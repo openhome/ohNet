@@ -99,7 +99,7 @@ private:
      * GetProtocolInfo action for the owning device.
      * Must be implemented iff EnableActionGetProtocolInfo was called.
      */
-    virtual void GetProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aSource, IInvocationResponseString& aSink);
+    virtual void GetProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aSource, IDvInvocationResponseString& aSink);
     /**
      * PrepareForConnection action.
      *
@@ -107,7 +107,7 @@ private:
      * PrepareForConnection action for the owning device.
      * Must be implemented iff EnableActionPrepareForConnection was called.
      */
-    virtual void PrepareForConnection(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRemoteProtocolInfo, const Brx& aPeerConnectionManager, TInt aPeerConnectionID, const Brx& aDirection, IInvocationResponseInt& aConnectionID, IInvocationResponseInt& aAVTransportID, IInvocationResponseInt& aRcsID);
+    virtual void PrepareForConnection(IDvInvocation& aInvocation, const Brx& aRemoteProtocolInfo, const Brx& aPeerConnectionManager, TInt aPeerConnectionID, const Brx& aDirection, IDvInvocationResponseInt& aConnectionID, IDvInvocationResponseInt& aAVTransportID, IDvInvocationResponseInt& aRcsID);
     /**
      * ConnectionComplete action.
      *
@@ -115,7 +115,7 @@ private:
      * ConnectionComplete action for the owning device.
      * Must be implemented iff EnableActionConnectionComplete was called.
      */
-    virtual void ConnectionComplete(IInvocationResponse& aResponse, TUint aVersion, TInt aConnectionID);
+    virtual void ConnectionComplete(IDvInvocation& aInvocation, TInt aConnectionID);
     /**
      * GetCurrentConnectionIDs action.
      *
@@ -123,7 +123,7 @@ private:
      * GetCurrentConnectionIDs action for the owning device.
      * Must be implemented iff EnableActionGetCurrentConnectionIDs was called.
      */
-    virtual void GetCurrentConnectionIDs(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aConnectionIDs);
+    virtual void GetCurrentConnectionIDs(IDvInvocation& aInvocation, IDvInvocationResponseString& aConnectionIDs);
     /**
      * GetCurrentConnectionInfo action.
      *
@@ -131,14 +131,14 @@ private:
      * GetCurrentConnectionInfo action for the owning device.
      * Must be implemented iff EnableActionGetCurrentConnectionInfo was called.
      */
-    virtual void GetCurrentConnectionInfo(IInvocationResponse& aResponse, TUint aVersion, TInt aConnectionID, IInvocationResponseInt& aRcsID, IInvocationResponseInt& aAVTransportID, IInvocationResponseString& aProtocolInfo, IInvocationResponseString& aPeerConnectionManager, IInvocationResponseInt& aPeerConnectionID, IInvocationResponseString& aDirection, IInvocationResponseString& aStatus);
+    virtual void GetCurrentConnectionInfo(IDvInvocation& aInvocation, TInt aConnectionID, IDvInvocationResponseInt& aRcsID, IDvInvocationResponseInt& aAVTransportID, IDvInvocationResponseString& aProtocolInfo, IDvInvocationResponseString& aPeerConnectionManager, IDvInvocationResponseInt& aPeerConnectionID, IDvInvocationResponseString& aDirection, IDvInvocationResponseString& aStatus);
 private:
     DvProviderUpnpOrgConnectionManager1();
-    void DoGetProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPrepareForConnection(IDviInvocation& aInvocation, TUint aVersion);
-    void DoConnectionComplete(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetProtocolInfo(IDviInvocation& aInvocation);
+    void DoPrepareForConnection(IDviInvocation& aInvocation);
+    void DoConnectionComplete(IDviInvocation& aInvocation);
+    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation);
+    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertySourceProtocolInfo;
     PropertyString* iPropertySinkProtocolInfo;

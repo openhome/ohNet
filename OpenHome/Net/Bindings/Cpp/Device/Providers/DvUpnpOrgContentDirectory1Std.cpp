@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -213,47 +214,50 @@ void DvProviderUpnpOrgContentDirectory1Cpp::EnableActionCreateReference()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSearchCapabilities(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSearchCapabilities(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respSearchCaps;
-    GetSearchCapabilities(aVersion, respSearchCaps);
+    DvInvocationStd invocation(aInvocation);
+    GetSearchCapabilities(invocation, respSearchCaps);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterSearchCaps(aInvocation, "SearchCaps");
+    DviInvocationResponseString respWriterSearchCaps(aInvocation, "SearchCaps");
     Brn buf_SearchCaps((const TByte*)respSearchCaps.c_str(), (TUint)respSearchCaps.length());
     respWriterSearchCaps.Write(buf_SearchCaps);
     aInvocation.InvocationWriteStringEnd("SearchCaps");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSortCapabilities(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSortCapabilities(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respSortCaps;
-    GetSortCapabilities(aVersion, respSortCaps);
+    DvInvocationStd invocation(aInvocation);
+    GetSortCapabilities(invocation, respSortCaps);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterSortCaps(aInvocation, "SortCaps");
+    DviInvocationResponseString respWriterSortCaps(aInvocation, "SortCaps");
     Brn buf_SortCaps((const TByte*)respSortCaps.c_str(), (TUint)respSortCaps.length());
     respWriterSortCaps.Write(buf_SortCaps);
     aInvocation.InvocationWriteStringEnd("SortCaps");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSystemUpdateID(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSystemUpdateID(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respId;
-    GetSystemUpdateID(aVersion, respId);
+    DvInvocationStd invocation(aInvocation);
+    GetSystemUpdateID(invocation, respId);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterId(aInvocation, "Id");
+    DviInvocationResponseUint respWriterId(aInvocation, "Id");
     respWriterId.Write(respId);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -275,22 +279,23 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation
     uint32_t respNumberReturned;
     uint32_t respTotalMatches;
     uint32_t respUpdateID;
-    Browse(aVersion, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
+    DvInvocationStd invocation(aInvocation);
+    Browse(invocation, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterResult(aInvocation, "Result");
+    DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
-    InvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
     respWriterNumberReturned.Write(respNumberReturned);
-    InvocationResponseUint respWriterTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respWriterTotalMatches(aInvocation, "TotalMatches");
     respWriterTotalMatches.Write(respTotalMatches);
-    InvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -312,22 +317,23 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation
     uint32_t respNumberReturned;
     uint32_t respTotalMatches;
     uint32_t respUpdateID;
-    Search(aVersion, ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
+    DvInvocationStd invocation(aInvocation);
+    Search(invocation, ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterResult(aInvocation, "Result");
+    DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
-    InvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
     respWriterNumberReturned.Write(respNumberReturned);
-    InvocationResponseUint respWriterTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respWriterTotalMatches(aInvocation, "TotalMatches");
     respWriterTotalMatches.Write(respTotalMatches);
-    InvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -339,32 +345,34 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvo
     aInvocation.InvocationReadEnd();
     std::string respObjectID;
     std::string respResult;
-    CreateObject(aVersion, ContainerID, Elements, respObjectID, respResult);
+    DvInvocationStd invocation(aInvocation);
+    CreateObject(invocation, ContainerID, Elements, respObjectID, respResult);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterObjectID(aInvocation, "ObjectID");
+    DviInvocationResponseString respWriterObjectID(aInvocation, "ObjectID");
     Brn buf_ObjectID((const TByte*)respObjectID.c_str(), (TUint)respObjectID.length());
     respWriterObjectID.Write(buf_ObjectID);
     aInvocation.InvocationWriteStringEnd("ObjectID");
-    InvocationResponseString respWriterResult(aInvocation, "Result");
+    DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoDestroyObject(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoDestroyObject(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
     aInvocation.InvocationReadString("ObjectID", buf_ObjectID);
     std::string ObjectID((const char*)buf_ObjectID.Ptr(), buf_ObjectID.Bytes());
     aInvocation.InvocationReadEnd();
-    DestroyObject(aVersion, ObjectID);
+    DvInvocationStd invocation(aInvocation);
+    DestroyObject(invocation, ObjectID);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoUpdateObject(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoUpdateObject(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -377,12 +385,13 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoUpdateObject(IDviInvocation& aInvo
     aInvocation.InvocationReadString("NewTagValue", buf_NewTagValue);
     std::string NewTagValue((const char*)buf_NewTagValue.Ptr(), buf_NewTagValue.Bytes());
     aInvocation.InvocationReadEnd();
-    UpdateObject(aVersion, ObjectID, CurrentTagValue, NewTagValue);
+    DvInvocationStd invocation(aInvocation);
+    UpdateObject(invocation, ObjectID, CurrentTagValue, NewTagValue);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoImportResource(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoImportResource(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_SourceURI;
@@ -393,14 +402,15 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoImportResource(IDviInvocation& aIn
     std::string DestinationURI((const char*)buf_DestinationURI.Ptr(), buf_DestinationURI.Bytes());
     aInvocation.InvocationReadEnd();
     uint32_t respTransferID;
-    ImportResource(aVersion, SourceURI, DestinationURI, respTransferID);
+    DvInvocationStd invocation(aInvocation);
+    ImportResource(invocation, SourceURI, DestinationURI, respTransferID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
+    DviInvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
     respWriterTransferID.Write(respTransferID);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoExportResource(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoExportResource(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_SourceURI;
@@ -411,24 +421,26 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoExportResource(IDviInvocation& aIn
     std::string DestinationURI((const char*)buf_DestinationURI.Ptr(), buf_DestinationURI.Bytes());
     aInvocation.InvocationReadEnd();
     uint32_t respTransferID;
-    ExportResource(aVersion, SourceURI, DestinationURI, respTransferID);
+    DvInvocationStd invocation(aInvocation);
+    ExportResource(invocation, SourceURI, DestinationURI, respTransferID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
+    DviInvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
     respWriterTransferID.Write(respTransferID);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoStopTransferResource(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoStopTransferResource(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
-    StopTransferResource(aVersion, TransferID);
+    DvInvocationStd invocation(aInvocation);
+    StopTransferResource(invocation, TransferID);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t TransferID = aInvocation.InvocationReadUint("TransferID");
@@ -436,36 +448,38 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation
     std::string respTransferStatus;
     std::string respTransferLength;
     std::string respTransferTotal;
-    GetTransferProgress(aVersion, TransferID, respTransferStatus, respTransferLength, respTransferTotal);
+    DvInvocationStd invocation(aInvocation);
+    GetTransferProgress(invocation, TransferID, respTransferStatus, respTransferLength, respTransferTotal);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterTransferStatus(aInvocation, "TransferStatus");
+    DviInvocationResponseString respWriterTransferStatus(aInvocation, "TransferStatus");
     Brn buf_TransferStatus((const TByte*)respTransferStatus.c_str(), (TUint)respTransferStatus.length());
     respWriterTransferStatus.Write(buf_TransferStatus);
     aInvocation.InvocationWriteStringEnd("TransferStatus");
-    InvocationResponseString respWriterTransferLength(aInvocation, "TransferLength");
+    DviInvocationResponseString respWriterTransferLength(aInvocation, "TransferLength");
     Brn buf_TransferLength((const TByte*)respTransferLength.c_str(), (TUint)respTransferLength.length());
     respWriterTransferLength.Write(buf_TransferLength);
     aInvocation.InvocationWriteStringEnd("TransferLength");
-    InvocationResponseString respWriterTransferTotal(aInvocation, "TransferTotal");
+    DviInvocationResponseString respWriterTransferTotal(aInvocation, "TransferTotal");
     Brn buf_TransferTotal((const TByte*)respTransferTotal.c_str(), (TUint)respTransferTotal.length());
     respWriterTransferTotal.Write(buf_TransferTotal);
     aInvocation.InvocationWriteStringEnd("TransferTotal");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoDeleteResource(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoDeleteResource(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ResourceURI;
     aInvocation.InvocationReadString("ResourceURI", buf_ResourceURI);
     std::string ResourceURI((const char*)buf_ResourceURI.Ptr(), buf_ResourceURI.Bytes());
     aInvocation.InvocationReadEnd();
-    DeleteResource(aVersion, ResourceURI);
+    DvInvocationStd invocation(aInvocation);
+    DeleteResource(invocation, ResourceURI);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateReference(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateReference(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -476,81 +490,82 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateReference(IDviInvocation& aI
     std::string ObjectID((const char*)buf_ObjectID.Ptr(), buf_ObjectID.Bytes());
     aInvocation.InvocationReadEnd();
     std::string respNewID;
-    CreateReference(aVersion, ContainerID, ObjectID, respNewID);
+    DvInvocationStd invocation(aInvocation);
+    CreateReference(invocation, ContainerID, ObjectID, respNewID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterNewID(aInvocation, "NewID");
+    DviInvocationResponseString respWriterNewID(aInvocation, "NewID");
     Brn buf_NewID((const TByte*)respNewID.c_str(), (TUint)respNewID.length());
     respWriterNewID.Write(buf_NewID);
     aInvocation.InvocationWriteStringEnd("NewID");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::GetSearchCapabilities(uint32_t /*aVersion*/, std::string& /*aSearchCaps*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::GetSearchCapabilities(IDvInvocationStd& /*aInvocation*/, std::string& /*aSearchCaps*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::GetSortCapabilities(uint32_t /*aVersion*/, std::string& /*aSortCaps*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::GetSortCapabilities(IDvInvocationStd& /*aInvocation*/, std::string& /*aSortCaps*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::GetSystemUpdateID(uint32_t /*aVersion*/, uint32_t& /*aId*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::GetSystemUpdateID(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aId*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::Browse(uint32_t /*aVersion*/, const std::string& /*aObjectID*/, const std::string& /*aBrowseFlag*/, const std::string& /*aFilter*/, uint32_t /*aStartingIndex*/, uint32_t /*aRequestedCount*/, const std::string& /*aSortCriteria*/, std::string& /*aResult*/, uint32_t& /*aNumberReturned*/, uint32_t& /*aTotalMatches*/, uint32_t& /*aUpdateID*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::Browse(IDvInvocationStd& /*aInvocation*/, const std::string& /*aObjectID*/, const std::string& /*aBrowseFlag*/, const std::string& /*aFilter*/, uint32_t /*aStartingIndex*/, uint32_t /*aRequestedCount*/, const std::string& /*aSortCriteria*/, std::string& /*aResult*/, uint32_t& /*aNumberReturned*/, uint32_t& /*aTotalMatches*/, uint32_t& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::Search(uint32_t /*aVersion*/, const std::string& /*aContainerID*/, const std::string& /*aSearchCriteria*/, const std::string& /*aFilter*/, uint32_t /*aStartingIndex*/, uint32_t /*aRequestedCount*/, const std::string& /*aSortCriteria*/, std::string& /*aResult*/, uint32_t& /*aNumberReturned*/, uint32_t& /*aTotalMatches*/, uint32_t& /*aUpdateID*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::Search(IDvInvocationStd& /*aInvocation*/, const std::string& /*aContainerID*/, const std::string& /*aSearchCriteria*/, const std::string& /*aFilter*/, uint32_t /*aStartingIndex*/, uint32_t /*aRequestedCount*/, const std::string& /*aSortCriteria*/, std::string& /*aResult*/, uint32_t& /*aNumberReturned*/, uint32_t& /*aTotalMatches*/, uint32_t& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::CreateObject(uint32_t /*aVersion*/, const std::string& /*aContainerID*/, const std::string& /*aElements*/, std::string& /*aObjectID*/, std::string& /*aResult*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::CreateObject(IDvInvocationStd& /*aInvocation*/, const std::string& /*aContainerID*/, const std::string& /*aElements*/, std::string& /*aObjectID*/, std::string& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DestroyObject(uint32_t /*aVersion*/, const std::string& /*aObjectID*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::DestroyObject(IDvInvocationStd& /*aInvocation*/, const std::string& /*aObjectID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::UpdateObject(uint32_t /*aVersion*/, const std::string& /*aObjectID*/, const std::string& /*aCurrentTagValue*/, const std::string& /*aNewTagValue*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::UpdateObject(IDvInvocationStd& /*aInvocation*/, const std::string& /*aObjectID*/, const std::string& /*aCurrentTagValue*/, const std::string& /*aNewTagValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::ImportResource(uint32_t /*aVersion*/, const std::string& /*aSourceURI*/, const std::string& /*aDestinationURI*/, uint32_t& /*aTransferID*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::ImportResource(IDvInvocationStd& /*aInvocation*/, const std::string& /*aSourceURI*/, const std::string& /*aDestinationURI*/, uint32_t& /*aTransferID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::ExportResource(uint32_t /*aVersion*/, const std::string& /*aSourceURI*/, const std::string& /*aDestinationURI*/, uint32_t& /*aTransferID*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::ExportResource(IDvInvocationStd& /*aInvocation*/, const std::string& /*aSourceURI*/, const std::string& /*aDestinationURI*/, uint32_t& /*aTransferID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::StopTransferResource(uint32_t /*aVersion*/, uint32_t /*aTransferID*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::StopTransferResource(IDvInvocationStd& /*aInvocation*/, uint32_t /*aTransferID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::GetTransferProgress(uint32_t /*aVersion*/, uint32_t /*aTransferID*/, std::string& /*aTransferStatus*/, std::string& /*aTransferLength*/, std::string& /*aTransferTotal*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::GetTransferProgress(IDvInvocationStd& /*aInvocation*/, uint32_t /*aTransferID*/, std::string& /*aTransferStatus*/, std::string& /*aTransferLength*/, std::string& /*aTransferTotal*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DeleteResource(uint32_t /*aVersion*/, const std::string& /*aResourceURI*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::DeleteResource(IDvInvocationStd& /*aInvocation*/, const std::string& /*aResourceURI*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::CreateReference(uint32_t /*aVersion*/, const std::string& /*aContainerID*/, const std::string& /*aObjectID*/, std::string& /*aNewID*/)
+void DvProviderUpnpOrgContentDirectory1Cpp::CreateReference(IDvInvocationStd& /*aInvocation*/, const std::string& /*aContainerID*/, const std::string& /*aObjectID*/, std::string& /*aNewID*/)
 {
     ASSERTS();
 }

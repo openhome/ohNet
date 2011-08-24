@@ -536,9 +536,8 @@ void DviSessionUpnp::Post()
 
     iSoapRequest.Set(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
 
-    DviDevice* device;
-    ParseRequestUri(DviProtocolUpnp::kControlUrlTail, &device, &iInvocationService);
-    if (device != NULL && iInvocationService != NULL) {
+    ParseRequestUri(DviProtocolUpnp::kControlUrlTail, &iInvocationDevice, &iInvocationService);
+    if (iInvocationDevice != NULL && iInvocationService != NULL) {
         try {
             Invoke();
         }
@@ -788,9 +787,37 @@ void DviSessionUpnp::WriteResourceEnd()
 void DviSessionUpnp::Invoke()
 {
     try {
-        iInvocationService->Invoke(*this, iHeaderSoapAction.Version(), iHeaderSoapAction.Action());
+        iInvocationService->Invoke(*this, iHeaderSoapAction.Action());
     }
     catch (InvocationError&) {}
+}
+
+TUint DviSessionUpnp::Version() const
+{
+    return iHeaderSoapAction.Version();
+}
+
+TIpAddress DviSessionUpnp::Adapter() const
+{
+    return iInterface;
+}
+
+const char* DviSessionUpnp::ResourceUriPrefix() const
+{
+    // !!!! should really read this from DvDeviceUpnp rather than duplicating knowledge here
+    iResourceUriPrefix.SetBytes(0);
+    iResourceUriPrefix.Append("http://");
+    Endpoint ep(iPort, iInterface);
+    ep.AppendEndpoint(iResourceUriPrefix);
+    iResourceUriPrefix.Append("/");
+    iResourceUriPrefix.Append(iInvocationDevice->Udn());
+    iResourceUriPrefix.Append("/");
+    iResourceUriPrefix.Append("Upnp");
+    iResourceUriPrefix.Append("/");
+    iResourceUriPrefix.Append("resource");
+    iResourceUriPrefix.Append("/");
+    iResourceUriPrefix.PtrZ();
+    return (const char*)iResourceUriPrefix.Ptr();
 }
 
 void DviSessionUpnp::InvocationReadStart()

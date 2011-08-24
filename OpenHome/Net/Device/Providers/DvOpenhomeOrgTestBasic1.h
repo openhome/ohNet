@@ -203,7 +203,7 @@ private:
      * Increment action for the owning device.
      * Must be implemented iff EnableActionIncrement was called.
      */
-    virtual void Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult);
+    virtual void Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
     /**
      * Decrement action.
      *
@@ -211,7 +211,7 @@ private:
      * Decrement action for the owning device.
      * Must be implemented iff EnableActionDecrement was called.
      */
-    virtual void Decrement(IInvocationResponse& aResponse, TUint aVersion, TInt aValue, IInvocationResponseInt& aResult);
+    virtual void Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult);
     /**
      * Toggle action.
      *
@@ -219,7 +219,7 @@ private:
      * Toggle action for the owning device.
      * Must be implemented iff EnableActionToggle was called.
      */
-    virtual void Toggle(IInvocationResponse& aResponse, TUint aVersion, TBool aValue, IInvocationResponseBool& aResult);
+    virtual void Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult);
     /**
      * EchoString action.
      *
@@ -227,7 +227,7 @@ private:
      * EchoString action for the owning device.
      * Must be implemented iff EnableActionEchoString was called.
      */
-    virtual void EchoString(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValue, IInvocationResponseString& aResult);
+    virtual void EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
     /**
      * EchoBinary action.
      *
@@ -235,7 +235,7 @@ private:
      * EchoBinary action for the owning device.
      * Must be implemented iff EnableActionEchoBinary was called.
      */
-    virtual void EchoBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValue, IInvocationResponseBinary& aResult);
+    virtual void EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult);
     /**
      * SetUint action.
      *
@@ -243,7 +243,7 @@ private:
      * SetUint action for the owning device.
      * Must be implemented iff EnableActionSetUint was called.
      */
-    virtual void SetUint(IInvocationResponse& aResponse, TUint aVersion, TUint aValueUint);
+    virtual void SetUint(IDvInvocation& aInvocation, TUint aValueUint);
     /**
      * GetUint action.
      *
@@ -251,7 +251,7 @@ private:
      * GetUint action for the owning device.
      * Must be implemented iff EnableActionGetUint was called.
      */
-    virtual void GetUint(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValueUint);
+    virtual void GetUint(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint);
     /**
      * SetInt action.
      *
@@ -259,7 +259,7 @@ private:
      * SetInt action for the owning device.
      * Must be implemented iff EnableActionSetInt was called.
      */
-    virtual void SetInt(IInvocationResponse& aResponse, TUint aVersion, TInt aValueInt);
+    virtual void SetInt(IDvInvocation& aInvocation, TInt aValueInt);
     /**
      * GetInt action.
      *
@@ -267,7 +267,7 @@ private:
      * GetInt action for the owning device.
      * Must be implemented iff EnableActionGetInt was called.
      */
-    virtual void GetInt(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseInt& aValueInt);
+    virtual void GetInt(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValueInt);
     /**
      * SetBool action.
      *
@@ -275,7 +275,7 @@ private:
      * SetBool action for the owning device.
      * Must be implemented iff EnableActionSetBool was called.
      */
-    virtual void SetBool(IInvocationResponse& aResponse, TUint aVersion, TBool aValueBool);
+    virtual void SetBool(IDvInvocation& aInvocation, TBool aValueBool);
     /**
      * GetBool action.
      *
@@ -283,7 +283,7 @@ private:
      * GetBool action for the owning device.
      * Must be implemented iff EnableActionGetBool was called.
      */
-    virtual void GetBool(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValueBool);
+    virtual void GetBool(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValueBool);
     /**
      * SetMultiple action.
      *
@@ -291,7 +291,7 @@ private:
      * SetMultiple action for the owning device.
      * Must be implemented iff EnableActionSetMultiple was called.
      */
-    virtual void SetMultiple(IInvocationResponse& aResponse, TUint aVersion, TUint aValueUint, TInt aValueInt, TBool aValueBool);
+    virtual void SetMultiple(IDvInvocation& aInvocation, TUint aValueUint, TInt aValueInt, TBool aValueBool);
     /**
      * SetString action.
      *
@@ -299,7 +299,7 @@ private:
      * SetString action for the owning device.
      * Must be implemented iff EnableActionSetString was called.
      */
-    virtual void SetString(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueStr);
+    virtual void SetString(IDvInvocation& aInvocation, const Brx& aValueStr);
     /**
      * GetString action.
      *
@@ -307,7 +307,7 @@ private:
      * GetString action for the owning device.
      * Must be implemented iff EnableActionGetString was called.
      */
-    virtual void GetString(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValueStr);
+    virtual void GetString(IDvInvocation& aInvocation, IDvInvocationResponseString& aValueStr);
     /**
      * SetBinary action.
      *
@@ -315,7 +315,7 @@ private:
      * SetBinary action for the owning device.
      * Must be implemented iff EnableActionSetBinary was called.
      */
-    virtual void SetBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueBin);
+    virtual void SetBinary(IDvInvocation& aInvocation, const Brx& aValueBin);
     /**
      * GetBinary action.
      *
@@ -323,7 +323,7 @@ private:
      * GetBinary action for the owning device.
      * Must be implemented iff EnableActionGetBinary was called.
      */
-    virtual void GetBinary(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBinary& aValueBin);
+    virtual void GetBinary(IDvInvocation& aInvocation, IDvInvocationResponseBinary& aValueBin);
     /**
      * ToggleBool action.
      *
@@ -331,7 +331,7 @@ private:
      * ToggleBool action for the owning device.
      * Must be implemented iff EnableActionToggleBool was called.
      */
-    virtual void ToggleBool(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void ToggleBool(IDvInvocation& aInvocation);
     /**
      * WriteFile action.
      *
@@ -339,7 +339,7 @@ private:
      * WriteFile action for the owning device.
      * Must be implemented iff EnableActionWriteFile was called.
      */
-    virtual void WriteFile(IInvocationResponse& aResponse, TUint aVersion, const Brx& aData, const Brx& aFileFullName);
+    virtual void WriteFile(IDvInvocation& aInvocation, const Brx& aData, const Brx& aFileFullName);
     /**
      * Shutdown action.
      *
@@ -347,28 +347,28 @@ private:
      * Shutdown action for the owning device.
      * Must be implemented iff EnableActionShutdown was called.
      */
-    virtual void Shutdown(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Shutdown(IDvInvocation& aInvocation);
 private:
     DvProviderOpenhomeOrgTestBasic1();
-    void DoIncrement(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDecrement(IDviInvocation& aInvocation, TUint aVersion);
-    void DoToggle(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEchoString(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEchoBinary(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetUint(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetUint(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetInt(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetInt(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBool(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetBool(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetMultiple(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetString(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetString(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBinary(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetBinary(IDviInvocation& aInvocation, TUint aVersion);
-    void DoToggleBool(IDviInvocation& aInvocation, TUint aVersion);
-    void DoWriteFile(IDviInvocation& aInvocation, TUint aVersion);
-    void DoShutdown(IDviInvocation& aInvocation, TUint aVersion);
+    void DoIncrement(IDviInvocation& aInvocation);
+    void DoDecrement(IDviInvocation& aInvocation);
+    void DoToggle(IDviInvocation& aInvocation);
+    void DoEchoString(IDviInvocation& aInvocation);
+    void DoEchoBinary(IDviInvocation& aInvocation);
+    void DoSetUint(IDviInvocation& aInvocation);
+    void DoGetUint(IDviInvocation& aInvocation);
+    void DoSetInt(IDviInvocation& aInvocation);
+    void DoGetInt(IDviInvocation& aInvocation);
+    void DoSetBool(IDviInvocation& aInvocation);
+    void DoGetBool(IDviInvocation& aInvocation);
+    void DoSetMultiple(IDviInvocation& aInvocation);
+    void DoSetString(IDviInvocation& aInvocation);
+    void DoGetString(IDviInvocation& aInvocation);
+    void DoSetBinary(IDviInvocation& aInvocation);
+    void DoGetBinary(IDviInvocation& aInvocation);
+    void DoToggleBool(IDviInvocation& aInvocation);
+    void DoWriteFile(IDviInvocation& aInvocation);
+    void DoShutdown(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyVarUint;
     PropertyInt* iPropertyVarInt;

@@ -118,23 +118,23 @@ void DvProviderAvOpenhomeOrgReceiver1::EnableActionTransportState()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1::DoPlay(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    Play(resp, aVersion);
+    DviInvocation invocation(aInvocation);
+    Play(invocation);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoStop(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1::DoStop(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    Stop(resp, aVersion);
+    DviInvocation invocation(aInvocation);
+    Stop(invocation);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoSetSender(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1::DoSetSender(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz Uri;
@@ -142,64 +142,64 @@ void DvProviderAvOpenhomeOrgReceiver1::DoSetSender(IDviInvocation& aInvocation, 
     Brhz Metadata;
     aInvocation.InvocationReadString("Metadata", Metadata);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetSender(resp, aVersion, Uri, Metadata);
+    DviInvocation invocation(aInvocation);
+    SetSender(invocation, Uri, Metadata);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoSender(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1::DoSender(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respUri(aInvocation, "Uri");
-    InvocationResponseString respMetadata(aInvocation, "Metadata");
-    Sender(resp, aVersion, respUri, respMetadata);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respUri(aInvocation, "Uri");
+    DviInvocationResponseString respMetadata(aInvocation, "Metadata");
+    Sender(invocation, respUri, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1::DoProtocolInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respValue(aInvocation, "Value");
-    ProtocolInfo(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respValue(aInvocation, "Value");
+    ProtocolInfo(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoTransportState(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1::DoTransportState(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respValue(aInvocation, "Value");
-    TransportState(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respValue(aInvocation, "Value");
+    TransportState(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::Play(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1::Play(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::Stop(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1::Stop(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::SetSender(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aUri*/, const Brx& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgReceiver1::SetSender(IDvInvocation& /*aResponse*/, const Brx& /*aUri*/, const Brx& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::Sender(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aUri*/, IInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgReceiver1::Sender(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aUri*/, IDvInvocationResponseString& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::ProtocolInfo(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgReceiver1::ProtocolInfo(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::TransportState(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgReceiver1::TransportState(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }

@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -159,7 +160,7 @@ private:
      * GetSortCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetSortCapabilities was called.
      */
-    virtual void GetSortCapabilities(uint32_t aVersion, std::string& aSortCaps, uint32_t& aSortLevelCap);
+    virtual void GetSortCapabilities(IDvInvocationStd& aInvocation, std::string& aSortCaps, uint32_t& aSortLevelCap);
     /**
      * GetPropertyList action.
      *
@@ -167,7 +168,7 @@ private:
      * GetPropertyList action for the owning device.
      * Must be implemented iff EnableActionGetPropertyList was called.
      */
-    virtual void GetPropertyList(uint32_t aVersion, const std::string& aDataTypeID, std::string& aPropertyList);
+    virtual void GetPropertyList(IDvInvocationStd& aInvocation, const std::string& aDataTypeID, std::string& aPropertyList);
     /**
      * GetAllowedValues action.
      *
@@ -175,7 +176,7 @@ private:
      * GetAllowedValues action for the owning device.
      * Must be implemented iff EnableActionGetAllowedValues was called.
      */
-    virtual void GetAllowedValues(uint32_t aVersion, const std::string& aDataTypeID, const std::string& aFilter, std::string& aPropertyInfo);
+    virtual void GetAllowedValues(IDvInvocationStd& aInvocation, const std::string& aDataTypeID, const std::string& aFilter, std::string& aPropertyInfo);
     /**
      * GetStateUpdateID action.
      *
@@ -183,7 +184,7 @@ private:
      * GetStateUpdateID action for the owning device.
      * Must be implemented iff EnableActionGetStateUpdateID was called.
      */
-    virtual void GetStateUpdateID(uint32_t aVersion, uint32_t& aId);
+    virtual void GetStateUpdateID(IDvInvocationStd& aInvocation, uint32_t& aId);
     /**
      * BrowseRecordSchedules action.
      *
@@ -191,7 +192,7 @@ private:
      * BrowseRecordSchedules action for the owning device.
      * Must be implemented iff EnableActionBrowseRecordSchedules was called.
      */
-    virtual void BrowseRecordSchedules(uint32_t aVersion, const std::string& aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const std::string& aSortCriteria, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
+    virtual void BrowseRecordSchedules(IDvInvocationStd& aInvocation, const std::string& aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const std::string& aSortCriteria, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
     /**
      * BrowseRecordTasks action.
      *
@@ -199,7 +200,7 @@ private:
      * BrowseRecordTasks action for the owning device.
      * Must be implemented iff EnableActionBrowseRecordTasks was called.
      */
-    virtual void BrowseRecordTasks(uint32_t aVersion, const std::string& aRecordScheduleID, const std::string& aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const std::string& aSortCriteria, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
+    virtual void BrowseRecordTasks(IDvInvocationStd& aInvocation, const std::string& aRecordScheduleID, const std::string& aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const std::string& aSortCriteria, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
     /**
      * CreateRecordSchedule action.
      *
@@ -207,7 +208,7 @@ private:
      * CreateRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionCreateRecordSchedule was called.
      */
-    virtual void CreateRecordSchedule(uint32_t aVersion, const std::string& aElements, std::string& aRecordScheduleID, std::string& aResult, uint32_t& aUpdateID);
+    virtual void CreateRecordSchedule(IDvInvocationStd& aInvocation, const std::string& aElements, std::string& aRecordScheduleID, std::string& aResult, uint32_t& aUpdateID);
     /**
      * DeleteRecordSchedule action.
      *
@@ -215,7 +216,7 @@ private:
      * DeleteRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionDeleteRecordSchedule was called.
      */
-    virtual void DeleteRecordSchedule(uint32_t aVersion, const std::string& aRecordScheduleID);
+    virtual void DeleteRecordSchedule(IDvInvocationStd& aInvocation, const std::string& aRecordScheduleID);
     /**
      * GetRecordSchedule action.
      *
@@ -223,7 +224,7 @@ private:
      * GetRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionGetRecordSchedule was called.
      */
-    virtual void GetRecordSchedule(uint32_t aVersion, const std::string& aRecordScheduleID, const std::string& aFilter, std::string& aResult, uint32_t& aUpdateID);
+    virtual void GetRecordSchedule(IDvInvocationStd& aInvocation, const std::string& aRecordScheduleID, const std::string& aFilter, std::string& aResult, uint32_t& aUpdateID);
     /**
      * EnableRecordSchedule action.
      *
@@ -231,7 +232,7 @@ private:
      * EnableRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionEnableRecordSchedule was called.
      */
-    virtual void EnableRecordSchedule(uint32_t aVersion, const std::string& aRecordScheduleID);
+    virtual void EnableRecordSchedule(IDvInvocationStd& aInvocation, const std::string& aRecordScheduleID);
     /**
      * DisableRecordSchedule action.
      *
@@ -239,7 +240,7 @@ private:
      * DisableRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionDisableRecordSchedule was called.
      */
-    virtual void DisableRecordSchedule(uint32_t aVersion, const std::string& aRecordScheduleID);
+    virtual void DisableRecordSchedule(IDvInvocationStd& aInvocation, const std::string& aRecordScheduleID);
     /**
      * DeleteRecordTask action.
      *
@@ -247,7 +248,7 @@ private:
      * DeleteRecordTask action for the owning device.
      * Must be implemented iff EnableActionDeleteRecordTask was called.
      */
-    virtual void DeleteRecordTask(uint32_t aVersion, const std::string& aRecordTaskID);
+    virtual void DeleteRecordTask(IDvInvocationStd& aInvocation, const std::string& aRecordTaskID);
     /**
      * GetRecordTask action.
      *
@@ -255,7 +256,7 @@ private:
      * GetRecordTask action for the owning device.
      * Must be implemented iff EnableActionGetRecordTask was called.
      */
-    virtual void GetRecordTask(uint32_t aVersion, const std::string& aRecordTaskID, const std::string& aFilter, std::string& aResult, uint32_t& aUpdateID);
+    virtual void GetRecordTask(IDvInvocationStd& aInvocation, const std::string& aRecordTaskID, const std::string& aFilter, std::string& aResult, uint32_t& aUpdateID);
     /**
      * EnableRecordTask action.
      *
@@ -263,7 +264,7 @@ private:
      * EnableRecordTask action for the owning device.
      * Must be implemented iff EnableActionEnableRecordTask was called.
      */
-    virtual void EnableRecordTask(uint32_t aVersion, const std::string& aRecordTaskID);
+    virtual void EnableRecordTask(IDvInvocationStd& aInvocation, const std::string& aRecordTaskID);
     /**
      * DisableRecordTask action.
      *
@@ -271,7 +272,7 @@ private:
      * DisableRecordTask action for the owning device.
      * Must be implemented iff EnableActionDisableRecordTask was called.
      */
-    virtual void DisableRecordTask(uint32_t aVersion, const std::string& aRecordTaskID);
+    virtual void DisableRecordTask(IDvInvocationStd& aInvocation, const std::string& aRecordTaskID);
     /**
      * ResetRecordTask action.
      *
@@ -279,7 +280,7 @@ private:
      * ResetRecordTask action for the owning device.
      * Must be implemented iff EnableActionResetRecordTask was called.
      */
-    virtual void ResetRecordTask(uint32_t aVersion, const std::string& aRecordTaskID);
+    virtual void ResetRecordTask(IDvInvocationStd& aInvocation, const std::string& aRecordTaskID);
     /**
      * GetRecordScheduleConflicts action.
      *
@@ -287,7 +288,7 @@ private:
      * GetRecordScheduleConflicts action for the owning device.
      * Must be implemented iff EnableActionGetRecordScheduleConflicts was called.
      */
-    virtual void GetRecordScheduleConflicts(uint32_t aVersion, const std::string& aRecordScheduleID, std::string& aRecordScheduleConflictIDList, uint32_t& aUpdateID);
+    virtual void GetRecordScheduleConflicts(IDvInvocationStd& aInvocation, const std::string& aRecordScheduleID, std::string& aRecordScheduleConflictIDList, uint32_t& aUpdateID);
     /**
      * GetRecordTaskConflicts action.
      *
@@ -295,27 +296,27 @@ private:
      * GetRecordTaskConflicts action for the owning device.
      * Must be implemented iff EnableActionGetRecordTaskConflicts was called.
      */
-    virtual void GetRecordTaskConflicts(uint32_t aVersion, const std::string& aRecordTaskID, std::string& aRecordTaskConflictIDList, uint32_t& aUpdateID);
+    virtual void GetRecordTaskConflicts(IDvInvocationStd& aInvocation, const std::string& aRecordTaskID, std::string& aRecordTaskConflictIDList, uint32_t& aUpdateID);
 private:
     DvProviderUpnpOrgScheduledRecording1Cpp();
-    void DoGetSortCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetPropertyList(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetAllowedValues(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetStateUpdateID(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoBrowseRecordSchedules(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoBrowseRecordTasks(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoCreateRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoDeleteRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoEnableRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoDisableRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoDeleteRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoEnableRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoDisableRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoResetRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation);
+    void DoGetPropertyList(IDviInvocation& aInvocation);
+    void DoGetAllowedValues(IDviInvocation& aInvocation);
+    void DoGetStateUpdateID(IDviInvocation& aInvocation);
+    void DoBrowseRecordSchedules(IDviInvocation& aInvocation);
+    void DoBrowseRecordTasks(IDviInvocation& aInvocation);
+    void DoCreateRecordSchedule(IDviInvocation& aInvocation);
+    void DoDeleteRecordSchedule(IDviInvocation& aInvocation);
+    void DoGetRecordSchedule(IDviInvocation& aInvocation);
+    void DoEnableRecordSchedule(IDviInvocation& aInvocation);
+    void DoDisableRecordSchedule(IDviInvocation& aInvocation);
+    void DoDeleteRecordTask(IDviInvocation& aInvocation);
+    void DoGetRecordTask(IDviInvocation& aInvocation);
+    void DoEnableRecordTask(IDviInvocation& aInvocation);
+    void DoDisableRecordTask(IDviInvocation& aInvocation);
+    void DoResetRecordTask(IDviInvocation& aInvocation);
+    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation);
+    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyLastChange;
 };

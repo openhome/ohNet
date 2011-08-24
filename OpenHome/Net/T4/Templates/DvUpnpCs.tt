@@ -199,7 +199,7 @@ namespace OpenHome.Net.Device.Providers
         /// <#=a.name#> action for the owning device.
         ///
         /// Must be implemented iff EnableAction<#=a.name#> was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
         /// <param name="a<#=i.name#>"></param>
@@ -208,7 +208,7 @@ namespace OpenHome.Net.Device.Providers
 <#      { #>
         /// <param name="a<#=o.name#>"></param>
 <#      } #>
-        protected virtual void <#=a.name#>(uint aVersion<#=ArgsFull(a)#>)
+        protected virtual void <#=a.name#>(IDvInvocation aInvocation<#=ArgsFull(a)#>)
         {
             throw (new ActionDisabledError());
         }
@@ -216,7 +216,7 @@ namespace OpenHome.Net.Device.Providers
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-        private static int Do<#=a.name#>(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int Do<#=a.name#>(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             <#=className#> self = (<#=className#>)gch.Target;
@@ -237,7 +237,7 @@ namespace OpenHome.Net.Device.Providers
                 <#=ArgNameLocal(i.name)#> = invocation.<#=invocationReader[i.variable.type]#>("<#=i.name#>");
 <#      } #>
                 invocation.ReadEnd();
-                self.<#=a.name#>(aVersion<#=ArgNames(a)#>);
+                self.<#=a.name#>(invocation<#=ArgNames(a)#>);
             }
             catch (ActionError)
             {

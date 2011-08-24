@@ -17,22 +17,17 @@ public class CpDeviceListUpnpAll extends CpDeviceList
 	/**
 	 * Constructor.
 	 * 
-	 * @param aAdded	delegate which will be run when a new device is detected.
-	 * 					Clients who are interested this new device should call
-	 *					<tt>CpDevice.addRef()</tt> on it and add it to some local collection.
-	 * 					This callback will never be run for a device that is already in the list.
-	 * @param aRemoved	delegate which will be run when a device is removed from the network.
-	 * 					Clients who had previously stored a reference to the device
-	 * 					in their <tt>aAdded</tt> callback should call
-	 * 					<tt>CpDevice.removeRef()</tt> and remove the device from their local collection.
+	 * @param aListener	delegate which will be called when a device is detected or removed.
+	 * 					Clients who are interested in a newly detected device should call
+	 *					<tt>CpDevice.addRef()</tt> on it and add it to some local collection
+	 *					and must later call <tt>CpDevice.removeRef()</tt> to remove the
+	 *					device from their local collection.
 	 * 					Clients who had not previously claimed a reference to a device must
 	 * 					not call <tt>CpDevice.removeRef()</tt>.
 	 */
-	public CpDeviceListUpnpAll(ICpDeviceListListener aAdded, 
-			ICpDeviceListListener aRemoved) 
+	public CpDeviceListUpnpAll(ICpDeviceListListener aListener) 
 	{
-		iAdded = aAdded;
-		iRemoved = aRemoved;
+		iListener = aListener;
 		CpDeviceListInitialised init = CpDeviceListCreateUpnpAll();
 		iHandle = init.getHandle();
 		iCallback = init.getCallback();

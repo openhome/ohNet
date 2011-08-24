@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,32 +22,38 @@ extern "C" {
 /**
  * Callback which runs when the SetAVTransportURI action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetAVTransportURI
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetAVTransportURI
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aCurrentURI
  * @param[in]  aCurrentURIMetaData
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2SetAVTransportURI)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData);
+typedef int32_t (STDCALL *CallbackAVTransport2SetAVTransportURI)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData);
 /**
  * Callback which runs when the SetNextAVTransportURI action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetNextAVTransportURI
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetNextAVTransportURI
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aNextURI
  * @param[in]  aNextURIMetaData
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2SetNextAVTransportURI)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData);
+typedef int32_t (STDCALL *CallbackAVTransport2SetNextAVTransportURI)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData);
 /**
  * Callback which runs when the GetMediaInfo action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aNrTracks
  * @param[out] aMediaDuration
@@ -60,12 +67,14 @@ typedef int32_t (STDCALL *CallbackAVTransport2SetNextAVTransportURI)(void* aPtr,
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetMediaInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+typedef int32_t (STDCALL *CallbackAVTransport2GetMediaInfo)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
 /**
  * Callback which runs when the GetMediaInfo_Ext action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo_Ext
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo_Ext
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentType
  * @param[out] aNrTracks
@@ -80,12 +89,14 @@ typedef int32_t (STDCALL *CallbackAVTransport2GetMediaInfo)(void* aPtr, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetMediaInfo_Ext)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+typedef int32_t (STDCALL *CallbackAVTransport2GetMediaInfo_Ext)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
 /**
  * Callback which runs when the GetTransportInfo action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetTransportInfo
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetTransportInfo
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentTransportState
  * @param[out] aCurrentTransportStatus
@@ -93,12 +104,14 @@ typedef int32_t (STDCALL *CallbackAVTransport2GetMediaInfo_Ext)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetTransportInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
+typedef int32_t (STDCALL *CallbackAVTransport2GetTransportInfo)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
 /**
  * Callback which runs when the GetPositionInfo action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetPositionInfo
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetPositionInfo
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aTrack
  * @param[out] aTrackDuration
@@ -111,12 +124,14 @@ typedef int32_t (STDCALL *CallbackAVTransport2GetTransportInfo)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetPositionInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
+typedef int32_t (STDCALL *CallbackAVTransport2GetPositionInfo)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
 /**
  * Callback which runs when the GetDeviceCapabilities action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetDeviceCapabilities
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetDeviceCapabilities
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aPlayMedia
  * @param[out] aRecMedia
@@ -124,153 +139,181 @@ typedef int32_t (STDCALL *CallbackAVTransport2GetPositionInfo)(void* aPtr, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetDeviceCapabilities)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
+typedef int32_t (STDCALL *CallbackAVTransport2GetDeviceCapabilities)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
 /**
  * Callback which runs when the GetTransportSettings action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetTransportSettings
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetTransportSettings
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aPlayMode
  * @param[out] aRecQualityMode
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetTransportSettings)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode);
+typedef int32_t (STDCALL *CallbackAVTransport2GetTransportSettings)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode);
 /**
  * Callback which runs when the Stop action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionStop
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionStop
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2Stop)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport2Stop)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID);
 /**
  * Callback which runs when the Play action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionPlay
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionPlay
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aSpeed
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2Play)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aSpeed);
+typedef int32_t (STDCALL *CallbackAVTransport2Play)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aSpeed);
 /**
  * Callback which runs when the Pause action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionPause
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionPause
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2Pause)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport2Pause)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID);
 /**
  * Callback which runs when the Record action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionRecord
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionRecord
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2Record)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport2Record)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID);
 /**
  * Callback which runs when the Seek action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSeek
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSeek
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aUnit
  * @param[in]  aTarget
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2Seek)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aUnit, const char* aTarget);
+typedef int32_t (STDCALL *CallbackAVTransport2Seek)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aUnit, const char* aTarget);
 /**
  * Callback which runs when the Next action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionNext
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionNext
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2Next)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport2Next)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID);
 /**
  * Callback which runs when the Previous action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionPrevious
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionPrevious
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2Previous)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport2Previous)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID);
 /**
  * Callback which runs when the SetPlayMode action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetPlayMode
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetPlayMode
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aNewPlayMode
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2SetPlayMode)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNewPlayMode);
+typedef int32_t (STDCALL *CallbackAVTransport2SetPlayMode)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aNewPlayMode);
 /**
  * Callback which runs when the SetRecordQualityMode action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetRecordQualityMode
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetRecordQualityMode
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aNewRecordQualityMode
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2SetRecordQualityMode)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNewRecordQualityMode);
+typedef int32_t (STDCALL *CallbackAVTransport2SetRecordQualityMode)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aNewRecordQualityMode);
 /**
  * Callback which runs when the GetCurrentTransportActions action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetCurrentTransportActions
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetCurrentTransportActions
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aActions
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetCurrentTransportActions)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aActions);
+typedef int32_t (STDCALL *CallbackAVTransport2GetCurrentTransportActions)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, char** aActions);
 /**
  * Callback which runs when the GetDRMState action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetDRMState
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetDRMState
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentDRMState
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetDRMState)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aCurrentDRMState);
+typedef int32_t (STDCALL *CallbackAVTransport2GetDRMState)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, char** aCurrentDRMState);
 /**
  * Callback which runs when the GetStateVariables action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetStateVariables
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionGetStateVariables
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aStateVariableList
  * @param[out] aStateVariableValuePairs
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2GetStateVariables)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aStateVariableList, char** aStateVariableValuePairs);
+typedef int32_t (STDCALL *CallbackAVTransport2GetStateVariables)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aStateVariableList, char** aStateVariableValuePairs);
 /**
  * Callback which runs when the SetStateVariables action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetStateVariables
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgAVTransport2EnableActionSetStateVariables
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aAVTransportUDN
  * @param[in]  aServiceType
@@ -280,7 +323,7 @@ typedef int32_t (STDCALL *CallbackAVTransport2GetStateVariables)(void* aPtr, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackAVTransport2SetStateVariables)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, char** aStateVariableList);
+typedef int32_t (STDCALL *CallbackAVTransport2SetStateVariables)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, char** aStateVariableList);
 
 /**
  * Provider constructor

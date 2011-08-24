@@ -379,10 +379,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetSortCapabilities action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetSortCapabilities was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aSortCaps"></param>
         /// <param name="aSortLevelCap"></param>
-        protected virtual void GetSortCapabilities(uint aVersion, out string aSortCaps, out uint aSortLevelCap)
+        protected virtual void GetSortCapabilities(IDvInvocation aInvocation, out string aSortCaps, out uint aSortLevelCap)
         {
             throw (new ActionDisabledError());
         }
@@ -394,10 +394,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetPropertyList action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetPropertyList was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aDataTypeID"></param>
         /// <param name="aPropertyList"></param>
-        protected virtual void GetPropertyList(uint aVersion, string aDataTypeID, out string aPropertyList)
+        protected virtual void GetPropertyList(IDvInvocation aInvocation, string aDataTypeID, out string aPropertyList)
         {
             throw (new ActionDisabledError());
         }
@@ -409,11 +409,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetAllowedValues action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetAllowedValues was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aDataTypeID"></param>
         /// <param name="aFilter"></param>
         /// <param name="aPropertyInfo"></param>
-        protected virtual void GetAllowedValues(uint aVersion, string aDataTypeID, string aFilter, out string aPropertyInfo)
+        protected virtual void GetAllowedValues(IDvInvocation aInvocation, string aDataTypeID, string aFilter, out string aPropertyInfo)
         {
             throw (new ActionDisabledError());
         }
@@ -425,9 +425,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetStateUpdateID action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetStateUpdateID was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
-        protected virtual void GetStateUpdateID(uint aVersion, out uint aId)
+        protected virtual void GetStateUpdateID(IDvInvocation aInvocation, out uint aId)
         {
             throw (new ActionDisabledError());
         }
@@ -439,7 +439,7 @@ namespace OpenHome.Net.Device.Providers
         /// BrowseRecordSchedules action for the owning device.
         ///
         /// Must be implemented iff EnableActionBrowseRecordSchedules was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aFilter"></param>
         /// <param name="aStartingIndex"></param>
         /// <param name="aRequestedCount"></param>
@@ -448,7 +448,7 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        protected virtual void BrowseRecordSchedules(uint aVersion, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        protected virtual void BrowseRecordSchedules(IDvInvocation aInvocation, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
@@ -460,7 +460,7 @@ namespace OpenHome.Net.Device.Providers
         /// BrowseRecordTasks action for the owning device.
         ///
         /// Must be implemented iff EnableActionBrowseRecordTasks was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aFilter"></param>
         /// <param name="aStartingIndex"></param>
@@ -470,7 +470,7 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        protected virtual void BrowseRecordTasks(uint aVersion, string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        protected virtual void BrowseRecordTasks(IDvInvocation aInvocation, string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
@@ -482,12 +482,12 @@ namespace OpenHome.Net.Device.Providers
         /// CreateRecordSchedule action for the owning device.
         ///
         /// Must be implemented iff EnableActionCreateRecordSchedule was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aElements"></param>
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        protected virtual void CreateRecordSchedule(uint aVersion, string aElements, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
+        protected virtual void CreateRecordSchedule(IDvInvocation aInvocation, string aElements, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
@@ -499,9 +499,9 @@ namespace OpenHome.Net.Device.Providers
         /// DeleteRecordSchedule action for the owning device.
         ///
         /// Must be implemented iff EnableActionDeleteRecordSchedule was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordScheduleID"></param>
-        protected virtual void DeleteRecordSchedule(uint aVersion, string aRecordScheduleID)
+        protected virtual void DeleteRecordSchedule(IDvInvocation aInvocation, string aRecordScheduleID)
         {
             throw (new ActionDisabledError());
         }
@@ -513,12 +513,12 @@ namespace OpenHome.Net.Device.Providers
         /// GetRecordSchedule action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRecordSchedule was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aFilter"></param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        protected virtual void GetRecordSchedule(uint aVersion, string aRecordScheduleID, string aFilter, out string aResult, out uint aUpdateID)
+        protected virtual void GetRecordSchedule(IDvInvocation aInvocation, string aRecordScheduleID, string aFilter, out string aResult, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
@@ -530,9 +530,9 @@ namespace OpenHome.Net.Device.Providers
         /// EnableRecordSchedule action for the owning device.
         ///
         /// Must be implemented iff EnableActionEnableRecordSchedule was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordScheduleID"></param>
-        protected virtual void EnableRecordSchedule(uint aVersion, string aRecordScheduleID)
+        protected virtual void EnableRecordSchedule(IDvInvocation aInvocation, string aRecordScheduleID)
         {
             throw (new ActionDisabledError());
         }
@@ -544,9 +544,9 @@ namespace OpenHome.Net.Device.Providers
         /// DisableRecordSchedule action for the owning device.
         ///
         /// Must be implemented iff EnableActionDisableRecordSchedule was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordScheduleID"></param>
-        protected virtual void DisableRecordSchedule(uint aVersion, string aRecordScheduleID)
+        protected virtual void DisableRecordSchedule(IDvInvocation aInvocation, string aRecordScheduleID)
         {
             throw (new ActionDisabledError());
         }
@@ -558,9 +558,9 @@ namespace OpenHome.Net.Device.Providers
         /// DeleteRecordTask action for the owning device.
         ///
         /// Must be implemented iff EnableActionDeleteRecordTask was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordTaskID"></param>
-        protected virtual void DeleteRecordTask(uint aVersion, string aRecordTaskID)
+        protected virtual void DeleteRecordTask(IDvInvocation aInvocation, string aRecordTaskID)
         {
             throw (new ActionDisabledError());
         }
@@ -572,12 +572,12 @@ namespace OpenHome.Net.Device.Providers
         /// GetRecordTask action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRecordTask was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordTaskID"></param>
         /// <param name="aFilter"></param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        protected virtual void GetRecordTask(uint aVersion, string aRecordTaskID, string aFilter, out string aResult, out uint aUpdateID)
+        protected virtual void GetRecordTask(IDvInvocation aInvocation, string aRecordTaskID, string aFilter, out string aResult, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
@@ -589,9 +589,9 @@ namespace OpenHome.Net.Device.Providers
         /// EnableRecordTask action for the owning device.
         ///
         /// Must be implemented iff EnableActionEnableRecordTask was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordTaskID"></param>
-        protected virtual void EnableRecordTask(uint aVersion, string aRecordTaskID)
+        protected virtual void EnableRecordTask(IDvInvocation aInvocation, string aRecordTaskID)
         {
             throw (new ActionDisabledError());
         }
@@ -603,9 +603,9 @@ namespace OpenHome.Net.Device.Providers
         /// DisableRecordTask action for the owning device.
         ///
         /// Must be implemented iff EnableActionDisableRecordTask was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordTaskID"></param>
-        protected virtual void DisableRecordTask(uint aVersion, string aRecordTaskID)
+        protected virtual void DisableRecordTask(IDvInvocation aInvocation, string aRecordTaskID)
         {
             throw (new ActionDisabledError());
         }
@@ -617,9 +617,9 @@ namespace OpenHome.Net.Device.Providers
         /// ResetRecordTask action for the owning device.
         ///
         /// Must be implemented iff EnableActionResetRecordTask was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordTaskID"></param>
-        protected virtual void ResetRecordTask(uint aVersion, string aRecordTaskID)
+        protected virtual void ResetRecordTask(IDvInvocation aInvocation, string aRecordTaskID)
         {
             throw (new ActionDisabledError());
         }
@@ -631,11 +631,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetRecordScheduleConflicts action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRecordScheduleConflicts was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aRecordScheduleConflictIDList"></param>
         /// <param name="aUpdateID"></param>
-        protected virtual void GetRecordScheduleConflicts(uint aVersion, string aRecordScheduleID, out string aRecordScheduleConflictIDList, out uint aUpdateID)
+        protected virtual void GetRecordScheduleConflicts(IDvInvocation aInvocation, string aRecordScheduleID, out string aRecordScheduleConflictIDList, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
@@ -647,16 +647,16 @@ namespace OpenHome.Net.Device.Providers
         /// GetRecordTaskConflicts action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRecordTaskConflicts was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRecordTaskID"></param>
         /// <param name="aRecordTaskConflictIDList"></param>
         /// <param name="aUpdateID"></param>
-        protected virtual void GetRecordTaskConflicts(uint aVersion, string aRecordTaskID, out string aRecordTaskConflictIDList, out uint aUpdateID)
+        protected virtual void GetRecordTaskConflicts(IDvInvocation aInvocation, string aRecordTaskID, out string aRecordTaskConflictIDList, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -667,7 +667,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetSortCapabilities(aVersion, out sortCaps, out sortLevelCap);
+                self.GetSortCapabilities(invocation, out sortCaps, out sortLevelCap);
             }
             catch (ActionError)
             {
@@ -705,7 +705,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetPropertyList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetPropertyList(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -717,7 +717,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 dataTypeID = invocation.ReadString("DataTypeID");
                 invocation.ReadEnd();
-                self.GetPropertyList(aVersion, dataTypeID, out propertyList);
+                self.GetPropertyList(invocation, dataTypeID, out propertyList);
             }
             catch (ActionError)
             {
@@ -754,7 +754,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetAllowedValues(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetAllowedValues(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -768,7 +768,7 @@ namespace OpenHome.Net.Device.Providers
                 dataTypeID = invocation.ReadString("DataTypeID");
                 filter = invocation.ReadString("Filter");
                 invocation.ReadEnd();
-                self.GetAllowedValues(aVersion, dataTypeID, filter, out propertyInfo);
+                self.GetAllowedValues(invocation, dataTypeID, filter, out propertyInfo);
             }
             catch (ActionError)
             {
@@ -805,7 +805,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetStateUpdateID(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetStateUpdateID(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -815,7 +815,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetStateUpdateID(aVersion, out id);
+                self.GetStateUpdateID(invocation, out id);
             }
             catch (ActionError)
             {
@@ -852,7 +852,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoBrowseRecordSchedules(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBrowseRecordSchedules(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -873,7 +873,7 @@ namespace OpenHome.Net.Device.Providers
                 requestedCount = invocation.ReadUint("RequestedCount");
                 sortCriteria = invocation.ReadString("SortCriteria");
                 invocation.ReadEnd();
-                self.BrowseRecordSchedules(aVersion, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+                self.BrowseRecordSchedules(invocation, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
             }
             catch (ActionError)
             {
@@ -913,7 +913,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoBrowseRecordTasks(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBrowseRecordTasks(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -936,7 +936,7 @@ namespace OpenHome.Net.Device.Providers
                 requestedCount = invocation.ReadUint("RequestedCount");
                 sortCriteria = invocation.ReadString("SortCriteria");
                 invocation.ReadEnd();
-                self.BrowseRecordTasks(aVersion, recordScheduleID, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+                self.BrowseRecordTasks(invocation, recordScheduleID, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
             }
             catch (ActionError)
             {
@@ -976,7 +976,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoCreateRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCreateRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -990,7 +990,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 elements = invocation.ReadString("Elements");
                 invocation.ReadEnd();
-                self.CreateRecordSchedule(aVersion, elements, out recordScheduleID, out result, out updateID);
+                self.CreateRecordSchedule(invocation, elements, out recordScheduleID, out result, out updateID);
             }
             catch (ActionError)
             {
@@ -1029,7 +1029,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1040,7 +1040,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordScheduleID = invocation.ReadString("RecordScheduleID");
                 invocation.ReadEnd();
-                self.DeleteRecordSchedule(aVersion, recordScheduleID);
+                self.DeleteRecordSchedule(invocation, recordScheduleID);
             }
             catch (ActionError)
             {
@@ -1076,7 +1076,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1091,7 +1091,7 @@ namespace OpenHome.Net.Device.Providers
                 recordScheduleID = invocation.ReadString("RecordScheduleID");
                 filter = invocation.ReadString("Filter");
                 invocation.ReadEnd();
-                self.GetRecordSchedule(aVersion, recordScheduleID, filter, out result, out updateID);
+                self.GetRecordSchedule(invocation, recordScheduleID, filter, out result, out updateID);
             }
             catch (ActionError)
             {
@@ -1129,7 +1129,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoEnableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEnableRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1140,7 +1140,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordScheduleID = invocation.ReadString("RecordScheduleID");
                 invocation.ReadEnd();
-                self.EnableRecordSchedule(aVersion, recordScheduleID);
+                self.EnableRecordSchedule(invocation, recordScheduleID);
             }
             catch (ActionError)
             {
@@ -1176,7 +1176,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDisableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisableRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1187,7 +1187,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordScheduleID = invocation.ReadString("RecordScheduleID");
                 invocation.ReadEnd();
-                self.DisableRecordSchedule(aVersion, recordScheduleID);
+                self.DisableRecordSchedule(invocation, recordScheduleID);
             }
             catch (ActionError)
             {
@@ -1223,7 +1223,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1234,7 +1234,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
-                self.DeleteRecordTask(aVersion, recordTaskID);
+                self.DeleteRecordTask(invocation, recordTaskID);
             }
             catch (ActionError)
             {
@@ -1270,7 +1270,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1285,7 +1285,7 @@ namespace OpenHome.Net.Device.Providers
                 recordTaskID = invocation.ReadString("RecordTaskID");
                 filter = invocation.ReadString("Filter");
                 invocation.ReadEnd();
-                self.GetRecordTask(aVersion, recordTaskID, filter, out result, out updateID);
+                self.GetRecordTask(invocation, recordTaskID, filter, out result, out updateID);
             }
             catch (ActionError)
             {
@@ -1323,7 +1323,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoEnableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEnableRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1334,7 +1334,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
-                self.EnableRecordTask(aVersion, recordTaskID);
+                self.EnableRecordTask(invocation, recordTaskID);
             }
             catch (ActionError)
             {
@@ -1370,7 +1370,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDisableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisableRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1381,7 +1381,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
-                self.DisableRecordTask(aVersion, recordTaskID);
+                self.DisableRecordTask(invocation, recordTaskID);
             }
             catch (ActionError)
             {
@@ -1417,7 +1417,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoResetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoResetRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1428,7 +1428,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
-                self.ResetRecordTask(aVersion, recordTaskID);
+                self.ResetRecordTask(invocation, recordTaskID);
             }
             catch (ActionError)
             {
@@ -1464,7 +1464,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRecordScheduleConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordScheduleConflicts(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1477,7 +1477,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordScheduleID = invocation.ReadString("RecordScheduleID");
                 invocation.ReadEnd();
-                self.GetRecordScheduleConflicts(aVersion, recordScheduleID, out recordScheduleConflictIDList, out updateID);
+                self.GetRecordScheduleConflicts(invocation, recordScheduleID, out recordScheduleConflictIDList, out updateID);
             }
             catch (ActionError)
             {
@@ -1515,7 +1515,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRecordTaskConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordTaskConflicts(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1528,7 +1528,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
-                self.GetRecordTaskConflicts(aVersion, recordTaskID, out recordTaskConflictIDList, out updateID);
+                self.GetRecordTaskConflicts(invocation, recordTaskID, out recordTaskConflictIDList, out updateID);
             }
             catch (ActionError)
             {

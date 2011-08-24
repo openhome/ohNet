@@ -1,6 +1,11 @@
 package org.openhome.net.device;
 
-public class DvInvocation
+/**
+ * Utility class used by providers to read input and write output arguments.
+ * 
+ * <p>Only intended for use by auto-generated providers.
+ */
+public class DvInvocation implements IDvInvocation
 {
 	private class InvocationStatus
 	{
@@ -91,6 +96,9 @@ public class DvInvocation
 		}
 	}
 	
+    private static native int DvInvocationGetVersion(long aInvocation);
+    private static native int DvInvocationGetAdapter(long aInvocation);
+    private static native String DvInvocationGetResourceUriPrefix(long aInvocation);
 	private static native int DvInvocationReadStart(long aInvocation);
 	private native InvocationStatusInt DvInvocationReadInt(long aInvocation, String aName);
 	private native InvocationStatusUint DvInvocationReadUint(long aInvocation, String aName);
@@ -130,6 +138,41 @@ public class DvInvocation
 	public DvInvocation(long aHandle)
 	{
 		iHandle = aHandle;
+	}
+	
+	/**
+	 * Get the version number of the service requested by the caller.
+	 *
+	 * @return	The version number of the service the caller expects.
+	 */
+	public int getVersion()
+	{
+		return DvInvocationGetVersion(iHandle);
+	}
+	
+	/**
+	 * Get the network adapter an action was invoked using.
+	 *
+	 * @return	The network adapter used to invoke this action.
+	 */
+	public int getAdapter()
+	{
+		return DvInvocationGetAdapter(iHandle);
+	}
+	
+	/**
+	 * Get the prefix to use on any URIs to resources offered by the provider.
+	 *
+	 * @return	The prefix to resource URIs.
+	 */
+	public String getResourceUriPrefix()
+	{
+		String result = DvInvocationGetResourceUriPrefix(iHandle);
+		if (result == null)
+		{
+			result = "";
+		}
+		return result;
 	}
 	
 	/**

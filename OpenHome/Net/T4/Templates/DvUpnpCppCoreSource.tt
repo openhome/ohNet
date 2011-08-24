@@ -154,7 +154,7 @@ void <#=className#>::EnableAction<#=a.name#>()
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
+void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
 <#      foreach (Argument i in a.inargs) #>
@@ -170,18 +170,18 @@ void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 <#          } #>
 <#      } #>
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
     <#=invRespType[o.variable.type]#> resp<#=o.name#>(aInvocation, "<#=o.name#>");
 <#      } #>
-    <#=a.name#>(resp, aVersion<#=ActionArgNames(a)#>);
+    <#=a.name#>(invocation<#=ActionArgNames(a)#>);
 }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::<#=a.name#>(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/<#=ActionArgTypesAndNames(a)#>)
+void <#=className#>::<#=a.name#>(IDvInvocation& /*aResponse*/<#=ActionArgTypesAndNames(a)#>)
 {
     ASSERTS();
 }
@@ -243,27 +243,27 @@ void Initialise()
     invReadType.Add("bin.base64", "InvocationReadBinary");
     invReadType.Add("uri", "InvocationReadString");
 
-    invRespType.Add("string", "InvocationResponseString");
-    invRespType.Add("ui1", "InvocationResponseUint");
-    invRespType.Add("ui2", "InvocationResponseUint");
-    invRespType.Add("ui4", "InvocationResponseUint");
-    invRespType.Add("boolean", "InvocationResponseBool");
-    invRespType.Add("i1", "InvocationResponseInt");
-    invRespType.Add("i2", "InvocationResponseInt");
-    invRespType.Add("i4", "InvocationResponseInt");
-    invRespType.Add("bin.base64", "InvocationResponseBinary");
-    invRespType.Add("uri", "InvocationResponseString");
+    invRespType.Add("string", "DviInvocationResponseString");
+    invRespType.Add("ui1", "DviInvocationResponseUint");
+    invRespType.Add("ui2", "DviInvocationResponseUint");
+    invRespType.Add("ui4", "DviInvocationResponseUint");
+    invRespType.Add("boolean", "DviInvocationResponseBool");
+    invRespType.Add("i1", "DviInvocationResponseInt");
+    invRespType.Add("i2", "DviInvocationResponseInt");
+    invRespType.Add("i4", "DviInvocationResponseInt");
+    invRespType.Add("bin.base64", "DviInvocationResponseBinary");
+    invRespType.Add("uri", "DviInvocationResponseString");
 
-    invRespParamType.Add("string", "IInvocationResponseString");
-    invRespParamType.Add("ui1", "IInvocationResponseUint");
-    invRespParamType.Add("ui2", "IInvocationResponseUint");
-    invRespParamType.Add("ui4", "IInvocationResponseUint");
-    invRespParamType.Add("boolean", "IInvocationResponseBool");
-    invRespParamType.Add("i1", "IInvocationResponseInt");
-    invRespParamType.Add("i2", "IInvocationResponseInt");
-    invRespParamType.Add("i4", "IInvocationResponseInt");
-    invRespParamType.Add("bin.base64", "IInvocationResponseBinary");
-    invRespParamType.Add("uri", "IInvocationResponseString");
+    invRespParamType.Add("string", "IDvInvocationResponseString");
+    invRespParamType.Add("ui1", "IDvInvocationResponseUint");
+    invRespParamType.Add("ui2", "IDvInvocationResponseUint");
+    invRespParamType.Add("ui4", "IDvInvocationResponseUint");
+    invRespParamType.Add("boolean", "IDvInvocationResponseBool");
+    invRespParamType.Add("i1", "IDvInvocationResponseInt");
+    invRespParamType.Add("i2", "IDvInvocationResponseInt");
+    invRespParamType.Add("i4", "IDvInvocationResponseInt");
+    invRespParamType.Add("bin.base64", "IDvInvocationResponseBinary");
+    invRespParamType.Add("uri", "IDvInvocationResponseString");
 
     propertyType.Add("string", "PropertyString");
     propertyType.Add("ui1", "PropertyUint");

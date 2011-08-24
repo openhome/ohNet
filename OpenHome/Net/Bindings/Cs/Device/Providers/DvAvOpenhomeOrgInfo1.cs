@@ -519,11 +519,11 @@ namespace OpenHome.Net.Device.Providers
         /// Counters action for the owning device.
         ///
         /// Must be implemented iff EnableActionCounters was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aTrackCount"></param>
         /// <param name="aDetailsCount"></param>
         /// <param name="aMetatextCount"></param>
-        protected virtual void Counters(uint aVersion, out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount)
+        protected virtual void Counters(IDvInvocation aInvocation, out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount)
         {
             throw (new ActionDisabledError());
         }
@@ -535,10 +535,10 @@ namespace OpenHome.Net.Device.Providers
         /// Track action for the owning device.
         ///
         /// Must be implemented iff EnableActionTrack was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aUri"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void Track(uint aVersion, out string aUri, out string aMetadata)
+        protected virtual void Track(IDvInvocation aInvocation, out string aUri, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -550,14 +550,14 @@ namespace OpenHome.Net.Device.Providers
         /// Details action for the owning device.
         ///
         /// Must be implemented iff EnableActionDetails was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aDuration"></param>
         /// <param name="aBitRate"></param>
         /// <param name="aBitDepth"></param>
         /// <param name="aSampleRate"></param>
         /// <param name="aLossless"></param>
         /// <param name="aCodecName"></param>
-        protected virtual void Details(uint aVersion, out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out string aCodecName)
+        protected virtual void Details(IDvInvocation aInvocation, out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out string aCodecName)
         {
             throw (new ActionDisabledError());
         }
@@ -569,14 +569,14 @@ namespace OpenHome.Net.Device.Providers
         /// Metatext action for the owning device.
         ///
         /// Must be implemented iff EnableActionMetatext was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Metatext(uint aVersion, out string aValue)
+        protected virtual void Metatext(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoCounters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCounters(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -588,7 +588,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Counters(aVersion, out trackCount, out detailsCount, out metatextCount);
+                self.Counters(invocation, out trackCount, out detailsCount, out metatextCount);
             }
             catch (ActionError)
             {
@@ -627,7 +627,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTrack(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTrack(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -638,7 +638,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Track(aVersion, out uri, out metadata);
+                self.Track(invocation, out uri, out metadata);
             }
             catch (ActionError)
             {
@@ -676,7 +676,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDetails(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDetails(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -691,7 +691,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Details(aVersion, out duration, out bitRate, out bitDepth, out sampleRate, out lossless, out codecName);
+                self.Details(invocation, out duration, out bitRate, out bitDepth, out sampleRate, out lossless, out codecName);
             }
             catch (ActionError)
             {
@@ -733,7 +733,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoMetatext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMetatext(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -743,7 +743,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Metatext(aVersion, out value);
+                self.Metatext(invocation, out value);
             }
             catch (ActionError)
             {

@@ -39,82 +39,85 @@ namespace OpenHome.Net
             EnableActionSetMultiple();
         }
 
-        protected override void Increment(uint aVersion, uint aValue, out uint aResult)
+        protected override void Increment(IDvInvocation aInvocation, uint aValue, out uint aResult)
         {
+            uint version = aInvocation.Version();
+            if (version != 1)
+                throw new Exception(String.Format("Unexpected result - {0} - from IDvInvocation.Version", version));
             aResult = aValue + 1;
         }
 
-        protected override void Decrement(uint aVersion, int aValue, out int aResult)
+        protected override void Decrement(IDvInvocation aInvocation, int aValue, out int aResult)
         {
             aResult = aValue - 1;
         }
 
-        protected override void Toggle(uint aVersion, bool aValue, out bool aResult)
+        protected override void Toggle(IDvInvocation aInvocation, bool aValue, out bool aResult)
         {
             aResult = !aValue;
         }
 
-        protected override void EchoString(uint aVersion, string aValue, out string aResult)
+        protected override void EchoString(IDvInvocation aInvocation, string aValue, out string aResult)
         {
             aResult = aValue;
         }
 
-        protected override void EchoBinary(uint aVersion, byte[] aValue, out byte[] aResult)
+        protected override void EchoBinary(IDvInvocation aInvocation, byte[] aValue, out byte[] aResult)
         {
             aResult = aValue;
         }
 
-        protected override void SetUint(uint aVersion, uint aValueUint)
+        protected override void SetUint(IDvInvocation aInvocation, uint aValueUint)
         {
             SetPropertyVarUint(aValueUint);
         }
 
-        protected override void GetUint(uint aVersion, out uint aValueUint)
+        protected override void GetUint(IDvInvocation aInvocation, out uint aValueUint)
         {
             aValueUint = PropertyVarUint();
         }
 
-        protected override void SetInt(uint aVersion, int aValueInt)
+        protected override void SetInt(IDvInvocation aInvocation, int aValueInt)
         {
             SetPropertyVarInt(aValueInt);
         }
 
-        protected override void GetInt(uint aVersion, out int aValueInt)
+        protected override void GetInt(IDvInvocation aInvocation, out int aValueInt)
         {
             aValueInt = PropertyVarInt();
         }
 
-        protected override void SetBool(uint aVersion, bool aValueBool)
+        protected override void SetBool(IDvInvocation aInvocation, bool aValueBool)
         {
             SetPropertyVarBool(aValueBool);
         }
 
-        protected override void GetBool(uint aVersion, out bool aValueBool)
+        protected override void GetBool(IDvInvocation aInvocation, out bool aValueBool)
         {
             aValueBool = PropertyVarBool();
         }
 
-        protected override void SetString(uint aVersion, string aValueStr)
+        protected override void SetString(IDvInvocation aInvocation, string aValueStr)
         {
             SetPropertyVarStr(aValueStr);
         }
 
-        protected override void GetString(uint aVersion, out string aValueStr)
+        protected override void GetString(IDvInvocation aInvocation, out string aValueStr)
         {
             aValueStr = PropertyVarStr();
         }
 
-        protected override void SetBinary(uint aVersion, byte[] aValueBin)
+        protected override void SetBinary(IDvInvocation aInvocation, byte[] aValueBin)
         {
             SetPropertyVarBin(aValueBin);
         }
 
-        protected override void GetBinary(uint aVersion, out byte[] aValueBin)
+        protected override void GetBinary(IDvInvocation aInvocation, out byte[] aValueBin)
         {
             aValueBin = PropertyVarBin();
         }
 
-        protected override void SetMultiple(uint aVersion, uint aValueUint, int aValueInt, bool aValueBool)
+        protected override void SetMultiple(IDvInvocation aInvocation, uint aValueUint, int aValueInt, bool aValueBool)
         {
             PropertiesLock();
             SetPropertyVarUint(aValueUint);

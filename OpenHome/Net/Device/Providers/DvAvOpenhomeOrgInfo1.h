@@ -183,7 +183,7 @@ private:
      * Counters action for the owning device.
      * Must be implemented iff EnableActionCounters was called.
      */
-    virtual void Counters(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aTrackCount, IInvocationResponseUint& aDetailsCount, IInvocationResponseUint& aMetatextCount);
+    virtual void Counters(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDetailsCount, IDvInvocationResponseUint& aMetatextCount);
     /**
      * Track action.
      *
@@ -191,7 +191,7 @@ private:
      * Track action for the owning device.
      * Must be implemented iff EnableActionTrack was called.
      */
-    virtual void Track(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aUri, IInvocationResponseString& aMetadata);
+    virtual void Track(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
     /**
      * Details action.
      *
@@ -199,7 +199,7 @@ private:
      * Details action for the owning device.
      * Must be implemented iff EnableActionDetails was called.
      */
-    virtual void Details(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aDuration, IInvocationResponseUint& aBitRate, IInvocationResponseUint& aBitDepth, IInvocationResponseUint& aSampleRate, IInvocationResponseBool& aLossless, IInvocationResponseString& aCodecName);
+    virtual void Details(IDvInvocation& aInvocation, IDvInvocationResponseUint& aDuration, IDvInvocationResponseUint& aBitRate, IDvInvocationResponseUint& aBitDepth, IDvInvocationResponseUint& aSampleRate, IDvInvocationResponseBool& aLossless, IDvInvocationResponseString& aCodecName);
     /**
      * Metatext action.
      *
@@ -207,13 +207,13 @@ private:
      * Metatext action for the owning device.
      * Must be implemented iff EnableActionMetatext was called.
      */
-    virtual void Metatext(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void Metatext(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgInfo1();
-    void DoCounters(IDviInvocation& aInvocation, TUint aVersion);
-    void DoTrack(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDetails(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMetatext(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCounters(IDviInvocation& aInvocation);
+    void DoTrack(IDviInvocation& aInvocation);
+    void DoDetails(IDviInvocation& aInvocation);
+    void DoMetatext(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyTrackCount;
     PropertyUint* iPropertyDetailsCount;

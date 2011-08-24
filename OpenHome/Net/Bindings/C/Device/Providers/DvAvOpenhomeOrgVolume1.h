@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,8 +22,10 @@ extern "C" {
 /**
  * Callback which runs when the Characteristics action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionCharacteristics
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionCharacteristics
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aVolumeMax
  * @param[out] aVolumeUnity
  * @param[out] aVolumeSteps
@@ -32,151 +35,181 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1Characteristics)(void* aPtr, uint32_t aVersion, uint32_t* aVolumeMax, uint32_t* aVolumeUnity, uint32_t* aVolumeSteps, uint32_t* aVolumeMilliDbPerStep, uint32_t* aBalanceMax, uint32_t* aFadeMax);
+typedef int32_t (STDCALL *CallbackVolume1Characteristics)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aVolumeMax, uint32_t* aVolumeUnity, uint32_t* aVolumeSteps, uint32_t* aVolumeMilliDbPerStep, uint32_t* aBalanceMax, uint32_t* aFadeMax);
 /**
  * Callback which runs when the SetVolume action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionSetVolume
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionSetVolume
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1SetVolume)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackVolume1SetVolume)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValue);
 /**
  * Callback which runs when the VolumeInc action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionVolumeInc
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionVolumeInc
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1VolumeInc)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackVolume1VolumeInc)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the VolumeDec action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionVolumeDec
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionVolumeDec
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1VolumeDec)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackVolume1VolumeDec)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the Volume action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionVolume
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionVolume
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1Volume)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackVolume1Volume)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
 /**
  * Callback which runs when the SetBalance action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionSetBalance
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionSetBalance
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1SetBalance)(void* aPtr, uint32_t aVersion, int32_t aValue);
+typedef int32_t (STDCALL *CallbackVolume1SetBalance)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t aValue);
 /**
  * Callback which runs when the BalanceInc action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionBalanceInc
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionBalanceInc
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1BalanceInc)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackVolume1BalanceInc)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the BalanceDec action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionBalanceDec
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionBalanceDec
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1BalanceDec)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackVolume1BalanceDec)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the Balance action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionBalance
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionBalance
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1Balance)(void* aPtr, uint32_t aVersion, int32_t* aValue);
+typedef int32_t (STDCALL *CallbackVolume1Balance)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t* aValue);
 /**
  * Callback which runs when the SetFade action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionSetFade
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionSetFade
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1SetFade)(void* aPtr, uint32_t aVersion, int32_t aValue);
+typedef int32_t (STDCALL *CallbackVolume1SetFade)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t aValue);
 /**
  * Callback which runs when the FadeInc action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionFadeInc
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionFadeInc
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1FadeInc)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackVolume1FadeInc)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the FadeDec action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionFadeDec
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionFadeDec
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1FadeDec)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackVolume1FadeDec)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the Fade action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionFade
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionFade
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1Fade)(void* aPtr, uint32_t aVersion, int32_t* aValue);
+typedef int32_t (STDCALL *CallbackVolume1Fade)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t* aValue);
 /**
  * Callback which runs when the SetMute action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionSetMute
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionSetMute
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1SetMute)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackVolume1SetMute)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValue);
 /**
  * Callback which runs when the Mute action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionMute
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionMute
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1Mute)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackVolume1Mute)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
 /**
  * Callback which runs when the VolumeLimit action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionVolumeLimit
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgVolume1EnableActionVolumeLimit
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackVolume1VolumeLimit)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackVolume1VolumeLimit)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
 
 /**
  * Provider constructor

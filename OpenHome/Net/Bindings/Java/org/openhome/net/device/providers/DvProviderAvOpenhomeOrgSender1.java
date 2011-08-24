@@ -321,9 +321,9 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionPresentationUrl} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String presentationUrl(int aVersion)
+    protected String presentationUrl(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -336,9 +336,9 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionMetadata} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String metadata(int aVersion)
+    protected String metadata(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -351,9 +351,9 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionAudio} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean audio(int aVersion)
+    protected boolean audio(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -366,9 +366,9 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionStatus} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String status(int aVersion)
+    protected String status(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -381,9 +381,9 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionAttributes} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String attributes(int aVersion)
+    protected String attributes(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -407,7 +407,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoPresentationUrl implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -415,7 +415,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = presentationUrl(aVersion);
+                 value = presentationUrl(invocation);
             }
             catch (ActionError ae)
             {
@@ -455,7 +455,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoMetadata implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -463,7 +463,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = metadata(aVersion);
+                 value = metadata(invocation);
             }
             catch (ActionError ae)
             {
@@ -503,7 +503,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoAudio implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -511,7 +511,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = audio(aVersion);
+                 value = audio(invocation);
             }
             catch (ActionError ae)
             {
@@ -551,7 +551,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoStatus implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -559,7 +559,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = status(aVersion);
+                 value = status(invocation);
             }
             catch (ActionError ae)
             {
@@ -599,7 +599,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoAttributes implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -607,7 +607,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = attributes(aVersion);
+                 value = attributes(invocation);
             }
             catch (ActionError ae)
             {

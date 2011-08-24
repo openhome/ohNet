@@ -319,9 +319,9 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionPlay} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void play(int aVersion)
+    protected void play(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -334,9 +334,9 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionStop} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void stop(int aVersion)
+    protected void stop(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -349,11 +349,11 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSetSender} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aUri
      * @param aMetadata
      */
-    protected void setSender(int aVersion, String aUri, String aMetadata)
+    protected void setSender(IDvInvocation aInvocation, String aUri, String aMetadata)
     {
         throw (new ActionDisabledError());
     }
@@ -366,9 +366,9 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSender} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Sender sender(int aVersion)
+    protected Sender sender(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -381,9 +381,9 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionProtocolInfo} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String protocolInfo(int aVersion)
+    protected String protocolInfo(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -396,9 +396,9 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionTransportState} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String transportState(int aVersion)
+    protected String transportState(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -422,14 +422,14 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoPlay implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                play(aVersion);
+                play(invocation);
             }
             catch (ActionError ae)
             {
@@ -468,14 +468,14 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoStop implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                stop(aVersion);
+                stop(invocation);
             }
             catch (ActionError ae)
             {
@@ -514,7 +514,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoSetSender implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -525,7 +525,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
                 uri = invocation.readString("Uri");
                 metadata = invocation.readString("Metadata");
                 invocation.readEnd();
-                setSender(aVersion, uri, metadata);
+                setSender(invocation, uri, metadata);
             }
             catch (ActionError ae)
             {
@@ -564,7 +564,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoSender implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -574,7 +574,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
                 invocation.readStart();
                 invocation.readEnd();
 
-            Sender outArgs = sender(aVersion);
+            Sender outArgs = sender(invocation);
             uri = outArgs.getUri();
             metadata = outArgs.getMetadata();
             }
@@ -617,7 +617,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoProtocolInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -625,7 +625,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = protocolInfo(aVersion);
+                 value = protocolInfo(invocation);
             }
             catch (ActionError ae)
             {
@@ -665,7 +665,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoTransportState implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -673,7 +673,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = transportState(aVersion);
+                 value = transportState(invocation);
             }
             catch (ActionError ae)
             {

@@ -67,7 +67,7 @@ private:
      * SetTarget action for the owning device.
      * Must be implemented iff EnableActionSetTarget was called.
      */
-    virtual void SetTarget(IInvocationResponse& aResponse, TUint aVersion, TBool anewTargetValue);
+    virtual void SetTarget(IDvInvocation& aInvocation, TBool anewTargetValue);
     /**
      * GetTarget action.
      *
@@ -75,7 +75,7 @@ private:
      * GetTarget action for the owning device.
      * Must be implemented iff EnableActionGetTarget was called.
      */
-    virtual void GetTarget(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aRetTargetValue);
+    virtual void GetTarget(IDvInvocation& aInvocation, IDvInvocationResponseBool& aRetTargetValue);
     /**
      * GetStatus action.
      *
@@ -83,12 +83,12 @@ private:
      * GetStatus action for the owning device.
      * Must be implemented iff EnableActionGetStatus was called.
      */
-    virtual void GetStatus(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aResultStatus);
+    virtual void GetStatus(IDvInvocation& aInvocation, IDvInvocationResponseBool& aResultStatus);
 private:
     DvProviderUpnpOrgSwitchPower1();
-    void DoSetTarget(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTarget(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetStatus(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetTarget(IDviInvocation& aInvocation);
+    void DoGetTarget(IDviInvocation& aInvocation);
+    void DoGetStatus(IDviInvocation& aInvocation);
 private:
     PropertyBool* iPropertyStatus;
 };

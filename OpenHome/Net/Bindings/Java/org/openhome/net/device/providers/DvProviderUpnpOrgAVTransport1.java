@@ -604,12 +604,12 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetAVTransportURI} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aCurrentURI
      * @param aCurrentURIMetaData
      */
-    protected void setAVTransportURI(int aVersion, long aInstanceID, String aCurrentURI, String aCurrentURIMetaData)
+    protected void setAVTransportURI(IDvInvocation aInvocation, long aInstanceID, String aCurrentURI, String aCurrentURIMetaData)
     {
         throw (new ActionDisabledError());
     }
@@ -622,12 +622,12 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetNextAVTransportURI} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aNextURI
      * @param aNextURIMetaData
      */
-    protected void setNextAVTransportURI(int aVersion, long aInstanceID, String aNextURI, String aNextURIMetaData)
+    protected void setNextAVTransportURI(IDvInvocation aInvocation, long aInstanceID, String aNextURI, String aNextURIMetaData)
     {
         throw (new ActionDisabledError());
     }
@@ -640,10 +640,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetMediaInfo} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected GetMediaInfo getMediaInfo(int aVersion, long aInstanceID)
+    protected GetMediaInfo getMediaInfo(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -656,10 +656,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetTransportInfo} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected GetTransportInfo getTransportInfo(int aVersion, long aInstanceID)
+    protected GetTransportInfo getTransportInfo(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -672,10 +672,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetPositionInfo} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected GetPositionInfo getPositionInfo(int aVersion, long aInstanceID)
+    protected GetPositionInfo getPositionInfo(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -688,10 +688,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetDeviceCapabilities} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected GetDeviceCapabilities getDeviceCapabilities(int aVersion, long aInstanceID)
+    protected GetDeviceCapabilities getDeviceCapabilities(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -704,10 +704,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetTransportSettings} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected GetTransportSettings getTransportSettings(int aVersion, long aInstanceID)
+    protected GetTransportSettings getTransportSettings(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -720,10 +720,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionStop} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected void stop(int aVersion, long aInstanceID)
+    protected void stop(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -736,11 +736,11 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPlay} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aSpeed
      */
-    protected void play(int aVersion, long aInstanceID, String aSpeed)
+    protected void play(IDvInvocation aInvocation, long aInstanceID, String aSpeed)
     {
         throw (new ActionDisabledError());
     }
@@ -753,10 +753,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPause} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected void pause(int aVersion, long aInstanceID)
+    protected void pause(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -769,10 +769,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionRecord} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected void record(int aVersion, long aInstanceID)
+    protected void record(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -785,12 +785,12 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSeek} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aUnit
      * @param aTarget
      */
-    protected void seek(int aVersion, long aInstanceID, String aUnit, String aTarget)
+    protected void seek(IDvInvocation aInvocation, long aInstanceID, String aUnit, String aTarget)
     {
         throw (new ActionDisabledError());
     }
@@ -803,10 +803,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionNext} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected void next(int aVersion, long aInstanceID)
+    protected void next(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -819,10 +819,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPrevious} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected void previous(int aVersion, long aInstanceID)
+    protected void previous(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -835,11 +835,11 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetPlayMode} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aNewPlayMode
      */
-    protected void setPlayMode(int aVersion, long aInstanceID, String aNewPlayMode)
+    protected void setPlayMode(IDvInvocation aInvocation, long aInstanceID, String aNewPlayMode)
     {
         throw (new ActionDisabledError());
     }
@@ -852,11 +852,11 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetRecordQualityMode} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aNewRecordQualityMode
      */
-    protected void setRecordQualityMode(int aVersion, long aInstanceID, String aNewRecordQualityMode)
+    protected void setRecordQualityMode(IDvInvocation aInvocation, long aInstanceID, String aNewRecordQualityMode)
     {
         throw (new ActionDisabledError());
     }
@@ -869,10 +869,10 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetCurrentTransportActions} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected String getCurrentTransportActions(int aVersion, long aInstanceID)
+    protected String getCurrentTransportActions(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -896,7 +896,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSetAVTransportURI implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -909,7 +909,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 currentURI = invocation.readString("CurrentURI");
                 currentURIMetaData = invocation.readString("CurrentURIMetaData");
                 invocation.readEnd();
-                setAVTransportURI(aVersion, instanceID, currentURI, currentURIMetaData);
+                setAVTransportURI(invocation, instanceID, currentURI, currentURIMetaData);
             }
             catch (ActionError ae)
             {
@@ -948,7 +948,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSetNextAVTransportURI implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -961,7 +961,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 nextURI = invocation.readString("NextURI");
                 nextURIMetaData = invocation.readString("NextURIMetaData");
                 invocation.readEnd();
-                setNextAVTransportURI(aVersion, instanceID, nextURI, nextURIMetaData);
+                setNextAVTransportURI(invocation, instanceID, nextURI, nextURIMetaData);
             }
             catch (ActionError ae)
             {
@@ -1000,7 +1000,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetMediaInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1019,7 +1019,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
 
-            GetMediaInfo outArgs = getMediaInfo(aVersion, instanceID);
+            GetMediaInfo outArgs = getMediaInfo(invocation, instanceID);
             nrTracks = outArgs.getNrTracks();
             mediaDuration = outArgs.getMediaDuration();
             currentURI = outArgs.getCurrentURI();
@@ -1076,7 +1076,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetTransportInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1089,7 +1089,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
 
-            GetTransportInfo outArgs = getTransportInfo(aVersion, instanceID);
+            GetTransportInfo outArgs = getTransportInfo(invocation, instanceID);
             currentTransportState = outArgs.getCurrentTransportState();
             currentTransportStatus = outArgs.getCurrentTransportStatus();
             currentSpeed = outArgs.getCurrentSpeed();
@@ -1134,7 +1134,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetPositionInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1152,7 +1152,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
 
-            GetPositionInfo outArgs = getPositionInfo(aVersion, instanceID);
+            GetPositionInfo outArgs = getPositionInfo(invocation, instanceID);
             track = outArgs.getTrack();
             trackDuration = outArgs.getTrackDuration();
             trackMetaData = outArgs.getTrackMetaData();
@@ -1207,7 +1207,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetDeviceCapabilities implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1220,7 +1220,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
 
-            GetDeviceCapabilities outArgs = getDeviceCapabilities(aVersion, instanceID);
+            GetDeviceCapabilities outArgs = getDeviceCapabilities(invocation, instanceID);
             playMedia = outArgs.getPlayMedia();
             recMedia = outArgs.getRecMedia();
             recQualityModes = outArgs.getRecQualityModes();
@@ -1265,7 +1265,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetTransportSettings implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1277,7 +1277,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
 
-            GetTransportSettings outArgs = getTransportSettings(aVersion, instanceID);
+            GetTransportSettings outArgs = getTransportSettings(invocation, instanceID);
             playMode = outArgs.getPlayMode();
             recQualityMode = outArgs.getRecQualityMode();
             }
@@ -1320,7 +1320,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoStop implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1329,7 +1329,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                stop(aVersion, instanceID);
+                stop(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1368,7 +1368,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoPlay implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1379,7 +1379,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 instanceID = invocation.readUint("InstanceID");
                 speed = invocation.readString("Speed");
                 invocation.readEnd();
-                play(aVersion, instanceID, speed);
+                play(invocation, instanceID, speed);
             }
             catch (ActionError ae)
             {
@@ -1418,7 +1418,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoPause implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1427,7 +1427,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                pause(aVersion, instanceID);
+                pause(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1466,7 +1466,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoRecord implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1475,7 +1475,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                record(aVersion, instanceID);
+                record(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1514,7 +1514,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSeek implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1527,7 +1527,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 unit = invocation.readString("Unit");
                 target = invocation.readString("Target");
                 invocation.readEnd();
-                seek(aVersion, instanceID, unit, target);
+                seek(invocation, instanceID, unit, target);
             }
             catch (ActionError ae)
             {
@@ -1566,7 +1566,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoNext implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1575,7 +1575,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                next(aVersion, instanceID);
+                next(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1614,7 +1614,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoPrevious implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1623,7 +1623,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                previous(aVersion, instanceID);
+                previous(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1662,7 +1662,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSetPlayMode implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1673,7 +1673,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 instanceID = invocation.readUint("InstanceID");
                 newPlayMode = invocation.readString("NewPlayMode");
                 invocation.readEnd();
-                setPlayMode(aVersion, instanceID, newPlayMode);
+                setPlayMode(invocation, instanceID, newPlayMode);
             }
             catch (ActionError ae)
             {
@@ -1712,7 +1712,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSetRecordQualityMode implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1723,7 +1723,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 instanceID = invocation.readUint("InstanceID");
                 newRecordQualityMode = invocation.readString("NewRecordQualityMode");
                 invocation.readEnd();
-                setRecordQualityMode(aVersion, instanceID, newRecordQualityMode);
+                setRecordQualityMode(invocation, instanceID, newRecordQualityMode);
             }
             catch (ActionError ae)
             {
@@ -1762,7 +1762,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetCurrentTransportActions implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1772,7 +1772,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 actions = getCurrentTransportActions(aVersion, instanceID);
+                 actions = getCurrentTransportActions(invocation, instanceID);
             }
             catch (ActionError ae)
             {

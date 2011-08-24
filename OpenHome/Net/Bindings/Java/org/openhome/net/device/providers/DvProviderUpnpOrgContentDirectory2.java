@@ -584,9 +584,9 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetSearchCapabilities} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String getSearchCapabilities(int aVersion)
+    protected String getSearchCapabilities(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -599,9 +599,9 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetSortCapabilities} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String getSortCapabilities(int aVersion)
+    protected String getSortCapabilities(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -614,9 +614,9 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetSortExtensionCapabilities} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String getSortExtensionCapabilities(int aVersion)
+    protected String getSortExtensionCapabilities(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -629,9 +629,9 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetFeatureList} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String getFeatureList(int aVersion)
+    protected String getFeatureList(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -644,9 +644,9 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetSystemUpdateID} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getSystemUpdateID(int aVersion)
+    protected long getSystemUpdateID(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -659,7 +659,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionBrowse} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aObjectID
      * @param aBrowseFlag
      * @param aFilter
@@ -667,7 +667,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      * @param aRequestedCount
      * @param aSortCriteria
      */
-    protected Browse browse(int aVersion, String aObjectID, String aBrowseFlag, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
+    protected Browse browse(IDvInvocation aInvocation, String aObjectID, String aBrowseFlag, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
     {
         throw (new ActionDisabledError());
     }
@@ -680,7 +680,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSearch} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aContainerID
      * @param aSearchCriteria
      * @param aFilter
@@ -688,7 +688,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      * @param aRequestedCount
      * @param aSortCriteria
      */
-    protected Search search(int aVersion, String aContainerID, String aSearchCriteria, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
+    protected Search search(IDvInvocation aInvocation, String aContainerID, String aSearchCriteria, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
     {
         throw (new ActionDisabledError());
     }
@@ -701,11 +701,11 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionCreateObject} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aContainerID
      * @param aElements
      */
-    protected CreateObject createObject(int aVersion, String aContainerID, String aElements)
+    protected CreateObject createObject(IDvInvocation aInvocation, String aContainerID, String aElements)
     {
         throw (new ActionDisabledError());
     }
@@ -718,10 +718,10 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionDestroyObject} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aObjectID
      */
-    protected void destroyObject(int aVersion, String aObjectID)
+    protected void destroyObject(IDvInvocation aInvocation, String aObjectID)
     {
         throw (new ActionDisabledError());
     }
@@ -734,12 +734,12 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionUpdateObject} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aObjectID
      * @param aCurrentTagValue
      * @param aNewTagValue
      */
-    protected void updateObject(int aVersion, String aObjectID, String aCurrentTagValue, String aNewTagValue)
+    protected void updateObject(IDvInvocation aInvocation, String aObjectID, String aCurrentTagValue, String aNewTagValue)
     {
         throw (new ActionDisabledError());
     }
@@ -752,11 +752,11 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionMoveObject} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aObjectID
      * @param aNewParentID
      */
-    protected String moveObject(int aVersion, String aObjectID, String aNewParentID)
+    protected String moveObject(IDvInvocation aInvocation, String aObjectID, String aNewParentID)
     {
         throw (new ActionDisabledError());
     }
@@ -769,11 +769,11 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionImportResource} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aSourceURI
      * @param aDestinationURI
      */
-    protected long importResource(int aVersion, String aSourceURI, String aDestinationURI)
+    protected long importResource(IDvInvocation aInvocation, String aSourceURI, String aDestinationURI)
     {
         throw (new ActionDisabledError());
     }
@@ -786,11 +786,11 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionExportResource} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aSourceURI
      * @param aDestinationURI
      */
-    protected long exportResource(int aVersion, String aSourceURI, String aDestinationURI)
+    protected long exportResource(IDvInvocation aInvocation, String aSourceURI, String aDestinationURI)
     {
         throw (new ActionDisabledError());
     }
@@ -803,10 +803,10 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionDeleteResource} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aResourceURI
      */
-    protected void deleteResource(int aVersion, String aResourceURI)
+    protected void deleteResource(IDvInvocation aInvocation, String aResourceURI)
     {
         throw (new ActionDisabledError());
     }
@@ -819,10 +819,10 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionStopTransferResource} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aTransferID
      */
-    protected void stopTransferResource(int aVersion, long aTransferID)
+    protected void stopTransferResource(IDvInvocation aInvocation, long aTransferID)
     {
         throw (new ActionDisabledError());
     }
@@ -835,10 +835,10 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetTransferProgress} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aTransferID
      */
-    protected GetTransferProgress getTransferProgress(int aVersion, long aTransferID)
+    protected GetTransferProgress getTransferProgress(IDvInvocation aInvocation, long aTransferID)
     {
         throw (new ActionDisabledError());
     }
@@ -851,11 +851,11 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionCreateReference} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aContainerID
      * @param aObjectID
      */
-    protected String createReference(int aVersion, String aContainerID, String aObjectID)
+    protected String createReference(IDvInvocation aInvocation, String aContainerID, String aObjectID)
     {
         throw (new ActionDisabledError());
     }
@@ -879,7 +879,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoGetSearchCapabilities implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String searchCaps;
@@ -887,7 +887,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 searchCaps = getSearchCapabilities(aVersion);
+                 searchCaps = getSearchCapabilities(invocation);
             }
             catch (ActionError ae)
             {
@@ -927,7 +927,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoGetSortCapabilities implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String sortCaps;
@@ -935,7 +935,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 sortCaps = getSortCapabilities(aVersion);
+                 sortCaps = getSortCapabilities(invocation);
             }
             catch (ActionError ae)
             {
@@ -975,7 +975,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoGetSortExtensionCapabilities implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String sortExtensionCaps;
@@ -983,7 +983,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 sortExtensionCaps = getSortExtensionCapabilities(aVersion);
+                 sortExtensionCaps = getSortExtensionCapabilities(invocation);
             }
             catch (ActionError ae)
             {
@@ -1023,7 +1023,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoGetFeatureList implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String featureList;
@@ -1031,7 +1031,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 featureList = getFeatureList(aVersion);
+                 featureList = getFeatureList(invocation);
             }
             catch (ActionError ae)
             {
@@ -1071,7 +1071,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoGetSystemUpdateID implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1079,7 +1079,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 id = getSystemUpdateID(aVersion);
+                 id = getSystemUpdateID(invocation);
             }
             catch (ActionError ae)
             {
@@ -1119,7 +1119,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoBrowse implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String objectID;
@@ -1143,7 +1143,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 sortCriteria = invocation.readString("SortCriteria");
                 invocation.readEnd();
 
-            Browse outArgs = browse(aVersion, objectID, browseFlag, filter, startingIndex, requestedCount, sortCriteria);
+            Browse outArgs = browse(invocation, objectID, browseFlag, filter, startingIndex, requestedCount, sortCriteria);
             result = outArgs.getResult();
             numberReturned = outArgs.getNumberReturned();
             totalMatches = outArgs.getTotalMatches();
@@ -1190,7 +1190,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoSearch implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String containerID;
@@ -1214,7 +1214,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 sortCriteria = invocation.readString("SortCriteria");
                 invocation.readEnd();
 
-            Search outArgs = search(aVersion, containerID, searchCriteria, filter, startingIndex, requestedCount, sortCriteria);
+            Search outArgs = search(invocation, containerID, searchCriteria, filter, startingIndex, requestedCount, sortCriteria);
             result = outArgs.getResult();
             numberReturned = outArgs.getNumberReturned();
             totalMatches = outArgs.getTotalMatches();
@@ -1261,7 +1261,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoCreateObject implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String containerID;
@@ -1275,7 +1275,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 elements = invocation.readString("Elements");
                 invocation.readEnd();
 
-            CreateObject outArgs = createObject(aVersion, containerID, elements);
+            CreateObject outArgs = createObject(invocation, containerID, elements);
             objectID = outArgs.getObjectID();
             result = outArgs.getResult();
             }
@@ -1318,7 +1318,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoDestroyObject implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String objectID;
@@ -1327,7 +1327,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 invocation.readStart();
                 objectID = invocation.readString("ObjectID");
                 invocation.readEnd();
-                destroyObject(aVersion, objectID);
+                destroyObject(invocation, objectID);
             }
             catch (ActionError ae)
             {
@@ -1366,7 +1366,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoUpdateObject implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String objectID;
@@ -1379,7 +1379,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 currentTagValue = invocation.readString("CurrentTagValue");
                 newTagValue = invocation.readString("NewTagValue");
                 invocation.readEnd();
-                updateObject(aVersion, objectID, currentTagValue, newTagValue);
+                updateObject(invocation, objectID, currentTagValue, newTagValue);
             }
             catch (ActionError ae)
             {
@@ -1418,7 +1418,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoMoveObject implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String objectID;
@@ -1430,7 +1430,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 objectID = invocation.readString("ObjectID");
                 newParentID = invocation.readString("NewParentID");
                 invocation.readEnd();
-                 newObjectID = moveObject(aVersion, objectID, newParentID);
+                 newObjectID = moveObject(invocation, objectID, newParentID);
             }
             catch (ActionError ae)
             {
@@ -1470,7 +1470,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoImportResource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String sourceURI;
@@ -1482,7 +1482,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 sourceURI = invocation.readString("SourceURI");
                 destinationURI = invocation.readString("DestinationURI");
                 invocation.readEnd();
-                 transferID = importResource(aVersion, sourceURI, destinationURI);
+                 transferID = importResource(invocation, sourceURI, destinationURI);
             }
             catch (ActionError ae)
             {
@@ -1522,7 +1522,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoExportResource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String sourceURI;
@@ -1534,7 +1534,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 sourceURI = invocation.readString("SourceURI");
                 destinationURI = invocation.readString("DestinationURI");
                 invocation.readEnd();
-                 transferID = exportResource(aVersion, sourceURI, destinationURI);
+                 transferID = exportResource(invocation, sourceURI, destinationURI);
             }
             catch (ActionError ae)
             {
@@ -1574,7 +1574,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoDeleteResource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String resourceURI;
@@ -1583,7 +1583,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 invocation.readStart();
                 resourceURI = invocation.readString("ResourceURI");
                 invocation.readEnd();
-                deleteResource(aVersion, resourceURI);
+                deleteResource(invocation, resourceURI);
             }
             catch (ActionError ae)
             {
@@ -1622,7 +1622,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoStopTransferResource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long transferID;
@@ -1631,7 +1631,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 invocation.readStart();
                 transferID = invocation.readUint("TransferID");
                 invocation.readEnd();
-                stopTransferResource(aVersion, transferID);
+                stopTransferResource(invocation, transferID);
             }
             catch (ActionError ae)
             {
@@ -1670,7 +1670,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoGetTransferProgress implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long transferID;
@@ -1683,7 +1683,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 transferID = invocation.readUint("TransferID");
                 invocation.readEnd();
 
-            GetTransferProgress outArgs = getTransferProgress(aVersion, transferID);
+            GetTransferProgress outArgs = getTransferProgress(invocation, transferID);
             transferStatus = outArgs.getTransferStatus();
             transferLength = outArgs.getTransferLength();
             transferTotal = outArgs.getTransferTotal();
@@ -1728,7 +1728,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
 
     private class DoCreateReference implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String containerID;
@@ -1740,7 +1740,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
                 containerID = invocation.readString("ContainerID");
                 objectID = invocation.readString("ObjectID");
                 invocation.readEnd();
-                 newID = createReference(aVersion, containerID, objectID);
+                 newID = createReference(invocation, containerID, objectID);
             }
             catch (ActionError ae)
             {

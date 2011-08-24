@@ -156,6 +156,24 @@ static IDviInvocation* InvocationFromHandle(DvInvocationC aInvocation)
     return invocation;
 }
 
+void STDCALL DvInvocationGetVersion(DvInvocationC aInvocation, uint32_t* aVersion)
+{
+    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+    *aVersion = invocation->Version();
+}
+
+void STDCALL DvInvocationGetAdapter(DvInvocationC aInvocation, TIpAddress* aAdapter)
+{
+    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+    *aAdapter = invocation->Adapter();
+}
+
+void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const char** aPrefix)
+{
+    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+    *aPrefix = invocation->ResourceUriPrefix();
+}
+
 int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);

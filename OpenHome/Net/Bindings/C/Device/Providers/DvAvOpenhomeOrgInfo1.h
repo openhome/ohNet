@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,31 +22,37 @@ extern "C" {
 /**
  * Callback which runs when the Counters action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgInfo1EnableActionCounters
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgInfo1EnableActionCounters
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aTrackCount
  * @param[out] aDetailsCount
  * @param[out] aMetatextCount
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackInfo1Counters)(void* aPtr, uint32_t aVersion, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
+typedef int32_t (STDCALL *CallbackInfo1Counters)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
 /**
  * Callback which runs when the Track action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgInfo1EnableActionTrack
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgInfo1EnableActionTrack
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aUri
  * @param[out] aMetadata
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackInfo1Track)(void* aPtr, uint32_t aVersion, char** aUri, char** aMetadata);
+typedef int32_t (STDCALL *CallbackInfo1Track)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aUri, char** aMetadata);
 /**
  * Callback which runs when the Details action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgInfo1EnableActionDetails
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgInfo1EnableActionDetails
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aDuration
  * @param[out] aBitRate
  * @param[out] aBitDepth
@@ -55,17 +62,19 @@ typedef int32_t (STDCALL *CallbackInfo1Track)(void* aPtr, uint32_t aVersion, cha
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackInfo1Details)(void* aPtr, uint32_t aVersion, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
+typedef int32_t (STDCALL *CallbackInfo1Details)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
 /**
  * Callback which runs when the Metatext action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgInfo1EnableActionMetatext
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgInfo1EnableActionMetatext
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackInfo1Metatext)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackInfo1Metatext)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aValue);
 
 /**
  * Provider constructor

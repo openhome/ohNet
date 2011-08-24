@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -40,23 +42,23 @@ public:
     void EnableActionGetTransferProgress(CallbackContentDirectory2GetTransferProgress aCallback, void* aPtr);
     void EnableActionCreateReference(CallbackContentDirectory2CreateReference aCallback, void* aPtr);
 private:
-    void DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetSortExtensionCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetFeatureList(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetSystemUpdateID(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBrowse(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSearch(IDviInvocation& aInvocation, TUint aVersion);
-    void DoCreateObject(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDestroyObject(IDviInvocation& aInvocation, TUint aVersion);
-    void DoUpdateObject(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMoveObject(IDviInvocation& aInvocation, TUint aVersion);
-    void DoImportResource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoExportResource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteResource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStopTransferResource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTransferProgress(IDviInvocation& aInvocation, TUint aVersion);
-    void DoCreateReference(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetSearchCapabilities(IDviInvocation& aInvocation);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation);
+    void DoGetSortExtensionCapabilities(IDviInvocation& aInvocation);
+    void DoGetFeatureList(IDviInvocation& aInvocation);
+    void DoGetSystemUpdateID(IDviInvocation& aInvocation);
+    void DoBrowse(IDviInvocation& aInvocation);
+    void DoSearch(IDviInvocation& aInvocation);
+    void DoCreateObject(IDviInvocation& aInvocation);
+    void DoDestroyObject(IDviInvocation& aInvocation);
+    void DoUpdateObject(IDviInvocation& aInvocation);
+    void DoMoveObject(IDviInvocation& aInvocation);
+    void DoImportResource(IDviInvocation& aInvocation);
+    void DoExportResource(IDviInvocation& aInvocation);
+    void DoDeleteResource(IDviInvocation& aInvocation);
+    void DoStopTransferResource(IDviInvocation& aInvocation);
+    void DoGetTransferProgress(IDviInvocation& aInvocation);
+    void DoCreateReference(IDviInvocation& aInvocation);
 private:
     CallbackContentDirectory2GetSearchCapabilities iCallbackGetSearchCapabilities;
     void* iPtrGetSearchCapabilities;
@@ -359,105 +361,129 @@ void DvProviderUpnpOrgContentDirectory2C::EnableActionCreateReference(CallbackCo
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoGetSearchCapabilities(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* SearchCaps;
     ASSERT(iCallbackGetSearchCapabilities != NULL);
-    if (0 != iCallbackGetSearchCapabilities(iPtrGetSearchCapabilities, aVersion, &SearchCaps)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetSearchCapabilities(iPtrGetSearchCapabilities, invocationC, invocationCPtr, &SearchCaps)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respSearchCaps(aInvocation, "SearchCaps");
-    resp.Start();
+    DviInvocationResponseString respSearchCaps(aInvocation, "SearchCaps");
+    invocation.StartResponse();
     Brhz bufSearchCaps((const TChar*)SearchCaps);
     OhNetFreeExternal(SearchCaps);
     respSearchCaps.Write(bufSearchCaps);
     respSearchCaps.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoGetSortCapabilities(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* SortCaps;
     ASSERT(iCallbackGetSortCapabilities != NULL);
-    if (0 != iCallbackGetSortCapabilities(iPtrGetSortCapabilities, aVersion, &SortCaps)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetSortCapabilities(iPtrGetSortCapabilities, invocationC, invocationCPtr, &SortCaps)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respSortCaps(aInvocation, "SortCaps");
-    resp.Start();
+    DviInvocationResponseString respSortCaps(aInvocation, "SortCaps");
+    invocation.StartResponse();
     Brhz bufSortCaps((const TChar*)SortCaps);
     OhNetFreeExternal(SortCaps);
     respSortCaps.Write(bufSortCaps);
     respSortCaps.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoGetSortExtensionCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoGetSortExtensionCapabilities(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* SortExtensionCaps;
     ASSERT(iCallbackGetSortExtensionCapabilities != NULL);
-    if (0 != iCallbackGetSortExtensionCapabilities(iPtrGetSortExtensionCapabilities, aVersion, &SortExtensionCaps)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetSortExtensionCapabilities(iPtrGetSortExtensionCapabilities, invocationC, invocationCPtr, &SortExtensionCaps)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respSortExtensionCaps(aInvocation, "SortExtensionCaps");
-    resp.Start();
+    DviInvocationResponseString respSortExtensionCaps(aInvocation, "SortExtensionCaps");
+    invocation.StartResponse();
     Brhz bufSortExtensionCaps((const TChar*)SortExtensionCaps);
     OhNetFreeExternal(SortExtensionCaps);
     respSortExtensionCaps.Write(bufSortExtensionCaps);
     respSortExtensionCaps.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoGetFeatureList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoGetFeatureList(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* FeatureList;
     ASSERT(iCallbackGetFeatureList != NULL);
-    if (0 != iCallbackGetFeatureList(iPtrGetFeatureList, aVersion, &FeatureList)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetFeatureList(iPtrGetFeatureList, invocationC, invocationCPtr, &FeatureList)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respFeatureList(aInvocation, "FeatureList");
-    resp.Start();
+    DviInvocationResponseString respFeatureList(aInvocation, "FeatureList");
+    invocation.StartResponse();
     Brhz bufFeatureList((const TChar*)FeatureList);
     OhNetFreeExternal(FeatureList);
     respFeatureList.Write(bufFeatureList);
     respFeatureList.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoGetSystemUpdateID(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoGetSystemUpdateID(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Id;
     ASSERT(iCallbackGetSystemUpdateID != NULL);
-    if (0 != iCallbackGetSystemUpdateID(iPtrGetSystemUpdateID, aVersion, &Id)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetSystemUpdateID(iPtrGetSystemUpdateID, invocationC, invocationCPtr, &Id)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respId(aInvocation, "Id");
-    resp.Start();
+    DviInvocationResponseUint respId(aInvocation, "Id");
+    invocation.StartResponse();
     respId.Write(Id);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoBrowse(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoBrowse(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
@@ -470,21 +496,21 @@ void DvProviderUpnpOrgContentDirectory2C::DoBrowse(IDviInvocation& aInvocation, 
     Brhz SortCriteria;
     aInvocation.InvocationReadString("SortCriteria", SortCriteria);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     uint32_t NumberReturned;
     uint32_t TotalMatches;
     uint32_t UpdateID;
     ASSERT(iCallbackBrowse != NULL);
-    if (0 != iCallbackBrowse(iPtrBrowse, aVersion, (const char*)ObjectID.Ptr(), (const char*)BrowseFlag.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackBrowse(iPtrBrowse, invocationC, invocationCPtr, (const char*)ObjectID.Ptr(), (const char*)BrowseFlag.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
-    InvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
@@ -492,11 +518,15 @@ void DvProviderUpnpOrgContentDirectory2C::DoBrowse(IDviInvocation& aInvocation, 
     respNumberReturned.Write(NumberReturned);
     respTotalMatches.Write(TotalMatches);
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoSearch(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoSearch(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ContainerID;
     aInvocation.InvocationReadString("ContainerID", ContainerID);
@@ -509,21 +539,21 @@ void DvProviderUpnpOrgContentDirectory2C::DoSearch(IDviInvocation& aInvocation, 
     Brhz SortCriteria;
     aInvocation.InvocationReadString("SortCriteria", SortCriteria);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     uint32_t NumberReturned;
     uint32_t TotalMatches;
     uint32_t UpdateID;
     ASSERT(iCallbackSearch != NULL);
-    if (0 != iCallbackSearch(iPtrSearch, aVersion, (const char*)ContainerID.Ptr(), (const char*)SearchCriteria.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSearch(iPtrSearch, invocationC, invocationCPtr, (const char*)ContainerID.Ptr(), (const char*)SearchCriteria.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
-    InvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
@@ -531,28 +561,32 @@ void DvProviderUpnpOrgContentDirectory2C::DoSearch(IDviInvocation& aInvocation, 
     respNumberReturned.Write(NumberReturned);
     respTotalMatches.Write(TotalMatches);
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoCreateObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoCreateObject(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ContainerID;
     aInvocation.InvocationReadString("ContainerID", ContainerID);
     Brhz Elements;
     aInvocation.InvocationReadString("Elements", Elements);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* ObjectID;
     char* Result;
     ASSERT(iCallbackCreateObject != NULL);
-    if (0 != iCallbackCreateObject(iPtrCreateObject, aVersion, (const char*)ContainerID.Ptr(), (const char*)Elements.Ptr(), &ObjectID, &Result)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackCreateObject(iPtrCreateObject, invocationC, invocationCPtr, (const char*)ContainerID.Ptr(), (const char*)Elements.Ptr(), &ObjectID, &Result)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respObjectID(aInvocation, "ObjectID");
-    InvocationResponseString respResult(aInvocation, "Result");
-    resp.Start();
+    DviInvocationResponseString respObjectID(aInvocation, "ObjectID");
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    invocation.StartResponse();
     Brhz bufObjectID((const TChar*)ObjectID);
     OhNetFreeExternal(ObjectID);
     respObjectID.Write(bufObjectID);
@@ -561,27 +595,35 @@ void DvProviderUpnpOrgContentDirectory2C::DoCreateObject(IDviInvocation& aInvoca
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoDestroyObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoDestroyObject(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDestroyObject != NULL);
-    if (0 != iCallbackDestroyObject(iPtrDestroyObject, aVersion, (const char*)ObjectID.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackDestroyObject(iPtrDestroyObject, invocationC, invocationCPtr, (const char*)ObjectID.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoUpdateObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoUpdateObject(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
@@ -590,131 +632,155 @@ void DvProviderUpnpOrgContentDirectory2C::DoUpdateObject(IDviInvocation& aInvoca
     Brhz NewTagValue;
     aInvocation.InvocationReadString("NewTagValue", NewTagValue);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackUpdateObject != NULL);
-    if (0 != iCallbackUpdateObject(iPtrUpdateObject, aVersion, (const char*)ObjectID.Ptr(), (const char*)CurrentTagValue.Ptr(), (const char*)NewTagValue.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackUpdateObject(iPtrUpdateObject, invocationC, invocationCPtr, (const char*)ObjectID.Ptr(), (const char*)CurrentTagValue.Ptr(), (const char*)NewTagValue.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoMoveObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoMoveObject(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
     Brhz NewParentID;
     aInvocation.InvocationReadString("NewParentID", NewParentID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* NewObjectID;
     ASSERT(iCallbackMoveObject != NULL);
-    if (0 != iCallbackMoveObject(iPtrMoveObject, aVersion, (const char*)ObjectID.Ptr(), (const char*)NewParentID.Ptr(), &NewObjectID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackMoveObject(iPtrMoveObject, invocationC, invocationCPtr, (const char*)ObjectID.Ptr(), (const char*)NewParentID.Ptr(), &NewObjectID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respNewObjectID(aInvocation, "NewObjectID");
-    resp.Start();
+    DviInvocationResponseString respNewObjectID(aInvocation, "NewObjectID");
+    invocation.StartResponse();
     Brhz bufNewObjectID((const TChar*)NewObjectID);
     OhNetFreeExternal(NewObjectID);
     respNewObjectID.Write(bufNewObjectID);
     respNewObjectID.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoImportResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoImportResource(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz SourceURI;
     aInvocation.InvocationReadString("SourceURI", SourceURI);
     Brhz DestinationURI;
     aInvocation.InvocationReadString("DestinationURI", DestinationURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t TransferID;
     ASSERT(iCallbackImportResource != NULL);
-    if (0 != iCallbackImportResource(iPtrImportResource, aVersion, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackImportResource(iPtrImportResource, invocationC, invocationCPtr, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respTransferID(aInvocation, "TransferID");
-    resp.Start();
+    DviInvocationResponseUint respTransferID(aInvocation, "TransferID");
+    invocation.StartResponse();
     respTransferID.Write(TransferID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoExportResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoExportResource(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz SourceURI;
     aInvocation.InvocationReadString("SourceURI", SourceURI);
     Brhz DestinationURI;
     aInvocation.InvocationReadString("DestinationURI", DestinationURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t TransferID;
     ASSERT(iCallbackExportResource != NULL);
-    if (0 != iCallbackExportResource(iPtrExportResource, aVersion, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackExportResource(iPtrExportResource, invocationC, invocationCPtr, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respTransferID(aInvocation, "TransferID");
-    resp.Start();
+    DviInvocationResponseUint respTransferID(aInvocation, "TransferID");
+    invocation.StartResponse();
     respTransferID.Write(TransferID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoDeleteResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoDeleteResource(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ResourceURI;
     aInvocation.InvocationReadString("ResourceURI", ResourceURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDeleteResource != NULL);
-    if (0 != iCallbackDeleteResource(iPtrDeleteResource, aVersion, (const char*)ResourceURI.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackDeleteResource(iPtrDeleteResource, invocationC, invocationCPtr, (const char*)ResourceURI.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoStopTransferResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoStopTransferResource(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStopTransferResource != NULL);
-    if (0 != iCallbackStopTransferResource(iPtrStopTransferResource, aVersion, TransferID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackStopTransferResource(iPtrStopTransferResource, invocationC, invocationCPtr, TransferID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoGetTransferProgress(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoGetTransferProgress(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* TransferStatus;
     char* TransferLength;
     char* TransferTotal;
     ASSERT(iCallbackGetTransferProgress != NULL);
-    if (0 != iCallbackGetTransferProgress(iPtrGetTransferProgress, aVersion, TransferID, &TransferStatus, &TransferLength, &TransferTotal)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetTransferProgress(iPtrGetTransferProgress, invocationC, invocationCPtr, TransferID, &TransferStatus, &TransferLength, &TransferTotal)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respTransferStatus(aInvocation, "TransferStatus");
-    InvocationResponseString respTransferLength(aInvocation, "TransferLength");
-    InvocationResponseString respTransferTotal(aInvocation, "TransferTotal");
-    resp.Start();
+    DviInvocationResponseString respTransferStatus(aInvocation, "TransferStatus");
+    DviInvocationResponseString respTransferLength(aInvocation, "TransferLength");
+    DviInvocationResponseString respTransferTotal(aInvocation, "TransferTotal");
+    invocation.StartResponse();
     Brhz bufTransferStatus((const TChar*)TransferStatus);
     OhNetFreeExternal(TransferStatus);
     respTransferStatus.Write(bufTransferStatus);
@@ -727,31 +793,35 @@ void DvProviderUpnpOrgContentDirectory2C::DoGetTransferProgress(IDviInvocation& 
     OhNetFreeExternal(TransferTotal);
     respTransferTotal.Write(bufTransferTotal);
     respTransferTotal.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory2C::DoCreateReference(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory2C::DoCreateReference(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ContainerID;
     aInvocation.InvocationReadString("ContainerID", ContainerID);
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* NewID;
     ASSERT(iCallbackCreateReference != NULL);
-    if (0 != iCallbackCreateReference(iPtrCreateReference, aVersion, (const char*)ContainerID.Ptr(), (const char*)ObjectID.Ptr(), &NewID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackCreateReference(iPtrCreateReference, invocationC, invocationCPtr, (const char*)ContainerID.Ptr(), (const char*)ObjectID.Ptr(), &NewID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respNewID(aInvocation, "NewID");
-    resp.Start();
+    DviInvocationResponseString respNewID(aInvocation, "NewID");
+    invocation.StartResponse();
     Brhz bufNewID((const TChar*)NewID);
     OhNetFreeExternal(NewID);
     respNewID.Write(bufNewID);
     respNewID.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 

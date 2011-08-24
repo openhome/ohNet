@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -117,7 +118,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(uint32_t aVersion);
+    virtual void Play(IDvInvocationStd& aInvocation);
     /**
      * Stop action.
      *
@@ -125,7 +126,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(uint32_t aVersion);
+    virtual void Stop(IDvInvocationStd& aInvocation);
     /**
      * SetSender action.
      *
@@ -133,7 +134,7 @@ private:
      * SetSender action for the owning device.
      * Must be implemented iff EnableActionSetSender was called.
      */
-    virtual void SetSender(uint32_t aVersion, const std::string& aUri, const std::string& aMetadata);
+    virtual void SetSender(IDvInvocationStd& aInvocation, const std::string& aUri, const std::string& aMetadata);
     /**
      * Sender action.
      *
@@ -141,7 +142,7 @@ private:
      * Sender action for the owning device.
      * Must be implemented iff EnableActionSender was called.
      */
-    virtual void Sender(uint32_t aVersion, std::string& aUri, std::string& aMetadata);
+    virtual void Sender(IDvInvocationStd& aInvocation, std::string& aUri, std::string& aMetadata);
     /**
      * ProtocolInfo action.
      *
@@ -149,7 +150,7 @@ private:
      * ProtocolInfo action for the owning device.
      * Must be implemented iff EnableActionProtocolInfo was called.
      */
-    virtual void ProtocolInfo(uint32_t aVersion, std::string& aValue);
+    virtual void ProtocolInfo(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * TransportState action.
      *
@@ -157,15 +158,15 @@ private:
      * TransportState action for the owning device.
      * Must be implemented iff EnableActionTransportState was called.
      */
-    virtual void TransportState(uint32_t aVersion, std::string& aValue);
+    virtual void TransportState(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgReceiver1Cpp();
-    void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStop(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetSender(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSender(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoTransportState(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoSetSender(IDviInvocation& aInvocation);
+    void DoSender(IDviInvocation& aInvocation);
+    void DoProtocolInfo(IDviInvocation& aInvocation);
+    void DoTransportState(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyUri;
     PropertyString* iPropertyMetadata;

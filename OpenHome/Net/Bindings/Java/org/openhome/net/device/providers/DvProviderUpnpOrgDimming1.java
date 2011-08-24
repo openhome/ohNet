@@ -583,10 +583,10 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetLoadLevelTarget} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewLoadlevelTarget
      */
-    protected void setLoadLevelTarget(int aVersion, long anewLoadlevelTarget)
+    protected void setLoadLevelTarget(IDvInvocation aInvocation, long anewLoadlevelTarget)
     {
         throw (new ActionDisabledError());
     }
@@ -599,9 +599,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetLoadLevelTarget} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getLoadLevelTarget(int aVersion)
+    protected long getLoadLevelTarget(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -614,9 +614,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetLoadLevelStatus} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getLoadLevelStatus(int aVersion)
+    protected long getLoadLevelStatus(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -629,10 +629,10 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetOnEffectLevel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewOnEffectLevel
      */
-    protected void setOnEffectLevel(int aVersion, long anewOnEffectLevel)
+    protected void setOnEffectLevel(IDvInvocation aInvocation, long anewOnEffectLevel)
     {
         throw (new ActionDisabledError());
     }
@@ -645,10 +645,10 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetOnEffect} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewOnEffect
      */
-    protected void setOnEffect(int aVersion, String anewOnEffect)
+    protected void setOnEffect(IDvInvocation aInvocation, String anewOnEffect)
     {
         throw (new ActionDisabledError());
     }
@@ -661,9 +661,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetOnEffectParameters} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected GetOnEffectParameters getOnEffectParameters(int aVersion)
+    protected GetOnEffectParameters getOnEffectParameters(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -676,9 +676,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStepUp} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void stepUp(int aVersion)
+    protected void stepUp(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -691,9 +691,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStepDown} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void stepDown(int aVersion)
+    protected void stepDown(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -706,9 +706,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStartRampUp} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void startRampUp(int aVersion)
+    protected void startRampUp(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -721,9 +721,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStartRampDown} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void startRampDown(int aVersion)
+    protected void startRampDown(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -736,9 +736,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStopRamp} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void stopRamp(int aVersion)
+    protected void stopRamp(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -751,11 +751,11 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStartRampToLevel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewLoadLevelTarget
      * @param anewRampTime
      */
-    protected void startRampToLevel(int aVersion, long anewLoadLevelTarget, long anewRampTime)
+    protected void startRampToLevel(IDvInvocation aInvocation, long anewLoadLevelTarget, long anewRampTime)
     {
         throw (new ActionDisabledError());
     }
@@ -768,10 +768,10 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetStepDelta} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewStepDelta
      */
-    protected void setStepDelta(int aVersion, long anewStepDelta)
+    protected void setStepDelta(IDvInvocation aInvocation, long anewStepDelta)
     {
         throw (new ActionDisabledError());
     }
@@ -784,9 +784,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetStepDelta} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getStepDelta(int aVersion)
+    protected long getStepDelta(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -799,10 +799,10 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetRampRate} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewRampRate
      */
-    protected void setRampRate(int aVersion, long anewRampRate)
+    protected void setRampRate(IDvInvocation aInvocation, long anewRampRate)
     {
         throw (new ActionDisabledError());
     }
@@ -815,9 +815,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetRampRate} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getRampRate(int aVersion)
+    protected long getRampRate(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -830,9 +830,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionPauseRamp} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void pauseRamp(int aVersion)
+    protected void pauseRamp(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -845,9 +845,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionResumeRamp} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void resumeRamp(int aVersion)
+    protected void resumeRamp(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -860,9 +860,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetIsRamping} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean getIsRamping(int aVersion)
+    protected boolean getIsRamping(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -875,9 +875,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetRampPaused} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean getRampPaused(int aVersion)
+    protected boolean getRampPaused(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -890,9 +890,9 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetRampTime} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getRampTime(int aVersion)
+    protected long getRampTime(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -916,7 +916,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoSetLoadLevelTarget implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long newLoadlevelTarget;
@@ -925,7 +925,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 invocation.readStart();
                 newLoadlevelTarget = invocation.readUint("newLoadlevelTarget");
                 invocation.readEnd();
-                setLoadLevelTarget(aVersion, newLoadlevelTarget);
+                setLoadLevelTarget(invocation, newLoadlevelTarget);
             }
             catch (ActionError ae)
             {
@@ -964,7 +964,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoGetLoadLevelTarget implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long getLoadlevelTarget;
@@ -972,7 +972,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 getLoadlevelTarget = getLoadLevelTarget(aVersion);
+                 getLoadlevelTarget = getLoadLevelTarget(invocation);
             }
             catch (ActionError ae)
             {
@@ -1012,7 +1012,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoGetLoadLevelStatus implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long retLoadlevelStatus;
@@ -1020,7 +1020,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 retLoadlevelStatus = getLoadLevelStatus(aVersion);
+                 retLoadlevelStatus = getLoadLevelStatus(invocation);
             }
             catch (ActionError ae)
             {
@@ -1060,7 +1060,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoSetOnEffectLevel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long newOnEffectLevel;
@@ -1069,7 +1069,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 invocation.readStart();
                 newOnEffectLevel = invocation.readUint("newOnEffectLevel");
                 invocation.readEnd();
-                setOnEffectLevel(aVersion, newOnEffectLevel);
+                setOnEffectLevel(invocation, newOnEffectLevel);
             }
             catch (ActionError ae)
             {
@@ -1108,7 +1108,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoSetOnEffect implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String newOnEffect;
@@ -1117,7 +1117,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 invocation.readStart();
                 newOnEffect = invocation.readString("newOnEffect");
                 invocation.readEnd();
-                setOnEffect(aVersion, newOnEffect);
+                setOnEffect(invocation, newOnEffect);
             }
             catch (ActionError ae)
             {
@@ -1156,7 +1156,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoGetOnEffectParameters implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String retOnEffect;
@@ -1166,7 +1166,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 invocation.readStart();
                 invocation.readEnd();
 
-            GetOnEffectParameters outArgs = getOnEffectParameters(aVersion);
+            GetOnEffectParameters outArgs = getOnEffectParameters(invocation);
             retOnEffect = outArgs.getRetOnEffect();
             retOnEffectLevel = outArgs.getRetOnEffectLevel();
             }
@@ -1209,14 +1209,14 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoStepUp implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                stepUp(aVersion);
+                stepUp(invocation);
             }
             catch (ActionError ae)
             {
@@ -1255,14 +1255,14 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoStepDown implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                stepDown(aVersion);
+                stepDown(invocation);
             }
             catch (ActionError ae)
             {
@@ -1301,14 +1301,14 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoStartRampUp implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                startRampUp(aVersion);
+                startRampUp(invocation);
             }
             catch (ActionError ae)
             {
@@ -1347,14 +1347,14 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoStartRampDown implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                startRampDown(aVersion);
+                startRampDown(invocation);
             }
             catch (ActionError ae)
             {
@@ -1393,14 +1393,14 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoStopRamp implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                stopRamp(aVersion);
+                stopRamp(invocation);
             }
             catch (ActionError ae)
             {
@@ -1439,7 +1439,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoStartRampToLevel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long newLoadLevelTarget;
@@ -1450,7 +1450,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 newLoadLevelTarget = invocation.readUint("newLoadLevelTarget");
                 newRampTime = invocation.readUint("newRampTime");
                 invocation.readEnd();
-                startRampToLevel(aVersion, newLoadLevelTarget, newRampTime);
+                startRampToLevel(invocation, newLoadLevelTarget, newRampTime);
             }
             catch (ActionError ae)
             {
@@ -1489,7 +1489,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoSetStepDelta implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long newStepDelta;
@@ -1498,7 +1498,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 invocation.readStart();
                 newStepDelta = invocation.readUint("newStepDelta");
                 invocation.readEnd();
-                setStepDelta(aVersion, newStepDelta);
+                setStepDelta(invocation, newStepDelta);
             }
             catch (ActionError ae)
             {
@@ -1537,7 +1537,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoGetStepDelta implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long retStepDelta;
@@ -1545,7 +1545,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 retStepDelta = getStepDelta(aVersion);
+                 retStepDelta = getStepDelta(invocation);
             }
             catch (ActionError ae)
             {
@@ -1585,7 +1585,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoSetRampRate implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long newRampRate;
@@ -1594,7 +1594,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 invocation.readStart();
                 newRampRate = invocation.readUint("newRampRate");
                 invocation.readEnd();
-                setRampRate(aVersion, newRampRate);
+                setRampRate(invocation, newRampRate);
             }
             catch (ActionError ae)
             {
@@ -1633,7 +1633,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoGetRampRate implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long retRampRate;
@@ -1641,7 +1641,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 retRampRate = getRampRate(aVersion);
+                 retRampRate = getRampRate(invocation);
             }
             catch (ActionError ae)
             {
@@ -1681,14 +1681,14 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoPauseRamp implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                pauseRamp(aVersion);
+                pauseRamp(invocation);
             }
             catch (ActionError ae)
             {
@@ -1727,14 +1727,14 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoResumeRamp implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                resumeRamp(aVersion);
+                resumeRamp(invocation);
             }
             catch (ActionError ae)
             {
@@ -1773,7 +1773,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoGetIsRamping implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean retIsRamping;
@@ -1781,7 +1781,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 retIsRamping = getIsRamping(aVersion);
+                 retIsRamping = getIsRamping(invocation);
             }
             catch (ActionError ae)
             {
@@ -1821,7 +1821,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoGetRampPaused implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean retRampPaused;
@@ -1829,7 +1829,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 retRampPaused = getRampPaused(aVersion);
+                 retRampPaused = getRampPaused(invocation);
             }
             catch (ActionError ae)
             {
@@ -1869,7 +1869,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
 
     private class DoGetRampTime implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long retRampTime;
@@ -1877,7 +1877,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 retRampTime = getRampTime(aVersion);
+                 retRampTime = getRampTime(invocation);
             }
             catch (ActionError ae)
             {

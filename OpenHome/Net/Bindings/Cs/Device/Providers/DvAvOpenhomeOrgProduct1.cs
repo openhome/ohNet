@@ -863,12 +863,12 @@ namespace OpenHome.Net.Device.Providers
         /// Manufacturer action for the owning device.
         ///
         /// Must be implemented iff EnableActionManufacturer was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aName"></param>
         /// <param name="aInfo"></param>
         /// <param name="aUrl"></param>
         /// <param name="aImageUri"></param>
-        protected virtual void Manufacturer(uint aVersion, out string aName, out string aInfo, out string aUrl, out string aImageUri)
+        protected virtual void Manufacturer(IDvInvocation aInvocation, out string aName, out string aInfo, out string aUrl, out string aImageUri)
         {
             throw (new ActionDisabledError());
         }
@@ -880,12 +880,12 @@ namespace OpenHome.Net.Device.Providers
         /// Model action for the owning device.
         ///
         /// Must be implemented iff EnableActionModel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aName"></param>
         /// <param name="aInfo"></param>
         /// <param name="aUrl"></param>
         /// <param name="aImageUri"></param>
-        protected virtual void Model(uint aVersion, out string aName, out string aInfo, out string aUrl, out string aImageUri)
+        protected virtual void Model(IDvInvocation aInvocation, out string aName, out string aInfo, out string aUrl, out string aImageUri)
         {
             throw (new ActionDisabledError());
         }
@@ -897,13 +897,13 @@ namespace OpenHome.Net.Device.Providers
         /// Product action for the owning device.
         ///
         /// Must be implemented iff EnableActionProduct was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRoom"></param>
         /// <param name="aName"></param>
         /// <param name="aInfo"></param>
         /// <param name="aUrl"></param>
         /// <param name="aImageUri"></param>
-        protected virtual void Product(uint aVersion, out string aRoom, out string aName, out string aInfo, out string aUrl, out string aImageUri)
+        protected virtual void Product(IDvInvocation aInvocation, out string aRoom, out string aName, out string aInfo, out string aUrl, out string aImageUri)
         {
             throw (new ActionDisabledError());
         }
@@ -915,9 +915,9 @@ namespace OpenHome.Net.Device.Providers
         /// Standby action for the owning device.
         ///
         /// Must be implemented iff EnableActionStandby was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Standby(uint aVersion, out bool aValue)
+        protected virtual void Standby(IDvInvocation aInvocation, out bool aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -929,9 +929,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetStandby action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetStandby was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SetStandby(uint aVersion, bool aValue)
+        protected virtual void SetStandby(IDvInvocation aInvocation, bool aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -943,9 +943,9 @@ namespace OpenHome.Net.Device.Providers
         /// SourceCount action for the owning device.
         ///
         /// Must be implemented iff EnableActionSourceCount was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SourceCount(uint aVersion, out uint aValue)
+        protected virtual void SourceCount(IDvInvocation aInvocation, out uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -957,9 +957,9 @@ namespace OpenHome.Net.Device.Providers
         /// SourceXml action for the owning device.
         ///
         /// Must be implemented iff EnableActionSourceXml was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SourceXml(uint aVersion, out string aValue)
+        protected virtual void SourceXml(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -971,9 +971,9 @@ namespace OpenHome.Net.Device.Providers
         /// SourceIndex action for the owning device.
         ///
         /// Must be implemented iff EnableActionSourceIndex was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SourceIndex(uint aVersion, out uint aValue)
+        protected virtual void SourceIndex(IDvInvocation aInvocation, out uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -985,9 +985,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetSourceIndex action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetSourceIndex was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SetSourceIndex(uint aVersion, uint aValue)
+        protected virtual void SetSourceIndex(IDvInvocation aInvocation, uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -999,9 +999,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetSourceIndexByName action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetSourceIndexByName was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SetSourceIndexByName(uint aVersion, string aValue)
+        protected virtual void SetSourceIndexByName(IDvInvocation aInvocation, string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -1013,13 +1013,13 @@ namespace OpenHome.Net.Device.Providers
         /// Source action for the owning device.
         ///
         /// Must be implemented iff EnableActionSource was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aIndex"></param>
         /// <param name="aSystemName"></param>
         /// <param name="aType"></param>
         /// <param name="aName"></param>
         /// <param name="aVisible"></param>
-        protected virtual void Source(uint aVersion, uint aIndex, out string aSystemName, out string aType, out string aName, out bool aVisible)
+        protected virtual void Source(IDvInvocation aInvocation, uint aIndex, out string aSystemName, out string aType, out string aName, out bool aVisible)
         {
             throw (new ActionDisabledError());
         }
@@ -1031,9 +1031,9 @@ namespace OpenHome.Net.Device.Providers
         /// Attributes action for the owning device.
         ///
         /// Must be implemented iff EnableActionAttributes was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Attributes(uint aVersion, out string aValue)
+        protected virtual void Attributes(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -1045,14 +1045,14 @@ namespace OpenHome.Net.Device.Providers
         /// SourceXmlChangeCount action for the owning device.
         ///
         /// Must be implemented iff EnableActionSourceXmlChangeCount was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SourceXmlChangeCount(uint aVersion, out uint aValue)
+        protected virtual void SourceXmlChangeCount(IDvInvocation aInvocation, out uint aValue)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoManufacturer(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoManufacturer(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1065,7 +1065,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Manufacturer(aVersion, out name, out info, out url, out imageUri);
+                self.Manufacturer(invocation, out name, out info, out url, out imageUri);
             }
             catch (ActionError)
             {
@@ -1105,7 +1105,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoModel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoModel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1118,7 +1118,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Model(aVersion, out name, out info, out url, out imageUri);
+                self.Model(invocation, out name, out info, out url, out imageUri);
             }
             catch (ActionError)
             {
@@ -1158,7 +1158,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoProduct(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoProduct(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1172,7 +1172,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Product(aVersion, out room, out name, out info, out url, out imageUri);
+                self.Product(invocation, out room, out name, out info, out url, out imageUri);
             }
             catch (ActionError)
             {
@@ -1213,7 +1213,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStandby(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1223,7 +1223,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Standby(aVersion, out value);
+                self.Standby(invocation, out value);
             }
             catch (ActionError)
             {
@@ -1260,7 +1260,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStandby(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1271,7 +1271,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadBool("Value");
                 invocation.ReadEnd();
-                self.SetStandby(aVersion, value);
+                self.SetStandby(invocation, value);
             }
             catch (ActionError)
             {
@@ -1307,7 +1307,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSourceCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceCount(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1317,7 +1317,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.SourceCount(aVersion, out value);
+                self.SourceCount(invocation, out value);
             }
             catch (ActionError)
             {
@@ -1354,7 +1354,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSourceXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceXml(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1364,7 +1364,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.SourceXml(aVersion, out value);
+                self.SourceXml(invocation, out value);
             }
             catch (ActionError)
             {
@@ -1401,7 +1401,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSourceIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceIndex(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1411,7 +1411,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.SourceIndex(aVersion, out value);
+                self.SourceIndex(invocation, out value);
             }
             catch (ActionError)
             {
@@ -1448,7 +1448,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetSourceIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSourceIndex(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1459,7 +1459,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadUint("Value");
                 invocation.ReadEnd();
-                self.SetSourceIndex(aVersion, value);
+                self.SetSourceIndex(invocation, value);
             }
             catch (ActionError)
             {
@@ -1495,7 +1495,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetSourceIndexByName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSourceIndexByName(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1506,7 +1506,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadString("Value");
                 invocation.ReadEnd();
-                self.SetSourceIndexByName(aVersion, value);
+                self.SetSourceIndexByName(invocation, value);
             }
             catch (ActionError)
             {
@@ -1542,7 +1542,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSource(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1557,7 +1557,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 index = invocation.ReadUint("Index");
                 invocation.ReadEnd();
-                self.Source(aVersion, index, out systemName, out type, out name, out visible);
+                self.Source(invocation, index, out systemName, out type, out name, out visible);
             }
             catch (ActionError)
             {
@@ -1597,7 +1597,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoAttributes(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoAttributes(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1607,7 +1607,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Attributes(aVersion, out value);
+                self.Attributes(invocation, out value);
             }
             catch (ActionError)
             {
@@ -1644,7 +1644,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSourceXmlChangeCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceXmlChangeCount(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1654,7 +1654,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.SourceXmlChangeCount(aVersion, out value);
+                self.SourceXmlChangeCount(invocation, out value);
             }
             catch (ActionError)
             {

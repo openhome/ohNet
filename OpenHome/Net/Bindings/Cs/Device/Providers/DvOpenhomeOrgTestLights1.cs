@@ -145,9 +145,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetCount action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetCount was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aCount"></param>
-        protected virtual void GetCount(uint aVersion, out uint aCount)
+        protected virtual void GetCount(IDvInvocation aInvocation, out uint aCount)
         {
             throw (new ActionDisabledError());
         }
@@ -159,10 +159,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetRoom action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRoom was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aIndex"></param>
         /// <param name="aRoomName"></param>
-        protected virtual void GetRoom(uint aVersion, uint aIndex, out string aRoomName)
+        protected virtual void GetRoom(IDvInvocation aInvocation, uint aIndex, out string aRoomName)
         {
             throw (new ActionDisabledError());
         }
@@ -174,10 +174,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetName action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetName was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aIndex"></param>
         /// <param name="aFriendlyName"></param>
-        protected virtual void GetName(uint aVersion, uint aIndex, out string aFriendlyName)
+        protected virtual void GetName(IDvInvocation aInvocation, uint aIndex, out string aFriendlyName)
         {
             throw (new ActionDisabledError());
         }
@@ -189,12 +189,12 @@ namespace OpenHome.Net.Device.Providers
         /// GetPosition action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetPosition was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aIndex"></param>
         /// <param name="aX"></param>
         /// <param name="aY"></param>
         /// <param name="aZ"></param>
-        protected virtual void GetPosition(uint aVersion, uint aIndex, out uint aX, out uint aY, out uint aZ)
+        protected virtual void GetPosition(IDvInvocation aInvocation, uint aIndex, out uint aX, out uint aY, out uint aZ)
         {
             throw (new ActionDisabledError());
         }
@@ -206,10 +206,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetColor action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetColor was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aIndex"></param>
         /// <param name="aColor"></param>
-        protected virtual void SetColor(uint aVersion, uint aIndex, uint aColor)
+        protected virtual void SetColor(IDvInvocation aInvocation, uint aIndex, uint aColor)
         {
             throw (new ActionDisabledError());
         }
@@ -221,10 +221,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetColor action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetColor was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aIndex"></param>
         /// <param name="aColor"></param>
-        protected virtual void GetColor(uint aVersion, uint aIndex, out uint aColor)
+        protected virtual void GetColor(IDvInvocation aInvocation, uint aIndex, out uint aColor)
         {
             throw (new ActionDisabledError());
         }
@@ -236,18 +236,18 @@ namespace OpenHome.Net.Device.Providers
         /// GetColorComponents action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetColorComponents was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aColor"></param>
         /// <param name="aBrightness"></param>
         /// <param name="aRed"></param>
         /// <param name="aGreen"></param>
         /// <param name="aBlue"></param>
-        protected virtual void GetColorComponents(uint aVersion, uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
+        protected virtual void GetColorComponents(IDvInvocation aInvocation, uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoGetCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCount(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -257,7 +257,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetCount(aVersion, out count);
+                self.GetCount(invocation, out count);
             }
             catch (ActionError)
             {
@@ -294,7 +294,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRoom(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -306,7 +306,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 index = invocation.ReadUint("Index");
                 invocation.ReadEnd();
-                self.GetRoom(aVersion, index, out roomName);
+                self.GetRoom(invocation, index, out roomName);
             }
             catch (ActionError)
             {
@@ -343,7 +343,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetName(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -355,7 +355,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 index = invocation.ReadUint("Index");
                 invocation.ReadEnd();
-                self.GetName(aVersion, index, out friendlyName);
+                self.GetName(invocation, index, out friendlyName);
             }
             catch (ActionError)
             {
@@ -392,7 +392,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetPosition(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetPosition(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -406,7 +406,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 index = invocation.ReadUint("Index");
                 invocation.ReadEnd();
-                self.GetPosition(aVersion, index, out x, out y, out z);
+                self.GetPosition(invocation, index, out x, out y, out z);
             }
             catch (ActionError)
             {
@@ -445,7 +445,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetColor(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -458,7 +458,7 @@ namespace OpenHome.Net.Device.Providers
                 index = invocation.ReadUint("Index");
                 color = invocation.ReadUint("Color");
                 invocation.ReadEnd();
-                self.SetColor(aVersion, index, color);
+                self.SetColor(invocation, index, color);
             }
             catch (ActionError)
             {
@@ -494,7 +494,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColor(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -506,7 +506,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 index = invocation.ReadUint("Index");
                 invocation.ReadEnd();
-                self.GetColor(aVersion, index, out color);
+                self.GetColor(invocation, index, out color);
             }
             catch (ActionError)
             {
@@ -543,7 +543,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetColorComponents(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColorComponents(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -558,7 +558,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 color = invocation.ReadUint("Color");
                 invocation.ReadEnd();
-                self.GetColorComponents(aVersion, color, out brightness, out red, out green, out blue);
+                self.GetColorComponents(invocation, color, out brightness, out red, out green, out blue);
             }
             catch (ActionError)
             {

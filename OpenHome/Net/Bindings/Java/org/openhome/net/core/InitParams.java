@@ -8,6 +8,18 @@ public class InitParams
 	// Initialisation and destruction functions.
 	private static native long OhNetInitParamsCreate();
 	private static native void OhNetInitParamsDestroy(long aParams);
+	
+	// Callbacks.
+//	private static native void OhNetInitParamsSetLogOutput(long aParams, OhNetCallbackMsg aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetFatalErrorHandler(long aParams, OhNetCallbackMsg aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetAsyncBeginHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetAsyncEndHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetAsyncErrorHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetSubnetListChangedListener(long aParams, OhNetCallback aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetSubnetAddedListener(long aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetSubnetRemovedListener(long aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetNetworkAdapterChangedListener(long aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
+//	private static native void OhNetInitParamsSetFreeExternalCallback(long aParams, OhNetCallbackFreeExternal aCallback);
 
 	// Getter functions.
 	private static native int OhNetInitParamsTcpConnectTimeoutMs(long aParams);
@@ -27,8 +39,23 @@ public class InitParams
 	private static native int OhNetInitParamsDvIsBonjourEnabled(long aParams);
 	
 	// Setter functions.
+	private static native void OhNetInitParamsSetTcpConnectTimeout(long aParams, int aTimeoutMs);
 	private static native void OhNetInitParamsSetMsearchTime(long aParams, int aSecs);
+	private static native void OhNetInitParamsSetMsearchTtl(long aParams, int aTtl);
+	private static native void OhNetInitParamsSetNumEventSessionThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetNumXmlFetcherThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetNumActionInvokerThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetNumInvocations(long aParams, int aNumInvocations);
+	private static native void OhNetInitParamsSetNumSubscriberThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetPendingSubscriptionTimeout(long aParams, int aTimeoutMs);
 	private static native void OhNetInitParamsSetUseLoopbackNetworkAdapter(long aParams);
+	private static native void OhNetInitParamsSetDvMaxUpdateTime(long aParams, int aSecs);
+	private static native void OhNetInitParamsSetDvNumServerThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetDvNumPublisherThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetDvNumWebSocketThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetDvWebSocketPort(long aParams, int aPort);
+	private static native void OhNetInitParamsSetDvEnableBonjour(long aParams);
+
 
 	static
     {
@@ -51,50 +78,229 @@ public class InitParams
 		return iHandle;
 	}
 	
+	/**
+	 * Get the timeout for TCP connections in milliseconds.
+	 *
+	 * @return	timeout in milliseconds.
+	 */
 	public int getTcpConnectTimeoutMs()
 	{
 		return OhNetInitParamsTcpConnectTimeoutMs(iHandle);
 	}
 	
+	/**
+	 * Get the time in seconds that msearch responses should be spread out over.
+	 *
+	 * @return	msearch time in seconds.
+	 */
 	public int getMsearchTimeSecs()
 	{
 		return OhNetInitParamsMsearchTimeSecs(iHandle);
 	}
 	
+	/**
+	 * Get the time-to-live value for msearches.
+	 *
+	 * @return	time-to-live value for msearches.
+	 */
 	public int getMsearchTtl()
 	{
 		return OhNetInitParamsMsearchTtl(iHandle);
 	}
 	
+	/**
+	 * Get the number of threads which should be dedicated to eventing
+	 * (handling updates to subscribed state variables).
+	 *
+	 * @return	the number of eventing threads.
+	 */
 	public int getNumEventSessionThreads()
 	{
 		return OhNetInitParamsNumEventSessionThreads(iHandle);
 	}
 	
+	/**
+	 * Get the number of threads which should be dedicated to fetching
+	 * device/service XML.
+	 * 
+	 * <p>A higher number of threads will allow faster population of device
+	 * lists but will also require more system resources.
+	 *
+	 * @return	the number of XML fetcher threads.
+	 */
 	public int getNumXmlFetcherThreads()
 	{
 		return OhNetInitParamsNumXmlFetcherThreads(iHandle);
 	}
 	
+	/**
+	 * Get the number of threads which should be dedicated to invoking actions
+	 * on devices.
+	 * 
+	 * <p>A higher number of threads will allow faster population of device
+	 * lists but will also require more system resources.
+	 * 
+	 * @return	the number of action invoker threads.
+	 */
 	public int getNumActionInvokerThreads()
 	{
 		return OhNetInitParamsNumActionInvokerThreads(iHandle);
 	}
 	
+	/**
+	 * Get the number of invocations (actions) which should be pre-allocated.
+	 * 
+	 * <p>If more that this number are pending, the additional attempted invocations 
+	 * will block until a pre-allocated slot becomes clear.
+	 * 
+	 * <p>A higher number of invocations will decrease the likelihood and duration of
+	 * any UI-level delays but will also increase the peaks in RAM requirements.
+	 * 
+	 * @return	the number of pre-allocated invocations.
+	 */
 	public int getNumInvocations()
 	{
 		return OhNetInitParamsNumInvocations(iHandle);
 	}
 	
+	/**
+	 * Get the number of threads which should be dedicated to (un)subscribing
+	 * to state variables on a service + device.
+	 * 
+	 * <p>A higher number of threads will allow faster population of device
+	 * lists but will also require more system resources.
+	 * 
+	 * @return	the number of subscriber threads.
+	 */
 	public int getNumSubscriberThreads()
 	{
 		return OhNetInitParamsNumSubscriberThreads(iHandle);
 	}
 	
 	/**
-	 * Set a custom time that msearch responses should be spread out over.
+	 * Get the maximum time in milliseconds to wait before rejecting an event
+	 * update from an unknown source.
 	 * 
-	 * @param aSecs	time in seconds.  Must be between 1 and 5 (inclusive).
+	 * <p>It is possible for initial information on state variables to arrive
+	 * before a subscription is noted as complete. Waiting a short while before
+	 * rejecting events from unknown sources decreases the chances of missing
+	 * the initial event from a subscription.
+	 * 
+	 * @return	maximum time before rejecting an event update.
+	 */
+	public int getPendingSubscriptionTimeoutMs()
+	{
+		return OhNetInitParamsPendingSubscriptionTimeoutMs(iHandle);
+	}
+	
+	/**
+	 * Get the maximum time in seconds between device announcements for the
+	 * device stack.
+	 * 
+	 * <p>This value will appear in the maxage header for UPnP advertisements.
+	 * 
+	 * @return	the maximum time between device announcements.
+	 */
+	public int getDvMaxUpdateTimeSecs()
+	{
+		return OhNetInitParamsDvMaxUpdateTimeSecs(iHandle);
+	}
+	
+	/**
+	 * Get the number of threads which should be dedicated to processing
+	 * control/eventing/presentation requests.
+	 * 
+	 * <p>A higher number of threads may allow faster response to multiple
+	 * clients making concurrent requests but will also require more system
+	 * resources.
+	 * 
+	 * @return	the number of threads dedicated to processing requests.
+	 */
+	public int getDvNumServerThreads()
+	{
+		return OhNetInitParamsDvNumServerThreads(iHandle);
+	}
+	
+	/**
+	 * Get the number of threads which should be dedicated to publishing
+	 * changes to state variables on a service + device.
+	 * 
+	 * <p>A higher number of threads will allow faster publication of changes
+	 * but will also require more system resources.
+	 * 
+	 * @return	the number of publishing threads.
+	 */
+	public int getDvNumPublisherThreads()
+	{
+		return OhNetInitParamsDvNumPublisherThreads(iHandle);
+	}
+	
+	/**
+	 * Get the number of threads which will be dedicated to published changes
+	 * to state variables via WebSockets.
+	 * 
+	 * <p>One thread will be used per active (web browser) connection so a
+	 * higher number of threads will allow more concurrent clients but will
+	 * also require more system resources. Can be 0 for clients who do not
+	 * require HTML5 support.
+	 * 
+	 * @return	the number of WebSocket threads.
+	 */
+	public int getDvNumWebSocketThreads()
+	{
+		return OhNetInitParamsDvNumWebSocketThreads(iHandle);
+	}
+	
+	/**
+	 * Get the TCP port number the WebSocket server will run on.
+	 * 
+	 * <p>The default value is 0 (meaning that the OS will assign a port).
+	 * You should question your design if you need to use this.
+	 *
+	 * @return	the TCP port number the WebSocket server will run on.
+	 */
+	public int getDvWebSocketPort()
+	{
+		return OhNetInitParamsDvWebSocketPort(iHandle);
+	}
+	
+	/**
+	 * Check if use of Bonjour is enabled
+	 * 
+	 * <p>All <tt>DvDevice</tt> instances with an <tt>IResourceManager</tt>
+	 * will be published using Bonjour. 
+	 * 
+	 * <p>If a device sets the "Upnp.MdnsHostName" attribute, its presentation
+	 * will be available via http://[hostname].local.
+	 * 
+	 * <p>Behaviour when more than one DvDevice sets the "MdnsHostName" attribute
+	 * is undefined.
+	 * 
+	 * <p>Note that enabling Bonjour will cause the device stack to run a HTTP
+	 * server on port 80, requiring root privileges on Linux.
+	 * 
+	 * @return	<tt>true</tt> if Bonjour is enabled; <tt>false</tt> otherwise.
+	 */
+	public boolean getDvIsBonjourEnabled()
+	{
+		return OhNetInitParamsDvIsBonjourEnabled(iHandle) == 1;
+	}
+
+	/**
+	 * Set the timeout for TCP connections in milliseconds. Must be >0.
+	 *
+	 * @param aTimeoutMs	timeout in milliseconds.
+	 */
+	public void setTcpConnectTimeoutMs(int aTimeoutMs)
+	{
+		OhNetInitParamsSetTcpConnectTimeout(iHandle, aTimeoutMs);
+	}
+	
+	/**
+	 * Set the time in seconds that msearch responses should be spread out over.
+	 * Should be between 1 and 5 (inclusive).
+	 *
+	 * @param aSecs		msearch time in seconds.
 	 */
 	public void setMsearchTimeSecs(int aSecs)
 	{
@@ -102,17 +308,220 @@ public class InitParams
 	}
 	
 	/**
+	 * Set the time-to-live value for msearches.
+	 *
+	 * @param aTtl	time-to-live value for msearches.
+	 */
+	public void setMsearchTtl(int aTtl)
+	{
+		OhNetInitParamsSetMsearchTtl(iHandle, aTtl);
+	}
+	
+	/**
+	 * Set the number of threads which should be dedicated to eventing
+	 * (handling updates to subscribed state variables).
+	 *
+	 * @param aNumThreads	the number of eventing threads.
+	 */
+	public void setNumEventSessionThreads(int aNumThreads)
+	{
+		OhNetInitParamsSetNumEventSessionThreads(iHandle, aNumThreads);
+	}
+	
+	/**
+	 * Set the number of threads which should be dedicated to fetching
+	 * device/service XML.
+	 * 
+	 * <p>A higher number of threads will allow faster population of device
+	 * lists but will also require more system resources.
+	 *
+	 * @param aNumThreads	the number of XML fetcher threads.
+	 */
+	public void setNumXmlFetcherThreads(int aNumThreads)
+	{
+		OhNetInitParamsSetNumXmlFetcherThreads(iHandle, aNumThreads);
+	}
+	
+	/**
+	 * Set the number of threads which should be dedicated to invoking actions
+	 * on devices.
+	 * 
+	 * <p>A higher number of threads will allow faster population of device
+	 * lists but will also require more system resources.
+	 * 
+	 * @param aNumThreads	the number of action invoker threads.
+	 */
+	public void setNumActionInvokerThreads(int aNumThreads)
+	{
+		OhNetInitParamsSetNumActionInvokerThreads(iHandle, aNumThreads);
+	}
+	
+	/**
+	 * Set the number of invocations (actions) which should be pre-allocated.
+	 * 
+	 * <p>If more that this number are pending, the additional attempted invocations 
+	 * will block until a pre-allocated slot becomes clear.
+	 * 
+	 * <p>A higher number of invocations will decrease the likelihood and duration of
+	 * any UI-level delays but will also increase the peaks in RAM requirements.
+	 * 
+	 * @param aNumInvocations	the number of pre-allocated invocations.
+	 */
+	public void setNumInvocations(int aNumInvocations)
+	{
+		OhNetInitParamsSetNumInvocations(iHandle, aNumInvocations);
+	}
+	
+	/**
+	 * Set the number of threads which should be dedicated to (un)subscribing
+	 * to state variables on a service + device.
+	 * 
+	 * <p>A higher number of threads will allow faster population of device
+	 * lists but will also require more system resources.
+	 * 
+	 * @param aNumThreads	the number of subscriber threads.
+	 */
+	public void setNumSubscriberThreads(int aNumThreads)
+	{
+		OhNetInitParamsSetNumSubscriberThreads(iHandle, aNumThreads);
+	}
+	
+	/**
+	 * Set the maximum time in milliseconds to wait before rejecting an event
+	 * update from an unknown source.
+	 * 
+	 * <p>It is possible for initial information on state variables to arrive
+	 * before a subscription is noted as complete. Waiting a short while before
+	 * rejecting events from unknown sources decreases the chances of missing
+	 * the initial event from a subscription.
+	 * 
+	 * @param aTimeoutMs	maximum time before rejecting an event update.
+	 */
+	public void setPendingSubscriptionTimeoutMs(int aTimeoutMs)
+	{
+		OhNetInitParamsSetPendingSubscriptionTimeout(iHandle, aTimeoutMs);
+	}
+	
+	/**
 	 * Limit the library to using only the loopback network interface.
-	 * Useful for testing but not expected to be used in production code.
+	 * 
+	 * <p>Useful for testing but not expected to be used in production code.
 	 */
 	public void setUseLoopbackNetworkAdapter()
 	{
 		OhNetInitParamsSetUseLoopbackNetworkAdapter(iHandle);
 	}
 	
+	/**
+	 * Set the maximum time in seconds between device announcements for the
+	 * device stack.
+	 * 
+	 * <p>This value will appear in the maxage header for UPnP advertisements.
+	 * 
+	 * @param aSecs		the maximum time between device announcements.
+	 */
+	public void setDvMaxUpdateTimeSecs(int aSecs)
+	{
+		OhNetInitParamsSetDvMaxUpdateTime(iHandle, aSecs);
+	}
+	
+	/**
+	 * Set the number of threads which should be dedicated to processing
+	 * control/eventing/presentation requests.
+	 * 
+	 * <p>A higher number of threads may allow faster response to multiple
+	 * clients making concurrent requests but will also require more system
+	 * resources.
+	 * 
+	 * @param aNumThreads	the number of threads dedicated to processing requests.
+	 */
+	public void setDvNumServerThreads(int aNumThreads)
+	{
+		OhNetInitParamsSetDvNumServerThreads(iHandle, aNumThreads);
+	}
+	
+	/**
+	 * Set the number of threads which should be dedicated to publishing
+	 * changes to state variables on a service + device.
+	 * 
+	 * <p>A higher number of threads will allow faster publication of changes
+	 * but will also require more system resources.
+	 * 
+	 * @param aNumThreads	the number of publishing threads.
+	 */
+	public void setDvNumPublisherThreads(int aNumThreads)
+	{
+		OhNetInitParamsSetDvNumPublisherThreads(iHandle, aNumThreads);
+	}
+	
+	/**
+	 * Set the number of threads which will be dedicated to published changes
+	 * to state variables via WebSockets.
+	 * 
+	 * <p>One thread will be used per active (web browser) connection so a
+	 * higher number of threads will allow more concurrent clients but will
+	 * also require more system resources. Can be 0 for clients who do not
+	 * require HTML5 support.
+	 * 
+	 * @param aNumThreads	the number of WebSocket threads.
+	 */
+	public void setDvNumWebSocketThreads(int aNumThreads)
+	{
+		OhNetInitParamsSetDvNumWebSocketThreads(iHandle, aNumThreads);
+	}
+	
+	/**
+	 * Set the TCP port number the WebSocket server will run on.
+	 * 
+	 * <p>The default value is 0 (meaning that the OS will assign a port).
+	 * You should question your design if you need to use this.
+	 *
+	 * @param aPort		the TCP port number the WebSocket server will run on.
+	 */
+	public void setDvWebSocketPort(int aPort)
+	{
+		OhNetInitParamsSetDvWebSocketPort(iHandle, aPort);
+	}
+	
+	/**
+	 * Enable the use of Bonjour.
+	 * 
+	 * <p>All <tt>DvDevice</tt> instances with an <tt>IResourceManager</tt>
+	 * will be published using Bonjour. 
+	 * 
+	 * <p>If a device sets the "Upnp.MdnsHostName" attribute, its presentation
+	 * will be available via http://[hostname].local.
+	 * 
+	 * <p>Behaviour when more than one DvDevice sets the "MdnsHostName" attribute
+	 * is undefined.
+	 * 
+	 * <p>Note that enabling Bonjour will cause the device stack to run a HTTP
+	 * server on port 80, requiring root privileges on Linux.
+	 */
+	public void setDvEnableBonjour()
+	{
+		OhNetInitParamsSetDvEnableBonjour(iHandle);
+	}
+	
 	public static void main(String[] args)
 	{
 		InitParams params = new InitParams();
+		
+		int tcpTimeout 				= params.getTcpConnectTimeoutMs();
+		int msearchTime 			= params.getMsearchTimeSecs();
+		int msearchTtl				= params.getMsearchTtl();
+		int numEventThreads			= params.getNumEventSessionThreads();
+		int numFetcherThreads		= params.getNumXmlFetcherThreads();
+		int numInvokerThreads		= params.getNumActionInvokerThreads();
+		int numInvocations			= params.getNumInvocations();
+		int numSubscriberThreads	= params.getNumSubscriberThreads();
+		int pendingSubsTimeout 		= params.getPendingSubscriptionTimeoutMs();
+		int maxUpdateTime			= params.getDvMaxUpdateTimeSecs();
+		int numServerThreads		= params.getDvNumServerThreads();
+		int numPublisherThreads		= params.getDvNumPublisherThreads();
+		int numWebSocketThreads		= params.getDvNumWebSocketThreads();
+		int webSocketPort			= params.getDvWebSocketPort();
+		boolean bonjourEnabled		= params.getDvIsBonjourEnabled();
 		
 		System.out.println("Params TCP timeout:\t\t\t" + params.getTcpConnectTimeoutMs() + " ms");
         System.out.println("Params search time:\t\t\t" + params.getMsearchTimeSecs() + " secs");
@@ -122,7 +531,45 @@ public class InitParams
         System.out.println("Params num action invoker threads:\t" + params.getNumActionInvokerThreads());
         System.out.println("Params num invocations:\t\t\t" + params.getNumInvocations());
         System.out.println("Params num subscriber threads:\t\t" + params.getNumSubscriberThreads());
+        System.out.println("Params pending subscription timeout:\t" + params.getPendingSubscriptionTimeoutMs());
+        System.out.println("Params device max update time:\t\t" + params.getDvMaxUpdateTimeSecs() + " secs");
+        System.out.println("Params num server threads:\t\t" + params.getDvNumServerThreads());
+        System.out.println("Params num publisher threads:\t\t" + params.getDvNumPublisherThreads());
+        System.out.println("Params num WebSocket threads:\t\t" + params.getDvNumWebSocketThreads());
+        System.out.println("Params WebSocket port:\t\t\t" + params.getDvWebSocketPort());
+        System.out.println("Params Bonjour enabled:\t\t\t" + params.getDvIsBonjourEnabled());
         
+		params.setTcpConnectTimeoutMs(tcpTimeout + 1);
+		params.setMsearchTimeSecs(msearchTime + 1);
+		params.setMsearchTtl(msearchTtl + 1);
+		params.setNumEventSessionThreads(numEventThreads + 1);
+		params.setNumXmlFetcherThreads(numFetcherThreads + 1);
+		params.setNumActionInvokerThreads(numInvokerThreads + 1);
+		params.setNumInvocations(numInvocations + 1);
+		params.setNumSubscriberThreads(numSubscriberThreads + 1);
+		params.setPendingSubscriptionTimeoutMs(pendingSubsTimeout + 1);
+		params.setDvMaxUpdateTimeSecs(maxUpdateTime + 1);
+		params.setDvNumServerThreads(numServerThreads + 1);
+		params.setDvNumPublisherThreads(numPublisherThreads + 1);
+		params.setDvNumWebSocketThreads(numWebSocketThreads + 1);
+		params.setDvWebSocketPort(webSocketPort + 1);
+		params.setDvEnableBonjour();
+		
+		System.out.println();
+		System.out.println("Params TCP timeout:\t\t\t" + params.getTcpConnectTimeoutMs() + " ms");
+        System.out.println("Params search time:\t\t\t" + params.getMsearchTimeSecs() + " secs");
+        System.out.println("Params search TTL:\t\t\t" + params.getMsearchTtl());
+        System.out.println("Params num event session threads:\t" + params.getNumEventSessionThreads());
+        System.out.println("Params num XML fetcher threads:\t\t" + params.getNumXmlFetcherThreads());
+        System.out.println("Params num action invoker threads:\t" + params.getNumActionInvokerThreads());
+        System.out.println("Params num invocations:\t\t\t" + params.getNumInvocations());
+        System.out.println("Params num subscriber threads:\t\t" + params.getNumSubscriberThreads());
+        System.out.println("Params pending subscription timeout:\t" + params.getPendingSubscriptionTimeoutMs());
+        System.out.println("Params device max update time:\t\t" + params.getDvMaxUpdateTimeSecs() + " secs");
+        System.out.println("Params num server threads:\t\t" + params.getDvNumServerThreads());
+        System.out.println("Params num publisher threads:\t\t" + params.getDvNumPublisherThreads());
+        System.out.println("Params num WebSocket threads:\t\t" + params.getDvNumWebSocketThreads());
+        System.out.println("Params WebSocket port:\t\t\t" + params.getDvWebSocketPort());
+        System.out.println("Params Bonjour enabled:\t\t\t" + params.getDvIsBonjourEnabled());
 	}
-	
 }

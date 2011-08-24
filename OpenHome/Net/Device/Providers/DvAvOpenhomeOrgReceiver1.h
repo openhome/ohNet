@@ -115,7 +115,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Play(IDvInvocation& aInvocation);
     /**
      * Stop action.
      *
@@ -123,7 +123,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Stop(IDvInvocation& aInvocation);
     /**
      * SetSender action.
      *
@@ -131,7 +131,7 @@ private:
      * SetSender action for the owning device.
      * Must be implemented iff EnableActionSetSender was called.
      */
-    virtual void SetSender(IInvocationResponse& aResponse, TUint aVersion, const Brx& aUri, const Brx& aMetadata);
+    virtual void SetSender(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata);
     /**
      * Sender action.
      *
@@ -139,7 +139,7 @@ private:
      * Sender action for the owning device.
      * Must be implemented iff EnableActionSender was called.
      */
-    virtual void Sender(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aUri, IInvocationResponseString& aMetadata);
+    virtual void Sender(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
     /**
      * ProtocolInfo action.
      *
@@ -147,7 +147,7 @@ private:
      * ProtocolInfo action for the owning device.
      * Must be implemented iff EnableActionProtocolInfo was called.
      */
-    virtual void ProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
     /**
      * TransportState action.
      *
@@ -155,15 +155,15 @@ private:
      * TransportState action for the owning device.
      * Must be implemented iff EnableActionTransportState was called.
      */
-    virtual void TransportState(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgReceiver1();
-    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetSender(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSender(IDviInvocation& aInvocation, TUint aVersion);
-    void DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoTransportState(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoSetSender(IDviInvocation& aInvocation);
+    void DoSender(IDviInvocation& aInvocation);
+    void DoProtocolInfo(IDviInvocation& aInvocation);
+    void DoTransportState(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyUri;
     PropertyString* iPropertyMetadata;

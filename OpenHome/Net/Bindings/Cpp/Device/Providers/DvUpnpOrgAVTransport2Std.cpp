@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -316,7 +317,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionSetStateVariables()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetAVTransportURI(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetAVTransportURI(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -327,12 +328,13 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetAVTransportURI(IDviInvocation& aInvo
     aInvocation.InvocationReadString("CurrentURIMetaData", buf_CurrentURIMetaData);
     std::string CurrentURIMetaData((const char*)buf_CurrentURIMetaData.Ptr(), buf_CurrentURIMetaData.Bytes());
     aInvocation.InvocationReadEnd();
-    SetAVTransportURI(aVersion, InstanceID, CurrentURI, CurrentURIMetaData);
+    DvInvocationStd invocation(aInvocation);
+    SetAVTransportURI(invocation, InstanceID, CurrentURI, CurrentURIMetaData);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetNextAVTransportURI(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetNextAVTransportURI(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -343,12 +345,13 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetNextAVTransportURI(IDviInvocation& a
     aInvocation.InvocationReadString("NextURIMetaData", buf_NextURIMetaData);
     std::string NextURIMetaData((const char*)buf_NextURIMetaData.Ptr(), buf_NextURIMetaData.Bytes());
     aInvocation.InvocationReadEnd();
-    SetNextAVTransportURI(aVersion, InstanceID, NextURI, NextURIMetaData);
+    DvInvocationStd invocation(aInvocation);
+    SetNextAVTransportURI(invocation, InstanceID, NextURI, NextURIMetaData);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -362,46 +365,47 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocatio
     std::string respPlayMedium;
     std::string respRecordMedium;
     std::string respWriteStatus;
-    GetMediaInfo(aVersion, InstanceID, respNrTracks, respMediaDuration, respCurrentURI, respCurrentURIMetaData, respNextURI, respNextURIMetaData, respPlayMedium, respRecordMedium, respWriteStatus);
+    DvInvocationStd invocation(aInvocation);
+    GetMediaInfo(invocation, InstanceID, respNrTracks, respMediaDuration, respCurrentURI, respCurrentURIMetaData, respNextURI, respNextURIMetaData, respPlayMedium, respRecordMedium, respWriteStatus);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterNrTracks(aInvocation, "NrTracks");
+    DviInvocationResponseUint respWriterNrTracks(aInvocation, "NrTracks");
     respWriterNrTracks.Write(respNrTracks);
-    InvocationResponseString respWriterMediaDuration(aInvocation, "MediaDuration");
+    DviInvocationResponseString respWriterMediaDuration(aInvocation, "MediaDuration");
     Brn buf_MediaDuration((const TByte*)respMediaDuration.c_str(), (TUint)respMediaDuration.length());
     respWriterMediaDuration.Write(buf_MediaDuration);
     aInvocation.InvocationWriteStringEnd("MediaDuration");
-    InvocationResponseString respWriterCurrentURI(aInvocation, "CurrentURI");
+    DviInvocationResponseString respWriterCurrentURI(aInvocation, "CurrentURI");
     Brn buf_CurrentURI((const TByte*)respCurrentURI.c_str(), (TUint)respCurrentURI.length());
     respWriterCurrentURI.Write(buf_CurrentURI);
     aInvocation.InvocationWriteStringEnd("CurrentURI");
-    InvocationResponseString respWriterCurrentURIMetaData(aInvocation, "CurrentURIMetaData");
+    DviInvocationResponseString respWriterCurrentURIMetaData(aInvocation, "CurrentURIMetaData");
     Brn buf_CurrentURIMetaData((const TByte*)respCurrentURIMetaData.c_str(), (TUint)respCurrentURIMetaData.length());
     respWriterCurrentURIMetaData.Write(buf_CurrentURIMetaData);
     aInvocation.InvocationWriteStringEnd("CurrentURIMetaData");
-    InvocationResponseString respWriterNextURI(aInvocation, "NextURI");
+    DviInvocationResponseString respWriterNextURI(aInvocation, "NextURI");
     Brn buf_NextURI((const TByte*)respNextURI.c_str(), (TUint)respNextURI.length());
     respWriterNextURI.Write(buf_NextURI);
     aInvocation.InvocationWriteStringEnd("NextURI");
-    InvocationResponseString respWriterNextURIMetaData(aInvocation, "NextURIMetaData");
+    DviInvocationResponseString respWriterNextURIMetaData(aInvocation, "NextURIMetaData");
     Brn buf_NextURIMetaData((const TByte*)respNextURIMetaData.c_str(), (TUint)respNextURIMetaData.length());
     respWriterNextURIMetaData.Write(buf_NextURIMetaData);
     aInvocation.InvocationWriteStringEnd("NextURIMetaData");
-    InvocationResponseString respWriterPlayMedium(aInvocation, "PlayMedium");
+    DviInvocationResponseString respWriterPlayMedium(aInvocation, "PlayMedium");
     Brn buf_PlayMedium((const TByte*)respPlayMedium.c_str(), (TUint)respPlayMedium.length());
     respWriterPlayMedium.Write(buf_PlayMedium);
     aInvocation.InvocationWriteStringEnd("PlayMedium");
-    InvocationResponseString respWriterRecordMedium(aInvocation, "RecordMedium");
+    DviInvocationResponseString respWriterRecordMedium(aInvocation, "RecordMedium");
     Brn buf_RecordMedium((const TByte*)respRecordMedium.c_str(), (TUint)respRecordMedium.length());
     respWriterRecordMedium.Write(buf_RecordMedium);
     aInvocation.InvocationWriteStringEnd("RecordMedium");
-    InvocationResponseString respWriterWriteStatus(aInvocation, "WriteStatus");
+    DviInvocationResponseString respWriterWriteStatus(aInvocation, "WriteStatus");
     Brn buf_WriteStatus((const TByte*)respWriteStatus.c_str(), (TUint)respWriteStatus.length());
     respWriterWriteStatus.Write(buf_WriteStatus);
     aInvocation.InvocationWriteStringEnd("WriteStatus");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -416,50 +420,51 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvoc
     std::string respPlayMedium;
     std::string respRecordMedium;
     std::string respWriteStatus;
-    GetMediaInfo_Ext(aVersion, InstanceID, respCurrentType, respNrTracks, respMediaDuration, respCurrentURI, respCurrentURIMetaData, respNextURI, respNextURIMetaData, respPlayMedium, respRecordMedium, respWriteStatus);
+    DvInvocationStd invocation(aInvocation);
+    GetMediaInfo_Ext(invocation, InstanceID, respCurrentType, respNrTracks, respMediaDuration, respCurrentURI, respCurrentURIMetaData, respNextURI, respNextURIMetaData, respPlayMedium, respRecordMedium, respWriteStatus);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterCurrentType(aInvocation, "CurrentType");
+    DviInvocationResponseString respWriterCurrentType(aInvocation, "CurrentType");
     Brn buf_CurrentType((const TByte*)respCurrentType.c_str(), (TUint)respCurrentType.length());
     respWriterCurrentType.Write(buf_CurrentType);
     aInvocation.InvocationWriteStringEnd("CurrentType");
-    InvocationResponseUint respWriterNrTracks(aInvocation, "NrTracks");
+    DviInvocationResponseUint respWriterNrTracks(aInvocation, "NrTracks");
     respWriterNrTracks.Write(respNrTracks);
-    InvocationResponseString respWriterMediaDuration(aInvocation, "MediaDuration");
+    DviInvocationResponseString respWriterMediaDuration(aInvocation, "MediaDuration");
     Brn buf_MediaDuration((const TByte*)respMediaDuration.c_str(), (TUint)respMediaDuration.length());
     respWriterMediaDuration.Write(buf_MediaDuration);
     aInvocation.InvocationWriteStringEnd("MediaDuration");
-    InvocationResponseString respWriterCurrentURI(aInvocation, "CurrentURI");
+    DviInvocationResponseString respWriterCurrentURI(aInvocation, "CurrentURI");
     Brn buf_CurrentURI((const TByte*)respCurrentURI.c_str(), (TUint)respCurrentURI.length());
     respWriterCurrentURI.Write(buf_CurrentURI);
     aInvocation.InvocationWriteStringEnd("CurrentURI");
-    InvocationResponseString respWriterCurrentURIMetaData(aInvocation, "CurrentURIMetaData");
+    DviInvocationResponseString respWriterCurrentURIMetaData(aInvocation, "CurrentURIMetaData");
     Brn buf_CurrentURIMetaData((const TByte*)respCurrentURIMetaData.c_str(), (TUint)respCurrentURIMetaData.length());
     respWriterCurrentURIMetaData.Write(buf_CurrentURIMetaData);
     aInvocation.InvocationWriteStringEnd("CurrentURIMetaData");
-    InvocationResponseString respWriterNextURI(aInvocation, "NextURI");
+    DviInvocationResponseString respWriterNextURI(aInvocation, "NextURI");
     Brn buf_NextURI((const TByte*)respNextURI.c_str(), (TUint)respNextURI.length());
     respWriterNextURI.Write(buf_NextURI);
     aInvocation.InvocationWriteStringEnd("NextURI");
-    InvocationResponseString respWriterNextURIMetaData(aInvocation, "NextURIMetaData");
+    DviInvocationResponseString respWriterNextURIMetaData(aInvocation, "NextURIMetaData");
     Brn buf_NextURIMetaData((const TByte*)respNextURIMetaData.c_str(), (TUint)respNextURIMetaData.length());
     respWriterNextURIMetaData.Write(buf_NextURIMetaData);
     aInvocation.InvocationWriteStringEnd("NextURIMetaData");
-    InvocationResponseString respWriterPlayMedium(aInvocation, "PlayMedium");
+    DviInvocationResponseString respWriterPlayMedium(aInvocation, "PlayMedium");
     Brn buf_PlayMedium((const TByte*)respPlayMedium.c_str(), (TUint)respPlayMedium.length());
     respWriterPlayMedium.Write(buf_PlayMedium);
     aInvocation.InvocationWriteStringEnd("PlayMedium");
-    InvocationResponseString respWriterRecordMedium(aInvocation, "RecordMedium");
+    DviInvocationResponseString respWriterRecordMedium(aInvocation, "RecordMedium");
     Brn buf_RecordMedium((const TByte*)respRecordMedium.c_str(), (TUint)respRecordMedium.length());
     respWriterRecordMedium.Write(buf_RecordMedium);
     aInvocation.InvocationWriteStringEnd("RecordMedium");
-    InvocationResponseString respWriterWriteStatus(aInvocation, "WriteStatus");
+    DviInvocationResponseString respWriterWriteStatus(aInvocation, "WriteStatus");
     Brn buf_WriteStatus((const TByte*)respWriteStatus.c_str(), (TUint)respWriteStatus.length());
     respWriterWriteStatus.Write(buf_WriteStatus);
     aInvocation.InvocationWriteStringEnd("WriteStatus");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -467,24 +472,25 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvoc
     std::string respCurrentTransportState;
     std::string respCurrentTransportStatus;
     std::string respCurrentSpeed;
-    GetTransportInfo(aVersion, InstanceID, respCurrentTransportState, respCurrentTransportStatus, respCurrentSpeed);
+    DvInvocationStd invocation(aInvocation);
+    GetTransportInfo(invocation, InstanceID, respCurrentTransportState, respCurrentTransportStatus, respCurrentSpeed);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterCurrentTransportState(aInvocation, "CurrentTransportState");
+    DviInvocationResponseString respWriterCurrentTransportState(aInvocation, "CurrentTransportState");
     Brn buf_CurrentTransportState((const TByte*)respCurrentTransportState.c_str(), (TUint)respCurrentTransportState.length());
     respWriterCurrentTransportState.Write(buf_CurrentTransportState);
     aInvocation.InvocationWriteStringEnd("CurrentTransportState");
-    InvocationResponseString respWriterCurrentTransportStatus(aInvocation, "CurrentTransportStatus");
+    DviInvocationResponseString respWriterCurrentTransportStatus(aInvocation, "CurrentTransportStatus");
     Brn buf_CurrentTransportStatus((const TByte*)respCurrentTransportStatus.c_str(), (TUint)respCurrentTransportStatus.length());
     respWriterCurrentTransportStatus.Write(buf_CurrentTransportStatus);
     aInvocation.InvocationWriteStringEnd("CurrentTransportStatus");
-    InvocationResponseString respWriterCurrentSpeed(aInvocation, "CurrentSpeed");
+    DviInvocationResponseString respWriterCurrentSpeed(aInvocation, "CurrentSpeed");
     Brn buf_CurrentSpeed((const TByte*)respCurrentSpeed.c_str(), (TUint)respCurrentSpeed.length());
     respWriterCurrentSpeed.Write(buf_CurrentSpeed);
     aInvocation.InvocationWriteStringEnd("CurrentSpeed");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -497,38 +503,39 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvoca
     std::string respAbsTime;
     int32_t respRelCount;
     int32_t respAbsCount;
-    GetPositionInfo(aVersion, InstanceID, respTrack, respTrackDuration, respTrackMetaData, respTrackURI, respRelTime, respAbsTime, respRelCount, respAbsCount);
+    DvInvocationStd invocation(aInvocation);
+    GetPositionInfo(invocation, InstanceID, respTrack, respTrackDuration, respTrackMetaData, respTrackURI, respRelTime, respAbsTime, respRelCount, respAbsCount);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterTrack(aInvocation, "Track");
+    DviInvocationResponseUint respWriterTrack(aInvocation, "Track");
     respWriterTrack.Write(respTrack);
-    InvocationResponseString respWriterTrackDuration(aInvocation, "TrackDuration");
+    DviInvocationResponseString respWriterTrackDuration(aInvocation, "TrackDuration");
     Brn buf_TrackDuration((const TByte*)respTrackDuration.c_str(), (TUint)respTrackDuration.length());
     respWriterTrackDuration.Write(buf_TrackDuration);
     aInvocation.InvocationWriteStringEnd("TrackDuration");
-    InvocationResponseString respWriterTrackMetaData(aInvocation, "TrackMetaData");
+    DviInvocationResponseString respWriterTrackMetaData(aInvocation, "TrackMetaData");
     Brn buf_TrackMetaData((const TByte*)respTrackMetaData.c_str(), (TUint)respTrackMetaData.length());
     respWriterTrackMetaData.Write(buf_TrackMetaData);
     aInvocation.InvocationWriteStringEnd("TrackMetaData");
-    InvocationResponseString respWriterTrackURI(aInvocation, "TrackURI");
+    DviInvocationResponseString respWriterTrackURI(aInvocation, "TrackURI");
     Brn buf_TrackURI((const TByte*)respTrackURI.c_str(), (TUint)respTrackURI.length());
     respWriterTrackURI.Write(buf_TrackURI);
     aInvocation.InvocationWriteStringEnd("TrackURI");
-    InvocationResponseString respWriterRelTime(aInvocation, "RelTime");
+    DviInvocationResponseString respWriterRelTime(aInvocation, "RelTime");
     Brn buf_RelTime((const TByte*)respRelTime.c_str(), (TUint)respRelTime.length());
     respWriterRelTime.Write(buf_RelTime);
     aInvocation.InvocationWriteStringEnd("RelTime");
-    InvocationResponseString respWriterAbsTime(aInvocation, "AbsTime");
+    DviInvocationResponseString respWriterAbsTime(aInvocation, "AbsTime");
     Brn buf_AbsTime((const TByte*)respAbsTime.c_str(), (TUint)respAbsTime.length());
     respWriterAbsTime.Write(buf_AbsTime);
     aInvocation.InvocationWriteStringEnd("AbsTime");
-    InvocationResponseInt respWriterRelCount(aInvocation, "RelCount");
+    DviInvocationResponseInt respWriterRelCount(aInvocation, "RelCount");
     respWriterRelCount.Write(respRelCount);
-    InvocationResponseInt respWriterAbsCount(aInvocation, "AbsCount");
+    DviInvocationResponseInt respWriterAbsCount(aInvocation, "AbsCount");
     respWriterAbsCount.Write(respAbsCount);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -536,54 +543,57 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& a
     std::string respPlayMedia;
     std::string respRecMedia;
     std::string respRecQualityModes;
-    GetDeviceCapabilities(aVersion, InstanceID, respPlayMedia, respRecMedia, respRecQualityModes);
+    DvInvocationStd invocation(aInvocation);
+    GetDeviceCapabilities(invocation, InstanceID, respPlayMedia, respRecMedia, respRecQualityModes);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterPlayMedia(aInvocation, "PlayMedia");
+    DviInvocationResponseString respWriterPlayMedia(aInvocation, "PlayMedia");
     Brn buf_PlayMedia((const TByte*)respPlayMedia.c_str(), (TUint)respPlayMedia.length());
     respWriterPlayMedia.Write(buf_PlayMedia);
     aInvocation.InvocationWriteStringEnd("PlayMedia");
-    InvocationResponseString respWriterRecMedia(aInvocation, "RecMedia");
+    DviInvocationResponseString respWriterRecMedia(aInvocation, "RecMedia");
     Brn buf_RecMedia((const TByte*)respRecMedia.c_str(), (TUint)respRecMedia.length());
     respWriterRecMedia.Write(buf_RecMedia);
     aInvocation.InvocationWriteStringEnd("RecMedia");
-    InvocationResponseString respWriterRecQualityModes(aInvocation, "RecQualityModes");
+    DviInvocationResponseString respWriterRecQualityModes(aInvocation, "RecQualityModes");
     Brn buf_RecQualityModes((const TByte*)respRecQualityModes.c_str(), (TUint)respRecQualityModes.length());
     respWriterRecQualityModes.Write(buf_RecQualityModes);
     aInvocation.InvocationWriteStringEnd("RecQualityModes");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     std::string respPlayMode;
     std::string respRecQualityMode;
-    GetTransportSettings(aVersion, InstanceID, respPlayMode, respRecQualityMode);
+    DvInvocationStd invocation(aInvocation);
+    GetTransportSettings(invocation, InstanceID, respPlayMode, respRecQualityMode);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterPlayMode(aInvocation, "PlayMode");
+    DviInvocationResponseString respWriterPlayMode(aInvocation, "PlayMode");
     Brn buf_PlayMode((const TByte*)respPlayMode.c_str(), (TUint)respPlayMode.length());
     respWriterPlayMode.Write(buf_PlayMode);
     aInvocation.InvocationWriteStringEnd("PlayMode");
-    InvocationResponseString respWriterRecQualityMode(aInvocation, "RecQualityMode");
+    DviInvocationResponseString respWriterRecQualityMode(aInvocation, "RecQualityMode");
     Brn buf_RecQualityMode((const TByte*)respRecQualityMode.c_str(), (TUint)respRecQualityMode.length());
     respWriterRecQualityMode.Write(buf_RecQualityMode);
     aInvocation.InvocationWriteStringEnd("RecQualityMode");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoStop(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoStop(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    Stop(aVersion, InstanceID);
+    DvInvocationStd invocation(aInvocation);
+    Stop(invocation, InstanceID);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoPlay(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoPlay(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -591,32 +601,35 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoPlay(IDviInvocation& aInvocation, uint3
     aInvocation.InvocationReadString("Speed", buf_Speed);
     std::string Speed((const char*)buf_Speed.Ptr(), buf_Speed.Bytes());
     aInvocation.InvocationReadEnd();
-    Play(aVersion, InstanceID, Speed);
+    DvInvocationStd invocation(aInvocation);
+    Play(invocation, InstanceID, Speed);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoPause(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoPause(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    Pause(aVersion, InstanceID);
+    DvInvocationStd invocation(aInvocation);
+    Pause(invocation, InstanceID);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoRecord(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoRecord(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    Record(aVersion, InstanceID);
+    DvInvocationStd invocation(aInvocation);
+    Record(invocation, InstanceID);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSeek(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSeek(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -627,32 +640,35 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSeek(IDviInvocation& aInvocation, uint3
     aInvocation.InvocationReadString("Target", buf_Target);
     std::string Target((const char*)buf_Target.Ptr(), buf_Target.Bytes());
     aInvocation.InvocationReadEnd();
-    Seek(aVersion, InstanceID, Unit, Target);
+    DvInvocationStd invocation(aInvocation);
+    Seek(invocation, InstanceID, Unit, Target);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoNext(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoNext(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    Next(aVersion, InstanceID);
+    DvInvocationStd invocation(aInvocation);
+    Next(invocation, InstanceID);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoPrevious(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoPrevious(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    Previous(aVersion, InstanceID);
+    DvInvocationStd invocation(aInvocation);
+    Previous(invocation, InstanceID);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -660,12 +676,13 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode(IDviInvocation& aInvocation
     aInvocation.InvocationReadString("NewPlayMode", buf_NewPlayMode);
     std::string NewPlayMode((const char*)buf_NewPlayMode.Ptr(), buf_NewPlayMode.Bytes());
     aInvocation.InvocationReadEnd();
-    SetPlayMode(aVersion, InstanceID, NewPlayMode);
+    DvInvocationStd invocation(aInvocation);
+    SetPlayMode(invocation, InstanceID, NewPlayMode);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetRecordQualityMode(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetRecordQualityMode(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -673,42 +690,45 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetRecordQualityMode(IDviInvocation& aI
     aInvocation.InvocationReadString("NewRecordQualityMode", buf_NewRecordQualityMode);
     std::string NewRecordQualityMode((const char*)buf_NewRecordQualityMode.Ptr(), buf_NewRecordQualityMode.Bytes());
     aInvocation.InvocationReadEnd();
-    SetRecordQualityMode(aVersion, InstanceID, NewRecordQualityMode);
+    DvInvocationStd invocation(aInvocation);
+    SetRecordQualityMode(invocation, InstanceID, NewRecordQualityMode);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetCurrentTransportActions(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetCurrentTransportActions(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     std::string respActions;
-    GetCurrentTransportActions(aVersion, InstanceID, respActions);
+    DvInvocationStd invocation(aInvocation);
+    GetCurrentTransportActions(invocation, InstanceID, respActions);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterActions(aInvocation, "Actions");
+    DviInvocationResponseString respWriterActions(aInvocation, "Actions");
     Brn buf_Actions((const TByte*)respActions.c_str(), (TUint)respActions.length());
     respWriterActions.Write(buf_Actions);
     aInvocation.InvocationWriteStringEnd("Actions");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetDRMState(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetDRMState(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     std::string respCurrentDRMState;
-    GetDRMState(aVersion, InstanceID, respCurrentDRMState);
+    DvInvocationStd invocation(aInvocation);
+    GetDRMState(invocation, InstanceID, respCurrentDRMState);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterCurrentDRMState(aInvocation, "CurrentDRMState");
+    DviInvocationResponseString respWriterCurrentDRMState(aInvocation, "CurrentDRMState");
     Brn buf_CurrentDRMState((const TByte*)respCurrentDRMState.c_str(), (TUint)respCurrentDRMState.length());
     respWriterCurrentDRMState.Write(buf_CurrentDRMState);
     aInvocation.InvocationWriteStringEnd("CurrentDRMState");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetStateVariables(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetStateVariables(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -717,16 +737,17 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetStateVariables(IDviInvocation& aInvo
     std::string StateVariableList((const char*)buf_StateVariableList.Ptr(), buf_StateVariableList.Bytes());
     aInvocation.InvocationReadEnd();
     std::string respStateVariableValuePairs;
-    GetStateVariables(aVersion, InstanceID, StateVariableList, respStateVariableValuePairs);
+    DvInvocationStd invocation(aInvocation);
+    GetStateVariables(invocation, InstanceID, StateVariableList, respStateVariableValuePairs);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
+    DviInvocationResponseString respWriterStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
     Brn buf_StateVariableValuePairs((const TByte*)respStateVariableValuePairs.c_str(), (TUint)respStateVariableValuePairs.length());
     respWriterStateVariableValuePairs.Write(buf_StateVariableValuePairs);
     aInvocation.InvocationWriteStringEnd("StateVariableValuePairs");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetStateVariables(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetStateVariables(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -744,116 +765,117 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetStateVariables(IDviInvocation& aInvo
     std::string StateVariableValuePairs((const char*)buf_StateVariableValuePairs.Ptr(), buf_StateVariableValuePairs.Bytes());
     aInvocation.InvocationReadEnd();
     std::string respStateVariableList;
-    SetStateVariables(aVersion, InstanceID, AVTransportUDN, ServiceType, ServiceId, StateVariableValuePairs, respStateVariableList);
+    DvInvocationStd invocation(aInvocation);
+    SetStateVariables(invocation, InstanceID, AVTransportUDN, ServiceType, ServiceId, StateVariableValuePairs, respStateVariableList);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterStateVariableList(aInvocation, "StateVariableList");
+    DviInvocationResponseString respWriterStateVariableList(aInvocation, "StateVariableList");
     Brn buf_StateVariableList((const TByte*)respStateVariableList.c_str(), (TUint)respStateVariableList.length());
     respWriterStateVariableList.Write(buf_StateVariableList);
     aInvocation.InvocationWriteStringEnd("StateVariableList");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::SetAVTransportURI(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aCurrentURI*/, const std::string& /*aCurrentURIMetaData*/)
+void DvProviderUpnpOrgAVTransport2Cpp::SetAVTransportURI(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aCurrentURI*/, const std::string& /*aCurrentURIMetaData*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::SetNextAVTransportURI(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aNextURI*/, const std::string& /*aNextURIMetaData*/)
+void DvProviderUpnpOrgAVTransport2Cpp::SetNextAVTransportURI(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aNextURI*/, const std::string& /*aNextURIMetaData*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetMediaInfo(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aNrTracks*/, std::string& /*aMediaDuration*/, std::string& /*aCurrentURI*/, std::string& /*aCurrentURIMetaData*/, std::string& /*aNextURI*/, std::string& /*aNextURIMetaData*/, std::string& /*aPlayMedium*/, std::string& /*aRecordMedium*/, std::string& /*aWriteStatus*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetMediaInfo(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, uint32_t& /*aNrTracks*/, std::string& /*aMediaDuration*/, std::string& /*aCurrentURI*/, std::string& /*aCurrentURIMetaData*/, std::string& /*aNextURI*/, std::string& /*aNextURIMetaData*/, std::string& /*aPlayMedium*/, std::string& /*aRecordMedium*/, std::string& /*aWriteStatus*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetMediaInfo_Ext(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentType*/, uint32_t& /*aNrTracks*/, std::string& /*aMediaDuration*/, std::string& /*aCurrentURI*/, std::string& /*aCurrentURIMetaData*/, std::string& /*aNextURI*/, std::string& /*aNextURIMetaData*/, std::string& /*aPlayMedium*/, std::string& /*aRecordMedium*/, std::string& /*aWriteStatus*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetMediaInfo_Ext(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentType*/, uint32_t& /*aNrTracks*/, std::string& /*aMediaDuration*/, std::string& /*aCurrentURI*/, std::string& /*aCurrentURIMetaData*/, std::string& /*aNextURI*/, std::string& /*aNextURIMetaData*/, std::string& /*aPlayMedium*/, std::string& /*aRecordMedium*/, std::string& /*aWriteStatus*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetTransportInfo(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentTransportState*/, std::string& /*aCurrentTransportStatus*/, std::string& /*aCurrentSpeed*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetTransportInfo(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentTransportState*/, std::string& /*aCurrentTransportStatus*/, std::string& /*aCurrentSpeed*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetPositionInfo(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aTrack*/, std::string& /*aTrackDuration*/, std::string& /*aTrackMetaData*/, std::string& /*aTrackURI*/, std::string& /*aRelTime*/, std::string& /*aAbsTime*/, int32_t& /*aRelCount*/, int32_t& /*aAbsCount*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetPositionInfo(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, uint32_t& /*aTrack*/, std::string& /*aTrackDuration*/, std::string& /*aTrackMetaData*/, std::string& /*aTrackURI*/, std::string& /*aRelTime*/, std::string& /*aAbsTime*/, int32_t& /*aRelCount*/, int32_t& /*aAbsCount*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetDeviceCapabilities(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, std::string& /*aPlayMedia*/, std::string& /*aRecMedia*/, std::string& /*aRecQualityModes*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetDeviceCapabilities(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, std::string& /*aPlayMedia*/, std::string& /*aRecMedia*/, std::string& /*aRecQualityModes*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetTransportSettings(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, std::string& /*aPlayMode*/, std::string& /*aRecQualityMode*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetTransportSettings(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, std::string& /*aPlayMode*/, std::string& /*aRecQualityMode*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::Stop(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport2Cpp::Stop(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::Play(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aSpeed*/)
+void DvProviderUpnpOrgAVTransport2Cpp::Play(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aSpeed*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::Pause(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport2Cpp::Pause(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::Record(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport2Cpp::Record(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::Seek(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aUnit*/, const std::string& /*aTarget*/)
+void DvProviderUpnpOrgAVTransport2Cpp::Seek(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aUnit*/, const std::string& /*aTarget*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::Next(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport2Cpp::Next(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::Previous(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport2Cpp::Previous(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::SetPlayMode(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aNewPlayMode*/)
+void DvProviderUpnpOrgAVTransport2Cpp::SetPlayMode(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aNewPlayMode*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::SetRecordQualityMode(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aNewRecordQualityMode*/)
+void DvProviderUpnpOrgAVTransport2Cpp::SetRecordQualityMode(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aNewRecordQualityMode*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetCurrentTransportActions(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, std::string& /*aActions*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetCurrentTransportActions(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, std::string& /*aActions*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetDRMState(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentDRMState*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetDRMState(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentDRMState*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::GetStateVariables(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aStateVariableList*/, std::string& /*aStateVariableValuePairs*/)
+void DvProviderUpnpOrgAVTransport2Cpp::GetStateVariables(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aStateVariableList*/, std::string& /*aStateVariableValuePairs*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::SetStateVariables(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aAVTransportUDN*/, const std::string& /*aServiceType*/, const std::string& /*aServiceId*/, const std::string& /*aStateVariableValuePairs*/, std::string& /*aStateVariableList*/)
+void DvProviderUpnpOrgAVTransport2Cpp::SetStateVariables(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aAVTransportUDN*/, const std::string& /*aServiceType*/, const std::string& /*aServiceId*/, const std::string& /*aStateVariableValuePairs*/, std::string& /*aStateVariableList*/)
 {
     ASSERTS();
 }

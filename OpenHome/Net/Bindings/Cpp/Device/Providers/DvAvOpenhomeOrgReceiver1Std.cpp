@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -126,25 +127,27 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::EnableActionTransportState()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoPlay(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoPlay(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    Play(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    Play(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoStop(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoStop(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    Stop(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    Stop(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSetSender(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSetSender(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Uri;
@@ -154,84 +157,88 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSetSender(IDviInvocation& aInvocatio
     aInvocation.InvocationReadString("Metadata", buf_Metadata);
     std::string Metadata((const char*)buf_Metadata.Ptr(), buf_Metadata.Bytes());
     aInvocation.InvocationReadEnd();
-    SetSender(aVersion, Uri, Metadata);
+    DvInvocationStd invocation(aInvocation);
+    SetSender(invocation, Uri, Metadata);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSender(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSender(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respUri;
     std::string respMetadata;
-    Sender(aVersion, respUri, respMetadata);
+    DvInvocationStd invocation(aInvocation);
+    Sender(invocation, respUri, respMetadata);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterUri(aInvocation, "Uri");
+    DviInvocationResponseString respWriterUri(aInvocation, "Uri");
     Brn buf_Uri((const TByte*)respUri.c_str(), (TUint)respUri.length());
     respWriterUri.Write(buf_Uri);
     aInvocation.InvocationWriteStringEnd("Uri");
-    InvocationResponseString respWriterMetadata(aInvocation, "Metadata");
+    DviInvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
     aInvocation.InvocationWriteStringEnd("Metadata");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoProtocolInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValue;
-    ProtocolInfo(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    ProtocolInfo(invocation, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoTransportState(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoTransportState(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValue;
-    TransportState(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    TransportState(invocation, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::Play(uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::Play(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::Stop(uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::Stop(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::SetSender(uint32_t /*aVersion*/, const std::string& /*aUri*/, const std::string& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::SetSender(IDvInvocationStd& /*aInvocation*/, const std::string& /*aUri*/, const std::string& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::Sender(uint32_t /*aVersion*/, std::string& /*aUri*/, std::string& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::Sender(IDvInvocationStd& /*aInvocation*/, std::string& /*aUri*/, std::string& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::ProtocolInfo(uint32_t /*aVersion*/, std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::ProtocolInfo(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::TransportState(uint32_t /*aVersion*/, std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::TransportState(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
 {
     ASSERTS();
 }

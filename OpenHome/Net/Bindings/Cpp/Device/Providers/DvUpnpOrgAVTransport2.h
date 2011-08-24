@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -187,7 +188,7 @@ private:
      * SetAVTransportURI action for the owning device.
      * Must be implemented iff EnableActionSetAVTransportURI was called.
      */
-    virtual void SetAVTransportURI(uint32_t aVersion, uint32_t aInstanceID, const std::string& aCurrentURI, const std::string& aCurrentURIMetaData);
+    virtual void SetAVTransportURI(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aCurrentURI, const std::string& aCurrentURIMetaData);
     /**
      * SetNextAVTransportURI action.
      *
@@ -195,7 +196,7 @@ private:
      * SetNextAVTransportURI action for the owning device.
      * Must be implemented iff EnableActionSetNextAVTransportURI was called.
      */
-    virtual void SetNextAVTransportURI(uint32_t aVersion, uint32_t aInstanceID, const std::string& aNextURI, const std::string& aNextURIMetaData);
+    virtual void SetNextAVTransportURI(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aNextURI, const std::string& aNextURIMetaData);
     /**
      * GetMediaInfo action.
      *
@@ -203,7 +204,7 @@ private:
      * GetMediaInfo action for the owning device.
      * Must be implemented iff EnableActionGetMediaInfo was called.
      */
-    virtual void GetMediaInfo(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus);
+    virtual void GetMediaInfo(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus);
     /**
      * GetMediaInfo_Ext action.
      *
@@ -211,7 +212,7 @@ private:
      * GetMediaInfo_Ext action for the owning device.
      * Must be implemented iff EnableActionGetMediaInfo_Ext was called.
      */
-    virtual void GetMediaInfo_Ext(uint32_t aVersion, uint32_t aInstanceID, std::string& aCurrentType, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus);
+    virtual void GetMediaInfo_Ext(IDvInvocationStd& aInvocation, uint32_t aInstanceID, std::string& aCurrentType, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus);
     /**
      * GetTransportInfo action.
      *
@@ -219,7 +220,7 @@ private:
      * GetTransportInfo action for the owning device.
      * Must be implemented iff EnableActionGetTransportInfo was called.
      */
-    virtual void GetTransportInfo(uint32_t aVersion, uint32_t aInstanceID, std::string& aCurrentTransportState, std::string& aCurrentTransportStatus, std::string& aCurrentSpeed);
+    virtual void GetTransportInfo(IDvInvocationStd& aInvocation, uint32_t aInstanceID, std::string& aCurrentTransportState, std::string& aCurrentTransportStatus, std::string& aCurrentSpeed);
     /**
      * GetPositionInfo action.
      *
@@ -227,7 +228,7 @@ private:
      * GetPositionInfo action for the owning device.
      * Must be implemented iff EnableActionGetPositionInfo was called.
      */
-    virtual void GetPositionInfo(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aTrack, std::string& aTrackDuration, std::string& aTrackMetaData, std::string& aTrackURI, std::string& aRelTime, std::string& aAbsTime, int32_t& aRelCount, int32_t& aAbsCount);
+    virtual void GetPositionInfo(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aTrack, std::string& aTrackDuration, std::string& aTrackMetaData, std::string& aTrackURI, std::string& aRelTime, std::string& aAbsTime, int32_t& aRelCount, int32_t& aAbsCount);
     /**
      * GetDeviceCapabilities action.
      *
@@ -235,7 +236,7 @@ private:
      * GetDeviceCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetDeviceCapabilities was called.
      */
-    virtual void GetDeviceCapabilities(uint32_t aVersion, uint32_t aInstanceID, std::string& aPlayMedia, std::string& aRecMedia, std::string& aRecQualityModes);
+    virtual void GetDeviceCapabilities(IDvInvocationStd& aInvocation, uint32_t aInstanceID, std::string& aPlayMedia, std::string& aRecMedia, std::string& aRecQualityModes);
     /**
      * GetTransportSettings action.
      *
@@ -243,7 +244,7 @@ private:
      * GetTransportSettings action for the owning device.
      * Must be implemented iff EnableActionGetTransportSettings was called.
      */
-    virtual void GetTransportSettings(uint32_t aVersion, uint32_t aInstanceID, std::string& aPlayMode, std::string& aRecQualityMode);
+    virtual void GetTransportSettings(IDvInvocationStd& aInvocation, uint32_t aInstanceID, std::string& aPlayMode, std::string& aRecQualityMode);
     /**
      * Stop action.
      *
@@ -251,7 +252,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(uint32_t aVersion, uint32_t aInstanceID);
+    virtual void Stop(IDvInvocationStd& aInvocation, uint32_t aInstanceID);
     /**
      * Play action.
      *
@@ -259,7 +260,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(uint32_t aVersion, uint32_t aInstanceID, const std::string& aSpeed);
+    virtual void Play(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aSpeed);
     /**
      * Pause action.
      *
@@ -267,7 +268,7 @@ private:
      * Pause action for the owning device.
      * Must be implemented iff EnableActionPause was called.
      */
-    virtual void Pause(uint32_t aVersion, uint32_t aInstanceID);
+    virtual void Pause(IDvInvocationStd& aInvocation, uint32_t aInstanceID);
     /**
      * Record action.
      *
@@ -275,7 +276,7 @@ private:
      * Record action for the owning device.
      * Must be implemented iff EnableActionRecord was called.
      */
-    virtual void Record(uint32_t aVersion, uint32_t aInstanceID);
+    virtual void Record(IDvInvocationStd& aInvocation, uint32_t aInstanceID);
     /**
      * Seek action.
      *
@@ -283,7 +284,7 @@ private:
      * Seek action for the owning device.
      * Must be implemented iff EnableActionSeek was called.
      */
-    virtual void Seek(uint32_t aVersion, uint32_t aInstanceID, const std::string& aUnit, const std::string& aTarget);
+    virtual void Seek(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aUnit, const std::string& aTarget);
     /**
      * Next action.
      *
@@ -291,7 +292,7 @@ private:
      * Next action for the owning device.
      * Must be implemented iff EnableActionNext was called.
      */
-    virtual void Next(uint32_t aVersion, uint32_t aInstanceID);
+    virtual void Next(IDvInvocationStd& aInvocation, uint32_t aInstanceID);
     /**
      * Previous action.
      *
@@ -299,7 +300,7 @@ private:
      * Previous action for the owning device.
      * Must be implemented iff EnableActionPrevious was called.
      */
-    virtual void Previous(uint32_t aVersion, uint32_t aInstanceID);
+    virtual void Previous(IDvInvocationStd& aInvocation, uint32_t aInstanceID);
     /**
      * SetPlayMode action.
      *
@@ -307,7 +308,7 @@ private:
      * SetPlayMode action for the owning device.
      * Must be implemented iff EnableActionSetPlayMode was called.
      */
-    virtual void SetPlayMode(uint32_t aVersion, uint32_t aInstanceID, const std::string& aNewPlayMode);
+    virtual void SetPlayMode(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aNewPlayMode);
     /**
      * SetRecordQualityMode action.
      *
@@ -315,7 +316,7 @@ private:
      * SetRecordQualityMode action for the owning device.
      * Must be implemented iff EnableActionSetRecordQualityMode was called.
      */
-    virtual void SetRecordQualityMode(uint32_t aVersion, uint32_t aInstanceID, const std::string& aNewRecordQualityMode);
+    virtual void SetRecordQualityMode(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aNewRecordQualityMode);
     /**
      * GetCurrentTransportActions action.
      *
@@ -323,7 +324,7 @@ private:
      * GetCurrentTransportActions action for the owning device.
      * Must be implemented iff EnableActionGetCurrentTransportActions was called.
      */
-    virtual void GetCurrentTransportActions(uint32_t aVersion, uint32_t aInstanceID, std::string& aActions);
+    virtual void GetCurrentTransportActions(IDvInvocationStd& aInvocation, uint32_t aInstanceID, std::string& aActions);
     /**
      * GetDRMState action.
      *
@@ -331,7 +332,7 @@ private:
      * GetDRMState action for the owning device.
      * Must be implemented iff EnableActionGetDRMState was called.
      */
-    virtual void GetDRMState(uint32_t aVersion, uint32_t aInstanceID, std::string& aCurrentDRMState);
+    virtual void GetDRMState(IDvInvocationStd& aInvocation, uint32_t aInstanceID, std::string& aCurrentDRMState);
     /**
      * GetStateVariables action.
      *
@@ -339,7 +340,7 @@ private:
      * GetStateVariables action for the owning device.
      * Must be implemented iff EnableActionGetStateVariables was called.
      */
-    virtual void GetStateVariables(uint32_t aVersion, uint32_t aInstanceID, const std::string& aStateVariableList, std::string& aStateVariableValuePairs);
+    virtual void GetStateVariables(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aStateVariableList, std::string& aStateVariableValuePairs);
     /**
      * SetStateVariables action.
      *
@@ -347,30 +348,30 @@ private:
      * SetStateVariables action for the owning device.
      * Must be implemented iff EnableActionSetStateVariables was called.
      */
-    virtual void SetStateVariables(uint32_t aVersion, uint32_t aInstanceID, const std::string& aAVTransportUDN, const std::string& aServiceType, const std::string& aServiceId, const std::string& aStateVariableValuePairs, std::string& aStateVariableList);
+    virtual void SetStateVariables(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aAVTransportUDN, const std::string& aServiceType, const std::string& aServiceId, const std::string& aStateVariableValuePairs, std::string& aStateVariableList);
 private:
     DvProviderUpnpOrgAVTransport2Cpp();
-    void DoSetAVTransportURI(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetNextAVTransportURI(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetMediaInfo(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetMediaInfo_Ext(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetTransportInfo(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetPositionInfo(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetDeviceCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetTransportSettings(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStop(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPause(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoRecord(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSeek(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoNext(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPrevious(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetPlayMode(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRecordQualityMode(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetCurrentTransportActions(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetDRMState(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetStateVariables(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStateVariables(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetAVTransportURI(IDviInvocation& aInvocation);
+    void DoSetNextAVTransportURI(IDviInvocation& aInvocation);
+    void DoGetMediaInfo(IDviInvocation& aInvocation);
+    void DoGetMediaInfo_Ext(IDviInvocation& aInvocation);
+    void DoGetTransportInfo(IDviInvocation& aInvocation);
+    void DoGetPositionInfo(IDviInvocation& aInvocation);
+    void DoGetDeviceCapabilities(IDviInvocation& aInvocation);
+    void DoGetTransportSettings(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoPause(IDviInvocation& aInvocation);
+    void DoRecord(IDviInvocation& aInvocation);
+    void DoSeek(IDviInvocation& aInvocation);
+    void DoNext(IDviInvocation& aInvocation);
+    void DoPrevious(IDviInvocation& aInvocation);
+    void DoSetPlayMode(IDviInvocation& aInvocation);
+    void DoSetRecordQualityMode(IDviInvocation& aInvocation);
+    void DoGetCurrentTransportActions(IDviInvocation& aInvocation);
+    void DoGetDRMState(IDviInvocation& aInvocation);
+    void DoGetStateVariables(IDviInvocation& aInvocation);
+    void DoSetStateVariables(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyLastChange;
     PropertyString* iPropertyDRMState;

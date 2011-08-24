@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,58 +22,70 @@ extern "C" {
 /**
  * Callback which runs when the GetSearchCapabilities action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetSearchCapabilities
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetSearchCapabilities
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aSearchCaps
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2GetSearchCapabilities)(void* aPtr, uint32_t aVersion, char** aSearchCaps);
+typedef int32_t (STDCALL *CallbackContentDirectory2GetSearchCapabilities)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aSearchCaps);
 /**
  * Callback which runs when the GetSortCapabilities action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetSortCapabilities
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetSortCapabilities
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aSortCaps
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2GetSortCapabilities)(void* aPtr, uint32_t aVersion, char** aSortCaps);
+typedef int32_t (STDCALL *CallbackContentDirectory2GetSortCapabilities)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aSortCaps);
 /**
  * Callback which runs when the GetSortExtensionCapabilities action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetSortExtensionCapabilities
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetSortExtensionCapabilities
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aSortExtensionCaps
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2GetSortExtensionCapabilities)(void* aPtr, uint32_t aVersion, char** aSortExtensionCaps);
+typedef int32_t (STDCALL *CallbackContentDirectory2GetSortExtensionCapabilities)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aSortExtensionCaps);
 /**
  * Callback which runs when the GetFeatureList action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetFeatureList
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetFeatureList
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aFeatureList
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2GetFeatureList)(void* aPtr, uint32_t aVersion, char** aFeatureList);
+typedef int32_t (STDCALL *CallbackContentDirectory2GetFeatureList)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aFeatureList);
 /**
  * Callback which runs when the GetSystemUpdateID action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetSystemUpdateID
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetSystemUpdateID
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2GetSystemUpdateID)(void* aPtr, uint32_t aVersion, uint32_t* aId);
+typedef int32_t (STDCALL *CallbackContentDirectory2GetSystemUpdateID)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aId);
 /**
  * Callback which runs when the Browse action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionBrowse
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionBrowse
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aObjectID
  * @param[in]  aBrowseFlag
  * @param[in]  aFilter
@@ -86,12 +99,14 @@ typedef int32_t (STDCALL *CallbackContentDirectory2GetSystemUpdateID)(void* aPtr
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2Browse)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackContentDirectory2Browse)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Callback which runs when the Search action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionSearch
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionSearch
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aContainerID
  * @param[in]  aSearchCriteria
  * @param[in]  aFilter
@@ -105,12 +120,14 @@ typedef int32_t (STDCALL *CallbackContentDirectory2Browse)(void* aPtr, uint32_t 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2Search)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackContentDirectory2Search)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Callback which runs when the CreateObject action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionCreateObject
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionCreateObject
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aContainerID
  * @param[in]  aElements
  * @param[out] aObjectID
@@ -118,90 +135,106 @@ typedef int32_t (STDCALL *CallbackContentDirectory2Search)(void* aPtr, uint32_t 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2CreateObject)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult);
+typedef int32_t (STDCALL *CallbackContentDirectory2CreateObject)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult);
 /**
  * Callback which runs when the DestroyObject action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionDestroyObject
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionDestroyObject
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aObjectID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2DestroyObject)(void* aPtr, uint32_t aVersion, const char* aObjectID);
+typedef int32_t (STDCALL *CallbackContentDirectory2DestroyObject)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aObjectID);
 /**
  * Callback which runs when the UpdateObject action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionUpdateObject
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionUpdateObject
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aObjectID
  * @param[in]  aCurrentTagValue
  * @param[in]  aNewTagValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2UpdateObject)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue);
+typedef int32_t (STDCALL *CallbackContentDirectory2UpdateObject)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue);
 /**
  * Callback which runs when the MoveObject action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionMoveObject
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionMoveObject
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aObjectID
  * @param[in]  aNewParentID
  * @param[out] aNewObjectID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2MoveObject)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aNewParentID, char** aNewObjectID);
+typedef int32_t (STDCALL *CallbackContentDirectory2MoveObject)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aObjectID, const char* aNewParentID, char** aNewObjectID);
 /**
  * Callback which runs when the ImportResource action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionImportResource
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionImportResource
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aSourceURI
  * @param[in]  aDestinationURI
  * @param[out] aTransferID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2ImportResource)(void* aPtr, uint32_t aVersion, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
+typedef int32_t (STDCALL *CallbackContentDirectory2ImportResource)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
 /**
  * Callback which runs when the ExportResource action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionExportResource
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionExportResource
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aSourceURI
  * @param[in]  aDestinationURI
  * @param[out] aTransferID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2ExportResource)(void* aPtr, uint32_t aVersion, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
+typedef int32_t (STDCALL *CallbackContentDirectory2ExportResource)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
 /**
  * Callback which runs when the DeleteResource action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionDeleteResource
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionDeleteResource
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aResourceURI
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2DeleteResource)(void* aPtr, uint32_t aVersion, const char* aResourceURI);
+typedef int32_t (STDCALL *CallbackContentDirectory2DeleteResource)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aResourceURI);
 /**
  * Callback which runs when the StopTransferResource action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionStopTransferResource
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionStopTransferResource
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aTransferID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2StopTransferResource)(void* aPtr, uint32_t aVersion, uint32_t aTransferID);
+typedef int32_t (STDCALL *CallbackContentDirectory2StopTransferResource)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aTransferID);
 /**
  * Callback which runs when the GetTransferProgress action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetTransferProgress
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionGetTransferProgress
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aTransferID
  * @param[out] aTransferStatus
  * @param[out] aTransferLength
@@ -209,19 +242,21 @@ typedef int32_t (STDCALL *CallbackContentDirectory2StopTransferResource)(void* a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2GetTransferProgress)(void* aPtr, uint32_t aVersion, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
+typedef int32_t (STDCALL *CallbackContentDirectory2GetTransferProgress)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
 /**
  * Callback which runs when the CreateReference action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionCreateReference
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgContentDirectory2EnableActionCreateReference
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aContainerID
  * @param[in]  aObjectID
  * @param[out] aNewID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackContentDirectory2CreateReference)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aObjectID, char** aNewID);
+typedef int32_t (STDCALL *CallbackContentDirectory2CreateReference)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aContainerID, const char* aObjectID, char** aNewID);
 
 /**
  * Provider constructor

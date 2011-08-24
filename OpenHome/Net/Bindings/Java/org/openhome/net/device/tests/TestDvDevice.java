@@ -20,17 +20,18 @@ public class TestDvDevice implements ICpDeviceListListener
 {
 	private List<CpDevice> iDeviceList;
 	private DeviceBasic iDevice;
+	private Semaphore iSem;
 	
 	public TestDvDevice()
 	{
 		System.out.println("TestDvDeviceJava - starting");
 		iDevice = new DeviceBasic();
 		iDeviceList = new ArrayList<CpDevice>();
-		CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("openhome.org", "TestBasic", 1, this, this);
-		Semaphore sem = new Semaphore(1);
-		sem.acquireUninterruptibly();
+		CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("openhome.org", "TestBasic", 1, this);
+		iSem = new Semaphore(1);
+		iSem.acquireUninterruptibly();
 		try {
-			sem.tryAcquire(1000, TimeUnit.MILLISECONDS);
+			iSem.tryAcquire(30*1000, TimeUnit.MILLISECONDS);
 		}
 		catch (InterruptedException ie)
 		{
@@ -62,6 +63,7 @@ public class TestDvDevice implements ICpDeviceListListener
 			{
                 aDevice.addRef();
 				iDeviceList.add(aDevice);
+				iSem.release();
 			}
 		}
 		

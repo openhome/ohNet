@@ -16,22 +16,22 @@ class OpenHome::Net::ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1C
 public:
     ProviderTestBasic(DvDeviceStd& aDevice);
 private:
-    void Increment(uint32_t aVersion, uint32_t aValue, uint32_t& aResult);
-    void Decrement(uint32_t aVersion, int32_t aValue, int32_t& aResult);
-    void Toggle(uint32_t aVersion, bool aValue, bool& aResult);
-    void EchoString(uint32_t aVersion, const std::string& aValue, std::string& aResult);
-    void EchoBinary(uint32_t aVersion, const std::string& aValue, std::string& aResult);
-    void SetUint(uint32_t aVersion, uint32_t aValueUint);
-    void GetUint(uint32_t aVersion, uint32_t& aValueUint);
-    void SetInt(uint32_t aVersion, int32_t aValueInt);
-    void GetInt(uint32_t aVersion, int32_t& aValueInt);
-    void SetBool(uint32_t aVersion, bool aValueBool);
-    void GetBool(uint32_t aVersion, bool& aValueBool);
-    void SetMultiple(uint32_t aVersion, uint32_t aValueUint, int32_t aValueInt, bool aValueBool);
-    void SetString(uint32_t aVersion, const std::string& aValueStr);
-    void GetString(uint32_t aVersion, std::string& aValueStr);
-    void SetBinary(uint32_t aVersion, const std::string& aValueBin);
-    void GetBinary(uint32_t aVersion, std::string& aValueBin);
+    void Increment(IDvInvocationStd& aInvocation, uint32_t aValue, uint32_t& aResult);
+    void Decrement(IDvInvocationStd& aInvocation, int32_t aValue, int32_t& aResult);
+    void Toggle(IDvInvocationStd& aInvocation, bool aValue, bool& aResult);
+    void EchoString(IDvInvocationStd& aInvocation, const std::string& aValue, std::string& aResult);
+    void EchoBinary(IDvInvocationStd& aInvocation, const std::string& aValue, std::string& aResult);
+    void SetUint(IDvInvocationStd& aInvocation, uint32_t aValueUint);
+    void GetUint(IDvInvocationStd& aInvocation, uint32_t& aValueUint);
+    void SetInt(IDvInvocationStd& aInvocation, int32_t aValueInt);
+    void GetInt(IDvInvocationStd& aInvocation, int32_t& aValueInt);
+    void SetBool(IDvInvocationStd& aInvocation, bool aValueBool);
+    void GetBool(IDvInvocationStd& aInvocation, bool& aValueBool);
+    void SetMultiple(IDvInvocationStd& aInvocation, uint32_t aValueUint, int32_t aValueInt, bool aValueBool);
+    void SetString(IDvInvocationStd& aInvocation, const std::string& aValueStr);
+    void GetString(IDvInvocationStd& aInvocation, std::string& aValueStr);
+    void SetBinary(IDvInvocationStd& aInvocation, const std::string& aValueBin);
+    void GetBinary(IDvInvocationStd& aInvocation, std::string& aValueBin);
 };
 
 
@@ -63,62 +63,63 @@ ProviderTestBasic::ProviderTestBasic(DvDeviceStd& aDevice)
     EnableActionGetBinary();
 }
 
-void ProviderTestBasic::Increment(uint32_t /*aVersion*/, uint32_t aValue, uint32_t& aResult)
+void ProviderTestBasic::Increment(IDvInvocationStd& aInvocation, uint32_t aValue, uint32_t& aResult)
 {
+    ASSERT(aInvocation.Version() == 1);
     aResult = ++aValue;
 }
 
-void ProviderTestBasic::Decrement(uint32_t /*aVersion*/, int32_t aValue, int32_t& aResult)
+void ProviderTestBasic::Decrement(IDvInvocationStd& /*aInvocation*/, int32_t aValue, int32_t& aResult)
 {
     aResult = --aValue;
 }
 
-void ProviderTestBasic::Toggle(uint32_t /*aVersion*/, bool aValue, bool& aResult)
+void ProviderTestBasic::Toggle(IDvInvocationStd& /*aInvocation*/, bool aValue, bool& aResult)
 {
     aResult = !aValue;
 }
 
-void ProviderTestBasic::EchoString(uint32_t /*aVersion*/, const std::string& aValue, std::string& aResult)
+void ProviderTestBasic::EchoString(IDvInvocationStd& /*aInvocation*/, const std::string& aValue, std::string& aResult)
 {
     aResult.assign(aValue);
 }
 
-void ProviderTestBasic::EchoBinary(uint32_t /*aVersion*/, const std::string& aValue, std::string& aResult)
+void ProviderTestBasic::EchoBinary(IDvInvocationStd& /*aInvocation*/, const std::string& aValue, std::string& aResult)
 {
     aResult.assign(aValue);
 }
 
-void ProviderTestBasic::SetUint(uint32_t /*aVersion*/, uint32_t aValueUint)
+void ProviderTestBasic::SetUint(IDvInvocationStd& /*aInvocation*/, uint32_t aValueUint)
 {
     SetPropertyVarUint(aValueUint);
 }
 
-void ProviderTestBasic::GetUint(uint32_t /*aVersion*/, uint32_t& aValueUint)
+void ProviderTestBasic::GetUint(IDvInvocationStd& /*aInvocation*/, uint32_t& aValueUint)
 {
     GetPropertyVarUint(aValueUint);
 }
 
-void ProviderTestBasic::SetInt(uint32_t /*aVersion*/, int32_t aValueInt)
+void ProviderTestBasic::SetInt(IDvInvocationStd& /*aInvocation*/, int32_t aValueInt)
 {
     SetPropertyVarInt(aValueInt);
 }
 
-void ProviderTestBasic::GetInt(uint32_t /*aVersion*/, int32_t& aValueInt)
+void ProviderTestBasic::GetInt(IDvInvocationStd& /*aInvocation*/, int32_t& aValueInt)
 {
     GetPropertyVarInt(aValueInt);
 }
 
-void ProviderTestBasic::SetBool(uint32_t /*aVersion*/, bool aValueBool)
+void ProviderTestBasic::SetBool(IDvInvocationStd& /*aInvocation*/, bool aValueBool)
 {
     SetPropertyVarBool(aValueBool);
 }
 
-void ProviderTestBasic::GetBool(uint32_t /*aVersion*/, bool& aValueBool)
+void ProviderTestBasic::GetBool(IDvInvocationStd& /*aInvocation*/, bool& aValueBool)
 {
     GetPropertyVarBool(aValueBool);
 }
 
-void ProviderTestBasic::SetMultiple(uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, bool aValueBool)
+void ProviderTestBasic::SetMultiple(IDvInvocationStd& /*aInvocation*/, uint32_t aValueUint, int32_t aValueInt, bool aValueBool)
 {
     PropertiesLock();
     SetPropertyVarUint(aValueUint);
@@ -127,22 +128,22 @@ void ProviderTestBasic::SetMultiple(uint32_t /*aVersion*/, uint32_t aValueUint, 
     PropertiesUnlock();
 }
 
-void ProviderTestBasic::SetString(uint32_t /*aVersion*/, const std::string& aValueStr)
+void ProviderTestBasic::SetString(IDvInvocationStd& /*aInvocation*/, const std::string& aValueStr)
 {
     SetPropertyVarStr(aValueStr);
 }
 
-void ProviderTestBasic::GetString(uint32_t /*aVersion*/, std::string& aValueStr)
+void ProviderTestBasic::GetString(IDvInvocationStd& /*aInvocation*/, std::string& aValueStr)
 {
     GetPropertyVarStr(aValueStr);
 }
 
-void ProviderTestBasic::SetBinary(uint32_t /*aVersion*/, const std::string& aValueBin)
+void ProviderTestBasic::SetBinary(IDvInvocationStd& /*aInvocation*/, const std::string& aValueBin)
 {
     SetPropertyVarBin(aValueBin);
 }
 
-void ProviderTestBasic::GetBinary(uint32_t /*aVersion*/, std::string& aValueBin)
+void ProviderTestBasic::GetBinary(IDvInvocationStd& /*aInvocation*/, std::string& aValueBin)
 {
     GetPropertyVarBin(aValueBin);
 }

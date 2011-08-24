@@ -514,8 +514,8 @@ namespace OpenHome.Net.Device.Providers
         /// Play action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlay was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void Play(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void Play(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -527,8 +527,8 @@ namespace OpenHome.Net.Device.Providers
         /// Pause action for the owning device.
         ///
         /// Must be implemented iff EnableActionPause was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void Pause(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void Pause(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -540,8 +540,8 @@ namespace OpenHome.Net.Device.Providers
         /// Stop action for the owning device.
         ///
         /// Must be implemented iff EnableActionStop was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void Stop(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void Stop(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -553,9 +553,9 @@ namespace OpenHome.Net.Device.Providers
         /// SeekSecondAbsolute action for the owning device.
         ///
         /// Must be implemented iff EnableActionSeekSecondAbsolute was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SeekSecondAbsolute(uint aVersion, uint aValue)
+        protected virtual void SeekSecondAbsolute(IDvInvocation aInvocation, uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -567,9 +567,9 @@ namespace OpenHome.Net.Device.Providers
         /// SeekSecondRelative action for the owning device.
         ///
         /// Must be implemented iff EnableActionSeekSecondRelative was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void SeekSecondRelative(uint aVersion, int aValue)
+        protected virtual void SeekSecondRelative(IDvInvocation aInvocation, int aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -581,10 +581,10 @@ namespace OpenHome.Net.Device.Providers
         /// Channel action for the owning device.
         ///
         /// Must be implemented iff EnableActionChannel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aUri"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void Channel(uint aVersion, out string aUri, out string aMetadata)
+        protected virtual void Channel(IDvInvocation aInvocation, out string aUri, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -596,10 +596,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetChannel action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetChannel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aUri"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void SetChannel(uint aVersion, string aUri, string aMetadata)
+        protected virtual void SetChannel(IDvInvocation aInvocation, string aUri, string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -611,9 +611,9 @@ namespace OpenHome.Net.Device.Providers
         /// TransportState action for the owning device.
         ///
         /// Must be implemented iff EnableActionTransportState was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void TransportState(uint aVersion, out string aValue)
+        protected virtual void TransportState(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -625,9 +625,9 @@ namespace OpenHome.Net.Device.Providers
         /// Id action for the owning device.
         ///
         /// Must be implemented iff EnableActionId was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Id(uint aVersion, out uint aValue)
+        protected virtual void Id(IDvInvocation aInvocation, out uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -639,10 +639,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetId action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetId was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
         /// <param name="aUri"></param>
-        protected virtual void SetId(uint aVersion, uint aValue, string aUri)
+        protected virtual void SetId(IDvInvocation aInvocation, uint aValue, string aUri)
         {
             throw (new ActionDisabledError());
         }
@@ -654,10 +654,10 @@ namespace OpenHome.Net.Device.Providers
         /// Read action for the owning device.
         ///
         /// Must be implemented iff EnableActionRead was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void Read(uint aVersion, uint aId, out string aMetadata)
+        protected virtual void Read(IDvInvocation aInvocation, uint aId, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -669,10 +669,10 @@ namespace OpenHome.Net.Device.Providers
         /// ReadList action for the owning device.
         ///
         /// Must be implemented iff EnableActionReadList was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aIdList"></param>
         /// <param name="aChannelList"></param>
-        protected virtual void ReadList(uint aVersion, string aIdList, out string aChannelList)
+        protected virtual void ReadList(IDvInvocation aInvocation, string aIdList, out string aChannelList)
         {
             throw (new ActionDisabledError());
         }
@@ -684,10 +684,10 @@ namespace OpenHome.Net.Device.Providers
         /// IdArray action for the owning device.
         ///
         /// Must be implemented iff EnableActionIdArray was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aToken"></param>
         /// <param name="aArray"></param>
-        protected virtual void IdArray(uint aVersion, out uint aToken, out byte[] aArray)
+        protected virtual void IdArray(IDvInvocation aInvocation, out uint aToken, out byte[] aArray)
         {
             throw (new ActionDisabledError());
         }
@@ -699,10 +699,10 @@ namespace OpenHome.Net.Device.Providers
         /// IdArrayChanged action for the owning device.
         ///
         /// Must be implemented iff EnableActionIdArrayChanged was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aToken"></param>
         /// <param name="aValue"></param>
-        protected virtual void IdArrayChanged(uint aVersion, uint aToken, out bool aValue)
+        protected virtual void IdArrayChanged(IDvInvocation aInvocation, uint aToken, out bool aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -714,9 +714,9 @@ namespace OpenHome.Net.Device.Providers
         /// ChannelsMax action for the owning device.
         ///
         /// Must be implemented iff EnableActionChannelsMax was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void ChannelsMax(uint aVersion, out uint aValue)
+        protected virtual void ChannelsMax(IDvInvocation aInvocation, out uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -728,14 +728,14 @@ namespace OpenHome.Net.Device.Providers
         /// ProtocolInfo action for the owning device.
         ///
         /// Must be implemented iff EnableActionProtocolInfo was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void ProtocolInfo(uint aVersion, out string aValue)
+        protected virtual void ProtocolInfo(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -744,7 +744,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Play(aVersion);
+                self.Play(invocation);
             }
             catch (ActionError)
             {
@@ -780,7 +780,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPause(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -789,7 +789,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Pause(aVersion);
+                self.Pause(invocation);
             }
             catch (ActionError)
             {
@@ -825,7 +825,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -834,7 +834,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Stop(aVersion);
+                self.Stop(invocation);
             }
             catch (ActionError)
             {
@@ -870,7 +870,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -881,7 +881,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadUint("Value");
                 invocation.ReadEnd();
-                self.SeekSecondAbsolute(aVersion, value);
+                self.SeekSecondAbsolute(invocation, value);
             }
             catch (ActionError)
             {
@@ -917,7 +917,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -928,7 +928,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadInt("Value");
                 invocation.ReadEnd();
-                self.SeekSecondRelative(aVersion, value);
+                self.SeekSecondRelative(invocation, value);
             }
             catch (ActionError)
             {
@@ -964,7 +964,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoChannel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoChannel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -975,7 +975,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Channel(aVersion, out uri, out metadata);
+                self.Channel(invocation, out uri, out metadata);
             }
             catch (ActionError)
             {
@@ -1013,7 +1013,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetChannel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetChannel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1026,7 +1026,7 @@ namespace OpenHome.Net.Device.Providers
                 uri = invocation.ReadString("Uri");
                 metadata = invocation.ReadString("Metadata");
                 invocation.ReadEnd();
-                self.SetChannel(aVersion, uri, metadata);
+                self.SetChannel(invocation, uri, metadata);
             }
             catch (ActionError)
             {
@@ -1062,7 +1062,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTransportState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTransportState(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1072,7 +1072,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.TransportState(aVersion, out value);
+                self.TransportState(invocation, out value);
             }
             catch (ActionError)
             {
@@ -1109,7 +1109,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1119,7 +1119,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Id(aVersion, out value);
+                self.Id(invocation, out value);
             }
             catch (ActionError)
             {
@@ -1156,7 +1156,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1169,7 +1169,7 @@ namespace OpenHome.Net.Device.Providers
                 value = invocation.ReadUint("Value");
                 uri = invocation.ReadString("Uri");
                 invocation.ReadEnd();
-                self.SetId(aVersion, value, uri);
+                self.SetId(invocation, value, uri);
             }
             catch (ActionError)
             {
@@ -1205,7 +1205,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRead(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1217,7 +1217,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 id = invocation.ReadUint("Id");
                 invocation.ReadEnd();
-                self.Read(aVersion, id, out metadata);
+                self.Read(invocation, id, out metadata);
             }
             catch (ActionError)
             {
@@ -1254,7 +1254,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1266,7 +1266,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 idList = invocation.ReadString("IdList");
                 invocation.ReadEnd();
-                self.ReadList(aVersion, idList, out channelList);
+                self.ReadList(invocation, idList, out channelList);
             }
             catch (ActionError)
             {
@@ -1303,7 +1303,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoIdArray(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIdArray(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1314,7 +1314,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.IdArray(aVersion, out token, out array);
+                self.IdArray(invocation, out token, out array);
             }
             catch (ActionError)
             {
@@ -1352,7 +1352,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1364,7 +1364,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 token = invocation.ReadUint("Token");
                 invocation.ReadEnd();
-                self.IdArrayChanged(aVersion, token, out value);
+                self.IdArrayChanged(invocation, token, out value);
             }
             catch (ActionError)
             {
@@ -1401,7 +1401,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoChannelsMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoChannelsMax(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1411,7 +1411,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.ChannelsMax(aVersion, out value);
+                self.ChannelsMax(invocation, out value);
             }
             catch (ActionError)
             {
@@ -1448,7 +1448,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1458,7 +1458,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.ProtocolInfo(aVersion, out value);
+                self.ProtocolInfo(invocation, out value);
             }
             catch (ActionError)
             {

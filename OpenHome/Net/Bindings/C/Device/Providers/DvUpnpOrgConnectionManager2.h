@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,19 +22,23 @@ extern "C" {
 /**
  * Callback which runs when the GetProtocolInfo action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionGetProtocolInfo
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionGetProtocolInfo
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aSource
  * @param[out] aSink
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackConnectionManager2GetProtocolInfo)(void* aPtr, uint32_t aVersion, char** aSource, char** aSink);
+typedef int32_t (STDCALL *CallbackConnectionManager2GetProtocolInfo)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aSource, char** aSink);
 /**
  * Callback which runs when the PrepareForConnection action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionPrepareForConnection
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionPrepareForConnection
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRemoteProtocolInfo
  * @param[in]  aPeerConnectionManager
  * @param[in]  aPeerConnectionID
@@ -44,32 +49,38 @@ typedef int32_t (STDCALL *CallbackConnectionManager2GetProtocolInfo)(void* aPtr,
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackConnectionManager2PrepareForConnection)(void* aPtr, uint32_t aVersion, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
+typedef int32_t (STDCALL *CallbackConnectionManager2PrepareForConnection)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
 /**
  * Callback which runs when the ConnectionComplete action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionConnectionComplete
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionConnectionComplete
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aConnectionID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackConnectionManager2ConnectionComplete)(void* aPtr, uint32_t aVersion, int32_t aConnectionID);
+typedef int32_t (STDCALL *CallbackConnectionManager2ConnectionComplete)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t aConnectionID);
 /**
  * Callback which runs when the GetCurrentConnectionIDs action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aConnectionIDs
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackConnectionManager2GetCurrentConnectionIDs)(void* aPtr, uint32_t aVersion, char** aConnectionIDs);
+typedef int32_t (STDCALL *CallbackConnectionManager2GetCurrentConnectionIDs)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aConnectionIDs);
 /**
  * Callback which runs when the GetCurrentConnectionInfo action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aConnectionID
  * @param[out] aRcsID
  * @param[out] aAVTransportID
@@ -81,7 +92,7 @@ typedef int32_t (STDCALL *CallbackConnectionManager2GetCurrentConnectionIDs)(voi
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackConnectionManager2GetCurrentConnectionInfo)(void* aPtr, uint32_t aVersion, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
+typedef int32_t (STDCALL *CallbackConnectionManager2GetCurrentConnectionInfo)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
 
 /**
  * Provider constructor

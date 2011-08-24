@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,52 +22,62 @@ extern "C" {
 /**
  * Callback which runs when the GetSortCapabilities action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetSortCapabilities
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetSortCapabilities
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aSortCaps
  * @param[out] aSortLevelCap
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1GetSortCapabilities)(void* aPtr, uint32_t aVersion, char** aSortCaps, uint32_t* aSortLevelCap);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetSortCapabilities)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aSortCaps, uint32_t* aSortLevelCap);
 /**
  * Callback which runs when the GetPropertyList action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetPropertyList
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetPropertyList
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aDataTypeID
  * @param[out] aPropertyList
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1GetPropertyList)(void* aPtr, uint32_t aVersion, const char* aDataTypeID, char** aPropertyList);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetPropertyList)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aDataTypeID, char** aPropertyList);
 /**
  * Callback which runs when the GetAllowedValues action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetAllowedValues
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetAllowedValues
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aDataTypeID
  * @param[in]  aFilter
  * @param[out] aPropertyInfo
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1GetAllowedValues)(void* aPtr, uint32_t aVersion, const char* aDataTypeID, const char* aFilter, char** aPropertyInfo);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetAllowedValues)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aDataTypeID, const char* aFilter, char** aPropertyInfo);
 /**
  * Callback which runs when the GetStateUpdateID action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetStateUpdateID
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetStateUpdateID
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1GetStateUpdateID)(void* aPtr, uint32_t aVersion, uint32_t* aId);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetStateUpdateID)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aId);
 /**
  * Callback which runs when the BrowseRecordSchedules action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordSchedules
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordSchedules
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aFilter
  * @param[in]  aStartingIndex
  * @param[in]  aRequestedCount
@@ -78,12 +89,14 @@ typedef int32_t (STDCALL *CallbackScheduledRecording1GetStateUpdateID)(void* aPt
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1BrowseRecordSchedules)(void* aPtr, uint32_t aVersion, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1BrowseRecordSchedules)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Callback which runs when the BrowseRecordTasks action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordTasks
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordTasks
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordScheduleID
  * @param[in]  aFilter
  * @param[in]  aStartingIndex
@@ -96,12 +109,14 @@ typedef int32_t (STDCALL *CallbackScheduledRecording1BrowseRecordSchedules)(void
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1BrowseRecordTasks)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1BrowseRecordTasks)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Callback which runs when the CreateRecordSchedule action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionCreateRecordSchedule
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionCreateRecordSchedule
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aElements
  * @param[out] aRecordScheduleID
  * @param[out] aResult
@@ -109,22 +124,26 @@ typedef int32_t (STDCALL *CallbackScheduledRecording1BrowseRecordTasks)(void* aP
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1CreateRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aElements, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1CreateRecordSchedule)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aElements, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID);
 /**
  * Callback which runs when the DeleteRecordSchedule action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordSchedule
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordSchedule
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordScheduleID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1DeleteRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1DeleteRecordSchedule)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordScheduleID);
 /**
  * Callback which runs when the GetRecordSchedule action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordSchedule
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordSchedule
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordScheduleID
  * @param[in]  aFilter
  * @param[out] aResult
@@ -132,42 +151,50 @@ typedef int32_t (STDCALL *CallbackScheduledRecording1DeleteRecordSchedule)(void*
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordSchedule)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordScheduleID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
 /**
  * Callback which runs when the EnableRecordSchedule action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordSchedule
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordSchedule
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordScheduleID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1EnableRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1EnableRecordSchedule)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordScheduleID);
 /**
  * Callback which runs when the DisableRecordSchedule action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordSchedule
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordSchedule
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordScheduleID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1DisableRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1DisableRecordSchedule)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordScheduleID);
 /**
  * Callback which runs when the DeleteRecordTask action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordTask
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordTask
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordTaskID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1DeleteRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1DeleteRecordTask)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordTaskID);
 /**
  * Callback which runs when the GetRecordTask action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTask
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTask
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordTaskID
  * @param[in]  aFilter
  * @param[out] aResult
@@ -175,61 +202,71 @@ typedef int32_t (STDCALL *CallbackScheduledRecording1DeleteRecordTask)(void* aPt
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordTask)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordTaskID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
 /**
  * Callback which runs when the EnableRecordTask action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordTask
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordTask
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordTaskID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1EnableRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1EnableRecordTask)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordTaskID);
 /**
  * Callback which runs when the DisableRecordTask action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordTask
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordTask
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordTaskID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1DisableRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1DisableRecordTask)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordTaskID);
 /**
  * Callback which runs when the ResetRecordTask action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionResetRecordTask
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionResetRecordTask
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordTaskID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1ResetRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1ResetRecordTask)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordTaskID);
 /**
  * Callback which runs when the GetRecordScheduleConflicts action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordScheduleConflicts
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordScheduleConflicts
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordScheduleID
  * @param[out] aRecordScheduleConflictIDList
  * @param[out] aUpdateID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordScheduleConflicts)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordScheduleConflicts)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID);
 /**
  * Callback which runs when the GetRecordTaskConflicts action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTaskConflicts
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTaskConflicts
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRecordTaskID
  * @param[out] aRecordTaskConflictIDList
  * @param[out] aUpdateID
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordTaskConflicts)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID, char** aRecordTaskConflictIDList, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordTaskConflicts)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRecordTaskID, char** aRecordTaskConflictIDList, uint32_t* aUpdateID);
 
 /**
  * Provider constructor

@@ -138,14 +138,28 @@ void InvocationDv::Start()
 void InvocationDv::Invoke()
 {
     const Brx& actionName = iInvocation.Action().Name();
-    TUint version = iInvocation.ServiceType().Version();
     try {
-        iService.Invoke(*this, version, actionName);
+        iService.Invoke(*this, actionName);
     }
     catch (InvocationError&) {}
     catch (ParameterValidationError&) {
         InvocationReportError(Error::eCodeParameterInvalid, Error::kDescriptionParameterInvalid);
     }
+}
+
+TUint InvocationDv::Version() const
+{
+    return iInvocation.ServiceType().Version();
+}
+
+TIpAddress InvocationDv::Adapter() const
+{
+    return 0;
+}
+
+const char* InvocationDv::ResourceUriPrefix() const
+{
+    return NULL;
 }
 
 void InvocationDv::InvocationReadStart()

@@ -75,10 +75,10 @@ private:
      * Time action for the owning device.
      * Must be implemented iff EnableActionTime was called.
      */
-    virtual void Time(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aTrackCount, IInvocationResponseUint& aDuration, IInvocationResponseUint& aSeconds);
+    virtual void Time(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDuration, IDvInvocationResponseUint& aSeconds);
 private:
     DvProviderAvOpenhomeOrgTime1();
-    void DoTime(IDviInvocation& aInvocation, TUint aVersion);
+    void DoTime(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyTrackCount;
     PropertyUint* iPropertyDuration;

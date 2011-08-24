@@ -220,9 +220,9 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetCount} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getCount(int aVersion)
+    protected long getCount(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -235,10 +235,10 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetRoom} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
-    protected String getRoom(int aVersion, long aIndex)
+    protected String getRoom(IDvInvocation aInvocation, long aIndex)
     {
         throw (new ActionDisabledError());
     }
@@ -251,10 +251,10 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetName} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
-    protected String getName(int aVersion, long aIndex)
+    protected String getName(IDvInvocation aInvocation, long aIndex)
     {
         throw (new ActionDisabledError());
     }
@@ -267,10 +267,10 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetPosition} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
-    protected GetPosition getPosition(int aVersion, long aIndex)
+    protected GetPosition getPosition(IDvInvocation aInvocation, long aIndex)
     {
         throw (new ActionDisabledError());
     }
@@ -283,11 +283,11 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSetColor} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      * @param aColor
      */
-    protected void setColor(int aVersion, long aIndex, long aColor)
+    protected void setColor(IDvInvocation aInvocation, long aIndex, long aColor)
     {
         throw (new ActionDisabledError());
     }
@@ -300,10 +300,10 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetColor} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
-    protected long getColor(int aVersion, long aIndex)
+    protected long getColor(IDvInvocation aInvocation, long aIndex)
     {
         throw (new ActionDisabledError());
     }
@@ -316,10 +316,10 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetColorComponents} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aColor
      */
-    protected GetColorComponents getColorComponents(int aVersion, long aColor)
+    protected GetColorComponents getColorComponents(IDvInvocation aInvocation, long aColor)
     {
         throw (new ActionDisabledError());
     }
@@ -343,7 +343,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetCount implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long count;
@@ -351,7 +351,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 count = getCount(aVersion);
+                 count = getCount(invocation);
             }
             catch (ActionError ae)
             {
@@ -391,7 +391,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetRoom implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -401,7 +401,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 invocation.readStart();
                 index = invocation.readUint("Index");
                 invocation.readEnd();
-                 roomName = getRoom(aVersion, index);
+                 roomName = getRoom(invocation, index);
             }
             catch (ActionError ae)
             {
@@ -441,7 +441,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetName implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -451,7 +451,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 invocation.readStart();
                 index = invocation.readUint("Index");
                 invocation.readEnd();
-                 friendlyName = getName(aVersion, index);
+                 friendlyName = getName(invocation, index);
             }
             catch (ActionError ae)
             {
@@ -491,7 +491,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetPosition implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -504,7 +504,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 index = invocation.readUint("Index");
                 invocation.readEnd();
 
-            GetPosition outArgs = getPosition(aVersion, index);
+            GetPosition outArgs = getPosition(invocation, index);
             x = outArgs.getX();
             y = outArgs.getY();
             z = outArgs.getZ();
@@ -549,7 +549,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoSetColor implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -560,7 +560,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 index = invocation.readUint("Index");
                 color = invocation.readUint("Color");
                 invocation.readEnd();
-                setColor(aVersion, index, color);
+                setColor(invocation, index, color);
             }
             catch (ActionError ae)
             {
@@ -599,7 +599,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetColor implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -609,7 +609,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 invocation.readStart();
                 index = invocation.readUint("Index");
                 invocation.readEnd();
-                 color = getColor(aVersion, index);
+                 color = getColor(invocation, index);
             }
             catch (ActionError ae)
             {
@@ -649,7 +649,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetColorComponents implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long color;
@@ -663,7 +663,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 color = invocation.readUint("Color");
                 invocation.readEnd();
 
-            GetColorComponents outArgs = getColorComponents(aVersion, color);
+            GetColorComponents outArgs = getColorComponents(invocation, color);
             brightness = outArgs.getBrightness();
             red = outArgs.getRed();
             green = outArgs.getGreen();

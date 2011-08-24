@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -22,9 +24,9 @@ public:
     void EnableActionGetTarget(CallbackSwitchPower1GetTarget aCallback, void* aPtr);
     void EnableActionGetStatus(CallbackSwitchPower1GetStatus aCallback, void* aPtr);
 private:
-    void DoSetTarget(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTarget(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetStatus(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetTarget(IDviInvocation& aInvocation);
+    void DoGetTarget(IDviInvocation& aInvocation);
+    void DoGetStatus(IDviInvocation& aInvocation);
 private:
     CallbackSwitchPower1SetTarget iCallbackSetTarget;
     void* iPtrSetTarget;
@@ -83,53 +85,65 @@ void DvProviderUpnpOrgSwitchPower1C::EnableActionGetStatus(CallbackSwitchPower1G
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgSwitchPower1C::DoSetTarget(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1C::DoSetTarget(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TBool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetTarget != NULL);
-    if (0 != iCallbackSetTarget(iPtrSetTarget, aVersion, newTargetValue)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetTarget(iPtrSetTarget, invocationC, invocationCPtr, newTargetValue)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgSwitchPower1C::DoGetTarget(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1C::DoGetTarget(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t RetTargetValue;
     ASSERT(iCallbackGetTarget != NULL);
-    if (0 != iCallbackGetTarget(iPtrGetTarget, aVersion, &RetTargetValue)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetTarget(iPtrGetTarget, invocationC, invocationCPtr, &RetTargetValue)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseBool respRetTargetValue(aInvocation, "RetTargetValue");
-    resp.Start();
+    DviInvocationResponseBool respRetTargetValue(aInvocation, "RetTargetValue");
+    invocation.StartResponse();
     respRetTargetValue.Write((RetTargetValue!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t ResultStatus;
     ASSERT(iCallbackGetStatus != NULL);
-    if (0 != iCallbackGetStatus(iPtrGetStatus, aVersion, &ResultStatus)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetStatus(iPtrGetStatus, invocationC, invocationCPtr, &ResultStatus)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseBool respResultStatus(aInvocation, "ResultStatus");
-    resp.Start();
+    DviInvocationResponseBool respResultStatus(aInvocation, "ResultStatus");
+    invocation.StartResponse();
     respResultStatus.Write((ResultStatus!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
 
