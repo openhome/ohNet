@@ -14,6 +14,7 @@ class SyncManufacturerAvOpenhomeOrgMediaServer1 : public SyncProxyAction
 public:
     SyncManufacturerAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncManufacturerAvOpenhomeOrgMediaServer1() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1& iService;
     Brh& iName;
@@ -42,6 +43,7 @@ class SyncModelAvOpenhomeOrgMediaServer1 : public SyncProxyAction
 public:
     SyncModelAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncModelAvOpenhomeOrgMediaServer1() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1& iService;
     Brh& iName;
@@ -70,6 +72,7 @@ class SyncProductAvOpenhomeOrgMediaServer1 : public SyncProxyAction
 public:
     SyncProductAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProductAvOpenhomeOrgMediaServer1() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1& iService;
     Brh& iName;
@@ -98,6 +101,7 @@ class SyncAttributesAvOpenhomeOrgMediaServer1 : public SyncProxyAction
 public:
     SyncAttributesAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncAttributesAvOpenhomeOrgMediaServer1() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1& iService;
     Brh& iValue;
@@ -120,6 +124,7 @@ class SyncQueryAvOpenhomeOrgMediaServer1 : public SyncProxyAction
 public:
     SyncQueryAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1& aProxy, Brh& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncQueryAvOpenhomeOrgMediaServer1() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1& iService;
     Brh& iResult;

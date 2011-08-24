@@ -114,6 +114,7 @@ class OpenHome::Net::DefaultAsyncHandler : private IAsyncOutput
 {
 public:
     void LogError(IAsync& aAsync);
+    virtual ~DefaultAsyncHandler() {}
 private:
     void Output(const TChar* aKey, const TChar* aValue);
 };

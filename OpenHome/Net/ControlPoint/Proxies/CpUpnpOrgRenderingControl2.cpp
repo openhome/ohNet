@@ -14,6 +14,7 @@ class SyncListPresetsUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncListPresetsUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, Brh& aCurrentPresetNameList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncListPresetsUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     Brh& iCurrentPresetNameList;
@@ -36,6 +37,7 @@ class SyncSelectPresetUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSelectPresetUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSelectPresetUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -56,6 +58,7 @@ class SyncGetBrightnessUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetBrightnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentBrightness);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetBrightnessUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentBrightness;
@@ -78,6 +81,7 @@ class SyncSetBrightnessUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetBrightnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetBrightnessUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -98,6 +102,7 @@ class SyncGetContrastUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetContrastUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentContrast);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetContrastUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentContrast;
@@ -120,6 +125,7 @@ class SyncSetContrastUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetContrastUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetContrastUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -140,6 +146,7 @@ class SyncGetSharpnessUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetSharpnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentSharpness);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSharpnessUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentSharpness;
@@ -162,6 +169,7 @@ class SyncSetSharpnessUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetSharpnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetSharpnessUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -182,6 +190,7 @@ class SyncGetRedVideoGainUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetRedVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentRedVideoGain);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRedVideoGainUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentRedVideoGain;
@@ -204,6 +213,7 @@ class SyncSetRedVideoGainUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetRedVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetRedVideoGainUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -224,6 +234,7 @@ class SyncGetGreenVideoGainUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetGreenVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentGreenVideoGain);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetGreenVideoGainUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentGreenVideoGain;
@@ -246,6 +257,7 @@ class SyncSetGreenVideoGainUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetGreenVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetGreenVideoGainUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -266,6 +278,7 @@ class SyncGetBlueVideoGainUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetBlueVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentBlueVideoGain);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetBlueVideoGainUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentBlueVideoGain;
@@ -288,6 +301,7 @@ class SyncSetBlueVideoGainUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetBlueVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetBlueVideoGainUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -308,6 +322,7 @@ class SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentRedVideoBlackLevel);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentRedVideoBlackLevel;
@@ -330,6 +345,7 @@ class SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -350,6 +366,7 @@ class SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2 : public SyncProxyActi
 public:
     SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentGreenVideoBlackLevel);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentGreenVideoBlackLevel;
@@ -372,6 +389,7 @@ class SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2 : public SyncProxyActi
 public:
     SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -392,6 +410,7 @@ class SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2 : public SyncProxyActio
 public:
     SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentBlueVideoBlackLevel);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentBlueVideoBlackLevel;
@@ -414,6 +433,7 @@ class SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2 : public SyncProxyActio
 public:
     SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -434,6 +454,7 @@ class SyncGetColorTemperatureUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetColorTemperatureUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentColorTemperature);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetColorTemperatureUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentColorTemperature;
@@ -456,6 +477,7 @@ class SyncSetColorTemperatureUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetColorTemperatureUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetColorTemperatureUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -476,6 +498,7 @@ class SyncGetHorizontalKeystoneUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetHorizontalKeystoneUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TInt& aCurrentHorizontalKeystone);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetHorizontalKeystoneUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TInt& iCurrentHorizontalKeystone;
@@ -498,6 +521,7 @@ class SyncSetHorizontalKeystoneUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetHorizontalKeystoneUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetHorizontalKeystoneUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -518,6 +542,7 @@ class SyncGetVerticalKeystoneUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetVerticalKeystoneUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TInt& aCurrentVerticalKeystone);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetVerticalKeystoneUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TInt& iCurrentVerticalKeystone;
@@ -540,6 +565,7 @@ class SyncSetVerticalKeystoneUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetVerticalKeystoneUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetVerticalKeystoneUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -560,6 +586,7 @@ class SyncGetMuteUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetMuteUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TBool& aCurrentMute);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetMuteUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TBool& iCurrentMute;
@@ -582,6 +609,7 @@ class SyncSetMuteUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetMuteUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetMuteUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -602,6 +630,7 @@ class SyncGetVolumeUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetVolumeUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TUint& aCurrentVolume);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetVolumeUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TUint& iCurrentVolume;
@@ -624,6 +653,7 @@ class SyncSetVolumeUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetVolumeUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetVolumeUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -644,6 +674,7 @@ class SyncGetVolumeDBUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetVolumeDBUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TInt& aCurrentVolume);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetVolumeDBUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TInt& iCurrentVolume;
@@ -666,6 +697,7 @@ class SyncSetVolumeDBUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetVolumeDBUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetVolumeDBUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -686,6 +718,7 @@ class SyncGetVolumeDBRangeUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetVolumeDBRangeUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TInt& aMinValue, TInt& aMaxValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetVolumeDBRangeUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TInt& iMinValue;
@@ -710,6 +743,7 @@ class SyncGetLoudnessUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetLoudnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, TBool& aCurrentLoudness);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetLoudnessUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     TBool& iCurrentLoudness;
@@ -732,6 +766,7 @@ class SyncSetLoudnessUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetLoudnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetLoudnessUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
 };
@@ -752,6 +787,7 @@ class SyncGetStateVariablesUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncGetStateVariablesUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, Brh& aStateVariableValuePairs);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetStateVariablesUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     Brh& iStateVariableValuePairs;
@@ -774,6 +810,7 @@ class SyncSetStateVariablesUpnpOrgRenderingControl2 : public SyncProxyAction
 public:
     SyncSetStateVariablesUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2& aProxy, Brh& aStateVariableList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetStateVariablesUpnpOrgRenderingControl2() {}
 private:
     CpProxyUpnpOrgRenderingControl2& iService;
     Brh& iStateVariableList;

@@ -14,6 +14,7 @@ class SyncManufacturerAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncManufacturerAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncManufacturerAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     Brh& iName;
@@ -42,6 +43,7 @@ class SyncModelAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncModelAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncModelAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     Brh& iName;
@@ -70,6 +72,7 @@ class SyncProductAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncProductAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aRoom, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProductAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     Brh& iRoom;
@@ -100,6 +103,7 @@ class SyncStandbyAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncStandbyAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TBool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStandbyAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     TBool& iValue;
@@ -122,6 +126,7 @@ class SyncSetStandbyAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncSetStandbyAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetStandbyAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
 };
@@ -142,6 +147,7 @@ class SyncSourceCountAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncSourceCountAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceCountAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     TUint& iValue;
@@ -164,6 +170,7 @@ class SyncSourceXmlAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncSourceXmlAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceXmlAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     Brh& iValue;
@@ -186,6 +193,7 @@ class SyncSourceIndexAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncSourceIndexAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceIndexAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     TUint& iValue;
@@ -208,6 +216,7 @@ class SyncSetSourceIndexAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncSetSourceIndexAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetSourceIndexAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
 };
@@ -228,6 +237,7 @@ class SyncSetSourceIndexByNameAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncSetSourceIndexByNameAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetSourceIndexByNameAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
 };
@@ -248,6 +258,7 @@ class SyncSourceAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncSourceAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aSystemName, Brh& aType, Brh& aName, TBool& aVisible);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     Brh& iSystemName;
@@ -276,6 +287,7 @@ class SyncAttributesAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncAttributesAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncAttributesAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     Brh& iValue;
@@ -298,6 +310,7 @@ class SyncSourceXmlChangeCountAvOpenhomeOrgProduct1 : public SyncProxyAction
 public:
     SyncSourceXmlChangeCountAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceXmlChangeCountAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     TUint& iValue;

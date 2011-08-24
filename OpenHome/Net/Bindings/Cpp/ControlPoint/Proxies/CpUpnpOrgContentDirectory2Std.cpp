@@ -17,6 +17,7 @@ class SyncGetSearchCapabilitiesUpnpOrgContentDirectory2Cpp : public SyncProxyAct
 public:
     SyncGetSearchCapabilitiesUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aSearchCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSearchCapabilitiesUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iSearchCaps;
@@ -39,6 +40,7 @@ class SyncGetSortCapabilitiesUpnpOrgContentDirectory2Cpp : public SyncProxyActio
 public:
     SyncGetSortCapabilitiesUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aSortCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSortCapabilitiesUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iSortCaps;
@@ -61,6 +63,7 @@ class SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2Cpp : public SyncP
 public:
     SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aSortExtensionCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iSortExtensionCaps;
@@ -83,6 +86,7 @@ class SyncGetFeatureListUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncGetFeatureListUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aFeatureList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetFeatureListUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iFeatureList;
@@ -105,6 +109,7 @@ class SyncGetSystemUpdateIDUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncGetSystemUpdateIDUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, uint32_t& aId);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSystemUpdateIDUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     uint32_t& iId;
@@ -127,6 +132,7 @@ class SyncBrowseUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncBrowseUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBrowseUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iResult;
@@ -155,6 +161,7 @@ class SyncSearchUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncSearchUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSearchUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iResult;
@@ -183,6 +190,7 @@ class SyncCreateObjectUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncCreateObjectUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aObjectID, std::string& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCreateObjectUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iObjectID;
@@ -207,6 +215,7 @@ class SyncDestroyObjectUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncDestroyObjectUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDestroyObjectUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
 };
@@ -227,6 +236,7 @@ class SyncUpdateObjectUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncUpdateObjectUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncUpdateObjectUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
 };
@@ -247,6 +257,7 @@ class SyncMoveObjectUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncMoveObjectUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aNewObjectID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncMoveObjectUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iNewObjectID;
@@ -269,6 +280,7 @@ class SyncImportResourceUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncImportResourceUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, uint32_t& aTransferID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncImportResourceUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     uint32_t& iTransferID;
@@ -291,6 +303,7 @@ class SyncExportResourceUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncExportResourceUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, uint32_t& aTransferID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncExportResourceUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     uint32_t& iTransferID;
@@ -313,6 +326,7 @@ class SyncDeleteResourceUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncDeleteResourceUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteResourceUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
 };
@@ -333,6 +347,7 @@ class SyncStopTransferResourceUpnpOrgContentDirectory2Cpp : public SyncProxyActi
 public:
     SyncStopTransferResourceUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopTransferResourceUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
 };
@@ -353,6 +368,7 @@ class SyncGetTransferProgressUpnpOrgContentDirectory2Cpp : public SyncProxyActio
 public:
     SyncGetTransferProgressUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aTransferStatus, std::string& aTransferLength, std::string& aTransferTotal);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetTransferProgressUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iTransferStatus;
@@ -379,6 +395,7 @@ class SyncCreateReferenceUpnpOrgContentDirectory2Cpp : public SyncProxyAction
 public:
     SyncCreateReferenceUpnpOrgContentDirectory2Cpp(CpProxyUpnpOrgContentDirectory2Cpp& aProxy, std::string& aNewID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCreateReferenceUpnpOrgContentDirectory2Cpp() {}
 private:
     CpProxyUpnpOrgContentDirectory2Cpp& iService;
     std::string& iNewID;

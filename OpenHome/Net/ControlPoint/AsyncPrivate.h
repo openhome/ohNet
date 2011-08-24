@@ -27,7 +27,7 @@ public:
     DllExport void Wait();
 protected:
     DllExport SyncProxyAction();
-    DllExport ~SyncProxyAction();
+    DllExport virtual ~SyncProxyAction();
     virtual void CompleteRequest(IAsync& aAsync) = 0;
 private:
     void Completed(IAsync& aAsync);

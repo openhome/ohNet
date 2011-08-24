@@ -22,6 +22,7 @@ class CpiDeviceDv : private INonCopyable, private ICpiProtocol, private ICpiDevi
 public:
     CpiDeviceDv(DviDevice& aDevice);
     CpiDevice& Device();
+    virtual ~CpiDeviceDv() {}
 private: // ICpiProtocol
     void InvokeAction(Invocation& aInvocation);
     TBool GetAttribute(const char* aKey, Brh& aValue) const;
@@ -107,6 +108,8 @@ private:
 
 class OutputProcessorDv : public IOutputProcessor
 {
+public:
+    virtual ~OutputProcessorDv() {}
 private: // IOutputProcessor
     void ProcessString(const Brx& aBuffer, Brhz& aVal);
     void ProcessInt(const Brx& aBuffer, TInt& aVal);

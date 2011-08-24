@@ -17,6 +17,7 @@ class SyncManufacturerAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncManufacturerAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncManufacturerAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     std::string& iName;
@@ -45,6 +46,7 @@ class SyncModelAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncModelAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncModelAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     std::string& iName;
@@ -73,6 +75,7 @@ class SyncProductAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncProductAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, std::string& aRoom, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProductAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     std::string& iRoom;
@@ -103,6 +106,7 @@ class SyncStandbyAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncStandbyAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, bool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStandbyAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     bool& iValue;
@@ -125,6 +129,7 @@ class SyncSetStandbyAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncSetStandbyAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetStandbyAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
 };
@@ -145,6 +150,7 @@ class SyncSourceCountAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncSourceCountAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceCountAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     uint32_t& iValue;
@@ -167,6 +173,7 @@ class SyncSourceXmlAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncSourceXmlAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceXmlAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     std::string& iValue;
@@ -189,6 +196,7 @@ class SyncSourceIndexAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncSourceIndexAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceIndexAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     uint32_t& iValue;
@@ -211,6 +219,7 @@ class SyncSetSourceIndexAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncSetSourceIndexAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetSourceIndexAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
 };
@@ -231,6 +240,7 @@ class SyncSetSourceIndexByNameAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncSetSourceIndexByNameAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetSourceIndexByNameAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
 };
@@ -251,6 +261,7 @@ class SyncSourceAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncSourceAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, std::string& aSystemName, std::string& aType, std::string& aName, bool& aVisible);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     std::string& iSystemName;
@@ -279,6 +290,7 @@ class SyncAttributesAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncAttributesAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncAttributesAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     std::string& iValue;
@@ -301,6 +313,7 @@ class SyncSourceXmlChangeCountAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
 public:
     SyncSourceXmlChangeCountAvOpenhomeOrgProduct1Cpp(CpProxyAvOpenhomeOrgProduct1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSourceXmlChangeCountAvOpenhomeOrgProduct1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgProduct1Cpp& iService;
     uint32_t& iValue;

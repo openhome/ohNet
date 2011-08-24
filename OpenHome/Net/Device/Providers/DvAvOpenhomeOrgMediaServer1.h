@@ -27,131 +27,183 @@ public:
     /**
      * Set the value of the ManufacturerName property
      *
+     * Can only be called if EnablePropertyManufacturerName has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyManufacturerName(const Brx& aValue);
     /**
      * Get a copy of the value of the ManufacturerName property
+     *
+     * Can only be called if EnablePropertyManufacturerName has previously been called.
      */
     void GetPropertyManufacturerName(Brhz& aValue);
     /**
      * Set the value of the ManufacturerInfo property
+     *
+     * Can only be called if EnablePropertyManufacturerInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyManufacturerInfo(const Brx& aValue);
     /**
      * Get a copy of the value of the ManufacturerInfo property
+     *
+     * Can only be called if EnablePropertyManufacturerInfo has previously been called.
      */
     void GetPropertyManufacturerInfo(Brhz& aValue);
     /**
      * Set the value of the ManufacturerUrl property
+     *
+     * Can only be called if EnablePropertyManufacturerUrl has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyManufacturerUrl(const Brx& aValue);
     /**
      * Get a copy of the value of the ManufacturerUrl property
+     *
+     * Can only be called if EnablePropertyManufacturerUrl has previously been called.
      */
     void GetPropertyManufacturerUrl(Brhz& aValue);
     /**
      * Set the value of the ManufacturerImageUri property
+     *
+     * Can only be called if EnablePropertyManufacturerImageUri has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyManufacturerImageUri(const Brx& aValue);
     /**
      * Get a copy of the value of the ManufacturerImageUri property
+     *
+     * Can only be called if EnablePropertyManufacturerImageUri has previously been called.
      */
     void GetPropertyManufacturerImageUri(Brhz& aValue);
     /**
      * Set the value of the ModelName property
+     *
+     * Can only be called if EnablePropertyModelName has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyModelName(const Brx& aValue);
     /**
      * Get a copy of the value of the ModelName property
+     *
+     * Can only be called if EnablePropertyModelName has previously been called.
      */
     void GetPropertyModelName(Brhz& aValue);
     /**
      * Set the value of the ModelInfo property
+     *
+     * Can only be called if EnablePropertyModelInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyModelInfo(const Brx& aValue);
     /**
      * Get a copy of the value of the ModelInfo property
+     *
+     * Can only be called if EnablePropertyModelInfo has previously been called.
      */
     void GetPropertyModelInfo(Brhz& aValue);
     /**
      * Set the value of the ModelUrl property
+     *
+     * Can only be called if EnablePropertyModelUrl has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyModelUrl(const Brx& aValue);
     /**
      * Get a copy of the value of the ModelUrl property
+     *
+     * Can only be called if EnablePropertyModelUrl has previously been called.
      */
     void GetPropertyModelUrl(Brhz& aValue);
     /**
      * Set the value of the ModelImageUri property
+     *
+     * Can only be called if EnablePropertyModelImageUri has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyModelImageUri(const Brx& aValue);
     /**
      * Get a copy of the value of the ModelImageUri property
+     *
+     * Can only be called if EnablePropertyModelImageUri has previously been called.
      */
     void GetPropertyModelImageUri(Brhz& aValue);
     /**
      * Set the value of the ProductName property
+     *
+     * Can only be called if EnablePropertyProductName has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyProductName(const Brx& aValue);
     /**
      * Get a copy of the value of the ProductName property
+     *
+     * Can only be called if EnablePropertyProductName has previously been called.
      */
     void GetPropertyProductName(Brhz& aValue);
     /**
      * Set the value of the ProductInfo property
+     *
+     * Can only be called if EnablePropertyProductInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyProductInfo(const Brx& aValue);
     /**
      * Get a copy of the value of the ProductInfo property
+     *
+     * Can only be called if EnablePropertyProductInfo has previously been called.
      */
     void GetPropertyProductInfo(Brhz& aValue);
     /**
      * Set the value of the ProductUrl property
+     *
+     * Can only be called if EnablePropertyProductUrl has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyProductUrl(const Brx& aValue);
     /**
      * Get a copy of the value of the ProductUrl property
+     *
+     * Can only be called if EnablePropertyProductUrl has previously been called.
      */
     void GetPropertyProductUrl(Brhz& aValue);
     /**
      * Set the value of the ProductImageUri property
+     *
+     * Can only be called if EnablePropertyProductImageUri has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyProductImageUri(const Brx& aValue);
     /**
      * Get a copy of the value of the ProductImageUri property
+     *
+     * Can only be called if EnablePropertyProductImageUri has previously been called.
      */
     void GetPropertyProductImageUri(Brhz& aValue);
     /**
      * Set the value of the Attributes property
+     *
+     * Can only be called if EnablePropertyAttributes has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyAttributes(const Brx& aValue);
     /**
      * Get a copy of the value of the Attributes property
+     *
+     * Can only be called if EnablePropertyAttributes has previously been called.
      */
     void GetPropertyAttributes(Brhz& aValue);
 protected:
@@ -161,6 +213,58 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgMediaServer1(DvDevice& aDevice);
+    /**
+     * Enable the ManufacturerName property.
+     */
+    void EnablePropertyManufacturerName();
+    /**
+     * Enable the ManufacturerInfo property.
+     */
+    void EnablePropertyManufacturerInfo();
+    /**
+     * Enable the ManufacturerUrl property.
+     */
+    void EnablePropertyManufacturerUrl();
+    /**
+     * Enable the ManufacturerImageUri property.
+     */
+    void EnablePropertyManufacturerImageUri();
+    /**
+     * Enable the ModelName property.
+     */
+    void EnablePropertyModelName();
+    /**
+     * Enable the ModelInfo property.
+     */
+    void EnablePropertyModelInfo();
+    /**
+     * Enable the ModelUrl property.
+     */
+    void EnablePropertyModelUrl();
+    /**
+     * Enable the ModelImageUri property.
+     */
+    void EnablePropertyModelImageUri();
+    /**
+     * Enable the ProductName property.
+     */
+    void EnablePropertyProductName();
+    /**
+     * Enable the ProductInfo property.
+     */
+    void EnablePropertyProductInfo();
+    /**
+     * Enable the ProductUrl property.
+     */
+    void EnablePropertyProductUrl();
+    /**
+     * Enable the ProductImageUri property.
+     */
+    void EnablePropertyProductImageUri();
+    /**
+     * Enable the Attributes property.
+     */
+    void EnablePropertyAttributes();
     /**
      * Signal that the action Manufacturer is supported.
      * The action's availability will be published in the device's service.xml.

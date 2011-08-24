@@ -17,6 +17,7 @@ class SyncMetadataAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncMetadataAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncMetadataAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     std::string& iMetadata;
@@ -39,6 +40,7 @@ class SyncImagesXmlAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncImagesXmlAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aImagesXml);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncImagesXmlAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     std::string& iImagesXml;
@@ -61,6 +63,7 @@ class SyncPlaylistReadArrayAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAc
 public:
     SyncPlaylistReadArrayAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aArray);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistReadArrayAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     std::string& iArray;
@@ -83,6 +86,7 @@ class SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAct
 public:
     SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aPlaylistList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     std::string& iPlaylistList;
@@ -105,6 +109,7 @@ class SyncPlaylistReadAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncPlaylistReadAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aName, std::string& aDescription, uint32_t& aImageId);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistReadAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     std::string& iName;
@@ -131,6 +136,7 @@ class SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyActi
 public:
     SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
 };
@@ -151,6 +157,7 @@ class SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp : public SyncPr
 public:
     SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
 };
@@ -171,6 +178,7 @@ class SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyA
 public:
     SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
 };
@@ -191,6 +199,7 @@ class SyncPlaylistInsertAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyActio
 public:
     SyncPlaylistInsertAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, uint32_t& aNewId);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistInsertAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     uint32_t& iNewId;
@@ -213,6 +222,7 @@ class SyncPlaylistDeleteIdAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAct
 public:
     SyncPlaylistDeleteIdAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistDeleteIdAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
 };
@@ -233,6 +243,7 @@ class SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
 };
@@ -253,6 +264,7 @@ class SyncPlaylistsMaxAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncPlaylistsMaxAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistsMaxAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     uint32_t& iValue;
@@ -275,6 +287,7 @@ class SyncTracksMaxAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncTracksMaxAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTracksMaxAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     uint32_t& iValue;
@@ -297,6 +310,7 @@ class SyncPlaylistArraysAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyActio
 public:
     SyncPlaylistArraysAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, uint32_t& aToken, std::string& aIdArray, std::string& aTokenArray);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistArraysAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     uint32_t& iToken;
@@ -323,6 +337,7 @@ class SyncPlaylistArraysChangedAvOpenhomeOrgPlaylistManager1Cpp : public SyncPro
 public:
     SyncPlaylistArraysChangedAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, bool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlaylistArraysChangedAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     bool& iValue;
@@ -345,6 +360,7 @@ class SyncReadAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncReadAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aUdn, std::string& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncReadAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     std::string& iUdn;
@@ -369,6 +385,7 @@ class SyncReadListAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncReadListAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aTrackList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncReadListAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     std::string& iTrackList;
@@ -391,6 +408,7 @@ class SyncInsertAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncInsertAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, uint32_t& aNewTrackId);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncInsertAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
     uint32_t& iNewTrackId;
@@ -413,6 +431,7 @@ class SyncDeleteIdAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncDeleteIdAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteIdAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
 };
@@ -433,6 +452,7 @@ class SyncDeleteAllAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 public:
     SyncDeleteAllAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteAllAvOpenhomeOrgPlaylistManager1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
 };

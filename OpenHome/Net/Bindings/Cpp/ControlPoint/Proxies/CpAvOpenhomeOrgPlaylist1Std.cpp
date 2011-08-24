@@ -17,6 +17,7 @@ class SyncPlayAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncPlayAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlayAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -37,6 +38,7 @@ class SyncPauseAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncPauseAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPauseAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -57,6 +59,7 @@ class SyncStopAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncStopAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -77,6 +80,7 @@ class SyncNextAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncNextAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncNextAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -97,6 +101,7 @@ class SyncPreviousAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncPreviousAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPreviousAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -117,6 +122,7 @@ class SyncSetRepeatAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncSetRepeatAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetRepeatAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -137,6 +143,7 @@ class SyncRepeatAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncRepeatAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, bool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncRepeatAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     bool& iValue;
@@ -159,6 +166,7 @@ class SyncSetShuffleAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncSetShuffleAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetShuffleAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -179,6 +187,7 @@ class SyncShuffleAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncShuffleAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, bool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncShuffleAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     bool& iValue;
@@ -201,6 +210,7 @@ class SyncSeekSecondAbsoluteAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncSeekSecondAbsoluteAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSeekSecondAbsoluteAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -221,6 +231,7 @@ class SyncSeekSecondRelativeAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncSeekSecondRelativeAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSeekSecondRelativeAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -241,6 +252,7 @@ class SyncSeekIdAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncSeekIdAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSeekIdAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -261,6 +273,7 @@ class SyncSeekIndexAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncSeekIndexAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSeekIndexAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -281,6 +294,7 @@ class SyncTransportStateAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncTransportStateAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTransportStateAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     std::string& iValue;
@@ -303,6 +317,7 @@ class SyncIdAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncIdAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncIdAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     uint32_t& iValue;
@@ -325,6 +340,7 @@ class SyncReadAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncReadAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, std::string& aUri, std::string& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncReadAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     std::string& iUri;
@@ -349,6 +365,7 @@ class SyncReadListAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncReadListAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, std::string& aTrackList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncReadListAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     std::string& iTrackList;
@@ -371,6 +388,7 @@ class SyncInsertAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncInsertAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, uint32_t& aNewId);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncInsertAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     uint32_t& iNewId;
@@ -393,6 +411,7 @@ class SyncDeleteIdAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncDeleteIdAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteIdAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -413,6 +432,7 @@ class SyncDeleteAllAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncDeleteAllAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteAllAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
 };
@@ -433,6 +453,7 @@ class SyncTracksMaxAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncTracksMaxAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTracksMaxAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     uint32_t& iValue;
@@ -455,6 +476,7 @@ class SyncIdArrayAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncIdArrayAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, uint32_t& aToken, std::string& aArray);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncIdArrayAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     uint32_t& iToken;
@@ -479,6 +501,7 @@ class SyncIdArrayChangedAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncIdArrayChangedAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, bool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncIdArrayChangedAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     bool& iValue;
@@ -501,6 +524,7 @@ class SyncProtocolInfoAvOpenhomeOrgPlaylist1Cpp : public SyncProxyAction
 public:
     SyncProtocolInfoAvOpenhomeOrgPlaylist1Cpp(CpProxyAvOpenhomeOrgPlaylist1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProtocolInfoAvOpenhomeOrgPlaylist1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgPlaylist1Cpp& iService;
     std::string& iValue;

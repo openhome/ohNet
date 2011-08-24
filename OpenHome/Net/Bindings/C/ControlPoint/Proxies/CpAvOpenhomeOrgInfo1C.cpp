@@ -114,6 +114,7 @@ class SyncCountersAvOpenhomeOrgInfo1C : public SyncProxyAction
 public:
     SyncCountersAvOpenhomeOrgInfo1C(CpProxyAvOpenhomeOrgInfo1C& aProxy, TUint& aTrackCount, TUint& aDetailsCount, TUint& aMetatextCount);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCountersAvOpenhomeOrgInfo1C() {};
 private:
     CpProxyAvOpenhomeOrgInfo1C& iService;
     TUint& iTrackCount;
@@ -140,6 +141,7 @@ class SyncTrackAvOpenhomeOrgInfo1C : public SyncProxyAction
 public:
     SyncTrackAvOpenhomeOrgInfo1C(CpProxyAvOpenhomeOrgInfo1C& aProxy, Brh& aUri, Brh& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTrackAvOpenhomeOrgInfo1C() {};
 private:
     CpProxyAvOpenhomeOrgInfo1C& iService;
     Brh& iUri;
@@ -164,6 +166,7 @@ class SyncDetailsAvOpenhomeOrgInfo1C : public SyncProxyAction
 public:
     SyncDetailsAvOpenhomeOrgInfo1C(CpProxyAvOpenhomeOrgInfo1C& aProxy, TUint& aDuration, TUint& aBitRate, TUint& aBitDepth, TUint& aSampleRate, TBool& aLossless, Brh& aCodecName);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDetailsAvOpenhomeOrgInfo1C() {};
 private:
     CpProxyAvOpenhomeOrgInfo1C& iService;
     TUint& iDuration;
@@ -196,6 +199,7 @@ class SyncMetatextAvOpenhomeOrgInfo1C : public SyncProxyAction
 public:
     SyncMetatextAvOpenhomeOrgInfo1C(CpProxyAvOpenhomeOrgInfo1C& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncMetatextAvOpenhomeOrgInfo1C() {};
 private:
     CpProxyAvOpenhomeOrgInfo1C& iService;
     Brh& iValue;

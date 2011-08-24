@@ -17,6 +17,7 @@ class SyncSetAVTransportURIUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncSetAVTransportURIUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetAVTransportURIUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -37,6 +38,7 @@ class SyncSetNextAVTransportURIUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncSetNextAVTransportURIUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetNextAVTransportURIUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -57,6 +59,7 @@ class SyncGetMediaInfoUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncGetMediaInfoUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetMediaInfoUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     uint32_t& iNrTracks;
@@ -95,6 +98,7 @@ class SyncGetMediaInfo_ExtUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncGetMediaInfo_ExtUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, std::string& aCurrentType, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetMediaInfo_ExtUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     std::string& iCurrentType;
@@ -135,6 +139,7 @@ class SyncGetTransportInfoUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncGetTransportInfoUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, std::string& aCurrentTransportState, std::string& aCurrentTransportStatus, std::string& aCurrentSpeed);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetTransportInfoUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     std::string& iCurrentTransportState;
@@ -161,6 +166,7 @@ class SyncGetPositionInfoUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncGetPositionInfoUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, uint32_t& aTrack, std::string& aTrackDuration, std::string& aTrackMetaData, std::string& aTrackURI, std::string& aRelTime, std::string& aAbsTime, int32_t& aRelCount, int32_t& aAbsCount);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetPositionInfoUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     uint32_t& iTrack;
@@ -197,6 +203,7 @@ class SyncGetDeviceCapabilitiesUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncGetDeviceCapabilitiesUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, std::string& aPlayMedia, std::string& aRecMedia, std::string& aRecQualityModes);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetDeviceCapabilitiesUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     std::string& iPlayMedia;
@@ -223,6 +230,7 @@ class SyncGetTransportSettingsUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncGetTransportSettingsUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, std::string& aPlayMode, std::string& aRecQualityMode);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetTransportSettingsUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     std::string& iPlayMode;
@@ -247,6 +255,7 @@ class SyncStopUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncStopUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -267,6 +276,7 @@ class SyncPlayUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncPlayUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlayUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -287,6 +297,7 @@ class SyncPauseUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncPauseUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPauseUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -307,6 +318,7 @@ class SyncRecordUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncRecordUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncRecordUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -327,6 +339,7 @@ class SyncSeekUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncSeekUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSeekUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -347,6 +360,7 @@ class SyncNextUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncNextUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncNextUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -367,6 +381,7 @@ class SyncPreviousUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncPreviousUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPreviousUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -387,6 +402,7 @@ class SyncSetPlayModeUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncSetPlayModeUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetPlayModeUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -407,6 +423,7 @@ class SyncSetRecordQualityModeUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncSetRecordQualityModeUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetRecordQualityModeUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
 };
@@ -427,6 +444,7 @@ class SyncGetCurrentTransportActionsUpnpOrgAVTransport2Cpp : public SyncProxyAct
 public:
     SyncGetCurrentTransportActionsUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, std::string& aActions);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetCurrentTransportActionsUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     std::string& iActions;
@@ -449,6 +467,7 @@ class SyncGetDRMStateUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncGetDRMStateUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, std::string& aCurrentDRMState);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetDRMStateUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     std::string& iCurrentDRMState;
@@ -471,6 +490,7 @@ class SyncGetStateVariablesUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncGetStateVariablesUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, std::string& aStateVariableValuePairs);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetStateVariablesUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     std::string& iStateVariableValuePairs;
@@ -493,6 +513,7 @@ class SyncSetStateVariablesUpnpOrgAVTransport2Cpp : public SyncProxyAction
 public:
     SyncSetStateVariablesUpnpOrgAVTransport2Cpp(CpProxyUpnpOrgAVTransport2Cpp& aProxy, std::string& aStateVariableList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetStateVariablesUpnpOrgAVTransport2Cpp() {}
 private:
     CpProxyUpnpOrgAVTransport2Cpp& iService;
     std::string& iStateVariableList;

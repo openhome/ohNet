@@ -124,6 +124,7 @@ class SyncManufacturerAvOpenhomeOrgMediaServer1C : public SyncProxyAction
 public:
     SyncManufacturerAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncManufacturerAvOpenhomeOrgMediaServer1C() {};
 private:
     CpProxyAvOpenhomeOrgMediaServer1C& iService;
     Brh& iName;
@@ -152,6 +153,7 @@ class SyncModelAvOpenhomeOrgMediaServer1C : public SyncProxyAction
 public:
     SyncModelAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncModelAvOpenhomeOrgMediaServer1C() {};
 private:
     CpProxyAvOpenhomeOrgMediaServer1C& iService;
     Brh& iName;
@@ -180,6 +182,7 @@ class SyncProductAvOpenhomeOrgMediaServer1C : public SyncProxyAction
 public:
     SyncProductAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProductAvOpenhomeOrgMediaServer1C() {};
 private:
     CpProxyAvOpenhomeOrgMediaServer1C& iService;
     Brh& iName;
@@ -208,6 +211,7 @@ class SyncAttributesAvOpenhomeOrgMediaServer1C : public SyncProxyAction
 public:
     SyncAttributesAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncAttributesAvOpenhomeOrgMediaServer1C() {};
 private:
     CpProxyAvOpenhomeOrgMediaServer1C& iService;
     Brh& iValue;
@@ -230,6 +234,7 @@ class SyncQueryAvOpenhomeOrgMediaServer1C : public SyncProxyAction
 public:
     SyncQueryAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, Brh& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncQueryAvOpenhomeOrgMediaServer1C() {};
 private:
     CpProxyAvOpenhomeOrgMediaServer1C& iService;
     Brh& iResult;

@@ -17,6 +17,7 @@ class SyncTimeAvOpenhomeOrgTime1Cpp : public SyncProxyAction
 public:
     SyncTimeAvOpenhomeOrgTime1Cpp(CpProxyAvOpenhomeOrgTime1Cpp& aProxy, uint32_t& aTrackCount, uint32_t& aDuration, uint32_t& aSeconds);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTimeAvOpenhomeOrgTime1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgTime1Cpp& iService;
     uint32_t& iTrackCount;

@@ -10,156 +10,182 @@ using namespace OpenHome::Net;
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyManufacturerName(const std::string& aValue)
 {
+    ASSERT(iPropertyManufacturerName != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyManufacturerName, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyManufacturerName(std::string& aValue)
 {
+    ASSERT(iPropertyManufacturerName != NULL);
     const Brx& val = iPropertyManufacturerName->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyManufacturerInfo(const std::string& aValue)
 {
+    ASSERT(iPropertyManufacturerInfo != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyManufacturerInfo, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyManufacturerInfo(std::string& aValue)
 {
+    ASSERT(iPropertyManufacturerInfo != NULL);
     const Brx& val = iPropertyManufacturerInfo->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyManufacturerUrl(const std::string& aValue)
 {
+    ASSERT(iPropertyManufacturerUrl != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyManufacturerUrl, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyManufacturerUrl(std::string& aValue)
 {
+    ASSERT(iPropertyManufacturerUrl != NULL);
     const Brx& val = iPropertyManufacturerUrl->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyManufacturerImageUri(const std::string& aValue)
 {
+    ASSERT(iPropertyManufacturerImageUri != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyManufacturerImageUri, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyManufacturerImageUri(std::string& aValue)
 {
+    ASSERT(iPropertyManufacturerImageUri != NULL);
     const Brx& val = iPropertyManufacturerImageUri->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyModelName(const std::string& aValue)
 {
+    ASSERT(iPropertyModelName != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyModelName, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyModelName(std::string& aValue)
 {
+    ASSERT(iPropertyModelName != NULL);
     const Brx& val = iPropertyModelName->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyModelInfo(const std::string& aValue)
 {
+    ASSERT(iPropertyModelInfo != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyModelInfo, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyModelInfo(std::string& aValue)
 {
+    ASSERT(iPropertyModelInfo != NULL);
     const Brx& val = iPropertyModelInfo->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyModelUrl(const std::string& aValue)
 {
+    ASSERT(iPropertyModelUrl != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyModelUrl, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyModelUrl(std::string& aValue)
 {
+    ASSERT(iPropertyModelUrl != NULL);
     const Brx& val = iPropertyModelUrl->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyModelImageUri(const std::string& aValue)
 {
+    ASSERT(iPropertyModelImageUri != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyModelImageUri, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyModelImageUri(std::string& aValue)
 {
+    ASSERT(iPropertyModelImageUri != NULL);
     const Brx& val = iPropertyModelImageUri->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyProductName(const std::string& aValue)
 {
+    ASSERT(iPropertyProductName != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyProductName, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyProductName(std::string& aValue)
 {
+    ASSERT(iPropertyProductName != NULL);
     const Brx& val = iPropertyProductName->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyProductInfo(const std::string& aValue)
 {
+    ASSERT(iPropertyProductInfo != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyProductInfo, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyProductInfo(std::string& aValue)
 {
+    ASSERT(iPropertyProductInfo != NULL);
     const Brx& val = iPropertyProductInfo->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyProductUrl(const std::string& aValue)
 {
+    ASSERT(iPropertyProductUrl != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyProductUrl, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyProductUrl(std::string& aValue)
 {
+    ASSERT(iPropertyProductUrl != NULL);
     const Brx& val = iPropertyProductUrl->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyProductImageUri(const std::string& aValue)
 {
+    ASSERT(iPropertyProductImageUri != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyProductImageUri, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyProductImageUri(std::string& aValue)
 {
+    ASSERT(iPropertyProductImageUri != NULL);
     const Brx& val = iPropertyProductImageUri->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyAttributes(const std::string& aValue)
 {
+    ASSERT(iPropertyAttributes != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyAttributes, buf);
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyAttributes(std::string& aValue)
 {
+    ASSERT(iPropertyAttributes != NULL);
     const Brx& val = iPropertyAttributes->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -167,31 +193,95 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyAttributes(std::string& 
 DvProviderAvOpenhomeOrgMediaServer1Cpp::DvProviderAvOpenhomeOrgMediaServer1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "MediaServer", 1)
 {
-    
+    iPropertyManufacturerName = NULL;
+    iPropertyManufacturerInfo = NULL;
+    iPropertyManufacturerUrl = NULL;
+    iPropertyManufacturerImageUri = NULL;
+    iPropertyModelName = NULL;
+    iPropertyModelInfo = NULL;
+    iPropertyModelUrl = NULL;
+    iPropertyModelImageUri = NULL;
+    iPropertyProductName = NULL;
+    iPropertyProductInfo = NULL;
+    iPropertyProductUrl = NULL;
+    iPropertyProductImageUri = NULL;
+    iPropertyAttributes = NULL;
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyManufacturerName()
+{
     iPropertyManufacturerName = new PropertyString(new ParameterString("ManufacturerName"));
     iService->AddProperty(iPropertyManufacturerName); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyManufacturerInfo()
+{
     iPropertyManufacturerInfo = new PropertyString(new ParameterString("ManufacturerInfo"));
     iService->AddProperty(iPropertyManufacturerInfo); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyManufacturerUrl()
+{
     iPropertyManufacturerUrl = new PropertyString(new ParameterString("ManufacturerUrl"));
     iService->AddProperty(iPropertyManufacturerUrl); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyManufacturerImageUri()
+{
     iPropertyManufacturerImageUri = new PropertyString(new ParameterString("ManufacturerImageUri"));
     iService->AddProperty(iPropertyManufacturerImageUri); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyModelName()
+{
     iPropertyModelName = new PropertyString(new ParameterString("ModelName"));
     iService->AddProperty(iPropertyModelName); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyModelInfo()
+{
     iPropertyModelInfo = new PropertyString(new ParameterString("ModelInfo"));
     iService->AddProperty(iPropertyModelInfo); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyModelUrl()
+{
     iPropertyModelUrl = new PropertyString(new ParameterString("ModelUrl"));
     iService->AddProperty(iPropertyModelUrl); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyModelImageUri()
+{
     iPropertyModelImageUri = new PropertyString(new ParameterString("ModelImageUri"));
     iService->AddProperty(iPropertyModelImageUri); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyProductName()
+{
     iPropertyProductName = new PropertyString(new ParameterString("ProductName"));
     iService->AddProperty(iPropertyProductName); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyProductInfo()
+{
     iPropertyProductInfo = new PropertyString(new ParameterString("ProductInfo"));
     iService->AddProperty(iPropertyProductInfo); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyProductUrl()
+{
     iPropertyProductUrl = new PropertyString(new ParameterString("ProductUrl"));
     iService->AddProperty(iPropertyProductUrl); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyProductImageUri()
+{
     iPropertyProductImageUri = new PropertyString(new ParameterString("ProductImageUri"));
     iService->AddProperty(iPropertyProductImageUri); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyAttributes()
+{
     iPropertyAttributes = new PropertyString(new ParameterString("Attributes"));
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }

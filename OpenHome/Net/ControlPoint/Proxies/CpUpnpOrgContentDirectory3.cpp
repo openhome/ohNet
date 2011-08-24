@@ -14,6 +14,7 @@ class SyncGetSearchCapabilitiesUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncGetSearchCapabilitiesUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aSearchCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSearchCapabilitiesUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iSearchCaps;
@@ -36,6 +37,7 @@ class SyncGetSortCapabilitiesUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncGetSortCapabilitiesUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aSortCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSortCapabilitiesUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iSortCaps;
@@ -58,6 +60,7 @@ class SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory3 : public SyncProx
 public:
     SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aSortExtensionCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iSortExtensionCaps;
@@ -80,6 +83,7 @@ class SyncGetFeatureListUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncGetFeatureListUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aFeatureList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetFeatureListUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iFeatureList;
@@ -102,6 +106,7 @@ class SyncGetSystemUpdateIDUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncGetSystemUpdateIDUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, TUint& aId);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSystemUpdateIDUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     TUint& iId;
@@ -124,6 +129,7 @@ class SyncGetServiceResetTokenUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncGetServiceResetTokenUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aResetToken);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetServiceResetTokenUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iResetToken;
@@ -146,6 +152,7 @@ class SyncBrowseUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncBrowseUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBrowseUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iResult;
@@ -174,6 +181,7 @@ class SyncSearchUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncSearchUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSearchUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iResult;
@@ -202,6 +210,7 @@ class SyncCreateObjectUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncCreateObjectUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aObjectID, Brh& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCreateObjectUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iObjectID;
@@ -226,6 +235,7 @@ class SyncDestroyObjectUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncDestroyObjectUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDestroyObjectUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
 };
@@ -246,6 +256,7 @@ class SyncUpdateObjectUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncUpdateObjectUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncUpdateObjectUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
 };
@@ -266,6 +277,7 @@ class SyncMoveObjectUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncMoveObjectUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aNewObjectID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncMoveObjectUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iNewObjectID;
@@ -288,6 +300,7 @@ class SyncImportResourceUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncImportResourceUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, TUint& aTransferID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncImportResourceUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     TUint& iTransferID;
@@ -310,6 +323,7 @@ class SyncExportResourceUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncExportResourceUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, TUint& aTransferID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncExportResourceUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     TUint& iTransferID;
@@ -332,6 +346,7 @@ class SyncDeleteResourceUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncDeleteResourceUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteResourceUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
 };
@@ -352,6 +367,7 @@ class SyncStopTransferResourceUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncStopTransferResourceUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopTransferResourceUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
 };
@@ -372,6 +388,7 @@ class SyncGetTransferProgressUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncGetTransferProgressUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aTransferStatus, Brh& aTransferLength, Brh& aTransferTotal);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetTransferProgressUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iTransferStatus;
@@ -398,6 +415,7 @@ class SyncCreateReferenceUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncCreateReferenceUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aNewID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCreateReferenceUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iNewID;
@@ -420,6 +438,7 @@ class SyncFreeFormQueryUpnpOrgContentDirectory3 : public SyncProxyAction
 public:
     SyncFreeFormQueryUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aQueryResult, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncFreeFormQueryUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iQueryResult;
@@ -444,6 +463,7 @@ class SyncGetFreeFormQueryCapabilitiesUpnpOrgContentDirectory3 : public SyncProx
 public:
     SyncGetFreeFormQueryCapabilitiesUpnpOrgContentDirectory3(CpProxyUpnpOrgContentDirectory3& aProxy, Brh& aFFQCapabilities);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetFreeFormQueryCapabilitiesUpnpOrgContentDirectory3() {}
 private:
     CpProxyUpnpOrgContentDirectory3& iService;
     Brh& iFFQCapabilities;
