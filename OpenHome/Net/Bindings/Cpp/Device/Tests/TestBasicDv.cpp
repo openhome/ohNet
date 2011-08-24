@@ -63,8 +63,9 @@ ProviderTestBasic::ProviderTestBasic(DvDeviceStd& aDevice)
     EnableActionGetBinary();
 }
 
-void ProviderTestBasic::Increment(IDvInvocationStd& /*aInvocation*/, uint32_t aValue, uint32_t& aResult)
+void ProviderTestBasic::Increment(IDvInvocationStd& aInvocation, uint32_t aValue, uint32_t& aResult)
 {
+    ASSERT(aInvocation.Version() == 1);
     aResult = ++aValue;
 }
 
