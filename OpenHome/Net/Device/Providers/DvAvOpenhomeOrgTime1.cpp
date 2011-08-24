@@ -59,7 +59,7 @@ void DvProviderAvOpenhomeOrgTime1::EnableActionTime()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgTime1::DoTime(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgTime1::DoTime(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -67,10 +67,10 @@ void DvProviderAvOpenhomeOrgTime1::DoTime(IDviInvocation& aInvocation, TUint aVe
     DviInvocationResponseUint respTrackCount(aInvocation, "TrackCount");
     DviInvocationResponseUint respDuration(aInvocation, "Duration");
     DviInvocationResponseUint respSeconds(aInvocation, "Seconds");
-    Time(invocation, aVersion, respTrackCount, respDuration, respSeconds);
+    Time(invocation, respTrackCount, respDuration, respSeconds);
 }
 
-void DvProviderAvOpenhomeOrgTime1::Time(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aTrackCount*/, IDvInvocationResponseUint& /*aDuration*/, IDvInvocationResponseUint& /*aSeconds*/)
+void DvProviderAvOpenhomeOrgTime1::Time(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aTrackCount*/, IDvInvocationResponseUint& /*aDuration*/, IDvInvocationResponseUint& /*aSeconds*/)
 {
     ASSERTS();
 }

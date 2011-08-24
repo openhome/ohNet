@@ -81,7 +81,7 @@ private:
      * GetCount action for the owning device.
      * Must be implemented iff EnableActionGetCount was called.
      */
-    virtual void GetCount(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aCount);
+    virtual void GetCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aCount);
     /**
      * GetRoom action.
      *
@@ -89,7 +89,7 @@ private:
      * GetRoom action for the owning device.
      * Must be implemented iff EnableActionGetRoom was called.
      */
-    virtual void GetRoom(IDvInvocation& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseString& aRoomName);
+    virtual void GetRoom(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseString& aRoomName);
     /**
      * GetName action.
      *
@@ -97,7 +97,7 @@ private:
      * GetName action for the owning device.
      * Must be implemented iff EnableActionGetName was called.
      */
-    virtual void GetName(IDvInvocation& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseString& aFriendlyName);
+    virtual void GetName(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseString& aFriendlyName);
     /**
      * GetPosition action.
      *
@@ -105,7 +105,7 @@ private:
      * GetPosition action for the owning device.
      * Must be implemented iff EnableActionGetPosition was called.
      */
-    virtual void GetPosition(IDvInvocation& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseUint& aX, IDvInvocationResponseUint& aY, IDvInvocationResponseUint& aZ);
+    virtual void GetPosition(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseUint& aX, IDvInvocationResponseUint& aY, IDvInvocationResponseUint& aZ);
     /**
      * SetColor action.
      *
@@ -113,7 +113,7 @@ private:
      * SetColor action for the owning device.
      * Must be implemented iff EnableActionSetColor was called.
      */
-    virtual void SetColor(IDvInvocation& aResponse, TUint aVersion, TUint aIndex, TUint aColor);
+    virtual void SetColor(IDvInvocation& aInvocation, TUint aIndex, TUint aColor);
     /**
      * GetColor action.
      *
@@ -121,7 +121,7 @@ private:
      * GetColor action for the owning device.
      * Must be implemented iff EnableActionGetColor was called.
      */
-    virtual void GetColor(IDvInvocation& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseUint& aColor);
+    virtual void GetColor(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseUint& aColor);
     /**
      * GetColorComponents action.
      *
@@ -129,7 +129,7 @@ private:
      * GetColorComponents action for the owning device.
      * Must be implemented iff EnableActionGetColorComponents was called.
      */
-    virtual void GetColorComponents(IDvInvocation& aResponse, TUint aVersion, TUint aColor, IDvInvocationResponseUint& aBrightness, IDvInvocationResponseUint& aRed, IDvInvocationResponseUint& aGreen, IDvInvocationResponseUint& aBlue);
+    virtual void GetColorComponents(IDvInvocation& aInvocation, TUint aColor, IDvInvocationResponseUint& aBrightness, IDvInvocationResponseUint& aRed, IDvInvocationResponseUint& aGreen, IDvInvocationResponseUint& aBlue);
 private:
     DvProviderOpenhomeOrgTestLights1();
     void DoGetCount(IDviInvocation& aInvocation, TUint aVersion);

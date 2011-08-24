@@ -106,7 +106,7 @@ private:
      * <#=a.name#> action for the owning device.
      * Must be implemented iff EnableAction<#=a.name#> was called.
      */
-    virtual void <#=a.name#>(IDvInvocation& aResponse, TUint aVersion<#=ActionArgs(a)#>);
+    virtual void <#=a.name#>(IDvInvocation& aInvocation<#=ActionArgs(a)#>);
 <#  } #>
 private:
     <#=className#>();

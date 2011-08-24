@@ -231,37 +231,37 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionShutdown()
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoIncrement(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoIncrement(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respResult(aInvocation, "Result");
-    Increment(invocation, aVersion, Value, respResult);
+    Increment(invocation, Value, respResult);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoDecrement(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoDecrement(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseInt respResult(aInvocation, "Result");
-    Decrement(invocation, aVersion, Value, respResult);
+    Decrement(invocation, Value, respResult);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoToggle(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoToggle(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TBool Value = aInvocation.InvocationReadBool("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseBool respResult(aInvocation, "Result");
-    Toggle(invocation, aVersion, Value, respResult);
+    Toggle(invocation, Value, respResult);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoEchoString(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoEchoString(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz Value;
@@ -269,10 +269,10 @@ void DvProviderOpenhomeOrgTestBasic1::DoEchoString(IDviInvocation& aInvocation, 
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respResult(aInvocation, "Result");
-    EchoString(invocation, aVersion, Value, respResult);
+    EchoString(invocation, Value, respResult);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoEchoBinary(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoEchoBinary(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brh Value;
@@ -280,64 +280,64 @@ void DvProviderOpenhomeOrgTestBasic1::DoEchoBinary(IDviInvocation& aInvocation, 
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseBinary respResult(aInvocation, "Result");
-    EchoBinary(invocation, aVersion, Value, respResult);
+    EchoBinary(invocation, Value, respResult);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoSetUint(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoSetUint(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint ValueUint = aInvocation.InvocationReadUint("ValueUint");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetUint(invocation, aVersion, ValueUint);
+    SetUint(invocation, ValueUint);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoGetUint(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoGetUint(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respValueUint(aInvocation, "ValueUint");
-    GetUint(invocation, aVersion, respValueUint);
+    GetUint(invocation, respValueUint);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoSetInt(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoSetInt(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TInt ValueInt = aInvocation.InvocationReadInt("ValueInt");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetInt(invocation, aVersion, ValueInt);
+    SetInt(invocation, ValueInt);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoGetInt(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoGetInt(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseInt respValueInt(aInvocation, "ValueInt");
-    GetInt(invocation, aVersion, respValueInt);
+    GetInt(invocation, respValueInt);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoSetBool(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoSetBool(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TBool ValueBool = aInvocation.InvocationReadBool("ValueBool");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetBool(invocation, aVersion, ValueBool);
+    SetBool(invocation, ValueBool);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoGetBool(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoGetBool(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseBool respValueBool(aInvocation, "ValueBool");
-    GetBool(invocation, aVersion, respValueBool);
+    GetBool(invocation, respValueBool);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoSetMultiple(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoSetMultiple(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint ValueUint = aInvocation.InvocationReadUint("ValueUint");
@@ -345,56 +345,56 @@ void DvProviderOpenhomeOrgTestBasic1::DoSetMultiple(IDviInvocation& aInvocation,
     TBool ValueBool = aInvocation.InvocationReadBool("ValueBool");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetMultiple(invocation, aVersion, ValueUint, ValueInt, ValueBool);
+    SetMultiple(invocation, ValueUint, ValueInt, ValueBool);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoSetString(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoSetString(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz ValueStr;
     aInvocation.InvocationReadString("ValueStr", ValueStr);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetString(invocation, aVersion, ValueStr);
+    SetString(invocation, ValueStr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoGetString(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoGetString(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respValueStr(aInvocation, "ValueStr");
-    GetString(invocation, aVersion, respValueStr);
+    GetString(invocation, respValueStr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoSetBinary(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoSetBinary(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brh ValueBin;
     aInvocation.InvocationReadBinary("ValueBin", ValueBin);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetBinary(invocation, aVersion, ValueBin);
+    SetBinary(invocation, ValueBin);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoGetBinary(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoGetBinary(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseBinary respValueBin(aInvocation, "ValueBin");
-    GetBinary(invocation, aVersion, respValueBin);
+    GetBinary(invocation, respValueBin);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoToggleBool(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoToggleBool(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    ToggleBool(invocation, aVersion);
+    ToggleBool(invocation);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoWriteFile(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoWriteFile(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz Data;
@@ -403,108 +403,108 @@ void DvProviderOpenhomeOrgTestBasic1::DoWriteFile(IDviInvocation& aInvocation, T
     aInvocation.InvocationReadString("FileFullName", FileFullName);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    WriteFile(invocation, aVersion, Data, FileFullName);
+    WriteFile(invocation, Data, FileFullName);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::DoShutdown(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestBasic1::DoShutdown(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Shutdown(invocation, aVersion);
+    Shutdown(invocation);
 }
 
-void DvProviderOpenhomeOrgTestBasic1::Increment(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/, IDvInvocationResponseUint& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1::Increment(IDvInvocation& /*aResponse*/, TUint /*aValue*/, IDvInvocationResponseUint& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::Decrement(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TInt /*aValue*/, IDvInvocationResponseInt& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1::Decrement(IDvInvocation& /*aResponse*/, TInt /*aValue*/, IDvInvocationResponseInt& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::Toggle(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TBool /*aValue*/, IDvInvocationResponseBool& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1::Toggle(IDvInvocation& /*aResponse*/, TBool /*aValue*/, IDvInvocationResponseBool& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::EchoString(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aValue*/, IDvInvocationResponseString& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1::EchoString(IDvInvocation& /*aResponse*/, const Brx& /*aValue*/, IDvInvocationResponseString& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::EchoBinary(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aValue*/, IDvInvocationResponseBinary& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1::EchoBinary(IDvInvocation& /*aResponse*/, const Brx& /*aValue*/, IDvInvocationResponseBinary& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::SetUint(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aValueUint*/)
+void DvProviderOpenhomeOrgTestBasic1::SetUint(IDvInvocation& /*aResponse*/, TUint /*aValueUint*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::GetUint(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aValueUint*/)
+void DvProviderOpenhomeOrgTestBasic1::GetUint(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValueUint*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::SetInt(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TInt /*aValueInt*/)
+void DvProviderOpenhomeOrgTestBasic1::SetInt(IDvInvocation& /*aResponse*/, TInt /*aValueInt*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::GetInt(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseInt& /*aValueInt*/)
+void DvProviderOpenhomeOrgTestBasic1::GetInt(IDvInvocation& /*aResponse*/, IDvInvocationResponseInt& /*aValueInt*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::SetBool(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TBool /*aValueBool*/)
+void DvProviderOpenhomeOrgTestBasic1::SetBool(IDvInvocation& /*aResponse*/, TBool /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::GetBool(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseBool& /*aValueBool*/)
+void DvProviderOpenhomeOrgTestBasic1::GetBool(IDvInvocation& /*aResponse*/, IDvInvocationResponseBool& /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::SetMultiple(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aValueUint*/, TInt /*aValueInt*/, TBool /*aValueBool*/)
+void DvProviderOpenhomeOrgTestBasic1::SetMultiple(IDvInvocation& /*aResponse*/, TUint /*aValueUint*/, TInt /*aValueInt*/, TBool /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::SetString(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aValueStr*/)
+void DvProviderOpenhomeOrgTestBasic1::SetString(IDvInvocation& /*aResponse*/, const Brx& /*aValueStr*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::GetString(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValueStr*/)
+void DvProviderOpenhomeOrgTestBasic1::GetString(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValueStr*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::SetBinary(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aValueBin*/)
+void DvProviderOpenhomeOrgTestBasic1::SetBinary(IDvInvocation& /*aResponse*/, const Brx& /*aValueBin*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::GetBinary(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseBinary& /*aValueBin*/)
+void DvProviderOpenhomeOrgTestBasic1::GetBinary(IDvInvocation& /*aResponse*/, IDvInvocationResponseBinary& /*aValueBin*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::ToggleBool(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1::ToggleBool(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::WriteFile(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aData*/, const Brx& /*aFileFullName*/)
+void DvProviderOpenhomeOrgTestBasic1::WriteFile(IDvInvocation& /*aResponse*/, const Brx& /*aData*/, const Brx& /*aFileFullName*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1::Shutdown(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1::Shutdown(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }

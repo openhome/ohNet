@@ -67,7 +67,7 @@ private:
      * SetTarget action for the owning device.
      * Must be implemented iff EnableActionSetTarget was called.
      */
-    virtual void SetTarget(IDvInvocation& aResponse, TUint aVersion, TBool anewTargetValue);
+    virtual void SetTarget(IDvInvocation& aInvocation, TBool anewTargetValue);
     /**
      * GetTarget action.
      *
@@ -75,7 +75,7 @@ private:
      * GetTarget action for the owning device.
      * Must be implemented iff EnableActionGetTarget was called.
      */
-    virtual void GetTarget(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseBool& aRetTargetValue);
+    virtual void GetTarget(IDvInvocation& aInvocation, IDvInvocationResponseBool& aRetTargetValue);
     /**
      * GetStatus action.
      *
@@ -83,7 +83,7 @@ private:
      * GetStatus action for the owning device.
      * Must be implemented iff EnableActionGetStatus was called.
      */
-    virtual void GetStatus(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseBool& aResultStatus);
+    virtual void GetStatus(IDvInvocation& aInvocation, IDvInvocationResponseBool& aResultStatus);
 private:
     DvProviderUpnpOrgSwitchPower1();
     void DoSetTarget(IDviInvocation& aInvocation, TUint aVersion);

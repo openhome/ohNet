@@ -18,22 +18,22 @@ class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 public:
     ProviderTestBasic(DvDevice& aDevice);
 private:
-    void Increment(IDvInvocation& aInvocation, TUint aVersion, TUint aValue, IDvInvocationResponseUint& aResult);
-    void Decrement(IDvInvocation& aInvocation, TUint aVersion, TInt aValue, IDvInvocationResponseInt& aResult);
-    void Toggle(IDvInvocation& aInvocation, TUint aVersion, TBool aValue, IDvInvocationResponseBool& aResult);
-    void EchoString(IDvInvocation& aInvocation, TUint aVersion, const Brx& aValue, IDvInvocationResponseString& aResult);
-    void EchoBinary(IDvInvocation& aInvocation, TUint aVersion, const Brx& aValue, IDvInvocationResponseBinary& aResult);
-    void SetUint(IDvInvocation& aInvocation, TUint aVersion, TUint aValueUint);
-    void GetUint(IDvInvocation& aInvocation, TUint aVersion, IDvInvocationResponseUint& aValueUint);
-    void SetInt(IDvInvocation& aInvocation, TUint aVersion, TInt aValueInt);
-    void GetInt(IDvInvocation& aInvocation, TUint aVersion, IDvInvocationResponseInt& aValueInt);
-    void SetBool(IDvInvocation& aInvocation, TUint aVersion, TBool aValueBool);
-    void GetBool(IDvInvocation& aInvocation, TUint aVersion, IDvInvocationResponseBool& aValueBool);
-    void SetMultiple(IDvInvocation& aInvocation, TUint aVersion, TUint aValueUint, TInt aValueInt, TBool aValueBool);
-    void SetString(IDvInvocation& aInvocation, TUint aVersion, const Brx& aValueStr);
-    void GetString(IDvInvocation& aInvocation, TUint aVersion, IDvInvocationResponseString& aValueStr);
-    void SetBinary(IDvInvocation& aInvocation, TUint aVersion, const Brx& aValueBin);
-    void GetBinary(IDvInvocation& aInvocation, TUint aVersion, IDvInvocationResponseBinary& aValueBin);
+    void Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
+    void Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult);
+    void Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult);
+    void EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
+    void EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult);
+    void SetUint(IDvInvocation& aInvocation, TUint aValueUint);
+    void GetUint(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint);
+    void SetInt(IDvInvocation& aInvocation, TInt aValueInt);
+    void GetInt(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValueInt);
+    void SetBool(IDvInvocation& aInvocation, TBool aValueBool);
+    void GetBool(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValueBool);
+    void SetMultiple(IDvInvocation& aInvocation, TUint aValueUint, TInt aValueInt, TBool aValueBool);
+    void SetString(IDvInvocation& aInvocation, const Brx& aValueStr);
+    void GetString(IDvInvocation& aInvocation, IDvInvocationResponseString& aValueStr);
+    void SetBinary(IDvInvocation& aInvocation, const Brx& aValueBin);
+    void GetBinary(IDvInvocation& aInvocation, IDvInvocationResponseBinary& aValueBin);
 };
 
 class DeviceBasic
@@ -75,28 +75,28 @@ ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     EnableActionGetBinary();
 }
 
-void ProviderTestBasic::Increment(IDvInvocation& aInvocation, TUint /*aVersion*/, TUint aValue, IDvInvocationResponseUint& aResult)
+void ProviderTestBasic::Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(++aValue);
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::Decrement(IDvInvocation& aInvocation, TUint /*aVersion*/, TInt aValue, IDvInvocationResponseInt& aResult)
+void ProviderTestBasic::Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(--aValue);
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::Toggle(IDvInvocation& aInvocation, TUint /*aVersion*/, TBool aValue, IDvInvocationResponseBool& aResult)
+void ProviderTestBasic::Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(!aValue);
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, TUint /*aVersion*/, const Brx& aValue, IDvInvocationResponseString& aResult)
+void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(aValue);
@@ -104,7 +104,7 @@ void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, TUint /*aVersion*
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::EchoBinary(IDvInvocation& aInvocation, TUint /*aVersion*/, const Brx& aValue, IDvInvocationResponseBinary& aResult)
+void ProviderTestBasic::EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(aValue);
@@ -112,14 +112,14 @@ void ProviderTestBasic::EchoBinary(IDvInvocation& aInvocation, TUint /*aVersion*
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::SetUint(IDvInvocation& aInvocation, TUint /*aVersion*/, TUint aValueUint)
+void ProviderTestBasic::SetUint(IDvInvocation& aInvocation, TUint aValueUint)
 {
     SetPropertyVarUint(aValueUint);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::GetUint(IDvInvocation& aInvocation, TUint /*aVersion*/, IDvInvocationResponseUint& aValueUint)
+void ProviderTestBasic::GetUint(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint)
 {
     aInvocation.StartResponse();
     TUint val;
@@ -128,14 +128,14 @@ void ProviderTestBasic::GetUint(IDvInvocation& aInvocation, TUint /*aVersion*/, 
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::SetInt(IDvInvocation& aInvocation, TUint /*aVersion*/, TInt aValueInt)
+void ProviderTestBasic::SetInt(IDvInvocation& aInvocation, TInt aValueInt)
 {
     SetPropertyVarInt(aValueInt);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::GetInt(IDvInvocation& aInvocation, TUint /*aVersion*/, IDvInvocationResponseInt& aValueInt)
+void ProviderTestBasic::GetInt(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValueInt)
 {
     aInvocation.StartResponse();
     TInt val;
@@ -144,14 +144,14 @@ void ProviderTestBasic::GetInt(IDvInvocation& aInvocation, TUint /*aVersion*/, I
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::SetBool(IDvInvocation& aInvocation, TUint /*aVersion*/, TBool aValueBool)
+void ProviderTestBasic::SetBool(IDvInvocation& aInvocation, TBool aValueBool)
 {
     SetPropertyVarBool(aValueBool);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::GetBool(IDvInvocation& aInvocation, TUint /*aVersion*/, IDvInvocationResponseBool& aValueBool)
+void ProviderTestBasic::GetBool(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValueBool)
 {
     aInvocation.StartResponse();
     TBool val;
@@ -160,7 +160,7 @@ void ProviderTestBasic::GetBool(IDvInvocation& aInvocation, TUint /*aVersion*/, 
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::SetMultiple(IDvInvocation& aInvocation, TUint /*aVersion*/, TUint aValueUint, TInt aValueInt, TBool aValueBool)
+void ProviderTestBasic::SetMultiple(IDvInvocation& aInvocation, TUint aValueUint, TInt aValueInt, TBool aValueBool)
 {
     PropertiesLock();
     SetPropertyVarUint(aValueUint);
@@ -171,14 +171,14 @@ void ProviderTestBasic::SetMultiple(IDvInvocation& aInvocation, TUint /*aVersion
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::SetString(IDvInvocation& aInvocation, TUint /*aVersion*/, const Brx& aValueStr)
+void ProviderTestBasic::SetString(IDvInvocation& aInvocation, const Brx& aValueStr)
 {
     SetPropertyVarStr(aValueStr);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::GetString(IDvInvocation& aInvocation, TUint /*aVersion*/, IDvInvocationResponseString& aValueStr)
+void ProviderTestBasic::GetString(IDvInvocation& aInvocation, IDvInvocationResponseString& aValueStr)
 {
     aInvocation.StartResponse();
     Brhz val;
@@ -188,14 +188,14 @@ void ProviderTestBasic::GetString(IDvInvocation& aInvocation, TUint /*aVersion*/
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::SetBinary(IDvInvocation& aInvocation, TUint /*aVersion*/, const Brx& aValueBin)
+void ProviderTestBasic::SetBinary(IDvInvocation& aInvocation, const Brx& aValueBin)
 {
     SetPropertyVarBin(aValueBin);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::GetBinary(IDvInvocation& aInvocation, TUint /*aVersion*/, IDvInvocationResponseBinary& aValueBin)
+void ProviderTestBasic::GetBinary(IDvInvocation& aInvocation, IDvInvocationResponseBinary& aValueBin)
 {
     aInvocation.StartResponse();
     Brh val;

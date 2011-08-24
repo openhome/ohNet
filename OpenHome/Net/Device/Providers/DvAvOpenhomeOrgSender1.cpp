@@ -121,72 +121,72 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionAttributes()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoPresentationUrl(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respValue(aInvocation, "Value");
-    PresentationUrl(invocation, aVersion, respValue);
+    PresentationUrl(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoMetadata(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoMetadata(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respValue(aInvocation, "Value");
-    Metadata(invocation, aVersion, respValue);
+    Metadata(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoAudio(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoAudio(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseBool respValue(aInvocation, "Value");
-    Audio(invocation, aVersion, respValue);
+    Audio(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoStatus(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoStatus(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respValue(aInvocation, "Value");
-    Status(invocation, aVersion, respValue);
+    Status(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoAttributes(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoAttributes(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respValue(aInvocation, "Value");
-    Attributes(invocation, aVersion, respValue);
+    Attributes(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::PresentationUrl(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1::PresentationUrl(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgSender1::Metadata(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1::Metadata(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgSender1::Audio(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseBool& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1::Audio(IDvInvocation& /*aResponse*/, IDvInvocationResponseBool& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgSender1::Status(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1::Status(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgSender1::Attributes(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1::Attributes(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }

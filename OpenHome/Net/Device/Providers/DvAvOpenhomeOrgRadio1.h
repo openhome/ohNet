@@ -205,7 +205,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(IDvInvocation& aResponse, TUint aVersion);
+    virtual void Play(IDvInvocation& aInvocation);
     /**
      * Pause action.
      *
@@ -213,7 +213,7 @@ private:
      * Pause action for the owning device.
      * Must be implemented iff EnableActionPause was called.
      */
-    virtual void Pause(IDvInvocation& aResponse, TUint aVersion);
+    virtual void Pause(IDvInvocation& aInvocation);
     /**
      * Stop action.
      *
@@ -221,7 +221,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(IDvInvocation& aResponse, TUint aVersion);
+    virtual void Stop(IDvInvocation& aInvocation);
     /**
      * SeekSecondAbsolute action.
      *
@@ -229,7 +229,7 @@ private:
      * SeekSecondAbsolute action for the owning device.
      * Must be implemented iff EnableActionSeekSecondAbsolute was called.
      */
-    virtual void SeekSecondAbsolute(IDvInvocation& aResponse, TUint aVersion, TUint aValue);
+    virtual void SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue);
     /**
      * SeekSecondRelative action.
      *
@@ -237,7 +237,7 @@ private:
      * SeekSecondRelative action for the owning device.
      * Must be implemented iff EnableActionSeekSecondRelative was called.
      */
-    virtual void SeekSecondRelative(IDvInvocation& aResponse, TUint aVersion, TInt aValue);
+    virtual void SeekSecondRelative(IDvInvocation& aInvocation, TInt aValue);
     /**
      * Channel action.
      *
@@ -245,7 +245,7 @@ private:
      * Channel action for the owning device.
      * Must be implemented iff EnableActionChannel was called.
      */
-    virtual void Channel(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
+    virtual void Channel(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
     /**
      * SetChannel action.
      *
@@ -253,7 +253,7 @@ private:
      * SetChannel action for the owning device.
      * Must be implemented iff EnableActionSetChannel was called.
      */
-    virtual void SetChannel(IDvInvocation& aResponse, TUint aVersion, const Brx& aUri, const Brx& aMetadata);
+    virtual void SetChannel(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata);
     /**
      * TransportState action.
      *
@@ -261,7 +261,7 @@ private:
      * TransportState action for the owning device.
      * Must be implemented iff EnableActionTransportState was called.
      */
-    virtual void TransportState(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
     /**
      * Id action.
      *
@@ -269,7 +269,7 @@ private:
      * Id action for the owning device.
      * Must be implemented iff EnableActionId was called.
      */
-    virtual void Id(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
+    virtual void Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
     /**
      * SetId action.
      *
@@ -277,7 +277,7 @@ private:
      * SetId action for the owning device.
      * Must be implemented iff EnableActionSetId was called.
      */
-    virtual void SetId(IDvInvocation& aResponse, TUint aVersion, TUint aValue, const Brx& aUri);
+    virtual void SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri);
     /**
      * Read action.
      *
@@ -285,7 +285,7 @@ private:
      * Read action for the owning device.
      * Must be implemented iff EnableActionRead was called.
      */
-    virtual void Read(IDvInvocation& aResponse, TUint aVersion, TUint aId, IDvInvocationResponseString& aMetadata);
+    virtual void Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aMetadata);
     /**
      * ReadList action.
      *
@@ -293,7 +293,7 @@ private:
      * ReadList action for the owning device.
      * Must be implemented iff EnableActionReadList was called.
      */
-    virtual void ReadList(IDvInvocation& aResponse, TUint aVersion, const Brx& aIdList, IDvInvocationResponseString& aChannelList);
+    virtual void ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDvInvocationResponseString& aChannelList);
     /**
      * IdArray action.
      *
@@ -301,7 +301,7 @@ private:
      * IdArray action for the owning device.
      * Must be implemented iff EnableActionIdArray was called.
      */
-    virtual void IdArray(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aArray);
+    virtual void IdArray(IDvInvocation& aInvocation, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aArray);
     /**
      * IdArrayChanged action.
      *
@@ -309,7 +309,7 @@ private:
      * IdArrayChanged action for the owning device.
      * Must be implemented iff EnableActionIdArrayChanged was called.
      */
-    virtual void IdArrayChanged(IDvInvocation& aResponse, TUint aVersion, TUint aToken, IDvInvocationResponseBool& aValue);
+    virtual void IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDvInvocationResponseBool& aValue);
     /**
      * ChannelsMax action.
      *
@@ -317,7 +317,7 @@ private:
      * ChannelsMax action for the owning device.
      * Must be implemented iff EnableActionChannelsMax was called.
      */
-    virtual void ChannelsMax(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
+    virtual void ChannelsMax(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
     /**
      * ProtocolInfo action.
      *
@@ -325,7 +325,7 @@ private:
      * ProtocolInfo action for the owning device.
      * Must be implemented iff EnableActionProtocolInfo was called.
      */
-    virtual void ProtocolInfo(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgRadio1();
     void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
