@@ -137,30 +137,30 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvOpenhomeOrgTestLights1.net.dll \
 
 device_java_classes_with_path = \
-        $(devicejavadir)DvProviderUpnpOrgAVTransport1.class \
-        $(devicejavadir)DvProviderUpnpOrgAVTransport2.class \
-        $(devicejavadir)DvProviderUpnpOrgConnectionManager1.class \
-        $(devicejavadir)DvProviderUpnpOrgConnectionManager2.class \
-        $(devicejavadir)DvProviderUpnpOrgContentDirectory1.class \
-        $(devicejavadir)DvProviderUpnpOrgContentDirectory2.class \
-        $(devicejavadir)DvProviderUpnpOrgContentDirectory3.class \
-        $(devicejavadir)DvProviderUpnpOrgRenderingControl1.class \
-        $(devicejavadir)DvProviderUpnpOrgRenderingControl2.class \
-        $(devicejavadir)DvProviderUpnpOrgScheduledRecording1.class \
-        $(devicejavadir)DvProviderUpnpOrgScheduledRecording2.class \
-        $(devicejavadir)DvProviderUpnpOrgSwitchPower1.class \
-        $(devicejavadir)DvProviderUpnpOrgDimming1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgInfo1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgTime1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgPlaylist1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgVolume1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgProduct1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgRadio1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgReceiver1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgSender1.class \
-        $(devicejavadir)DvProviderAvOpenhomeOrgPlaylistManager1.class \
-        $(devicejavadir)DvProviderOpenhomeOrgTestBasic1.class \
-        $(devicejavadir)DvProviderOpenhomeOrgTestLights1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgAVTransport1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgAVTransport2.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgConnectionManager1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgConnectionManager2.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgContentDirectory1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgContentDirectory2.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgContentDirectory3.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgRenderingControl1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgRenderingControl2.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgScheduledRecording1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgScheduledRecording2.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgSwitchPower1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgDimming1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgInfo1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgTime1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgPlaylist1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgVolume1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgProduct1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgRadio1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgReceiver1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgSender1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgPlaylistManager1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestBasic1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestLights1.class \
 
 devices : ohNetCore $(objects_devices)
 	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
@@ -539,53 +539,53 @@ $(objdir)DvOpenhomeOrgTestLights1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvO
 
 DvDeviceJavaClasses: $(device_java_classes_with_path)
 
-$(devicejavadir)DvProviderUpnpOrgAVTransport1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgAVTransport1.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgAVTransport1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgAVTransport1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgAVTransport1.java
-$(devicejavadir)DvProviderUpnpOrgAVTransport2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgAVTransport2.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgAVTransport2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgAVTransport2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgAVTransport2.java
-$(devicejavadir)DvProviderUpnpOrgConnectionManager1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgConnectionManager1.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgConnectionManager1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgConnectionManager1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgConnectionManager1.java
-$(devicejavadir)DvProviderUpnpOrgConnectionManager2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgConnectionManager2.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgConnectionManager2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgConnectionManager2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgConnectionManager2.java
-$(devicejavadir)DvProviderUpnpOrgContentDirectory1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgContentDirectory1.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgContentDirectory1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgContentDirectory1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgContentDirectory1.java
-$(devicejavadir)DvProviderUpnpOrgContentDirectory2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgContentDirectory2.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgContentDirectory2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgContentDirectory2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgContentDirectory2.java
-$(devicejavadir)DvProviderUpnpOrgContentDirectory3.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgContentDirectory3.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgContentDirectory3.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgContentDirectory3.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgContentDirectory3.java
-$(devicejavadir)DvProviderUpnpOrgRenderingControl1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgRenderingControl1.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgRenderingControl1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgRenderingControl1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgRenderingControl1.java
-$(devicejavadir)DvProviderUpnpOrgRenderingControl2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgRenderingControl2.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgRenderingControl2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgRenderingControl2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgRenderingControl2.java
-$(devicejavadir)DvProviderUpnpOrgScheduledRecording1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgScheduledRecording1.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgScheduledRecording1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgScheduledRecording1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgScheduledRecording1.java
-$(devicejavadir)DvProviderUpnpOrgScheduledRecording2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgScheduledRecording2.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgScheduledRecording2.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgScheduledRecording2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgScheduledRecording2.java
-$(devicejavadir)DvProviderUpnpOrgSwitchPower1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgSwitchPower1.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgSwitchPower1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgSwitchPower1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgSwitchPower1.java
-$(devicejavadir)DvProviderUpnpOrgDimming1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgDimming1.java
+$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgDimming1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderUpnpOrgDimming1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderUpnpOrgDimming1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgInfo1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgInfo1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgInfo1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgInfo1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgInfo1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgTime1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgTime1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgTime1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgTime1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgTime1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgPlaylist1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgPlaylist1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgPlaylist1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgPlaylist1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgPlaylist1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgVolume1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgVolume1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgVolume1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgVolume1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgVolume1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgProduct1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgProduct1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgProduct1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgProduct1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgProduct1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgRadio1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgRadio1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgRadio1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgRadio1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgRadio1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgReceiver1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgReceiver1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgReceiver1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgReceiver1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgReceiver1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgSender1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgSender1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgSender1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgSender1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgSender1.java
-$(devicejavadir)DvProviderAvOpenhomeOrgPlaylistManager1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgPlaylistManager1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgPlaylistManager1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgPlaylistManager1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgPlaylistManager1.java
-$(devicejavadir)DvProviderOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
+$(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
-$(devicejavadir)DvProviderOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestLights1.java
+$(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestLights1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderOpenhomeOrgTestLights1.java
 
 

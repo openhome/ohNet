@@ -1139,9 +1139,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionManufacturer} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Manufacturer manufacturer(int aVersion)
+    protected Manufacturer manufacturer(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1154,9 +1154,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionModel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Model model(int aVersion)
+    protected Model model(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1169,9 +1169,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionProduct} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Product product(int aVersion)
+    protected Product product(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1184,9 +1184,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionStandby} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean standby(int aVersion)
+    protected boolean standby(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1199,10 +1199,10 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetStandby} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setStandby(int aVersion, boolean aValue)
+    protected void setStandby(IDvInvocation aInvocation, boolean aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -1215,9 +1215,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSourceCount} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long sourceCount(int aVersion)
+    protected long sourceCount(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1230,9 +1230,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSourceXml} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String sourceXml(int aVersion)
+    protected String sourceXml(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1245,9 +1245,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSourceIndex} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long sourceIndex(int aVersion)
+    protected long sourceIndex(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1260,10 +1260,10 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetSourceIndex} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setSourceIndex(int aVersion, long aValue)
+    protected void setSourceIndex(IDvInvocation aInvocation, long aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -1276,10 +1276,10 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetSourceIndexByName} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setSourceIndexByName(int aVersion, String aValue)
+    protected void setSourceIndexByName(IDvInvocation aInvocation, String aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -1292,10 +1292,10 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSource} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
-    protected Source source(int aVersion, long aIndex)
+    protected Source source(IDvInvocation aInvocation, long aIndex)
     {
         throw (new ActionDisabledError());
     }
@@ -1308,9 +1308,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionAttributes} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String attributes(int aVersion)
+    protected String attributes(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1323,9 +1323,9 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSourceXmlChangeCount} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long sourceXmlChangeCount(int aVersion)
+    protected long sourceXmlChangeCount(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1361,7 +1361,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 invocation.readEnd();
 
-            Manufacturer outArgs = manufacturer(aVersion);
+            Manufacturer outArgs = manufacturer(invocation);
             name = outArgs.getName();
             info = outArgs.getInfo();
             url = outArgs.getUrl();
@@ -1420,7 +1420,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 invocation.readEnd();
 
-            Model outArgs = model(aVersion);
+            Model outArgs = model(invocation);
             name = outArgs.getName();
             info = outArgs.getInfo();
             url = outArgs.getUrl();
@@ -1480,7 +1480,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 invocation.readEnd();
 
-            Product outArgs = product(aVersion);
+            Product outArgs = product(invocation);
             room = outArgs.getRoom();
             name = outArgs.getName();
             info = outArgs.getInfo();
@@ -1537,7 +1537,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = standby(aVersion);
+                 value = standby(invocation);
             }
             catch (ActionError ae)
             {
@@ -1586,7 +1586,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 value = invocation.readBool("Value");
                 invocation.readEnd();
-                setStandby(aVersion, value);
+                setStandby(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1633,7 +1633,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = sourceCount(aVersion);
+                 value = sourceCount(invocation);
             }
             catch (ActionError ae)
             {
@@ -1681,7 +1681,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = sourceXml(aVersion);
+                 value = sourceXml(invocation);
             }
             catch (ActionError ae)
             {
@@ -1729,7 +1729,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = sourceIndex(aVersion);
+                 value = sourceIndex(invocation);
             }
             catch (ActionError ae)
             {
@@ -1778,7 +1778,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 value = invocation.readUint("Value");
                 invocation.readEnd();
-                setSourceIndex(aVersion, value);
+                setSourceIndex(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1826,7 +1826,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 value = invocation.readString("Value");
                 invocation.readEnd();
-                setSourceIndexByName(aVersion, value);
+                setSourceIndexByName(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1879,7 +1879,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 index = invocation.readUint("Index");
                 invocation.readEnd();
 
-            Source outArgs = source(aVersion, index);
+            Source outArgs = source(invocation, index);
             systemName = outArgs.getSystemName();
             type = outArgs.getType();
             name = outArgs.getName();
@@ -1934,7 +1934,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = attributes(aVersion);
+                 value = attributes(invocation);
             }
             catch (ActionError ae)
             {
@@ -1982,7 +1982,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = sourceXmlChangeCount(aVersion);
+                 value = sourceXmlChangeCount(invocation);
             }
             catch (ActionError ae)
             {

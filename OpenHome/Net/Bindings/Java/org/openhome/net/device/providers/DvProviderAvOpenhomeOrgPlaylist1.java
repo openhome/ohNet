@@ -737,9 +737,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionPlay} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void play(int aVersion)
+    protected void play(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -752,9 +752,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionPause} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void pause(int aVersion)
+    protected void pause(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -767,9 +767,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionStop} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void stop(int aVersion)
+    protected void stop(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -782,9 +782,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionNext} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void next(int aVersion)
+    protected void next(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -797,9 +797,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionPrevious} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void previous(int aVersion)
+    protected void previous(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -812,10 +812,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSetRepeat} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setRepeat(int aVersion, boolean aValue)
+    protected void setRepeat(IDvInvocation aInvocation, boolean aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -828,9 +828,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionRepeat} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean repeat(int aVersion)
+    protected boolean repeat(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -843,10 +843,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSetShuffle} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setShuffle(int aVersion, boolean aValue)
+    protected void setShuffle(IDvInvocation aInvocation, boolean aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -859,9 +859,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionShuffle} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean shuffle(int aVersion)
+    protected boolean shuffle(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -874,10 +874,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSeekSecondAbsolute} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void seekSecondAbsolute(int aVersion, long aValue)
+    protected void seekSecondAbsolute(IDvInvocation aInvocation, long aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -890,10 +890,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSeekSecondRelative} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void seekSecondRelative(int aVersion, int aValue)
+    protected void seekSecondRelative(IDvInvocation aInvocation, int aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -906,10 +906,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSeekId} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void seekId(int aVersion, long aValue)
+    protected void seekId(IDvInvocation aInvocation, long aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -922,10 +922,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSeekIndex} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void seekIndex(int aVersion, long aValue)
+    protected void seekIndex(IDvInvocation aInvocation, long aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -938,9 +938,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionTransportState} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String transportState(int aVersion)
+    protected String transportState(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -953,9 +953,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionId} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long id(int aVersion)
+    protected long id(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -968,10 +968,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionRead} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      */
-    protected Read read(int aVersion, long aId)
+    protected Read read(IDvInvocation aInvocation, long aId)
     {
         throw (new ActionDisabledError());
     }
@@ -984,10 +984,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionReadList} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIdList
      */
-    protected String readList(int aVersion, String aIdList)
+    protected String readList(IDvInvocation aInvocation, String aIdList)
     {
         throw (new ActionDisabledError());
     }
@@ -1000,12 +1000,12 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionInsert} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aAfterId
      * @param aUri
      * @param aMetadata
      */
-    protected long insert(int aVersion, long aAfterId, String aUri, String aMetadata)
+    protected long insert(IDvInvocation aInvocation, long aAfterId, String aUri, String aMetadata)
     {
         throw (new ActionDisabledError());
     }
@@ -1018,10 +1018,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionDeleteId} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void deleteId(int aVersion, long aValue)
+    protected void deleteId(IDvInvocation aInvocation, long aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -1034,9 +1034,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionDeleteAll} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void deleteAll(int aVersion)
+    protected void deleteAll(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1049,9 +1049,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionTracksMax} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long tracksMax(int aVersion)
+    protected long tracksMax(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1064,9 +1064,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionIdArray} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected IdArray idArray(int aVersion)
+    protected IdArray idArray(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1079,10 +1079,10 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionIdArrayChanged} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aToken
      */
-    protected boolean idArrayChanged(int aVersion, long aToken)
+    protected boolean idArrayChanged(IDvInvocation aInvocation, long aToken)
     {
         throw (new ActionDisabledError());
     }
@@ -1095,9 +1095,9 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionProtocolInfo} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String protocolInfo(int aVersion)
+    protected String protocolInfo(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1128,7 +1128,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                play(aVersion);
+                play(invocation);
             }
             catch (ActionError ae)
             {
@@ -1174,7 +1174,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                pause(aVersion);
+                pause(invocation);
             }
             catch (ActionError ae)
             {
@@ -1220,7 +1220,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                stop(aVersion);
+                stop(invocation);
             }
             catch (ActionError ae)
             {
@@ -1266,7 +1266,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                next(aVersion);
+                next(invocation);
             }
             catch (ActionError ae)
             {
@@ -1312,7 +1312,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                previous(aVersion);
+                previous(invocation);
             }
             catch (ActionError ae)
             {
@@ -1360,7 +1360,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 value = invocation.readBool("Value");
                 invocation.readEnd();
-                setRepeat(aVersion, value);
+                setRepeat(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1407,7 +1407,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = repeat(aVersion);
+                 value = repeat(invocation);
             }
             catch (ActionError ae)
             {
@@ -1456,7 +1456,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 value = invocation.readBool("Value");
                 invocation.readEnd();
-                setShuffle(aVersion, value);
+                setShuffle(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1503,7 +1503,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = shuffle(aVersion);
+                 value = shuffle(invocation);
             }
             catch (ActionError ae)
             {
@@ -1552,7 +1552,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 value = invocation.readUint("Value");
                 invocation.readEnd();
-                seekSecondAbsolute(aVersion, value);
+                seekSecondAbsolute(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1600,7 +1600,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 value = invocation.readInt("Value");
                 invocation.readEnd();
-                seekSecondRelative(aVersion, value);
+                seekSecondRelative(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1648,7 +1648,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 value = invocation.readUint("Value");
                 invocation.readEnd();
-                seekId(aVersion, value);
+                seekId(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1696,7 +1696,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 value = invocation.readUint("Value");
                 invocation.readEnd();
-                seekIndex(aVersion, value);
+                seekIndex(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1743,7 +1743,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = transportState(aVersion);
+                 value = transportState(invocation);
             }
             catch (ActionError ae)
             {
@@ -1791,7 +1791,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = id(aVersion);
+                 value = id(invocation);
             }
             catch (ActionError ae)
             {
@@ -1843,7 +1843,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 id = invocation.readUint("Id");
                 invocation.readEnd();
 
-            Read outArgs = read(aVersion, id);
+            Read outArgs = read(invocation, id);
             uri = outArgs.getUri();
             metadata = outArgs.getMetadata();
             }
@@ -1896,7 +1896,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 idList = invocation.readString("IdList");
                 invocation.readEnd();
-                 trackList = readList(aVersion, idList);
+                 trackList = readList(invocation, idList);
             }
             catch (ActionError ae)
             {
@@ -1950,7 +1950,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 uri = invocation.readString("Uri");
                 metadata = invocation.readString("Metadata");
                 invocation.readEnd();
-                 newId = insert(aVersion, afterId, uri, metadata);
+                 newId = insert(invocation, afterId, uri, metadata);
             }
             catch (ActionError ae)
             {
@@ -1999,7 +1999,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 value = invocation.readUint("Value");
                 invocation.readEnd();
-                deleteId(aVersion, value);
+                deleteId(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -2045,7 +2045,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                deleteAll(aVersion);
+                deleteAll(invocation);
             }
             catch (ActionError ae)
             {
@@ -2092,7 +2092,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = tracksMax(aVersion);
+                 value = tracksMax(invocation);
             }
             catch (ActionError ae)
             {
@@ -2142,7 +2142,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 invocation.readEnd();
 
-            IdArray outArgs = idArray(aVersion);
+            IdArray outArgs = idArray(invocation);
             token = outArgs.getToken();
             array = outArgs.getArray();
             }
@@ -2195,7 +2195,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
                 invocation.readStart();
                 token = invocation.readUint("Token");
                 invocation.readEnd();
-                 value = idArrayChanged(aVersion, token);
+                 value = idArrayChanged(invocation, token);
             }
             catch (ActionError ae)
             {
@@ -2243,7 +2243,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = protocolInfo(aVersion);
+                 value = protocolInfo(invocation);
             }
             catch (ActionError ae)
             {

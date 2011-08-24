@@ -123,10 +123,10 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetTarget} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewTargetValue
      */
-    protected void setTarget(int aVersion, boolean anewTargetValue)
+    protected void setTarget(IDvInvocation aInvocation, boolean anewTargetValue)
     {
         throw (new ActionDisabledError());
     }
@@ -139,9 +139,9 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetTarget} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean getTarget(int aVersion)
+    protected boolean getTarget(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -154,9 +154,9 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetStatus} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean getStatus(int aVersion)
+    protected boolean getStatus(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -189,7 +189,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 newTargetValue = invocation.readBool("newTargetValue");
                 invocation.readEnd();
-                setTarget(aVersion, newTargetValue);
+                setTarget(invocation, newTargetValue);
             }
             catch (ActionError ae)
             {
@@ -236,7 +236,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 retTargetValue = getTarget(aVersion);
+                 retTargetValue = getTarget(invocation);
             }
             catch (ActionError ae)
             {
@@ -284,7 +284,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 resultStatus = getStatus(aVersion);
+                 resultStatus = getStatus(invocation);
             }
             catch (ActionError ae)
             {

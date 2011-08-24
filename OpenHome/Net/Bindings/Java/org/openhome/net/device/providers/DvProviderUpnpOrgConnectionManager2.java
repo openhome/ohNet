@@ -372,9 +372,9 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionGetProtocolInfo} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected GetProtocolInfo getProtocolInfo(int aVersion)
+    protected GetProtocolInfo getProtocolInfo(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -387,13 +387,13 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionPrepareForConnection} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRemoteProtocolInfo
      * @param aPeerConnectionManager
      * @param aPeerConnectionID
      * @param aDirection
      */
-    protected PrepareForConnection prepareForConnection(int aVersion, String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection)
+    protected PrepareForConnection prepareForConnection(IDvInvocation aInvocation, String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection)
     {
         throw (new ActionDisabledError());
     }
@@ -406,10 +406,10 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionConnectionComplete} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aConnectionID
      */
-    protected void connectionComplete(int aVersion, int aConnectionID)
+    protected void connectionComplete(IDvInvocation aInvocation, int aConnectionID)
     {
         throw (new ActionDisabledError());
     }
@@ -422,9 +422,9 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionGetCurrentConnectionIDs} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String getCurrentConnectionIDs(int aVersion)
+    protected String getCurrentConnectionIDs(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -437,10 +437,10 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionGetCurrentConnectionInfo} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aConnectionID
      */
-    protected GetCurrentConnectionInfo getCurrentConnectionInfo(int aVersion, int aConnectionID)
+    protected GetCurrentConnectionInfo getCurrentConnectionInfo(IDvInvocation aInvocation, int aConnectionID)
     {
         throw (new ActionDisabledError());
     }
@@ -474,7 +474,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
                 invocation.readStart();
                 invocation.readEnd();
 
-            GetProtocolInfo outArgs = getProtocolInfo(aVersion);
+            GetProtocolInfo outArgs = getProtocolInfo(invocation);
             source = outArgs.getSource();
             sink = outArgs.getSink();
             }
@@ -536,7 +536,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
                 direction = invocation.readString("Direction");
                 invocation.readEnd();
 
-            PrepareForConnection outArgs = prepareForConnection(aVersion, remoteProtocolInfo, peerConnectionManager, peerConnectionID, direction);
+            PrepareForConnection outArgs = prepareForConnection(invocation, remoteProtocolInfo, peerConnectionManager, peerConnectionID, direction);
             connectionID = outArgs.getConnectionID();
             aVTransportID = outArgs.getAVTransportID();
             rcsID = outArgs.getRcsID();
@@ -590,7 +590,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
                 invocation.readStart();
                 connectionID = invocation.readInt("ConnectionID");
                 invocation.readEnd();
-                connectionComplete(aVersion, connectionID);
+                connectionComplete(invocation, connectionID);
             }
             catch (ActionError ae)
             {
@@ -637,7 +637,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 connectionIDs = getCurrentConnectionIDs(aVersion);
+                 connectionIDs = getCurrentConnectionIDs(invocation);
             }
             catch (ActionError ae)
             {
@@ -694,7 +694,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
                 connectionID = invocation.readInt("ConnectionID");
                 invocation.readEnd();
 
-            GetCurrentConnectionInfo outArgs = getCurrentConnectionInfo(aVersion, connectionID);
+            GetCurrentConnectionInfo outArgs = getCurrentConnectionInfo(invocation, connectionID);
             rcsID = outArgs.getRcsID();
             aVTransportID = outArgs.getAVTransportID();
             protocolInfo = outArgs.getProtocolInfo();

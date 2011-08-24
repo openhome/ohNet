@@ -9,6 +9,30 @@ extern "C" {
 #endif
 /*
  * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetVersion
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetVersion
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetAdapter
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetAdapter
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetResourceUriPrefix
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetResourceUriPrefix
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
  * Method:    DvInvocationReadStart
  * Signature: (J)I
  */
