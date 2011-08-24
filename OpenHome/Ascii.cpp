@@ -165,6 +165,16 @@ TUint Ascii::AppendDec(Bwx& aBuffer, TInt8 aValue)
     return AppendDec(aBuffer, (TInt)aValue);
 }
 
+TUint Ascii::AppendDec(Bwx& aBuffer, TUint16 aValue)
+{
+    return AppendDec(aBuffer, (TUint)aValue);
+}
+
+TUint Ascii::AppendDec(Bwx& aBuffer, TInt16 aValue)
+{
+    return AppendDec(aBuffer, (TInt)aValue);
+}
+
 /// Convert the supplied value to an decimal string and append it to
 /// the specified buffer.
 
