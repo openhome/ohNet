@@ -396,19 +396,19 @@ private:
     virtual void SourceXmlChangeCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
 private:
     DvProviderAvOpenhomeOrgProduct1();
-    void DoManufacturer(IDviInvocation& aInvocation, TUint aVersion);
-    void DoModel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoProduct(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStandby(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetStandby(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSourceCount(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSourceXml(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoAttributes(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSourceXmlChangeCount(IDviInvocation& aInvocation, TUint aVersion);
+    void DoManufacturer(IDviInvocation& aInvocation);
+    void DoModel(IDviInvocation& aInvocation);
+    void DoProduct(IDviInvocation& aInvocation);
+    void DoStandby(IDviInvocation& aInvocation);
+    void DoSetStandby(IDviInvocation& aInvocation);
+    void DoSourceCount(IDviInvocation& aInvocation);
+    void DoSourceXml(IDviInvocation& aInvocation);
+    void DoSourceIndex(IDviInvocation& aInvocation);
+    void DoSetSourceIndex(IDviInvocation& aInvocation);
+    void DoSetSourceIndexByName(IDviInvocation& aInvocation);
+    void DoSource(IDviInvocation& aInvocation);
+    void DoAttributes(IDviInvocation& aInvocation);
+    void DoSourceXmlChangeCount(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyManufacturerName;
     PropertyString* iPropertyManufacturerInfo;

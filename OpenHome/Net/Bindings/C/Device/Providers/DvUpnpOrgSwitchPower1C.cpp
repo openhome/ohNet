@@ -24,9 +24,9 @@ public:
     void EnableActionGetTarget(CallbackSwitchPower1GetTarget aCallback, void* aPtr);
     void EnableActionGetStatus(CallbackSwitchPower1GetStatus aCallback, void* aPtr);
 private:
-    void DoSetTarget(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTarget(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetStatus(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetTarget(IDviInvocation& aInvocation);
+    void DoGetTarget(IDviInvocation& aInvocation);
+    void DoGetStatus(IDviInvocation& aInvocation);
 private:
     CallbackSwitchPower1SetTarget iCallbackSetTarget;
     void* iPtrSetTarget;
@@ -85,7 +85,7 @@ void DvProviderUpnpOrgSwitchPower1C::EnableActionGetStatus(CallbackSwitchPower1G
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgSwitchPower1C::DoSetTarget(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1C::DoSetTarget(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -104,7 +104,7 @@ void DvProviderUpnpOrgSwitchPower1C::DoSetTarget(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgSwitchPower1C::DoGetTarget(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1C::DoGetTarget(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -125,7 +125,7 @@ void DvProviderUpnpOrgSwitchPower1C::DoGetTarget(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

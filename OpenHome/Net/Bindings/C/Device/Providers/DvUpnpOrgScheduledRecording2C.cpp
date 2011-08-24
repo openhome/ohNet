@@ -39,24 +39,24 @@ public:
     void EnableActionGetRecordScheduleConflicts(CallbackScheduledRecording2GetRecordScheduleConflicts aCallback, void* aPtr);
     void EnableActionGetRecordTaskConflicts(CallbackScheduledRecording2GetRecordTaskConflicts aCallback, void* aPtr);
 private:
-    void DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetPropertyList(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetAllowedValues(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetStateUpdateID(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBrowseRecordSchedules(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBrowseRecordTasks(IDviInvocation& aInvocation, TUint aVersion);
-    void DoCreateRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEnableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDisableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEnableRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDisableRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoResetRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation);
+    void DoGetPropertyList(IDviInvocation& aInvocation);
+    void DoGetAllowedValues(IDviInvocation& aInvocation);
+    void DoGetStateUpdateID(IDviInvocation& aInvocation);
+    void DoBrowseRecordSchedules(IDviInvocation& aInvocation);
+    void DoBrowseRecordTasks(IDviInvocation& aInvocation);
+    void DoCreateRecordSchedule(IDviInvocation& aInvocation);
+    void DoDeleteRecordSchedule(IDviInvocation& aInvocation);
+    void DoGetRecordSchedule(IDviInvocation& aInvocation);
+    void DoEnableRecordSchedule(IDviInvocation& aInvocation);
+    void DoDisableRecordSchedule(IDviInvocation& aInvocation);
+    void DoDeleteRecordTask(IDviInvocation& aInvocation);
+    void DoGetRecordTask(IDviInvocation& aInvocation);
+    void DoEnableRecordTask(IDviInvocation& aInvocation);
+    void DoDisableRecordTask(IDviInvocation& aInvocation);
+    void DoResetRecordTask(IDviInvocation& aInvocation);
+    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation);
+    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation);
 private:
     CallbackScheduledRecording2GetSortCapabilities iCallbackGetSortCapabilities;
     void* iPtrGetSortCapabilities;
@@ -343,7 +343,7 @@ void DvProviderUpnpOrgScheduledRecording2C::EnableActionGetRecordTaskConflicts(C
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoGetSortCapabilities(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -370,7 +370,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoGetSortCapabilities(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoGetPropertyList(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoGetPropertyList(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -396,7 +396,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoGetPropertyList(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoGetAllowedValues(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoGetAllowedValues(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -424,7 +424,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoGetAllowedValues(IDviInvocation& a
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoGetStateUpdateID(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoGetStateUpdateID(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -445,7 +445,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoGetStateUpdateID(IDviInvocation& a
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoBrowseRecordSchedules(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoBrowseRecordSchedules(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -484,7 +484,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoBrowseRecordSchedules(IDviInvocati
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoBrowseRecordTasks(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoBrowseRecordTasks(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -525,7 +525,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoBrowseRecordTasks(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoCreateRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoCreateRecordSchedule(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -560,7 +560,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoCreateRecordSchedule(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoDeleteRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoDeleteRecordSchedule(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -580,7 +580,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoDeleteRecordSchedule(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordSchedule(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -611,7 +611,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordSchedule(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoEnableRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoEnableRecordSchedule(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -631,7 +631,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoEnableRecordSchedule(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoDisableRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoDisableRecordSchedule(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -651,7 +651,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoDisableRecordSchedule(IDviInvocati
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoDeleteRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoDeleteRecordTask(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -671,7 +671,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoDeleteRecordTask(IDviInvocation& a
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordTask(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -702,7 +702,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordTask(IDviInvocation& aInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoEnableRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoEnableRecordTask(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -722,7 +722,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoEnableRecordTask(IDviInvocation& a
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoDisableRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoDisableRecordTask(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -742,7 +742,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoDisableRecordTask(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoResetRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoResetRecordTask(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -762,7 +762,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoResetRecordTask(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -791,7 +791,7 @@ void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordScheduleConflicts(IDviInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordTaskConflicts(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2C::DoGetRecordTaskConflicts(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

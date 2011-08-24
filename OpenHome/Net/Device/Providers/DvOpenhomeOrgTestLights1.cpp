@@ -80,7 +80,7 @@ void DvProviderOpenhomeOrgTestLights1::EnableActionGetColorComponents()
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetCount(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1::DoGetCount(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -89,7 +89,7 @@ void DvProviderOpenhomeOrgTestLights1::DoGetCount(IDviInvocation& aInvocation, T
     GetCount(invocation, respCount);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetRoom(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1::DoGetRoom(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -99,7 +99,7 @@ void DvProviderOpenhomeOrgTestLights1::DoGetRoom(IDviInvocation& aInvocation, TU
     GetRoom(invocation, Index, respRoomName);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetName(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1::DoGetName(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -109,7 +109,7 @@ void DvProviderOpenhomeOrgTestLights1::DoGetName(IDviInvocation& aInvocation, TU
     GetName(invocation, Index, respFriendlyName);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetPosition(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1::DoGetPosition(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -121,7 +121,7 @@ void DvProviderOpenhomeOrgTestLights1::DoGetPosition(IDviInvocation& aInvocation
     GetPosition(invocation, Index, respX, respY, respZ);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoSetColor(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1::DoSetColor(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -131,7 +131,7 @@ void DvProviderOpenhomeOrgTestLights1::DoSetColor(IDviInvocation& aInvocation, T
     SetColor(invocation, Index, Color);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetColor(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1::DoGetColor(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -141,7 +141,7 @@ void DvProviderOpenhomeOrgTestLights1::DoGetColor(IDviInvocation& aInvocation, T
     GetColor(invocation, Index, respColor);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetColorComponents(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1::DoGetColorComponents(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Color = aInvocation.InvocationReadUint("Color");

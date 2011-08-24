@@ -154,11 +154,11 @@ private:
     virtual void Attributes(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgSender1();
-    void DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMetadata(IDviInvocation& aInvocation, TUint aVersion);
-    void DoAudio(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStatus(IDviInvocation& aInvocation, TUint aVersion);
-    void DoAttributes(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPresentationUrl(IDviInvocation& aInvocation);
+    void DoMetadata(IDviInvocation& aInvocation);
+    void DoAudio(IDviInvocation& aInvocation);
+    void DoStatus(IDviInvocation& aInvocation);
+    void DoAttributes(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyPresentationUrl;
     PropertyString* iPropertyMetadata;

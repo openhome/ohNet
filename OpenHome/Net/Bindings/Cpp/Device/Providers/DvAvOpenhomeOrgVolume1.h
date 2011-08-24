@@ -371,22 +371,22 @@ private:
     virtual void VolumeLimit(IDvInvocationStd& aInvocation, uint32_t& aValue);
 private:
     DvProviderAvOpenhomeOrgVolume1Cpp();
-    void DoCharacteristics(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetVolume(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoVolumeInc(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoVolumeDec(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoVolume(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetBalance(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoBalanceInc(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoBalanceDec(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoBalance(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetFade(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoFadeInc(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoFadeDec(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoFade(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetMute(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoMute(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoVolumeLimit(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCharacteristics(IDviInvocation& aInvocation);
+    void DoSetVolume(IDviInvocation& aInvocation);
+    void DoVolumeInc(IDviInvocation& aInvocation);
+    void DoVolumeDec(IDviInvocation& aInvocation);
+    void DoVolume(IDviInvocation& aInvocation);
+    void DoSetBalance(IDviInvocation& aInvocation);
+    void DoBalanceInc(IDviInvocation& aInvocation);
+    void DoBalanceDec(IDviInvocation& aInvocation);
+    void DoBalance(IDviInvocation& aInvocation);
+    void DoSetFade(IDviInvocation& aInvocation);
+    void DoFadeInc(IDviInvocation& aInvocation);
+    void DoFadeDec(IDviInvocation& aInvocation);
+    void DoFade(IDviInvocation& aInvocation);
+    void DoSetMute(IDviInvocation& aInvocation);
+    void DoMute(IDviInvocation& aInvocation);
+    void DoVolumeLimit(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyVolume;
     PropertyBool* iPropertyMute;

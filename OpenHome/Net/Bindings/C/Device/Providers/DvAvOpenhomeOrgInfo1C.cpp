@@ -47,10 +47,10 @@ public:
     void EnableActionDetails(CallbackInfo1Details aCallback, void* aPtr);
     void EnableActionMetatext(CallbackInfo1Metatext aCallback, void* aPtr);
 private:
-    void DoCounters(IDviInvocation& aInvocation, TUint aVersion);
-    void DoTrack(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDetails(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMetatext(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCounters(IDviInvocation& aInvocation);
+    void DoTrack(IDviInvocation& aInvocation);
+    void DoDetails(IDviInvocation& aInvocation);
+    void DoMetatext(IDviInvocation& aInvocation);
 private:
     CallbackInfo1Counters iCallbackCounters;
     void* iPtrCounters;
@@ -272,7 +272,7 @@ void DvProviderAvOpenhomeOrgInfo1C::EnableActionMetatext(CallbackInfo1Metatext a
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -299,7 +299,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -329,7 +329,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint /
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -368,7 +368,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

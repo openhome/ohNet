@@ -576,7 +576,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoCounters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCounters(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -627,7 +627,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTrack(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTrack(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -676,7 +676,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDetails(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDetails(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -733,7 +733,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoMetatext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMetatext(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;

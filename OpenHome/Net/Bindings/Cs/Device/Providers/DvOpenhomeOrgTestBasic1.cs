@@ -749,7 +749,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoIncrement(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIncrement(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -798,7 +798,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDecrement(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDecrement(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -847,7 +847,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoToggle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoToggle(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -896,7 +896,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoEchoString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEchoString(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -945,7 +945,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoEchoBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEchoBinary(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -994,7 +994,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetUint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetUint(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1041,7 +1041,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetUint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetUint(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1088,7 +1088,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetInt(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetInt(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1135,7 +1135,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetInt(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetInt(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1182,7 +1182,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBool(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1229,7 +1229,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBool(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1276,7 +1276,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetMultiple(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetMultiple(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1327,7 +1327,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetString(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1374,7 +1374,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetString(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1421,7 +1421,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBinary(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1468,7 +1468,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBinary(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1515,7 +1515,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoToggleBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoToggleBool(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1560,7 +1560,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoWriteFile(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoWriteFile(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
@@ -1609,7 +1609,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoShutdown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoShutdown(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;

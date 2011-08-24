@@ -273,7 +273,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionVolumeLimit()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoCharacteristics(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoCharacteristics(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -301,7 +301,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoCharacteristics(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetVolume(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetVolume(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Value = aInvocation.InvocationReadUint("Value");
@@ -312,7 +312,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetVolume(IDviInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeInc(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeInc(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -322,7 +322,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeInc(IDviInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeDec(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeDec(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -332,7 +332,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeDec(IDviInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolume(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolume(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -345,7 +345,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolume(IDviInvocation& aInvocation, ui
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetBalance(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetBalance(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     int32_t Value = aInvocation.InvocationReadInt("Value");
@@ -356,7 +356,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetBalance(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalanceInc(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalanceInc(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -366,7 +366,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalanceInc(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalanceDec(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalanceDec(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -376,7 +376,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalanceDec(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalance(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalance(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -389,7 +389,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalance(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetFade(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetFade(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     int32_t Value = aInvocation.InvocationReadInt("Value");
@@ -400,7 +400,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetFade(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoFadeInc(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoFadeInc(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -410,7 +410,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoFadeInc(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoFadeDec(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoFadeDec(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -420,7 +420,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoFadeDec(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoFade(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoFade(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -433,7 +433,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoFade(IDviInvocation& aInvocation, uint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetMute(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetMute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     bool Value = aInvocation.InvocationReadBool("Value");
@@ -444,7 +444,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoSetMute(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoMute(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoMute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -457,7 +457,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoMute(IDviInvocation& aInvocation, uint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeLimit(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeLimit(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

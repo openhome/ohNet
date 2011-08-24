@@ -135,13 +135,13 @@ private:
     virtual void GetColorComponents(IDvInvocationStd& aInvocation, uint32_t aColor, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue);
 private:
     DvProviderOpenhomeOrgTestLights1Cpp();
-    void DoGetCount(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRoom(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetName(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetPosition(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetColor(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetColor(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetColorComponents(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetCount(IDviInvocation& aInvocation);
+    void DoGetRoom(IDviInvocation& aInvocation);
+    void DoGetName(IDviInvocation& aInvocation);
+    void DoGetPosition(IDviInvocation& aInvocation);
+    void DoSetColor(IDviInvocation& aInvocation);
+    void DoGetColor(IDviInvocation& aInvocation);
+    void DoGetColorComponents(IDviInvocation& aInvocation);
 private:
 };
 

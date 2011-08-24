@@ -216,7 +216,7 @@ namespace OpenHome.Net.Device.Providers
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-        private static int Do<#=a.name#>(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int Do<#=a.name#>(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             <#=className#> self = (<#=className#>)gch.Target;

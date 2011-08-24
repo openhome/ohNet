@@ -858,7 +858,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoCharacteristics(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCharacteristics(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -915,7 +915,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -962,7 +962,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoVolumeInc(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolumeInc(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1007,7 +1007,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoVolumeDec(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolumeDec(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1052,7 +1052,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolume(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1099,7 +1099,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBalance(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBalance(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1146,7 +1146,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoBalanceInc(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBalanceInc(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1191,7 +1191,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoBalanceDec(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBalanceDec(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1236,7 +1236,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoBalance(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBalance(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1283,7 +1283,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetFade(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetFade(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1330,7 +1330,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoFadeInc(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoFadeInc(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1375,7 +1375,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoFadeDec(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoFadeDec(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1420,7 +1420,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoFade(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoFade(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1467,7 +1467,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1514,7 +1514,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;
@@ -1561,7 +1561,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoVolumeLimit(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolumeLimit(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgVolume1 self = (DvProviderAvOpenhomeOrgVolume1)gch.Target;

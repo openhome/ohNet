@@ -410,7 +410,7 @@ void DvProviderUpnpOrgRenderingControl1::EnableActionSetLoudness()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoListPresets(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoListPresets(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -420,7 +420,7 @@ void DvProviderUpnpOrgRenderingControl1::DoListPresets(IDviInvocation& aInvocati
     ListPresets(invocation, InstanceID, respCurrentPresetNameList);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSelectPreset(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSelectPreset(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -431,7 +431,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSelectPreset(IDviInvocation& aInvocat
     SelectPreset(invocation, InstanceID, PresetName);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetBrightness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetBrightness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -441,7 +441,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetBrightness(IDviInvocation& aInvoca
     GetBrightness(invocation, InstanceID, respCurrentBrightness);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetBrightness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetBrightness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -451,7 +451,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetBrightness(IDviInvocation& aInvoca
     SetBrightness(invocation, InstanceID, DesiredBrightness);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetContrast(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetContrast(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -461,7 +461,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetContrast(IDviInvocation& aInvocati
     GetContrast(invocation, InstanceID, respCurrentContrast);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetContrast(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetContrast(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -471,7 +471,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetContrast(IDviInvocation& aInvocati
     SetContrast(invocation, InstanceID, DesiredContrast);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetSharpness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetSharpness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -481,7 +481,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetSharpness(IDviInvocation& aInvocat
     GetSharpness(invocation, InstanceID, respCurrentSharpness);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetSharpness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetSharpness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -491,7 +491,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetSharpness(IDviInvocation& aInvocat
     SetSharpness(invocation, InstanceID, DesiredSharpness);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetRedVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetRedVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -501,7 +501,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetRedVideoGain(IDviInvocation& aInvo
     GetRedVideoGain(invocation, InstanceID, respCurrentRedVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetRedVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetRedVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -511,7 +511,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetRedVideoGain(IDviInvocation& aInvo
     SetRedVideoGain(invocation, InstanceID, DesiredRedVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetGreenVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -521,7 +521,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetGreenVideoGain(IDviInvocation& aIn
     GetGreenVideoGain(invocation, InstanceID, respCurrentGreenVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetGreenVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -531,7 +531,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetGreenVideoGain(IDviInvocation& aIn
     SetGreenVideoGain(invocation, InstanceID, DesiredGreenVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetBlueVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -541,7 +541,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetBlueVideoGain(IDviInvocation& aInv
     GetBlueVideoGain(invocation, InstanceID, respCurrentBlueVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetBlueVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -551,7 +551,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetBlueVideoGain(IDviInvocation& aInv
     SetBlueVideoGain(invocation, InstanceID, DesiredBlueVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -561,7 +561,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetRedVideoBlackLevel(IDviInvocation&
     GetRedVideoBlackLevel(invocation, InstanceID, respCurrentRedVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -571,7 +571,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetRedVideoBlackLevel(IDviInvocation&
     SetRedVideoBlackLevel(invocation, InstanceID, DesiredRedVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -581,7 +581,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetGreenVideoBlackLevel(IDviInvocatio
     GetGreenVideoBlackLevel(invocation, InstanceID, respCurrentGreenVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -591,7 +591,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetGreenVideoBlackLevel(IDviInvocatio
     SetGreenVideoBlackLevel(invocation, InstanceID, DesiredGreenVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -601,7 +601,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetBlueVideoBlackLevel(IDviInvocation
     GetBlueVideoBlackLevel(invocation, InstanceID, respCurrentBlueVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -611,7 +611,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetBlueVideoBlackLevel(IDviInvocation
     SetBlueVideoBlackLevel(invocation, InstanceID, DesiredBlueVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetColorTemperature(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetColorTemperature(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -621,7 +621,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetColorTemperature(IDviInvocation& a
     GetColorTemperature(invocation, InstanceID, respCurrentColorTemperature);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetColorTemperature(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetColorTemperature(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -631,7 +631,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetColorTemperature(IDviInvocation& a
     SetColorTemperature(invocation, InstanceID, DesiredColorTemperature);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetHorizontalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -641,7 +641,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetHorizontalKeystone(IDviInvocation&
     GetHorizontalKeystone(invocation, InstanceID, respCurrentHorizontalKeystone);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetHorizontalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -651,7 +651,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetHorizontalKeystone(IDviInvocation&
     SetHorizontalKeystone(invocation, InstanceID, DesiredHorizontalKeystone);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetVerticalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -661,7 +661,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetVerticalKeystone(IDviInvocation& a
     GetVerticalKeystone(invocation, InstanceID, respCurrentVerticalKeystone);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetVerticalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -671,7 +671,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetVerticalKeystone(IDviInvocation& a
     SetVerticalKeystone(invocation, InstanceID, DesiredVerticalKeystone);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetMute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -683,7 +683,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetMute(IDviInvocation& aInvocation, 
     GetMute(invocation, InstanceID, Channel, respCurrentMute);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetMute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -695,7 +695,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetMute(IDviInvocation& aInvocation, 
     SetMute(invocation, InstanceID, Channel, DesiredMute);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetVolume(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -707,7 +707,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetVolume(IDviInvocation& aInvocation
     GetVolume(invocation, InstanceID, Channel, respCurrentVolume);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetVolume(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -719,7 +719,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetVolume(IDviInvocation& aInvocation
     SetVolume(invocation, InstanceID, Channel, DesiredVolume);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetVolumeDB(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetVolumeDB(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -731,7 +731,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetVolumeDB(IDviInvocation& aInvocati
     GetVolumeDB(invocation, InstanceID, Channel, respCurrentVolume);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetVolumeDB(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetVolumeDB(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -743,7 +743,7 @@ void DvProviderUpnpOrgRenderingControl1::DoSetVolumeDB(IDviInvocation& aInvocati
     SetVolumeDB(invocation, InstanceID, Channel, DesiredVolume);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetVolumeDBRange(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -756,7 +756,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetVolumeDBRange(IDviInvocation& aInv
     GetVolumeDBRange(invocation, InstanceID, Channel, respMinValue, respMaxValue);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoGetLoudness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoGetLoudness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -768,7 +768,7 @@ void DvProviderUpnpOrgRenderingControl1::DoGetLoudness(IDviInvocation& aInvocati
     GetLoudness(invocation, InstanceID, Channel, respCurrentLoudness);
 }
 
-void DvProviderUpnpOrgRenderingControl1::DoSetLoudness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1::DoSetLoudness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");

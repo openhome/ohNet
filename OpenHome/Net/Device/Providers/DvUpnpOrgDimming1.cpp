@@ -252,7 +252,7 @@ void DvProviderUpnpOrgDimming1::EnableActionGetRampTime()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgDimming1::DoSetLoadLevelTarget(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoSetLoadLevelTarget(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint newLoadlevelTarget = aInvocation.InvocationReadUint("newLoadlevelTarget");
@@ -261,7 +261,7 @@ void DvProviderUpnpOrgDimming1::DoSetLoadLevelTarget(IDviInvocation& aInvocation
     SetLoadLevelTarget(invocation, newLoadlevelTarget);
 }
 
-void DvProviderUpnpOrgDimming1::DoGetLoadLevelTarget(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoGetLoadLevelTarget(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -270,7 +270,7 @@ void DvProviderUpnpOrgDimming1::DoGetLoadLevelTarget(IDviInvocation& aInvocation
     GetLoadLevelTarget(invocation, respGetLoadlevelTarget);
 }
 
-void DvProviderUpnpOrgDimming1::DoGetLoadLevelStatus(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoGetLoadLevelStatus(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -279,7 +279,7 @@ void DvProviderUpnpOrgDimming1::DoGetLoadLevelStatus(IDviInvocation& aInvocation
     GetLoadLevelStatus(invocation, respretLoadlevelStatus);
 }
 
-void DvProviderUpnpOrgDimming1::DoSetOnEffectLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoSetOnEffectLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint newOnEffectLevel = aInvocation.InvocationReadUint("newOnEffectLevel");
@@ -288,7 +288,7 @@ void DvProviderUpnpOrgDimming1::DoSetOnEffectLevel(IDviInvocation& aInvocation, 
     SetOnEffectLevel(invocation, newOnEffectLevel);
 }
 
-void DvProviderUpnpOrgDimming1::DoSetOnEffect(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoSetOnEffect(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz newOnEffect;
@@ -298,7 +298,7 @@ void DvProviderUpnpOrgDimming1::DoSetOnEffect(IDviInvocation& aInvocation, TUint
     SetOnEffect(invocation, newOnEffect);
 }
 
-void DvProviderUpnpOrgDimming1::DoGetOnEffectParameters(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoGetOnEffectParameters(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -308,7 +308,7 @@ void DvProviderUpnpOrgDimming1::DoGetOnEffectParameters(IDviInvocation& aInvocat
     GetOnEffectParameters(invocation, respretOnEffect, respretOnEffectLevel);
 }
 
-void DvProviderUpnpOrgDimming1::DoStepUp(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoStepUp(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -316,7 +316,7 @@ void DvProviderUpnpOrgDimming1::DoStepUp(IDviInvocation& aInvocation, TUint /*aV
     StepUp(invocation);
 }
 
-void DvProviderUpnpOrgDimming1::DoStepDown(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoStepDown(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -324,7 +324,7 @@ void DvProviderUpnpOrgDimming1::DoStepDown(IDviInvocation& aInvocation, TUint /*
     StepDown(invocation);
 }
 
-void DvProviderUpnpOrgDimming1::DoStartRampUp(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoStartRampUp(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -332,7 +332,7 @@ void DvProviderUpnpOrgDimming1::DoStartRampUp(IDviInvocation& aInvocation, TUint
     StartRampUp(invocation);
 }
 
-void DvProviderUpnpOrgDimming1::DoStartRampDown(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoStartRampDown(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -340,7 +340,7 @@ void DvProviderUpnpOrgDimming1::DoStartRampDown(IDviInvocation& aInvocation, TUi
     StartRampDown(invocation);
 }
 
-void DvProviderUpnpOrgDimming1::DoStopRamp(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoStopRamp(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -348,7 +348,7 @@ void DvProviderUpnpOrgDimming1::DoStopRamp(IDviInvocation& aInvocation, TUint /*
     StopRamp(invocation);
 }
 
-void DvProviderUpnpOrgDimming1::DoStartRampToLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoStartRampToLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint newLoadLevelTarget = aInvocation.InvocationReadUint("newLoadLevelTarget");
@@ -358,7 +358,7 @@ void DvProviderUpnpOrgDimming1::DoStartRampToLevel(IDviInvocation& aInvocation, 
     StartRampToLevel(invocation, newLoadLevelTarget, newRampTime);
 }
 
-void DvProviderUpnpOrgDimming1::DoSetStepDelta(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoSetStepDelta(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint newStepDelta = aInvocation.InvocationReadUint("newStepDelta");
@@ -367,7 +367,7 @@ void DvProviderUpnpOrgDimming1::DoSetStepDelta(IDviInvocation& aInvocation, TUin
     SetStepDelta(invocation, newStepDelta);
 }
 
-void DvProviderUpnpOrgDimming1::DoGetStepDelta(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoGetStepDelta(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -376,7 +376,7 @@ void DvProviderUpnpOrgDimming1::DoGetStepDelta(IDviInvocation& aInvocation, TUin
     GetStepDelta(invocation, respretStepDelta);
 }
 
-void DvProviderUpnpOrgDimming1::DoSetRampRate(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoSetRampRate(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint newRampRate = aInvocation.InvocationReadUint("newRampRate");
@@ -385,7 +385,7 @@ void DvProviderUpnpOrgDimming1::DoSetRampRate(IDviInvocation& aInvocation, TUint
     SetRampRate(invocation, newRampRate);
 }
 
-void DvProviderUpnpOrgDimming1::DoGetRampRate(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoGetRampRate(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -394,7 +394,7 @@ void DvProviderUpnpOrgDimming1::DoGetRampRate(IDviInvocation& aInvocation, TUint
     GetRampRate(invocation, respretRampRate);
 }
 
-void DvProviderUpnpOrgDimming1::DoPauseRamp(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoPauseRamp(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -402,7 +402,7 @@ void DvProviderUpnpOrgDimming1::DoPauseRamp(IDviInvocation& aInvocation, TUint /
     PauseRamp(invocation);
 }
 
-void DvProviderUpnpOrgDimming1::DoResumeRamp(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoResumeRamp(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -410,7 +410,7 @@ void DvProviderUpnpOrgDimming1::DoResumeRamp(IDviInvocation& aInvocation, TUint 
     ResumeRamp(invocation);
 }
 
-void DvProviderUpnpOrgDimming1::DoGetIsRamping(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoGetIsRamping(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -419,7 +419,7 @@ void DvProviderUpnpOrgDimming1::DoGetIsRamping(IDviInvocation& aInvocation, TUin
     GetIsRamping(invocation, respretIsRamping);
 }
 
-void DvProviderUpnpOrgDimming1::DoGetRampPaused(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoGetRampPaused(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -428,7 +428,7 @@ void DvProviderUpnpOrgDimming1::DoGetRampPaused(IDviInvocation& aInvocation, TUi
     GetRampPaused(invocation, respretRampPaused);
 }
 
-void DvProviderUpnpOrgDimming1::DoGetRampTime(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgDimming1::DoGetRampTime(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

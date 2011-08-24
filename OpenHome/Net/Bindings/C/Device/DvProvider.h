@@ -34,7 +34,7 @@ typedef THandle DvProviderC;
 /**
  * Callback which runs when an action is invoked
  */
-typedef void (STDCALL *OhNetCallbackDvInvocation)(void* aPtr, DvInvocationC aInvocation, uint32_t aVersion);
+typedef void (STDCALL *OhNetCallbackDvInvocation)(void* aPtr, DvInvocationC aInvocation);
 
 /**
  * Create a provider (of a service)

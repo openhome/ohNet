@@ -236,7 +236,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionShutdown()
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoIncrement(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoIncrement(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Value = aInvocation.InvocationReadUint("Value");
@@ -250,7 +250,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoIncrement(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoDecrement(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoDecrement(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     int32_t Value = aInvocation.InvocationReadInt("Value");
@@ -264,7 +264,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoDecrement(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggle(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggle(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     bool Value = aInvocation.InvocationReadBool("Value");
@@ -278,7 +278,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggle(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Value;
@@ -296,7 +296,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoBinary(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoBinary(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brh buf_Value;
@@ -314,7 +314,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoBinary(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetUint(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetUint(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t ValueUint = aInvocation.InvocationReadUint("ValueUint");
@@ -325,7 +325,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetUint(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetUint(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetUint(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -338,7 +338,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetUint(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetInt(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetInt(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     int32_t ValueInt = aInvocation.InvocationReadInt("ValueInt");
@@ -349,7 +349,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetInt(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetInt(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetInt(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -362,7 +362,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetInt(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBool(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBool(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     bool ValueBool = aInvocation.InvocationReadBool("ValueBool");
@@ -373,7 +373,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBool(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBool(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBool(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -386,7 +386,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBool(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetMultiple(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetMultiple(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t ValueUint = aInvocation.InvocationReadUint("ValueUint");
@@ -399,7 +399,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetMultiple(IDviInvocation& aInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetString(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetString(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ValueStr;
@@ -412,7 +412,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetString(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetString(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetString(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -427,7 +427,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetString(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBinary(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBinary(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brh buf_ValueBin;
@@ -440,7 +440,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBinary(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBinary(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBinary(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -455,7 +455,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBinary(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggleBool(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggleBool(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -465,7 +465,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggleBool(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoWriteFile(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoWriteFile(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Data;
@@ -481,7 +481,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoWriteFile(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoShutdown(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoShutdown(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

@@ -830,7 +830,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoGetSearchCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSearchCapabilities(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -877,7 +877,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -924,7 +924,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetSortExtensionCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSortExtensionCapabilities(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -971,7 +971,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetFeatureList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetFeatureList(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1018,7 +1018,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetSystemUpdateID(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSystemUpdateID(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1065,7 +1065,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetServiceResetToken(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetServiceResetToken(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1112,7 +1112,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoBrowse(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBrowse(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1177,7 +1177,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSearch(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSearch(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1242,7 +1242,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoCreateObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCreateObject(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1295,7 +1295,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDestroyObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDestroyObject(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1342,7 +1342,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoUpdateObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoUpdateObject(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1393,7 +1393,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoMoveObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMoveObject(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1444,7 +1444,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoImportResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoImportResource(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1495,7 +1495,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoExportResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoExportResource(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1546,7 +1546,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteResource(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1593,7 +1593,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStopTransferResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStopTransferResource(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1640,7 +1640,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetTransferProgress(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetTransferProgress(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1693,7 +1693,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoCreateReference(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCreateReference(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1744,7 +1744,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoFreeFormQuery(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoFreeFormQuery(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
@@ -1799,7 +1799,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetFreeFormQueryCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetFreeFormQueryCapabilities(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;

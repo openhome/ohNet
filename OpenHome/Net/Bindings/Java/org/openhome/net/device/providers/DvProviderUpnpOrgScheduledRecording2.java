@@ -914,7 +914,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoGetSortCapabilities implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String sortCaps;
@@ -967,7 +967,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoGetPropertyList implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String dataTypeID;
@@ -1017,7 +1017,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoGetAllowedValues implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String dataTypeID;
@@ -1069,7 +1069,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoGetStateUpdateID implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1117,7 +1117,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoBrowseRecordSchedules implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String filter;
@@ -1184,7 +1184,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoBrowseRecordTasks implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordScheduleID;
@@ -1253,7 +1253,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoCreateRecordSchedule implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String elements;
@@ -1311,7 +1311,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoDeleteRecordSchedule implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordScheduleID;
@@ -1359,7 +1359,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoGetRecordSchedule implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordScheduleID;
@@ -1416,7 +1416,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoEnableRecordSchedule implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordScheduleID;
@@ -1464,7 +1464,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoDisableRecordSchedule implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordScheduleID;
@@ -1512,7 +1512,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoDeleteRecordTask implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordTaskID;
@@ -1560,7 +1560,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoGetRecordTask implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordTaskID;
@@ -1617,7 +1617,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoEnableRecordTask implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordTaskID;
@@ -1665,7 +1665,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoDisableRecordTask implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordTaskID;
@@ -1713,7 +1713,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoResetRecordTask implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordTaskID;
@@ -1761,7 +1761,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoGetRecordScheduleConflicts implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordScheduleID;
@@ -1816,7 +1816,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
 
     private class DoGetRecordTaskConflicts implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String recordTaskID;

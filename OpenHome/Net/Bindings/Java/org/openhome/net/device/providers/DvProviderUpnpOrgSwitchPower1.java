@@ -180,7 +180,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
 
     private class DoSetTarget implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean newTargetValue;
@@ -228,7 +228,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
 
     private class DoGetTarget implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean retTargetValue;
@@ -276,7 +276,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
 
     private class DoGetStatus implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean resultStatus;

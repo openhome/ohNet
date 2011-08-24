@@ -57,22 +57,22 @@ public:
     void EnableActionMute(CallbackVolume1Mute aCallback, void* aPtr);
     void EnableActionVolumeLimit(CallbackVolume1VolumeLimit aCallback, void* aPtr);
 private:
-    void DoCharacteristics(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetVolume(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolume(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBalance(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalanceInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalanceDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalance(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetFade(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFadeInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFadeDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFade(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetMute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeLimit(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCharacteristics(IDviInvocation& aInvocation);
+    void DoSetVolume(IDviInvocation& aInvocation);
+    void DoVolumeInc(IDviInvocation& aInvocation);
+    void DoVolumeDec(IDviInvocation& aInvocation);
+    void DoVolume(IDviInvocation& aInvocation);
+    void DoSetBalance(IDviInvocation& aInvocation);
+    void DoBalanceInc(IDviInvocation& aInvocation);
+    void DoBalanceDec(IDviInvocation& aInvocation);
+    void DoBalance(IDviInvocation& aInvocation);
+    void DoSetFade(IDviInvocation& aInvocation);
+    void DoFadeInc(IDviInvocation& aInvocation);
+    void DoFadeDec(IDviInvocation& aInvocation);
+    void DoFade(IDviInvocation& aInvocation);
+    void DoSetMute(IDviInvocation& aInvocation);
+    void DoMute(IDviInvocation& aInvocation);
+    void DoVolumeLimit(IDviInvocation& aInvocation);
 private:
     CallbackVolume1Characteristics iCallbackCharacteristics;
     void* iPtrCharacteristics;
@@ -416,7 +416,7 @@ void DvProviderAvOpenhomeOrgVolume1C::EnableActionVolumeLimit(CallbackVolume1Vol
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoCharacteristics(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoCharacteristics(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -452,7 +452,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoCharacteristics(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoSetVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoSetVolume(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -471,7 +471,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoSetVolume(IDviInvocation& aInvocation, T
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoVolumeInc(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoVolumeInc(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -489,7 +489,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoVolumeInc(IDviInvocation& aInvocation, T
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoVolumeDec(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoVolumeDec(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -507,7 +507,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoVolumeDec(IDviInvocation& aInvocation, T
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoVolume(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -528,7 +528,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoVolume(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoSetBalance(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoSetBalance(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -547,7 +547,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoSetBalance(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoBalanceInc(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoBalanceInc(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -565,7 +565,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoBalanceInc(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoBalanceDec(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoBalanceDec(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -583,7 +583,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoBalanceDec(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoBalance(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoBalance(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -604,7 +604,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoBalance(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoSetFade(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoSetFade(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -623,7 +623,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoSetFade(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoFadeInc(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoFadeInc(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -641,7 +641,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoFadeInc(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoFadeDec(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoFadeDec(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -659,7 +659,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoFadeDec(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoFade(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoFade(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -680,7 +680,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoFade(IDviInvocation& aInvocation, TUint 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoSetMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoSetMute(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -699,7 +699,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoSetMute(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoMute(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -720,7 +720,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoMute(IDviInvocation& aInvocation, TUint 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgVolume1C::DoVolumeLimit(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1C::DoVolumeLimit(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

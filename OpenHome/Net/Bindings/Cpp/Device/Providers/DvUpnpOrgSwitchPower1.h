@@ -89,9 +89,9 @@ private:
     virtual void GetStatus(IDvInvocationStd& aInvocation, bool& aResultStatus);
 private:
     DvProviderUpnpOrgSwitchPower1Cpp();
-    void DoSetTarget(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetTarget(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetStatus(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetTarget(IDviInvocation& aInvocation);
+    void DoGetTarget(IDviInvocation& aInvocation);
+    void DoGetStatus(IDviInvocation& aInvocation);
 private:
     PropertyBool* iPropertyStatus;
 };

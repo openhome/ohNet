@@ -341,7 +341,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgReceiver1 self = (DvProviderAvOpenhomeOrgReceiver1)gch.Target;
@@ -386,7 +386,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgReceiver1 self = (DvProviderAvOpenhomeOrgReceiver1)gch.Target;
@@ -431,7 +431,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetSender(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSender(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgReceiver1 self = (DvProviderAvOpenhomeOrgReceiver1)gch.Target;
@@ -480,7 +480,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSender(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSender(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgReceiver1 self = (DvProviderAvOpenhomeOrgReceiver1)gch.Target;
@@ -529,7 +529,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgReceiver1 self = (DvProviderAvOpenhomeOrgReceiver1)gch.Target;
@@ -576,7 +576,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTransportState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTransportState(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgReceiver1 self = (DvProviderAvOpenhomeOrgReceiver1)gch.Target;

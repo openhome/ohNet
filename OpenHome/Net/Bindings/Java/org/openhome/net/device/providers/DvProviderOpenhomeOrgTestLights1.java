@@ -343,7 +343,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetCount implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long count;
@@ -391,7 +391,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetRoom implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -441,7 +441,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetName implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -491,7 +491,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetPosition implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -549,7 +549,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoSetColor implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -599,7 +599,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetColor implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -649,7 +649,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
 
     private class DoGetColorComponents implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long color;

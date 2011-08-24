@@ -347,7 +347,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoPresentationUrl(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPresentationUrl(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgSender1 self = (DvProviderAvOpenhomeOrgSender1)gch.Target;
@@ -394,7 +394,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoMetadata(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMetadata(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgSender1 self = (DvProviderAvOpenhomeOrgSender1)gch.Target;
@@ -441,7 +441,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoAudio(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoAudio(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgSender1 self = (DvProviderAvOpenhomeOrgSender1)gch.Target;
@@ -488,7 +488,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStatus(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgSender1 self = (DvProviderAvOpenhomeOrgSender1)gch.Target;
@@ -535,7 +535,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoAttributes(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoAttributes(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgSender1 self = (DvProviderAvOpenhomeOrgSender1)gch.Target;

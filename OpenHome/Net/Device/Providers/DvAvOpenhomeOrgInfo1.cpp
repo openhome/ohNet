@@ -197,7 +197,7 @@ void DvProviderAvOpenhomeOrgInfo1::EnableActionMetatext()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgInfo1::DoCounters(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1::DoCounters(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -208,7 +208,7 @@ void DvProviderAvOpenhomeOrgInfo1::DoCounters(IDviInvocation& aInvocation, TUint
     Counters(invocation, respTrackCount, respDetailsCount, respMetatextCount);
 }
 
-void DvProviderAvOpenhomeOrgInfo1::DoTrack(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1::DoTrack(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -218,7 +218,7 @@ void DvProviderAvOpenhomeOrgInfo1::DoTrack(IDviInvocation& aInvocation, TUint /*
     Track(invocation, respUri, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgInfo1::DoDetails(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1::DoDetails(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -232,7 +232,7 @@ void DvProviderAvOpenhomeOrgInfo1::DoDetails(IDviInvocation& aInvocation, TUint 
     Details(invocation, respDuration, respBitRate, respBitDepth, respSampleRate, respLossless, respCodecName);
 }
 
-void DvProviderAvOpenhomeOrgInfo1::DoMetatext(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1::DoMetatext(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

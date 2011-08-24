@@ -407,7 +407,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoPresentationUrl implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -455,7 +455,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoMetadata implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -503,7 +503,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoAudio implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -551,7 +551,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoStatus implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -599,7 +599,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
 
     private class DoAttributes implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;

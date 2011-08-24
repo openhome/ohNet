@@ -44,27 +44,27 @@ public:
     void EnableActionGetStateVariables(CallbackAVTransport2GetStateVariables aCallback, void* aPtr);
     void EnableActionSetStateVariables(CallbackAVTransport2SetStateVariables aCallback, void* aPtr);
 private:
-    void DoSetAVTransportURI(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetNextAVTransportURI(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetMediaInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetMediaInfo_Ext(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTransportInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetPositionInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetDeviceCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTransportSettings(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPause(IDviInvocation& aInvocation, TUint aVersion);
-    void DoRecord(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSeek(IDviInvocation& aInvocation, TUint aVersion);
-    void DoNext(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPrevious(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetPlayMode(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetRecordQualityMode(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentTransportActions(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetDRMState(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetStateVariables(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetStateVariables(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetAVTransportURI(IDviInvocation& aInvocation);
+    void DoSetNextAVTransportURI(IDviInvocation& aInvocation);
+    void DoGetMediaInfo(IDviInvocation& aInvocation);
+    void DoGetMediaInfo_Ext(IDviInvocation& aInvocation);
+    void DoGetTransportInfo(IDviInvocation& aInvocation);
+    void DoGetPositionInfo(IDviInvocation& aInvocation);
+    void DoGetDeviceCapabilities(IDviInvocation& aInvocation);
+    void DoGetTransportSettings(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoPause(IDviInvocation& aInvocation);
+    void DoRecord(IDviInvocation& aInvocation);
+    void DoSeek(IDviInvocation& aInvocation);
+    void DoNext(IDviInvocation& aInvocation);
+    void DoPrevious(IDviInvocation& aInvocation);
+    void DoSetPlayMode(IDviInvocation& aInvocation);
+    void DoSetRecordQualityMode(IDviInvocation& aInvocation);
+    void DoGetCurrentTransportActions(IDviInvocation& aInvocation);
+    void DoGetDRMState(IDviInvocation& aInvocation);
+    void DoGetStateVariables(IDviInvocation& aInvocation);
+    void DoSetStateVariables(IDviInvocation& aInvocation);
 private:
     CallbackAVTransport2SetAVTransportURI iCallbackSetAVTransportURI;
     void* iPtrSetAVTransportURI;
@@ -459,7 +459,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionSetStateVariables(CallbackAVTra
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoSetAVTransportURI(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoSetAVTransportURI(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -482,7 +482,7 @@ void DvProviderUpnpOrgAVTransport2C::DoSetAVTransportURI(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoSetNextAVTransportURI(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoSetNextAVTransportURI(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -505,7 +505,7 @@ void DvProviderUpnpOrgAVTransport2C::DoSetNextAVTransportURI(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetMediaInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetMediaInfo(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -575,7 +575,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetMediaInfo(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetMediaInfo_Ext(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetMediaInfo_Ext(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -651,7 +651,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetMediaInfo_Ext(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetTransportInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetTransportInfo(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -688,7 +688,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetTransportInfo(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetPositionInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetPositionInfo(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -746,7 +746,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetPositionInfo(IDviInvocation& aInvocati
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetDeviceCapabilities(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetDeviceCapabilities(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -783,7 +783,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetDeviceCapabilities(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetTransportSettings(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetTransportSettings(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -814,7 +814,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetTransportSettings(IDviInvocation& aInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoStop(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -833,7 +833,7 @@ void DvProviderUpnpOrgAVTransport2C::DoStop(IDviInvocation& aInvocation, TUint /
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoPlay(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -854,7 +854,7 @@ void DvProviderUpnpOrgAVTransport2C::DoPlay(IDviInvocation& aInvocation, TUint /
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoPause(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoPause(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -873,7 +873,7 @@ void DvProviderUpnpOrgAVTransport2C::DoPause(IDviInvocation& aInvocation, TUint 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoRecord(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoRecord(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -892,7 +892,7 @@ void DvProviderUpnpOrgAVTransport2C::DoRecord(IDviInvocation& aInvocation, TUint
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoSeek(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoSeek(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -915,7 +915,7 @@ void DvProviderUpnpOrgAVTransport2C::DoSeek(IDviInvocation& aInvocation, TUint /
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoNext(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoNext(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -934,7 +934,7 @@ void DvProviderUpnpOrgAVTransport2C::DoNext(IDviInvocation& aInvocation, TUint /
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoPrevious(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoPrevious(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -953,7 +953,7 @@ void DvProviderUpnpOrgAVTransport2C::DoPrevious(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoSetPlayMode(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoSetPlayMode(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -974,7 +974,7 @@ void DvProviderUpnpOrgAVTransport2C::DoSetPlayMode(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoSetRecordQualityMode(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoSetRecordQualityMode(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -995,7 +995,7 @@ void DvProviderUpnpOrgAVTransport2C::DoSetRecordQualityMode(IDviInvocation& aInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetCurrentTransportActions(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetCurrentTransportActions(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1020,7 +1020,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetCurrentTransportActions(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetDRMState(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetDRMState(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1045,7 +1045,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetDRMState(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoGetStateVariables(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoGetStateVariables(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1072,7 +1072,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetStateVariables(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgAVTransport2C::DoSetStateVariables(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2C::DoSetStateVariables(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

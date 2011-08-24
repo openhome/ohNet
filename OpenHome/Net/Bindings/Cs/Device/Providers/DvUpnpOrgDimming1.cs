@@ -790,7 +790,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoSetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -837,7 +837,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -884,7 +884,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetLoadLevelStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLoadLevelStatus(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -931,7 +931,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetOnEffectLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetOnEffectLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -978,7 +978,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetOnEffect(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetOnEffect(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1025,7 +1025,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetOnEffectParameters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetOnEffectParameters(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1074,7 +1074,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStepUp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStepUp(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1119,7 +1119,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStepDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStepDown(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1164,7 +1164,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStartRampUp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStartRampUp(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1209,7 +1209,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStartRampDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStartRampDown(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1254,7 +1254,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStopRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStopRamp(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1299,7 +1299,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStartRampToLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStartRampToLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1348,7 +1348,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetStepDelta(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStepDelta(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1395,7 +1395,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetStepDelta(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetStepDelta(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1442,7 +1442,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetRampRate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRampRate(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1489,7 +1489,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRampRate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRampRate(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1536,7 +1536,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPauseRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPauseRamp(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1581,7 +1581,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoResumeRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoResumeRamp(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1626,7 +1626,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetIsRamping(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetIsRamping(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1673,7 +1673,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRampPaused(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRampPaused(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1720,7 +1720,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRampTime(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRampTime(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;

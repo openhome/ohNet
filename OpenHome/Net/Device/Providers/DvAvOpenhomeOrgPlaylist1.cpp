@@ -300,7 +300,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionProtocolInfo()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoPlay(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -308,7 +308,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoPlay(IDviInvocation& aInvocation, TUint
     Play(invocation);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoPause(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoPause(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -316,7 +316,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoPause(IDviInvocation& aInvocation, TUin
     Pause(invocation);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoStop(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -324,7 +324,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoStop(IDviInvocation& aInvocation, TUint
     Stop(invocation);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoNext(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoNext(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -332,7 +332,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoNext(IDviInvocation& aInvocation, TUint
     Next(invocation);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoPrevious(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoPrevious(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -340,7 +340,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoPrevious(IDviInvocation& aInvocation, T
     Previous(invocation);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoSetRepeat(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoSetRepeat(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TBool Value = aInvocation.InvocationReadBool("Value");
@@ -349,7 +349,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoSetRepeat(IDviInvocation& aInvocation, 
     SetRepeat(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoRepeat(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoRepeat(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -358,7 +358,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoRepeat(IDviInvocation& aInvocation, TUi
     Repeat(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoSetShuffle(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoSetShuffle(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TBool Value = aInvocation.InvocationReadBool("Value");
@@ -367,7 +367,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoSetShuffle(IDviInvocation& aInvocation,
     SetShuffle(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoShuffle(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoShuffle(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -376,7 +376,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoShuffle(IDviInvocation& aInvocation, TU
     Shuffle(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoSeekSecondAbsolute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
@@ -385,7 +385,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoSeekSecondAbsolute(IDviInvocation& aInv
     SeekSecondAbsolute(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoSeekSecondRelative(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
@@ -394,7 +394,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoSeekSecondRelative(IDviInvocation& aInv
     SeekSecondRelative(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoSeekId(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoSeekId(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
@@ -403,7 +403,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoSeekId(IDviInvocation& aInvocation, TUi
     SeekId(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoSeekIndex(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoSeekIndex(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
@@ -412,7 +412,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoSeekIndex(IDviInvocation& aInvocation, 
     SeekIndex(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoTransportState(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoTransportState(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -421,7 +421,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoTransportState(IDviInvocation& aInvocat
     TransportState(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoId(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoId(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -430,7 +430,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoId(IDviInvocation& aInvocation, TUint /
     Id(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoRead(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoRead(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
@@ -441,7 +441,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoRead(IDviInvocation& aInvocation, TUint
     Read(invocation, Id, respUri, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoReadList(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoReadList(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz IdList;
@@ -452,7 +452,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoReadList(IDviInvocation& aInvocation, T
     ReadList(invocation, IdList, respTrackList);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoInsert(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoInsert(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint AfterId = aInvocation.InvocationReadUint("AfterId");
@@ -466,7 +466,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoInsert(IDviInvocation& aInvocation, TUi
     Insert(invocation, AfterId, Uri, Metadata, respNewId);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoDeleteId(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoDeleteId(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
@@ -475,7 +475,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoDeleteId(IDviInvocation& aInvocation, T
     DeleteId(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoDeleteAll(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoDeleteAll(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -483,7 +483,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoDeleteAll(IDviInvocation& aInvocation, 
     DeleteAll(invocation);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoTracksMax(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoTracksMax(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -492,7 +492,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoTracksMax(IDviInvocation& aInvocation, 
     TracksMax(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoIdArray(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoIdArray(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -502,7 +502,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoIdArray(IDviInvocation& aInvocation, TU
     IdArray(invocation, respToken, respArray);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoIdArrayChanged(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoIdArrayChanged(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Token = aInvocation.InvocationReadUint("Token");
@@ -512,7 +512,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::DoIdArrayChanged(IDviInvocation& aInvocat
     IdArrayChanged(invocation, Token, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1::DoProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylist1::DoProtocolInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

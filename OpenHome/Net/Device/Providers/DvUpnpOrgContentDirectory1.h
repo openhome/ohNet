@@ -260,20 +260,20 @@ private:
     virtual void CreateReference(IDvInvocation& aInvocation, const Brx& aContainerID, const Brx& aObjectID, IDvInvocationResponseString& aNewID);
 private:
     DvProviderUpnpOrgContentDirectory1();
-    void DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetSystemUpdateID(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBrowse(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSearch(IDviInvocation& aInvocation, TUint aVersion);
-    void DoCreateObject(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDestroyObject(IDviInvocation& aInvocation, TUint aVersion);
-    void DoUpdateObject(IDviInvocation& aInvocation, TUint aVersion);
-    void DoImportResource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoExportResource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStopTransferResource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTransferProgress(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteResource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoCreateReference(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetSearchCapabilities(IDviInvocation& aInvocation);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation);
+    void DoGetSystemUpdateID(IDviInvocation& aInvocation);
+    void DoBrowse(IDviInvocation& aInvocation);
+    void DoSearch(IDviInvocation& aInvocation);
+    void DoCreateObject(IDviInvocation& aInvocation);
+    void DoDestroyObject(IDviInvocation& aInvocation);
+    void DoUpdateObject(IDviInvocation& aInvocation);
+    void DoImportResource(IDviInvocation& aInvocation);
+    void DoExportResource(IDviInvocation& aInvocation);
+    void DoStopTransferResource(IDviInvocation& aInvocation);
+    void DoGetTransferProgress(IDviInvocation& aInvocation);
+    void DoDeleteResource(IDviInvocation& aInvocation);
+    void DoCreateReference(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyTransferIDs;
     PropertyUint* iPropertySystemUpdateID;

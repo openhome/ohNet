@@ -30,11 +30,11 @@ public:
     void EnableActionGetCurrentConnectionIDs(CallbackConnectionManager1GetCurrentConnectionIDs aCallback, void* aPtr);
     void EnableActionGetCurrentConnectionInfo(CallbackConnectionManager1GetCurrentConnectionInfo aCallback, void* aPtr);
 private:
-    void DoGetProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPrepareForConnection(IDviInvocation& aInvocation, TUint aVersion);
-    void DoConnectionComplete(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetProtocolInfo(IDviInvocation& aInvocation);
+    void DoPrepareForConnection(IDviInvocation& aInvocation);
+    void DoConnectionComplete(IDviInvocation& aInvocation);
+    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation);
+    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation);
 private:
     CallbackConnectionManager1GetProtocolInfo iCallbackGetProtocolInfo;
     void* iPtrGetProtocolInfo;
@@ -179,7 +179,7 @@ void DvProviderUpnpOrgConnectionManager1C::EnableActionGetCurrentConnectionInfo(
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -209,7 +209,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -243,7 +243,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -262,7 +262,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -286,7 +286,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs(IDviInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

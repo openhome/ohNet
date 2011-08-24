@@ -637,7 +637,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoSetAVTransportURI(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetAVTransportURI(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -688,7 +688,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetNextAVTransportURI(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetNextAVTransportURI(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -739,7 +739,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetMediaInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetMediaInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -804,7 +804,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetTransportInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetTransportInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -857,7 +857,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetPositionInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetPositionInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -920,7 +920,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetDeviceCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetDeviceCapabilities(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -973,7 +973,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetTransportSettings(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetTransportSettings(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1024,7 +1024,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1071,7 +1071,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1120,7 +1120,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPause(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1167,7 +1167,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoRecord(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRecord(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1214,7 +1214,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeek(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeek(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1265,7 +1265,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoNext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoNext(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1312,7 +1312,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPrevious(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPrevious(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1359,7 +1359,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetPlayMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetPlayMode(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1408,7 +1408,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetRecordQualityMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRecordQualityMode(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
@@ -1457,7 +1457,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetCurrentTransportActions(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCurrentTransportActions(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;

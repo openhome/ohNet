@@ -7,12 +7,12 @@ namespace OpenHome {
 namespace Net {
 
 class IDviInvocation;
-typedef void (STDCALL *OhNetFunctorDviInvocation)(void* aPtr, IDviInvocation* aInvocation, TUint aVersion);
+typedef void (STDCALL *OhNetFunctorDviInvocation)(void* aPtr, IDviInvocation* aInvocation);
 
 class FunctorDviInvocation
 {
 public:
-    void operator()(IDviInvocation& aInvocation, TUint aVersion) const { iThunk(*this, aInvocation, aVersion); }
+    void operator()(IDviInvocation& aInvocation) const { iThunk(*this, aInvocation); }
     operator TBool() const { return (iObject!=NULL || iCallback!=NULL); }
     typedef TAny (FunctorDviInvocation::*MemberFunction)();
     typedef TAny (*Callback)();
@@ -26,7 +26,7 @@ public:
     TAny* iObject;
 
 protected:
-    typedef void (*Thunk)(const FunctorDviInvocation&, IDviInvocation&, TUint);
+    typedef void (*Thunk)(const FunctorDviInvocation&, IDviInvocation&);
     FunctorDviInvocation(Thunk aT, const TAny* aObject, const TAny* aCallback, TUint aBytes)
         : iThunk(aT)
     {
@@ -50,11 +50,11 @@ class MemberTranslatorDviInvocation : public FunctorDviInvocation
 public:
     MemberTranslatorDviInvocation(Object& aC, const MemFunc& aM) :
         FunctorDviInvocation(Thunk,&aC,&aM,sizeof(MemFunc)) {}
-    static void Thunk(const FunctorDviInvocation& aFb, IDviInvocation& aInvocation, TUint aVersion)
+    static void Thunk(const FunctorDviInvocation& aFb, IDviInvocation& aInvocation)
     {
         Object* object = (Object*)aFb.iObject;
         MemFunc& memFunc(*(MemFunc*)(TAny*)(aFb.iCallbackMember));
-        (object->*memFunc)(aInvocation, aVersion);
+        (object->*memFunc)(aInvocation);
     }
 };
 
@@ -63,17 +63,17 @@ class FunctionTranslatorDviInvocation : public FunctorDviInvocation
 public:
     FunctionTranslatorDviInvocation(void* aPtr, OhNetFunctorDviInvocation aCallback) :
         FunctorDviInvocation(Thunk,aPtr,aCallback) {}
-    static void Thunk(const FunctorDviInvocation& aFb, IDviInvocation& aInvocation, TUint aVersion)
+    static void Thunk(const FunctorDviInvocation& aFb, IDviInvocation& aInvocation)
     {
-        ((OhNetFunctorDviInvocation)aFb.iCallback)(aFb.iObject, &aInvocation, aVersion);
+        ((OhNetFunctorDviInvocation)aFb.iCallback)(aFb.iObject, &aInvocation);
     }
 };
 
 template<class Object, class CallType>
-inline MemberTranslatorDviInvocation<Object,void (CallType::*)(IDviInvocation&, TUint)>
-MakeFunctorDviInvocation(Object& aC, void(CallType::* const &aF)(IDviInvocation&, TUint))
+inline MemberTranslatorDviInvocation<Object,void (CallType::*)(IDviInvocation&)>
+MakeFunctorDviInvocation(Object& aC, void(CallType::* const &aF)(IDviInvocation&))
     {
-    typedef void(CallType::*MemFunc)(IDviInvocation&, TUint);
+    typedef void(CallType::*MemFunc)(IDviInvocation&);
     return MemberTranslatorDviInvocation<Object,MemFunc>(aC,aF);
     }
 

@@ -51,26 +51,26 @@ public:
     void EnableActionDeleteId(CallbackPlaylistManager1DeleteId aCallback, void* aPtr);
     void EnableActionDeleteAll(CallbackPlaylistManager1DeleteAll aCallback, void* aPtr);
 private:
-    void DoMetadata(IDviInvocation& aInvocation, TUint aVersion);
-    void DoImagesXml(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistReadArray(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistReadList(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistRead(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistSetName(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistInsert(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistDeleteId(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistMove(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistsMax(IDviInvocation& aInvocation, TUint aVersion);
-    void DoTracksMax(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistArrays(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistArraysChanged(IDviInvocation& aInvocation, TUint aVersion);
-    void DoRead(IDviInvocation& aInvocation, TUint aVersion);
-    void DoReadList(IDviInvocation& aInvocation, TUint aVersion);
-    void DoInsert(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteId(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion);
+    void DoMetadata(IDviInvocation& aInvocation);
+    void DoImagesXml(IDviInvocation& aInvocation);
+    void DoPlaylistReadArray(IDviInvocation& aInvocation);
+    void DoPlaylistReadList(IDviInvocation& aInvocation);
+    void DoPlaylistRead(IDviInvocation& aInvocation);
+    void DoPlaylistSetName(IDviInvocation& aInvocation);
+    void DoPlaylistSetDescription(IDviInvocation& aInvocation);
+    void DoPlaylistSetImageId(IDviInvocation& aInvocation);
+    void DoPlaylistInsert(IDviInvocation& aInvocation);
+    void DoPlaylistDeleteId(IDviInvocation& aInvocation);
+    void DoPlaylistMove(IDviInvocation& aInvocation);
+    void DoPlaylistsMax(IDviInvocation& aInvocation);
+    void DoTracksMax(IDviInvocation& aInvocation);
+    void DoPlaylistArrays(IDviInvocation& aInvocation);
+    void DoPlaylistArraysChanged(IDviInvocation& aInvocation);
+    void DoRead(IDviInvocation& aInvocation);
+    void DoReadList(IDviInvocation& aInvocation);
+    void DoInsert(IDviInvocation& aInvocation);
+    void DoDeleteId(IDviInvocation& aInvocation);
+    void DoDeleteAll(IDviInvocation& aInvocation);
 private:
     CallbackPlaylistManager1Metadata iCallbackMetadata;
     void* iPtrMetadata;
@@ -423,7 +423,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionDeleteAll(CallbackPla
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoMetadata(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoMetadata(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -447,7 +447,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoMetadata(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoImagesXml(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoImagesXml(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -471,7 +471,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoImagesXml(IDviInvocation& aInvo
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadArray(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadArray(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -498,7 +498,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadArray(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -524,7 +524,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistRead(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistRead(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -558,7 +558,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistRead(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -579,7 +579,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName(IDviInvocation&
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -600,7 +600,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription(IDviInvo
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetImageId(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -620,7 +620,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetImageId(IDviInvocati
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistInsert(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistInsert(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -647,7 +647,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistInsert(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistDeleteId(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistDeleteId(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -666,7 +666,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistDeleteId(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistMove(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistMove(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -686,7 +686,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistMove(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistsMax(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistsMax(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -707,7 +707,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistsMax(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoTracksMax(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoTracksMax(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -728,7 +728,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoTracksMax(IDviInvocation& aInvo
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArrays(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArrays(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -765,7 +765,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArrays(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArraysChanged(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArraysChanged(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -787,7 +787,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArraysChanged(IDviInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -813,7 +813,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoReadList(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoReadList(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -840,7 +840,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoReadList(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -867,7 +867,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -887,7 +887,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteAll(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteAll(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

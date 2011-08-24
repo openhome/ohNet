@@ -896,7 +896,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSetAVTransportURI implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -948,7 +948,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSetNextAVTransportURI implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1000,7 +1000,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetMediaInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1076,7 +1076,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetTransportInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1134,7 +1134,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetPositionInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1207,7 +1207,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetDeviceCapabilities implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1265,7 +1265,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetTransportSettings implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1320,7 +1320,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoStop implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1368,7 +1368,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoPlay implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1418,7 +1418,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoPause implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1466,7 +1466,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoRecord implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1514,7 +1514,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSeek implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1566,7 +1566,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoNext implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1614,7 +1614,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoPrevious implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1662,7 +1662,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSetPlayMode implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1712,7 +1712,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoSetRecordQualityMode implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1762,7 +1762,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
 
     private class DoGetCurrentTransportActions implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;

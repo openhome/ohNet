@@ -138,9 +138,8 @@ void InvocationDv::Start()
 void InvocationDv::Invoke()
 {
     const Brx& actionName = iInvocation.Action().Name();
-    TUint version = iInvocation.ServiceType().Version();
     try {
-        iService.Invoke(*this, version, actionName);
+        iService.Invoke(*this, actionName);
     }
     catch (InvocationError&) {}
     catch (ParameterValidationError&) {

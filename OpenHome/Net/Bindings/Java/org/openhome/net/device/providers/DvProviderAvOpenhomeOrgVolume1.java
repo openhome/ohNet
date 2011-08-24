@@ -1033,7 +1033,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoCharacteristics implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long volumeMax;
@@ -1098,7 +1098,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoSetVolume implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1146,7 +1146,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoVolumeInc implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1192,7 +1192,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoVolumeDec implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1238,7 +1238,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoVolume implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1286,7 +1286,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoSetBalance implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1334,7 +1334,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoBalanceInc implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1380,7 +1380,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoBalanceDec implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1426,7 +1426,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoBalance implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1474,7 +1474,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoSetFade implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1522,7 +1522,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoFadeInc implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1568,7 +1568,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoFadeDec implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1614,7 +1614,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoFade implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1662,7 +1662,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoSetMute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1710,7 +1710,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoMute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1758,7 +1758,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoVolumeLimit implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;

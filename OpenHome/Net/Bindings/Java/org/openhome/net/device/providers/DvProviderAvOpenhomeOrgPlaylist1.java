@@ -1121,7 +1121,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoPlay implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1167,7 +1167,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoPause implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1213,7 +1213,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoStop implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1259,7 +1259,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoNext implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1305,7 +1305,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoPrevious implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1351,7 +1351,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoSetRepeat implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1399,7 +1399,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoRepeat implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1447,7 +1447,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoSetShuffle implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1495,7 +1495,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoShuffle implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1543,7 +1543,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoSeekSecondAbsolute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1591,7 +1591,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoSeekSecondRelative implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1639,7 +1639,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoSeekId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1687,7 +1687,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoSeekIndex implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1735,7 +1735,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoTransportState implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1783,7 +1783,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1831,7 +1831,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoRead implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1886,7 +1886,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoReadList implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String idList;
@@ -1936,7 +1936,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoInsert implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long afterId;
@@ -1990,7 +1990,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoDeleteId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -2038,7 +2038,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoDeleteAll implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -2084,7 +2084,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoTracksMax implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -2132,7 +2132,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoIdArray implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long token;
@@ -2185,7 +2185,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoIdArrayChanged implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long token;
@@ -2235,7 +2235,7 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
 
     private class DoProtocolInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;

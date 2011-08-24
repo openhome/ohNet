@@ -60,7 +60,7 @@ void DvProviderAvOpenhomeOrgTime1Cpp::EnableActionTime()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgTime1Cpp::DoTime(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgTime1Cpp::DoTime(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

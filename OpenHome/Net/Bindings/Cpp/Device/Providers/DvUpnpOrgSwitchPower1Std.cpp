@@ -50,7 +50,7 @@ void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionGetStatus()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     bool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
@@ -61,7 +61,7 @@ void DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -74,7 +74,7 @@ void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

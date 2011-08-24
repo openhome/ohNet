@@ -1288,7 +1288,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoListPresets implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1338,7 +1338,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSelectPreset implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1388,7 +1388,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetBrightness implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1438,7 +1438,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetBrightness implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1488,7 +1488,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetContrast implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1538,7 +1538,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetContrast implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1588,7 +1588,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetSharpness implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1638,7 +1638,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetSharpness implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1688,7 +1688,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetRedVideoGain implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1738,7 +1738,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetRedVideoGain implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1788,7 +1788,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetGreenVideoGain implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1838,7 +1838,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetGreenVideoGain implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1888,7 +1888,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetBlueVideoGain implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1938,7 +1938,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetBlueVideoGain implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -1988,7 +1988,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetRedVideoBlackLevel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2038,7 +2038,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetRedVideoBlackLevel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2088,7 +2088,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetGreenVideoBlackLevel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2138,7 +2138,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetGreenVideoBlackLevel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2188,7 +2188,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetBlueVideoBlackLevel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2238,7 +2238,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetBlueVideoBlackLevel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2288,7 +2288,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetColorTemperature implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2338,7 +2338,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetColorTemperature implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2388,7 +2388,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetHorizontalKeystone implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2438,7 +2438,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetHorizontalKeystone implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2488,7 +2488,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetVerticalKeystone implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2538,7 +2538,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetVerticalKeystone implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2588,7 +2588,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetMute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2640,7 +2640,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetMute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2692,7 +2692,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetVolume implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2744,7 +2744,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetVolume implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2796,7 +2796,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetVolumeDB implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2848,7 +2848,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetVolumeDB implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2900,7 +2900,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetVolumeDBRange implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -2957,7 +2957,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoGetLoudness implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;
@@ -3009,7 +3009,7 @@ public class DvProviderUpnpOrgRenderingControl1 extends DvProvider implements ID
 
     private class DoSetLoudness implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long instanceID;

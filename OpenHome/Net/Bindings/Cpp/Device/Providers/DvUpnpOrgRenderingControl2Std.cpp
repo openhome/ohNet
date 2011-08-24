@@ -436,7 +436,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetStateVariables()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoListPresets(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoListPresets(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -452,7 +452,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoListPresets(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSelectPreset(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSelectPreset(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -466,7 +466,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSelectPreset(IDviInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBrightness(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBrightness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -480,7 +480,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBrightness(IDviInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBrightness(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBrightness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -492,7 +492,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBrightness(IDviInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetContrast(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetContrast(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -506,7 +506,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetContrast(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetContrast(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetContrast(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -518,7 +518,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetContrast(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetSharpness(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetSharpness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -532,7 +532,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetSharpness(IDviInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetSharpness(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetSharpness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -544,7 +544,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetSharpness(IDviInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -558,7 +558,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain(IDviInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -570,7 +570,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain(IDviInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -584,7 +584,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain(IDviInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -596,7 +596,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain(IDviInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -610,7 +610,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain(IDviInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -622,7 +622,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain(IDviInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -636,7 +636,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -648,7 +648,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -662,7 +662,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel(IDviInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -674,7 +674,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel(IDviInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -688,7 +688,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel(IDviInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -700,7 +700,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel(IDviInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetColorTemperature(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetColorTemperature(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -714,7 +714,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetColorTemperature(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetColorTemperature(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetColorTemperature(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -726,7 +726,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetColorTemperature(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -740,7 +740,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -752,7 +752,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -766,7 +766,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -778,7 +778,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetMute(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetMute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -795,7 +795,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetMute(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetMute(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetMute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -810,7 +810,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetMute(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolume(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolume(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -827,7 +827,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolume(IDviInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolume(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolume(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -842,7 +842,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolume(IDviInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDB(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDB(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -859,7 +859,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDB(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolumeDB(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolumeDB(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -874,7 +874,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolumeDB(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -894,7 +894,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange(IDviInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetLoudness(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetLoudness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -911,7 +911,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetLoudness(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetLoudness(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetLoudness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -926,7 +926,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetLoudness(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -945,7 +945,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDviInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgRenderingControl2Cpp::DoSetStateVariables(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetStateVariables(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");

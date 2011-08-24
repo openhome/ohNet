@@ -787,7 +787,7 @@ void DviSessionUpnp::WriteResourceEnd()
 void DviSessionUpnp::Invoke()
 {
     try {
-        iInvocationService->Invoke(*this, iHeaderSoapAction.Version(), iHeaderSoapAction.Action());
+        iInvocationService->Invoke(*this, iHeaderSoapAction.Action());
     }
     catch (InvocationError&) {}
 }

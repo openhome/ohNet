@@ -206,7 +206,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::EnableActionMetatext()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgInfo1Cpp::DoCounters(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1Cpp::DoCounters(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -225,7 +225,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoCounters(IDviInvocation& aInvocation, ui
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgInfo1Cpp::DoTrack(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1Cpp::DoTrack(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -245,7 +245,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoTrack(IDviInvocation& aInvocation, uint3
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgInfo1Cpp::DoDetails(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1Cpp::DoDetails(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -275,7 +275,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoDetails(IDviInvocation& aInvocation, uin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgInfo1Cpp::DoMetatext(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgInfo1Cpp::DoMetatext(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
