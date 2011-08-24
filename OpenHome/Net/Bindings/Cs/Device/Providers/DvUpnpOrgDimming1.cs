@@ -508,9 +508,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetLoadLevelTarget action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetLoadLevelTarget was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="anewLoadlevelTarget"></param>
-        protected virtual void SetLoadLevelTarget(uint aVersion, uint anewLoadlevelTarget)
+        protected virtual void SetLoadLevelTarget(IDvInvocation aInvocation, uint anewLoadlevelTarget)
         {
             throw (new ActionDisabledError());
         }
@@ -522,9 +522,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetLoadLevelTarget action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetLoadLevelTarget was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aGetLoadlevelTarget"></param>
-        protected virtual void GetLoadLevelTarget(uint aVersion, out uint aGetLoadlevelTarget)
+        protected virtual void GetLoadLevelTarget(IDvInvocation aInvocation, out uint aGetLoadlevelTarget)
         {
             throw (new ActionDisabledError());
         }
@@ -536,9 +536,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetLoadLevelStatus action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetLoadLevelStatus was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aretLoadlevelStatus"></param>
-        protected virtual void GetLoadLevelStatus(uint aVersion, out uint aretLoadlevelStatus)
+        protected virtual void GetLoadLevelStatus(IDvInvocation aInvocation, out uint aretLoadlevelStatus)
         {
             throw (new ActionDisabledError());
         }
@@ -550,9 +550,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetOnEffectLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetOnEffectLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="anewOnEffectLevel"></param>
-        protected virtual void SetOnEffectLevel(uint aVersion, uint anewOnEffectLevel)
+        protected virtual void SetOnEffectLevel(IDvInvocation aInvocation, uint anewOnEffectLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -564,9 +564,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetOnEffect action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetOnEffect was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="anewOnEffect"></param>
-        protected virtual void SetOnEffect(uint aVersion, string anewOnEffect)
+        protected virtual void SetOnEffect(IDvInvocation aInvocation, string anewOnEffect)
         {
             throw (new ActionDisabledError());
         }
@@ -578,10 +578,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetOnEffectParameters action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetOnEffectParameters was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aretOnEffect"></param>
         /// <param name="aretOnEffectLevel"></param>
-        protected virtual void GetOnEffectParameters(uint aVersion, out string aretOnEffect, out uint aretOnEffectLevel)
+        protected virtual void GetOnEffectParameters(IDvInvocation aInvocation, out string aretOnEffect, out uint aretOnEffectLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -593,8 +593,8 @@ namespace OpenHome.Net.Device.Providers
         /// StepUp action for the owning device.
         ///
         /// Must be implemented iff EnableActionStepUp was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void StepUp(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void StepUp(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -606,8 +606,8 @@ namespace OpenHome.Net.Device.Providers
         /// StepDown action for the owning device.
         ///
         /// Must be implemented iff EnableActionStepDown was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void StepDown(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void StepDown(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -619,8 +619,8 @@ namespace OpenHome.Net.Device.Providers
         /// StartRampUp action for the owning device.
         ///
         /// Must be implemented iff EnableActionStartRampUp was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void StartRampUp(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void StartRampUp(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -632,8 +632,8 @@ namespace OpenHome.Net.Device.Providers
         /// StartRampDown action for the owning device.
         ///
         /// Must be implemented iff EnableActionStartRampDown was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void StartRampDown(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void StartRampDown(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -645,8 +645,8 @@ namespace OpenHome.Net.Device.Providers
         /// StopRamp action for the owning device.
         ///
         /// Must be implemented iff EnableActionStopRamp was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void StopRamp(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void StopRamp(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -658,10 +658,10 @@ namespace OpenHome.Net.Device.Providers
         /// StartRampToLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionStartRampToLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="anewLoadLevelTarget"></param>
         /// <param name="anewRampTime"></param>
-        protected virtual void StartRampToLevel(uint aVersion, uint anewLoadLevelTarget, uint anewRampTime)
+        protected virtual void StartRampToLevel(IDvInvocation aInvocation, uint anewLoadLevelTarget, uint anewRampTime)
         {
             throw (new ActionDisabledError());
         }
@@ -673,9 +673,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetStepDelta action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetStepDelta was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="anewStepDelta"></param>
-        protected virtual void SetStepDelta(uint aVersion, uint anewStepDelta)
+        protected virtual void SetStepDelta(IDvInvocation aInvocation, uint anewStepDelta)
         {
             throw (new ActionDisabledError());
         }
@@ -687,9 +687,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetStepDelta action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetStepDelta was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aretStepDelta"></param>
-        protected virtual void GetStepDelta(uint aVersion, out uint aretStepDelta)
+        protected virtual void GetStepDelta(IDvInvocation aInvocation, out uint aretStepDelta)
         {
             throw (new ActionDisabledError());
         }
@@ -701,9 +701,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetRampRate action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetRampRate was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="anewRampRate"></param>
-        protected virtual void SetRampRate(uint aVersion, uint anewRampRate)
+        protected virtual void SetRampRate(IDvInvocation aInvocation, uint anewRampRate)
         {
             throw (new ActionDisabledError());
         }
@@ -715,9 +715,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetRampRate action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRampRate was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aretRampRate"></param>
-        protected virtual void GetRampRate(uint aVersion, out uint aretRampRate)
+        protected virtual void GetRampRate(IDvInvocation aInvocation, out uint aretRampRate)
         {
             throw (new ActionDisabledError());
         }
@@ -729,8 +729,8 @@ namespace OpenHome.Net.Device.Providers
         /// PauseRamp action for the owning device.
         ///
         /// Must be implemented iff EnableActionPauseRamp was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void PauseRamp(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void PauseRamp(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -742,8 +742,8 @@ namespace OpenHome.Net.Device.Providers
         /// ResumeRamp action for the owning device.
         ///
         /// Must be implemented iff EnableActionResumeRamp was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void ResumeRamp(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void ResumeRamp(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -755,9 +755,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetIsRamping action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetIsRamping was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aretIsRamping"></param>
-        protected virtual void GetIsRamping(uint aVersion, out bool aretIsRamping)
+        protected virtual void GetIsRamping(IDvInvocation aInvocation, out bool aretIsRamping)
         {
             throw (new ActionDisabledError());
         }
@@ -769,9 +769,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetRampPaused action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRampPaused was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aretRampPaused"></param>
-        protected virtual void GetRampPaused(uint aVersion, out bool aretRampPaused)
+        protected virtual void GetRampPaused(IDvInvocation aInvocation, out bool aretRampPaused)
         {
             throw (new ActionDisabledError());
         }
@@ -783,9 +783,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetRampTime action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRampTime was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aretRampTime"></param>
-        protected virtual void GetRampTime(uint aVersion, out uint aretRampTime)
+        protected virtual void GetRampTime(IDvInvocation aInvocation, out uint aretRampTime)
         {
             throw (new ActionDisabledError());
         }
@@ -801,7 +801,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 newLoadlevelTarget = invocation.ReadUint("newLoadlevelTarget");
                 invocation.ReadEnd();
-                self.SetLoadLevelTarget(aVersion, newLoadlevelTarget);
+                self.SetLoadLevelTarget(invocation, newLoadlevelTarget);
             }
             catch (ActionError)
             {
@@ -847,7 +847,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetLoadLevelTarget(aVersion, out getLoadlevelTarget);
+                self.GetLoadLevelTarget(invocation, out getLoadlevelTarget);
             }
             catch (ActionError)
             {
@@ -894,7 +894,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetLoadLevelStatus(aVersion, out retLoadlevelStatus);
+                self.GetLoadLevelStatus(invocation, out retLoadlevelStatus);
             }
             catch (ActionError)
             {
@@ -942,7 +942,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 newOnEffectLevel = invocation.ReadUint("newOnEffectLevel");
                 invocation.ReadEnd();
-                self.SetOnEffectLevel(aVersion, newOnEffectLevel);
+                self.SetOnEffectLevel(invocation, newOnEffectLevel);
             }
             catch (ActionError)
             {
@@ -989,7 +989,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 newOnEffect = invocation.ReadString("newOnEffect");
                 invocation.ReadEnd();
-                self.SetOnEffect(aVersion, newOnEffect);
+                self.SetOnEffect(invocation, newOnEffect);
             }
             catch (ActionError)
             {
@@ -1036,7 +1036,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetOnEffectParameters(aVersion, out retOnEffect, out retOnEffectLevel);
+                self.GetOnEffectParameters(invocation, out retOnEffect, out retOnEffectLevel);
             }
             catch (ActionError)
             {
@@ -1083,7 +1083,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.StepUp(aVersion);
+                self.StepUp(invocation);
             }
             catch (ActionError)
             {
@@ -1128,7 +1128,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.StepDown(aVersion);
+                self.StepDown(invocation);
             }
             catch (ActionError)
             {
@@ -1173,7 +1173,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.StartRampUp(aVersion);
+                self.StartRampUp(invocation);
             }
             catch (ActionError)
             {
@@ -1218,7 +1218,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.StartRampDown(aVersion);
+                self.StartRampDown(invocation);
             }
             catch (ActionError)
             {
@@ -1263,7 +1263,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.StopRamp(aVersion);
+                self.StopRamp(invocation);
             }
             catch (ActionError)
             {
@@ -1312,7 +1312,7 @@ namespace OpenHome.Net.Device.Providers
                 newLoadLevelTarget = invocation.ReadUint("newLoadLevelTarget");
                 newRampTime = invocation.ReadUint("newRampTime");
                 invocation.ReadEnd();
-                self.StartRampToLevel(aVersion, newLoadLevelTarget, newRampTime);
+                self.StartRampToLevel(invocation, newLoadLevelTarget, newRampTime);
             }
             catch (ActionError)
             {
@@ -1359,7 +1359,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 newStepDelta = invocation.ReadUint("newStepDelta");
                 invocation.ReadEnd();
-                self.SetStepDelta(aVersion, newStepDelta);
+                self.SetStepDelta(invocation, newStepDelta);
             }
             catch (ActionError)
             {
@@ -1405,7 +1405,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetStepDelta(aVersion, out retStepDelta);
+                self.GetStepDelta(invocation, out retStepDelta);
             }
             catch (ActionError)
             {
@@ -1453,7 +1453,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 newRampRate = invocation.ReadUint("newRampRate");
                 invocation.ReadEnd();
-                self.SetRampRate(aVersion, newRampRate);
+                self.SetRampRate(invocation, newRampRate);
             }
             catch (ActionError)
             {
@@ -1499,7 +1499,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetRampRate(aVersion, out retRampRate);
+                self.GetRampRate(invocation, out retRampRate);
             }
             catch (ActionError)
             {
@@ -1545,7 +1545,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.PauseRamp(aVersion);
+                self.PauseRamp(invocation);
             }
             catch (ActionError)
             {
@@ -1590,7 +1590,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.ResumeRamp(aVersion);
+                self.ResumeRamp(invocation);
             }
             catch (ActionError)
             {
@@ -1636,7 +1636,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetIsRamping(aVersion, out retIsRamping);
+                self.GetIsRamping(invocation, out retIsRamping);
             }
             catch (ActionError)
             {
@@ -1683,7 +1683,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetRampPaused(aVersion, out retRampPaused);
+                self.GetRampPaused(invocation, out retRampPaused);
             }
             catch (ActionError)
             {
@@ -1730,7 +1730,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetRampTime(aVersion, out retRampTime);
+                self.GetRampTime(invocation, out retRampTime);
             }
             catch (ActionError)
             {

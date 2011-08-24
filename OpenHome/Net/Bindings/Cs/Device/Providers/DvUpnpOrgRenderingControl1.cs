@@ -636,10 +636,10 @@ namespace OpenHome.Net.Device.Providers
         /// ListPresets action for the owning device.
         ///
         /// Must be implemented iff EnableActionListPresets was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentPresetNameList"></param>
-        protected virtual void ListPresets(uint aVersion, uint aInstanceID, out string aCurrentPresetNameList)
+        protected virtual void ListPresets(IDvInvocation aInvocation, uint aInstanceID, out string aCurrentPresetNameList)
         {
             throw (new ActionDisabledError());
         }
@@ -651,10 +651,10 @@ namespace OpenHome.Net.Device.Providers
         /// SelectPreset action for the owning device.
         ///
         /// Must be implemented iff EnableActionSelectPreset was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aPresetName"></param>
-        protected virtual void SelectPreset(uint aVersion, uint aInstanceID, string aPresetName)
+        protected virtual void SelectPreset(IDvInvocation aInvocation, uint aInstanceID, string aPresetName)
         {
             throw (new ActionDisabledError());
         }
@@ -666,10 +666,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetBrightness action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetBrightness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBrightness"></param>
-        protected virtual void GetBrightness(uint aVersion, uint aInstanceID, out uint aCurrentBrightness)
+        protected virtual void GetBrightness(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentBrightness)
         {
             throw (new ActionDisabledError());
         }
@@ -681,10 +681,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetBrightness action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetBrightness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBrightness"></param>
-        protected virtual void SetBrightness(uint aVersion, uint aInstanceID, uint aDesiredBrightness)
+        protected virtual void SetBrightness(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredBrightness)
         {
             throw (new ActionDisabledError());
         }
@@ -696,10 +696,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetContrast action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetContrast was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentContrast"></param>
-        protected virtual void GetContrast(uint aVersion, uint aInstanceID, out uint aCurrentContrast)
+        protected virtual void GetContrast(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentContrast)
         {
             throw (new ActionDisabledError());
         }
@@ -711,10 +711,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetContrast action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetContrast was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredContrast"></param>
-        protected virtual void SetContrast(uint aVersion, uint aInstanceID, uint aDesiredContrast)
+        protected virtual void SetContrast(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredContrast)
         {
             throw (new ActionDisabledError());
         }
@@ -726,10 +726,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetSharpness action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetSharpness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentSharpness"></param>
-        protected virtual void GetSharpness(uint aVersion, uint aInstanceID, out uint aCurrentSharpness)
+        protected virtual void GetSharpness(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentSharpness)
         {
             throw (new ActionDisabledError());
         }
@@ -741,10 +741,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetSharpness action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetSharpness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredSharpness"></param>
-        protected virtual void SetSharpness(uint aVersion, uint aInstanceID, uint aDesiredSharpness)
+        protected virtual void SetSharpness(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredSharpness)
         {
             throw (new ActionDisabledError());
         }
@@ -756,10 +756,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetRedVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRedVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentRedVideoGain"></param>
-        protected virtual void GetRedVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentRedVideoGain)
+        protected virtual void GetRedVideoGain(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentRedVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -771,10 +771,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetRedVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetRedVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredRedVideoGain"></param>
-        protected virtual void SetRedVideoGain(uint aVersion, uint aInstanceID, uint aDesiredRedVideoGain)
+        protected virtual void SetRedVideoGain(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredRedVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -786,10 +786,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetGreenVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetGreenVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentGreenVideoGain"></param>
-        protected virtual void GetGreenVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentGreenVideoGain)
+        protected virtual void GetGreenVideoGain(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentGreenVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -801,10 +801,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetGreenVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetGreenVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredGreenVideoGain"></param>
-        protected virtual void SetGreenVideoGain(uint aVersion, uint aInstanceID, uint aDesiredGreenVideoGain)
+        protected virtual void SetGreenVideoGain(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredGreenVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -816,10 +816,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetBlueVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetBlueVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBlueVideoGain"></param>
-        protected virtual void GetBlueVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentBlueVideoGain)
+        protected virtual void GetBlueVideoGain(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentBlueVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -831,10 +831,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetBlueVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetBlueVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBlueVideoGain"></param>
-        protected virtual void SetBlueVideoGain(uint aVersion, uint aInstanceID, uint aDesiredBlueVideoGain)
+        protected virtual void SetBlueVideoGain(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredBlueVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -846,10 +846,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetRedVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRedVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentRedVideoBlackLevel"></param>
-        protected virtual void GetRedVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentRedVideoBlackLevel)
+        protected virtual void GetRedVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentRedVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -861,10 +861,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetRedVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetRedVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredRedVideoBlackLevel"></param>
-        protected virtual void SetRedVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredRedVideoBlackLevel)
+        protected virtual void SetRedVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredRedVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -876,10 +876,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetGreenVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetGreenVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentGreenVideoBlackLevel"></param>
-        protected virtual void GetGreenVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentGreenVideoBlackLevel)
+        protected virtual void GetGreenVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentGreenVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -891,10 +891,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetGreenVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetGreenVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredGreenVideoBlackLevel"></param>
-        protected virtual void SetGreenVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
+        protected virtual void SetGreenVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -906,10 +906,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetBlueVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetBlueVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBlueVideoBlackLevel"></param>
-        protected virtual void GetBlueVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentBlueVideoBlackLevel)
+        protected virtual void GetBlueVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentBlueVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -921,10 +921,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetBlueVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetBlueVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBlueVideoBlackLevel"></param>
-        protected virtual void SetBlueVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
+        protected virtual void SetBlueVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -936,10 +936,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetColorTemperature action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetColorTemperature was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentColorTemperature"></param>
-        protected virtual void GetColorTemperature(uint aVersion, uint aInstanceID, out uint aCurrentColorTemperature)
+        protected virtual void GetColorTemperature(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentColorTemperature)
         {
             throw (new ActionDisabledError());
         }
@@ -951,10 +951,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetColorTemperature action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetColorTemperature was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredColorTemperature"></param>
-        protected virtual void SetColorTemperature(uint aVersion, uint aInstanceID, uint aDesiredColorTemperature)
+        protected virtual void SetColorTemperature(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredColorTemperature)
         {
             throw (new ActionDisabledError());
         }
@@ -966,10 +966,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetHorizontalKeystone action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetHorizontalKeystone was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentHorizontalKeystone"></param>
-        protected virtual void GetHorizontalKeystone(uint aVersion, uint aInstanceID, out int aCurrentHorizontalKeystone)
+        protected virtual void GetHorizontalKeystone(IDvInvocation aInvocation, uint aInstanceID, out int aCurrentHorizontalKeystone)
         {
             throw (new ActionDisabledError());
         }
@@ -981,10 +981,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetHorizontalKeystone action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetHorizontalKeystone was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredHorizontalKeystone"></param>
-        protected virtual void SetHorizontalKeystone(uint aVersion, uint aInstanceID, int aDesiredHorizontalKeystone)
+        protected virtual void SetHorizontalKeystone(IDvInvocation aInvocation, uint aInstanceID, int aDesiredHorizontalKeystone)
         {
             throw (new ActionDisabledError());
         }
@@ -996,10 +996,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetVerticalKeystone action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetVerticalKeystone was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentVerticalKeystone"></param>
-        protected virtual void GetVerticalKeystone(uint aVersion, uint aInstanceID, out int aCurrentVerticalKeystone)
+        protected virtual void GetVerticalKeystone(IDvInvocation aInvocation, uint aInstanceID, out int aCurrentVerticalKeystone)
         {
             throw (new ActionDisabledError());
         }
@@ -1011,10 +1011,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetVerticalKeystone action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetVerticalKeystone was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredVerticalKeystone"></param>
-        protected virtual void SetVerticalKeystone(uint aVersion, uint aInstanceID, int aDesiredVerticalKeystone)
+        protected virtual void SetVerticalKeystone(IDvInvocation aInvocation, uint aInstanceID, int aDesiredVerticalKeystone)
         {
             throw (new ActionDisabledError());
         }
@@ -1026,11 +1026,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetMute action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetMute was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentMute"></param>
-        protected virtual void GetMute(uint aVersion, uint aInstanceID, string aChannel, out bool aCurrentMute)
+        protected virtual void GetMute(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out bool aCurrentMute)
         {
             throw (new ActionDisabledError());
         }
@@ -1042,11 +1042,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetMute action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetMute was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredMute"></param>
-        protected virtual void SetMute(uint aVersion, uint aInstanceID, string aChannel, bool aDesiredMute)
+        protected virtual void SetMute(IDvInvocation aInvocation, uint aInstanceID, string aChannel, bool aDesiredMute)
         {
             throw (new ActionDisabledError());
         }
@@ -1058,11 +1058,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetVolume action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetVolume was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentVolume"></param>
-        protected virtual void GetVolume(uint aVersion, uint aInstanceID, string aChannel, out uint aCurrentVolume)
+        protected virtual void GetVolume(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out uint aCurrentVolume)
         {
             throw (new ActionDisabledError());
         }
@@ -1074,11 +1074,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetVolume action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetVolume was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredVolume"></param>
-        protected virtual void SetVolume(uint aVersion, uint aInstanceID, string aChannel, uint aDesiredVolume)
+        protected virtual void SetVolume(IDvInvocation aInvocation, uint aInstanceID, string aChannel, uint aDesiredVolume)
         {
             throw (new ActionDisabledError());
         }
@@ -1090,11 +1090,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetVolumeDB action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetVolumeDB was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentVolume"></param>
-        protected virtual void GetVolumeDB(uint aVersion, uint aInstanceID, string aChannel, out int aCurrentVolume)
+        protected virtual void GetVolumeDB(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out int aCurrentVolume)
         {
             throw (new ActionDisabledError());
         }
@@ -1106,11 +1106,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetVolumeDB action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetVolumeDB was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredVolume"></param>
-        protected virtual void SetVolumeDB(uint aVersion, uint aInstanceID, string aChannel, int aDesiredVolume)
+        protected virtual void SetVolumeDB(IDvInvocation aInvocation, uint aInstanceID, string aChannel, int aDesiredVolume)
         {
             throw (new ActionDisabledError());
         }
@@ -1122,12 +1122,12 @@ namespace OpenHome.Net.Device.Providers
         /// GetVolumeDBRange action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetVolumeDBRange was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aMinValue"></param>
         /// <param name="aMaxValue"></param>
-        protected virtual void GetVolumeDBRange(uint aVersion, uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue)
+        protected virtual void GetVolumeDBRange(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue)
         {
             throw (new ActionDisabledError());
         }
@@ -1139,11 +1139,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetLoudness action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetLoudness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentLoudness"></param>
-        protected virtual void GetLoudness(uint aVersion, uint aInstanceID, string aChannel, out bool aCurrentLoudness)
+        protected virtual void GetLoudness(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out bool aCurrentLoudness)
         {
             throw (new ActionDisabledError());
         }
@@ -1155,11 +1155,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetLoudness action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetLoudness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredLoudness"></param>
-        protected virtual void SetLoudness(uint aVersion, uint aInstanceID, string aChannel, bool aDesiredLoudness)
+        protected virtual void SetLoudness(IDvInvocation aInvocation, uint aInstanceID, string aChannel, bool aDesiredLoudness)
         {
             throw (new ActionDisabledError());
         }
@@ -1176,7 +1176,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.ListPresets(aVersion, instanceID, out currentPresetNameList);
+                self.ListPresets(invocation, instanceID, out currentPresetNameList);
             }
             catch (ActionError)
             {
@@ -1226,7 +1226,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 presetName = invocation.ReadString("PresetName");
                 invocation.ReadEnd();
-                self.SelectPreset(aVersion, instanceID, presetName);
+                self.SelectPreset(invocation, instanceID, presetName);
             }
             catch (ActionError)
             {
@@ -1274,7 +1274,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetBrightness(aVersion, instanceID, out currentBrightness);
+                self.GetBrightness(invocation, instanceID, out currentBrightness);
             }
             catch (ActionError)
             {
@@ -1324,7 +1324,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredBrightness = invocation.ReadUint("DesiredBrightness");
                 invocation.ReadEnd();
-                self.SetBrightness(aVersion, instanceID, desiredBrightness);
+                self.SetBrightness(invocation, instanceID, desiredBrightness);
             }
             catch (ActionError)
             {
@@ -1372,7 +1372,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetContrast(aVersion, instanceID, out currentContrast);
+                self.GetContrast(invocation, instanceID, out currentContrast);
             }
             catch (ActionError)
             {
@@ -1422,7 +1422,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredContrast = invocation.ReadUint("DesiredContrast");
                 invocation.ReadEnd();
-                self.SetContrast(aVersion, instanceID, desiredContrast);
+                self.SetContrast(invocation, instanceID, desiredContrast);
             }
             catch (ActionError)
             {
@@ -1470,7 +1470,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetSharpness(aVersion, instanceID, out currentSharpness);
+                self.GetSharpness(invocation, instanceID, out currentSharpness);
             }
             catch (ActionError)
             {
@@ -1520,7 +1520,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredSharpness = invocation.ReadUint("DesiredSharpness");
                 invocation.ReadEnd();
-                self.SetSharpness(aVersion, instanceID, desiredSharpness);
+                self.SetSharpness(invocation, instanceID, desiredSharpness);
             }
             catch (ActionError)
             {
@@ -1568,7 +1568,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetRedVideoGain(aVersion, instanceID, out currentRedVideoGain);
+                self.GetRedVideoGain(invocation, instanceID, out currentRedVideoGain);
             }
             catch (ActionError)
             {
@@ -1618,7 +1618,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredRedVideoGain = invocation.ReadUint("DesiredRedVideoGain");
                 invocation.ReadEnd();
-                self.SetRedVideoGain(aVersion, instanceID, desiredRedVideoGain);
+                self.SetRedVideoGain(invocation, instanceID, desiredRedVideoGain);
             }
             catch (ActionError)
             {
@@ -1666,7 +1666,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetGreenVideoGain(aVersion, instanceID, out currentGreenVideoGain);
+                self.GetGreenVideoGain(invocation, instanceID, out currentGreenVideoGain);
             }
             catch (ActionError)
             {
@@ -1716,7 +1716,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredGreenVideoGain = invocation.ReadUint("DesiredGreenVideoGain");
                 invocation.ReadEnd();
-                self.SetGreenVideoGain(aVersion, instanceID, desiredGreenVideoGain);
+                self.SetGreenVideoGain(invocation, instanceID, desiredGreenVideoGain);
             }
             catch (ActionError)
             {
@@ -1764,7 +1764,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetBlueVideoGain(aVersion, instanceID, out currentBlueVideoGain);
+                self.GetBlueVideoGain(invocation, instanceID, out currentBlueVideoGain);
             }
             catch (ActionError)
             {
@@ -1814,7 +1814,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredBlueVideoGain = invocation.ReadUint("DesiredBlueVideoGain");
                 invocation.ReadEnd();
-                self.SetBlueVideoGain(aVersion, instanceID, desiredBlueVideoGain);
+                self.SetBlueVideoGain(invocation, instanceID, desiredBlueVideoGain);
             }
             catch (ActionError)
             {
@@ -1862,7 +1862,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetRedVideoBlackLevel(aVersion, instanceID, out currentRedVideoBlackLevel);
+                self.GetRedVideoBlackLevel(invocation, instanceID, out currentRedVideoBlackLevel);
             }
             catch (ActionError)
             {
@@ -1912,7 +1912,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredRedVideoBlackLevel = invocation.ReadUint("DesiredRedVideoBlackLevel");
                 invocation.ReadEnd();
-                self.SetRedVideoBlackLevel(aVersion, instanceID, desiredRedVideoBlackLevel);
+                self.SetRedVideoBlackLevel(invocation, instanceID, desiredRedVideoBlackLevel);
             }
             catch (ActionError)
             {
@@ -1960,7 +1960,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetGreenVideoBlackLevel(aVersion, instanceID, out currentGreenVideoBlackLevel);
+                self.GetGreenVideoBlackLevel(invocation, instanceID, out currentGreenVideoBlackLevel);
             }
             catch (ActionError)
             {
@@ -2010,7 +2010,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredGreenVideoBlackLevel = invocation.ReadUint("DesiredGreenVideoBlackLevel");
                 invocation.ReadEnd();
-                self.SetGreenVideoBlackLevel(aVersion, instanceID, desiredGreenVideoBlackLevel);
+                self.SetGreenVideoBlackLevel(invocation, instanceID, desiredGreenVideoBlackLevel);
             }
             catch (ActionError)
             {
@@ -2058,7 +2058,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetBlueVideoBlackLevel(aVersion, instanceID, out currentBlueVideoBlackLevel);
+                self.GetBlueVideoBlackLevel(invocation, instanceID, out currentBlueVideoBlackLevel);
             }
             catch (ActionError)
             {
@@ -2108,7 +2108,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredBlueVideoBlackLevel = invocation.ReadUint("DesiredBlueVideoBlackLevel");
                 invocation.ReadEnd();
-                self.SetBlueVideoBlackLevel(aVersion, instanceID, desiredBlueVideoBlackLevel);
+                self.SetBlueVideoBlackLevel(invocation, instanceID, desiredBlueVideoBlackLevel);
             }
             catch (ActionError)
             {
@@ -2156,7 +2156,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetColorTemperature(aVersion, instanceID, out currentColorTemperature);
+                self.GetColorTemperature(invocation, instanceID, out currentColorTemperature);
             }
             catch (ActionError)
             {
@@ -2206,7 +2206,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredColorTemperature = invocation.ReadUint("DesiredColorTemperature");
                 invocation.ReadEnd();
-                self.SetColorTemperature(aVersion, instanceID, desiredColorTemperature);
+                self.SetColorTemperature(invocation, instanceID, desiredColorTemperature);
             }
             catch (ActionError)
             {
@@ -2254,7 +2254,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetHorizontalKeystone(aVersion, instanceID, out currentHorizontalKeystone);
+                self.GetHorizontalKeystone(invocation, instanceID, out currentHorizontalKeystone);
             }
             catch (ActionError)
             {
@@ -2304,7 +2304,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredHorizontalKeystone = invocation.ReadInt("DesiredHorizontalKeystone");
                 invocation.ReadEnd();
-                self.SetHorizontalKeystone(aVersion, instanceID, desiredHorizontalKeystone);
+                self.SetHorizontalKeystone(invocation, instanceID, desiredHorizontalKeystone);
             }
             catch (ActionError)
             {
@@ -2352,7 +2352,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetVerticalKeystone(aVersion, instanceID, out currentVerticalKeystone);
+                self.GetVerticalKeystone(invocation, instanceID, out currentVerticalKeystone);
             }
             catch (ActionError)
             {
@@ -2402,7 +2402,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredVerticalKeystone = invocation.ReadInt("DesiredVerticalKeystone");
                 invocation.ReadEnd();
-                self.SetVerticalKeystone(aVersion, instanceID, desiredVerticalKeystone);
+                self.SetVerticalKeystone(invocation, instanceID, desiredVerticalKeystone);
             }
             catch (ActionError)
             {
@@ -2452,7 +2452,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetMute(aVersion, instanceID, channel, out currentMute);
+                self.GetMute(invocation, instanceID, channel, out currentMute);
             }
             catch (ActionError)
             {
@@ -2504,7 +2504,7 @@ namespace OpenHome.Net.Device.Providers
                 channel = invocation.ReadString("Channel");
                 desiredMute = invocation.ReadBool("DesiredMute");
                 invocation.ReadEnd();
-                self.SetMute(aVersion, instanceID, channel, desiredMute);
+                self.SetMute(invocation, instanceID, channel, desiredMute);
             }
             catch (ActionError)
             {
@@ -2554,7 +2554,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetVolume(aVersion, instanceID, channel, out currentVolume);
+                self.GetVolume(invocation, instanceID, channel, out currentVolume);
             }
             catch (ActionError)
             {
@@ -2606,7 +2606,7 @@ namespace OpenHome.Net.Device.Providers
                 channel = invocation.ReadString("Channel");
                 desiredVolume = invocation.ReadUint("DesiredVolume");
                 invocation.ReadEnd();
-                self.SetVolume(aVersion, instanceID, channel, desiredVolume);
+                self.SetVolume(invocation, instanceID, channel, desiredVolume);
             }
             catch (ActionError)
             {
@@ -2656,7 +2656,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetVolumeDB(aVersion, instanceID, channel, out currentVolume);
+                self.GetVolumeDB(invocation, instanceID, channel, out currentVolume);
             }
             catch (ActionError)
             {
@@ -2708,7 +2708,7 @@ namespace OpenHome.Net.Device.Providers
                 channel = invocation.ReadString("Channel");
                 desiredVolume = invocation.ReadInt("DesiredVolume");
                 invocation.ReadEnd();
-                self.SetVolumeDB(aVersion, instanceID, channel, desiredVolume);
+                self.SetVolumeDB(invocation, instanceID, channel, desiredVolume);
             }
             catch (ActionError)
             {
@@ -2759,7 +2759,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetVolumeDBRange(aVersion, instanceID, channel, out minValue, out maxValue);
+                self.GetVolumeDBRange(invocation, instanceID, channel, out minValue, out maxValue);
             }
             catch (ActionError)
             {
@@ -2811,7 +2811,7 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetLoudness(aVersion, instanceID, channel, out currentLoudness);
+                self.GetLoudness(invocation, instanceID, channel, out currentLoudness);
             }
             catch (ActionError)
             {
@@ -2863,7 +2863,7 @@ namespace OpenHome.Net.Device.Providers
                 channel = invocation.ReadString("Channel");
                 desiredLoudness = invocation.ReadBool("DesiredLoudness");
                 invocation.ReadEnd();
-                self.SetLoudness(aVersion, instanceID, channel, desiredLoudness);
+                self.SetLoudness(invocation, instanceID, channel, desiredLoudness);
             }
             catch (ActionError)
             {

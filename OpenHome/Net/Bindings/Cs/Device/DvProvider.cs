@@ -237,12 +237,37 @@ namespace OpenHome.Net.Device
         }
     }
 
+    public interface IDvInvocation
+    {
+        /// <summary>
+        /// Get the version number of the service requested by the caller.
+        /// </summary>
+        /// <returns>The version number of the service the caller expects.</returns>
+        uint Version();
+        /// <summary>
+        /// Get the network adapter an action was invoked using.
+        /// </summary>
+        /// <returns>The network adapter used to invoke this action.</returns>
+        uint Adapter();
+        /// <summary>
+        /// Get the prefix to use on any uris to resources offered by the provider.
+        /// </summary>
+        /// <returns>The prefix to resource uris.</returns>
+        string ResourceUriPrefix();
+    }
+
     /// <summary>
     /// Utility class used by providers to read input and write output arguments
     /// </summary>
     /// <remarks>Only intended for use by auto-generated providers</remarks>
-    public class DvInvocation
+    public class DvInvocation : IDvInvocation
     {
+        [DllImport("ohNet")]
+        static extern uint DvInvocationVersion(IntPtr aInvocation);
+        [DllImport("ohNet")]
+        static extern uint DvInvocationAdapter(IntPtr aInvocation);
+        [DllImport("ohNet")]
+        static extern IntPtr DvInvocationResourceUriPrefix(IntPtr aInvocation);
         [DllImport("ohNet")]
         static extern int DvInvocationReadStart(IntPtr aInvocation);
         [DllImport("ohNet")]
@@ -293,6 +318,32 @@ namespace OpenHome.Net.Device
         public DvInvocation(IntPtr aHandle)
         {
             iHandle = aHandle;
+        }
+        /// <summary>
+        /// Get the version number of the service requested by the caller.
+        /// </summary>
+        /// <returns>The version number of the service the caller expects.</returns>
+        public uint Version()
+        {
+            return DvInvocationVersion(iHandle);
+        }
+        /// <summary>
+        /// Get the network adapter an action was invoked using.
+        /// </summary>
+        /// <returns>The network adapter used to invoke this action.</returns>
+        public uint Adapter()
+        {
+            return DvInvocationAdapter(iHandle);
+        }
+        /// <summary>
+        /// Get the prefix to use on any uris to resources offered by the provider.
+        /// </summary>
+        /// <returns>The prefix to resource uris.</returns>
+        public string ResourceUriPrefix()
+        {
+            IntPtr cPrefix = DvInvocationResourceUriPrefix(iHandle);
+            String prefix = (cPrefix == IntPtr.Zero? "" : Marshal.PtrToStringAnsi(cPrefix));
+            return prefix;
         }
         /// <summary>
         /// Begin reading (input arguments for) an invocation

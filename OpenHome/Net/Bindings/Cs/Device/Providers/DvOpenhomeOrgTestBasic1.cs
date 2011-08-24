@@ -484,10 +484,10 @@ namespace OpenHome.Net.Device.Providers
         /// Increment action for the owning device.
         ///
         /// Must be implemented iff EnableActionIncrement was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        protected virtual void Increment(uint aVersion, uint aValue, out uint aResult)
+        protected virtual void Increment(IDvInvocation aInvocation, uint aValue, out uint aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -499,10 +499,10 @@ namespace OpenHome.Net.Device.Providers
         /// Decrement action for the owning device.
         ///
         /// Must be implemented iff EnableActionDecrement was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        protected virtual void Decrement(uint aVersion, int aValue, out int aResult)
+        protected virtual void Decrement(IDvInvocation aInvocation, int aValue, out int aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -514,10 +514,10 @@ namespace OpenHome.Net.Device.Providers
         /// Toggle action for the owning device.
         ///
         /// Must be implemented iff EnableActionToggle was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        protected virtual void Toggle(uint aVersion, bool aValue, out bool aResult)
+        protected virtual void Toggle(IDvInvocation aInvocation, bool aValue, out bool aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -529,10 +529,10 @@ namespace OpenHome.Net.Device.Providers
         /// EchoString action for the owning device.
         ///
         /// Must be implemented iff EnableActionEchoString was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        protected virtual void EchoString(uint aVersion, string aValue, out string aResult)
+        protected virtual void EchoString(IDvInvocation aInvocation, string aValue, out string aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -544,10 +544,10 @@ namespace OpenHome.Net.Device.Providers
         /// EchoBinary action for the owning device.
         ///
         /// Must be implemented iff EnableActionEchoBinary was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        protected virtual void EchoBinary(uint aVersion, byte[] aValue, out byte[] aResult)
+        protected virtual void EchoBinary(IDvInvocation aInvocation, byte[] aValue, out byte[] aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -559,9 +559,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetUint action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetUint was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueUint"></param>
-        protected virtual void SetUint(uint aVersion, uint aValueUint)
+        protected virtual void SetUint(IDvInvocation aInvocation, uint aValueUint)
         {
             throw (new ActionDisabledError());
         }
@@ -573,9 +573,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetUint action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetUint was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueUint"></param>
-        protected virtual void GetUint(uint aVersion, out uint aValueUint)
+        protected virtual void GetUint(IDvInvocation aInvocation, out uint aValueUint)
         {
             throw (new ActionDisabledError());
         }
@@ -587,9 +587,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetInt action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetInt was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueInt"></param>
-        protected virtual void SetInt(uint aVersion, int aValueInt)
+        protected virtual void SetInt(IDvInvocation aInvocation, int aValueInt)
         {
             throw (new ActionDisabledError());
         }
@@ -601,9 +601,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetInt action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetInt was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueInt"></param>
-        protected virtual void GetInt(uint aVersion, out int aValueInt)
+        protected virtual void GetInt(IDvInvocation aInvocation, out int aValueInt)
         {
             throw (new ActionDisabledError());
         }
@@ -615,9 +615,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetBool action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetBool was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueBool"></param>
-        protected virtual void SetBool(uint aVersion, bool aValueBool)
+        protected virtual void SetBool(IDvInvocation aInvocation, bool aValueBool)
         {
             throw (new ActionDisabledError());
         }
@@ -629,9 +629,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetBool action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetBool was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueBool"></param>
-        protected virtual void GetBool(uint aVersion, out bool aValueBool)
+        protected virtual void GetBool(IDvInvocation aInvocation, out bool aValueBool)
         {
             throw (new ActionDisabledError());
         }
@@ -643,11 +643,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetMultiple action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetMultiple was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueUint"></param>
         /// <param name="aValueInt"></param>
         /// <param name="aValueBool"></param>
-        protected virtual void SetMultiple(uint aVersion, uint aValueUint, int aValueInt, bool aValueBool)
+        protected virtual void SetMultiple(IDvInvocation aInvocation, uint aValueUint, int aValueInt, bool aValueBool)
         {
             throw (new ActionDisabledError());
         }
@@ -659,9 +659,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetString action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetString was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueStr"></param>
-        protected virtual void SetString(uint aVersion, string aValueStr)
+        protected virtual void SetString(IDvInvocation aInvocation, string aValueStr)
         {
             throw (new ActionDisabledError());
         }
@@ -673,9 +673,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetString action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetString was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueStr"></param>
-        protected virtual void GetString(uint aVersion, out string aValueStr)
+        protected virtual void GetString(IDvInvocation aInvocation, out string aValueStr)
         {
             throw (new ActionDisabledError());
         }
@@ -687,9 +687,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetBinary action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetBinary was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueBin"></param>
-        protected virtual void SetBinary(uint aVersion, byte[] aValueBin)
+        protected virtual void SetBinary(IDvInvocation aInvocation, byte[] aValueBin)
         {
             throw (new ActionDisabledError());
         }
@@ -701,9 +701,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetBinary action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetBinary was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValueBin"></param>
-        protected virtual void GetBinary(uint aVersion, out byte[] aValueBin)
+        protected virtual void GetBinary(IDvInvocation aInvocation, out byte[] aValueBin)
         {
             throw (new ActionDisabledError());
         }
@@ -715,8 +715,8 @@ namespace OpenHome.Net.Device.Providers
         /// ToggleBool action for the owning device.
         ///
         /// Must be implemented iff EnableActionToggleBool was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void ToggleBool(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void ToggleBool(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -728,10 +728,10 @@ namespace OpenHome.Net.Device.Providers
         /// WriteFile action for the owning device.
         ///
         /// Must be implemented iff EnableActionWriteFile was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aData"></param>
         /// <param name="aFileFullName"></param>
-        protected virtual void WriteFile(uint aVersion, string aData, string aFileFullName)
+        protected virtual void WriteFile(IDvInvocation aInvocation, string aData, string aFileFullName)
         {
             throw (new ActionDisabledError());
         }
@@ -743,8 +743,8 @@ namespace OpenHome.Net.Device.Providers
         /// Shutdown action for the owning device.
         ///
         /// Must be implemented iff EnableActionShutdown was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void Shutdown(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void Shutdown(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -761,7 +761,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadUint("Value");
                 invocation.ReadEnd();
-                self.Increment(aVersion, value, out result);
+                self.Increment(invocation, value, out result);
             }
             catch (ActionError)
             {
@@ -810,7 +810,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadInt("Value");
                 invocation.ReadEnd();
-                self.Decrement(aVersion, value, out result);
+                self.Decrement(invocation, value, out result);
             }
             catch (ActionError)
             {
@@ -859,7 +859,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadBool("Value");
                 invocation.ReadEnd();
-                self.Toggle(aVersion, value, out result);
+                self.Toggle(invocation, value, out result);
             }
             catch (ActionError)
             {
@@ -908,7 +908,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadString("Value");
                 invocation.ReadEnd();
-                self.EchoString(aVersion, value, out result);
+                self.EchoString(invocation, value, out result);
             }
             catch (ActionError)
             {
@@ -957,7 +957,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadBinary("Value");
                 invocation.ReadEnd();
-                self.EchoBinary(aVersion, value, out result);
+                self.EchoBinary(invocation, value, out result);
             }
             catch (ActionError)
             {
@@ -1005,7 +1005,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 valueUint = invocation.ReadUint("ValueUint");
                 invocation.ReadEnd();
-                self.SetUint(aVersion, valueUint);
+                self.SetUint(invocation, valueUint);
             }
             catch (ActionError)
             {
@@ -1051,7 +1051,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetUint(aVersion, out valueUint);
+                self.GetUint(invocation, out valueUint);
             }
             catch (ActionError)
             {
@@ -1099,7 +1099,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 valueInt = invocation.ReadInt("ValueInt");
                 invocation.ReadEnd();
-                self.SetInt(aVersion, valueInt);
+                self.SetInt(invocation, valueInt);
             }
             catch (ActionError)
             {
@@ -1145,7 +1145,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetInt(aVersion, out valueInt);
+                self.GetInt(invocation, out valueInt);
             }
             catch (ActionError)
             {
@@ -1193,7 +1193,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 valueBool = invocation.ReadBool("ValueBool");
                 invocation.ReadEnd();
-                self.SetBool(aVersion, valueBool);
+                self.SetBool(invocation, valueBool);
             }
             catch (ActionError)
             {
@@ -1239,7 +1239,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetBool(aVersion, out valueBool);
+                self.GetBool(invocation, out valueBool);
             }
             catch (ActionError)
             {
@@ -1291,7 +1291,7 @@ namespace OpenHome.Net.Device.Providers
                 valueInt = invocation.ReadInt("ValueInt");
                 valueBool = invocation.ReadBool("ValueBool");
                 invocation.ReadEnd();
-                self.SetMultiple(aVersion, valueUint, valueInt, valueBool);
+                self.SetMultiple(invocation, valueUint, valueInt, valueBool);
             }
             catch (ActionError)
             {
@@ -1338,7 +1338,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 valueStr = invocation.ReadString("ValueStr");
                 invocation.ReadEnd();
-                self.SetString(aVersion, valueStr);
+                self.SetString(invocation, valueStr);
             }
             catch (ActionError)
             {
@@ -1384,7 +1384,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetString(aVersion, out valueStr);
+                self.GetString(invocation, out valueStr);
             }
             catch (ActionError)
             {
@@ -1432,7 +1432,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 valueBin = invocation.ReadBinary("ValueBin");
                 invocation.ReadEnd();
-                self.SetBinary(aVersion, valueBin);
+                self.SetBinary(invocation, valueBin);
             }
             catch (ActionError)
             {
@@ -1478,7 +1478,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetBinary(aVersion, out valueBin);
+                self.GetBinary(invocation, out valueBin);
             }
             catch (ActionError)
             {
@@ -1524,7 +1524,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.ToggleBool(aVersion);
+                self.ToggleBool(invocation);
             }
             catch (ActionError)
             {
@@ -1573,7 +1573,7 @@ namespace OpenHome.Net.Device.Providers
                 data = invocation.ReadString("Data");
                 fileFullName = invocation.ReadString("FileFullName");
                 invocation.ReadEnd();
-                self.WriteFile(aVersion, data, fileFullName);
+                self.WriteFile(invocation, data, fileFullName);
             }
             catch (ActionError)
             {
@@ -1618,7 +1618,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Shutdown(aVersion);
+                self.Shutdown(invocation);
             }
             catch (ActionError)
             {

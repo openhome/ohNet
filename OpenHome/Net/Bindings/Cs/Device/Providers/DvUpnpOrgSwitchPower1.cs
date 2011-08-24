@@ -111,9 +111,9 @@ namespace OpenHome.Net.Device.Providers
         /// SetTarget action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetTarget was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="anewTargetValue"></param>
-        protected virtual void SetTarget(uint aVersion, bool anewTargetValue)
+        protected virtual void SetTarget(IDvInvocation aInvocation, bool anewTargetValue)
         {
             throw (new ActionDisabledError());
         }
@@ -125,9 +125,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetTarget action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetTarget was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRetTargetValue"></param>
-        protected virtual void GetTarget(uint aVersion, out bool aRetTargetValue)
+        protected virtual void GetTarget(IDvInvocation aInvocation, out bool aRetTargetValue)
         {
             throw (new ActionDisabledError());
         }
@@ -139,9 +139,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetStatus action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetStatus was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aResultStatus"></param>
-        protected virtual void GetStatus(uint aVersion, out bool aResultStatus)
+        protected virtual void GetStatus(IDvInvocation aInvocation, out bool aResultStatus)
         {
             throw (new ActionDisabledError());
         }
@@ -157,7 +157,7 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 newTargetValue = invocation.ReadBool("newTargetValue");
                 invocation.ReadEnd();
-                self.SetTarget(aVersion, newTargetValue);
+                self.SetTarget(invocation, newTargetValue);
             }
             catch (ActionError)
             {
@@ -203,7 +203,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetTarget(aVersion, out retTargetValue);
+                self.GetTarget(invocation, out retTargetValue);
             }
             catch (ActionError)
             {
@@ -250,7 +250,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetStatus(aVersion, out resultStatus);
+                self.GetStatus(invocation, out resultStatus);
             }
             catch (ActionError)
             {

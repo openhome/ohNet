@@ -264,8 +264,8 @@ namespace OpenHome.Net.Device.Providers
         /// Play action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlay was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void Play(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void Play(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -277,8 +277,8 @@ namespace OpenHome.Net.Device.Providers
         /// Stop action for the owning device.
         ///
         /// Must be implemented iff EnableActionStop was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        protected virtual void Stop(uint aVersion)
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void Stop(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -290,10 +290,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetSender action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetSender was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aUri"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void SetSender(uint aVersion, string aUri, string aMetadata)
+        protected virtual void SetSender(IDvInvocation aInvocation, string aUri, string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -305,10 +305,10 @@ namespace OpenHome.Net.Device.Providers
         /// Sender action for the owning device.
         ///
         /// Must be implemented iff EnableActionSender was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aUri"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void Sender(uint aVersion, out string aUri, out string aMetadata)
+        protected virtual void Sender(IDvInvocation aInvocation, out string aUri, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -320,9 +320,9 @@ namespace OpenHome.Net.Device.Providers
         /// ProtocolInfo action for the owning device.
         ///
         /// Must be implemented iff EnableActionProtocolInfo was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void ProtocolInfo(uint aVersion, out string aValue)
+        protected virtual void ProtocolInfo(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -334,9 +334,9 @@ namespace OpenHome.Net.Device.Providers
         /// TransportState action for the owning device.
         ///
         /// Must be implemented iff EnableActionTransportState was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void TransportState(uint aVersion, out string aValue)
+        protected virtual void TransportState(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -350,7 +350,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Play(aVersion);
+                self.Play(invocation);
             }
             catch (ActionError)
             {
@@ -395,7 +395,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Stop(aVersion);
+                self.Stop(invocation);
             }
             catch (ActionError)
             {
@@ -444,7 +444,7 @@ namespace OpenHome.Net.Device.Providers
                 uri = invocation.ReadString("Uri");
                 metadata = invocation.ReadString("Metadata");
                 invocation.ReadEnd();
-                self.SetSender(aVersion, uri, metadata);
+                self.SetSender(invocation, uri, metadata);
             }
             catch (ActionError)
             {
@@ -491,7 +491,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Sender(aVersion, out uri, out metadata);
+                self.Sender(invocation, out uri, out metadata);
             }
             catch (ActionError)
             {
@@ -539,7 +539,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.ProtocolInfo(aVersion, out value);
+                self.ProtocolInfo(invocation, out value);
             }
             catch (ActionError)
             {
@@ -586,7 +586,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.TransportState(aVersion, out value);
+                self.TransportState(invocation, out value);
             }
             catch (ActionError)
             {

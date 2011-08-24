@@ -284,9 +284,9 @@ namespace OpenHome.Net.Device.Providers
         /// PresentationUrl action for the owning device.
         ///
         /// Must be implemented iff EnableActionPresentationUrl was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void PresentationUrl(uint aVersion, out string aValue)
+        protected virtual void PresentationUrl(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -298,9 +298,9 @@ namespace OpenHome.Net.Device.Providers
         /// Metadata action for the owning device.
         ///
         /// Must be implemented iff EnableActionMetadata was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Metadata(uint aVersion, out string aValue)
+        protected virtual void Metadata(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -312,9 +312,9 @@ namespace OpenHome.Net.Device.Providers
         /// Audio action for the owning device.
         ///
         /// Must be implemented iff EnableActionAudio was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Audio(uint aVersion, out bool aValue)
+        protected virtual void Audio(IDvInvocation aInvocation, out bool aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -326,9 +326,9 @@ namespace OpenHome.Net.Device.Providers
         /// Status action for the owning device.
         ///
         /// Must be implemented iff EnableActionStatus was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Status(uint aVersion, out string aValue)
+        protected virtual void Status(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -340,9 +340,9 @@ namespace OpenHome.Net.Device.Providers
         /// Attributes action for the owning device.
         ///
         /// Must be implemented iff EnableActionAttributes was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Attributes(uint aVersion, out string aValue)
+        protected virtual void Attributes(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -357,7 +357,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.PresentationUrl(aVersion, out value);
+                self.PresentationUrl(invocation, out value);
             }
             catch (ActionError)
             {
@@ -404,7 +404,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Metadata(aVersion, out value);
+                self.Metadata(invocation, out value);
             }
             catch (ActionError)
             {
@@ -451,7 +451,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Audio(aVersion, out value);
+                self.Audio(invocation, out value);
             }
             catch (ActionError)
             {
@@ -498,7 +498,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Status(aVersion, out value);
+                self.Status(invocation, out value);
             }
             catch (ActionError)
             {
@@ -545,7 +545,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Attributes(aVersion, out value);
+                self.Attributes(invocation, out value);
             }
             catch (ActionError)
             {

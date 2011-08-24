@@ -198,6 +198,35 @@ DllExport int32_t STDCALL DvProviderSetPropertyBinary(DvProviderC aProvider, Ser
  */
 
 /**
+ * Get the version number of the service requested by the caller.
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
+ *
+ * @return  The version number of the service the caller expects.
+ */
+DllExport uint32_t STDCALL DvInvocationVersion(DvInvocationC aInvocation);
+
+/**
+ * Get the network adapter an action was invoked using.
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
+ *
+ * @return  The network adapter used to invoke this action.
+ */
+DllExport TIpAddress STDCALL DvInvocationAdapter(DvInvocationC aInvocation);
+
+/**
+ * Get the prefix to use on any uris to resources offered by the provider.
+ *
+ * (This will change depending on which network adapter was used to invoke an action.)
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
+ *
+ * @return  The prefix to resource uris.
+ */
+DllExport const char* STDCALL DvInvocationResourceUriPrefix(DvInvocationC aInvocation);
+
+/**
  * Begin reading (input arguments for) an invocation
  *
  * Must be called before the values of any input arguments are read.

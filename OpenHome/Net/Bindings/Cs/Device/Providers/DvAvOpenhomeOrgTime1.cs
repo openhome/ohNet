@@ -155,11 +155,11 @@ namespace OpenHome.Net.Device.Providers
         /// Time action for the owning device.
         ///
         /// Must be implemented iff EnableActionTime was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aTrackCount"></param>
         /// <param name="aDuration"></param>
         /// <param name="aSeconds"></param>
-        protected virtual void Time(uint aVersion, out uint aTrackCount, out uint aDuration, out uint aSeconds)
+        protected virtual void Time(IDvInvocation aInvocation, out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
             throw (new ActionDisabledError());
         }
@@ -176,7 +176,7 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Time(aVersion, out trackCount, out duration, out seconds);
+                self.Time(invocation, out trackCount, out duration, out seconds);
             }
             catch (ActionError)
             {
