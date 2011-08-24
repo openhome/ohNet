@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -636,15 +638,19 @@ void DvProviderUpnpOrgRenderingControl1C::EnableActionSetLoudness(CallbackRender
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoListPresets(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoListPresets(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* CurrentPresetNameList;
     ASSERT(iCallbackListPresets != NULL);
-    if (0 != iCallbackListPresets(iPtrListPresets, aVersion, InstanceID, &CurrentPresetNameList)) {
+    if (0 != iCallbackListPresets(iPtrListPresets, invocationC, invocationCPtr, InstanceID, &CurrentPresetNameList)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -657,8 +663,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoListPresets(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSelectPreset(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSelectPreset(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz PresetName;
@@ -666,7 +676,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSelectPreset(IDviInvocation& aInvoca
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSelectPreset != NULL);
-    if (0 != iCallbackSelectPreset(iPtrSelectPreset, aVersion, InstanceID, (const char*)PresetName.Ptr())) {
+    if (0 != iCallbackSelectPreset(iPtrSelectPreset, invocationC, invocationCPtr, InstanceID, (const char*)PresetName.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -674,15 +684,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSelectPreset(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetBrightness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetBrightness(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentBrightness;
     ASSERT(iCallbackGetBrightness != NULL);
-    if (0 != iCallbackGetBrightness(iPtrGetBrightness, aVersion, InstanceID, &CurrentBrightness)) {
+    if (0 != iCallbackGetBrightness(iPtrGetBrightness, invocationC, invocationCPtr, InstanceID, &CurrentBrightness)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -692,15 +706,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetBrightness(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetBrightness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetBrightness(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredBrightness = aInvocation.InvocationReadUint("DesiredBrightness");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetBrightness != NULL);
-    if (0 != iCallbackSetBrightness(iPtrSetBrightness, aVersion, InstanceID, DesiredBrightness)) {
+    if (0 != iCallbackSetBrightness(iPtrSetBrightness, invocationC, invocationCPtr, InstanceID, DesiredBrightness)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -708,15 +726,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetBrightness(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetContrast(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetContrast(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentContrast;
     ASSERT(iCallbackGetContrast != NULL);
-    if (0 != iCallbackGetContrast(iPtrGetContrast, aVersion, InstanceID, &CurrentContrast)) {
+    if (0 != iCallbackGetContrast(iPtrGetContrast, invocationC, invocationCPtr, InstanceID, &CurrentContrast)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -726,15 +748,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetContrast(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetContrast(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetContrast(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredContrast = aInvocation.InvocationReadUint("DesiredContrast");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetContrast != NULL);
-    if (0 != iCallbackSetContrast(iPtrSetContrast, aVersion, InstanceID, DesiredContrast)) {
+    if (0 != iCallbackSetContrast(iPtrSetContrast, invocationC, invocationCPtr, InstanceID, DesiredContrast)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -742,15 +768,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetContrast(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetSharpness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetSharpness(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentSharpness;
     ASSERT(iCallbackGetSharpness != NULL);
-    if (0 != iCallbackGetSharpness(iPtrGetSharpness, aVersion, InstanceID, &CurrentSharpness)) {
+    if (0 != iCallbackGetSharpness(iPtrGetSharpness, invocationC, invocationCPtr, InstanceID, &CurrentSharpness)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -760,15 +790,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetSharpness(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetSharpness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetSharpness(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredSharpness = aInvocation.InvocationReadUint("DesiredSharpness");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetSharpness != NULL);
-    if (0 != iCallbackSetSharpness(iPtrSetSharpness, aVersion, InstanceID, DesiredSharpness)) {
+    if (0 != iCallbackSetSharpness(iPtrSetSharpness, invocationC, invocationCPtr, InstanceID, DesiredSharpness)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -776,15 +810,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetSharpness(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentRedVideoGain;
     ASSERT(iCallbackGetRedVideoGain != NULL);
-    if (0 != iCallbackGetRedVideoGain(iPtrGetRedVideoGain, aVersion, InstanceID, &CurrentRedVideoGain)) {
+    if (0 != iCallbackGetRedVideoGain(iPtrGetRedVideoGain, invocationC, invocationCPtr, InstanceID, &CurrentRedVideoGain)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -794,15 +832,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoGain(IDviInvocation& aInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredRedVideoGain = aInvocation.InvocationReadUint("DesiredRedVideoGain");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetRedVideoGain != NULL);
-    if (0 != iCallbackSetRedVideoGain(iPtrSetRedVideoGain, aVersion, InstanceID, DesiredRedVideoGain)) {
+    if (0 != iCallbackSetRedVideoGain(iPtrSetRedVideoGain, invocationC, invocationCPtr, InstanceID, DesiredRedVideoGain)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -810,15 +852,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoGain(IDviInvocation& aInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentGreenVideoGain;
     ASSERT(iCallbackGetGreenVideoGain != NULL);
-    if (0 != iCallbackGetGreenVideoGain(iPtrGetGreenVideoGain, aVersion, InstanceID, &CurrentGreenVideoGain)) {
+    if (0 != iCallbackGetGreenVideoGain(iPtrGetGreenVideoGain, invocationC, invocationCPtr, InstanceID, &CurrentGreenVideoGain)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -828,15 +874,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoGain(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredGreenVideoGain = aInvocation.InvocationReadUint("DesiredGreenVideoGain");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetGreenVideoGain != NULL);
-    if (0 != iCallbackSetGreenVideoGain(iPtrSetGreenVideoGain, aVersion, InstanceID, DesiredGreenVideoGain)) {
+    if (0 != iCallbackSetGreenVideoGain(iPtrSetGreenVideoGain, invocationC, invocationCPtr, InstanceID, DesiredGreenVideoGain)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -844,15 +894,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoGain(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentBlueVideoGain;
     ASSERT(iCallbackGetBlueVideoGain != NULL);
-    if (0 != iCallbackGetBlueVideoGain(iPtrGetBlueVideoGain, aVersion, InstanceID, &CurrentBlueVideoGain)) {
+    if (0 != iCallbackGetBlueVideoGain(iPtrGetBlueVideoGain, invocationC, invocationCPtr, InstanceID, &CurrentBlueVideoGain)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -862,15 +916,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoGain(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredBlueVideoGain = aInvocation.InvocationReadUint("DesiredBlueVideoGain");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetBlueVideoGain != NULL);
-    if (0 != iCallbackSetBlueVideoGain(iPtrSetBlueVideoGain, aVersion, InstanceID, DesiredBlueVideoGain)) {
+    if (0 != iCallbackSetBlueVideoGain(iPtrSetBlueVideoGain, invocationC, invocationCPtr, InstanceID, DesiredBlueVideoGain)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -878,15 +936,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoGain(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentRedVideoBlackLevel;
     ASSERT(iCallbackGetRedVideoBlackLevel != NULL);
-    if (0 != iCallbackGetRedVideoBlackLevel(iPtrGetRedVideoBlackLevel, aVersion, InstanceID, &CurrentRedVideoBlackLevel)) {
+    if (0 != iCallbackGetRedVideoBlackLevel(iPtrGetRedVideoBlackLevel, invocationC, invocationCPtr, InstanceID, &CurrentRedVideoBlackLevel)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -896,15 +958,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoBlackLevel(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredRedVideoBlackLevel = aInvocation.InvocationReadUint("DesiredRedVideoBlackLevel");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetRedVideoBlackLevel != NULL);
-    if (0 != iCallbackSetRedVideoBlackLevel(iPtrSetRedVideoBlackLevel, aVersion, InstanceID, DesiredRedVideoBlackLevel)) {
+    if (0 != iCallbackSetRedVideoBlackLevel(iPtrSetRedVideoBlackLevel, invocationC, invocationCPtr, InstanceID, DesiredRedVideoBlackLevel)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -912,15 +978,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoBlackLevel(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentGreenVideoBlackLevel;
     ASSERT(iCallbackGetGreenVideoBlackLevel != NULL);
-    if (0 != iCallbackGetGreenVideoBlackLevel(iPtrGetGreenVideoBlackLevel, aVersion, InstanceID, &CurrentGreenVideoBlackLevel)) {
+    if (0 != iCallbackGetGreenVideoBlackLevel(iPtrGetGreenVideoBlackLevel, invocationC, invocationCPtr, InstanceID, &CurrentGreenVideoBlackLevel)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -930,15 +1000,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoBlackLevel(IDviInvocati
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredGreenVideoBlackLevel = aInvocation.InvocationReadUint("DesiredGreenVideoBlackLevel");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetGreenVideoBlackLevel != NULL);
-    if (0 != iCallbackSetGreenVideoBlackLevel(iPtrSetGreenVideoBlackLevel, aVersion, InstanceID, DesiredGreenVideoBlackLevel)) {
+    if (0 != iCallbackSetGreenVideoBlackLevel(iPtrSetGreenVideoBlackLevel, invocationC, invocationCPtr, InstanceID, DesiredGreenVideoBlackLevel)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -946,15 +1020,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoBlackLevel(IDviInvocati
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentBlueVideoBlackLevel;
     ASSERT(iCallbackGetBlueVideoBlackLevel != NULL);
-    if (0 != iCallbackGetBlueVideoBlackLevel(iPtrGetBlueVideoBlackLevel, aVersion, InstanceID, &CurrentBlueVideoBlackLevel)) {
+    if (0 != iCallbackGetBlueVideoBlackLevel(iPtrGetBlueVideoBlackLevel, invocationC, invocationCPtr, InstanceID, &CurrentBlueVideoBlackLevel)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -964,15 +1042,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoBlackLevel(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredBlueVideoBlackLevel = aInvocation.InvocationReadUint("DesiredBlueVideoBlackLevel");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetBlueVideoBlackLevel != NULL);
-    if (0 != iCallbackSetBlueVideoBlackLevel(iPtrSetBlueVideoBlackLevel, aVersion, InstanceID, DesiredBlueVideoBlackLevel)) {
+    if (0 != iCallbackSetBlueVideoBlackLevel(iPtrSetBlueVideoBlackLevel, invocationC, invocationCPtr, InstanceID, DesiredBlueVideoBlackLevel)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -980,15 +1062,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoBlackLevel(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetColorTemperature(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetColorTemperature(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t CurrentColorTemperature;
     ASSERT(iCallbackGetColorTemperature != NULL);
-    if (0 != iCallbackGetColorTemperature(iPtrGetColorTemperature, aVersion, InstanceID, &CurrentColorTemperature)) {
+    if (0 != iCallbackGetColorTemperature(iPtrGetColorTemperature, invocationC, invocationCPtr, InstanceID, &CurrentColorTemperature)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -998,15 +1084,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetColorTemperature(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetColorTemperature(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetColorTemperature(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredColorTemperature = aInvocation.InvocationReadUint("DesiredColorTemperature");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetColorTemperature != NULL);
-    if (0 != iCallbackSetColorTemperature(iPtrSetColorTemperature, aVersion, InstanceID, DesiredColorTemperature)) {
+    if (0 != iCallbackSetColorTemperature(iPtrSetColorTemperature, invocationC, invocationCPtr, InstanceID, DesiredColorTemperature)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1014,15 +1104,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetColorTemperature(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     int32_t CurrentHorizontalKeystone;
     ASSERT(iCallbackGetHorizontalKeystone != NULL);
-    if (0 != iCallbackGetHorizontalKeystone(iPtrGetHorizontalKeystone, aVersion, InstanceID, &CurrentHorizontalKeystone)) {
+    if (0 != iCallbackGetHorizontalKeystone(iPtrGetHorizontalKeystone, invocationC, invocationCPtr, InstanceID, &CurrentHorizontalKeystone)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1032,15 +1126,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetHorizontalKeystone(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TInt DesiredHorizontalKeystone = aInvocation.InvocationReadInt("DesiredHorizontalKeystone");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetHorizontalKeystone != NULL);
-    if (0 != iCallbackSetHorizontalKeystone(iPtrSetHorizontalKeystone, aVersion, InstanceID, DesiredHorizontalKeystone)) {
+    if (0 != iCallbackSetHorizontalKeystone(iPtrSetHorizontalKeystone, invocationC, invocationCPtr, InstanceID, DesiredHorizontalKeystone)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1048,15 +1146,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetHorizontalKeystone(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     int32_t CurrentVerticalKeystone;
     ASSERT(iCallbackGetVerticalKeystone != NULL);
-    if (0 != iCallbackGetVerticalKeystone(iPtrGetVerticalKeystone, aVersion, InstanceID, &CurrentVerticalKeystone)) {
+    if (0 != iCallbackGetVerticalKeystone(iPtrGetVerticalKeystone, invocationC, invocationCPtr, InstanceID, &CurrentVerticalKeystone)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1066,15 +1168,19 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVerticalKeystone(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TInt DesiredVerticalKeystone = aInvocation.InvocationReadInt("DesiredVerticalKeystone");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetVerticalKeystone != NULL);
-    if (0 != iCallbackSetVerticalKeystone(iPtrSetVerticalKeystone, aVersion, InstanceID, DesiredVerticalKeystone)) {
+    if (0 != iCallbackSetVerticalKeystone(iPtrSetVerticalKeystone, invocationC, invocationCPtr, InstanceID, DesiredVerticalKeystone)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1082,8 +1188,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetVerticalKeystone(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetMute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1092,7 +1202,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetMute(IDviInvocation& aInvocation,
     DviInvocation invocation(aInvocation);
     uint32_t CurrentMute;
     ASSERT(iCallbackGetMute != NULL);
-    if (0 != iCallbackGetMute(iPtrGetMute, aVersion, InstanceID, (const char*)Channel.Ptr(), &CurrentMute)) {
+    if (0 != iCallbackGetMute(iPtrGetMute, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), &CurrentMute)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1102,8 +1212,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetMute(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetMute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1112,7 +1226,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetMute(IDviInvocation& aInvocation,
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetMute != NULL);
-    if (0 != iCallbackSetMute(iPtrSetMute, aVersion, InstanceID, (const char*)Channel.Ptr(), DesiredMute)) {
+    if (0 != iCallbackSetMute(iPtrSetMute, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), DesiredMute)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1120,8 +1234,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetMute(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetVolume(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1130,7 +1248,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolume(IDviInvocation& aInvocatio
     DviInvocation invocation(aInvocation);
     uint32_t CurrentVolume;
     ASSERT(iCallbackGetVolume != NULL);
-    if (0 != iCallbackGetVolume(iPtrGetVolume, aVersion, InstanceID, (const char*)Channel.Ptr(), &CurrentVolume)) {
+    if (0 != iCallbackGetVolume(iPtrGetVolume, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), &CurrentVolume)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1140,8 +1258,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolume(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetVolume(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1150,7 +1272,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetVolume(IDviInvocation& aInvocatio
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetVolume != NULL);
-    if (0 != iCallbackSetVolume(iPtrSetVolume, aVersion, InstanceID, (const char*)Channel.Ptr(), DesiredVolume)) {
+    if (0 != iCallbackSetVolume(iPtrSetVolume, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), DesiredVolume)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1158,8 +1280,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetVolume(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDB(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDB(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1168,7 +1294,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDB(IDviInvocation& aInvocat
     DviInvocation invocation(aInvocation);
     int32_t CurrentVolume;
     ASSERT(iCallbackGetVolumeDB != NULL);
-    if (0 != iCallbackGetVolumeDB(iPtrGetVolumeDB, aVersion, InstanceID, (const char*)Channel.Ptr(), &CurrentVolume)) {
+    if (0 != iCallbackGetVolumeDB(iPtrGetVolumeDB, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), &CurrentVolume)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1178,8 +1304,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDB(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetVolumeDB(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetVolumeDB(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1188,7 +1318,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetVolumeDB(IDviInvocation& aInvocat
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetVolumeDB != NULL);
-    if (0 != iCallbackSetVolumeDB(iPtrSetVolumeDB, aVersion, InstanceID, (const char*)Channel.Ptr(), DesiredVolume)) {
+    if (0 != iCallbackSetVolumeDB(iPtrSetVolumeDB, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), DesiredVolume)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1196,8 +1326,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetVolumeDB(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1207,7 +1341,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDBRange(IDviInvocation& aIn
     int32_t MinValue;
     int32_t MaxValue;
     ASSERT(iCallbackGetVolumeDBRange != NULL);
-    if (0 != iCallbackGetVolumeDBRange(iPtrGetVolumeDBRange, aVersion, InstanceID, (const char*)Channel.Ptr(), &MinValue, &MaxValue)) {
+    if (0 != iCallbackGetVolumeDBRange(iPtrGetVolumeDBRange, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), &MinValue, &MaxValue)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1219,8 +1353,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDBRange(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetLoudness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoGetLoudness(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1229,7 +1367,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetLoudness(IDviInvocation& aInvocat
     DviInvocation invocation(aInvocation);
     uint32_t CurrentLoudness;
     ASSERT(iCallbackGetLoudness != NULL);
-    if (0 != iCallbackGetLoudness(iPtrGetLoudness, aVersion, InstanceID, (const char*)Channel.Ptr(), &CurrentLoudness)) {
+    if (0 != iCallbackGetLoudness(iPtrGetLoudness, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), &CurrentLoudness)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -1239,8 +1377,12 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetLoudness(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetLoudness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl1C::DoSetLoudness(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
@@ -1249,7 +1391,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetLoudness(IDviInvocation& aInvocat
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetLoudness != NULL);
-    if (0 != iCallbackSetLoudness(iPtrSetLoudness, aVersion, InstanceID, (const char*)Channel.Ptr(), DesiredLoudness)) {
+    if (0 != iCallbackSetLoudness(iPtrSetLoudness, invocationC, invocationCPtr, InstanceID, (const char*)Channel.Ptr(), DesiredLoudness)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

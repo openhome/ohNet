@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -179,13 +181,17 @@ void DvProviderAvOpenhomeOrgReceiver1C::EnableActionTransportState(CallbackRecei
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1C::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPlay != NULL);
-    if (0 != iCallbackPlay(iPtrPlay, aVersion)) {
+    if (0 != iCallbackPlay(iPtrPlay, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -193,13 +199,17 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoPlay(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoStop(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1C::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStop != NULL);
-    if (0 != iCallbackStop(iPtrStop, aVersion)) {
+    if (0 != iCallbackStop(iPtrStop, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -207,8 +217,12 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoStop(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoSetSender(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1C::DoSetSender(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz Uri;
     aInvocation.InvocationReadString("Uri", Uri);
@@ -217,7 +231,7 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoSetSender(IDviInvocation& aInvocation,
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetSender != NULL);
-    if (0 != iCallbackSetSender(iPtrSetSender, aVersion, (const char*)Uri.Ptr(), (const char*)Metadata.Ptr())) {
+    if (0 != iCallbackSetSender(iPtrSetSender, invocationC, invocationCPtr, (const char*)Uri.Ptr(), (const char*)Metadata.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -225,15 +239,19 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoSetSender(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoSender(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1C::DoSender(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Uri;
     char* Metadata;
     ASSERT(iCallbackSender != NULL);
-    if (0 != iCallbackSender(iPtrSender, aVersion, &Uri, &Metadata)) {
+    if (0 != iCallbackSender(iPtrSender, invocationC, invocationCPtr, &Uri, &Metadata)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -251,14 +269,18 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoSender(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1C::DoProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackProtocolInfo != NULL);
-    if (0 != iCallbackProtocolInfo(iPtrProtocolInfo, aVersion, &Value)) {
+    if (0 != iCallbackProtocolInfo(iPtrProtocolInfo, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -271,14 +293,18 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoProtocolInfo(IDviInvocation& aInvocati
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoTransportState(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgReceiver1C::DoTransportState(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackTransportState != NULL);
-    if (0 != iCallbackTransportState(iPtrTransportState, aVersion, &Value)) {
+    if (0 != iCallbackTransportState(iPtrTransportState, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

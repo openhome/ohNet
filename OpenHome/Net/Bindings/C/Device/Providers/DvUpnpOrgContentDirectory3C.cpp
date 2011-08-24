@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -420,14 +422,18 @@ void DvProviderUpnpOrgContentDirectory3C::EnableActionGetFreeFormQueryCapabiliti
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* SearchCaps;
     ASSERT(iCallbackGetSearchCapabilities != NULL);
-    if (0 != iCallbackGetSearchCapabilities(iPtrGetSearchCapabilities, aVersion, &SearchCaps)) {
+    if (0 != iCallbackGetSearchCapabilities(iPtrGetSearchCapabilities, invocationC, invocationCPtr, &SearchCaps)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -440,14 +446,18 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetSearchCapabilities(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* SortCaps;
     ASSERT(iCallbackGetSortCapabilities != NULL);
-    if (0 != iCallbackGetSortCapabilities(iPtrGetSortCapabilities, aVersion, &SortCaps)) {
+    if (0 != iCallbackGetSortCapabilities(iPtrGetSortCapabilities, invocationC, invocationCPtr, &SortCaps)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -460,14 +470,18 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetSortCapabilities(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoGetSortExtensionCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoGetSortExtensionCapabilities(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* SortExtensionCaps;
     ASSERT(iCallbackGetSortExtensionCapabilities != NULL);
-    if (0 != iCallbackGetSortExtensionCapabilities(iPtrGetSortExtensionCapabilities, aVersion, &SortExtensionCaps)) {
+    if (0 != iCallbackGetSortExtensionCapabilities(iPtrGetSortExtensionCapabilities, invocationC, invocationCPtr, &SortExtensionCaps)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -480,14 +494,18 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetSortExtensionCapabilities(IDviInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoGetFeatureList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoGetFeatureList(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* FeatureList;
     ASSERT(iCallbackGetFeatureList != NULL);
-    if (0 != iCallbackGetFeatureList(iPtrGetFeatureList, aVersion, &FeatureList)) {
+    if (0 != iCallbackGetFeatureList(iPtrGetFeatureList, invocationC, invocationCPtr, &FeatureList)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -500,14 +518,18 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetFeatureList(IDviInvocation& aInvo
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoGetSystemUpdateID(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoGetSystemUpdateID(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t Id;
     ASSERT(iCallbackGetSystemUpdateID != NULL);
-    if (0 != iCallbackGetSystemUpdateID(iPtrGetSystemUpdateID, aVersion, &Id)) {
+    if (0 != iCallbackGetSystemUpdateID(iPtrGetSystemUpdateID, invocationC, invocationCPtr, &Id)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -517,14 +539,18 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetSystemUpdateID(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoGetServiceResetToken(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoGetServiceResetToken(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* ResetToken;
     ASSERT(iCallbackGetServiceResetToken != NULL);
-    if (0 != iCallbackGetServiceResetToken(iPtrGetServiceResetToken, aVersion, &ResetToken)) {
+    if (0 != iCallbackGetServiceResetToken(iPtrGetServiceResetToken, invocationC, invocationCPtr, &ResetToken)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -537,8 +563,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetServiceResetToken(IDviInvocation&
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoBrowse(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoBrowse(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
@@ -557,7 +587,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoBrowse(IDviInvocation& aInvocation, 
     uint32_t TotalMatches;
     uint32_t UpdateID;
     ASSERT(iCallbackBrowse != NULL);
-    if (0 != iCallbackBrowse(iPtrBrowse, aVersion, (const char*)ObjectID.Ptr(), (const char*)BrowseFlag.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
+    if (0 != iCallbackBrowse(iPtrBrowse, invocationC, invocationCPtr, (const char*)ObjectID.Ptr(), (const char*)BrowseFlag.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -576,8 +606,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoBrowse(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoSearch(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoSearch(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ContainerID;
     aInvocation.InvocationReadString("ContainerID", ContainerID);
@@ -596,7 +630,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoSearch(IDviInvocation& aInvocation, 
     uint32_t TotalMatches;
     uint32_t UpdateID;
     ASSERT(iCallbackSearch != NULL);
-    if (0 != iCallbackSearch(iPtrSearch, aVersion, (const char*)ContainerID.Ptr(), (const char*)SearchCriteria.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
+    if (0 != iCallbackSearch(iPtrSearch, invocationC, invocationCPtr, (const char*)ContainerID.Ptr(), (const char*)SearchCriteria.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -615,8 +649,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoSearch(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoCreateObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoCreateObject(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ContainerID;
     aInvocation.InvocationReadString("ContainerID", ContainerID);
@@ -627,7 +665,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoCreateObject(IDviInvocation& aInvoca
     char* ObjectID;
     char* Result;
     ASSERT(iCallbackCreateObject != NULL);
-    if (0 != iCallbackCreateObject(iPtrCreateObject, aVersion, (const char*)ContainerID.Ptr(), (const char*)Elements.Ptr(), &ObjectID, &Result)) {
+    if (0 != iCallbackCreateObject(iPtrCreateObject, invocationC, invocationCPtr, (const char*)ContainerID.Ptr(), (const char*)Elements.Ptr(), &ObjectID, &Result)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -645,15 +683,19 @@ void DvProviderUpnpOrgContentDirectory3C::DoCreateObject(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoDestroyObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoDestroyObject(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDestroyObject != NULL);
-    if (0 != iCallbackDestroyObject(iPtrDestroyObject, aVersion, (const char*)ObjectID.Ptr())) {
+    if (0 != iCallbackDestroyObject(iPtrDestroyObject, invocationC, invocationCPtr, (const char*)ObjectID.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -661,8 +703,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoDestroyObject(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoUpdateObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoUpdateObject(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
@@ -673,7 +719,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoUpdateObject(IDviInvocation& aInvoca
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackUpdateObject != NULL);
-    if (0 != iCallbackUpdateObject(iPtrUpdateObject, aVersion, (const char*)ObjectID.Ptr(), (const char*)CurrentTagValue.Ptr(), (const char*)NewTagValue.Ptr())) {
+    if (0 != iCallbackUpdateObject(iPtrUpdateObject, invocationC, invocationCPtr, (const char*)ObjectID.Ptr(), (const char*)CurrentTagValue.Ptr(), (const char*)NewTagValue.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -681,8 +727,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoUpdateObject(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoMoveObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoMoveObject(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
@@ -692,7 +742,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoMoveObject(IDviInvocation& aInvocati
     DviInvocation invocation(aInvocation);
     char* NewObjectID;
     ASSERT(iCallbackMoveObject != NULL);
-    if (0 != iCallbackMoveObject(iPtrMoveObject, aVersion, (const char*)ObjectID.Ptr(), (const char*)NewParentID.Ptr(), &NewObjectID)) {
+    if (0 != iCallbackMoveObject(iPtrMoveObject, invocationC, invocationCPtr, (const char*)ObjectID.Ptr(), (const char*)NewParentID.Ptr(), &NewObjectID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -705,8 +755,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoMoveObject(IDviInvocation& aInvocati
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoImportResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoImportResource(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz SourceURI;
     aInvocation.InvocationReadString("SourceURI", SourceURI);
@@ -716,7 +770,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoImportResource(IDviInvocation& aInvo
     DviInvocation invocation(aInvocation);
     uint32_t TransferID;
     ASSERT(iCallbackImportResource != NULL);
-    if (0 != iCallbackImportResource(iPtrImportResource, aVersion, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
+    if (0 != iCallbackImportResource(iPtrImportResource, invocationC, invocationCPtr, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -726,8 +780,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoImportResource(IDviInvocation& aInvo
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoExportResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoExportResource(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz SourceURI;
     aInvocation.InvocationReadString("SourceURI", SourceURI);
@@ -737,7 +795,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoExportResource(IDviInvocation& aInvo
     DviInvocation invocation(aInvocation);
     uint32_t TransferID;
     ASSERT(iCallbackExportResource != NULL);
-    if (0 != iCallbackExportResource(iPtrExportResource, aVersion, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
+    if (0 != iCallbackExportResource(iPtrExportResource, invocationC, invocationCPtr, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -747,15 +805,19 @@ void DvProviderUpnpOrgContentDirectory3C::DoExportResource(IDviInvocation& aInvo
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoDeleteResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoDeleteResource(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ResourceURI;
     aInvocation.InvocationReadString("ResourceURI", ResourceURI);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDeleteResource != NULL);
-    if (0 != iCallbackDeleteResource(iPtrDeleteResource, aVersion, (const char*)ResourceURI.Ptr())) {
+    if (0 != iCallbackDeleteResource(iPtrDeleteResource, invocationC, invocationCPtr, (const char*)ResourceURI.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -763,14 +825,18 @@ void DvProviderUpnpOrgContentDirectory3C::DoDeleteResource(IDviInvocation& aInvo
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoStopTransferResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoStopTransferResource(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStopTransferResource != NULL);
-    if (0 != iCallbackStopTransferResource(iPtrStopTransferResource, aVersion, TransferID)) {
+    if (0 != iCallbackStopTransferResource(iPtrStopTransferResource, invocationC, invocationCPtr, TransferID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -778,8 +844,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoStopTransferResource(IDviInvocation&
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoGetTransferProgress(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoGetTransferProgress(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
@@ -788,7 +858,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetTransferProgress(IDviInvocation& 
     char* TransferLength;
     char* TransferTotal;
     ASSERT(iCallbackGetTransferProgress != NULL);
-    if (0 != iCallbackGetTransferProgress(iPtrGetTransferProgress, aVersion, TransferID, &TransferStatus, &TransferLength, &TransferTotal)) {
+    if (0 != iCallbackGetTransferProgress(iPtrGetTransferProgress, invocationC, invocationCPtr, TransferID, &TransferStatus, &TransferLength, &TransferTotal)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -811,8 +881,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetTransferProgress(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoCreateReference(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoCreateReference(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ContainerID;
     aInvocation.InvocationReadString("ContainerID", ContainerID);
@@ -822,7 +896,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoCreateReference(IDviInvocation& aInv
     DviInvocation invocation(aInvocation);
     char* NewID;
     ASSERT(iCallbackCreateReference != NULL);
-    if (0 != iCallbackCreateReference(iPtrCreateReference, aVersion, (const char*)ContainerID.Ptr(), (const char*)ObjectID.Ptr(), &NewID)) {
+    if (0 != iCallbackCreateReference(iPtrCreateReference, invocationC, invocationCPtr, (const char*)ContainerID.Ptr(), (const char*)ObjectID.Ptr(), &NewID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -835,8 +909,12 @@ void DvProviderUpnpOrgContentDirectory3C::DoCreateReference(IDviInvocation& aInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoFreeFormQuery(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoFreeFormQuery(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz ContainerID;
     aInvocation.InvocationReadString("ContainerID", ContainerID);
@@ -848,7 +926,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoFreeFormQuery(IDviInvocation& aInvoc
     char* QueryResult;
     uint32_t UpdateID;
     ASSERT(iCallbackFreeFormQuery != NULL);
-    if (0 != iCallbackFreeFormQuery(iPtrFreeFormQuery, aVersion, (const char*)ContainerID.Ptr(), CDSView, (const char*)QueryRequest.Ptr(), &QueryResult, &UpdateID)) {
+    if (0 != iCallbackFreeFormQuery(iPtrFreeFormQuery, invocationC, invocationCPtr, (const char*)ContainerID.Ptr(), CDSView, (const char*)QueryRequest.Ptr(), &QueryResult, &UpdateID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -863,14 +941,18 @@ void DvProviderUpnpOrgContentDirectory3C::DoFreeFormQuery(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgContentDirectory3C::DoGetFreeFormQueryCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3C::DoGetFreeFormQueryCapabilities(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* FFQCapabilities;
     ASSERT(iCallbackGetFreeFormQueryCapabilities != NULL);
-    if (0 != iCallbackGetFreeFormQueryCapabilities(iPtrGetFreeFormQueryCapabilities, aVersion, &FFQCapabilities)) {
+    if (0 != iCallbackGetFreeFormQueryCapabilities(iPtrGetFreeFormQueryCapabilities, invocationC, invocationCPtr, &FFQCapabilities)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

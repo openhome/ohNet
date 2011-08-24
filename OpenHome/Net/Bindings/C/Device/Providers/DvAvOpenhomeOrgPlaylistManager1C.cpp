@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -421,14 +423,18 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionDeleteAll(CallbackPla
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoMetadata(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoMetadata(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Metadata;
     ASSERT(iCallbackMetadata != NULL);
-    if (0 != iCallbackMetadata(iPtrMetadata, aVersion, &Metadata)) {
+    if (0 != iCallbackMetadata(iPtrMetadata, invocationC, invocationCPtr, &Metadata)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -441,14 +447,18 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoMetadata(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoImagesXml(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoImagesXml(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* ImagesXml;
     ASSERT(iCallbackImagesXml != NULL);
-    if (0 != iCallbackImagesXml(iPtrImagesXml, aVersion, &ImagesXml)) {
+    if (0 != iCallbackImagesXml(iPtrImagesXml, invocationC, invocationCPtr, &ImagesXml)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -461,8 +471,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoImagesXml(IDviInvocation& aInvo
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadArray(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadArray(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
@@ -470,7 +484,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadArray(IDviInvocatio
     char* Array;
     uint32_t ArrayLen;
     ASSERT(iCallbackPlaylistReadArray != NULL);
-    if (0 != iCallbackPlaylistReadArray(iPtrPlaylistReadArray, aVersion, Id, &Array, &ArrayLen)) {
+    if (0 != iCallbackPlaylistReadArray(iPtrPlaylistReadArray, invocationC, invocationCPtr, Id, &Array, &ArrayLen)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -484,8 +498,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadArray(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz IdList;
     aInvocation.InvocationReadString("IdList", IdList);
@@ -493,7 +511,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList(IDviInvocation
     DviInvocation invocation(aInvocation);
     char* PlaylistList;
     ASSERT(iCallbackPlaylistReadList != NULL);
-    if (0 != iCallbackPlaylistReadList(iPtrPlaylistReadList, aVersion, (const char*)IdList.Ptr(), &PlaylistList)) {
+    if (0 != iCallbackPlaylistReadList(iPtrPlaylistReadList, invocationC, invocationCPtr, (const char*)IdList.Ptr(), &PlaylistList)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -506,8 +524,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistRead(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistRead(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
@@ -516,7 +538,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistRead(IDviInvocation& aI
     char* Description;
     uint32_t ImageId;
     ASSERT(iCallbackPlaylistRead != NULL);
-    if (0 != iCallbackPlaylistRead(iPtrPlaylistRead, aVersion, Id, &Name, &Description, &ImageId)) {
+    if (0 != iCallbackPlaylistRead(iPtrPlaylistRead, invocationC, invocationCPtr, Id, &Name, &Description, &ImageId)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -536,8 +558,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistRead(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz Name;
@@ -545,7 +571,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName(IDviInvocation&
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPlaylistSetName != NULL);
-    if (0 != iCallbackPlaylistSetName(iPtrPlaylistSetName, aVersion, Id, (const char*)Name.Ptr())) {
+    if (0 != iCallbackPlaylistSetName(iPtrPlaylistSetName, invocationC, invocationCPtr, Id, (const char*)Name.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -553,8 +579,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName(IDviInvocation&
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz Description;
@@ -562,7 +592,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription(IDviInvo
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPlaylistSetDescription != NULL);
-    if (0 != iCallbackPlaylistSetDescription(iPtrPlaylistSetDescription, aVersion, Id, (const char*)Description.Ptr())) {
+    if (0 != iCallbackPlaylistSetDescription(iPtrPlaylistSetDescription, invocationC, invocationCPtr, Id, (const char*)Description.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -570,15 +600,19 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription(IDviInvo
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint ImageId = aInvocation.InvocationReadUint("ImageId");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPlaylistSetImageId != NULL);
-    if (0 != iCallbackPlaylistSetImageId(iPtrPlaylistSetImageId, aVersion, Id, ImageId)) {
+    if (0 != iCallbackPlaylistSetImageId(iPtrPlaylistSetImageId, invocationC, invocationCPtr, Id, ImageId)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -586,8 +620,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetImageId(IDviInvocati
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistInsert(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistInsert(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint AfterId = aInvocation.InvocationReadUint("AfterId");
     Brhz Name;
@@ -599,7 +637,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistInsert(IDviInvocation& 
     DviInvocation invocation(aInvocation);
     uint32_t NewId;
     ASSERT(iCallbackPlaylistInsert != NULL);
-    if (0 != iCallbackPlaylistInsert(iPtrPlaylistInsert, aVersion, AfterId, (const char*)Name.Ptr(), (const char*)Description.Ptr(), ImageId, &NewId)) {
+    if (0 != iCallbackPlaylistInsert(iPtrPlaylistInsert, invocationC, invocationCPtr, AfterId, (const char*)Name.Ptr(), (const char*)Description.Ptr(), ImageId, &NewId)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -609,14 +647,18 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistInsert(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistDeleteId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistDeleteId(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPlaylistDeleteId != NULL);
-    if (0 != iCallbackPlaylistDeleteId(iPtrPlaylistDeleteId, aVersion, Value)) {
+    if (0 != iCallbackPlaylistDeleteId(iPtrPlaylistDeleteId, invocationC, invocationCPtr, Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -624,15 +666,19 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistDeleteId(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistMove(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistMove(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint AfterId = aInvocation.InvocationReadUint("AfterId");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPlaylistMove != NULL);
-    if (0 != iCallbackPlaylistMove(iPtrPlaylistMove, aVersion, Id, AfterId)) {
+    if (0 != iCallbackPlaylistMove(iPtrPlaylistMove, invocationC, invocationCPtr, Id, AfterId)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -640,14 +686,18 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistMove(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistsMax(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistsMax(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackPlaylistsMax != NULL);
-    if (0 != iCallbackPlaylistsMax(iPtrPlaylistsMax, aVersion, &Value)) {
+    if (0 != iCallbackPlaylistsMax(iPtrPlaylistsMax, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -657,14 +707,18 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistsMax(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoTracksMax(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoTracksMax(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackTracksMax != NULL);
-    if (0 != iCallbackTracksMax(iPtrTracksMax, aVersion, &Value)) {
+    if (0 != iCallbackTracksMax(iPtrTracksMax, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -674,8 +728,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoTracksMax(IDviInvocation& aInvo
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArrays(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArrays(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
@@ -685,7 +743,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArrays(IDviInvocation& 
     char* TokenArray;
     uint32_t TokenArrayLen;
     ASSERT(iCallbackPlaylistArrays != NULL);
-    if (0 != iCallbackPlaylistArrays(iPtrPlaylistArrays, aVersion, &Token, &IdArray, &IdArrayLen, &TokenArray, &TokenArrayLen)) {
+    if (0 != iCallbackPlaylistArrays(iPtrPlaylistArrays, invocationC, invocationCPtr, &Token, &IdArray, &IdArrayLen, &TokenArray, &TokenArrayLen)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -707,15 +765,19 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArrays(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArraysChanged(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArraysChanged(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Token = aInvocation.InvocationReadUint("Token");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackPlaylistArraysChanged != NULL);
-    if (0 != iCallbackPlaylistArraysChanged(iPtrPlaylistArraysChanged, aVersion, Token, &Value)) {
+    if (0 != iCallbackPlaylistArraysChanged(iPtrPlaylistArraysChanged, invocationC, invocationCPtr, Token, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -725,8 +787,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistArraysChanged(IDviInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
@@ -734,7 +800,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocatio
     DviInvocation invocation(aInvocation);
     char* Metadata;
     ASSERT(iCallbackRead != NULL);
-    if (0 != iCallbackRead(iPtrRead, aVersion, Id, TrackId, &Metadata)) {
+    if (0 != iCallbackRead(iPtrRead, invocationC, invocationCPtr, Id, TrackId, &Metadata)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -747,8 +813,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoReadList(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz TrackIdList;
@@ -757,7 +827,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoReadList(IDviInvocation& aInvoc
     DviInvocation invocation(aInvocation);
     char* TrackList;
     ASSERT(iCallbackReadList != NULL);
-    if (0 != iCallbackReadList(iPtrReadList, aVersion, Id, (const char*)TrackIdList.Ptr(), &TrackList)) {
+    if (0 != iCallbackReadList(iPtrReadList, invocationC, invocationCPtr, Id, (const char*)TrackIdList.Ptr(), &TrackList)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -770,8 +840,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoReadList(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint AfterTrackId = aInvocation.InvocationReadUint("AfterTrackId");
@@ -783,7 +857,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocat
     DviInvocation invocation(aInvocation);
     uint32_t NewTrackId;
     ASSERT(iCallbackInsert != NULL);
-    if (0 != iCallbackInsert(iPtrInsert, aVersion, Id, AfterTrackId, (const char*)Udn.Ptr(), (const char*)MetadataId.Ptr(), &NewTrackId)) {
+    if (0 != iCallbackInsert(iPtrInsert, invocationC, invocationCPtr, Id, AfterTrackId, (const char*)Udn.Ptr(), (const char*)MetadataId.Ptr(), &NewTrackId)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -793,15 +867,19 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDeleteId != NULL);
-    if (0 != iCallbackDeleteId(iPtrDeleteId, aVersion, Id, TrackId)) {
+    if (0 != iCallbackDeleteId(iPtrDeleteId, invocationC, invocationCPtr, Id, TrackId)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -809,14 +887,18 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteAll(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDeleteAll != NULL);
-    if (0 != iCallbackDeleteAll(iPtrDeleteAll, aVersion, Id)) {
+    if (0 != iCallbackDeleteAll(iPtrDeleteAll, invocationC, invocationCPtr, Id)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,366 +22,432 @@ extern "C" {
 /**
  * Callback which runs when the ListPresets action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionListPresets
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionListPresets
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentPresetNameList
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1ListPresets)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aCurrentPresetNameList);
+typedef int32_t (STDCALL *CallbackRenderingControl1ListPresets)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, char** aCurrentPresetNameList);
 /**
  * Callback which runs when the SelectPreset action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aPresetName
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SelectPreset)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aPresetName);
+typedef int32_t (STDCALL *CallbackRenderingControl1SelectPreset)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aPresetName);
 /**
  * Callback which runs when the GetBrightness action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentBrightness
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetBrightness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBrightness);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetBrightness)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentBrightness);
 /**
  * Callback which runs when the SetBrightness action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBrightness
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetBrightness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBrightness);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetBrightness)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredBrightness);
 /**
  * Callback which runs when the GetContrast action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetContrast
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetContrast
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentContrast
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetContrast)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentContrast);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetContrast)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentContrast);
 /**
  * Callback which runs when the SetContrast action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetContrast
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetContrast
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredContrast
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetContrast)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredContrast);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetContrast)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredContrast);
 /**
  * Callback which runs when the GetSharpness action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentSharpness
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetSharpness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentSharpness);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetSharpness)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentSharpness);
 /**
  * Callback which runs when the SetSharpness action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredSharpness
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetSharpness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredSharpness);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetSharpness)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredSharpness);
 /**
  * Callback which runs when the GetRedVideoGain action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentRedVideoGain
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetRedVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetRedVideoGain)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain);
 /**
  * Callback which runs when the SetRedVideoGain action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredRedVideoGain
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetRedVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetRedVideoGain)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
 /**
  * Callback which runs when the GetGreenVideoGain action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentGreenVideoGain
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetGreenVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetGreenVideoGain)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain);
 /**
  * Callback which runs when the SetGreenVideoGain action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredGreenVideoGain
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetGreenVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetGreenVideoGain)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
 /**
  * Callback which runs when the GetBlueVideoGain action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentBlueVideoGain
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetBlueVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetBlueVideoGain)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain);
 /**
  * Callback which runs when the SetBlueVideoGain action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBlueVideoGain
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetBlueVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetBlueVideoGain)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
 /**
  * Callback which runs when the GetRedVideoBlackLevel action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLevel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLevel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentRedVideoBlackLevel
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetRedVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetRedVideoBlackLevel)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel);
 /**
  * Callback which runs when the SetRedVideoBlackLevel action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLevel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLevel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredRedVideoBlackLevel
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetRedVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetRedVideoBlackLevel)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
 /**
  * Callback which runs when the GetGreenVideoBlackLevel action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackLevel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackLevel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentGreenVideoBlackLevel
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetGreenVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetGreenVideoBlackLevel)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel);
 /**
  * Callback which runs when the SetGreenVideoBlackLevel action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackLevel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackLevel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredGreenVideoBlackLevel
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetGreenVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetGreenVideoBlackLevel)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
 /**
  * Callback which runs when the GetBlueVideoBlackLevel action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLevel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLevel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentBlueVideoBlackLevel
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetBlueVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetBlueVideoBlackLevel)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel);
 /**
  * Callback which runs when the SetBlueVideoBlackLevel action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLevel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLevel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBlueVideoBlackLevel
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetBlueVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetBlueVideoBlackLevel)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
 /**
  * Callback which runs when the GetColorTemperature action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentColorTemperature
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetColorTemperature)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetColorTemperature)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature);
 /**
  * Callback which runs when the SetColorTemperature action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredColorTemperature
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetColorTemperature)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetColorTemperature)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
 /**
  * Callback which runs when the GetHorizontalKeystone action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeystone
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeystone
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentHorizontalKeystone
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetHorizontalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetHorizontalKeystone)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone);
 /**
  * Callback which runs when the SetHorizontalKeystone action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeystone
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeystone
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredHorizontalKeystone
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetHorizontalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetHorizontalKeystone)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
 /**
  * Callback which runs when the GetVerticalKeystone action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[out] aCurrentVerticalKeystone
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetVerticalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetVerticalKeystone)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone);
 /**
  * Callback which runs when the SetVerticalKeystone action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aDesiredVerticalKeystone
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetVerticalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetVerticalKeystone)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
 /**
  * Callback which runs when the GetMute action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetMute
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetMute
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aCurrentMute
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetMute)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetMute)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute);
 /**
  * Callback which runs when the SetMute action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetMute
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetMute
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[in]  aDesiredMute
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetMute)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetMute)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute);
 /**
  * Callback which runs when the GetVolume action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetVolume
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetVolume
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aCurrentVolume
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetVolume)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetVolume)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume);
 /**
  * Callback which runs when the SetVolume action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetVolume
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetVolume
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[in]  aDesiredVolume
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetVolume)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetVolume)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume);
 /**
  * Callback which runs when the GetVolumeDB action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aCurrentVolume
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetVolumeDB)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetVolumeDB)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume);
 /**
  * Callback which runs when the SetVolumeDB action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[in]  aDesiredVolume
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetVolumeDB)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetVolumeDB)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume);
 /**
  * Callback which runs when the GetVolumeDBRange action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aMinValue
@@ -388,31 +455,35 @@ typedef int32_t (STDCALL *CallbackRenderingControl1SetVolumeDB)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetVolumeDBRange)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetVolumeDBRange)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue);
 /**
  * Callback which runs when the GetLoudness action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aCurrentLoudness
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1GetLoudness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetLoudness)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness);
 /**
  * Callback which runs when the SetLoudness action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[in]  aDesiredLoudness
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackRenderingControl1SetLoudness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetLoudness)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness);
 
 /**
  * Provider constructor

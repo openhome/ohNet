@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,15 +22,17 @@ extern "C" {
 /**
  * Callback which runs when the Time action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgTime1EnableActionTime
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgTime1EnableActionTime
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aTrackCount
  * @param[out] aDuration
  * @param[out] aSeconds
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTime1Time)(void* aPtr, uint32_t aVersion, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
+typedef int32_t (STDCALL *CallbackTime1Time)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
 
 /**
  * Provider constructor

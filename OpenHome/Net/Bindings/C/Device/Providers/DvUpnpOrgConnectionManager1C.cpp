@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -177,15 +179,19 @@ void DvProviderUpnpOrgConnectionManager1C::EnableActionGetCurrentConnectionInfo(
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Source;
     char* Sink;
     ASSERT(iCallbackGetProtocolInfo != NULL);
-    if (0 != iCallbackGetProtocolInfo(iPtrGetProtocolInfo, aVersion, &Source, &Sink)) {
+    if (0 != iCallbackGetProtocolInfo(iPtrGetProtocolInfo, invocationC, invocationCPtr, &Source, &Sink)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -203,8 +209,12 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RemoteProtocolInfo;
     aInvocation.InvocationReadString("RemoteProtocolInfo", RemoteProtocolInfo);
@@ -219,7 +229,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation
     int32_t AVTransportID;
     int32_t RcsID;
     ASSERT(iCallbackPrepareForConnection != NULL);
-    if (0 != iCallbackPrepareForConnection(iPtrPrepareForConnection, aVersion, (const char*)RemoteProtocolInfo.Ptr(), (const char*)PeerConnectionManager.Ptr(), PeerConnectionID, (const char*)Direction.Ptr(), &ConnectionID, &AVTransportID, &RcsID)) {
+    if (0 != iCallbackPrepareForConnection(iPtrPrepareForConnection, invocationC, invocationCPtr, (const char*)RemoteProtocolInfo.Ptr(), (const char*)PeerConnectionManager.Ptr(), PeerConnectionID, (const char*)Direction.Ptr(), &ConnectionID, &AVTransportID, &RcsID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -233,14 +243,18 @@ void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackConnectionComplete != NULL);
-    if (0 != iCallbackConnectionComplete(iPtrConnectionComplete, aVersion, ConnectionID)) {
+    if (0 != iCallbackConnectionComplete(iPtrConnectionComplete, invocationC, invocationCPtr, ConnectionID)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -248,14 +262,18 @@ void DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* ConnectionIDs;
     ASSERT(iCallbackGetCurrentConnectionIDs != NULL);
-    if (0 != iCallbackGetCurrentConnectionIDs(iPtrGetCurrentConnectionIDs, aVersion, &ConnectionIDs)) {
+    if (0 != iCallbackGetCurrentConnectionIDs(iPtrGetCurrentConnectionIDs, invocationC, invocationCPtr, &ConnectionIDs)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -268,8 +286,12 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs(IDviInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
@@ -282,7 +304,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvoca
     char* Direction;
     char* Status;
     ASSERT(iCallbackGetCurrentConnectionInfo != NULL);
-    if (0 != iCallbackGetCurrentConnectionInfo(iPtrGetCurrentConnectionInfo, aVersion, ConnectionID, &RcsID, &AVTransportID, &ProtocolInfo, &PeerConnectionManager, &PeerConnectionID, &Direction, &Status)) {
+    if (0 != iCallbackGetCurrentConnectionInfo(iPtrGetCurrentConnectionInfo, invocationC, invocationCPtr, ConnectionID, &RcsID, &AVTransportID, &ProtocolInfo, &PeerConnectionManager, &PeerConnectionID, &Direction, &Status)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

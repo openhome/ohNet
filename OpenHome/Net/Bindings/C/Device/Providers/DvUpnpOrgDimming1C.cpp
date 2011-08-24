@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -406,14 +408,18 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetRampTime(CallbackDimming1GetRamp
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgDimming1C::DoSetLoadLevelTarget(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoSetLoadLevelTarget(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint newLoadlevelTarget = aInvocation.InvocationReadUint("newLoadlevelTarget");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetLoadLevelTarget != NULL);
-    if (0 != iCallbackSetLoadLevelTarget(iPtrSetLoadLevelTarget, aVersion, newLoadlevelTarget)) {
+    if (0 != iCallbackSetLoadLevelTarget(iPtrSetLoadLevelTarget, invocationC, invocationCPtr, newLoadlevelTarget)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -421,14 +427,18 @@ void DvProviderUpnpOrgDimming1C::DoSetLoadLevelTarget(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoGetLoadLevelTarget(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoGetLoadLevelTarget(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t GetLoadlevelTarget;
     ASSERT(iCallbackGetLoadLevelTarget != NULL);
-    if (0 != iCallbackGetLoadLevelTarget(iPtrGetLoadLevelTarget, aVersion, &GetLoadlevelTarget)) {
+    if (0 != iCallbackGetLoadLevelTarget(iPtrGetLoadLevelTarget, invocationC, invocationCPtr, &GetLoadlevelTarget)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -438,14 +448,18 @@ void DvProviderUpnpOrgDimming1C::DoGetLoadLevelTarget(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoGetLoadLevelStatus(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoGetLoadLevelStatus(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t retLoadlevelStatus;
     ASSERT(iCallbackGetLoadLevelStatus != NULL);
-    if (0 != iCallbackGetLoadLevelStatus(iPtrGetLoadLevelStatus, aVersion, &retLoadlevelStatus)) {
+    if (0 != iCallbackGetLoadLevelStatus(iPtrGetLoadLevelStatus, invocationC, invocationCPtr, &retLoadlevelStatus)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -455,14 +469,18 @@ void DvProviderUpnpOrgDimming1C::DoGetLoadLevelStatus(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoSetOnEffectLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoSetOnEffectLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint newOnEffectLevel = aInvocation.InvocationReadUint("newOnEffectLevel");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetOnEffectLevel != NULL);
-    if (0 != iCallbackSetOnEffectLevel(iPtrSetOnEffectLevel, aVersion, newOnEffectLevel)) {
+    if (0 != iCallbackSetOnEffectLevel(iPtrSetOnEffectLevel, invocationC, invocationCPtr, newOnEffectLevel)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -470,15 +488,19 @@ void DvProviderUpnpOrgDimming1C::DoSetOnEffectLevel(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoSetOnEffect(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoSetOnEffect(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz newOnEffect;
     aInvocation.InvocationReadString("newOnEffect", newOnEffect);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetOnEffect != NULL);
-    if (0 != iCallbackSetOnEffect(iPtrSetOnEffect, aVersion, (const char*)newOnEffect.Ptr())) {
+    if (0 != iCallbackSetOnEffect(iPtrSetOnEffect, invocationC, invocationCPtr, (const char*)newOnEffect.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -486,15 +508,19 @@ void DvProviderUpnpOrgDimming1C::DoSetOnEffect(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoGetOnEffectParameters(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoGetOnEffectParameters(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* retOnEffect;
     uint32_t retOnEffectLevel;
     ASSERT(iCallbackGetOnEffectParameters != NULL);
-    if (0 != iCallbackGetOnEffectParameters(iPtrGetOnEffectParameters, aVersion, &retOnEffect, &retOnEffectLevel)) {
+    if (0 != iCallbackGetOnEffectParameters(iPtrGetOnEffectParameters, invocationC, invocationCPtr, &retOnEffect, &retOnEffectLevel)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -509,13 +535,17 @@ void DvProviderUpnpOrgDimming1C::DoGetOnEffectParameters(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoStepUp(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStepUp(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStepUp != NULL);
-    if (0 != iCallbackStepUp(iPtrStepUp, aVersion)) {
+    if (0 != iCallbackStepUp(iPtrStepUp, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -523,13 +553,17 @@ void DvProviderUpnpOrgDimming1C::DoStepUp(IDviInvocation& aInvocation, TUint aVe
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoStepDown(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStepDown(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStepDown != NULL);
-    if (0 != iCallbackStepDown(iPtrStepDown, aVersion)) {
+    if (0 != iCallbackStepDown(iPtrStepDown, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -537,13 +571,17 @@ void DvProviderUpnpOrgDimming1C::DoStepDown(IDviInvocation& aInvocation, TUint a
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoStartRampUp(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStartRampUp(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStartRampUp != NULL);
-    if (0 != iCallbackStartRampUp(iPtrStartRampUp, aVersion)) {
+    if (0 != iCallbackStartRampUp(iPtrStartRampUp, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -551,13 +589,17 @@ void DvProviderUpnpOrgDimming1C::DoStartRampUp(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoStartRampDown(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStartRampDown(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStartRampDown != NULL);
-    if (0 != iCallbackStartRampDown(iPtrStartRampDown, aVersion)) {
+    if (0 != iCallbackStartRampDown(iPtrStartRampDown, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -565,13 +607,17 @@ void DvProviderUpnpOrgDimming1C::DoStartRampDown(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoStopRamp(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStopRamp(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStopRamp != NULL);
-    if (0 != iCallbackStopRamp(iPtrStopRamp, aVersion)) {
+    if (0 != iCallbackStopRamp(iPtrStopRamp, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -579,15 +625,19 @@ void DvProviderUpnpOrgDimming1C::DoStopRamp(IDviInvocation& aInvocation, TUint a
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoStartRampToLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStartRampToLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint newLoadLevelTarget = aInvocation.InvocationReadUint("newLoadLevelTarget");
     TUint newRampTime = aInvocation.InvocationReadUint("newRampTime");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStartRampToLevel != NULL);
-    if (0 != iCallbackStartRampToLevel(iPtrStartRampToLevel, aVersion, newLoadLevelTarget, newRampTime)) {
+    if (0 != iCallbackStartRampToLevel(iPtrStartRampToLevel, invocationC, invocationCPtr, newLoadLevelTarget, newRampTime)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -595,14 +645,18 @@ void DvProviderUpnpOrgDimming1C::DoStartRampToLevel(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoSetStepDelta(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoSetStepDelta(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint newStepDelta = aInvocation.InvocationReadUint("newStepDelta");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetStepDelta != NULL);
-    if (0 != iCallbackSetStepDelta(iPtrSetStepDelta, aVersion, newStepDelta)) {
+    if (0 != iCallbackSetStepDelta(iPtrSetStepDelta, invocationC, invocationCPtr, newStepDelta)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -610,14 +664,18 @@ void DvProviderUpnpOrgDimming1C::DoSetStepDelta(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoGetStepDelta(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoGetStepDelta(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t retStepDelta;
     ASSERT(iCallbackGetStepDelta != NULL);
-    if (0 != iCallbackGetStepDelta(iPtrGetStepDelta, aVersion, &retStepDelta)) {
+    if (0 != iCallbackGetStepDelta(iPtrGetStepDelta, invocationC, invocationCPtr, &retStepDelta)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -627,14 +685,18 @@ void DvProviderUpnpOrgDimming1C::DoGetStepDelta(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoSetRampRate(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoSetRampRate(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint newRampRate = aInvocation.InvocationReadUint("newRampRate");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetRampRate != NULL);
-    if (0 != iCallbackSetRampRate(iPtrSetRampRate, aVersion, newRampRate)) {
+    if (0 != iCallbackSetRampRate(iPtrSetRampRate, invocationC, invocationCPtr, newRampRate)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -642,14 +704,18 @@ void DvProviderUpnpOrgDimming1C::DoSetRampRate(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoGetRampRate(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoGetRampRate(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t retRampRate;
     ASSERT(iCallbackGetRampRate != NULL);
-    if (0 != iCallbackGetRampRate(iPtrGetRampRate, aVersion, &retRampRate)) {
+    if (0 != iCallbackGetRampRate(iPtrGetRampRate, invocationC, invocationCPtr, &retRampRate)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -659,13 +725,17 @@ void DvProviderUpnpOrgDimming1C::DoGetRampRate(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoPauseRamp(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoPauseRamp(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPauseRamp != NULL);
-    if (0 != iCallbackPauseRamp(iPtrPauseRamp, aVersion)) {
+    if (0 != iCallbackPauseRamp(iPtrPauseRamp, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -673,13 +743,17 @@ void DvProviderUpnpOrgDimming1C::DoPauseRamp(IDviInvocation& aInvocation, TUint 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoResumeRamp(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoResumeRamp(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackResumeRamp != NULL);
-    if (0 != iCallbackResumeRamp(iPtrResumeRamp, aVersion)) {
+    if (0 != iCallbackResumeRamp(iPtrResumeRamp, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -687,14 +761,18 @@ void DvProviderUpnpOrgDimming1C::DoResumeRamp(IDviInvocation& aInvocation, TUint
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoGetIsRamping(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoGetIsRamping(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t retIsRamping;
     ASSERT(iCallbackGetIsRamping != NULL);
-    if (0 != iCallbackGetIsRamping(iPtrGetIsRamping, aVersion, &retIsRamping)) {
+    if (0 != iCallbackGetIsRamping(iPtrGetIsRamping, invocationC, invocationCPtr, &retIsRamping)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -704,14 +782,18 @@ void DvProviderUpnpOrgDimming1C::DoGetIsRamping(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoGetRampPaused(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoGetRampPaused(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t retRampPaused;
     ASSERT(iCallbackGetRampPaused != NULL);
-    if (0 != iCallbackGetRampPaused(iPtrGetRampPaused, aVersion, &retRampPaused)) {
+    if (0 != iCallbackGetRampPaused(iPtrGetRampPaused, invocationC, invocationCPtr, &retRampPaused)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -721,14 +803,18 @@ void DvProviderUpnpOrgDimming1C::DoGetRampPaused(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgDimming1C::DoGetRampTime(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoGetRampTime(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t retRampTime;
     ASSERT(iCallbackGetRampTime != NULL);
-    if (0 != iCallbackGetRampTime(iPtrGetRampTime, aVersion, &retRampTime)) {
+    if (0 != iCallbackGetRampTime(iPtrGetRampTime, invocationC, invocationCPtr, &retRampTime)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

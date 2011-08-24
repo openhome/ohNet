@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -87,8 +89,12 @@ void DvProviderAvOpenhomeOrgTime1C::EnableActionTime(CallbackTime1Time aCallback
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
@@ -96,7 +102,7 @@ void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint aV
     uint32_t Duration;
     uint32_t Seconds;
     ASSERT(iCallbackTime != NULL);
-    if (0 != iCallbackTime(iPtrTime, aVersion, &TrackCount, &Duration, &Seconds)) {
+    if (0 != iCallbackTime(iPtrTime, invocationC, invocationCPtr, &TrackCount, &Duration, &Seconds)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

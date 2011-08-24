@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -179,14 +181,18 @@ void DvProviderAvOpenhomeOrgSender1C::EnableActionAttributes(CallbackSender1Attr
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1C::DoPresentationUrl(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackPresentationUrl != NULL);
-    if (0 != iCallbackPresentationUrl(iPtrPresentationUrl, aVersion, &Value)) {
+    if (0 != iCallbackPresentationUrl(iPtrPresentationUrl, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -199,14 +205,18 @@ void DvProviderAvOpenhomeOrgSender1C::DoPresentationUrl(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoMetadata(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1C::DoMetadata(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackMetadata != NULL);
-    if (0 != iCallbackMetadata(iPtrMetadata, aVersion, &Value)) {
+    if (0 != iCallbackMetadata(iPtrMetadata, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -219,14 +229,18 @@ void DvProviderAvOpenhomeOrgSender1C::DoMetadata(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoAudio(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1C::DoAudio(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackAudio != NULL);
-    if (0 != iCallbackAudio(iPtrAudio, aVersion, &Value)) {
+    if (0 != iCallbackAudio(iPtrAudio, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -236,14 +250,18 @@ void DvProviderAvOpenhomeOrgSender1C::DoAudio(IDviInvocation& aInvocation, TUint
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoStatus(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1C::DoStatus(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackStatus != NULL);
-    if (0 != iCallbackStatus(iPtrStatus, aVersion, &Value)) {
+    if (0 != iCallbackStatus(iPtrStatus, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -256,14 +274,18 @@ void DvProviderAvOpenhomeOrgSender1C::DoStatus(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoAttributes(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1C::DoAttributes(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackAttributes != NULL);
-    if (0 != iCallbackAttributes(iPtrAttributes, aVersion, &Value)) {
+    if (0 != iCallbackAttributes(iPtrAttributes, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

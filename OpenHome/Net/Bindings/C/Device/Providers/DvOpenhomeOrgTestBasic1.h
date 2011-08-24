@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,52 +22,62 @@ extern "C" {
 /**
  * Callback which runs when the Increment action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionIncrement
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionIncrement
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  * @param[out] aResult
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1Increment)(void* aPtr, uint32_t aVersion, uint32_t aValue, uint32_t* aResult);
+typedef int32_t (STDCALL *CallbackTestBasic1Increment)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValue, uint32_t* aResult);
 /**
  * Callback which runs when the Decrement action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionDecrement
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionDecrement
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  * @param[out] aResult
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1Decrement)(void* aPtr, uint32_t aVersion, int32_t aValue, int32_t* aResult);
+typedef int32_t (STDCALL *CallbackTestBasic1Decrement)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t aValue, int32_t* aResult);
 /**
  * Callback which runs when the Toggle action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionToggle
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionToggle
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  * @param[out] aResult
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1Toggle)(void* aPtr, uint32_t aVersion, uint32_t aValue, uint32_t* aResult);
+typedef int32_t (STDCALL *CallbackTestBasic1Toggle)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValue, uint32_t* aResult);
 /**
  * Callback which runs when the EchoString action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionEchoString
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionEchoString
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  * @param[out] aResult
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1EchoString)(void* aPtr, uint32_t aVersion, const char* aValue, char** aResult);
+typedef int32_t (STDCALL *CallbackTestBasic1EchoString)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aValue, char** aResult);
 /**
  * Callback which runs when the EchoBinary action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionEchoBinary
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionEchoBinary
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  * @param[in]  aValueLen
  * @param[out] aResult
@@ -74,150 +85,178 @@ typedef int32_t (STDCALL *CallbackTestBasic1EchoString)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1EchoBinary)(void* aPtr, uint32_t aVersion, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen);
+typedef int32_t (STDCALL *CallbackTestBasic1EchoBinary)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen);
 /**
  * Callback which runs when the SetUint action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetUint
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetUint
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValueUint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1SetUint)(void* aPtr, uint32_t aVersion, uint32_t aValueUint);
+typedef int32_t (STDCALL *CallbackTestBasic1SetUint)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValueUint);
 /**
  * Callback which runs when the GetUint action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetUint
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetUint
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValueUint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1GetUint)(void* aPtr, uint32_t aVersion, uint32_t* aValueUint);
+typedef int32_t (STDCALL *CallbackTestBasic1GetUint)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValueUint);
 /**
  * Callback which runs when the SetInt action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetInt
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetInt
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValueInt
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1SetInt)(void* aPtr, uint32_t aVersion, int32_t aValueInt);
+typedef int32_t (STDCALL *CallbackTestBasic1SetInt)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t aValueInt);
 /**
  * Callback which runs when the GetInt action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetInt
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetInt
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValueInt
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1GetInt)(void* aPtr, uint32_t aVersion, int32_t* aValueInt);
+typedef int32_t (STDCALL *CallbackTestBasic1GetInt)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, int32_t* aValueInt);
 /**
  * Callback which runs when the SetBool action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetBool
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetBool
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValueBool
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1SetBool)(void* aPtr, uint32_t aVersion, uint32_t aValueBool);
+typedef int32_t (STDCALL *CallbackTestBasic1SetBool)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValueBool);
 /**
  * Callback which runs when the GetBool action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetBool
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetBool
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValueBool
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1GetBool)(void* aPtr, uint32_t aVersion, uint32_t* aValueBool);
+typedef int32_t (STDCALL *CallbackTestBasic1GetBool)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValueBool);
 /**
  * Callback which runs when the SetMultiple action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValueUint
  * @param[in]  aValueInt
  * @param[in]  aValueBool
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1SetMultiple)(void* aPtr, uint32_t aVersion, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool);
+typedef int32_t (STDCALL *CallbackTestBasic1SetMultiple)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool);
 /**
  * Callback which runs when the SetString action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetString
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetString
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValueStr
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1SetString)(void* aPtr, uint32_t aVersion, const char* aValueStr);
+typedef int32_t (STDCALL *CallbackTestBasic1SetString)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aValueStr);
 /**
  * Callback which runs when the GetString action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetString
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetString
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValueStr
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1GetString)(void* aPtr, uint32_t aVersion, char** aValueStr);
+typedef int32_t (STDCALL *CallbackTestBasic1GetString)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aValueStr);
 /**
  * Callback which runs when the SetBinary action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetBinary
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionSetBinary
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValueBin
  * @param[in]  aValueBinLen
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1SetBinary)(void* aPtr, uint32_t aVersion, const char* aValueBin, uint32_t aValueBinLen);
+typedef int32_t (STDCALL *CallbackTestBasic1SetBinary)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aValueBin, uint32_t aValueBinLen);
 /**
  * Callback which runs when the GetBinary action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValueBin
  * @param[out] aValueBinLen
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1GetBinary)(void* aPtr, uint32_t aVersion, char** aValueBin, uint32_t* aValueBinLen);
+typedef int32_t (STDCALL *CallbackTestBasic1GetBinary)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aValueBin, uint32_t* aValueBinLen);
 /**
  * Callback which runs when the ToggleBool action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1ToggleBool)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackTestBasic1ToggleBool)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the WriteFile action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aData
  * @param[in]  aFileFullName
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1WriteFile)(void* aPtr, uint32_t aVersion, const char* aData, const char* aFileFullName);
+typedef int32_t (STDCALL *CallbackTestBasic1WriteFile)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aData, const char* aFileFullName);
 /**
  * Callback which runs when the Shutdown action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionShutdown
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionShutdown
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestBasic1Shutdown)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackTestBasic1Shutdown)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 
 /**
  * Provider constructor

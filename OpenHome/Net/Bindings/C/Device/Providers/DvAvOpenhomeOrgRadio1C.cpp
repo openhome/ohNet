@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -368,13 +370,17 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionProtocolInfo(CallbackRadio1Prot
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPlay != NULL);
-    if (0 != iCallbackPlay(iPtrPlay, aVersion)) {
+    if (0 != iCallbackPlay(iPtrPlay, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -382,13 +388,17 @@ void DvProviderAvOpenhomeOrgRadio1C::DoPlay(IDviInvocation& aInvocation, TUint a
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoPause(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoPause(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackPause != NULL);
-    if (0 != iCallbackPause(iPtrPause, aVersion)) {
+    if (0 != iCallbackPause(iPtrPause, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -396,13 +406,17 @@ void DvProviderAvOpenhomeOrgRadio1C::DoPause(IDviInvocation& aInvocation, TUint 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoStop(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackStop != NULL);
-    if (0 != iCallbackStop(iPtrStop, aVersion)) {
+    if (0 != iCallbackStop(iPtrStop, invocationC, invocationCPtr)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -410,14 +424,18 @@ void DvProviderAvOpenhomeOrgRadio1C::DoStop(IDviInvocation& aInvocation, TUint a
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSeekSecondAbsolute != NULL);
-    if (0 != iCallbackSeekSecondAbsolute(iPtrSeekSecondAbsolute, aVersion, Value)) {
+    if (0 != iCallbackSeekSecondAbsolute(iPtrSeekSecondAbsolute, invocationC, invocationCPtr, Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -425,14 +443,18 @@ void DvProviderAvOpenhomeOrgRadio1C::DoSeekSecondAbsolute(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSeekSecondRelative != NULL);
-    if (0 != iCallbackSeekSecondRelative(iPtrSeekSecondRelative, aVersion, Value)) {
+    if (0 != iCallbackSeekSecondRelative(iPtrSeekSecondRelative, invocationC, invocationCPtr, Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -440,15 +462,19 @@ void DvProviderAvOpenhomeOrgRadio1C::DoSeekSecondRelative(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoChannel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoChannel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Uri;
     char* Metadata;
     ASSERT(iCallbackChannel != NULL);
-    if (0 != iCallbackChannel(iPtrChannel, aVersion, &Uri, &Metadata)) {
+    if (0 != iCallbackChannel(iPtrChannel, invocationC, invocationCPtr, &Uri, &Metadata)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -466,8 +492,12 @@ void DvProviderAvOpenhomeOrgRadio1C::DoChannel(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoSetChannel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoSetChannel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz Uri;
     aInvocation.InvocationReadString("Uri", Uri);
@@ -476,7 +506,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoSetChannel(IDviInvocation& aInvocation, T
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetChannel != NULL);
-    if (0 != iCallbackSetChannel(iPtrSetChannel, aVersion, (const char*)Uri.Ptr(), (const char*)Metadata.Ptr())) {
+    if (0 != iCallbackSetChannel(iPtrSetChannel, invocationC, invocationCPtr, (const char*)Uri.Ptr(), (const char*)Metadata.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -484,14 +514,18 @@ void DvProviderAvOpenhomeOrgRadio1C::DoSetChannel(IDviInvocation& aInvocation, T
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoTransportState(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoTransportState(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackTransportState != NULL);
-    if (0 != iCallbackTransportState(iPtrTransportState, aVersion, &Value)) {
+    if (0 != iCallbackTransportState(iPtrTransportState, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -504,14 +538,18 @@ void DvProviderAvOpenhomeOrgRadio1C::DoTransportState(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoId(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackId != NULL);
-    if (0 != iCallbackId(iPtrId, aVersion, &Value)) {
+    if (0 != iCallbackId(iPtrId, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -521,8 +559,12 @@ void DvProviderAvOpenhomeOrgRadio1C::DoId(IDviInvocation& aInvocation, TUint aVe
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoSetId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoSetId(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     Brhz Uri;
@@ -530,7 +572,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoSetId(IDviInvocation& aInvocation, TUint 
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetId != NULL);
-    if (0 != iCallbackSetId(iPtrSetId, aVersion, Value, (const char*)Uri.Ptr())) {
+    if (0 != iCallbackSetId(iPtrSetId, invocationC, invocationCPtr, Value, (const char*)Uri.Ptr())) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -538,15 +580,19 @@ void DvProviderAvOpenhomeOrgRadio1C::DoSetId(IDviInvocation& aInvocation, TUint 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoRead(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoRead(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Metadata;
     ASSERT(iCallbackRead != NULL);
-    if (0 != iCallbackRead(iPtrRead, aVersion, Id, &Metadata)) {
+    if (0 != iCallbackRead(iPtrRead, invocationC, invocationCPtr, Id, &Metadata)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -559,8 +605,12 @@ void DvProviderAvOpenhomeOrgRadio1C::DoRead(IDviInvocation& aInvocation, TUint a
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoReadList(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz IdList;
     aInvocation.InvocationReadString("IdList", IdList);
@@ -568,7 +618,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoReadList(IDviInvocation& aInvocation, TUi
     DviInvocation invocation(aInvocation);
     char* ChannelList;
     ASSERT(iCallbackReadList != NULL);
-    if (0 != iCallbackReadList(iPtrReadList, aVersion, (const char*)IdList.Ptr(), &ChannelList)) {
+    if (0 != iCallbackReadList(iPtrReadList, invocationC, invocationCPtr, (const char*)IdList.Ptr(), &ChannelList)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -581,8 +631,12 @@ void DvProviderAvOpenhomeOrgRadio1C::DoReadList(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoIdArray(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoIdArray(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
@@ -590,7 +644,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoIdArray(IDviInvocation& aInvocation, TUin
     char* Array;
     uint32_t ArrayLen;
     ASSERT(iCallbackIdArray != NULL);
-    if (0 != iCallbackIdArray(iPtrIdArray, aVersion, &Token, &Array, &ArrayLen)) {
+    if (0 != iCallbackIdArray(iPtrIdArray, invocationC, invocationCPtr, &Token, &Array, &ArrayLen)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -606,15 +660,19 @@ void DvProviderAvOpenhomeOrgRadio1C::DoIdArray(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoIdArrayChanged(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     TUint Token = aInvocation.InvocationReadUint("Token");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackIdArrayChanged != NULL);
-    if (0 != iCallbackIdArrayChanged(iPtrIdArrayChanged, aVersion, Token, &Value)) {
+    if (0 != iCallbackIdArrayChanged(iPtrIdArrayChanged, invocationC, invocationCPtr, Token, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -624,14 +682,18 @@ void DvProviderAvOpenhomeOrgRadio1C::DoIdArrayChanged(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoChannelsMax(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoChannelsMax(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackChannelsMax != NULL);
-    if (0 != iCallbackChannelsMax(iPtrChannelsMax, aVersion, &Value)) {
+    if (0 != iCallbackChannelsMax(iPtrChannelsMax, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -641,14 +703,18 @@ void DvProviderAvOpenhomeOrgRadio1C::DoChannelsMax(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgRadio1C::DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1C::DoProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackProtocolInfo != NULL);
-    if (0 != iCallbackProtocolInfo(iPtrProtocolInfo, aVersion, &Value)) {
+    if (0 != iCallbackProtocolInfo(iPtrProtocolInfo, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

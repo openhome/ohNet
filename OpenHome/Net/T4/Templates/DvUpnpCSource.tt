@@ -52,6 +52,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -192,8 +194,12 @@ void <#=className#>C::EnableAction<#=a.name#>(<#=callbackPrefix#><#=a.name#> aCa
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
+void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
@@ -230,7 +236,7 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 <#          } #>
 <#      } #>
     ASSERT(iCallback<#=a.name#> != NULL);
-    if (0 != iCallback<#=a.name#>(iPtr<#=a.name#>, aVersion<#=CallbackArgs(a)#>)) {
+    if (0 != iCallback<#=a.name#>(iPtr<#=a.name#>, invocationC, invocationCPtr<#=CallbackArgs(a)#>)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

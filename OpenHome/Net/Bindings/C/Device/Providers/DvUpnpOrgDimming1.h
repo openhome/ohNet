@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,208 +22,250 @@ extern "C" {
 /**
  * Callback which runs when the SetLoadLevelTarget action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  anewLoadlevelTarget
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1SetLoadLevelTarget)(void* aPtr, uint32_t aVersion, uint32_t anewLoadlevelTarget);
+typedef int32_t (STDCALL *CallbackDimming1SetLoadLevelTarget)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t anewLoadlevelTarget);
 /**
  * Callback which runs when the GetLoadLevelTarget action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aGetLoadlevelTarget
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1GetLoadLevelTarget)(void* aPtr, uint32_t aVersion, uint32_t* aGetLoadlevelTarget);
+typedef int32_t (STDCALL *CallbackDimming1GetLoadLevelTarget)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aGetLoadlevelTarget);
 /**
  * Callback which runs when the GetLoadLevelStatus action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aretLoadlevelStatus
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1GetLoadLevelStatus)(void* aPtr, uint32_t aVersion, uint32_t* aretLoadlevelStatus);
+typedef int32_t (STDCALL *CallbackDimming1GetLoadLevelStatus)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aretLoadlevelStatus);
 /**
  * Callback which runs when the SetOnEffectLevel action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  anewOnEffectLevel
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1SetOnEffectLevel)(void* aPtr, uint32_t aVersion, uint32_t anewOnEffectLevel);
+typedef int32_t (STDCALL *CallbackDimming1SetOnEffectLevel)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t anewOnEffectLevel);
 /**
  * Callback which runs when the SetOnEffect action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetOnEffect
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetOnEffect
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  anewOnEffect
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1SetOnEffect)(void* aPtr, uint32_t aVersion, const char* anewOnEffect);
+typedef int32_t (STDCALL *CallbackDimming1SetOnEffect)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* anewOnEffect);
 /**
  * Callback which runs when the GetOnEffectParameters action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aretOnEffect
  * @param[out] aretOnEffectLevel
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1GetOnEffectParameters)(void* aPtr, uint32_t aVersion, char** aretOnEffect, uint32_t* aretOnEffectLevel);
+typedef int32_t (STDCALL *CallbackDimming1GetOnEffectParameters)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aretOnEffect, uint32_t* aretOnEffectLevel);
 /**
  * Callback which runs when the StepUp action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStepUp
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStepUp
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1StepUp)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackDimming1StepUp)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the StepDown action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStepDown
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStepDown
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1StepDown)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackDimming1StepDown)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the StartRampUp action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStartRampUp
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStartRampUp
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1StartRampUp)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackDimming1StartRampUp)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the StartRampDown action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStartRampDown
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStartRampDown
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1StartRampDown)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackDimming1StartRampDown)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the StopRamp action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStopRamp
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStopRamp
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1StopRamp)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackDimming1StopRamp)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the StartRampToLevel action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStartRampToLevel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionStartRampToLevel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  anewLoadLevelTarget
  * @param[in]  anewRampTime
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1StartRampToLevel)(void* aPtr, uint32_t aVersion, uint32_t anewLoadLevelTarget, uint32_t anewRampTime);
+typedef int32_t (STDCALL *CallbackDimming1StartRampToLevel)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t anewLoadLevelTarget, uint32_t anewRampTime);
 /**
  * Callback which runs when the SetStepDelta action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetStepDelta
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetStepDelta
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  anewStepDelta
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1SetStepDelta)(void* aPtr, uint32_t aVersion, uint32_t anewStepDelta);
+typedef int32_t (STDCALL *CallbackDimming1SetStepDelta)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t anewStepDelta);
 /**
  * Callback which runs when the GetStepDelta action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetStepDelta
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetStepDelta
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aretStepDelta
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1GetStepDelta)(void* aPtr, uint32_t aVersion, uint32_t* aretStepDelta);
+typedef int32_t (STDCALL *CallbackDimming1GetStepDelta)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aretStepDelta);
 /**
  * Callback which runs when the SetRampRate action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetRampRate
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetRampRate
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  anewRampRate
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1SetRampRate)(void* aPtr, uint32_t aVersion, uint32_t anewRampRate);
+typedef int32_t (STDCALL *CallbackDimming1SetRampRate)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t anewRampRate);
 /**
  * Callback which runs when the GetRampRate action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetRampRate
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetRampRate
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aretRampRate
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1GetRampRate)(void* aPtr, uint32_t aVersion, uint32_t* aretRampRate);
+typedef int32_t (STDCALL *CallbackDimming1GetRampRate)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aretRampRate);
 /**
  * Callback which runs when the PauseRamp action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionPauseRamp
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionPauseRamp
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1PauseRamp)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackDimming1PauseRamp)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the ResumeRamp action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionResumeRamp
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionResumeRamp
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1ResumeRamp)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackDimming1ResumeRamp)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the GetIsRamping action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetIsRamping
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetIsRamping
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aretIsRamping
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1GetIsRamping)(void* aPtr, uint32_t aVersion, uint32_t* aretIsRamping);
+typedef int32_t (STDCALL *CallbackDimming1GetIsRamping)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aretIsRamping);
 /**
  * Callback which runs when the GetRampPaused action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetRampPaused
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetRampPaused
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aretRampPaused
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1GetRampPaused)(void* aPtr, uint32_t aVersion, uint32_t* aretRampPaused);
+typedef int32_t (STDCALL *CallbackDimming1GetRampPaused)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aretRampPaused);
 /**
  * Callback which runs when the GetRampTime action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetRampTime
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgDimming1EnableActionGetRampTime
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aretRampTime
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackDimming1GetRampTime)(void* aPtr, uint32_t aVersion, uint32_t* aretRampTime);
+typedef int32_t (STDCALL *CallbackDimming1GetRampTime)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aretRampTime);
 
 /**
  * Provider constructor

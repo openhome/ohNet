@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -270,8 +272,12 @@ void DvProviderAvOpenhomeOrgInfo1C::EnableActionMetatext(CallbackInfo1Metatext a
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
@@ -279,7 +285,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUin
     uint32_t DetailsCount;
     uint32_t MetatextCount;
     ASSERT(iCallbackCounters != NULL);
-    if (0 != iCallbackCounters(iPtrCounters, aVersion, &TrackCount, &DetailsCount, &MetatextCount)) {
+    if (0 != iCallbackCounters(iPtrCounters, invocationC, invocationCPtr, &TrackCount, &DetailsCount, &MetatextCount)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -293,15 +299,19 @@ void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Uri;
     char* Metadata;
     ASSERT(iCallbackTrack != NULL);
-    if (0 != iCallbackTrack(iPtrTrack, aVersion, &Uri, &Metadata)) {
+    if (0 != iCallbackTrack(iPtrTrack, invocationC, invocationCPtr, &Uri, &Metadata)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -319,8 +329,12 @@ void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint a
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
@@ -331,7 +345,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
     uint32_t Lossless;
     char* CodecName;
     ASSERT(iCallbackDetails != NULL);
-    if (0 != iCallbackDetails(iPtrDetails, aVersion, &Duration, &BitRate, &BitDepth, &SampleRate, &Lossless, &CodecName)) {
+    if (0 != iCallbackDetails(iPtrDetails, invocationC, invocationCPtr, &Duration, &BitRate, &BitDepth, &SampleRate, &Lossless, &CodecName)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -354,14 +368,18 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackMetatext != NULL);
-    if (0 != iCallbackMetatext(iPtrMetatext, aVersion, &Value)) {
+    if (0 != iCallbackMetatext(iPtrMetatext, invocationC, invocationCPtr, &Value)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }

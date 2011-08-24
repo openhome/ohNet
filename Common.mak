@@ -47,6 +47,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)DvDeviceStd.$(objext) \
     		   $(objdir)DvDeviceC.$(objext) \
     		   $(objdir)DviDevice.$(objext) \
+               $(objdir)DvInvocationC.$(objext) \
                $(objdir)DvInvocationStd.$(objext) \
     		   $(objdir)DviProtocolUpnp.$(objext) \
     		   $(objdir)DviServer.$(objext) \
@@ -265,6 +266,8 @@ $(objdir)DvDeviceC.$(objext) : OpenHome/Net/Bindings/C/Device/DvDeviceC.cpp $(he
 	$(compiler)DvDeviceC.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/C/Device/DvDeviceC.cpp
 $(objdir)DviDevice.$(objext) : OpenHome/Net/Device/DviDevice.cpp $(headers)
 	$(compiler)DviDevice.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviDevice.cpp
+$(objdir)DvInvocationC.$(objext) : OpenHome/Net/Bindings/C/Device/DvInvocationC.cpp $(headers)
+	$(compiler)DvInvocationC.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/C/Device/DvInvocationC.cpp
 $(objdir)DvInvocationStd.$(objext) : OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp $(headers)
 	$(compiler)DvInvocationStd.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp
 $(objdir)DviProtocolUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp $(headers)
