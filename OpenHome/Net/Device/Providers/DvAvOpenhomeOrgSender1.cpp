@@ -121,7 +121,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionAttributes()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoPresentationUrl(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1::DoPresentationUrl(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -130,7 +130,7 @@ void DvProviderAvOpenhomeOrgSender1::DoPresentationUrl(IDviInvocation& aInvocati
     PresentationUrl(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoMetadata(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1::DoMetadata(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -139,7 +139,7 @@ void DvProviderAvOpenhomeOrgSender1::DoMetadata(IDviInvocation& aInvocation, TUi
     Metadata(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoAudio(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1::DoAudio(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -148,7 +148,7 @@ void DvProviderAvOpenhomeOrgSender1::DoAudio(IDviInvocation& aInvocation, TUint 
     Audio(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoStatus(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1::DoStatus(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -157,7 +157,7 @@ void DvProviderAvOpenhomeOrgSender1::DoStatus(IDviInvocation& aInvocation, TUint
     Status(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoAttributes(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1::DoAttributes(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

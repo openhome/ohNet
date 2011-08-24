@@ -36,7 +36,7 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern unsafe int DvProviderSetPropertyBinary(IntPtr aProvider, IntPtr aProperty, byte* aData, uint aLen, uint* aChanged);
 
-        protected delegate int ActionDelegate(IntPtr aPtr, IntPtr aInvocation, uint aVersion);
+        protected delegate int ActionDelegate(IntPtr aPtr, IntPtr aInvocation);
 
         protected IntPtr iHandle;
         private List<OpenHome.Net.Core.Action> iActions;

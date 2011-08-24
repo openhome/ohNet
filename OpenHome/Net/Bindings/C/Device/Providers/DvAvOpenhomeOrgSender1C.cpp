@@ -34,11 +34,11 @@ public:
     void EnableActionStatus(CallbackSender1Status aCallback, void* aPtr);
     void EnableActionAttributes(CallbackSender1Attributes aCallback, void* aPtr);
 private:
-    void DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMetadata(IDviInvocation& aInvocation, TUint aVersion);
-    void DoAudio(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStatus(IDviInvocation& aInvocation, TUint aVersion);
-    void DoAttributes(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPresentationUrl(IDviInvocation& aInvocation);
+    void DoMetadata(IDviInvocation& aInvocation);
+    void DoAudio(IDviInvocation& aInvocation);
+    void DoStatus(IDviInvocation& aInvocation);
+    void DoAttributes(IDviInvocation& aInvocation);
 private:
     CallbackSender1PresentationUrl iCallbackPresentationUrl;
     void* iPtrPresentationUrl;
@@ -181,7 +181,7 @@ void DvProviderAvOpenhomeOrgSender1C::EnableActionAttributes(CallbackSender1Attr
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoPresentationUrl(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1C::DoPresentationUrl(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -205,7 +205,7 @@ void DvProviderAvOpenhomeOrgSender1C::DoPresentationUrl(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoMetadata(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1C::DoMetadata(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -229,7 +229,7 @@ void DvProviderAvOpenhomeOrgSender1C::DoMetadata(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoAudio(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1C::DoAudio(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -250,7 +250,7 @@ void DvProviderAvOpenhomeOrgSender1C::DoAudio(IDviInvocation& aInvocation, TUint
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoStatus(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1C::DoStatus(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -274,7 +274,7 @@ void DvProviderAvOpenhomeOrgSender1C::DoStatus(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgSender1C::DoAttributes(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1C::DoAttributes(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

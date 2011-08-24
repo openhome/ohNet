@@ -247,7 +247,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoGetCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCount(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -294,7 +294,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRoom(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -343,7 +343,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetName(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -392,7 +392,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetPosition(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetPosition(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -445,7 +445,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetColor(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -494,7 +494,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColor(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;
@@ -543,7 +543,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetColorComponents(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColorComponents(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestLights1 self = (DvProviderOpenhomeOrgTestLights1)gch.Target;

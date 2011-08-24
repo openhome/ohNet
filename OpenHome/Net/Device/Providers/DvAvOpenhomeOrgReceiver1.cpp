@@ -118,7 +118,7 @@ void DvProviderAvOpenhomeOrgReceiver1::EnableActionTransportState()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1::DoPlay(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -126,7 +126,7 @@ void DvProviderAvOpenhomeOrgReceiver1::DoPlay(IDviInvocation& aInvocation, TUint
     Play(invocation);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1::DoStop(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -134,7 +134,7 @@ void DvProviderAvOpenhomeOrgReceiver1::DoStop(IDviInvocation& aInvocation, TUint
     Stop(invocation);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoSetSender(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1::DoSetSender(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz Uri;
@@ -146,7 +146,7 @@ void DvProviderAvOpenhomeOrgReceiver1::DoSetSender(IDviInvocation& aInvocation, 
     SetSender(invocation, Uri, Metadata);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoSender(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1::DoSender(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -156,7 +156,7 @@ void DvProviderAvOpenhomeOrgReceiver1::DoSender(IDviInvocation& aInvocation, TUi
     Sender(invocation, respUri, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1::DoProtocolInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -165,7 +165,7 @@ void DvProviderAvOpenhomeOrgReceiver1::DoProtocolInfo(IDviInvocation& aInvocatio
     ProtocolInfo(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1::DoTransportState(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1::DoTransportState(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

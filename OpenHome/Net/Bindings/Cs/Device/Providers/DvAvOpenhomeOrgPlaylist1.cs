@@ -957,7 +957,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1002,7 +1002,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPause(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1047,7 +1047,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1092,7 +1092,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoNext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoNext(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1137,7 +1137,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPrevious(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPrevious(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1182,7 +1182,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetRepeat(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRepeat(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1229,7 +1229,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoRepeat(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRepeat(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1276,7 +1276,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetShuffle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetShuffle(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1323,7 +1323,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoShuffle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoShuffle(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1370,7 +1370,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1417,7 +1417,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1464,7 +1464,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeekId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1511,7 +1511,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeekIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekIndex(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1558,7 +1558,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTransportState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTransportState(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1605,7 +1605,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1652,7 +1652,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRead(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1703,7 +1703,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1752,7 +1752,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoInsert(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoInsert(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1805,7 +1805,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1852,7 +1852,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteAll(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteAll(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1897,7 +1897,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTracksMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTracksMax(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1944,7 +1944,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoIdArray(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIdArray(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -1993,7 +1993,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;
@@ -2042,7 +2042,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylist1 self = (DvProviderAvOpenhomeOrgPlaylist1)gch.Target;

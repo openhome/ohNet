@@ -134,11 +134,11 @@ private:
     virtual void GetCurrentConnectionInfo(IDvInvocation& aInvocation, TInt aConnectionID, IDvInvocationResponseInt& aRcsID, IDvInvocationResponseInt& aAVTransportID, IDvInvocationResponseString& aProtocolInfo, IDvInvocationResponseString& aPeerConnectionManager, IDvInvocationResponseInt& aPeerConnectionID, IDvInvocationResponseString& aDirection, IDvInvocationResponseString& aStatus);
 private:
     DvProviderUpnpOrgConnectionManager1();
-    void DoGetProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPrepareForConnection(IDviInvocation& aInvocation, TUint aVersion);
-    void DoConnectionComplete(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetProtocolInfo(IDviInvocation& aInvocation);
+    void DoPrepareForConnection(IDviInvocation& aInvocation);
+    void DoConnectionComplete(IDviInvocation& aInvocation);
+    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation);
+    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertySourceProtocolInfo;
     PropertyString* iPropertySinkProtocolInfo;

@@ -161,12 +161,12 @@ private:
     virtual void TransportState(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgReceiver1Cpp();
-    void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStop(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetSender(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSender(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoTransportState(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoSetSender(IDviInvocation& aInvocation);
+    void DoSender(IDviInvocation& aInvocation);
+    void DoProtocolInfo(IDviInvocation& aInvocation);
+    void DoTransportState(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyUri;
     PropertyString* iPropertyMetadata;

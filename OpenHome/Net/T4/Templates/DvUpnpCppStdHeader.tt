@@ -115,7 +115,7 @@ private:
     <#=className#>();
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-    void Do<#=a.name#>(IDviInvocation& aInvocation, uint32_t aVersion);
+    void Do<#=a.name#>(IDviInvocation& aInvocation);
 <#  } #>
 private:
 <#  foreach (Variable s in u.evented) #>

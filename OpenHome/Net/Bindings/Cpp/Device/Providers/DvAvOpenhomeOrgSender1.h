@@ -157,11 +157,11 @@ private:
     virtual void Attributes(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgSender1Cpp();
-    void DoPresentationUrl(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoMetadata(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoAudio(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStatus(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoAttributes(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPresentationUrl(IDviInvocation& aInvocation);
+    void DoMetadata(IDviInvocation& aInvocation);
+    void DoAudio(IDviInvocation& aInvocation);
+    void DoStatus(IDviInvocation& aInvocation);
+    void DoAttributes(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyPresentationUrl;
     PropertyString* iPropertyMetadata;

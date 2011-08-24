@@ -78,7 +78,7 @@ public:
     DllExport void AddAction(Action* aAction, FunctorDviInvocation aFunctor);
     typedef std::vector<DvAction> VectorActions;
     const VectorActions& DvActions() const;
-    void Invoke(IDviInvocation& aInvocation, TUint aVersion, const Brx& aActionName);
+    void Invoke(IDviInvocation& aInvocation, const Brx& aActionName);
 
     void PropertiesLock();
     void PropertiesUnlock();

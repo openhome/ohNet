@@ -74,7 +74,7 @@ public:
 private:
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-    void Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion);
+    void Do<#=a.name#>(IDviInvocation& aInvocation);
 <#  } #>
 private:
 <#  foreach (Method a in u.methods) #>
@@ -194,7 +194,7 @@ void <#=className#>C::EnableAction<#=a.name#>(<#=callbackPrefix#><#=a.name#> aCa
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

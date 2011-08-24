@@ -164,7 +164,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoTime(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTime(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgTime1 self = (DvProviderAvOpenhomeOrgTime1)gch.Target;

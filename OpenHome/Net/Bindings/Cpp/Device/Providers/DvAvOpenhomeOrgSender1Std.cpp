@@ -130,7 +130,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::EnableActionAttributes()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -145,7 +145,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -160,7 +160,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -173,7 +173,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation, uin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -188,7 +188,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation, ui
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoAttributes(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoAttributes(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

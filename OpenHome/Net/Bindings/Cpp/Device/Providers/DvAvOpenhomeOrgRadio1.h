@@ -331,22 +331,22 @@ private:
     virtual void ProtocolInfo(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgRadio1Cpp();
-    void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPause(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStop(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekSecondAbsolute(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekSecondRelative(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoChannel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetChannel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoTransportState(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoId(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetId(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoRead(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoReadList(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoIdArray(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoIdArrayChanged(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoChannelsMax(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoPause(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoSeekSecondAbsolute(IDviInvocation& aInvocation);
+    void DoSeekSecondRelative(IDviInvocation& aInvocation);
+    void DoChannel(IDviInvocation& aInvocation);
+    void DoSetChannel(IDviInvocation& aInvocation);
+    void DoTransportState(IDviInvocation& aInvocation);
+    void DoId(IDviInvocation& aInvocation);
+    void DoSetId(IDviInvocation& aInvocation);
+    void DoRead(IDviInvocation& aInvocation);
+    void DoReadList(IDviInvocation& aInvocation);
+    void DoIdArray(IDviInvocation& aInvocation);
+    void DoIdArrayChanged(IDviInvocation& aInvocation);
+    void DoChannelsMax(IDviInvocation& aInvocation);
+    void DoProtocolInfo(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyUri;
     PropertyString* iPropertyMetadata;

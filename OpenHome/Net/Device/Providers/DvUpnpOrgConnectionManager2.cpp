@@ -125,7 +125,7 @@ void DvProviderUpnpOrgConnectionManager2::EnableActionGetCurrentConnectionInfo()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgConnectionManager2::DoGetProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2::DoGetProtocolInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -135,7 +135,7 @@ void DvProviderUpnpOrgConnectionManager2::DoGetProtocolInfo(IDviInvocation& aInv
     GetProtocolInfo(invocation, respSource, respSink);
 }
 
-void DvProviderUpnpOrgConnectionManager2::DoPrepareForConnection(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2::DoPrepareForConnection(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RemoteProtocolInfo;
@@ -153,7 +153,7 @@ void DvProviderUpnpOrgConnectionManager2::DoPrepareForConnection(IDviInvocation&
     PrepareForConnection(invocation, RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, respConnectionID, respAVTransportID, respRcsID);
 }
 
-void DvProviderUpnpOrgConnectionManager2::DoConnectionComplete(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2::DoConnectionComplete(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
@@ -162,7 +162,7 @@ void DvProviderUpnpOrgConnectionManager2::DoConnectionComplete(IDviInvocation& a
     ConnectionComplete(invocation, ConnectionID);
 }
 
-void DvProviderUpnpOrgConnectionManager2::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -171,7 +171,7 @@ void DvProviderUpnpOrgConnectionManager2::DoGetCurrentConnectionIDs(IDviInvocati
     GetCurrentConnectionIDs(invocation, respConnectionIDs);
 }
 
-void DvProviderUpnpOrgConnectionManager2::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");

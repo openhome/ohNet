@@ -56,41 +56,41 @@ public:
     void EnableActionGetLoudness(CallbackRenderingControl1GetLoudness aCallback, void* aPtr);
     void EnableActionSetLoudness(CallbackRenderingControl1SetLoudness aCallback, void* aPtr);
 private:
-    void DoListPresets(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSelectPreset(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetBrightness(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBrightness(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetContrast(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetContrast(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetSharpness(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetSharpness(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetColorTemperature(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetColorTemperature(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetMute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetMute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetVolume(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetVolume(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetVolumeDB(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetVolumeDB(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetLoudness(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetLoudness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoListPresets(IDviInvocation& aInvocation);
+    void DoSelectPreset(IDviInvocation& aInvocation);
+    void DoGetBrightness(IDviInvocation& aInvocation);
+    void DoSetBrightness(IDviInvocation& aInvocation);
+    void DoGetContrast(IDviInvocation& aInvocation);
+    void DoSetContrast(IDviInvocation& aInvocation);
+    void DoGetSharpness(IDviInvocation& aInvocation);
+    void DoSetSharpness(IDviInvocation& aInvocation);
+    void DoGetRedVideoGain(IDviInvocation& aInvocation);
+    void DoSetRedVideoGain(IDviInvocation& aInvocation);
+    void DoGetGreenVideoGain(IDviInvocation& aInvocation);
+    void DoSetGreenVideoGain(IDviInvocation& aInvocation);
+    void DoGetBlueVideoGain(IDviInvocation& aInvocation);
+    void DoSetBlueVideoGain(IDviInvocation& aInvocation);
+    void DoGetRedVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoSetRedVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoGetColorTemperature(IDviInvocation& aInvocation);
+    void DoSetColorTemperature(IDviInvocation& aInvocation);
+    void DoGetHorizontalKeystone(IDviInvocation& aInvocation);
+    void DoSetHorizontalKeystone(IDviInvocation& aInvocation);
+    void DoGetVerticalKeystone(IDviInvocation& aInvocation);
+    void DoSetVerticalKeystone(IDviInvocation& aInvocation);
+    void DoGetMute(IDviInvocation& aInvocation);
+    void DoSetMute(IDviInvocation& aInvocation);
+    void DoGetVolume(IDviInvocation& aInvocation);
+    void DoSetVolume(IDviInvocation& aInvocation);
+    void DoGetVolumeDB(IDviInvocation& aInvocation);
+    void DoSetVolumeDB(IDviInvocation& aInvocation);
+    void DoGetVolumeDBRange(IDviInvocation& aInvocation);
+    void DoGetLoudness(IDviInvocation& aInvocation);
+    void DoSetLoudness(IDviInvocation& aInvocation);
 private:
     CallbackRenderingControl1ListPresets iCallbackListPresets;
     void* iPtrListPresets;
@@ -638,7 +638,7 @@ void DvProviderUpnpOrgRenderingControl1C::EnableActionSetLoudness(CallbackRender
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoListPresets(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoListPresets(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -663,7 +663,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoListPresets(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSelectPreset(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSelectPreset(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -684,7 +684,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSelectPreset(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetBrightness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetBrightness(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -706,7 +706,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetBrightness(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetBrightness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetBrightness(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -726,7 +726,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetBrightness(IDviInvocation& aInvoc
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetContrast(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetContrast(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -748,7 +748,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetContrast(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetContrast(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetContrast(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -768,7 +768,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetContrast(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetSharpness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetSharpness(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -790,7 +790,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetSharpness(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetSharpness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetSharpness(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -810,7 +810,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetSharpness(IDviInvocation& aInvoca
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoGain(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -832,7 +832,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoGain(IDviInvocation& aInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoGain(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -852,7 +852,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoGain(IDviInvocation& aInv
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoGain(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -874,7 +874,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoGain(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoGain(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -894,7 +894,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoGain(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoGain(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -916,7 +916,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoGain(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoGain(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -936,7 +936,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoGain(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -958,7 +958,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetRedVideoBlackLevel(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -978,7 +978,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetRedVideoBlackLevel(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1000,7 +1000,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetGreenVideoBlackLevel(IDviInvocati
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1020,7 +1020,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetGreenVideoBlackLevel(IDviInvocati
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1042,7 +1042,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetBlueVideoBlackLevel(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1062,7 +1062,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetBlueVideoBlackLevel(IDviInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetColorTemperature(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetColorTemperature(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1084,7 +1084,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetColorTemperature(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetColorTemperature(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetColorTemperature(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1104,7 +1104,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetColorTemperature(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetHorizontalKeystone(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1126,7 +1126,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetHorizontalKeystone(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetHorizontalKeystone(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1146,7 +1146,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetHorizontalKeystone(IDviInvocation
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetVerticalKeystone(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1168,7 +1168,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVerticalKeystone(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetVerticalKeystone(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1188,7 +1188,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetVerticalKeystone(IDviInvocation& 
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetMute(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1212,7 +1212,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetMute(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetMute(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1234,7 +1234,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetMute(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetVolume(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1258,7 +1258,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolume(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetVolume(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1280,7 +1280,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetVolume(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDB(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDB(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1304,7 +1304,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDB(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetVolumeDB(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetVolumeDB(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1326,7 +1326,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetVolumeDB(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDBRange(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1353,7 +1353,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetVolumeDBRange(IDviInvocation& aIn
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoGetLoudness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoGetLoudness(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -1377,7 +1377,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoGetLoudness(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgRenderingControl1C::DoSetLoudness(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgRenderingControl1C::DoSetLoudness(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

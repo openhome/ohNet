@@ -238,7 +238,7 @@ void DvProviderAvOpenhomeOrgRadio1::EnableActionProtocolInfo()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoPlay(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -246,7 +246,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoPlay(IDviInvocation& aInvocation, TUint /*
     Play(invocation);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoPause(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoPause(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -254,7 +254,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoPause(IDviInvocation& aInvocation, TUint /
     Pause(invocation);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoStop(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -262,7 +262,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoStop(IDviInvocation& aInvocation, TUint /*
     Stop(invocation);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondAbsolute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
@@ -271,7 +271,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondAbsolute(IDviInvocation& aInvoca
     SeekSecondAbsolute(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondRelative(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
@@ -280,7 +280,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondRelative(IDviInvocation& aInvoca
     SeekSecondRelative(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoChannel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoChannel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -290,7 +290,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoChannel(IDviInvocation& aInvocation, TUint
     Channel(invocation, respUri, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoSetChannel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoSetChannel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz Uri;
@@ -302,7 +302,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoSetChannel(IDviInvocation& aInvocation, TU
     SetChannel(invocation, Uri, Metadata);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoTransportState(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoTransportState(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -311,7 +311,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoTransportState(IDviInvocation& aInvocation
     TransportState(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoId(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoId(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -320,7 +320,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoId(IDviInvocation& aInvocation, TUint /*aV
     Id(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoSetId(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoSetId(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
@@ -331,7 +331,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoSetId(IDviInvocation& aInvocation, TUint /
     SetId(invocation, Value, Uri);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoRead(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoRead(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
@@ -341,7 +341,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoRead(IDviInvocation& aInvocation, TUint /*
     Read(invocation, Id, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoReadList(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoReadList(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz IdList;
@@ -352,7 +352,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoReadList(IDviInvocation& aInvocation, TUin
     ReadList(invocation, IdList, respChannelList);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoIdArray(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoIdArray(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -362,7 +362,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoIdArray(IDviInvocation& aInvocation, TUint
     IdArray(invocation, respToken, respArray);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoIdArrayChanged(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoIdArrayChanged(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Token = aInvocation.InvocationReadUint("Token");
@@ -372,7 +372,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoIdArrayChanged(IDviInvocation& aInvocation
     IdArrayChanged(invocation, Token, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoChannelsMax(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoChannelsMax(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -381,7 +381,7 @@ void DvProviderAvOpenhomeOrgRadio1::DoChannelsMax(IDviInvocation& aInvocation, T
     ChannelsMax(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::DoProtocolInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

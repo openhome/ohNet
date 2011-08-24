@@ -735,7 +735,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -780,7 +780,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPause(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -825,7 +825,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -870,7 +870,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -917,7 +917,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -964,7 +964,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoChannel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoChannel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1013,7 +1013,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetChannel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetChannel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1062,7 +1062,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTransportState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTransportState(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1109,7 +1109,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1156,7 +1156,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1205,7 +1205,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRead(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1254,7 +1254,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1303,7 +1303,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoIdArray(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIdArray(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1352,7 +1352,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1401,7 +1401,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoChannelsMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoChannelsMax(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;
@@ -1448,7 +1448,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgRadio1 self = (DvProviderAvOpenhomeOrgRadio1)gch.Target;

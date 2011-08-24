@@ -33,12 +33,12 @@ public:
     void EnableActionProtocolInfo(CallbackReceiver1ProtocolInfo aCallback, void* aPtr);
     void EnableActionTransportState(CallbackReceiver1TransportState aCallback, void* aPtr);
 private:
-    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetSender(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSender(IDviInvocation& aInvocation, TUint aVersion);
-    void DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoTransportState(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoSetSender(IDviInvocation& aInvocation);
+    void DoSender(IDviInvocation& aInvocation);
+    void DoProtocolInfo(IDviInvocation& aInvocation);
+    void DoTransportState(IDviInvocation& aInvocation);
 private:
     CallbackReceiver1Play iCallbackPlay;
     void* iPtrPlay;
@@ -181,7 +181,7 @@ void DvProviderAvOpenhomeOrgReceiver1C::EnableActionTransportState(CallbackRecei
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1C::DoPlay(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -199,7 +199,7 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoPlay(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1C::DoStop(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -217,7 +217,7 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoStop(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoSetSender(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1C::DoSetSender(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -239,7 +239,7 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoSetSender(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoSender(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1C::DoSender(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -269,7 +269,7 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoSender(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1C::DoProtocolInfo(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -293,7 +293,7 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoProtocolInfo(IDviInvocation& aInvocati
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1C::DoTransportState(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1C::DoTransportState(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

@@ -49,7 +49,7 @@ void DvProviderUpnpOrgSwitchPower1::EnableActionGetStatus()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgSwitchPower1::DoSetTarget(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1::DoSetTarget(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TBool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
@@ -58,7 +58,7 @@ void DvProviderUpnpOrgSwitchPower1::DoSetTarget(IDviInvocation& aInvocation, TUi
     SetTarget(invocation, newTargetValue);
 }
 
-void DvProviderUpnpOrgSwitchPower1::DoGetTarget(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1::DoGetTarget(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -67,7 +67,7 @@ void DvProviderUpnpOrgSwitchPower1::DoGetTarget(IDviInvocation& aInvocation, TUi
     GetTarget(invocation, respRetTargetValue);
 }
 
-void DvProviderUpnpOrgSwitchPower1::DoGetStatus(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgSwitchPower1::DoGetStatus(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

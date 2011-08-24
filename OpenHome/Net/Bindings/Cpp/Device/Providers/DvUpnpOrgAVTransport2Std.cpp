@@ -317,7 +317,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionSetStateVariables()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetAVTransportURI(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetAVTransportURI(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -334,7 +334,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetAVTransportURI(IDviInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetNextAVTransportURI(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetNextAVTransportURI(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -351,7 +351,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetNextAVTransportURI(IDviInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -405,7 +405,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -464,7 +464,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -490,7 +490,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -535,7 +535,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -561,7 +561,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -582,7 +582,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings(IDviInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoStop(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoStop(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -593,7 +593,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoStop(IDviInvocation& aInvocation, uint3
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoPlay(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoPlay(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -607,7 +607,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoPlay(IDviInvocation& aInvocation, uint3
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoPause(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoPause(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -618,7 +618,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoPause(IDviInvocation& aInvocation, uint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoRecord(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoRecord(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -629,7 +629,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoRecord(IDviInvocation& aInvocation, uin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSeek(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSeek(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -646,7 +646,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSeek(IDviInvocation& aInvocation, uint3
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoNext(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoNext(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -657,7 +657,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoNext(IDviInvocation& aInvocation, uint3
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoPrevious(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoPrevious(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -668,7 +668,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoPrevious(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -682,7 +682,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetRecordQualityMode(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetRecordQualityMode(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -696,7 +696,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetRecordQualityMode(IDviInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetCurrentTransportActions(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetCurrentTransportActions(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -712,7 +712,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetCurrentTransportActions(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetDRMState(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetDRMState(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -728,7 +728,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetDRMState(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoGetStateVariables(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoGetStateVariables(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -747,7 +747,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetStateVariables(IDviInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgAVTransport2Cpp::DoSetStateVariables(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgAVTransport2Cpp::DoSetStateVariables(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");

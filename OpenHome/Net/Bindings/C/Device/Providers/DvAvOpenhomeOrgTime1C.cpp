@@ -26,7 +26,7 @@ public:
     void GetPropertySeconds(TUint& aValue);
     void EnableActionTime(CallbackTime1Time aCallback, void* aPtr);
 private:
-    void DoTime(IDviInvocation& aInvocation, TUint aVersion);
+    void DoTime(IDviInvocation& aInvocation);
 private:
     CallbackTime1Time iCallbackTime;
     void* iPtrTime;
@@ -89,7 +89,7 @@ void DvProviderAvOpenhomeOrgTime1C::EnableActionTime(CallbackTime1Time aCallback
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

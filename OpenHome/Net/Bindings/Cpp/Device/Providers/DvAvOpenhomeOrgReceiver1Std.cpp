@@ -127,7 +127,7 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::EnableActionTransportState()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoPlay(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoPlay(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -137,7 +137,7 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoPlay(IDviInvocation& aInvocation, ui
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoStop(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoStop(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -147,7 +147,7 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoStop(IDviInvocation& aInvocation, ui
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSetSender(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSetSender(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Uri;
@@ -163,7 +163,7 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSetSender(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSender(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSender(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -183,7 +183,7 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSender(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoProtocolInfo(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoProtocolInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -198,7 +198,7 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoProtocolInfo(IDviInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Cpp::DoTransportState(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderAvOpenhomeOrgReceiver1Cpp::DoTransportState(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

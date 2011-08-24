@@ -213,10 +213,10 @@ private:
     virtual void Metatext(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgInfo1Cpp();
-    void DoCounters(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoTrack(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoDetails(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoMetatext(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCounters(IDviInvocation& aInvocation);
+    void DoTrack(IDviInvocation& aInvocation);
+    void DoDetails(IDviInvocation& aInvocation);
+    void DoMetatext(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyTrackCount;
     PropertyUint* iPropertyDetailsCount;

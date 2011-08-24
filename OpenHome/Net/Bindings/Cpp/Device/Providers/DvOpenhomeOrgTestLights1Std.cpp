@@ -81,7 +81,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::EnableActionGetColorComponents()
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetCount(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetCount(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -94,7 +94,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetCount(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetRoom(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetRoom(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
@@ -110,7 +110,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetRoom(IDviInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetName(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetName(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
@@ -126,7 +126,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetName(IDviInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetPosition(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetPosition(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
@@ -146,7 +146,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetPosition(IDviInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoSetColor(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoSetColor(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
@@ -158,7 +158,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoSetColor(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColor(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColor(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
@@ -172,7 +172,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColor(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColorComponents(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColorComponents(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Color = aInvocation.InvocationReadUint("Color");

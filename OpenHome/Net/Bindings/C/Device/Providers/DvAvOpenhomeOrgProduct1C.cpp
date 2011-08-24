@@ -68,19 +68,19 @@ public:
     void EnableActionAttributes(CallbackProduct1Attributes aCallback, void* aPtr);
     void EnableActionSourceXmlChangeCount(CallbackProduct1SourceXmlChangeCount aCallback, void* aPtr);
 private:
-    void DoManufacturer(IDviInvocation& aInvocation, TUint aVersion);
-    void DoModel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoProduct(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStandby(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetStandby(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSourceCount(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSourceXml(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSource(IDviInvocation& aInvocation, TUint aVersion);
-    void DoAttributes(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSourceXmlChangeCount(IDviInvocation& aInvocation, TUint aVersion);
+    void DoManufacturer(IDviInvocation& aInvocation);
+    void DoModel(IDviInvocation& aInvocation);
+    void DoProduct(IDviInvocation& aInvocation);
+    void DoStandby(IDviInvocation& aInvocation);
+    void DoSetStandby(IDviInvocation& aInvocation);
+    void DoSourceCount(IDviInvocation& aInvocation);
+    void DoSourceXml(IDviInvocation& aInvocation);
+    void DoSourceIndex(IDviInvocation& aInvocation);
+    void DoSetSourceIndex(IDviInvocation& aInvocation);
+    void DoSetSourceIndexByName(IDviInvocation& aInvocation);
+    void DoSource(IDviInvocation& aInvocation);
+    void DoAttributes(IDviInvocation& aInvocation);
+    void DoSourceXmlChangeCount(IDviInvocation& aInvocation);
 private:
     CallbackProduct1Manufacturer iCallbackManufacturer;
     void* iPtrManufacturer;
@@ -494,7 +494,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSourceXmlChangeCount(Callback
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoManufacturer(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoManufacturer(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -536,7 +536,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoManufacturer(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoModel(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoModel(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -578,7 +578,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoModel(IDviInvocation& aInvocation, TUin
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoProduct(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoProduct(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -626,7 +626,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoProduct(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoStandby(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoStandby(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -647,7 +647,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoStandby(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoSetStandby(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoSetStandby(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -666,7 +666,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSetStandby(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoSourceCount(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoSourceCount(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -687,7 +687,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSourceCount(IDviInvocation& aInvocation
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoSourceXml(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoSourceXml(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -711,7 +711,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSourceXml(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoSourceIndex(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoSourceIndex(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -732,7 +732,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSourceIndex(IDviInvocation& aInvocation
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndex(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndex(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -751,7 +751,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndex(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndexByName(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndexByName(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -771,7 +771,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndexByName(IDviInvocation& aI
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoSource(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoSource(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -811,7 +811,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSource(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoAttributes(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoAttributes(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -835,7 +835,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoAttributes(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgProduct1C::DoSourceXmlChangeCount(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgProduct1C::DoSourceXmlChangeCount(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

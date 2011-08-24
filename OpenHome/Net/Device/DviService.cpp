@@ -97,11 +97,11 @@ const DviService::VectorActions& DviService::DvActions() const
     return iDvActions;
 }
 
-void DviService::Invoke(IDviInvocation& aInvocation, TUint aVersion, const Brx& aActionName)
+void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName)
 {
     for (TUint i=0; i<iDvActions.size(); i++) {
         if (iDvActions[i].Action()->Name() == aActionName) {
-            iDvActions[i].Functor()(aInvocation, aVersion);
+            iDvActions[i].Functor()(aInvocation);
             return;
         }
     }

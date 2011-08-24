@@ -164,7 +164,7 @@ void <#=className#>::EnableAction<#=a.name#>()
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
 <#      foreach (Argument i in a.inargs) #>

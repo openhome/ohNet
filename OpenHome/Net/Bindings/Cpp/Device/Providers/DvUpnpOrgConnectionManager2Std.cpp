@@ -132,7 +132,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::EnableActionGetCurrentConnectionInf
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -152,7 +152,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDviInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RemoteProtocolInfo;
@@ -181,7 +181,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     int32_t ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
@@ -192,7 +192,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -207,7 +207,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDviInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     int32_t ConnectionID = aInvocation.InvocationReadInt("ConnectionID");

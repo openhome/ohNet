@@ -78,7 +78,7 @@ private:
     virtual void Time(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDuration, IDvInvocationResponseUint& aSeconds);
 private:
     DvProviderAvOpenhomeOrgTime1();
-    void DoTime(IDviInvocation& aInvocation, TUint aVersion);
+    void DoTime(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyTrackCount;
     PropertyUint* iPropertyDuration;

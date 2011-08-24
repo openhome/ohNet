@@ -1052,7 +1052,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoManufacturer(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoManufacturer(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1105,7 +1105,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoModel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoModel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1158,7 +1158,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoProduct(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoProduct(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1213,7 +1213,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStandby(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1260,7 +1260,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStandby(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1307,7 +1307,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSourceCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceCount(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1354,7 +1354,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSourceXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceXml(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1401,7 +1401,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSourceIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceIndex(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1448,7 +1448,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetSourceIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSourceIndex(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1495,7 +1495,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetSourceIndexByName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSourceIndexByName(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1542,7 +1542,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSource(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1597,7 +1597,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoAttributes(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoAttributes(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;
@@ -1644,7 +1644,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSourceXmlChangeCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceXmlChangeCount(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgProduct1 self = (DvProviderAvOpenhomeOrgProduct1)gch.Target;

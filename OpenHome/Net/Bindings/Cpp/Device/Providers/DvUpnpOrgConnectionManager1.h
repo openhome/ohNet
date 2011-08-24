@@ -137,11 +137,11 @@ private:
     virtual void GetCurrentConnectionInfo(IDvInvocationStd& aInvocation, int32_t aConnectionID, int32_t& aRcsID, int32_t& aAVTransportID, std::string& aProtocolInfo, std::string& aPeerConnectionManager, int32_t& aPeerConnectionID, std::string& aDirection, std::string& aStatus);
 private:
     DvProviderUpnpOrgConnectionManager1Cpp();
-    void DoGetProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPrepareForConnection(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoConnectionComplete(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetProtocolInfo(IDviInvocation& aInvocation);
+    void DoPrepareForConnection(IDviInvocation& aInvocation);
+    void DoConnectionComplete(IDviInvocation& aInvocation);
+    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation);
+    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertySourceProtocolInfo;
     PropertyString* iPropertySinkProtocolInfo;

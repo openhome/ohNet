@@ -656,7 +656,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -705,7 +705,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetPropertyList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetPropertyList(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -754,7 +754,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetAllowedValues(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetAllowedValues(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -805,7 +805,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetStateUpdateID(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetStateUpdateID(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -852,7 +852,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoBrowseRecordSchedules(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBrowseRecordSchedules(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -913,7 +913,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoBrowseRecordTasks(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBrowseRecordTasks(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -976,7 +976,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoCreateRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCreateRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1029,7 +1029,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1076,7 +1076,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1129,7 +1129,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoEnableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEnableRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1176,7 +1176,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDisableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisableRecordSchedule(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1223,7 +1223,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1270,7 +1270,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1323,7 +1323,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoEnableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEnableRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1370,7 +1370,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDisableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisableRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1417,7 +1417,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoResetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoResetRecordTask(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1464,7 +1464,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRecordScheduleConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordScheduleConflicts(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1515,7 +1515,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRecordTaskConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordTaskConflicts(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;

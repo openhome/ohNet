@@ -217,7 +217,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordTaskConflicts()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoGetSortCapabilities(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -227,7 +227,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoGetSortCapabilities(IDviInvocation&
     GetSortCapabilities(invocation, respSortCaps, respSortLevelCap);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoGetPropertyList(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoGetPropertyList(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz DataTypeID;
@@ -238,7 +238,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoGetPropertyList(IDviInvocation& aIn
     GetPropertyList(invocation, DataTypeID, respPropertyList);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoGetAllowedValues(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoGetAllowedValues(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz DataTypeID;
@@ -251,7 +251,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoGetAllowedValues(IDviInvocation& aI
     GetAllowedValues(invocation, DataTypeID, Filter, respPropertyInfo);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoGetStateUpdateID(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoGetStateUpdateID(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -260,7 +260,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoGetStateUpdateID(IDviInvocation& aI
     GetStateUpdateID(invocation, respId);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordSchedules(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordSchedules(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz Filter;
@@ -278,7 +278,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordSchedules(IDviInvocatio
     BrowseRecordSchedules(invocation, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordTasks(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordTasks(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -298,7 +298,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordTasks(IDviInvocation& a
     BrowseRecordTasks(invocation, RecordScheduleID, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoCreateRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoCreateRecordSchedule(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz Elements;
@@ -311,7 +311,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoCreateRecordSchedule(IDviInvocation
     CreateRecordSchedule(invocation, Elements, respRecordScheduleID, respResult, respUpdateID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordSchedule(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -321,7 +321,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordSchedule(IDviInvocation
     DeleteRecordSchedule(invocation, RecordScheduleID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoGetRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoGetRecordSchedule(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -335,7 +335,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoGetRecordSchedule(IDviInvocation& a
     GetRecordSchedule(invocation, RecordScheduleID, Filter, respResult, respUpdateID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoEnableRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoEnableRecordSchedule(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -345,7 +345,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoEnableRecordSchedule(IDviInvocation
     EnableRecordSchedule(invocation, RecordScheduleID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoDisableRecordSchedule(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoDisableRecordSchedule(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -355,7 +355,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoDisableRecordSchedule(IDviInvocatio
     DisableRecordSchedule(invocation, RecordScheduleID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordTask(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -365,7 +365,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordTask(IDviInvocation& aI
     DeleteRecordTask(invocation, RecordTaskID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoGetRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoGetRecordTask(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -379,7 +379,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoGetRecordTask(IDviInvocation& aInvo
     GetRecordTask(invocation, RecordTaskID, Filter, respResult, respUpdateID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoEnableRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoEnableRecordTask(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -389,7 +389,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoEnableRecordTask(IDviInvocation& aI
     EnableRecordTask(invocation, RecordTaskID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoDisableRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoDisableRecordTask(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -399,7 +399,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoDisableRecordTask(IDviInvocation& a
     DisableRecordTask(invocation, RecordTaskID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoResetRecordTask(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoResetRecordTask(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -409,7 +409,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoResetRecordTask(IDviInvocation& aIn
     ResetRecordTask(invocation, RecordTaskID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -421,7 +421,7 @@ void DvProviderUpnpOrgScheduledRecording2::DoGetRecordScheduleConflicts(IDviInvo
     GetRecordScheduleConflicts(invocation, RecordScheduleID, respRecordScheduleConflictIDList, respUpdateID);
 }
 
-void DvProviderUpnpOrgScheduledRecording2::DoGetRecordTaskConflicts(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderUpnpOrgScheduledRecording2::DoGetRecordTaskConflicts(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;

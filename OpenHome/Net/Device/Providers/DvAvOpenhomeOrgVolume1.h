@@ -368,22 +368,22 @@ private:
     virtual void VolumeLimit(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
 private:
     DvProviderAvOpenhomeOrgVolume1();
-    void DoCharacteristics(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetVolume(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolume(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBalance(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalanceInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalanceDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalance(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetFade(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFadeInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFadeDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFade(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetMute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeLimit(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCharacteristics(IDviInvocation& aInvocation);
+    void DoSetVolume(IDviInvocation& aInvocation);
+    void DoVolumeInc(IDviInvocation& aInvocation);
+    void DoVolumeDec(IDviInvocation& aInvocation);
+    void DoVolume(IDviInvocation& aInvocation);
+    void DoSetBalance(IDviInvocation& aInvocation);
+    void DoBalanceInc(IDviInvocation& aInvocation);
+    void DoBalanceDec(IDviInvocation& aInvocation);
+    void DoBalance(IDviInvocation& aInvocation);
+    void DoSetFade(IDviInvocation& aInvocation);
+    void DoFadeInc(IDviInvocation& aInvocation);
+    void DoFadeDec(IDviInvocation& aInvocation);
+    void DoFade(IDviInvocation& aInvocation);
+    void DoSetMute(IDviInvocation& aInvocation);
+    void DoMute(IDviInvocation& aInvocation);
+    void DoVolumeLimit(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyVolume;
     PropertyBool* iPropertyMute;

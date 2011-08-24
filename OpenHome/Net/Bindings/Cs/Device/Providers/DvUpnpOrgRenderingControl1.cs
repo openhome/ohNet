@@ -1164,7 +1164,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoListPresets(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoListPresets(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1213,7 +1213,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSelectPreset(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSelectPreset(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1262,7 +1262,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBrightness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1311,7 +1311,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBrightness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1360,7 +1360,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetContrast(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetContrast(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1409,7 +1409,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetContrast(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetContrast(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1458,7 +1458,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetSharpness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSharpness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1507,7 +1507,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetSharpness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSharpness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1556,7 +1556,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRedVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRedVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1605,7 +1605,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetRedVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRedVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1654,7 +1654,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1703,7 +1703,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1752,7 +1752,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1801,7 +1801,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1850,7 +1850,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1899,7 +1899,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1948,7 +1948,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1997,7 +1997,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2046,7 +2046,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2095,7 +2095,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2144,7 +2144,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetColorTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColorTemperature(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2193,7 +2193,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetColorTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetColorTemperature(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2242,7 +2242,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2291,7 +2291,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2340,7 +2340,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2389,7 +2389,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2438,7 +2438,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetMute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2489,7 +2489,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2540,7 +2540,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolume(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2591,7 +2591,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2642,7 +2642,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetVolumeDB(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolumeDB(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2693,7 +2693,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetVolumeDB(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolumeDB(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2744,7 +2744,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetVolumeDBRange(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolumeDBRange(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2797,7 +2797,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetLoudness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLoudness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2848,7 +2848,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetLoudness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetLoudness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;

@@ -81,7 +81,7 @@ private:
     virtual void Time(IDvInvocationStd& aInvocation, uint32_t& aTrackCount, uint32_t& aDuration, uint32_t& aSeconds);
 private:
     DvProviderAvOpenhomeOrgTime1Cpp();
-    void DoTime(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoTime(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyTrackCount;
     PropertyUint* iPropertyDuration;

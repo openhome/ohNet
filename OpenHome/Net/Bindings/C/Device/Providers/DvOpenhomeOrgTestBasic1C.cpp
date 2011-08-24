@@ -48,25 +48,25 @@ public:
     void EnableActionWriteFile(CallbackTestBasic1WriteFile aCallback, void* aPtr);
     void EnableActionShutdown(CallbackTestBasic1Shutdown aCallback, void* aPtr);
 private:
-    void DoIncrement(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDecrement(IDviInvocation& aInvocation, TUint aVersion);
-    void DoToggle(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEchoString(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEchoBinary(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetUint(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetUint(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetInt(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetInt(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBool(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetBool(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetMultiple(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetString(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetString(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBinary(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetBinary(IDviInvocation& aInvocation, TUint aVersion);
-    void DoToggleBool(IDviInvocation& aInvocation, TUint aVersion);
-    void DoWriteFile(IDviInvocation& aInvocation, TUint aVersion);
-    void DoShutdown(IDviInvocation& aInvocation, TUint aVersion);
+    void DoIncrement(IDviInvocation& aInvocation);
+    void DoDecrement(IDviInvocation& aInvocation);
+    void DoToggle(IDviInvocation& aInvocation);
+    void DoEchoString(IDviInvocation& aInvocation);
+    void DoEchoBinary(IDviInvocation& aInvocation);
+    void DoSetUint(IDviInvocation& aInvocation);
+    void DoGetUint(IDviInvocation& aInvocation);
+    void DoSetInt(IDviInvocation& aInvocation);
+    void DoGetInt(IDviInvocation& aInvocation);
+    void DoSetBool(IDviInvocation& aInvocation);
+    void DoGetBool(IDviInvocation& aInvocation);
+    void DoSetMultiple(IDviInvocation& aInvocation);
+    void DoSetString(IDviInvocation& aInvocation);
+    void DoGetString(IDviInvocation& aInvocation);
+    void DoSetBinary(IDviInvocation& aInvocation);
+    void DoGetBinary(IDviInvocation& aInvocation);
+    void DoToggleBool(IDviInvocation& aInvocation);
+    void DoWriteFile(IDviInvocation& aInvocation);
+    void DoShutdown(IDviInvocation& aInvocation);
 private:
     CallbackTestBasic1Increment iCallbackIncrement;
     void* iPtrIncrement;
@@ -375,7 +375,7 @@ void DvProviderOpenhomeOrgTestBasic1C::EnableActionShutdown(CallbackTestBasic1Sh
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoIncrement(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoIncrement(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -397,7 +397,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoIncrement(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoDecrement(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoDecrement(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -419,7 +419,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoDecrement(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoToggle(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoToggle(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -441,7 +441,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoToggle(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoEchoString(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoEchoString(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -467,7 +467,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoEchoString(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoEchoBinary(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoEchoBinary(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -495,7 +495,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoEchoBinary(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoSetUint(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoSetUint(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -514,7 +514,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetUint(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoGetUint(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoGetUint(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -535,7 +535,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoGetUint(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoSetInt(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoSetInt(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -554,7 +554,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetInt(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoGetInt(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoGetInt(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -575,7 +575,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoGetInt(IDviInvocation& aInvocation, TUi
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoSetBool(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoSetBool(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -594,7 +594,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetBool(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoGetBool(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoGetBool(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -615,7 +615,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoGetBool(IDviInvocation& aInvocation, TU
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoSetMultiple(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoSetMultiple(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -636,7 +636,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetMultiple(IDviInvocation& aInvocation
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoSetString(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoSetString(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -656,7 +656,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetString(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoGetString(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoGetString(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -680,7 +680,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoGetString(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoSetBinary(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoSetBinary(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -700,7 +700,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetBinary(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoGetBinary(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoGetBinary(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -726,7 +726,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoGetBinary(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoToggleBool(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoToggleBool(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -744,7 +744,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoToggleBool(IDviInvocation& aInvocation,
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoWriteFile(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoWriteFile(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -766,7 +766,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoWriteFile(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestBasic1C::DoShutdown(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1C::DoShutdown(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

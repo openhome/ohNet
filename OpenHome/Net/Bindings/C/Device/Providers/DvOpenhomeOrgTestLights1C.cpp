@@ -26,13 +26,13 @@ public:
     void EnableActionGetColor(CallbackTestLights1GetColor aCallback, void* aPtr);
     void EnableActionGetColorComponents(CallbackTestLights1GetColorComponents aCallback, void* aPtr);
 private:
-    void DoGetCount(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRoom(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetName(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetPosition(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetColor(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetColor(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetColorComponents(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetCount(IDviInvocation& aInvocation);
+    void DoGetRoom(IDviInvocation& aInvocation);
+    void DoGetName(IDviInvocation& aInvocation);
+    void DoGetPosition(IDviInvocation& aInvocation);
+    void DoSetColor(IDviInvocation& aInvocation);
+    void DoGetColor(IDviInvocation& aInvocation);
+    void DoGetColorComponents(IDviInvocation& aInvocation);
 private:
     CallbackTestLights1GetCount iCallbackGetCount;
     void* iPtrGetCount;
@@ -137,7 +137,7 @@ void DvProviderOpenhomeOrgTestLights1C::EnableActionGetColorComponents(CallbackT
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestLights1C::DoGetCount(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1C::DoGetCount(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -158,7 +158,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetCount(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestLights1C::DoGetRoom(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1C::DoGetRoom(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -183,7 +183,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetRoom(IDviInvocation& aInvocation, T
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestLights1C::DoGetName(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1C::DoGetName(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -208,7 +208,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetName(IDviInvocation& aInvocation, T
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestLights1C::DoGetPosition(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1C::DoGetPosition(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -236,7 +236,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetPosition(IDviInvocation& aInvocatio
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestLights1C::DoSetColor(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1C::DoSetColor(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -256,7 +256,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoSetColor(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestLights1C::DoGetColor(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1C::DoGetColor(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;
@@ -278,7 +278,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetColor(IDviInvocation& aInvocation, 
     invocation.EndResponse();
 }
 
-void DvProviderOpenhomeOrgTestLights1C::DoGetColorComponents(IDviInvocation& aInvocation, TUint /*aVersion*/)
+void DvProviderOpenhomeOrgTestLights1C::DoGetColorComponents(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
     IDvInvocationC* invocationC;

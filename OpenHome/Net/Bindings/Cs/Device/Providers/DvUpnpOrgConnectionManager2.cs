@@ -315,7 +315,7 @@ namespace OpenHome.Net.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static int DoGetProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetProtocolInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
@@ -364,7 +364,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPrepareForConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPrepareForConnection(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
@@ -423,7 +423,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoConnectionComplete(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoConnectionComplete(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
@@ -470,7 +470,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetCurrentConnectionIDs(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCurrentConnectionIDs(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
@@ -517,7 +517,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetCurrentConnectionInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCurrentConnectionInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;

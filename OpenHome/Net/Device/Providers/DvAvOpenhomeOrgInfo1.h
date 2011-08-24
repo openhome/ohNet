@@ -210,10 +210,10 @@ private:
     virtual void Metatext(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgInfo1();
-    void DoCounters(IDviInvocation& aInvocation, TUint aVersion);
-    void DoTrack(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDetails(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMetatext(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCounters(IDviInvocation& aInvocation);
+    void DoTrack(IDviInvocation& aInvocation);
+    void DoDetails(IDviInvocation& aInvocation);
+    void DoMetatext(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyTrackCount;
     PropertyUint* iPropertyDetailsCount;
