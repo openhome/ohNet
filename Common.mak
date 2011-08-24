@@ -784,7 +784,7 @@ $(objdir)TestPerformanceCpCs.exe: \
 		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 		$(csCpTests)TestPerformanceCp.cs
 
-ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses ohNetJavaSrc
+ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses DvDeviceJavaClasses ohNetJavaSrc
 
 objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniArgumentBinary.$(objext) \

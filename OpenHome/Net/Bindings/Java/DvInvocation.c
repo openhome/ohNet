@@ -10,6 +10,57 @@ extern "C" {
 #endif
 /*
  * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetVersion
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetVersion
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
+{
+	DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
+	uint32_t version;
+	aEnv = aEnv;
+	aClass = aClass;
+
+	DvInvocationGetVersion(invocation, &version);
+	return (jint) version;
+}
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetAdapter
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetAdapter
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
+{
+	DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
+	TIpAddress adapter;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	DvInvocationGetAdapter(invocation, &adapter);
+	return (jint) adapter;
+}
+
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetResourceUriPrefix
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetResourceUriPrefix
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
+{
+	DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
+	char* uriPrefix;
+	aClass = aClass;
+	
+	DvInvocationGetResourceUriPrefix(invocation, &uriPrefix);
+	return (*aEnv)->NewStringUTF(aEnv, uriPrefix);
+}
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
  * Method:    DvInvocationReadStart
  * Signature: (J)I
  */

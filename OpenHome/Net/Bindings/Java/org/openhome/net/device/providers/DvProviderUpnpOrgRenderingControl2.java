@@ -728,10 +728,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionListPresets} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected String listPresets(int aVersion, long aInstanceID)
+    protected String listPresets(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -744,11 +744,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSelectPreset} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aPresetName
      */
-    protected void selectPreset(int aVersion, long aInstanceID, String aPresetName)
+    protected void selectPreset(IDvInvocation aInvocation, long aInstanceID, String aPresetName)
     {
         throw (new ActionDisabledError());
     }
@@ -761,10 +761,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetBrightness} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getBrightness(int aVersion, long aInstanceID)
+    protected long getBrightness(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -777,11 +777,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetBrightness} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredBrightness
      */
-    protected void setBrightness(int aVersion, long aInstanceID, long aDesiredBrightness)
+    protected void setBrightness(IDvInvocation aInvocation, long aInstanceID, long aDesiredBrightness)
     {
         throw (new ActionDisabledError());
     }
@@ -794,10 +794,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetContrast} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getContrast(int aVersion, long aInstanceID)
+    protected long getContrast(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -810,11 +810,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetContrast} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredContrast
      */
-    protected void setContrast(int aVersion, long aInstanceID, long aDesiredContrast)
+    protected void setContrast(IDvInvocation aInvocation, long aInstanceID, long aDesiredContrast)
     {
         throw (new ActionDisabledError());
     }
@@ -827,10 +827,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetSharpness} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getSharpness(int aVersion, long aInstanceID)
+    protected long getSharpness(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -843,11 +843,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetSharpness} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredSharpness
      */
-    protected void setSharpness(int aVersion, long aInstanceID, long aDesiredSharpness)
+    protected void setSharpness(IDvInvocation aInvocation, long aInstanceID, long aDesiredSharpness)
     {
         throw (new ActionDisabledError());
     }
@@ -860,10 +860,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetRedVideoGain} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getRedVideoGain(int aVersion, long aInstanceID)
+    protected long getRedVideoGain(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -876,11 +876,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetRedVideoGain} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredRedVideoGain
      */
-    protected void setRedVideoGain(int aVersion, long aInstanceID, long aDesiredRedVideoGain)
+    protected void setRedVideoGain(IDvInvocation aInvocation, long aInstanceID, long aDesiredRedVideoGain)
     {
         throw (new ActionDisabledError());
     }
@@ -893,10 +893,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetGreenVideoGain} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getGreenVideoGain(int aVersion, long aInstanceID)
+    protected long getGreenVideoGain(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -909,11 +909,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetGreenVideoGain} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredGreenVideoGain
      */
-    protected void setGreenVideoGain(int aVersion, long aInstanceID, long aDesiredGreenVideoGain)
+    protected void setGreenVideoGain(IDvInvocation aInvocation, long aInstanceID, long aDesiredGreenVideoGain)
     {
         throw (new ActionDisabledError());
     }
@@ -926,10 +926,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetBlueVideoGain} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getBlueVideoGain(int aVersion, long aInstanceID)
+    protected long getBlueVideoGain(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -942,11 +942,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetBlueVideoGain} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredBlueVideoGain
      */
-    protected void setBlueVideoGain(int aVersion, long aInstanceID, long aDesiredBlueVideoGain)
+    protected void setBlueVideoGain(IDvInvocation aInvocation, long aInstanceID, long aDesiredBlueVideoGain)
     {
         throw (new ActionDisabledError());
     }
@@ -959,10 +959,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetRedVideoBlackLevel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getRedVideoBlackLevel(int aVersion, long aInstanceID)
+    protected long getRedVideoBlackLevel(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -975,11 +975,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetRedVideoBlackLevel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredRedVideoBlackLevel
      */
-    protected void setRedVideoBlackLevel(int aVersion, long aInstanceID, long aDesiredRedVideoBlackLevel)
+    protected void setRedVideoBlackLevel(IDvInvocation aInvocation, long aInstanceID, long aDesiredRedVideoBlackLevel)
     {
         throw (new ActionDisabledError());
     }
@@ -992,10 +992,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetGreenVideoBlackLevel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getGreenVideoBlackLevel(int aVersion, long aInstanceID)
+    protected long getGreenVideoBlackLevel(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -1008,11 +1008,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetGreenVideoBlackLevel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredGreenVideoBlackLevel
      */
-    protected void setGreenVideoBlackLevel(int aVersion, long aInstanceID, long aDesiredGreenVideoBlackLevel)
+    protected void setGreenVideoBlackLevel(IDvInvocation aInvocation, long aInstanceID, long aDesiredGreenVideoBlackLevel)
     {
         throw (new ActionDisabledError());
     }
@@ -1025,10 +1025,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetBlueVideoBlackLevel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getBlueVideoBlackLevel(int aVersion, long aInstanceID)
+    protected long getBlueVideoBlackLevel(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -1041,11 +1041,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetBlueVideoBlackLevel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredBlueVideoBlackLevel
      */
-    protected void setBlueVideoBlackLevel(int aVersion, long aInstanceID, long aDesiredBlueVideoBlackLevel)
+    protected void setBlueVideoBlackLevel(IDvInvocation aInvocation, long aInstanceID, long aDesiredBlueVideoBlackLevel)
     {
         throw (new ActionDisabledError());
     }
@@ -1058,10 +1058,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetColorTemperature} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected long getColorTemperature(int aVersion, long aInstanceID)
+    protected long getColorTemperature(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -1074,11 +1074,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetColorTemperature} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredColorTemperature
      */
-    protected void setColorTemperature(int aVersion, long aInstanceID, long aDesiredColorTemperature)
+    protected void setColorTemperature(IDvInvocation aInvocation, long aInstanceID, long aDesiredColorTemperature)
     {
         throw (new ActionDisabledError());
     }
@@ -1091,10 +1091,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetHorizontalKeystone} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected int getHorizontalKeystone(int aVersion, long aInstanceID)
+    protected int getHorizontalKeystone(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -1107,11 +1107,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetHorizontalKeystone} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredHorizontalKeystone
      */
-    protected void setHorizontalKeystone(int aVersion, long aInstanceID, int aDesiredHorizontalKeystone)
+    protected void setHorizontalKeystone(IDvInvocation aInvocation, long aInstanceID, int aDesiredHorizontalKeystone)
     {
         throw (new ActionDisabledError());
     }
@@ -1124,10 +1124,10 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetVerticalKeystone} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
-    protected int getVerticalKeystone(int aVersion, long aInstanceID)
+    protected int getVerticalKeystone(IDvInvocation aInvocation, long aInstanceID)
     {
         throw (new ActionDisabledError());
     }
@@ -1140,11 +1140,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetVerticalKeystone} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aDesiredVerticalKeystone
      */
-    protected void setVerticalKeystone(int aVersion, long aInstanceID, int aDesiredVerticalKeystone)
+    protected void setVerticalKeystone(IDvInvocation aInvocation, long aInstanceID, int aDesiredVerticalKeystone)
     {
         throw (new ActionDisabledError());
     }
@@ -1157,11 +1157,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetMute} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      */
-    protected boolean getMute(int aVersion, long aInstanceID, String aChannel)
+    protected boolean getMute(IDvInvocation aInvocation, long aInstanceID, String aChannel)
     {
         throw (new ActionDisabledError());
     }
@@ -1174,12 +1174,12 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetMute} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      * @param aDesiredMute
      */
-    protected void setMute(int aVersion, long aInstanceID, String aChannel, boolean aDesiredMute)
+    protected void setMute(IDvInvocation aInvocation, long aInstanceID, String aChannel, boolean aDesiredMute)
     {
         throw (new ActionDisabledError());
     }
@@ -1192,11 +1192,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetVolume} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      */
-    protected long getVolume(int aVersion, long aInstanceID, String aChannel)
+    protected long getVolume(IDvInvocation aInvocation, long aInstanceID, String aChannel)
     {
         throw (new ActionDisabledError());
     }
@@ -1209,12 +1209,12 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetVolume} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      * @param aDesiredVolume
      */
-    protected void setVolume(int aVersion, long aInstanceID, String aChannel, long aDesiredVolume)
+    protected void setVolume(IDvInvocation aInvocation, long aInstanceID, String aChannel, long aDesiredVolume)
     {
         throw (new ActionDisabledError());
     }
@@ -1227,11 +1227,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetVolumeDB} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      */
-    protected int getVolumeDB(int aVersion, long aInstanceID, String aChannel)
+    protected int getVolumeDB(IDvInvocation aInvocation, long aInstanceID, String aChannel)
     {
         throw (new ActionDisabledError());
     }
@@ -1244,12 +1244,12 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetVolumeDB} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      * @param aDesiredVolume
      */
-    protected void setVolumeDB(int aVersion, long aInstanceID, String aChannel, int aDesiredVolume)
+    protected void setVolumeDB(IDvInvocation aInvocation, long aInstanceID, String aChannel, int aDesiredVolume)
     {
         throw (new ActionDisabledError());
     }
@@ -1262,11 +1262,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetVolumeDBRange} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      */
-    protected GetVolumeDBRange getVolumeDBRange(int aVersion, long aInstanceID, String aChannel)
+    protected GetVolumeDBRange getVolumeDBRange(IDvInvocation aInvocation, long aInstanceID, String aChannel)
     {
         throw (new ActionDisabledError());
     }
@@ -1279,11 +1279,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetLoudness} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      */
-    protected boolean getLoudness(int aVersion, long aInstanceID, String aChannel)
+    protected boolean getLoudness(IDvInvocation aInvocation, long aInstanceID, String aChannel)
     {
         throw (new ActionDisabledError());
     }
@@ -1296,12 +1296,12 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetLoudness} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aChannel
      * @param aDesiredLoudness
      */
-    protected void setLoudness(int aVersion, long aInstanceID, String aChannel, boolean aDesiredLoudness)
+    protected void setLoudness(IDvInvocation aInvocation, long aInstanceID, String aChannel, boolean aDesiredLoudness)
     {
         throw (new ActionDisabledError());
     }
@@ -1314,11 +1314,11 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetStateVariables} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aStateVariableList
      */
-    protected String getStateVariables(int aVersion, long aInstanceID, String aStateVariableList)
+    protected String getStateVariables(IDvInvocation aInvocation, long aInstanceID, String aStateVariableList)
     {
         throw (new ActionDisabledError());
     }
@@ -1331,14 +1331,14 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSetStateVariables} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aRenderingControlUDN
      * @param aServiceType
      * @param aServiceId
      * @param aStateVariableValuePairs
      */
-    protected String setStateVariables(int aVersion, long aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs)
+    protected String setStateVariables(IDvInvocation aInvocation, long aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs)
     {
         throw (new ActionDisabledError());
     }
@@ -1372,7 +1372,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentPresetNameList = listPresets(aVersion, instanceID);
+                 currentPresetNameList = listPresets(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1423,7 +1423,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 presetName = invocation.readString("PresetName");
                 invocation.readEnd();
-                selectPreset(aVersion, instanceID, presetName);
+                selectPreset(invocation, instanceID, presetName);
             }
             catch (ActionError ae)
             {
@@ -1472,7 +1472,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentBrightness = getBrightness(aVersion, instanceID);
+                 currentBrightness = getBrightness(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1523,7 +1523,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredBrightness = invocation.readUint("DesiredBrightness");
                 invocation.readEnd();
-                setBrightness(aVersion, instanceID, desiredBrightness);
+                setBrightness(invocation, instanceID, desiredBrightness);
             }
             catch (ActionError ae)
             {
@@ -1572,7 +1572,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentContrast = getContrast(aVersion, instanceID);
+                 currentContrast = getContrast(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1623,7 +1623,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredContrast = invocation.readUint("DesiredContrast");
                 invocation.readEnd();
-                setContrast(aVersion, instanceID, desiredContrast);
+                setContrast(invocation, instanceID, desiredContrast);
             }
             catch (ActionError ae)
             {
@@ -1672,7 +1672,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentSharpness = getSharpness(aVersion, instanceID);
+                 currentSharpness = getSharpness(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1723,7 +1723,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredSharpness = invocation.readUint("DesiredSharpness");
                 invocation.readEnd();
-                setSharpness(aVersion, instanceID, desiredSharpness);
+                setSharpness(invocation, instanceID, desiredSharpness);
             }
             catch (ActionError ae)
             {
@@ -1772,7 +1772,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentRedVideoGain = getRedVideoGain(aVersion, instanceID);
+                 currentRedVideoGain = getRedVideoGain(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1823,7 +1823,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredRedVideoGain = invocation.readUint("DesiredRedVideoGain");
                 invocation.readEnd();
-                setRedVideoGain(aVersion, instanceID, desiredRedVideoGain);
+                setRedVideoGain(invocation, instanceID, desiredRedVideoGain);
             }
             catch (ActionError ae)
             {
@@ -1872,7 +1872,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentGreenVideoGain = getGreenVideoGain(aVersion, instanceID);
+                 currentGreenVideoGain = getGreenVideoGain(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -1923,7 +1923,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredGreenVideoGain = invocation.readUint("DesiredGreenVideoGain");
                 invocation.readEnd();
-                setGreenVideoGain(aVersion, instanceID, desiredGreenVideoGain);
+                setGreenVideoGain(invocation, instanceID, desiredGreenVideoGain);
             }
             catch (ActionError ae)
             {
@@ -1972,7 +1972,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentBlueVideoGain = getBlueVideoGain(aVersion, instanceID);
+                 currentBlueVideoGain = getBlueVideoGain(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -2023,7 +2023,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredBlueVideoGain = invocation.readUint("DesiredBlueVideoGain");
                 invocation.readEnd();
-                setBlueVideoGain(aVersion, instanceID, desiredBlueVideoGain);
+                setBlueVideoGain(invocation, instanceID, desiredBlueVideoGain);
             }
             catch (ActionError ae)
             {
@@ -2072,7 +2072,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentRedVideoBlackLevel = getRedVideoBlackLevel(aVersion, instanceID);
+                 currentRedVideoBlackLevel = getRedVideoBlackLevel(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -2123,7 +2123,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredRedVideoBlackLevel = invocation.readUint("DesiredRedVideoBlackLevel");
                 invocation.readEnd();
-                setRedVideoBlackLevel(aVersion, instanceID, desiredRedVideoBlackLevel);
+                setRedVideoBlackLevel(invocation, instanceID, desiredRedVideoBlackLevel);
             }
             catch (ActionError ae)
             {
@@ -2172,7 +2172,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentGreenVideoBlackLevel = getGreenVideoBlackLevel(aVersion, instanceID);
+                 currentGreenVideoBlackLevel = getGreenVideoBlackLevel(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -2223,7 +2223,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredGreenVideoBlackLevel = invocation.readUint("DesiredGreenVideoBlackLevel");
                 invocation.readEnd();
-                setGreenVideoBlackLevel(aVersion, instanceID, desiredGreenVideoBlackLevel);
+                setGreenVideoBlackLevel(invocation, instanceID, desiredGreenVideoBlackLevel);
             }
             catch (ActionError ae)
             {
@@ -2272,7 +2272,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentBlueVideoBlackLevel = getBlueVideoBlackLevel(aVersion, instanceID);
+                 currentBlueVideoBlackLevel = getBlueVideoBlackLevel(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -2323,7 +2323,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredBlueVideoBlackLevel = invocation.readUint("DesiredBlueVideoBlackLevel");
                 invocation.readEnd();
-                setBlueVideoBlackLevel(aVersion, instanceID, desiredBlueVideoBlackLevel);
+                setBlueVideoBlackLevel(invocation, instanceID, desiredBlueVideoBlackLevel);
             }
             catch (ActionError ae)
             {
@@ -2372,7 +2372,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentColorTemperature = getColorTemperature(aVersion, instanceID);
+                 currentColorTemperature = getColorTemperature(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -2423,7 +2423,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredColorTemperature = invocation.readUint("DesiredColorTemperature");
                 invocation.readEnd();
-                setColorTemperature(aVersion, instanceID, desiredColorTemperature);
+                setColorTemperature(invocation, instanceID, desiredColorTemperature);
             }
             catch (ActionError ae)
             {
@@ -2472,7 +2472,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentHorizontalKeystone = getHorizontalKeystone(aVersion, instanceID);
+                 currentHorizontalKeystone = getHorizontalKeystone(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -2523,7 +2523,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredHorizontalKeystone = invocation.readInt("DesiredHorizontalKeystone");
                 invocation.readEnd();
-                setHorizontalKeystone(aVersion, instanceID, desiredHorizontalKeystone);
+                setHorizontalKeystone(invocation, instanceID, desiredHorizontalKeystone);
             }
             catch (ActionError ae)
             {
@@ -2572,7 +2572,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 invocation.readStart();
                 instanceID = invocation.readUint("InstanceID");
                 invocation.readEnd();
-                 currentVerticalKeystone = getVerticalKeystone(aVersion, instanceID);
+                 currentVerticalKeystone = getVerticalKeystone(invocation, instanceID);
             }
             catch (ActionError ae)
             {
@@ -2623,7 +2623,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 desiredVerticalKeystone = invocation.readInt("DesiredVerticalKeystone");
                 invocation.readEnd();
-                setVerticalKeystone(aVersion, instanceID, desiredVerticalKeystone);
+                setVerticalKeystone(invocation, instanceID, desiredVerticalKeystone);
             }
             catch (ActionError ae)
             {
@@ -2674,7 +2674,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 channel = invocation.readString("Channel");
                 invocation.readEnd();
-                 currentMute = getMute(aVersion, instanceID, channel);
+                 currentMute = getMute(invocation, instanceID, channel);
             }
             catch (ActionError ae)
             {
@@ -2727,7 +2727,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 channel = invocation.readString("Channel");
                 desiredMute = invocation.readBool("DesiredMute");
                 invocation.readEnd();
-                setMute(aVersion, instanceID, channel, desiredMute);
+                setMute(invocation, instanceID, channel, desiredMute);
             }
             catch (ActionError ae)
             {
@@ -2778,7 +2778,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 channel = invocation.readString("Channel");
                 invocation.readEnd();
-                 currentVolume = getVolume(aVersion, instanceID, channel);
+                 currentVolume = getVolume(invocation, instanceID, channel);
             }
             catch (ActionError ae)
             {
@@ -2831,7 +2831,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 channel = invocation.readString("Channel");
                 desiredVolume = invocation.readUint("DesiredVolume");
                 invocation.readEnd();
-                setVolume(aVersion, instanceID, channel, desiredVolume);
+                setVolume(invocation, instanceID, channel, desiredVolume);
             }
             catch (ActionError ae)
             {
@@ -2882,7 +2882,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 channel = invocation.readString("Channel");
                 invocation.readEnd();
-                 currentVolume = getVolumeDB(aVersion, instanceID, channel);
+                 currentVolume = getVolumeDB(invocation, instanceID, channel);
             }
             catch (ActionError ae)
             {
@@ -2935,7 +2935,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 channel = invocation.readString("Channel");
                 desiredVolume = invocation.readInt("DesiredVolume");
                 invocation.readEnd();
-                setVolumeDB(aVersion, instanceID, channel, desiredVolume);
+                setVolumeDB(invocation, instanceID, channel, desiredVolume);
             }
             catch (ActionError ae)
             {
@@ -2988,7 +2988,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 channel = invocation.readString("Channel");
                 invocation.readEnd();
 
-            GetVolumeDBRange outArgs = getVolumeDBRange(aVersion, instanceID, channel);
+            GetVolumeDBRange outArgs = getVolumeDBRange(invocation, instanceID, channel);
             minValue = outArgs.getMinValue();
             maxValue = outArgs.getMaxValue();
             }
@@ -3043,7 +3043,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 channel = invocation.readString("Channel");
                 invocation.readEnd();
-                 currentLoudness = getLoudness(aVersion, instanceID, channel);
+                 currentLoudness = getLoudness(invocation, instanceID, channel);
             }
             catch (ActionError ae)
             {
@@ -3096,7 +3096,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 channel = invocation.readString("Channel");
                 desiredLoudness = invocation.readBool("DesiredLoudness");
                 invocation.readEnd();
-                setLoudness(aVersion, instanceID, channel, desiredLoudness);
+                setLoudness(invocation, instanceID, channel, desiredLoudness);
             }
             catch (ActionError ae)
             {
@@ -3147,7 +3147,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 instanceID = invocation.readUint("InstanceID");
                 stateVariableList = invocation.readString("StateVariableList");
                 invocation.readEnd();
-                 stateVariableValuePairs = getStateVariables(aVersion, instanceID, stateVariableList);
+                 stateVariableValuePairs = getStateVariables(invocation, instanceID, stateVariableList);
             }
             catch (ActionError ae)
             {
@@ -3205,7 +3205,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
                 serviceId = invocation.readString("ServiceId");
                 stateVariableValuePairs = invocation.readString("StateVariableValuePairs");
                 invocation.readEnd();
-                 stateVariableList = setStateVariables(aVersion, instanceID, renderingControlUDN, serviceType, serviceId, stateVariableValuePairs);
+                 stateVariableList = setStateVariables(invocation, instanceID, renderingControlUDN, serviceType, serviceId, stateVariableValuePairs);
             }
             catch (ActionError ae)
             {

@@ -143,30 +143,30 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)CpOpenhomeOrgTestLights1.net.dll \
 
 proxy_java_classes_with_path = \
-        $(proxyjavadir)CpProxyUpnpOrgAVTransport1.class \
-        $(proxyjavadir)CpProxyUpnpOrgAVTransport2.class \
-        $(proxyjavadir)CpProxyUpnpOrgConnectionManager1.class \
-        $(proxyjavadir)CpProxyUpnpOrgConnectionManager2.class \
-        $(proxyjavadir)CpProxyUpnpOrgContentDirectory1.class \
-        $(proxyjavadir)CpProxyUpnpOrgContentDirectory2.class \
-        $(proxyjavadir)CpProxyUpnpOrgContentDirectory3.class \
-        $(proxyjavadir)CpProxyUpnpOrgRenderingControl1.class \
-        $(proxyjavadir)CpProxyUpnpOrgRenderingControl2.class \
-        $(proxyjavadir)CpProxyUpnpOrgScheduledRecording1.class \
-        $(proxyjavadir)CpProxyUpnpOrgScheduledRecording2.class \
-        $(proxyjavadir)CpProxyUpnpOrgSwitchPower1.class \
-        $(proxyjavadir)CpProxyUpnpOrgDimming1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgInfo1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgTime1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgPlaylist1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgVolume1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgProduct1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgRadio1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgReceiver1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgSender1.class \
-        $(proxyjavadir)CpProxyAvOpenhomeOrgPlaylistManager1.class \
-        $(proxyjavadir)CpProxyOpenhomeOrgTestBasic1.class \
-        $(proxyjavadir)CpProxyOpenhomeOrgTestLights1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgAVTransport1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgAVTransport2.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgConnectionManager1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgConnectionManager2.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgContentDirectory1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgContentDirectory2.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgContentDirectory3.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgRenderingControl1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgRenderingControl2.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgScheduledRecording1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgScheduledRecording2.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgSwitchPower1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgDimming1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgInfo1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgTime1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgPlaylist1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgVolume1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgProduct1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgRadio1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgReceiver1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgSender1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgPlaylistManager1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestBasic1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestLights1.class \
 
 
 proxies : ohNetCore $(objects_proxies)
@@ -546,53 +546,53 @@ $(objdir)CpOpenhomeOrgTestLights1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOp
 
 CpProxyJavaClasses: $(proxy_java_classes_with_path)
 
-$(proxyjavadir)CpProxyUpnpOrgAVTransport1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgAVTransport1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgAVTransport1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgAVTransport1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgAVTransport1.java
-$(proxyjavadir)CpProxyUpnpOrgAVTransport2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgAVTransport2.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgAVTransport2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgAVTransport2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgAVTransport2.java
-$(proxyjavadir)CpProxyUpnpOrgConnectionManager1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgConnectionManager1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgConnectionManager1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgConnectionManager1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgConnectionManager1.java
-$(proxyjavadir)CpProxyUpnpOrgConnectionManager2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgConnectionManager2.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgConnectionManager2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgConnectionManager2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgConnectionManager2.java
-$(proxyjavadir)CpProxyUpnpOrgContentDirectory1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgContentDirectory1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgContentDirectory1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgContentDirectory1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgContentDirectory1.java
-$(proxyjavadir)CpProxyUpnpOrgContentDirectory2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgContentDirectory2.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgContentDirectory2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgContentDirectory2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgContentDirectory2.java
-$(proxyjavadir)CpProxyUpnpOrgContentDirectory3.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgContentDirectory3.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgContentDirectory3.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgContentDirectory3.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgContentDirectory3.java
-$(proxyjavadir)CpProxyUpnpOrgRenderingControl1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgRenderingControl1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgRenderingControl1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgRenderingControl1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgRenderingControl1.java
-$(proxyjavadir)CpProxyUpnpOrgRenderingControl2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgRenderingControl2.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgRenderingControl2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgRenderingControl2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgRenderingControl2.java
-$(proxyjavadir)CpProxyUpnpOrgScheduledRecording1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgScheduledRecording1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgScheduledRecording1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgScheduledRecording1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgScheduledRecording1.java
-$(proxyjavadir)CpProxyUpnpOrgScheduledRecording2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgScheduledRecording2.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgScheduledRecording2.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgScheduledRecording2.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgScheduledRecording2.java
-$(proxyjavadir)CpProxyUpnpOrgSwitchPower1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgSwitchPower1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgSwitchPower1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgSwitchPower1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgSwitchPower1.java
-$(proxyjavadir)CpProxyUpnpOrgDimming1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgDimming1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgDimming1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyUpnpOrgDimming1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyUpnpOrgDimming1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgInfo1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgInfo1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgInfo1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgInfo1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgInfo1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgTime1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgTime1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgTime1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgTime1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgTime1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgPlaylist1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgPlaylist1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgPlaylist1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgPlaylist1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgPlaylist1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgVolume1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgVolume1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgVolume1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgVolume1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgVolume1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgProduct1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgProduct1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgProduct1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgProduct1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgProduct1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgRadio1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgRadio1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgRadio1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgRadio1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgRadio1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgReceiver1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgReceiver1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgReceiver1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgReceiver1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgReceiver1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgSender1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgSender1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgSender1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgSender1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgSender1.java
-$(proxyjavadir)CpProxyAvOpenhomeOrgPlaylistManager1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgPlaylistManager1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgPlaylistManager1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgPlaylistManager1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgPlaylistManager1.java
-$(proxyjavadir)CpProxyOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgTestBasic1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgTestBasic1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyOpenhomeOrgTestBasic1.java
-$(proxyjavadir)CpProxyOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
 
 

@@ -207,9 +207,9 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionTime} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Time time(int aVersion)
+    protected Time time(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -244,7 +244,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
                 invocation.readStart();
                 invocation.readEnd();
 
-            Time outArgs = time(aVersion);
+            Time outArgs = time(invocation);
             trackCount = outArgs.getTrackCount();
             duration = outArgs.getDuration();
             seconds = outArgs.getSeconds();

@@ -607,9 +607,9 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetSortCapabilities} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected GetSortCapabilities getSortCapabilities(int aVersion)
+    protected GetSortCapabilities getSortCapabilities(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -622,10 +622,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetPropertyList} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aDataTypeID
      */
-    protected String getPropertyList(int aVersion, String aDataTypeID)
+    protected String getPropertyList(IDvInvocation aInvocation, String aDataTypeID)
     {
         throw (new ActionDisabledError());
     }
@@ -638,11 +638,11 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetAllowedValues} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aDataTypeID
      * @param aFilter
      */
-    protected String getAllowedValues(int aVersion, String aDataTypeID, String aFilter)
+    protected String getAllowedValues(IDvInvocation aInvocation, String aDataTypeID, String aFilter)
     {
         throw (new ActionDisabledError());
     }
@@ -655,9 +655,9 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetStateUpdateID} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getStateUpdateID(int aVersion)
+    protected long getStateUpdateID(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -670,13 +670,13 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionBrowseRecordSchedules} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aFilter
      * @param aStartingIndex
      * @param aRequestedCount
      * @param aSortCriteria
      */
-    protected BrowseRecordSchedules browseRecordSchedules(int aVersion, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
+    protected BrowseRecordSchedules browseRecordSchedules(IDvInvocation aInvocation, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
     {
         throw (new ActionDisabledError());
     }
@@ -689,14 +689,14 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionBrowseRecordTasks} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      * @param aFilter
      * @param aStartingIndex
      * @param aRequestedCount
      * @param aSortCriteria
      */
-    protected BrowseRecordTasks browseRecordTasks(int aVersion, String aRecordScheduleID, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
+    protected BrowseRecordTasks browseRecordTasks(IDvInvocation aInvocation, String aRecordScheduleID, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
     {
         throw (new ActionDisabledError());
     }
@@ -709,10 +709,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionCreateRecordSchedule} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aElements
      */
-    protected CreateRecordSchedule createRecordSchedule(int aVersion, String aElements)
+    protected CreateRecordSchedule createRecordSchedule(IDvInvocation aInvocation, String aElements)
     {
         throw (new ActionDisabledError());
     }
@@ -725,10 +725,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionDeleteRecordSchedule} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      */
-    protected void deleteRecordSchedule(int aVersion, String aRecordScheduleID)
+    protected void deleteRecordSchedule(IDvInvocation aInvocation, String aRecordScheduleID)
     {
         throw (new ActionDisabledError());
     }
@@ -741,11 +741,11 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetRecordSchedule} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      * @param aFilter
      */
-    protected GetRecordSchedule getRecordSchedule(int aVersion, String aRecordScheduleID, String aFilter)
+    protected GetRecordSchedule getRecordSchedule(IDvInvocation aInvocation, String aRecordScheduleID, String aFilter)
     {
         throw (new ActionDisabledError());
     }
@@ -758,10 +758,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionEnableRecordSchedule} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      */
-    protected void enableRecordSchedule(int aVersion, String aRecordScheduleID)
+    protected void enableRecordSchedule(IDvInvocation aInvocation, String aRecordScheduleID)
     {
         throw (new ActionDisabledError());
     }
@@ -774,10 +774,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionDisableRecordSchedule} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      */
-    protected void disableRecordSchedule(int aVersion, String aRecordScheduleID)
+    protected void disableRecordSchedule(IDvInvocation aInvocation, String aRecordScheduleID)
     {
         throw (new ActionDisabledError());
     }
@@ -790,10 +790,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionDeleteRecordTask} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
-    protected void deleteRecordTask(int aVersion, String aRecordTaskID)
+    protected void deleteRecordTask(IDvInvocation aInvocation, String aRecordTaskID)
     {
         throw (new ActionDisabledError());
     }
@@ -806,11 +806,11 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetRecordTask} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      * @param aFilter
      */
-    protected GetRecordTask getRecordTask(int aVersion, String aRecordTaskID, String aFilter)
+    protected GetRecordTask getRecordTask(IDvInvocation aInvocation, String aRecordTaskID, String aFilter)
     {
         throw (new ActionDisabledError());
     }
@@ -823,10 +823,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionEnableRecordTask} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
-    protected void enableRecordTask(int aVersion, String aRecordTaskID)
+    protected void enableRecordTask(IDvInvocation aInvocation, String aRecordTaskID)
     {
         throw (new ActionDisabledError());
     }
@@ -839,10 +839,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionDisableRecordTask} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
-    protected void disableRecordTask(int aVersion, String aRecordTaskID)
+    protected void disableRecordTask(IDvInvocation aInvocation, String aRecordTaskID)
     {
         throw (new ActionDisabledError());
     }
@@ -855,10 +855,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionResetRecordTask} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
-    protected void resetRecordTask(int aVersion, String aRecordTaskID)
+    protected void resetRecordTask(IDvInvocation aInvocation, String aRecordTaskID)
     {
         throw (new ActionDisabledError());
     }
@@ -871,10 +871,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetRecordScheduleConflicts} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      */
-    protected GetRecordScheduleConflicts getRecordScheduleConflicts(int aVersion, String aRecordScheduleID)
+    protected GetRecordScheduleConflicts getRecordScheduleConflicts(IDvInvocation aInvocation, String aRecordScheduleID)
     {
         throw (new ActionDisabledError());
     }
@@ -887,10 +887,10 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetRecordTaskConflicts} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
-    protected GetRecordTaskConflicts getRecordTaskConflicts(int aVersion, String aRecordTaskID)
+    protected GetRecordTaskConflicts getRecordTaskConflicts(IDvInvocation aInvocation, String aRecordTaskID)
     {
         throw (new ActionDisabledError());
     }
@@ -924,7 +924,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 invocation.readEnd();
 
-            GetSortCapabilities outArgs = getSortCapabilities(aVersion);
+            GetSortCapabilities outArgs = getSortCapabilities(invocation);
             sortCaps = outArgs.getSortCaps();
             sortLevelCap = outArgs.getSortLevelCap();
             }
@@ -977,7 +977,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 dataTypeID = invocation.readString("DataTypeID");
                 invocation.readEnd();
-                 propertyList = getPropertyList(aVersion, dataTypeID);
+                 propertyList = getPropertyList(invocation, dataTypeID);
             }
             catch (ActionError ae)
             {
@@ -1029,7 +1029,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 dataTypeID = invocation.readString("DataTypeID");
                 filter = invocation.readString("Filter");
                 invocation.readEnd();
-                 propertyInfo = getAllowedValues(aVersion, dataTypeID, filter);
+                 propertyInfo = getAllowedValues(invocation, dataTypeID, filter);
             }
             catch (ActionError ae)
             {
@@ -1077,7 +1077,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 id = getStateUpdateID(aVersion);
+                 id = getStateUpdateID(invocation);
             }
             catch (ActionError ae)
             {
@@ -1137,7 +1137,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 sortCriteria = invocation.readString("SortCriteria");
                 invocation.readEnd();
 
-            BrowseRecordSchedules outArgs = browseRecordSchedules(aVersion, filter, startingIndex, requestedCount, sortCriteria);
+            BrowseRecordSchedules outArgs = browseRecordSchedules(invocation, filter, startingIndex, requestedCount, sortCriteria);
             result = outArgs.getResult();
             numberReturned = outArgs.getNumberReturned();
             totalMatches = outArgs.getTotalMatches();
@@ -1206,7 +1206,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 sortCriteria = invocation.readString("SortCriteria");
                 invocation.readEnd();
 
-            BrowseRecordTasks outArgs = browseRecordTasks(aVersion, recordScheduleID, filter, startingIndex, requestedCount, sortCriteria);
+            BrowseRecordTasks outArgs = browseRecordTasks(invocation, recordScheduleID, filter, startingIndex, requestedCount, sortCriteria);
             result = outArgs.getResult();
             numberReturned = outArgs.getNumberReturned();
             totalMatches = outArgs.getTotalMatches();
@@ -1266,7 +1266,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 elements = invocation.readString("Elements");
                 invocation.readEnd();
 
-            CreateRecordSchedule outArgs = createRecordSchedule(aVersion, elements);
+            CreateRecordSchedule outArgs = createRecordSchedule(invocation, elements);
             recordScheduleID = outArgs.getRecordScheduleID();
             result = outArgs.getResult();
             updateID = outArgs.getUpdateID();
@@ -1320,7 +1320,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 recordScheduleID = invocation.readString("RecordScheduleID");
                 invocation.readEnd();
-                deleteRecordSchedule(aVersion, recordScheduleID);
+                deleteRecordSchedule(invocation, recordScheduleID);
             }
             catch (ActionError ae)
             {
@@ -1373,7 +1373,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 filter = invocation.readString("Filter");
                 invocation.readEnd();
 
-            GetRecordSchedule outArgs = getRecordSchedule(aVersion, recordScheduleID, filter);
+            GetRecordSchedule outArgs = getRecordSchedule(invocation, recordScheduleID, filter);
             result = outArgs.getResult();
             updateID = outArgs.getUpdateID();
             }
@@ -1425,7 +1425,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 recordScheduleID = invocation.readString("RecordScheduleID");
                 invocation.readEnd();
-                enableRecordSchedule(aVersion, recordScheduleID);
+                enableRecordSchedule(invocation, recordScheduleID);
             }
             catch (ActionError ae)
             {
@@ -1473,7 +1473,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 recordScheduleID = invocation.readString("RecordScheduleID");
                 invocation.readEnd();
-                disableRecordSchedule(aVersion, recordScheduleID);
+                disableRecordSchedule(invocation, recordScheduleID);
             }
             catch (ActionError ae)
             {
@@ -1521,7 +1521,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 recordTaskID = invocation.readString("RecordTaskID");
                 invocation.readEnd();
-                deleteRecordTask(aVersion, recordTaskID);
+                deleteRecordTask(invocation, recordTaskID);
             }
             catch (ActionError ae)
             {
@@ -1574,7 +1574,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 filter = invocation.readString("Filter");
                 invocation.readEnd();
 
-            GetRecordTask outArgs = getRecordTask(aVersion, recordTaskID, filter);
+            GetRecordTask outArgs = getRecordTask(invocation, recordTaskID, filter);
             result = outArgs.getResult();
             updateID = outArgs.getUpdateID();
             }
@@ -1626,7 +1626,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 recordTaskID = invocation.readString("RecordTaskID");
                 invocation.readEnd();
-                enableRecordTask(aVersion, recordTaskID);
+                enableRecordTask(invocation, recordTaskID);
             }
             catch (ActionError ae)
             {
@@ -1674,7 +1674,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 recordTaskID = invocation.readString("RecordTaskID");
                 invocation.readEnd();
-                disableRecordTask(aVersion, recordTaskID);
+                disableRecordTask(invocation, recordTaskID);
             }
             catch (ActionError ae)
             {
@@ -1722,7 +1722,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 invocation.readStart();
                 recordTaskID = invocation.readString("RecordTaskID");
                 invocation.readEnd();
-                resetRecordTask(aVersion, recordTaskID);
+                resetRecordTask(invocation, recordTaskID);
             }
             catch (ActionError ae)
             {
@@ -1773,7 +1773,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 recordScheduleID = invocation.readString("RecordScheduleID");
                 invocation.readEnd();
 
-            GetRecordScheduleConflicts outArgs = getRecordScheduleConflicts(aVersion, recordScheduleID);
+            GetRecordScheduleConflicts outArgs = getRecordScheduleConflicts(invocation, recordScheduleID);
             recordScheduleConflictIDList = outArgs.getRecordScheduleConflictIDList();
             updateID = outArgs.getUpdateID();
             }
@@ -1828,7 +1828,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 recordTaskID = invocation.readString("RecordTaskID");
                 invocation.readEnd();
 
-            GetRecordTaskConflicts outArgs = getRecordTaskConflicts(aVersion, recordTaskID);
+            GetRecordTaskConflicts outArgs = getRecordTaskConflicts(invocation, recordTaskID);
             recordTaskConflictIDList = outArgs.getRecordTaskConflictIDList();
             updateID = outArgs.getUpdateID();
             }
