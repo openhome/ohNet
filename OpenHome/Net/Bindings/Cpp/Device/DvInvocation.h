@@ -1,5 +1,5 @@
-#ifndef HEADER_DVINVOCATIONSTD
-#define HEADER_DVINVOCATIONSTD
+#ifndef HEADER_DVINVOCATION_STD
+#define HEADER_DVINVOCATION_STD
 
 #include <OpenHome/OsTypes.h>
 
@@ -34,4 +34,4 @@ private:
 } // namespace Net
 } // namespace OpenHome
 
-#endif // HEADER_DVINVOCATIONSTD
+#endif // HEADER_DVINVOCATION_STD
