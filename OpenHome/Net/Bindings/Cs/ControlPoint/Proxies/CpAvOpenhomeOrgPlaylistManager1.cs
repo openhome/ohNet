@@ -55,14 +55,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncPlaylistArraysChanged(uint aToken, out bool aValue);
         void BeginPlaylistArraysChanged(uint aToken, CpProxy.CallbackAsyncComplete aCallback);
         void EndPlaylistArraysChanged(IntPtr aAsyncHandle, out bool aValue);
-        void SyncRead(uint aId, uint aTrackId, out String aMetadata);
+        void SyncRead(uint aId, uint aTrackId, out String aUdn, out String aMetadata);
         void BeginRead(uint aId, uint aTrackId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndRead(IntPtr aAsyncHandle, out String aMetadata);
+        void EndRead(IntPtr aAsyncHandle, out String aUdn, out String aMetadata);
         void SyncReadList(uint aId, String aTrackIdList, out String aTrackList);
         void BeginReadList(uint aId, String aTrackIdList, CpProxy.CallbackAsyncComplete aCallback);
         void EndReadList(IntPtr aAsyncHandle, out String aTrackList);
-        void SyncInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadataId, out uint aNewTrackId);
-        void BeginInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadataId, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadata, out uint aNewTrackId);
+        void BeginInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadata, CpProxy.CallbackAsyncComplete aCallback);
         void EndInsert(IntPtr aAsyncHandle, out uint aNewTrackId);
         void SyncDeleteId(uint aId, uint aTrackId);
         void BeginDeleteId(uint aId, uint aTrackId, CpProxy.CallbackAsyncComplete aCallback);
@@ -367,11 +367,16 @@ namespace OpenHome.Net.ControlPoint.Proxies
     internal class SyncReadAvOpenhomeOrgPlaylistManager1 : SyncProxyAction
     {
         private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
+        private String iUdn;
         private String iMetadata;
 
         public SyncReadAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
         {
             iService = aProxy;
+        }
+        public String Udn()
+        {
+            return iUdn;
         }
         public String Metadata()
         {
@@ -379,7 +384,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
         protected override void CompleteRequest(IntPtr aAsyncHandle)
         {
-            iService.EndRead(aAsyncHandle, out iMetadata);
+            iService.EndRead(aAsyncHandle, out iUdn, out iMetadata);
         }
     };
 
@@ -596,6 +601,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionRead.AddInputParameter(param);
             param = new ParameterUint("TrackId");
             iActionRead.AddInputParameter(param);
+            param = new ParameterString("Udn", allowedValues);
+            iActionRead.AddOutputParameter(param);
             param = new ParameterString("Metadata", allowedValues);
             iActionRead.AddOutputParameter(param);
 
@@ -614,7 +621,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionInsert.AddInputParameter(param);
             param = new ParameterString("Udn", allowedValues);
             iActionInsert.AddInputParameter(param);
-            param = new ParameterString("MetadataId", allowedValues);
+            param = new ParameterString("Metadata", allowedValues);
             iActionInsert.AddInputParameter(param);
             param = new ParameterUint("NewTrackId");
             iActionInsert.AddOutputParameter(param);
@@ -1403,13 +1410,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aId"></param>
         /// <param name="aTrackId"></param>
+        /// <param name="aUdn"></param>
         /// <param name="aMetadata"></param>
-        public void SyncRead(uint aId, uint aTrackId, out String aMetadata)
+        public void SyncRead(uint aId, uint aTrackId, out String aUdn, out String aMetadata)
         {
             SyncReadAvOpenhomeOrgPlaylistManager1 sync = new SyncReadAvOpenhomeOrgPlaylistManager1(this);
             BeginRead(aId, aTrackId, sync.AsyncComplete());
             sync.Wait();
             sync.ReportError();
+            aUdn = sync.Udn();
             aMetadata = sync.Metadata();
         }
 
@@ -1431,6 +1440,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             invocation.AddInput(new ArgumentUint((ParameterUint)iActionRead.InputParameter(inIndex++), aTrackId));
             int outIndex = 0;
             invocation.AddOutput(new ArgumentString((ParameterString)iActionRead.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionRead.OutputParameter(outIndex++)));
             iService.InvokeAction(invocation);
         }
 
@@ -1439,14 +1449,16 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aUdn"></param>
         /// <param name="aMetadata"></param>
-        public void EndRead(IntPtr aAsyncHandle, out String aMetadata)
+        public void EndRead(IntPtr aAsyncHandle, out String aUdn, out String aMetadata)
         {
             if (Invocation.Error(aAsyncHandle))
             {
                 throw new ProxyError();
             }
             uint index = 0;
+            aUdn = Invocation.OutputString(aAsyncHandle, index++);
             aMetadata = Invocation.OutputString(aAsyncHandle, index++);
         }
 
@@ -1512,12 +1524,12 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aId"></param>
         /// <param name="aAfterTrackId"></param>
         /// <param name="aUdn"></param>
-        /// <param name="aMetadataId"></param>
+        /// <param name="aMetadata"></param>
         /// <param name="aNewTrackId"></param>
-        public void SyncInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadataId, out uint aNewTrackId)
+        public void SyncInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadata, out uint aNewTrackId)
         {
             SyncInsertAvOpenhomeOrgPlaylistManager1 sync = new SyncInsertAvOpenhomeOrgPlaylistManager1(this);
-            BeginInsert(aId, aAfterTrackId, aUdn, aMetadataId, sync.AsyncComplete());
+            BeginInsert(aId, aAfterTrackId, aUdn, aMetadata, sync.AsyncComplete());
             sync.Wait();
             sync.ReportError();
             aNewTrackId = sync.NewTrackId();
@@ -1532,17 +1544,17 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aId"></param>
         /// <param name="aAfterTrackId"></param>
         /// <param name="aUdn"></param>
-        /// <param name="aMetadataId"></param>
+        /// <param name="aMetadata"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadataId, CallbackAsyncComplete aCallback)
+        public void BeginInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadata, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionInsert, aCallback);
             int inIndex = 0;
             invocation.AddInput(new ArgumentUint((ParameterUint)iActionInsert.InputParameter(inIndex++), aId));
             invocation.AddInput(new ArgumentUint((ParameterUint)iActionInsert.InputParameter(inIndex++), aAfterTrackId));
             invocation.AddInput(new ArgumentString((ParameterString)iActionInsert.InputParameter(inIndex++), aUdn));
-            invocation.AddInput(new ArgumentString((ParameterString)iActionInsert.InputParameter(inIndex++), aMetadataId));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionInsert.InputParameter(inIndex++), aMetadata));
             int outIndex = 0;
             invocation.AddOutput(new ArgumentUint((ParameterUint)iActionInsert.OutputParameter(outIndex++)));
             iService.InvokeAction(invocation);
