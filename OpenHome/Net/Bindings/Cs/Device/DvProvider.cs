@@ -263,11 +263,11 @@ namespace OpenHome.Net.Device
     public class DvInvocation : IDvInvocation
     {
         [DllImport("ohNet")]
-        static extern uint DvInvocationVersion(IntPtr aInvocation);
+        static extern unsafe void DvInvocationGetVersion(IntPtr aInvocation, uint* aVersion);
         [DllImport("ohNet")]
-        static extern uint DvInvocationAdapter(IntPtr aInvocation);
+        static extern unsafe void DvInvocationGetAdapter(IntPtr aInvocation, uint* aAdapter);
         [DllImport("ohNet")]
-        static extern IntPtr DvInvocationResourceUriPrefix(IntPtr aInvocation);
+        static extern unsafe void DvInvocationGetResourceUriPrefix(IntPtr aInvocation, IntPtr* aPrefix);
         [DllImport("ohNet")]
         static extern int DvInvocationReadStart(IntPtr aInvocation);
         [DllImport("ohNet")]
@@ -323,25 +323,30 @@ namespace OpenHome.Net.Device
         /// Get the version number of the service requested by the caller.
         /// </summary>
         /// <returns>The version number of the service the caller expects.</returns>
-        public uint Version()
+        public unsafe uint Version()
         {
-            return DvInvocationVersion(iHandle);
+            uint version;
+            DvInvocationGetVersion(iHandle, &version);
+            return version;
         }
         /// <summary>
         /// Get the network adapter an action was invoked using.
         /// </summary>
         /// <returns>The network adapter used to invoke this action.</returns>
-        public uint Adapter()
+        public unsafe uint Adapter()
         {
-            return DvInvocationAdapter(iHandle);
+            uint adapter;
+            DvInvocationGetAdapter(iHandle, &adapter);
+            return adapter;
         }
         /// <summary>
         /// Get the prefix to use on any uris to resources offered by the provider.
         /// </summary>
         /// <returns>The prefix to resource uris.</returns>
-        public string ResourceUriPrefix()
+        public unsafe string ResourceUriPrefix()
         {
-            IntPtr cPrefix = DvInvocationResourceUriPrefix(iHandle);
+            IntPtr cPrefix;
+            DvInvocationGetResourceUriPrefix(iHandle, &cPrefix);
             String prefix = (cPrefix == IntPtr.Zero? "" : Marshal.PtrToStringAnsi(cPrefix));
             return prefix;
         }
