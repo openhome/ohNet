@@ -233,7 +233,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
 
     private class DoTime implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long trackCount;

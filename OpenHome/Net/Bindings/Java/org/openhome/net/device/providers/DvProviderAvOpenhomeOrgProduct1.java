@@ -1349,7 +1349,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoManufacturer implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String name;
@@ -1408,7 +1408,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoModel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String name;
@@ -1467,7 +1467,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoProduct implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String room;
@@ -1529,7 +1529,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoStandby implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1577,7 +1577,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoSetStandby implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1625,7 +1625,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoSourceCount implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1673,7 +1673,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoSourceXml implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1721,7 +1721,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoSourceIndex implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1769,7 +1769,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoSetSourceIndex implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1817,7 +1817,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoSetSourceIndexByName implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1865,7 +1865,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoSource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long index;
@@ -1926,7 +1926,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoAttributes implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1974,7 +1974,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
 
     private class DoSourceXmlChangeCount implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;

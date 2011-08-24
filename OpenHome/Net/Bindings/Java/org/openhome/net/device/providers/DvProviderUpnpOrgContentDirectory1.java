@@ -785,7 +785,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoGetSearchCapabilities implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String searchCaps;
@@ -833,7 +833,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoGetSortCapabilities implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String sortCaps;
@@ -881,7 +881,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoGetSystemUpdateID implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -929,7 +929,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoBrowse implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String objectID;
@@ -1000,7 +1000,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoSearch implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String containerID;
@@ -1071,7 +1071,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoCreateObject implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String containerID;
@@ -1128,7 +1128,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoDestroyObject implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String objectID;
@@ -1176,7 +1176,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoUpdateObject implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String objectID;
@@ -1228,7 +1228,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoImportResource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String sourceURI;
@@ -1280,7 +1280,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoExportResource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String sourceURI;
@@ -1332,7 +1332,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoStopTransferResource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long transferID;
@@ -1380,7 +1380,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoGetTransferProgress implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long transferID;
@@ -1438,7 +1438,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoDeleteResource implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String resourceURI;
@@ -1486,7 +1486,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
 
     private class DoCreateReference implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String containerID;

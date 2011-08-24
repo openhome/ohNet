@@ -11,7 +11,6 @@ public interface IDvInvocationListener
 	 * <tt>DvDevice</tt>.
 	 * 
 	 * @param aInvocation	pointer to the <tt>Invocation</tt>.
-	 * @param aVersion		version of thew service.
 	 */
-	public void actionInvoked(long aInvocation, int aVersion);
+	public void actionInvoked(long aInvocation);
 }

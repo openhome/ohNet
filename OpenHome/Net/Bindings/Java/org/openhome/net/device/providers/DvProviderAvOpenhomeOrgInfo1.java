@@ -772,7 +772,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
 
     private class DoCounters implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long trackCount;
@@ -828,7 +828,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
 
     private class DoTrack implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -881,7 +881,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
 
     private class DoDetails implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long duration;
@@ -946,7 +946,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
 
     private class DoMetatext implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;

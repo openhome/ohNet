@@ -422,7 +422,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoPlay implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -468,7 +468,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoStop implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -514,7 +514,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoSetSender implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -564,7 +564,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoSender implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -617,7 +617,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoProtocolInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -665,7 +665,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
 
     private class DoTransportState implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;

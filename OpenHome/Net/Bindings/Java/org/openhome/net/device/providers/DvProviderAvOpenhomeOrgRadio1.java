@@ -879,7 +879,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoPlay implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -925,7 +925,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoPause implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -971,7 +971,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoStop implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1017,7 +1017,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoSeekSecondAbsolute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1065,7 +1065,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoSeekSecondRelative implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1113,7 +1113,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoChannel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -1166,7 +1166,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoSetChannel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -1216,7 +1216,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoTransportState implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1264,7 +1264,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1312,7 +1312,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoSetId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1362,7 +1362,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoRead implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1412,7 +1412,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoReadList implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String idList;
@@ -1462,7 +1462,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoIdArray implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long token;
@@ -1515,7 +1515,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoIdArrayChanged implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long token;
@@ -1565,7 +1565,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoChannelsMax implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1613,7 +1613,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoProtocolInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;

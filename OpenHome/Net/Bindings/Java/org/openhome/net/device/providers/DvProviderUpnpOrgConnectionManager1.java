@@ -464,7 +464,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
 
     private class DoGetProtocolInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String source;
@@ -517,7 +517,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
 
     private class DoPrepareForConnection implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String remoteProtocolInfo;
@@ -581,7 +581,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
 
     private class DoConnectionComplete implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int connectionID;
@@ -629,7 +629,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
 
     private class DoGetCurrentConnectionIDs implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String connectionIDs;
@@ -677,7 +677,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
 
     private class DoGetCurrentConnectionInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int connectionID;

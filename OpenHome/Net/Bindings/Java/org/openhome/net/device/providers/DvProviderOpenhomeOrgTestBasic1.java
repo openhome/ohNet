@@ -844,7 +844,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoIncrement implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -894,7 +894,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoDecrement implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -944,7 +944,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoToggle implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -994,7 +994,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoEchoString implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1044,7 +1044,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoEchoBinary implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             byte[] value;
@@ -1094,7 +1094,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetUint implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long valueUint;
@@ -1142,7 +1142,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetUint implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long valueUint;
@@ -1190,7 +1190,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetInt implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int valueInt;
@@ -1238,7 +1238,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetInt implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int valueInt;
@@ -1286,7 +1286,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetBool implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean valueBool;
@@ -1334,7 +1334,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetBool implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean valueBool;
@@ -1382,7 +1382,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetMultiple implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long valueUint;
@@ -1434,7 +1434,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetString implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String valueStr;
@@ -1482,7 +1482,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetString implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String valueStr;
@@ -1530,7 +1530,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetBinary implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             byte[] valueBin;
@@ -1578,7 +1578,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetBinary implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             byte[] valueBin;
@@ -1626,7 +1626,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoToggleBool implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
@@ -1672,7 +1672,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoWriteFile implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String data;
@@ -1722,7 +1722,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoShutdown implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try

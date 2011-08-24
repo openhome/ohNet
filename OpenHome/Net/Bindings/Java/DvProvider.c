@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-static void STDCALL CallbackDvInvocation(void* aPtr, DvInvocationC aInvocation, uint32_t aVersion)
+static void STDCALL CallbackDvInvocation(void* aPtr, DvInvocationC aInvocation)
 {
 	JniObjRef *ref = (JniObjRef*) aPtr;
 	jint ret;
@@ -34,12 +34,12 @@ static void STDCALL CallbackDvInvocation(void* aPtr, DvInvocationC aInvocation, 
         }
     }
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
-	mid = (*env)->GetMethodID(env, cls, "actionInvoked", "(JI)V");
+	mid = (*env)->GetMethodID(env, cls, "actionInvoked", "(J)V");
 	if (mid == 0) {
 		printf("Method ID actionInvoked() not found.\n");
 		return;
 	}
-	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aInvocation, aVersion);
+	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aInvocation);
 	if (attached < 0)
     {
         (*(ref->vm))->DetachCurrentThread(ref->vm);

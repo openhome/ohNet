@@ -1007,7 +1007,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoMetadata implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String metadata;
@@ -1055,7 +1055,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoImagesXml implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String imagesXml;
@@ -1103,7 +1103,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistReadArray implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1153,7 +1153,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistReadList implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String idList;
@@ -1203,7 +1203,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistRead implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1261,7 +1261,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistSetName implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1311,7 +1311,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistSetDescription implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1361,7 +1361,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistSetImageId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1411,7 +1411,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistInsert implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long afterId;
@@ -1467,7 +1467,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistDeleteId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1515,7 +1515,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistMove implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1565,7 +1565,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistsMax implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1613,7 +1613,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoTracksMax implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1661,7 +1661,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistArrays implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long token;
@@ -1717,7 +1717,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoPlaylistArraysChanged implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long token;
@@ -1767,7 +1767,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoRead implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1819,7 +1819,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoReadList implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1871,7 +1871,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoInsert implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1927,7 +1927,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoDeleteId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1977,7 +1977,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
 
     private class DoDeleteAll implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
