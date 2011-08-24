@@ -80,36 +80,36 @@ void DvProviderOpenhomeOrgTestLights1::EnableActionGetColorComponents()
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetCount(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestLights1::DoGetCount(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respCount(aInvocation, "Count");
-    GetCount(invocation, aVersion, respCount);
+    GetCount(invocation, respCount);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetRoom(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestLights1::DoGetRoom(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respRoomName(aInvocation, "RoomName");
-    GetRoom(invocation, aVersion, Index, respRoomName);
+    GetRoom(invocation, Index, respRoomName);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetName(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestLights1::DoGetName(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respFriendlyName(aInvocation, "FriendlyName");
-    GetName(invocation, aVersion, Index, respFriendlyName);
+    GetName(invocation, Index, respFriendlyName);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetPosition(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestLights1::DoGetPosition(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -118,30 +118,30 @@ void DvProviderOpenhomeOrgTestLights1::DoGetPosition(IDviInvocation& aInvocation
     DviInvocationResponseUint respX(aInvocation, "X");
     DviInvocationResponseUint respY(aInvocation, "Y");
     DviInvocationResponseUint respZ(aInvocation, "Z");
-    GetPosition(invocation, aVersion, Index, respX, respY, respZ);
+    GetPosition(invocation, Index, respX, respY, respZ);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoSetColor(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestLights1::DoSetColor(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     TUint Color = aInvocation.InvocationReadUint("Color");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetColor(invocation, aVersion, Index, Color);
+    SetColor(invocation, Index, Color);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetColor(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestLights1::DoGetColor(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respColor(aInvocation, "Color");
-    GetColor(invocation, aVersion, Index, respColor);
+    GetColor(invocation, Index, respColor);
 }
 
-void DvProviderOpenhomeOrgTestLights1::DoGetColorComponents(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestLights1::DoGetColorComponents(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Color = aInvocation.InvocationReadUint("Color");
@@ -151,40 +151,40 @@ void DvProviderOpenhomeOrgTestLights1::DoGetColorComponents(IDviInvocation& aInv
     DviInvocationResponseUint respRed(aInvocation, "Red");
     DviInvocationResponseUint respGreen(aInvocation, "Green");
     DviInvocationResponseUint respBlue(aInvocation, "Blue");
-    GetColorComponents(invocation, aVersion, Color, respBrightness, respRed, respGreen, respBlue);
+    GetColorComponents(invocation, Color, respBrightness, respRed, respGreen, respBlue);
 }
 
-void DvProviderOpenhomeOrgTestLights1::GetCount(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aCount*/)
+void DvProviderOpenhomeOrgTestLights1::GetCount(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aCount*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1::GetRoom(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aIndex*/, IDvInvocationResponseString& /*aRoomName*/)
+void DvProviderOpenhomeOrgTestLights1::GetRoom(IDvInvocation& /*aResponse*/, TUint /*aIndex*/, IDvInvocationResponseString& /*aRoomName*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1::GetName(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aIndex*/, IDvInvocationResponseString& /*aFriendlyName*/)
+void DvProviderOpenhomeOrgTestLights1::GetName(IDvInvocation& /*aResponse*/, TUint /*aIndex*/, IDvInvocationResponseString& /*aFriendlyName*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1::GetPosition(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aIndex*/, IDvInvocationResponseUint& /*aX*/, IDvInvocationResponseUint& /*aY*/, IDvInvocationResponseUint& /*aZ*/)
+void DvProviderOpenhomeOrgTestLights1::GetPosition(IDvInvocation& /*aResponse*/, TUint /*aIndex*/, IDvInvocationResponseUint& /*aX*/, IDvInvocationResponseUint& /*aY*/, IDvInvocationResponseUint& /*aZ*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1::SetColor(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aIndex*/, TUint /*aColor*/)
+void DvProviderOpenhomeOrgTestLights1::SetColor(IDvInvocation& /*aResponse*/, TUint /*aIndex*/, TUint /*aColor*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1::GetColor(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aIndex*/, IDvInvocationResponseUint& /*aColor*/)
+void DvProviderOpenhomeOrgTestLights1::GetColor(IDvInvocation& /*aResponse*/, TUint /*aIndex*/, IDvInvocationResponseUint& /*aColor*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1::GetColorComponents(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aColor*/, IDvInvocationResponseUint& /*aBrightness*/, IDvInvocationResponseUint& /*aRed*/, IDvInvocationResponseUint& /*aGreen*/, IDvInvocationResponseUint& /*aBlue*/)
+void DvProviderOpenhomeOrgTestLights1::GetColorComponents(IDvInvocation& /*aResponse*/, TUint /*aColor*/, IDvInvocationResponseUint& /*aBrightness*/, IDvInvocationResponseUint& /*aRed*/, IDvInvocationResponseUint& /*aGreen*/, IDvInvocationResponseUint& /*aBlue*/)
 {
     ASSERTS();
 }

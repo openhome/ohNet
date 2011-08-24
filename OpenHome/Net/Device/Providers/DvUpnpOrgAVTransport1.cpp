@@ -236,7 +236,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionGetCurrentTransportActions()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoSetAVTransportURI(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoSetAVTransportURI(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -246,10 +246,10 @@ void DvProviderUpnpOrgAVTransport1::DoSetAVTransportURI(IDviInvocation& aInvocat
     aInvocation.InvocationReadString("CurrentURIMetaData", CurrentURIMetaData);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetAVTransportURI(invocation, aVersion, InstanceID, CurrentURI, CurrentURIMetaData);
+    SetAVTransportURI(invocation, InstanceID, CurrentURI, CurrentURIMetaData);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoSetNextAVTransportURI(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoSetNextAVTransportURI(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -259,10 +259,10 @@ void DvProviderUpnpOrgAVTransport1::DoSetNextAVTransportURI(IDviInvocation& aInv
     aInvocation.InvocationReadString("NextURIMetaData", NextURIMetaData);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetNextAVTransportURI(invocation, aVersion, InstanceID, NextURI, NextURIMetaData);
+    SetNextAVTransportURI(invocation, InstanceID, NextURI, NextURIMetaData);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoGetMediaInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoGetMediaInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -277,10 +277,10 @@ void DvProviderUpnpOrgAVTransport1::DoGetMediaInfo(IDviInvocation& aInvocation, 
     DviInvocationResponseString respPlayMedium(aInvocation, "PlayMedium");
     DviInvocationResponseString respRecordMedium(aInvocation, "RecordMedium");
     DviInvocationResponseString respWriteStatus(aInvocation, "WriteStatus");
-    GetMediaInfo(invocation, aVersion, InstanceID, respNrTracks, respMediaDuration, respCurrentURI, respCurrentURIMetaData, respNextURI, respNextURIMetaData, respPlayMedium, respRecordMedium, respWriteStatus);
+    GetMediaInfo(invocation, InstanceID, respNrTracks, respMediaDuration, respCurrentURI, respCurrentURIMetaData, respNextURI, respNextURIMetaData, respPlayMedium, respRecordMedium, respWriteStatus);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoGetTransportInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoGetTransportInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -289,10 +289,10 @@ void DvProviderUpnpOrgAVTransport1::DoGetTransportInfo(IDviInvocation& aInvocati
     DviInvocationResponseString respCurrentTransportState(aInvocation, "CurrentTransportState");
     DviInvocationResponseString respCurrentTransportStatus(aInvocation, "CurrentTransportStatus");
     DviInvocationResponseString respCurrentSpeed(aInvocation, "CurrentSpeed");
-    GetTransportInfo(invocation, aVersion, InstanceID, respCurrentTransportState, respCurrentTransportStatus, respCurrentSpeed);
+    GetTransportInfo(invocation, InstanceID, respCurrentTransportState, respCurrentTransportStatus, respCurrentSpeed);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoGetPositionInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoGetPositionInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -306,10 +306,10 @@ void DvProviderUpnpOrgAVTransport1::DoGetPositionInfo(IDviInvocation& aInvocatio
     DviInvocationResponseString respAbsTime(aInvocation, "AbsTime");
     DviInvocationResponseInt respRelCount(aInvocation, "RelCount");
     DviInvocationResponseInt respAbsCount(aInvocation, "AbsCount");
-    GetPositionInfo(invocation, aVersion, InstanceID, respTrack, respTrackDuration, respTrackMetaData, respTrackURI, respRelTime, respAbsTime, respRelCount, respAbsCount);
+    GetPositionInfo(invocation, InstanceID, respTrack, respTrackDuration, respTrackMetaData, respTrackURI, respRelTime, respAbsTime, respRelCount, respAbsCount);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoGetDeviceCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoGetDeviceCapabilities(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -318,10 +318,10 @@ void DvProviderUpnpOrgAVTransport1::DoGetDeviceCapabilities(IDviInvocation& aInv
     DviInvocationResponseString respPlayMedia(aInvocation, "PlayMedia");
     DviInvocationResponseString respRecMedia(aInvocation, "RecMedia");
     DviInvocationResponseString respRecQualityModes(aInvocation, "RecQualityModes");
-    GetDeviceCapabilities(invocation, aVersion, InstanceID, respPlayMedia, respRecMedia, respRecQualityModes);
+    GetDeviceCapabilities(invocation, InstanceID, respPlayMedia, respRecMedia, respRecQualityModes);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoGetTransportSettings(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoGetTransportSettings(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -329,19 +329,19 @@ void DvProviderUpnpOrgAVTransport1::DoGetTransportSettings(IDviInvocation& aInvo
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respPlayMode(aInvocation, "PlayMode");
     DviInvocationResponseString respRecQualityMode(aInvocation, "RecQualityMode");
-    GetTransportSettings(invocation, aVersion, InstanceID, respPlayMode, respRecQualityMode);
+    GetTransportSettings(invocation, InstanceID, respPlayMode, respRecQualityMode);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoStop(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Stop(invocation, aVersion, InstanceID);
+    Stop(invocation, InstanceID);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -349,28 +349,28 @@ void DvProviderUpnpOrgAVTransport1::DoPlay(IDviInvocation& aInvocation, TUint aV
     aInvocation.InvocationReadString("Speed", Speed);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Play(invocation, aVersion, InstanceID, Speed);
+    Play(invocation, InstanceID, Speed);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoPause(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoPause(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Pause(invocation, aVersion, InstanceID);
+    Pause(invocation, InstanceID);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoRecord(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoRecord(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Record(invocation, aVersion, InstanceID);
+    Record(invocation, InstanceID);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoSeek(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoSeek(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -380,28 +380,28 @@ void DvProviderUpnpOrgAVTransport1::DoSeek(IDviInvocation& aInvocation, TUint aV
     aInvocation.InvocationReadString("Target", Target);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Seek(invocation, aVersion, InstanceID, Unit, Target);
+    Seek(invocation, InstanceID, Unit, Target);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoNext(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoNext(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Next(invocation, aVersion, InstanceID);
+    Next(invocation, InstanceID);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoPrevious(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoPrevious(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Previous(invocation, aVersion, InstanceID);
+    Previous(invocation, InstanceID);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoSetPlayMode(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoSetPlayMode(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -409,10 +409,10 @@ void DvProviderUpnpOrgAVTransport1::DoSetPlayMode(IDviInvocation& aInvocation, T
     aInvocation.InvocationReadString("NewPlayMode", NewPlayMode);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetPlayMode(invocation, aVersion, InstanceID, NewPlayMode);
+    SetPlayMode(invocation, InstanceID, NewPlayMode);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoSetRecordQualityMode(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoSetRecordQualityMode(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -420,100 +420,100 @@ void DvProviderUpnpOrgAVTransport1::DoSetRecordQualityMode(IDviInvocation& aInvo
     aInvocation.InvocationReadString("NewRecordQualityMode", NewRecordQualityMode);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetRecordQualityMode(invocation, aVersion, InstanceID, NewRecordQualityMode);
+    SetRecordQualityMode(invocation, InstanceID, NewRecordQualityMode);
 }
 
-void DvProviderUpnpOrgAVTransport1::DoGetCurrentTransportActions(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgAVTransport1::DoGetCurrentTransportActions(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respActions(aInvocation, "Actions");
-    GetCurrentTransportActions(invocation, aVersion, InstanceID, respActions);
+    GetCurrentTransportActions(invocation, InstanceID, respActions);
 }
 
-void DvProviderUpnpOrgAVTransport1::SetAVTransportURI(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aCurrentURI*/, const Brx& /*aCurrentURIMetaData*/)
+void DvProviderUpnpOrgAVTransport1::SetAVTransportURI(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aCurrentURI*/, const Brx& /*aCurrentURIMetaData*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::SetNextAVTransportURI(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aNextURI*/, const Brx& /*aNextURIMetaData*/)
+void DvProviderUpnpOrgAVTransport1::SetNextAVTransportURI(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aNextURI*/, const Brx& /*aNextURIMetaData*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::GetMediaInfo(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aNrTracks*/, IDvInvocationResponseString& /*aMediaDuration*/, IDvInvocationResponseString& /*aCurrentURI*/, IDvInvocationResponseString& /*aCurrentURIMetaData*/, IDvInvocationResponseString& /*aNextURI*/, IDvInvocationResponseString& /*aNextURIMetaData*/, IDvInvocationResponseString& /*aPlayMedium*/, IDvInvocationResponseString& /*aRecordMedium*/, IDvInvocationResponseString& /*aWriteStatus*/)
+void DvProviderUpnpOrgAVTransport1::GetMediaInfo(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aNrTracks*/, IDvInvocationResponseString& /*aMediaDuration*/, IDvInvocationResponseString& /*aCurrentURI*/, IDvInvocationResponseString& /*aCurrentURIMetaData*/, IDvInvocationResponseString& /*aNextURI*/, IDvInvocationResponseString& /*aNextURIMetaData*/, IDvInvocationResponseString& /*aPlayMedium*/, IDvInvocationResponseString& /*aRecordMedium*/, IDvInvocationResponseString& /*aWriteStatus*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::GetTransportInfo(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aCurrentTransportState*/, IDvInvocationResponseString& /*aCurrentTransportStatus*/, IDvInvocationResponseString& /*aCurrentSpeed*/)
+void DvProviderUpnpOrgAVTransport1::GetTransportInfo(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aCurrentTransportState*/, IDvInvocationResponseString& /*aCurrentTransportStatus*/, IDvInvocationResponseString& /*aCurrentSpeed*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::GetPositionInfo(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aTrack*/, IDvInvocationResponseString& /*aTrackDuration*/, IDvInvocationResponseString& /*aTrackMetaData*/, IDvInvocationResponseString& /*aTrackURI*/, IDvInvocationResponseString& /*aRelTime*/, IDvInvocationResponseString& /*aAbsTime*/, IDvInvocationResponseInt& /*aRelCount*/, IDvInvocationResponseInt& /*aAbsCount*/)
+void DvProviderUpnpOrgAVTransport1::GetPositionInfo(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aTrack*/, IDvInvocationResponseString& /*aTrackDuration*/, IDvInvocationResponseString& /*aTrackMetaData*/, IDvInvocationResponseString& /*aTrackURI*/, IDvInvocationResponseString& /*aRelTime*/, IDvInvocationResponseString& /*aAbsTime*/, IDvInvocationResponseInt& /*aRelCount*/, IDvInvocationResponseInt& /*aAbsCount*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::GetDeviceCapabilities(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aPlayMedia*/, IDvInvocationResponseString& /*aRecMedia*/, IDvInvocationResponseString& /*aRecQualityModes*/)
+void DvProviderUpnpOrgAVTransport1::GetDeviceCapabilities(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aPlayMedia*/, IDvInvocationResponseString& /*aRecMedia*/, IDvInvocationResponseString& /*aRecQualityModes*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::GetTransportSettings(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aPlayMode*/, IDvInvocationResponseString& /*aRecQualityMode*/)
+void DvProviderUpnpOrgAVTransport1::GetTransportSettings(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aPlayMode*/, IDvInvocationResponseString& /*aRecQualityMode*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::Stop(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport1::Stop(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::Play(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aSpeed*/)
+void DvProviderUpnpOrgAVTransport1::Play(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aSpeed*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::Pause(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport1::Pause(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::Record(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport1::Record(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::Seek(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aUnit*/, const Brx& /*aTarget*/)
+void DvProviderUpnpOrgAVTransport1::Seek(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aUnit*/, const Brx& /*aTarget*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::Next(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport1::Next(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::Previous(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/)
+void DvProviderUpnpOrgAVTransport1::Previous(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::SetPlayMode(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aNewPlayMode*/)
+void DvProviderUpnpOrgAVTransport1::SetPlayMode(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aNewPlayMode*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::SetRecordQualityMode(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aNewRecordQualityMode*/)
+void DvProviderUpnpOrgAVTransport1::SetRecordQualityMode(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aNewRecordQualityMode*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgAVTransport1::GetCurrentTransportActions(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aActions*/)
+void DvProviderUpnpOrgAVTransport1::GetCurrentTransportActions(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aActions*/)
 {
     ASSERTS();
 }

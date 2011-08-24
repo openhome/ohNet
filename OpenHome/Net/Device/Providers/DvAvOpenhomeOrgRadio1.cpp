@@ -238,59 +238,59 @@ void DvProviderAvOpenhomeOrgRadio1::EnableActionProtocolInfo()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoPlay(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Play(invocation, aVersion);
+    Play(invocation);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoPause(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoPause(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Pause(invocation, aVersion);
+    Pause(invocation);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoStop(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoStop(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    Stop(invocation, aVersion);
+    Stop(invocation);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SeekSecondAbsolute(invocation, aVersion, Value);
+    SeekSecondAbsolute(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SeekSecondRelative(invocation, aVersion, Value);
+    SeekSecondRelative(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoChannel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoChannel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respUri(aInvocation, "Uri");
     DviInvocationResponseString respMetadata(aInvocation, "Metadata");
-    Channel(invocation, aVersion, respUri, respMetadata);
+    Channel(invocation, respUri, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoSetChannel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoSetChannel(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz Uri;
@@ -299,28 +299,28 @@ void DvProviderAvOpenhomeOrgRadio1::DoSetChannel(IDviInvocation& aInvocation, TU
     aInvocation.InvocationReadString("Metadata", Metadata);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetChannel(invocation, aVersion, Uri, Metadata);
+    SetChannel(invocation, Uri, Metadata);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoTransportState(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoTransportState(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respValue(aInvocation, "Value");
-    TransportState(invocation, aVersion, respValue);
+    TransportState(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoId(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    Id(invocation, aVersion, respValue);
+    Id(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoSetId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoSetId(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
@@ -328,20 +328,20 @@ void DvProviderAvOpenhomeOrgRadio1::DoSetId(IDviInvocation& aInvocation, TUint a
     aInvocation.InvocationReadString("Uri", Uri);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetId(invocation, aVersion, Value, Uri);
+    SetId(invocation, Value, Uri);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoRead(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoRead(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respMetadata(aInvocation, "Metadata");
-    Read(invocation, aVersion, Id, respMetadata);
+    Read(invocation, Id, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoReadList(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz IdList;
@@ -349,123 +349,123 @@ void DvProviderAvOpenhomeOrgRadio1::DoReadList(IDviInvocation& aInvocation, TUin
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respChannelList(aInvocation, "ChannelList");
-    ReadList(invocation, aVersion, IdList, respChannelList);
+    ReadList(invocation, IdList, respChannelList);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoIdArray(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoIdArray(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respToken(aInvocation, "Token");
     DviInvocationResponseBinary respArray(aInvocation, "Array");
-    IdArray(invocation, aVersion, respToken, respArray);
+    IdArray(invocation, respToken, respArray);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoIdArrayChanged(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Token = aInvocation.InvocationReadUint("Token");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseBool respValue(aInvocation, "Value");
-    IdArrayChanged(invocation, aVersion, Token, respValue);
+    IdArrayChanged(invocation, Token, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoChannelsMax(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoChannelsMax(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    ChannelsMax(invocation, aVersion, respValue);
+    ChannelsMax(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1::DoProtocolInfo(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respValue(aInvocation, "Value");
-    ProtocolInfo(invocation, aVersion, respValue);
+    ProtocolInfo(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgRadio1::Play(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::Play(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::Pause(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::Pause(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::Stop(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgRadio1::Stop(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::SeekSecondAbsolute(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/)
+void DvProviderAvOpenhomeOrgRadio1::SeekSecondAbsolute(IDvInvocation& /*aResponse*/, TUint /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::SeekSecondRelative(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TInt /*aValue*/)
+void DvProviderAvOpenhomeOrgRadio1::SeekSecondRelative(IDvInvocation& /*aResponse*/, TInt /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::Channel(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aUri*/, IDvInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgRadio1::Channel(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aUri*/, IDvInvocationResponseString& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::SetChannel(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aUri*/, const Brx& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgRadio1::SetChannel(IDvInvocation& /*aResponse*/, const Brx& /*aUri*/, const Brx& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::TransportState(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgRadio1::TransportState(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::Id(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgRadio1::Id(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::SetId(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/, const Brx& /*aUri*/)
+void DvProviderAvOpenhomeOrgRadio1::SetId(IDvInvocation& /*aResponse*/, TUint /*aValue*/, const Brx& /*aUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::Read(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, IDvInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgRadio1::Read(IDvInvocation& /*aResponse*/, TUint /*aId*/, IDvInvocationResponseString& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::ReadList(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aIdList*/, IDvInvocationResponseString& /*aChannelList*/)
+void DvProviderAvOpenhomeOrgRadio1::ReadList(IDvInvocation& /*aResponse*/, const Brx& /*aIdList*/, IDvInvocationResponseString& /*aChannelList*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::IdArray(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aToken*/, IDvInvocationResponseBinary& /*aArray*/)
+void DvProviderAvOpenhomeOrgRadio1::IdArray(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aToken*/, IDvInvocationResponseBinary& /*aArray*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::IdArrayChanged(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aToken*/, IDvInvocationResponseBool& /*aValue*/)
+void DvProviderAvOpenhomeOrgRadio1::IdArrayChanged(IDvInvocation& /*aResponse*/, TUint /*aToken*/, IDvInvocationResponseBool& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::ChannelsMax(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgRadio1::ChannelsMax(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgRadio1::ProtocolInfo(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgRadio1::ProtocolInfo(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }

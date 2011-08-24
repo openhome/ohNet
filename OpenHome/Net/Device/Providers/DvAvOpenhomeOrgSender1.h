@@ -119,7 +119,7 @@ private:
      * PresentationUrl action for the owning device.
      * Must be implemented iff EnableActionPresentationUrl was called.
      */
-    virtual void PresentationUrl(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void PresentationUrl(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
     /**
      * Metadata action.
      *
@@ -127,7 +127,7 @@ private:
      * Metadata action for the owning device.
      * Must be implemented iff EnableActionMetadata was called.
      */
-    virtual void Metadata(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void Metadata(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
     /**
      * Audio action.
      *
@@ -135,7 +135,7 @@ private:
      * Audio action for the owning device.
      * Must be implemented iff EnableActionAudio was called.
      */
-    virtual void Audio(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseBool& aValue);
+    virtual void Audio(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue);
     /**
      * Status action.
      *
@@ -143,7 +143,7 @@ private:
      * Status action for the owning device.
      * Must be implemented iff EnableActionStatus was called.
      */
-    virtual void Status(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void Status(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
     /**
      * Attributes action.
      *
@@ -151,7 +151,7 @@ private:
      * Attributes action for the owning device.
      * Must be implemented iff EnableActionAttributes was called.
      */
-    virtual void Attributes(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void Attributes(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgSender1();
     void DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion);

@@ -171,7 +171,7 @@ private:
      * GetSearchCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetSearchCapabilities was called.
      */
-    virtual void GetSearchCapabilities(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aSearchCaps);
+    virtual void GetSearchCapabilities(IDvInvocation& aInvocation, IDvInvocationResponseString& aSearchCaps);
     /**
      * GetSortCapabilities action.
      *
@@ -179,7 +179,7 @@ private:
      * GetSortCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetSortCapabilities was called.
      */
-    virtual void GetSortCapabilities(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aSortCaps);
+    virtual void GetSortCapabilities(IDvInvocation& aInvocation, IDvInvocationResponseString& aSortCaps);
     /**
      * GetSortExtensionCapabilities action.
      *
@@ -187,7 +187,7 @@ private:
      * GetSortExtensionCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetSortExtensionCapabilities was called.
      */
-    virtual void GetSortExtensionCapabilities(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aSortExtensionCaps);
+    virtual void GetSortExtensionCapabilities(IDvInvocation& aInvocation, IDvInvocationResponseString& aSortExtensionCaps);
     /**
      * GetFeatureList action.
      *
@@ -195,7 +195,7 @@ private:
      * GetFeatureList action for the owning device.
      * Must be implemented iff EnableActionGetFeatureList was called.
      */
-    virtual void GetFeatureList(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aFeatureList);
+    virtual void GetFeatureList(IDvInvocation& aInvocation, IDvInvocationResponseString& aFeatureList);
     /**
      * GetSystemUpdateID action.
      *
@@ -203,7 +203,7 @@ private:
      * GetSystemUpdateID action for the owning device.
      * Must be implemented iff EnableActionGetSystemUpdateID was called.
      */
-    virtual void GetSystemUpdateID(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aId);
+    virtual void GetSystemUpdateID(IDvInvocation& aInvocation, IDvInvocationResponseUint& aId);
     /**
      * Browse action.
      *
@@ -211,7 +211,7 @@ private:
      * Browse action for the owning device.
      * Must be implemented iff EnableActionBrowse was called.
      */
-    virtual void Browse(IDvInvocation& aResponse, TUint aVersion, const Brx& aObjectID, const Brx& aBrowseFlag, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aNumberReturned, IDvInvocationResponseUint& aTotalMatches, IDvInvocationResponseUint& aUpdateID);
+    virtual void Browse(IDvInvocation& aInvocation, const Brx& aObjectID, const Brx& aBrowseFlag, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aNumberReturned, IDvInvocationResponseUint& aTotalMatches, IDvInvocationResponseUint& aUpdateID);
     /**
      * Search action.
      *
@@ -219,7 +219,7 @@ private:
      * Search action for the owning device.
      * Must be implemented iff EnableActionSearch was called.
      */
-    virtual void Search(IDvInvocation& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aSearchCriteria, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aNumberReturned, IDvInvocationResponseUint& aTotalMatches, IDvInvocationResponseUint& aUpdateID);
+    virtual void Search(IDvInvocation& aInvocation, const Brx& aContainerID, const Brx& aSearchCriteria, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aNumberReturned, IDvInvocationResponseUint& aTotalMatches, IDvInvocationResponseUint& aUpdateID);
     /**
      * CreateObject action.
      *
@@ -227,7 +227,7 @@ private:
      * CreateObject action for the owning device.
      * Must be implemented iff EnableActionCreateObject was called.
      */
-    virtual void CreateObject(IDvInvocation& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aElements, IDvInvocationResponseString& aObjectID, IDvInvocationResponseString& aResult);
+    virtual void CreateObject(IDvInvocation& aInvocation, const Brx& aContainerID, const Brx& aElements, IDvInvocationResponseString& aObjectID, IDvInvocationResponseString& aResult);
     /**
      * DestroyObject action.
      *
@@ -235,7 +235,7 @@ private:
      * DestroyObject action for the owning device.
      * Must be implemented iff EnableActionDestroyObject was called.
      */
-    virtual void DestroyObject(IDvInvocation& aResponse, TUint aVersion, const Brx& aObjectID);
+    virtual void DestroyObject(IDvInvocation& aInvocation, const Brx& aObjectID);
     /**
      * UpdateObject action.
      *
@@ -243,7 +243,7 @@ private:
      * UpdateObject action for the owning device.
      * Must be implemented iff EnableActionUpdateObject was called.
      */
-    virtual void UpdateObject(IDvInvocation& aResponse, TUint aVersion, const Brx& aObjectID, const Brx& aCurrentTagValue, const Brx& aNewTagValue);
+    virtual void UpdateObject(IDvInvocation& aInvocation, const Brx& aObjectID, const Brx& aCurrentTagValue, const Brx& aNewTagValue);
     /**
      * MoveObject action.
      *
@@ -251,7 +251,7 @@ private:
      * MoveObject action for the owning device.
      * Must be implemented iff EnableActionMoveObject was called.
      */
-    virtual void MoveObject(IDvInvocation& aResponse, TUint aVersion, const Brx& aObjectID, const Brx& aNewParentID, IDvInvocationResponseString& aNewObjectID);
+    virtual void MoveObject(IDvInvocation& aInvocation, const Brx& aObjectID, const Brx& aNewParentID, IDvInvocationResponseString& aNewObjectID);
     /**
      * ImportResource action.
      *
@@ -259,7 +259,7 @@ private:
      * ImportResource action for the owning device.
      * Must be implemented iff EnableActionImportResource was called.
      */
-    virtual void ImportResource(IDvInvocation& aResponse, TUint aVersion, const Brx& aSourceURI, const Brx& aDestinationURI, IDvInvocationResponseUint& aTransferID);
+    virtual void ImportResource(IDvInvocation& aInvocation, const Brx& aSourceURI, const Brx& aDestinationURI, IDvInvocationResponseUint& aTransferID);
     /**
      * ExportResource action.
      *
@@ -267,7 +267,7 @@ private:
      * ExportResource action for the owning device.
      * Must be implemented iff EnableActionExportResource was called.
      */
-    virtual void ExportResource(IDvInvocation& aResponse, TUint aVersion, const Brx& aSourceURI, const Brx& aDestinationURI, IDvInvocationResponseUint& aTransferID);
+    virtual void ExportResource(IDvInvocation& aInvocation, const Brx& aSourceURI, const Brx& aDestinationURI, IDvInvocationResponseUint& aTransferID);
     /**
      * DeleteResource action.
      *
@@ -275,7 +275,7 @@ private:
      * DeleteResource action for the owning device.
      * Must be implemented iff EnableActionDeleteResource was called.
      */
-    virtual void DeleteResource(IDvInvocation& aResponse, TUint aVersion, const Brx& aResourceURI);
+    virtual void DeleteResource(IDvInvocation& aInvocation, const Brx& aResourceURI);
     /**
      * StopTransferResource action.
      *
@@ -283,7 +283,7 @@ private:
      * StopTransferResource action for the owning device.
      * Must be implemented iff EnableActionStopTransferResource was called.
      */
-    virtual void StopTransferResource(IDvInvocation& aResponse, TUint aVersion, TUint aTransferID);
+    virtual void StopTransferResource(IDvInvocation& aInvocation, TUint aTransferID);
     /**
      * GetTransferProgress action.
      *
@@ -291,7 +291,7 @@ private:
      * GetTransferProgress action for the owning device.
      * Must be implemented iff EnableActionGetTransferProgress was called.
      */
-    virtual void GetTransferProgress(IDvInvocation& aResponse, TUint aVersion, TUint aTransferID, IDvInvocationResponseString& aTransferStatus, IDvInvocationResponseString& aTransferLength, IDvInvocationResponseString& aTransferTotal);
+    virtual void GetTransferProgress(IDvInvocation& aInvocation, TUint aTransferID, IDvInvocationResponseString& aTransferStatus, IDvInvocationResponseString& aTransferLength, IDvInvocationResponseString& aTransferTotal);
     /**
      * CreateReference action.
      *
@@ -299,7 +299,7 @@ private:
      * CreateReference action for the owning device.
      * Must be implemented iff EnableActionCreateReference was called.
      */
-    virtual void CreateReference(IDvInvocation& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aObjectID, IDvInvocationResponseString& aNewID);
+    virtual void CreateReference(IDvInvocation& aInvocation, const Brx& aContainerID, const Brx& aObjectID, IDvInvocationResponseString& aNewID);
 private:
     DvProviderUpnpOrgContentDirectory2();
     void DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint aVersion);

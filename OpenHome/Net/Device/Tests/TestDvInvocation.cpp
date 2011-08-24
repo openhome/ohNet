@@ -22,11 +22,11 @@ class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 public:
     ProviderTestBasic(DvDevice& aDevice);
 private:
-    void Increment(IDvInvocation& aInvocation, TUint aVersion, TUint aValue, IDvInvocationResponseUint& aResult);
-    void Decrement(IDvInvocation& aInvocation, TUint aVersion, TInt aValue, IDvInvocationResponseInt& aResult);
-    void Toggle(IDvInvocation& aInvocation, TUint aVersion, TBool aValue, IDvInvocationResponseBool& aResult);
-    void EchoString(IDvInvocation& aInvocation, TUint aVersion, const Brx& aValue, IDvInvocationResponseString& aResult);
-    void EchoBinary(IDvInvocation& aInvocation, TUint aVersion, const Brx& aValue, IDvInvocationResponseBinary& aResult);
+    void Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
+    void Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult);
+    void Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult);
+    void EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
+    void EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult);
 };
 
 class DeviceBasic
@@ -57,28 +57,29 @@ ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     EnableActionEchoBinary();
 }
 
-void ProviderTestBasic::Increment(IDvInvocation& aInvocation, TUint /*aVersion*/, TUint aValue, IDvInvocationResponseUint& aResult)
+void ProviderTestBasic::Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult)
 {
+    ASSERT(aInvocation.Version() == 1);
     aInvocation.StartResponse();
     aResult.Write(++aValue);
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::Decrement(IDvInvocation& aInvocation, TUint /*aVersion*/, TInt aValue, IDvInvocationResponseInt& aResult)
+void ProviderTestBasic::Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(--aValue);
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::Toggle(IDvInvocation& aInvocation, TUint /*aVersion*/, TBool aValue, IDvInvocationResponseBool& aResult)
+void ProviderTestBasic::Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(!aValue);
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, TUint /*aVersion*/, const Brx& aValue, IDvInvocationResponseString& aResult)
+void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(aValue);
@@ -86,7 +87,7 @@ void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, TUint /*aVersion*
     aInvocation.EndResponse();
 }
 
-void ProviderTestBasic::EchoBinary(IDvInvocation& aInvocation, TUint /*aVersion*/, const Brx& aValue, IDvInvocationResponseBinary& aResult)
+void ProviderTestBasic::EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(aValue);

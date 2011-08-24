@@ -272,7 +272,7 @@ void DvProviderAvOpenhomeOrgVolume1::EnableActionVolumeLimit()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoCharacteristics(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoCharacteristics(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -283,214 +283,214 @@ void DvProviderAvOpenhomeOrgVolume1::DoCharacteristics(IDviInvocation& aInvocati
     DviInvocationResponseUint respVolumeMilliDbPerStep(aInvocation, "VolumeMilliDbPerStep");
     DviInvocationResponseUint respBalanceMax(aInvocation, "BalanceMax");
     DviInvocationResponseUint respFadeMax(aInvocation, "FadeMax");
-    Characteristics(invocation, aVersion, respVolumeMax, respVolumeUnity, respVolumeSteps, respVolumeMilliDbPerStep, respBalanceMax, respFadeMax);
+    Characteristics(invocation, respVolumeMax, respVolumeUnity, respVolumeSteps, respVolumeMilliDbPerStep, respBalanceMax, respFadeMax);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoSetVolume(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoSetVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetVolume(invocation, aVersion, Value);
+    SetVolume(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoVolumeInc(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoVolumeInc(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    VolumeInc(invocation, aVersion);
+    VolumeInc(invocation);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoVolumeDec(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoVolumeDec(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    VolumeDec(invocation, aVersion);
+    VolumeDec(invocation);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoVolume(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoVolume(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    Volume(invocation, aVersion, respValue);
+    Volume(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoSetBalance(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoSetBalance(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetBalance(invocation, aVersion, Value);
+    SetBalance(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoBalanceInc(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoBalanceInc(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    BalanceInc(invocation, aVersion);
+    BalanceInc(invocation);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoBalanceDec(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoBalanceDec(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    BalanceDec(invocation, aVersion);
+    BalanceDec(invocation);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoBalance(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoBalance(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseInt respValue(aInvocation, "Value");
-    Balance(invocation, aVersion, respValue);
+    Balance(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoSetFade(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoSetFade(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetFade(invocation, aVersion, Value);
+    SetFade(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoFadeInc(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoFadeInc(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    FadeInc(invocation, aVersion);
+    FadeInc(invocation);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoFadeDec(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoFadeDec(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    FadeDec(invocation, aVersion);
+    FadeDec(invocation);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoFade(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoFade(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseInt respValue(aInvocation, "Value");
-    Fade(invocation, aVersion, respValue);
+    Fade(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoSetMute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoSetMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     TBool Value = aInvocation.InvocationReadBool("Value");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    SetMute(invocation, aVersion, Value);
+    SetMute(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoMute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoMute(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseBool respValue(aInvocation, "Value");
-    Mute(invocation, aVersion, respValue);
+    Mute(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::DoVolumeLimit(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgVolume1::DoVolumeLimit(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    VolumeLimit(invocation, aVersion, respValue);
+    VolumeLimit(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgVolume1::Characteristics(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aVolumeMax*/, IDvInvocationResponseUint& /*aVolumeUnity*/, IDvInvocationResponseUint& /*aVolumeSteps*/, IDvInvocationResponseUint& /*aVolumeMilliDbPerStep*/, IDvInvocationResponseUint& /*aBalanceMax*/, IDvInvocationResponseUint& /*aFadeMax*/)
+void DvProviderAvOpenhomeOrgVolume1::Characteristics(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aVolumeMax*/, IDvInvocationResponseUint& /*aVolumeUnity*/, IDvInvocationResponseUint& /*aVolumeSteps*/, IDvInvocationResponseUint& /*aVolumeMilliDbPerStep*/, IDvInvocationResponseUint& /*aBalanceMax*/, IDvInvocationResponseUint& /*aFadeMax*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::SetVolume(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::SetVolume(IDvInvocation& /*aResponse*/, TUint /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::VolumeInc(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1::VolumeInc(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::VolumeDec(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1::VolumeDec(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::Volume(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::Volume(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::SetBalance(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TInt /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::SetBalance(IDvInvocation& /*aResponse*/, TInt /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::BalanceInc(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1::BalanceInc(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::BalanceDec(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1::BalanceDec(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::Balance(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseInt& /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::Balance(IDvInvocation& /*aResponse*/, IDvInvocationResponseInt& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::SetFade(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TInt /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::SetFade(IDvInvocation& /*aResponse*/, TInt /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::FadeInc(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1::FadeInc(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::FadeDec(IDvInvocation& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderAvOpenhomeOrgVolume1::FadeDec(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::Fade(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseInt& /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::Fade(IDvInvocation& /*aResponse*/, IDvInvocationResponseInt& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::SetMute(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TBool /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::SetMute(IDvInvocation& /*aResponse*/, TBool /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::Mute(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseBool& /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::Mute(IDvInvocation& /*aResponse*/, IDvInvocationResponseBool& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgVolume1::VolumeLimit(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgVolume1::VolumeLimit(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }

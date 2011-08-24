@@ -154,7 +154,7 @@ void <#=className#>::EnableAction<#=a.name#>()
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
+void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
 <#      foreach (Argument i in a.inargs) #>
@@ -175,13 +175,13 @@ void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 <#      { #>
     <#=invRespType[o.variable.type]#> resp<#=o.name#>(aInvocation, "<#=o.name#>");
 <#      } #>
-    <#=a.name#>(invocation, aVersion<#=ActionArgNames(a)#>);
+    <#=a.name#>(invocation<#=ActionArgNames(a)#>);
 }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::<#=a.name#>(IDvInvocation& /*aResponse*/, TUint /*aVersion*/<#=ActionArgTypesAndNames(a)#>)
+void <#=className#>::<#=a.name#>(IDvInvocation& /*aResponse*/<#=ActionArgTypesAndNames(a)#>)
 {
     ASSERTS();
 }
