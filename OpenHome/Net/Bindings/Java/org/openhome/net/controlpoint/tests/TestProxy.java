@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import org.openhome.net.controlpoint.CpAttribute;
 import org.openhome.net.controlpoint.CpDevice;
 import org.openhome.net.controlpoint.CpDeviceListUpnpServiceType;
 import org.openhome.net.controlpoint.ICpDeviceListListener;
@@ -274,14 +275,12 @@ public class TestProxy implements ICpDeviceListListener, ICpProxyListener, IProp
 	
 	private static void printDeviceInfo(String aPrologue, CpDevice aDevice)
 	{
-		String[] location = new String[1];
-        aDevice.getAttribute("Upnp.Location", location);
-        String[] friendlyName = new String[1];
-        aDevice.getAttribute("Upnp.FriendlyName", friendlyName);
+        CpAttribute location = aDevice.getAttribute("Upnp.Location");
+        CpAttribute friendlyName = aDevice.getAttribute("Upnp.FriendlyName");
         System.out.println(aPrologue +
                       "\n    udn = " + aDevice.getUdn() + 
-                      "\n    location = " + location[0] +
-                      "\n    name = " + friendlyName[0]);
+                      "\n    location = " + location.getValue() +
+                      "\n    name = " + friendlyName.getValue());
 	}
 	
 	public static void main(String[] args)

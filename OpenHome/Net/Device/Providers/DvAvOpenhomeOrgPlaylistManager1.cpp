@@ -226,6 +226,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionRead()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
+    action->AddOutputParameter(new ParameterString("Udn"));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoRead);
     iService->AddAction(action, functor);
@@ -247,7 +248,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionInsert()
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("AfterTrackId"));
     action->AddInputParameter(new ParameterString("Udn"));
-    action->AddInputParameter(new ParameterString("MetadataId"));
+    action->AddInputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     action->AddOutputParameter(new ParameterUint("NewTrackId"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoInsert);
     iService->AddAction(action, functor);
@@ -433,8 +434,9 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::DoRead(IDviInvocation& aInvocation
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respUdn(aInvocation, "Udn");
     DviInvocationResponseString respMetadata(aInvocation, "Metadata");
-    Read(invocation, Id, TrackId, respMetadata);
+    Read(invocation, Id, TrackId, respUdn, respMetadata);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::DoReadList(IDviInvocation& aInvocation)
@@ -456,12 +458,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::DoInsert(IDviInvocation& aInvocati
     TUint AfterTrackId = aInvocation.InvocationReadUint("AfterTrackId");
     Brhz Udn;
     aInvocation.InvocationReadString("Udn", Udn);
-    Brhz MetadataId;
-    aInvocation.InvocationReadString("MetadataId", MetadataId);
+    Brhz Metadata;
+    aInvocation.InvocationReadString("Metadata", Metadata);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respNewTrackId(aInvocation, "NewTrackId");
-    Insert(invocation, Id, AfterTrackId, Udn, MetadataId, respNewTrackId);
+    Insert(invocation, Id, AfterTrackId, Udn, Metadata, respNewTrackId);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteId(IDviInvocation& aInvocation)
@@ -558,7 +560,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistArraysChanged(IDvInvocatio
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::Read(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aTrackId*/, IDvInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::Read(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aTrackId*/, IDvInvocationResponseString& /*aUdn*/, IDvInvocationResponseString& /*aMetadata*/)
 {
     ASSERTS();
 }
@@ -568,7 +570,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::ReadList(IDvInvocation& /*aRespons
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::Insert(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aAfterTrackId*/, const Brx& /*aUdn*/, const Brx& /*aMetadataId*/, IDvInvocationResponseUint& /*aNewTrackId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::Insert(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aAfterTrackId*/, const Brx& /*aUdn*/, const Brx& /*aMetadata*/, IDvInvocationResponseUint& /*aNewTrackId*/)
 {
     ASSERTS();
 }

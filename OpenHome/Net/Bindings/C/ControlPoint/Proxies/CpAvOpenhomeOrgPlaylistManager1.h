@@ -582,9 +582,10 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistArraysC
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aId
  * @param[in]  aTrackId
+ * @param[out] aUdn
  * @param[out] aMetadata
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, char** aMetadata);
+DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, char** aUdn, char** aMetadata);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -605,12 +606,13 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginRead(THandle aHa
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ * @param[out] aUdn
  * @param[out] aMetadata
  *
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndRead(THandle aHandle, OhNetHandleAsync aAsync, char** aMetadata);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndRead(THandle aHandle, OhNetHandleAsync aAsync, char** aUdn, char** aMetadata);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -657,10 +659,10 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndReadList(THandl
  * @param[in]  aId
  * @param[in]  aAfterTrackId
  * @param[in]  aUdn
- * @param[in]  aMetadataId
+ * @param[in]  aMetadata
  * @param[out] aNewTrackId
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aUdn, const char* aMetadataId, uint32_t* aNewTrackId);
+DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aUdn, const char* aMetadata, uint32_t* aNewTrackId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -671,12 +673,12 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncInsert(THandle aH
  * @param[in]  aId
  * @param[in]  aAfterTrackId
  * @param[in]  aUdn
- * @param[in]  aMetadataId
+ * @param[in]  aMetadata
  * @param[in]  aCallback Callback to run when the action completes.
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aUdn, const char* aMetadataId, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aUdn, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.

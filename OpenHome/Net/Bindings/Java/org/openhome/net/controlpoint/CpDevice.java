@@ -16,13 +16,14 @@ public class CpDevice
     private static native String CpDeviceCUdn(long aDevice);
     private static native void CpDeviceCAddRef(long aDevice);
     private static native void CpDeviceCRemoveRef(long aDevice);
-    private static native int CpDeviceCGetAttribute(long aDevice, String aKey, String[] aValue);
+    private static native CpAttribute CpDeviceCGetAttribute(long aDevice, String aKey);
     
     static
     {
         System.loadLibrary("ohNet");
         System.loadLibrary("ohNetJni");
     }
+
     
     /**
      * Constructor. Not intended for external use.
@@ -83,15 +84,9 @@ public class CpDevice
      * 
      * @param aKey		the name of the attribute being queried. Available
      * 					attributes will be listed in a protocol-specific header.
-     * @param aValue	empty String array of size 1.
-     * 					First and only element will be replaced with attribute matching key.
-     * @return			<tt>true</tt> if the attribute was available on the device;
-     * 					<tt>false</tt> otherwise. <tt>aValue</tt> will not have been set if
-     * 					false is returned
+     * @return			<tt>CpAttribute</tt> object.
      */
-    public boolean getAttribute(String aKey, String[] aValue) {
-    	int result = CpDeviceCGetAttribute(iHandle, aKey, aValue);
-    	
-    	return (result != 0);
+    public CpAttribute getAttribute(String aKey) {
+    	return CpDeviceCGetAttribute(iHandle, aKey);
     }
 }
