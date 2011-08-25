@@ -473,9 +473,10 @@ public:
      *
      * @param[in]  aId
      * @param[in]  aTrackId
+     * @param[out] aUdn
      * @param[out] aMetadata
      */
-    void SyncRead(uint32_t aId, uint32_t aTrackId, std::string& aMetadata);
+    void SyncRead(uint32_t aId, uint32_t aTrackId, std::string& aUdn, std::string& aMetadata);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
@@ -493,9 +494,10 @@ public:
      * This may only be called from the callback set in the above Begin function.
      *
      * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aUdn
      * @param[out] aMetadata
      */
-    void EndRead(IAsync& aAsync, std::string& aMetadata);
+    void EndRead(IAsync& aAsync, std::string& aUdn, std::string& aMetadata);
 
     /**
      * Invoke the action synchronously.  Blocks until the action has been processed
@@ -534,10 +536,10 @@ public:
      * @param[in]  aId
      * @param[in]  aAfterTrackId
      * @param[in]  aUdn
-     * @param[in]  aMetadataId
+     * @param[in]  aMetadata
      * @param[out] aNewTrackId
      */
-    void SyncInsert(uint32_t aId, uint32_t aAfterTrackId, const std::string& aUdn, const std::string& aMetadataId, uint32_t& aNewTrackId);
+    void SyncInsert(uint32_t aId, uint32_t aAfterTrackId, const std::string& aUdn, const std::string& aMetadata, uint32_t& aNewTrackId);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
@@ -547,11 +549,11 @@ public:
      * @param[in] aId
      * @param[in] aAfterTrackId
      * @param[in] aUdn
-     * @param[in] aMetadataId
+     * @param[in] aMetadata
      * @param[in] aFunctor   Callback to run when the action completes.
      *                       This is guaranteed to be run but may indicate an error
      */
-    void BeginInsert(uint32_t aId, uint32_t aAfterTrackId, const std::string& aUdn, const std::string& aMetadataId, FunctorAsync& aFunctor);
+    void BeginInsert(uint32_t aId, uint32_t aAfterTrackId, const std::string& aUdn, const std::string& aMetadata, FunctorAsync& aFunctor);
     /**
      * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the above Begin function.

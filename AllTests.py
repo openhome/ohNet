@@ -40,6 +40,8 @@ def runBuilds():
             cleanCmd = 'make clean'
         os.system(cleanCmd)
     build('all')
+    if (gRunJavaTests == 1):
+        build('ohNetJavaAll')
     print '\nBuilds complete'
 
 def runTests():
@@ -60,6 +62,27 @@ def runTests():
         if ret != 0:
             print '\nTest ' + test.name + ' failed, aborting'
             sys.exit(1)
+    if (gRunJavaTests == 1):
+        testsToRun = list(gJavaTests)
+        if gFullTests != 1:
+            # Suppress non-quick tests
+            testsToRun = [test for test in testsToRun if test.quick]
+        for test in testsToRun:
+            print '\nTest: ' + test.name
+            cmdLine = []
+            if os.name == 'nt':
+                cmdLine.append(os.path.join(os.environ['JAVA_HOME'], 'bin', 'java'))
+            else:
+                cmdLine.append('java')
+            cmdLine.append('-Djava.library.path=' + objPath())
+            cmdLine.append('-classpath')
+            cmdLine.append(os.path.join(objPath(), 'ohnet.jar '))
+            cmdLine.append('-enableassertions')
+            cmdLine.append(test.name)
+            ret = subprocess.call(cmdLine)
+            if ret != 0:
+                print '\nTest ' + test.name + ' failed, aborting'
+                sys.exit(1)
 
 def runTestsValgrind():
     # clear any old output files
@@ -132,6 +155,7 @@ gSilent = 0
 gTestsOnly = 0
 gValgrind = 0
 gHelgrind = 0
+gRunJavaTests = 0
 gJsTests = 0
 gReleaseBuild = 0
 for arg in sys.argv[1:]:
@@ -145,7 +169,9 @@ for arg in sys.argv[1:]:
         gNativeTestsOnly = 1
     elif arg == '-s' or arg == '--silent':
         gSilent = 1
-    elif arg == '-j' or arg == '--js':
+    elif arg == '--java':
+        gRunJavaTests = 1
+    elif arg == '--js':
         gJsTests = 1
     elif arg == '-t' or arg == '--testsonly':
         gTestsOnly = 1
@@ -213,6 +239,10 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestDvDeviceCs', [], True, False)
              ,TestCase('TestCpDeviceDvCs', [], True, False)
             ]
+gJavaTests = [ TestCase('org.openhome.net.controlpoint.tests.TestProxy', [], False, False)
+              ,TestCase('org.openhome.net.controlpoint.tests.TestCpDeviceDv', [], True, False)
+              ,TestCase('org.openhome.net.device.tests.TestDvDevice', [], True, False)
+               ]
 
 class js_test():
 
