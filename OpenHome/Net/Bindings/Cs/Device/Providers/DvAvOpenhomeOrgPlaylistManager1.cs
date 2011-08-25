@@ -870,20 +870,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.Metadata(invocation, out metadata);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Metadata"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Metadata"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -917,20 +917,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.ImagesXml(invocation, out imagesXml);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "ImagesXml"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "ImagesXml"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -966,20 +966,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistReadArray(invocation, id, out array);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistReadArray"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistReadArray"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1015,20 +1015,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistReadList(invocation, idList, out playlistList);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistReadList"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistReadList"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1066,20 +1066,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistRead(invocation, id, out name, out description, out imageId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistRead"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistRead"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1118,20 +1118,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistSetName(invocation, id, name);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistSetName"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistSetName"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1167,20 +1167,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistSetDescription(invocation, id, description);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistSetDescription"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistSetDescription"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1216,20 +1216,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistSetImageId(invocation, id, imageId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistSetImageId"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistSetImageId"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1270,20 +1270,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistInsert(invocation, afterId, name, description, imageId, out newId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistInsert"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistInsert"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1318,20 +1318,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistDeleteId(invocation, value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistDeleteId"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistDeleteId"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1367,20 +1367,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistMove(invocation, id, afterId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistMove"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistMove"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1413,20 +1413,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistsMax(invocation, out value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistsMax"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistsMax"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1460,20 +1460,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.TracksMax(invocation, out value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "TracksMax"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "TracksMax"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1509,20 +1509,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistArrays(invocation, out token, out idArray, out tokenArray);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistArrays"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistArrays"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1560,20 +1560,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PlaylistArraysChanged(invocation, token, out value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistArraysChanged"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistArraysChanged"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1612,20 +1612,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.Read(invocation, id, trackId, out udn, out metadata);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Read"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Read"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1664,20 +1664,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.ReadList(invocation, id, trackIdList, out trackList);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "ReadList"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "ReadList"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1719,20 +1719,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.Insert(invocation, id, afterTrackId, udn, metadata, out newTrackId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Insert"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Insert"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1769,20 +1769,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.DeleteId(invocation, id, trackId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "DeleteId"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "DeleteId"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1816,20 +1816,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.DeleteAll(invocation, id);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "DeleteAll"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "DeleteAll"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try

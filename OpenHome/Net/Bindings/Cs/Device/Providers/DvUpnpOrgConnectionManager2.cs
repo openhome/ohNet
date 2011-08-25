@@ -328,20 +328,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.GetProtocolInfo(invocation, out source, out sink);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetProtocolInfo"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetProtocolInfo"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -386,20 +386,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.PrepareForConnection(invocation, remoteProtocolInfo, peerConnectionManager, peerConnectionID, direction, out connectionID, out aVTransportID, out rcsID);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PrepareForConnection"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PrepareForConnection"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -436,20 +436,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.ConnectionComplete(invocation, connectionID);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "ConnectionComplete"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "ConnectionComplete"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -482,20 +482,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.GetCurrentConnectionIDs(invocation, out connectionIDs);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetCurrentConnectionIDs"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetCurrentConnectionIDs"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -537,20 +537,20 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadEnd();
                 self.GetCurrentConnectionInfo(invocation, connectionID, out rcsID, out aVTransportID, out protocolInfo, out peerConnectionManager, out peerConnectionID, out direction, out status);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetCurrentConnectionInfo"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetCurrentConnectionInfo"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
