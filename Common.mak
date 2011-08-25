@@ -917,6 +917,7 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/controlpoint/ArgumentInt.class \
 			   $(objdir)org/openhome/net/controlpoint/ArgumentString.class \
 			   $(objdir)org/openhome/net/controlpoint/ArgumentUint.class \
+			   $(objdir)org/openhome/net/controlpoint/CpAttribute.class \
 			   $(objdir)org/openhome/net/controlpoint/CpDevice.class \
 			   $(objdir)org/openhome/net/controlpoint/CpDeviceDv.class \
 			   $(objdir)org/openhome/net/controlpoint/CpDeviceList.class \
@@ -1003,6 +1004,8 @@ $(objdir)org/openhome/net/controlpoint/ArgumentString.class : $(publicjavadir)or
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/ArgumentString.java
 $(objdir)org/openhome/net/controlpoint/ArgumentUint.class : $(publicjavadir)org/openhome/net/controlpoint/ArgumentUint.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/ArgumentUint.java
+$(objdir)org/openhome/net/controlpoint/CpAttribute.class : $(publicjavadir)org/openhome/net/controlpoint/CpAttribute.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/CpAttribute.java
 $(objdir)org/openhome/net/controlpoint/CpDevice.class : $(publicjavadir)org/openhome/net/controlpoint/CpDevice.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/CpDevice.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceDv.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceDv.java
