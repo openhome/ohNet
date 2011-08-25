@@ -55,14 +55,14 @@ interface ICpProxyAvOpenhomeOrgPlaylistManager1 extends ICpProxy
     public boolean syncPlaylistArraysChanged(long aToken);
     public void beginPlaylistArraysChanged(long aToken, ICpProxyListener aCallback);
     public boolean endPlaylistArraysChanged(long aAsyncHandle);
-    public String syncRead(long aId, long aTrackId);
+    public Read syncRead(long aId, long aTrackId);
     public void beginRead(long aId, long aTrackId, ICpProxyListener aCallback);
-    public String endRead(long aAsyncHandle);
+    public Read endRead(long aAsyncHandle);
     public String syncReadList(long aId, String aTrackIdList);
     public void beginReadList(long aId, String aTrackIdList, ICpProxyListener aCallback);
     public String endReadList(long aAsyncHandle);
-    public long syncInsert(long aId, long aAfterTrackId, String aUdn, String aMetadataId);
-    public void beginInsert(long aId, long aAfterTrackId, String aUdn, String aMetadataId, ICpProxyListener aCallback);
+    public long syncInsert(long aId, long aAfterTrackId, String aUdn, String aMetadata);
+    public void beginInsert(long aId, long aAfterTrackId, String aUdn, String aMetadata, ICpProxyListener aCallback);
     public long endInsert(long aAsyncHandle);
     public void syncDeleteId(long aId, long aTrackId);
     public void beginDeleteId(long aId, long aTrackId, ICpProxyListener aCallback);
@@ -396,11 +396,16 @@ class SyncPlaylistArraysChangedAvOpenhomeOrgPlaylistManager1 extends SyncProxyAc
 class SyncReadAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
 {
     private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
+    private String iUdn;
     private String iMetadata;
 
     public SyncReadAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
     {
         iService = aProxy;
+    }
+    public String getUdn()
+    {
+        return iUdn;
     }
     public String getMetadata()
     {
@@ -408,9 +413,10 @@ class SyncReadAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
     }
     protected void completeRequest(long aAsyncHandle)
     {
-        String result = iService.endRead(aAsyncHandle);
+        Read result = iService.endRead(aAsyncHandle);
 		
-        iMetadata = result;
+        iUdn = result.getUdn();
+        iMetadata = result.getMetadata();
     }
 }
 
@@ -549,6 +555,29 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         public byte[] getTokenArray()
         {
             return iTokenArray;
+        }
+    }
+
+    public class Read
+    {
+        private String iUdn;
+        private String iMetadata;
+
+        public Read(
+            String aUdn,
+            String aMetadata
+        )
+        {
+            iUdn = aUdn;
+            iMetadata = aMetadata;
+        }
+        public String getUdn()
+        {
+            return iUdn;
+        }
+        public String getMetadata()
+        {
+            return iMetadata;
         }
     }
 
@@ -696,6 +725,8 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 		iActionRead.addInputParameter(param);
         param = new ParameterUint("TrackId");
 		iActionRead.addInputParameter(param);
+        param = new ParameterString("Udn", allowedValues);
+		iActionRead.addOutputParameter(param);
         param = new ParameterString("Metadata", allowedValues);
 		iActionRead.addOutputParameter(param);
 
@@ -714,7 +745,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 		iActionInsert.addInputParameter(param);
         param = new ParameterString("Udn", allowedValues);
 		iActionInsert.addInputParameter(param);
-        param = new ParameterString("MetadataId", allowedValues);
+        param = new ParameterString("Metadata", allowedValues);
 		iActionInsert.addInputParameter(param);
         param = new ParameterUint("NewTrackId");
 		iActionInsert.addOutputParameter(param);
@@ -1659,7 +1690,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      *
      * @return the result of the invoked action.
      */
-	public String syncRead(long aId, long aTrackId)
+	public Read syncRead(long aId, long aTrackId)
 	{
 	    SyncReadAvOpenhomeOrgPlaylistManager1 sync = new SyncReadAvOpenhomeOrgPlaylistManager1(this);
 	    beginRead(aId, aTrackId, sync.getListener());
@@ -1671,7 +1702,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         }
         catch (ProxyError pe) { }
 
-        return sync.getMetadata();
+        return new Read(
+            sync.getUdn(),
+            sync.getMetadata()
+		);
 	}
 	
 	/**
@@ -1693,6 +1727,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         invocation.addInput(new ArgumentUint((ParameterUint)iActionRead.getInputParameter(inIndex++), aTrackId));
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionRead.getOutputParameter(outIndex++)));
+        invocation.addOutput(new ArgumentString((ParameterString)iActionRead.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
@@ -1705,15 +1740,19 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 *			{@link #beginRead} method.
      * @return the result of the previously invoked action.
      */
-	public String endRead(long aAsyncHandle)
+	public Read endRead(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
         int index = 0;
+        String udn = Invocation.getOutputString(aAsyncHandle, index++);
         String metadata = Invocation.getOutputString(aAsyncHandle, index++);
-        return metadata;
+        return new Read(
+            udn,
+            metadata
+		);
     }
 		
     /**
@@ -1787,10 +1826,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      *
      * @return the result of the invoked action.
      */
-	public long syncInsert(long aId, long aAfterTrackId, String aUdn, String aMetadataId)
+	public long syncInsert(long aId, long aAfterTrackId, String aUdn, String aMetadata)
 	{
 	    SyncInsertAvOpenhomeOrgPlaylistManager1 sync = new SyncInsertAvOpenhomeOrgPlaylistManager1(this);
-	    beginInsert(aId, aAfterTrackId, aUdn, aMetadataId, sync.getListener());
+	    beginInsert(aId, aAfterTrackId, aUdn, aMetadata, sync.getListener());
 	    sync.waitToComplete();
 
         try
@@ -1811,18 +1850,18 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * @param aId
 	 * @param aAfterTrackId
 	 * @param aUdn
-	 * @param aMetadataId
+	 * @param aMetadata
 	 * @param aCallback	listener to call back when action completes.
 	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
-	public void beginInsert(long aId, long aAfterTrackId, String aUdn, String aMetadataId, ICpProxyListener aCallback)
+	public void beginInsert(long aId, long aAfterTrackId, String aUdn, String aMetadata, ICpProxyListener aCallback)
 	{
         Invocation invocation = iService.getInvocation(iActionInsert, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionInsert.getInputParameter(inIndex++), aId));
         invocation.addInput(new ArgumentUint((ParameterUint)iActionInsert.getInputParameter(inIndex++), aAfterTrackId));
         invocation.addInput(new ArgumentString((ParameterString)iActionInsert.getInputParameter(inIndex++), aUdn));
-        invocation.addInput(new ArgumentString((ParameterString)iActionInsert.getInputParameter(inIndex++), aMetadataId));
+        invocation.addInput(new ArgumentString((ParameterString)iActionInsert.getInputParameter(inIndex++), aMetadata));
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionInsert.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
