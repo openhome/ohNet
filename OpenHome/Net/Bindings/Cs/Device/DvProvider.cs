@@ -567,6 +567,28 @@ namespace OpenHome.Net.Device
         {
             CheckError(DvInvocationWriteEnd(iHandle));
         }
+        public void ReportActionError(Exception aException, string aActionName)
+        {
+            String msg = aException.Message;
+            uint errNum = 1;
+            int index = msg.IndexOf(':');
+            if (index != -1)
+            {
+                try
+                {
+                    errNum = Convert.ToUInt32(msg.Substring(0, index));
+                    msg = msg.Substring(index + 1);
+                }
+                catch (FormatException) {}
+                catch (OverflowException) {}
+            }
+            errNum += 500;
+            if (msg.Length == 0)
+            {
+                msg = String.Format("Action {0} failed", aActionName);
+            }
+            ReportError(errNum, msg);
+        }
         private void CheckError(int aError)
         {
             if (aError != 0)
