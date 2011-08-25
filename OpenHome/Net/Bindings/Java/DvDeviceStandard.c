@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-void CallbackResourceManager(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
+void STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
 	                         OhNetCallbackWriteResourceBegin aWriteBegin,
                              OhNetCallbackWriteResource aWriteResource,
                              OhNetCallbackWriteResourceEnd aWriteEnd)
@@ -38,14 +38,16 @@ void CallbackResourceManager(void* aUserData, const char* aUriTail, TIpAddress a
 		}
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
-	mid = (*env)->GetMethodID(env, cls, "writeResource", "(Jjava/lang/StringIJJJJJ)V");
+	mid = (*env)->GetMethodID(env, cls, "writeResource", "(JLjava/lang/String;IJJJJJ)V");
 	if (mid == 0) {
 		printf("Method ID writeResource() not found.\n");
+		fflush(stdout);
 		return;
 	}
+
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid,
 			(jlong) (size_t)aUserData,
-			(*env)->NewStringUTF(env, aUriTail),
+			(jstring) (*env)->NewStringUTF(env, aUriTail),
 			(jint) aInterface,
 			(jlong) (size_t)aLanguageList,
 			(jlong) (size_t)aWriterData,
@@ -114,9 +116,8 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDevice
         return NULL;
 	}
 	
-	device = DvDeviceStandardCreate(udn, callback, &ref);
+	device = DvDeviceStandardCreate(udn, callback, ref);
 	devInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)(size_t)device, (jlong)(size_t)ref);
-	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aUdn, udn);
 	
 	return devInit;
@@ -125,21 +126,16 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDevice
 /*
  * Class:     org_openhome_net_device_DvDeviceStandard
  * Method:    DvDeviceDestroy
- * Signature: (JJJ)V
+ * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceDestroy
-  (JNIEnv *aEnv, jclass aClass, jlong aDevice, jlong aUserData, jlong aCallback)
+  (JNIEnv *aEnv, jclass aClass, jlong aDevice, jlong aCallback)
 {
-	void* userData = (void*) (size_t)aUserData;
 	JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
 	DvDeviceC device = (DvDeviceC) (size_t)aDevice;
 	aEnv = aEnv;
 	aClass = aClass;
 
-	if (userData != NULL)
-	{
-		free(userData);
-	}
 	if (ref != NULL)
 	{
 		(*aEnv)->DeleteGlobalRef(aEnv, ref->callbackObj);
@@ -156,11 +152,12 @@ JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceDes
 JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvResourceWriterLanguageCount
   (JNIEnv *aEnv, jclass aClass, jlong aLanguageList)
 {
-	THandle languageList = (THandle) (void*)&aLanguageList;
+	THandle languageList = (THandle) (void*)(size_t)aLanguageList;
+	uint32_t count = DvResourceWriterLanguageCount(languageList);
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jint) DvResourceWriterLanguageCount(languageList);
+	return (jint) count;
 }
 
 /*
@@ -171,7 +168,7 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvResourceW
 JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvResourceWriterLanguage
   (JNIEnv *aEnv, jclass aClass, jlong aLanguageList, jint aIndex)
 {
-	THandle languageList = (THandle) (void*)&aLanguageList;
+	THandle languageList = (THandle) (void*)(size_t)aLanguageList;
 	const char* language = DvResourceWriterLanguage(languageList, aIndex);
 	aEnv = aEnv;
 	aClass = aClass;
