@@ -27,6 +27,4 @@
   <xi:include href="Presentation.xml" xpointer="element(/1)" />
 
   <xi:include href="AppendixAohNetGen.xml" xpointer="element(/1)" />
-
-  <xi:include href="Glossary.xml" xpointer="element(/1)" />
 </book>
