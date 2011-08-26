@@ -173,6 +173,29 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
         }
     }
 
+    public class Read
+    {
+        private String iUdn;
+        private String iMetadata;
+
+        public Read(
+            String aUdn,
+            String aMetadata
+        )
+        {
+            iUdn = aUdn;
+            iMetadata = aMetadata;
+        }
+        public String getUdn()
+        {
+            return iUdn;
+        }
+        public String getMetadata()
+        {
+            return iMetadata;
+        }
+    }
+
     private IDvInvocationListener iDelegateMetadata;
     private IDvInvocationListener iDelegateImagesXml;
     private IDvInvocationListener iDelegatePlaylistReadArray;
@@ -589,9 +612,10 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      */		 
     protected void enableActionRead()
     {
-        Action action = new Action("Read");
+        Action action = new Action("Read");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("Id"));
         action.addInputParameter(new ParameterUint("TrackId"));
+        action.addOutputParameter(new ParameterString("Udn", allowedValues));
         action.addOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
         iDelegateRead = new DoRead();
         enableAction(action, iDelegateRead);
@@ -625,7 +649,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
         action.addInputParameter(new ParameterUint("Id"));
         action.addInputParameter(new ParameterUint("AfterTrackId"));
         action.addInputParameter(new ParameterString("Udn", allowedValues));
-        action.addInputParameter(new ParameterString("MetadataId", allowedValues));
+        action.addInputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
         action.addOutputParameter(new ParameterUint("NewTrackId"));
         iDelegateInsert = new DoInsert();
         enableAction(action, iDelegateInsert);
@@ -914,7 +938,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * @param aId
      * @param aTrackId
      */
-    protected String read(IDvInvocation aInvocation, long aId, long aTrackId)
+    protected Read read(IDvInvocation aInvocation, long aId, long aTrackId)
     {
         throw (new ActionDisabledError());
     }
@@ -948,9 +972,9 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * @param aId
      * @param aAfterTrackId
      * @param aUdn
-     * @param aMetadataId
+     * @param aMetadata
      */
-    protected long insert(IDvInvocation aInvocation, long aId, long aAfterTrackId, String aUdn, String aMetadataId)
+    protected long insert(IDvInvocation aInvocation, long aId, long aAfterTrackId, String aUdn, String aMetadata)
     {
         throw (new ActionDisabledError());
     }
@@ -1772,6 +1796,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
             long trackId;
+            String udn;
             String metadata;
             try
             {
@@ -1779,7 +1804,10 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 id = invocation.readUint("Id");
                 trackId = invocation.readUint("TrackId");
                 invocation.readEnd();
-                 metadata = read(invocation, id, trackId);
+
+            Read outArgs = read(invocation, id, trackId);
+            udn = outArgs.getUdn();
+            metadata = outArgs.getMetadata();
             }
             catch (ActionError ae)
             {
@@ -1801,6 +1829,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             try
             {
                 invocation.writeStart();
+                invocation.writeString("Udn", udn);
                 invocation.writeString("Metadata", metadata);
                 invocation.writeEnd();
             }
@@ -1877,7 +1906,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             long id;
             long afterTrackId;
             String udn;
-            String metadataId;
+            String metadata;
             long newTrackId;
             try
             {
@@ -1885,9 +1914,9 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 id = invocation.readUint("Id");
                 afterTrackId = invocation.readUint("AfterTrackId");
                 udn = invocation.readString("Udn");
-                metadataId = invocation.readString("MetadataId");
+                metadata = invocation.readString("Metadata");
                 invocation.readEnd();
-                 newTrackId = insert(invocation, id, afterTrackId, udn, metadataId);
+                 newTrackId = insert(invocation, id, afterTrackId, udn, metadata);
             }
             catch (ActionError ae)
             {
