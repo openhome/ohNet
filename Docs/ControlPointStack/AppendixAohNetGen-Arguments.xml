@@ -41,7 +41,7 @@
             <entry>The stack you are generating files for. Options are: l cp —
             Control Point stack. Use this option to generate a Proxy. l dv —
             Device stack. Use this option to generate a Provider. See the
-            <emphasis>OpenHome ohNet Device stack</emphasis> document for more
+            <emphasis>ohNet Device Stack</emphasis> document for more
             details about using Providers.</entry>
           </row>
 

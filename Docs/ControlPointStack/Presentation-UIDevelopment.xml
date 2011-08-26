@@ -8,7 +8,7 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>UI development</title>
 
-  <para>The primary goal of OpenHome is to get you developing your Control
+  <para>The primary goal of ohNet is to get you developing your Control
   Point application's user interface as quickly as possible.</para>
 
   <para>The ohNet code provides a library of instantly accessible APIs and a

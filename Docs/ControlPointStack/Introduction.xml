@@ -8,7 +8,7 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Introduction</title>
 
-  <para>This document is for developers using the OpenHome ohNet stack to
+  <para>This document is for developers using the ohNet stack to
   develop Control Point applications.</para>
 
   <para>ohNet is a full UPnP stack, the public APIs of which are protocol
