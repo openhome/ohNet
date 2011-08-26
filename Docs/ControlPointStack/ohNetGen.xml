@@ -14,8 +14,8 @@
   list of Proxies available you can create your own using the ohNetGen tool
   and the service XML files you need to describe the device's services.</para>
 
-  <xi:include href="AppendixAohNetGen-Prerequisites.xml"
+  <xi:include href="ohNetGen-Prerequisites.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="AppendixAohNetGen-Arguments.xml" xpointer="element(/1)" />
+  <xi:include href="ohNetGen-Arguments.xml" xpointer="element(/1)" />
 </appendix>
