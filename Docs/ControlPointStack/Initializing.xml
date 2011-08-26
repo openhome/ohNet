@@ -15,11 +15,18 @@
   <para>To initialize the Control Point stack, you must include the following
   three lines of code in your Control Point application:</para>
 
-  <programlisting>InitialisationParams* initParams = new InitialisationParams();
-// initParams defaults to useful values for all fields but you can optionally
-// change any values here.
-UpnpLibrary::Initialise(initParams);
-UpnpLibrary::StartCp();</programlisting>
+  <programlisting>
+  InitialisationParams* initParams = new InitialisationParams();
+  // initParams defaults to useful values for all fields but you
+  // can optionally change any values here.
+  UpnpLibrary::Initialise(initParams);
+  // real control points would read the target subnet from disk;
+  // we just choose one arbitrarily here
+  std::vector&lt;NetworkAdapter*&gt;* subnetList =
+                                  UpnpLibrary::CreateSubnetList();
+  TIpAddress subnet = (*subnetList)[0]->Subnet();
+  UpnpLibrary::DestroySubnetList(subnetList);
+  UpnpLibrary::StartCp(subnet);</programlisting>
 
   <para>See the ohNet API's listing of <code>UpnpLibrary</code> for more
   details on initializing the stack.</para>
