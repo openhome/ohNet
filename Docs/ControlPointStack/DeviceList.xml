@@ -19,12 +19,12 @@
   <code>added</code> and <code>removed</code>, which are used to manage the
   list of available devices.</para>
 
-  <xi:include href="ControlPointStack-DeviceList-WritingAddedCallback.xml"
+  <xi:include href="DeviceList-WritingAddedCallback.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-DeviceList-WritingRemovedCallback.xml"
+  <xi:include href="DeviceList-WritingRemovedCallback.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-DeviceList-CreatingDeviceList.xml"
+  <xi:include href="DeviceList-CreatingDeviceList.xml"
               xpointer="element(/1)" />
 </section>

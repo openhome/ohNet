@@ -13,15 +13,15 @@
   value changes on the remote device. Access to and updating the variables
   covers the Eventing section of the UPnP architecture.</para>
 
-  <xi:include href="ControlPointStack-Proxy-Properties-InitialValues.xml"
+  <xi:include href="Proxy-Properties-InitialValues.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-Proxy-Properties-EventAny.xml"
+  <xi:include href="Proxy-Properties-EventAny.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-Proxy-Properties-EventSpecific.xml"
+  <xi:include href="Proxy-Properties-EventSpecific.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-Proxy-Properties-Subscribing.xml"
+  <xi:include href="Proxy-Properties-Subscribing.xml"
               xpointer="element(/1)" />
 </section>

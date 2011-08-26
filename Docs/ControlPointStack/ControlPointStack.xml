@@ -24,11 +24,11 @@
   <para>Details on how you use the Control Point stack and the Device, Device
   List and Proxy classes are contained in the following sections.</para>
 
-  <xi:include href="ControlPointStack-Initializing.xml" xpointer="element(/1)" />
+  <xi:include href="Initializing.xml" xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-Closing.xml" xpointer="element(/1)" />
+  <xi:include href="Closing.xml" xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-DeviceList.xml" xpointer="element(/1)" />
+  <xi:include href="DeviceList.xml" xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-Proxy.xml" xpointer="element(/1)" />
+  <xi:include href="Proxy.xml" xpointer="element(/1)" />
 </chapter>

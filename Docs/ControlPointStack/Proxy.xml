@@ -40,9 +40,9 @@
   the remote devices and added them to your Device List. This does not have to
   happen immediately after you discover each remote device.</para>
 
-  <xi:include href="ControlPointStack-Proxy-Actions.xml"
+  <xi:include href="Proxy-Actions.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="ControlPointStack-Proxy-Properties.xml"
+  <xi:include href="Proxy-Properties.xml"
               xpointer="element(/1)" />
 </section>
