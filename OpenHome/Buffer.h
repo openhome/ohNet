@@ -39,11 +39,11 @@ class DllExportClass Brn : public Brx
 {
 public:
     inline explicit Brn();
-    inline explicit Brn(const Brx& aBrx);
-    inline Brn(const Brn& aBrn);
-    inline explicit Brn(const TByte* aPtr, TUint aBytes);
+    DllExport explicit Brn(const Brx& aBrx);
+    DllExport Brn(const Brn& aBrn);
+    DllExport explicit Brn(const TByte* aPtr, TUint aBytes);
     DllExport explicit Brn(const TChar* aPtr);
-    inline void Set(const Brx& aBrx);
+    DllExport void Set(const Brx& aBrx);
     inline void Set(const TByte* aPtr, TUint aBytes);
     void Set(const TChar* aPtr);
     virtual const TByte* Ptr() const;

@@ -37,24 +37,6 @@ inline OpenHome::Brn::Brn() : Brx(0), iPtr(0)
 {
 }
 
-inline OpenHome::Brn::Brn(const Brx& aBrx) : Brx(aBrx), iPtr(aBrx.Ptr())
-{
-}
-
-inline OpenHome::Brn::Brn(const Brn& aBrn) : Brx(aBrn), iPtr(aBrn.Ptr())
-{
-}
-
-inline OpenHome::Brn::Brn(const TByte* aPtr, TUint aBytes) : Brx(aBytes), iPtr(aPtr)
-{
-}
-
-inline void OpenHome::Brn::Set(const Brx& aBrx)
-{
-    iPtr = aBrx.Ptr();
-    iBytes = aBrx.Bytes();
-}
-
 inline void OpenHome::Brn::Set(const TByte* aPtr, TUint aBytes)
 {
     iPtr = aPtr;
