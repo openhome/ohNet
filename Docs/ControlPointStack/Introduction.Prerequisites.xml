@@ -15,6 +15,7 @@
   you are using a different service you must also have your service's XML
   description file. You will use this to generate your own code.</para>
 
-  <para>See ohNetGen on page 15 in the Appendix for more details of using your
+  <para>See ohNetGen on <xref linkend="ohNetGen.xml"
+  xrefstyle="select: Page" /> in the Appendix for more details of using your
   service XML to generate a Proxy.</para>
 </section>

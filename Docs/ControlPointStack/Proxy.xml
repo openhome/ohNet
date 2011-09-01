@@ -24,7 +24,7 @@
     library as pre-generated Proxies available for immediate use.</para>
 
     <para>If you need to generate your own Proxy you can use the tools
-    provided with ohNet. See ohNetGen on page 15 for more information on
+    provided with ohNet. See ohNetGen on <xref linkend="ohNetGen.xml" xrefstyle="select: Page" /> for more information on
     generating your own Proxy from a service XML.</para>
   </note>
 
@@ -40,9 +40,7 @@
   the remote devices and added them to your Device List. This does not have to
   happen immediately after you discover each remote device.</para>
 
-  <xi:include href="Proxy-Actions.xml"
-              xpointer="element(/1)" />
+  <xi:include href="Proxy.Actions.xml" xpointer="element(/1)" />
 
-  <xi:include href="Proxy-Properties.xml"
-              xpointer="element(/1)" />
+  <xi:include href="Proxy.Properties.xml" xpointer="element(/1)" />
 </section>

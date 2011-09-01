@@ -29,20 +29,21 @@
             <entry><userinput>--language</userinput></entry>
 
             <entry>The language you want the code to be output in. Options
-            are:cpp — C++ cppcore — OpenHome's own C++ variant, using custom
-            buffers. c — C cs — C# js — JavaScript Note that the js option is
-            used only for generating the proxies. You must specify -- stack=cp
-            to be able to use the js language option.</entry>
+            are: cpp — C++; cppcore — OpenHome's own C++ variant, using custom
+            buffers; c — C; cs — C#; js — JavaScript. Note that the js option
+            is used only for generating the proxies. You must specify
+            <userinput>--stack=cp</userinput> to be able to use the js
+            language option.</entry>
           </row>
 
           <row>
             <entry><userinput>--stack</userinput></entry>
 
-            <entry>The stack you are generating files for. Options are: l cp —
-            Control Point stack. Use this option to generate a Proxy. l dv —
+            <entry>The stack you are generating files for. Options are: cp —
+            Control Point stack. Use this option to generate a Proxy. dv —
             Device stack. Use this option to generate a Provider. See the
-            <emphasis>ohNet Device Stack</emphasis> document for more
-            details about using Providers.</entry>
+            <emphasis>ohNet Device Stack</emphasis> document for more details
+            about using Providers.</entry>
           </row>
 
           <row>

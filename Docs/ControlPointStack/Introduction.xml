@@ -28,9 +28,9 @@
   is demonstrated, which shows how the use of Proxies allows the stack to
   remain device and protocol independent.</para>
 
-  <xi:include href="Introduction-Prerequisites.xml" xpointer="element(/1)" />
+  <xi:include href="Introduction.Prerequisites.xml" xpointer="element(/1)" />
 
-  <xi:include href="Introduction-RelatedDocuments.xml" xpointer="element(/1)" />
+  <xi:include href="Introduction.RelatedDocuments.xml" xpointer="element(/1)" />
 
-  <xi:include href="Introduction-WhyChooseohNet.xml" xpointer="element(/1)" />
+  <xi:include href="Introduction.WhyChooseohNet.xml" xpointer="element(/1)" />
 </chapter>

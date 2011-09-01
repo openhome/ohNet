@@ -8,10 +8,11 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Writing the removed callback</title>
 
-  <para>When the CpDevice needs to be removed from the Device List (i.e. when
-  the remote device disappears from the network), you do so using the removed
-  callback. You should also remove the CpDevice from your own collection and
-  delete any Proxies created that are using it. For example:</para>
+  <para>When the <code>CpDevice</code> needs to be removed from the Device
+  List (i.e. when the remote device disappears from the network), you do so
+  using the removed callback. You should also remove the <code>CpDevice</code>
+  from your own collection and delete any Proxies created that are using it.
+  For example:</para>
 
   <programlisting>void CpDevices::Removed(CpDeviceCpp&amp; aDevice)
 {
