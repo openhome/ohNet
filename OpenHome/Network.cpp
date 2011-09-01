@@ -178,6 +178,7 @@ void Socket::Close()
     TInt err = OpenHome::Os::NetworkClose(iHandle);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Close H = %d, RETURN VALUE = %d\n", iHandle, err);
+        THROW(NetworkError);
     }
     iHandle = kHandleNull;
 }
