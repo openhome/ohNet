@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Provider</title>
+
+  <para>Devices offer at least one service, with each service defined by a
+  list of actions and a list of properties. Each action and property is
+  described in XML. The XML is used to generate code which a Device uses to
+  receive, interpret and execute messages sent from a range of different
+  Control Points.</para>
+
+  <para>The generated code is called a Provider. A Provider is a class which
+  encapsulates the service on the Device, turning the actions into functions
+  and properties into member variables. Each Provider presents the service as
+  an API that you can program to.</para>
+
+  <para>Providers are generated as base classes which you must sub-class. You
+  add your own code to for the specific implementation of your Device's
+  service.</para>
+
+  <note>
+    <para>A high percentage of code for Providers can be auto-generated from a
+    service XML file. If you need to generate your own Provider you can use
+    the tools supplied with ohNet. See ohNetGen on page 12 for more
+    information on generating your own Provider from a service XML.</para>
+
+    <para>Every AV service from both UPnP and OpenHome is included in the
+    ohNet library as pre-generated Providers available for immediate
+    use.</para>
+  </note>
+
+  <xi:include href="Provider-Actions.xml" xpointer="element(/1)" />
+
+  <xi:include href="Provider-Properties.xml" xpointer="element(/1)" />
+
+  <xi:include href="Provider-Creating.xml" xpointer="element(/1)" />
+</chapter>

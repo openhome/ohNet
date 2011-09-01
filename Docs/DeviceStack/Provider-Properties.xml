@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Properties</title>
+
+  <para>A service's properties are represented in code as member variables of
+  generated Provider classes. Each property generates two access functions, as
+  follows:</para>
+
+  <programlisting>GetProperty&lt;property_name&gt;(value_to_be_returned) </programlisting>
+
+  <programlisting>SetProperty&lt;property_name&gt;(&lt;new_value&gt;) </programlisting>
+
+  <para>A property's <code>GetProperty</code> function is used to respond to
+  Control Point requests for an update on the property's current value.</para>
+
+  <para>The <code>SetProperty</code> function is used to change a property's
+  value. This applies when the update comes via a request from a Control Point
+  and also when the update is local to the Device itself.</para>
+
+  <para>Calling a property's <code>SetProperty</code> function also
+  automatically updates any registered subscribers. You do not need to add any
+  extra code to enable this. However, updates can be temporarily suspended in
+  the event you want to ensure several properties are updated in sync (see
+  Updating related properties below for more details).</para>
+
+  <xi:include href="Provider-Properties-UpdatingRelated.xml"
+              xpointer="element(/1)" />
+</section>

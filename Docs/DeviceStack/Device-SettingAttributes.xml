@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Setting the Device's attributes</title>
+
+  <para>The method you use to create the Device is also the best place to set
+  its attributes. This keeps the Device's details separate from each Provider
+  the Device may end up using. For example:</para>
+
+  <programlisting>iDevice-&gt;SetAttribute("Upnp.Domain", "openhome.org"); 
+iDevice-&gt;SetAttribute("Upnp.Type", "Volume"); 
+iDevice-&gt;SetAttribute("Upnp.Version", "1"); 
+iDevice-&gt;SetAttribute("Upnp.FriendlyName", "onNet Volume Controller"); 
+iDevice-&gt;SetAttribute("Upnp.Manufacturer", "None"); 
+iDevice-&gt;SetAttribute("Upnp.ModelName", "ohNet Volume Controller");</programlisting>
+
+  <important>
+    <para>You must set the Device's attributes before you enable it (see
+    Enabling the Device below). You cannot set attributes while the Device is
+    enabled.</para>
+  </important>
+</section>

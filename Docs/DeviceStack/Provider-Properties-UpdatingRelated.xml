@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Updating related properties</title>
+
+  <para>Some services offer properties that are closely related to each other
+  and are updated at the same time. The Device Stack offers a way for you to
+  ensure that the Provider broadcasts the updated values of several different
+  properties at the same time.</para>
+
+  <para>Calling <code>PropertiesLock</code> ensures that the Provider will not
+  event changes to any of its properties. This means that several properties
+  can have their state changed without the change being immediately updated on
+  a Control Point. </para>
+
+  <para>Finally you can release the Provider and allow it publish the updates
+  to all changed properties in one message. Altogether, the code for this
+  looks like this:</para>
+
+  <programlisting>void ClockProvider::UpdateTime(uint aHour, uint aMinute, uint aSecond) 
+{ 
+    PropertiesLock(); 
+    PropertySetHour(aHour); 
+    PropertySetMinute(aMinute); 
+    PropertySetSecond(aSecond); 
+    PropertiesUnlock(); 
+}</programlisting>
+
+  <para>The Provider always remains fully aware of updates to all properties
+  while <code>PropertiesLock</code> is in effect. All properties that have
+  changed when PropertiesUnlock is called will have their new value evented
+  out to subscribers.</para>
+
+  <epigraph>
+    <para><emphasis role="bold">Duplicate updates</emphasis> The Device Stack
+    automatically and safely filters out events for properties whose value
+    hasn't actually changed when a related property's value has. A good
+    example of this is the clock sample code shown above. </para>
+
+    <para>The property called second will be updated very regularly with
+    values cycling through 0 to 59, and then repeating the pattern. Its value
+    will change each time. However, the minute property will only change once
+    during the 60 second cycle, and the hour property once every 3600
+    seconds.</para>
+
+    <para>The properties' unchanged state will not be evented out to avoid
+    sending duplicate values to subscribers even though the
+    <code>PropertySetHour</code> and <code>PropertySetMinute</code> functions
+    are called.</para>
+  </epigraph>
+
+  <epigraph>
+    <para><emphasis role="bold">Rapid updates</emphasis> If a Provider's
+    properties receive very rapid updates, the stack may not publish each of
+    those updates. The Device stack will always publish the most up-to-date
+    value of each property in a Provider, but may skip some of the values the
+    properties were assigned in the interim period (typically less than a
+    second).</para>
+
+    <para>This avoids flooding the network with traffic from a Provider whose
+    properties are updated very quickly.</para>
+  </epigraph>
+</section>
