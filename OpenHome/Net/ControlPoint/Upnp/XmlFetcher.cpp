@@ -151,7 +151,7 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
 
 void XmlFetch::Read(SocketTcpClient& aSocket)
 {
-    Srs<kRwBufferLength> readBuffer(aSocket);
+    Srd readBuffer(kRwBufferLength, aSocket);
     ReaderHttpResponse readerResponse(readBuffer);
     HttpHeaderContentLength headerContentLength;
     HttpHeaderTransferEncoding headerTransferEncoding;
