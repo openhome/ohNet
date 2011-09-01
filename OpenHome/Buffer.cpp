@@ -73,30 +73,8 @@ TBool Brx::BeginsWith(const Brx& aBrx) const
 
 // Brn
 
-Brn::Brn(const Brx& aBrx) : Brx(aBrx), iPtr(aBrx.Ptr())
-{
-    ASSERT(iPtr != NULL);
-}
-
-Brn::Brn(const Brn& aBrn) : Brx(aBrn), iPtr(aBrn.Ptr())
-{
-    ASSERT(iPtr != NULL);
-}
-
-Brn::Brn(const TByte* aPtr, TUint aBytes) : Brx(aBytes), iPtr(aPtr)
-{
-    ASSERT(iPtr != NULL);
-}
-
 Brn::Brn(const TChar* aPtr) : Brx(OhNetStrlen(aPtr)), iPtr((TByte*)aPtr)
 {
-}
-
-void Brn::Set(const Brx& aBrx)
-{
-    iPtr = aBrx.Ptr();
-    ASSERT(iPtr != NULL);
-    iBytes = aBrx.Bytes();
 }
 
 void Brn::Set(const TChar* aStr)
@@ -264,7 +242,6 @@ void Bwx::Replace(const TByte* aPtr, TUint aBytes)
     ASSERT(aBytes <= MaxBytes());
     const TByte* ptr = Ptr();
     ASSERT(ptr != NULL);
-    ASSERT(aPtr != NULL);
     memcpy(const_cast<TByte*>(ptr), aPtr, aBytes);
     iBytes = aBytes;
 }
