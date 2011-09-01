@@ -713,7 +713,12 @@ SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aE
 SocketUdpMulticast::~SocketUdpMulticast()
 {
     LOGF(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
-    OpenHome::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
+    try {
+        OpenHome::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
+    }
+    catch (NetworkError&) {
+        LOG2F(kNetwork, kError, "DropMembership failed H = %d\n", iHandle);
+    }
     LOGF(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
 }
 
