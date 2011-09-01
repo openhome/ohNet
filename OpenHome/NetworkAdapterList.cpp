@@ -298,6 +298,10 @@ void NetworkAdapterList::HandleInterfaceListChanged()
         }
     }
 
+    DestroySubnetList(iSubnets);
+    iSubnets = subnets;
+    iListLock.Signal();
+
     if (subnetsChanged) {
         RunCallbacks(iListenersSubnet);
     }
@@ -323,10 +327,6 @@ void NetworkAdapterList::HandleInterfaceListChanged()
             RunSubnetCallbacks(iListenersAdapterChanged, *adapterChanged[i]);
         }
     }
-
-    DestroySubnetList(iSubnets);
-    iSubnets = subnets;
-    iListLock.Signal();
 }
 
 void NetworkAdapterList::RunCallbacks(Map& aMap)

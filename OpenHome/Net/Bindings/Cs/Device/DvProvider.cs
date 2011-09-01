@@ -520,6 +520,10 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteString(String aName, String aValue)
         {
+            if (aValue == null)
+            {
+                aValue = "";
+            }
             IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             IntPtr value = Marshal.StringToHGlobalAnsi(aValue);
             int err = DvInvocationWriteStringStart(iHandle, name);
