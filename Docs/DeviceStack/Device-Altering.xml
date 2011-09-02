@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Altering the Device</title>
+
+  <para>You cannot add new Providers or change the attributes after a Device
+  has been enabled. However, you can temporarily disable the Device to make
+  required changes as required.</para>
+
+  <para>You can call <code>SetDisabled</code> on a Device at any time:</para>
+
+  <programlisting>iDevice-&gt;SetDisabled(aDisableCompleted); </programlisting>
+
+  <para>This function takes a callback as its only argument. The callback
+  confirms that all outstanding notifications of the device's disappearance,
+  over all protocols, are complete. You must wait for this callback to return
+  before you can begin altering the Device.</para>
+
+  <para>When the callback later runs the Device is no longer available and
+  cannot be detected. The Device and all of its services are removed from the
+  network.</para>
+
+  <para>You can now add more services by creating new Providers or alter the
+  Device's description by changing attributes. </para>
+
+  <para>When you have finished making your changes you can reenable the Device
+  as before:</para>
+
+  <programlisting>iDevice-&gt;SetEnabled();</programlisting>
+</section>

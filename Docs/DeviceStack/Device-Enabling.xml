@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Enabling the Device</title>
+
+  <para>You enable the Devices by calling <code>SetEnabled</code> on each
+  one:</para>
+
+  <programlisting>iDevice-&gt;SetEnabled();</programlisting>
+
+  <para>The Device stack broadcasts the required alive messages to allow your
+  Device to be discovered. Providers won't be advertised or discoverable until
+  after <code>SetEnabled</code> has been called. Providers can be used as soon
+  as the associated Device has been detected.</para>
+
+  <para>This is typically the last thing you do after you have created both
+  the Device and its Providers, and also only after you have set the Device's
+  attributes.</para>
+</section>

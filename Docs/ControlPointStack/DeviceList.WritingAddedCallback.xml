@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Writing the added callback</title>
+
+  <para>The added callback runs automatically when a new device is detected on
+  the network. The <code>removed</code> callback runs automatically when the
+  device disappears from the network.</para>
+
+  <para>The added callback passes a new <code>CpDevice</code> object to the
+  Device List for each new remote device it detects. Each
+  <code>CpDevice</code> object represents one discovered remote device.</para>
+
+  <para><code>CpDevice</code> objects are reference counted. Each
+  <code>CpDevice</code> object is valid during the added callback. As soon as
+  that function ends, the <code>CpDevice</code> is no longer guaranteed to
+  persist. You must add your own reference to the new <code>CpDevice</code> in
+  the body of the added callback to ensure it continues to have at least one
+  reference and can be used by your Control Point application.</para>
+
+  <para>The API reference for <code>CpDeviceList</code> does not include a way
+  to iterate through the list of discovered remote devices. You must implement
+  a way of adding a pointer to each <code>CpDevice</code> and iterating
+  through the list of all discovered <code>CpDevice</code> objects.</para>
+
+  <para>The easiest way to store a pointer to each <code>CpDevice</code> and
+  be able to iterate through them all is to add them to a new
+  collection.</para>
+
+  <para>This gives us an added function that looks like this:</para>
+
+  <programlisting>void CpDevices::Added(CpDeviceCpp&amp; aDevice) 
+{ 
+    // lock mutex which protects iVector 
+    iVector.push_back(&amp;aDevice); 
+    // unlock mutex which protects iVector 
+    aDevice.AddRef(); 
+}</programlisting>
+</section>

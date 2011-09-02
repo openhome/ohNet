@@ -122,6 +122,10 @@ const Brx& HeaderCallback::Uri() const
 
 void HeaderCallback::Log()
 {
+    if (!Received()) {
+        LOG(kDvEvent, "(null)");
+        return;
+    }
     Endpoint::EndpointBuf buf;
     iEndpoint.AppendEndpoint(buf);
     LOG(kDvEvent, buf);

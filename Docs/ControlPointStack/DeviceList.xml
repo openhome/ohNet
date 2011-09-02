@@ -11,7 +11,7 @@
   <para>A Device List is the object you use in your Control Point application
   to detect available remote devices for later use. The Device List is
   represented in code by the protocol-independent base class called
-  CpDeviceList.</para>
+  <code>CpDeviceList</code>.</para>
 
   <para>Each protocol uses a different mechanism to locate remote devices.
   However, the mechanism to add and remove remote devices to the Device List
@@ -19,12 +19,11 @@
   <code>added</code> and <code>removed</code>, which are used to manage the
   list of available devices.</para>
 
-  <xi:include href="DeviceList-WritingAddedCallback.xml"
+  <xi:include href="DeviceList.WritingAddedCallback.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="DeviceList-WritingRemovedCallback.xml"
+  <xi:include href="DeviceList.WritingRemovedCallback.xml"
               xpointer="element(/1)" />
 
-  <xi:include href="DeviceList-CreatingDeviceList.xml"
-              xpointer="element(/1)" />
+  <xi:include href="DeviceList.CreatingDeviceList.xml" xpointer="element(/1)" />
 </section>

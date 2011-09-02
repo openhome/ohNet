@@ -92,9 +92,9 @@ void DviServer::SubnetListChanged()
     else {
         std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
         const std::vector<NetworkAdapter*>& nifList = adapterList.List();
-        TUint i;
+        TInt i;
         // remove servers whose interface is no longer available
-        for (i=(TUint)iServers.size()-1; i>=0; i--) {
+        for (i=(TInt)iServers.size()-1; i>=0; i--) {
             DviServer::Server* server = iServers[i];
             if (FindInterface(server->Interface(), nifList) == -1) {
                 delete server;
@@ -102,7 +102,7 @@ void DviServer::SubnetListChanged()
             }
         }
         // add servers for new subnets
-        for (i=0; i<subnetList->size(); i++) {
+        for (i=0; i<(TInt)subnetList->size(); i++) {
             NetworkAdapter* subnet = (*subnetList)[i];
             if (FindServer(subnet->Subnet()) == -1) {
                 AddServer(*subnet);

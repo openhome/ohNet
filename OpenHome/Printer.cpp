@@ -75,9 +75,6 @@ TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
 TInt Log::Print(FunctorMsg& aOutput, const Brx& aMessage)
 {
     TUint remaining = aMessage.Bytes();
-    if (remaining == 0) {
-        return 0;
-    }
     TInt ret = 0;
     const TByte* ptr = aMessage.Ptr();
     while (remaining > 0) {

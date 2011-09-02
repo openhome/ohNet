@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Creating the Device</title>
+
+  <para>To create a new <code>DvDeviceStandard</code> you must pass the
+  Device's UDN as an argument:</para>
+
+  <programlisting>VolumeControl::VolumeControl() 
+{ 
+    string udn = GenerateGloballyUniqueIdentifier(); 
+    iDevice = new DvDeviceStdStandard(udn); 
+}</programlisting>
+
+  <important>
+    <para>The UDN must be globally unique to ensure the service is correctly
+    recognized by Control Points. A Control Point cannot tell the difference
+    between different Devices that use the same UDN. Only one Device that uses
+    the same UDN as one or more others will be displayed.</para>
+
+    <para>Typically the Device's MAC address or a GUID are sufficient.
+    Physical devices that host multiple <code>DvDevice</code>-derived
+    instances must have the MAC address augmented so that each UDN is
+    unique.</para>
+  </important>
+</section>

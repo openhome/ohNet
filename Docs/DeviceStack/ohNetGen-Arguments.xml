@@ -9,7 +9,7 @@
   <title>ohNetGen arguments</title>
 
   <para>The ohNetGen tool needs several arguments to be defined before you can
-  successfully generate the Proxy. All of the following arguments are
+  successfully generate the Provider. All of the following arguments are
   mandatory.</para>
 
   <para><table>
@@ -41,15 +41,15 @@
             <entry>The stack you are generating files for. Options are: l cp —
             Control Point stack. Use this option to generate a Proxy. l dv —
             Device stack. Use this option to generate a Provider. See the
-            <emphasis>ohNet Device Stack</emphasis> document for more
-            details about using Providers.</entry>
+            <emphasis>OpenHome ohNet Control Point stack</emphasis> document
+            for more details about using Proxies.</entry>
           </row>
 
           <row>
             <entry><userinput>--xml</userinput></entry>
 
             <entry>The path and name of the service XML file you are using to
-            generate your Proxy.</entry>
+            generate your Provider.</entry>
           </row>
 
           <row>
@@ -87,19 +87,19 @@
   file. For example, if you specify the following options in an ohNetGen
   command:</para>
 
-  <para><userinput>ohNetGen.exe --language=cpp --stack=cp
-  --xml=c:\UPNP\Services\Volume.xml --output=c:\ohNet\Proxies
+  <para><userinput>ohNetGen.exe --language=cpp --stack=dv
+  --xml=c:\UPNP\Services\Volume.xml --output=c:\ohNet\Providers
   --domain=openhome.org --type=Volume -- version=1</userinput></para>
 
-  <para>you'll be provided with a Control Point Proxy, which contains code
+  <para>you'll be provided with a Device Provider, which contains code
   generated in the C++ language, and is called
-  <filename>CpOpenhomeOrgVolume1Std.cpp</filename>.</para>
+  <filename>DvOpenhomeOrgVolume1Std.cpp</filename>.</para>
 
   <note>
     <itemizedlist>
       <listitem>
-        <para>The Cp prefix denotes this file as a Control Point Proxy. In
-        contrast, Device Providers are prefixed with Dv.</para>
+        <para>The Dv prefix denotes this file as a Device Provider. In
+        contrast, Control Point Proxies are prefixed with Cp.</para>
       </listitem>
 
       <listitem>
@@ -107,17 +107,11 @@
         file. The header file is also named according to the options you
         provide in the ohNetGen command. For example, the header file for the
         sample given above would be called
-        <filename>CpOpenhomeOrgVolume1.h</filename>.</para>
+        <filename>DvOpenhomeOrgVolume1.h</filename>.</para>
 
         <para>The Std affix is used only in <filename>.cpp</filename> files
         and not in the associated header files.</para>
       </listitem>
     </itemizedlist>
   </note>
-
-  <para>Generated Proxies automatically contain the control and eventing
-  functions required to let you provide a user interface component and allow
-  the user to fully control that service. The code is also automatically
-  commented and provides a published API meaning you'll never need to open the
-  Proxy code to inspect it.</para>
 </section>

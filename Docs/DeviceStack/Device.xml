@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Device</title>
+
+  <para>A Device offers 1..n services over a network. Each service can offer
+  0..n actions and 0..n properties to allow a user to change the state and be
+  informed of changes in the state of the Device.</para>
+
+  <para>Each service that a Device offers is represented in a Provider, and
+  each Device can own several Providers in a 1:n relationship.</para>
+
+  <para>The Device that offers your services can be represented in code using
+  the classes included in the ohNet API:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para><code>DvDevice</code></para>
+    </listitem>
+
+    <listitem>
+      <para><code>DvDeviceStandard</code></para>
+    </listitem>
+  </itemizedlist>
+
+  <para>The <code>DvDevice</code> object is not published by any protocol and
+  is not accessible over a network. It should not be used to publish Devices
+  over a network.</para>
+
+  <para>The <code>DvDeviceStandard</code> object is used to publish Devices
+  and their services over all the protocols supported by ohNet. You should use
+  <code>DvDeviceStandard</code> to represent your services' device in the code
+  you write.</para>
+
+  <para>Code samples used in the following sections of this document show
+  instances of <code>DvDevice</code> being used. <code>DvDeviceStandard</code>
+  is derived from <code>DvDevice</code>. While Providers will operate on
+  either type of Device, almost all clients of ohNet will find
+  <code>DvDeviceStandard</code> most appropriate for their needs.</para>
+
+  <xi:include href="Device-Creating.xml" xpointer="element(/1)" />
+
+  <xi:include href="Device-SettingAttributes.xml" xpointer="element(/1)" />
+
+  <xi:include href="Device-Enabling.xml" xpointer="element(/1)" />
+
+  <xi:include href="Device-Altering.xml" xpointer="element(/1)" />
+</chapter>

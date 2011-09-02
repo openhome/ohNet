@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Creating a Provider</title>
+
+  <para>You must create a <code>DvDevice</code> object for the Provider to
+  belong to before you create the Provider. See Device on page 6 for more
+  details on Devices and how to create them.</para>
+
+  <para>Each Provider takes one Device as an argument. The Device you pass in
+  is the Device that offers the service encapsulated in the Provider.</para>
+
+  <para>To create a Provider you must pass in the <code>DvDevice</code> object
+  you created earlier:</para>
+
+  <programlisting>iVolumeProvider = new VolumeProvider(*iDevice);</programlisting>
+
+  <para>If a Device offers multiple services, you must create a new Provider
+  for each service in the same way: </para>
+
+  <programlisting>iPlayListProvider = new PlayListProvider(*iDevice);
+iScheduledRecordingProvider = new ScheduledRecordingProvider(*iDevice);</programlisting>
+</section>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Actions</title>
+
+  <para>A service's actions are represented in code by functions. Every action
+  that a service offers is given its own function in the Provider.</para>
+
+  <para>ohNet never treats an action as mandatory. ohNet does not require you
+  to implement a service's action if you do not want to support it. However,
+  some protocols will assume the implementation of certain actions is
+  mandatory.</para>
+
+  <note>
+    <para>Clients using your Device's service may not respond as expected if
+    you do not implement an action that your protocol treats as mandatory.
+    Refer to your service's definition for the protocols it is published over
+    to check if an action is mandatory or not.</para>
+  </note>
+
+  <para>If you choose to override the base Provider's function and advertise
+  your support for the associated action, you must enable it in the Provider's
+  constructor:</para>
+
+  <programlisting>EnableAction&lt;action_name&gt;;</programlisting>
+
+  <para>You must include the <code>EnableAction&lt;action_name&gt;</code> call
+  for each action you want to define in your Provider.</para>
+
+  <para>You then include a virtual function in the body of the Provider's
+  class definition:</para>
+
+  <programlisting>void &lt;action_name&gt;(uint32_t aVersion, &lt;argument_list&gt;);</programlisting>
+
+  <para>Override the function by including it in your class
+  implementation:</para>
+
+  <programlisting>void &lt;class_name&gt;::&lt;action_name&gt;(uint32_t aVersion, &lt;argument_list&gt;) 
+{ 
+    //function definition here 
+}</programlisting>
+
+  <para>Add your own code in each function to provide its
+  implementation.</para>
+</section>
