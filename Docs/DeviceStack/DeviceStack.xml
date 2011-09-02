@@ -14,12 +14,13 @@
   state.</para>
 
   <para>The Device stack uses a class-based architecture to present the device
-  and its services on the network. The device is implemented in a Device
-  class. The device's services are implemented in Provider classes.</para>
+  and its services on the network. The physical device is implemented in a
+  Device class. The physical device's services are implemented in Provider
+  classes.</para>
 
   <para>You use Devices and Providers together with the Device stack to send
-  updates about the device's state to interested clients, such as Control
-  Points.</para>
+  updates about the physical device's state to interested clients, such as
+  Control Points.</para>
 
   <para>Details on how you use the Device stack and the Device and Provider
   classes are contained in the following sections.</para>
