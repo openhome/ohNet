@@ -135,7 +135,7 @@ TByte* Srd::Ptr()
 
 Srd::~Srd()
 {
-    delete (iPtr);
+    delete[] iPtr;
 }
 
 // Swx

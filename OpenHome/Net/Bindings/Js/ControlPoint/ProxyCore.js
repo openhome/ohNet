@@ -647,7 +647,6 @@ OhNet.ServiceProperty = function (name, type) {
 * @param {String | Int | Boolean} value The new value for the property
 */
 OhNet.ServiceProperty.prototype.setValue = function (value) {
-    console.log("setValue: ");
     if (this.value != value) {
 
         switch (this.type) {

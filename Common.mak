@@ -829,7 +829,7 @@ objects_jni = $(objdir)JniAction.$(objext) \
 		
 ohNetJni : $(objdir)$(dllprefix)ohNetJni.$(dllext)
 $(objdir)$(dllprefix)ohNetJni.$(dllext) : ohNetDll $(objects_jni)
-	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohNetJni.$(dllext) $(objects_jni) $(objdir)$(libprefix)ohNetCore.$(libext) $(link_jvm)
+	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohNetJni.$(dllext) $(objects_jni) $(objdir)ohNet.$(libext) $(link_jvm)
 $(objdir)JniAction.$(objext) : $(publicjavadir)Action.c $(headers)
 	$(compiler)JniAction.$(objext) -c $(java_cflags) $(includes) $(includes_jni) $(publicjavadir)Action.c
 $(objdir)JniArgumentBinary.$(objext) : $(publicjavadir)ArgumentBinary.c $(headers)
