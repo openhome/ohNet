@@ -523,22 +523,26 @@ void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
     iXmlFetchSem.Signal();
 }
 
-void CpiDeviceListUpnp::SsdpNotifyRootAlive(const Brx& /*aUuid*/, const Brx& /*aLocation*/, TUint /*aMaxAge*/)
+void CpiDeviceListUpnp::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& /*aLocation*/, TUint aMaxAge)
 {
+    (void)Update(aUuid, aMaxAge);
 }
 
-void CpiDeviceListUpnp::SsdpNotifyUuidAlive(const Brx& /*aUuid*/, const Brx& /*aLocation*/, TUint /*aMaxAge*/)
+void CpiDeviceListUpnp::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& /*aLocation*/, TUint aMaxAge)
 {
+    (void)Update(aUuid, aMaxAge);
 }
 
-void CpiDeviceListUpnp::SsdpNotifyDeviceTypeAlive(const Brx& /*aUuid*/, const Brx& /*aDomain*/, const Brx& /*aType*/,
-                                                 TUint /*aVersion*/, const Brx& /*aLocation*/, TUint /*aMaxAge*/)
+void CpiDeviceListUpnp::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& /*aDomain*/, const Brx& /*aType*/,
+                                                 TUint /*aVersion*/, const Brx& /*aLocation*/, TUint aMaxAge)
 {
+    (void)Update(aUuid, aMaxAge);
 }
 
-void CpiDeviceListUpnp::SsdpNotifyServiceTypeAlive(const Brx& /*aUuid*/, const Brx& /*aDomain*/, const Brx& /*aType*/,
-                                                  TUint /*aVersion*/, const Brx& /*aLocation*/, TUint /*aMaxAge*/)
+void CpiDeviceListUpnp::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& /*aDomain*/, const Brx& /*aType*/,
+                                                  TUint /*aVersion*/, const Brx& /*aLocation*/, TUint aMaxAge)
 {
+    (void)Update(aUuid, aMaxAge);
 }
 
 void CpiDeviceListUpnp::SsdpNotifyRootByeBye(const Brx& aUuid)

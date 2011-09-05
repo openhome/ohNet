@@ -23,7 +23,11 @@ class IDviInvocation
 {
 public:
     virtual void Invoke() = 0;
-    
+
+    virtual TUint Version() const = 0;
+    virtual TIpAddress Adapter() const = 0;
+    virtual const char* ResourceUriPrefix() const = 0;
+
     virtual void InvocationReadStart() = 0;
     virtual TBool InvocationReadBool(const TChar* aName) = 0;
     virtual void InvocationReadString(const TChar* aName, Brhz& aString) = 0;
@@ -74,7 +78,7 @@ public:
     DllExport void AddAction(Action* aAction, FunctorDviInvocation aFunctor);
     typedef std::vector<DvAction> VectorActions;
     const VectorActions& DvActions() const;
-    void Invoke(IDviInvocation& aInvocation, TUint aVersion, const Brx& aActionName);
+    void Invoke(IDviInvocation& aInvocation, const Brx& aActionName);
 
     void PropertiesLock();
     void PropertiesUnlock();
@@ -96,51 +100,54 @@ private:
     std::vector<DviSubscription*> iSubscriptions;
 };
 
-class DllExportClass InvocationResponse : public IInvocationResponse, private INonCopyable
+class DllExportClass DviInvocation : public IDvInvocation, private INonCopyable
 {
 public:
-	DllExport InvocationResponse(IDviInvocation& aInvocation);
+	DllExport DviInvocation(IDviInvocation& aInvocation);
+    virtual TUint Version() const;
 	virtual void Error(TInt aCode, const Brx& aReason);
-	virtual void Start();
-	virtual void End();
+	virtual void StartResponse();
+	virtual void EndResponse();
+    virtual TIpAddress Adapter() const;
+    virtual const char* ResourceUriPrefix() const;
 private:
 	IDviInvocation& iInvocation;
 };
 
-class DllExportClass InvocationResponseBool : public IInvocationResponseBool, private INonCopyable
+class DllExportClass DviInvocationResponseBool : public IDvInvocationResponseBool, private INonCopyable
 {
 public:
-	DllExport InvocationResponseBool(IDviInvocation& aInvocation, const TChar* aName);
+	DllExport DviInvocationResponseBool(IDviInvocation& aInvocation, const TChar* aName);
 	void Write(TBool aValue);
 private:
 	IDviInvocation& iInvocation;
 	const TChar* iName;
 };
 
-class DllExportClass InvocationResponseUint : public IInvocationResponseUint, private INonCopyable
+class DllExportClass DviInvocationResponseUint : public IDvInvocationResponseUint, private INonCopyable
 {
 public:
-	DllExport InvocationResponseUint(IDviInvocation& aInvocation, const TChar* aName);
+	DllExport DviInvocationResponseUint(IDviInvocation& aInvocation, const TChar* aName);
 	void Write(TUint aValue);
 private:
 	IDviInvocation& iInvocation;
 	const TChar* iName;
 };
 
-class DllExportClass InvocationResponseInt : public IInvocationResponseInt, private INonCopyable
+class DllExportClass DviInvocationResponseInt : public IDvInvocationResponseInt, private INonCopyable
 {
 public:
-	DllExport InvocationResponseInt(IDviInvocation& aInvocation, const TChar* aName);
+	DllExport DviInvocationResponseInt(IDviInvocation& aInvocation, const TChar* aName);
 	void Write(TInt aValue);
 private:
 	IDviInvocation& iInvocation;
 	const TChar* iName;
 };
 
-class DllExportClass InvocationResponseBinary : public IInvocationResponseBinary, private INonCopyable
+class DllExportClass DviInvocationResponseBinary : public IDvInvocationResponseBinary, private INonCopyable
 {
 public:
-	DllExport InvocationResponseBinary(IDviInvocation& aInvocation, const TChar* aName);
+	DllExport DviInvocationResponseBinary(IDviInvocation& aInvocation, const TChar* aName);
 	// IWriter
     void Write(TByte aValue);
     void Write(const Brx& aValue);
@@ -153,10 +160,10 @@ private:
 	TBool iFirst;
 };
 
-class DllExportClass InvocationResponseString : public IInvocationResponseString, private INonCopyable
+class DllExportClass DviInvocationResponseString : public IDvInvocationResponseString, private INonCopyable
 {
 public:
-	DllExport InvocationResponseString(IDviInvocation& aInvocation, const TChar* aName);
+	DllExport DviInvocationResponseString(IDviInvocation& aInvocation, const TChar* aName);
 	// IWriter
     void Write(TByte aValue);
     void Write(const Brx& aValue);

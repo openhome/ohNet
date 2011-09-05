@@ -157,7 +157,7 @@ private:
      * GetSortCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetSortCapabilities was called.
      */
-    virtual void GetSortCapabilities(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aSortCaps, IInvocationResponseUint& aSortLevelCap);
+    virtual void GetSortCapabilities(IDvInvocation& aInvocation, IDvInvocationResponseString& aSortCaps, IDvInvocationResponseUint& aSortLevelCap);
     /**
      * GetPropertyList action.
      *
@@ -165,7 +165,7 @@ private:
      * GetPropertyList action for the owning device.
      * Must be implemented iff EnableActionGetPropertyList was called.
      */
-    virtual void GetPropertyList(IInvocationResponse& aResponse, TUint aVersion, const Brx& aDataTypeID, IInvocationResponseString& aPropertyList);
+    virtual void GetPropertyList(IDvInvocation& aInvocation, const Brx& aDataTypeID, IDvInvocationResponseString& aPropertyList);
     /**
      * GetAllowedValues action.
      *
@@ -173,7 +173,7 @@ private:
      * GetAllowedValues action for the owning device.
      * Must be implemented iff EnableActionGetAllowedValues was called.
      */
-    virtual void GetAllowedValues(IInvocationResponse& aResponse, TUint aVersion, const Brx& aDataTypeID, const Brx& aFilter, IInvocationResponseString& aPropertyInfo);
+    virtual void GetAllowedValues(IDvInvocation& aInvocation, const Brx& aDataTypeID, const Brx& aFilter, IDvInvocationResponseString& aPropertyInfo);
     /**
      * GetStateUpdateID action.
      *
@@ -181,7 +181,7 @@ private:
      * GetStateUpdateID action for the owning device.
      * Must be implemented iff EnableActionGetStateUpdateID was called.
      */
-    virtual void GetStateUpdateID(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aId);
+    virtual void GetStateUpdateID(IDvInvocation& aInvocation, IDvInvocationResponseUint& aId);
     /**
      * BrowseRecordSchedules action.
      *
@@ -189,7 +189,7 @@ private:
      * BrowseRecordSchedules action for the owning device.
      * Must be implemented iff EnableActionBrowseRecordSchedules was called.
      */
-    virtual void BrowseRecordSchedules(IInvocationResponse& aResponse, TUint aVersion, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IInvocationResponseString& aResult, IInvocationResponseUint& aNumberReturned, IInvocationResponseUint& aTotalMatches, IInvocationResponseUint& aUpdateID);
+    virtual void BrowseRecordSchedules(IDvInvocation& aInvocation, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aNumberReturned, IDvInvocationResponseUint& aTotalMatches, IDvInvocationResponseUint& aUpdateID);
     /**
      * BrowseRecordTasks action.
      *
@@ -197,7 +197,7 @@ private:
      * BrowseRecordTasks action for the owning device.
      * Must be implemented iff EnableActionBrowseRecordTasks was called.
      */
-    virtual void BrowseRecordTasks(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordScheduleID, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IInvocationResponseString& aResult, IInvocationResponseUint& aNumberReturned, IInvocationResponseUint& aTotalMatches, IInvocationResponseUint& aUpdateID);
+    virtual void BrowseRecordTasks(IDvInvocation& aInvocation, const Brx& aRecordScheduleID, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aNumberReturned, IDvInvocationResponseUint& aTotalMatches, IDvInvocationResponseUint& aUpdateID);
     /**
      * CreateRecordSchedule action.
      *
@@ -205,7 +205,7 @@ private:
      * CreateRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionCreateRecordSchedule was called.
      */
-    virtual void CreateRecordSchedule(IInvocationResponse& aResponse, TUint aVersion, const Brx& aElements, IInvocationResponseString& aRecordScheduleID, IInvocationResponseString& aResult, IInvocationResponseUint& aUpdateID);
+    virtual void CreateRecordSchedule(IDvInvocation& aInvocation, const Brx& aElements, IDvInvocationResponseString& aRecordScheduleID, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aUpdateID);
     /**
      * DeleteRecordSchedule action.
      *
@@ -213,7 +213,7 @@ private:
      * DeleteRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionDeleteRecordSchedule was called.
      */
-    virtual void DeleteRecordSchedule(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordScheduleID);
+    virtual void DeleteRecordSchedule(IDvInvocation& aInvocation, const Brx& aRecordScheduleID);
     /**
      * GetRecordSchedule action.
      *
@@ -221,7 +221,7 @@ private:
      * GetRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionGetRecordSchedule was called.
      */
-    virtual void GetRecordSchedule(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordScheduleID, const Brx& aFilter, IInvocationResponseString& aResult, IInvocationResponseUint& aUpdateID);
+    virtual void GetRecordSchedule(IDvInvocation& aInvocation, const Brx& aRecordScheduleID, const Brx& aFilter, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aUpdateID);
     /**
      * EnableRecordSchedule action.
      *
@@ -229,7 +229,7 @@ private:
      * EnableRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionEnableRecordSchedule was called.
      */
-    virtual void EnableRecordSchedule(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordScheduleID);
+    virtual void EnableRecordSchedule(IDvInvocation& aInvocation, const Brx& aRecordScheduleID);
     /**
      * DisableRecordSchedule action.
      *
@@ -237,7 +237,7 @@ private:
      * DisableRecordSchedule action for the owning device.
      * Must be implemented iff EnableActionDisableRecordSchedule was called.
      */
-    virtual void DisableRecordSchedule(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordScheduleID);
+    virtual void DisableRecordSchedule(IDvInvocation& aInvocation, const Brx& aRecordScheduleID);
     /**
      * DeleteRecordTask action.
      *
@@ -245,7 +245,7 @@ private:
      * DeleteRecordTask action for the owning device.
      * Must be implemented iff EnableActionDeleteRecordTask was called.
      */
-    virtual void DeleteRecordTask(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordTaskID);
+    virtual void DeleteRecordTask(IDvInvocation& aInvocation, const Brx& aRecordTaskID);
     /**
      * GetRecordTask action.
      *
@@ -253,7 +253,7 @@ private:
      * GetRecordTask action for the owning device.
      * Must be implemented iff EnableActionGetRecordTask was called.
      */
-    virtual void GetRecordTask(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordTaskID, const Brx& aFilter, IInvocationResponseString& aResult, IInvocationResponseUint& aUpdateID);
+    virtual void GetRecordTask(IDvInvocation& aInvocation, const Brx& aRecordTaskID, const Brx& aFilter, IDvInvocationResponseString& aResult, IDvInvocationResponseUint& aUpdateID);
     /**
      * EnableRecordTask action.
      *
@@ -261,7 +261,7 @@ private:
      * EnableRecordTask action for the owning device.
      * Must be implemented iff EnableActionEnableRecordTask was called.
      */
-    virtual void EnableRecordTask(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordTaskID);
+    virtual void EnableRecordTask(IDvInvocation& aInvocation, const Brx& aRecordTaskID);
     /**
      * DisableRecordTask action.
      *
@@ -269,7 +269,7 @@ private:
      * DisableRecordTask action for the owning device.
      * Must be implemented iff EnableActionDisableRecordTask was called.
      */
-    virtual void DisableRecordTask(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordTaskID);
+    virtual void DisableRecordTask(IDvInvocation& aInvocation, const Brx& aRecordTaskID);
     /**
      * ResetRecordTask action.
      *
@@ -277,7 +277,7 @@ private:
      * ResetRecordTask action for the owning device.
      * Must be implemented iff EnableActionResetRecordTask was called.
      */
-    virtual void ResetRecordTask(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordTaskID);
+    virtual void ResetRecordTask(IDvInvocation& aInvocation, const Brx& aRecordTaskID);
     /**
      * GetRecordScheduleConflicts action.
      *
@@ -285,7 +285,7 @@ private:
      * GetRecordScheduleConflicts action for the owning device.
      * Must be implemented iff EnableActionGetRecordScheduleConflicts was called.
      */
-    virtual void GetRecordScheduleConflicts(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordScheduleID, IInvocationResponseString& aRecordScheduleConflictIDList, IInvocationResponseUint& aUpdateID);
+    virtual void GetRecordScheduleConflicts(IDvInvocation& aInvocation, const Brx& aRecordScheduleID, IDvInvocationResponseString& aRecordScheduleConflictIDList, IDvInvocationResponseUint& aUpdateID);
     /**
      * GetRecordTaskConflicts action.
      *
@@ -293,27 +293,27 @@ private:
      * GetRecordTaskConflicts action for the owning device.
      * Must be implemented iff EnableActionGetRecordTaskConflicts was called.
      */
-    virtual void GetRecordTaskConflicts(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordTaskID, IInvocationResponseString& aRecordTaskConflictIDList, IInvocationResponseUint& aUpdateID);
+    virtual void GetRecordTaskConflicts(IDvInvocation& aInvocation, const Brx& aRecordTaskID, IDvInvocationResponseString& aRecordTaskConflictIDList, IDvInvocationResponseUint& aUpdateID);
 private:
     DvProviderUpnpOrgScheduledRecording2();
-    void DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetPropertyList(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetAllowedValues(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetStateUpdateID(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBrowseRecordSchedules(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBrowseRecordTasks(IDviInvocation& aInvocation, TUint aVersion);
-    void DoCreateRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEnableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDisableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEnableRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDisableRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoResetRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation);
+    void DoGetPropertyList(IDviInvocation& aInvocation);
+    void DoGetAllowedValues(IDviInvocation& aInvocation);
+    void DoGetStateUpdateID(IDviInvocation& aInvocation);
+    void DoBrowseRecordSchedules(IDviInvocation& aInvocation);
+    void DoBrowseRecordTasks(IDviInvocation& aInvocation);
+    void DoCreateRecordSchedule(IDviInvocation& aInvocation);
+    void DoDeleteRecordSchedule(IDviInvocation& aInvocation);
+    void DoGetRecordSchedule(IDviInvocation& aInvocation);
+    void DoEnableRecordSchedule(IDviInvocation& aInvocation);
+    void DoDisableRecordSchedule(IDviInvocation& aInvocation);
+    void DoDeleteRecordTask(IDviInvocation& aInvocation);
+    void DoGetRecordTask(IDviInvocation& aInvocation);
+    void DoEnableRecordTask(IDviInvocation& aInvocation);
+    void DoDisableRecordTask(IDviInvocation& aInvocation);
+    void DoResetRecordTask(IDviInvocation& aInvocation);
+    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation);
+    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyLastChange;
 };

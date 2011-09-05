@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Creating your Device List</title>
+
+  <para><code>CpDeviceList</code> is a protocol-independent base class.
+  However, the mechanism you use to discover remote devices necessarily
+  depends on the protocol being used. ohNet's UPnP implementation provides
+  five <code>CpDeviceList</code> sub-classes which implement the different
+  types of searches defined by UPnP.</para>
+
+  <para>Each of these classes represents a specific way to filter your
+  application's search for remote devices. The five classes are as
+  follows:</para>
+
+  <para><table>
+      <title></title>
+
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry align="center">Class</entry>
+
+            <entry align="center">Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><code>CpDeviceListUpnpAll</code></entry>
+
+            <entry>All UPnP devices and all services currently available on
+            those devices.</entry>
+          </row>
+
+          <row>
+            <entry><code>CpDeviceListUpnpRoot</code></entry>
+
+            <entry>All root UPnP devices — that is, the single device that
+            contains one or more other UPnP devices.</entry>
+          </row>
+
+          <row>
+            <entry><code>CpDeviceListUpnpUuid</code></entry>
+
+            <entry>A specific device given a universally unique name by the
+            vendor (note this is not the same as the friendly name
+            attribute).</entry>
+          </row>
+
+          <row>
+            <entry><code>CpDeviceListUpnpDeviceType</code></entry>
+
+            <entry>All devices that correspond to the UPnP device type (note
+            that this can be taken from the UPnP Forum's published list of
+            devices or as a new device that you have defined).</entry>
+          </row>
+
+          <row>
+            <entry><code>CpDeviceListUpnpServiceType</code></entry>
+
+            <entry>All services that correspond to the UPnP service type (note
+            that this can be taken from the UPnP Forum's published list of
+            services or as a new service that you have defined).</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table></para>
+
+  <para>Choose which type of search you want to use in your application and
+  create your new Device List object. For example:</para>
+
+  <programlisting>CpDeviceListCppUpnpServiceType* list = new 
+    CpDeviceListCppUpnpServiceType(domainName, serviceType, ver, added, 
+        removed);</programlisting>
+
+  <note>
+    <para>The example used above specifies the domain, service type and
+    version of the service. These details are required for this particular
+    Device List and must be declared in the body of your Control Point
+    application code. See the API for the details of each Device Lists'
+    arguments.</para>
+  </note>
+
+  <para>You can now use the <code>CpDevice</code> objects to create Proxies to
+  allow your Control Point application to communicate with the remote
+  device.</para>
+</section>

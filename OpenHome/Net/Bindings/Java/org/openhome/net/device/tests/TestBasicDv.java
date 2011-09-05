@@ -1,6 +1,7 @@
 package org.openhome.net.device.tests;
 
 import org.openhome.net.device.DvDevice;
+import org.openhome.net.device.IDvInvocation;
 import org.openhome.net.device.providers.DvProviderOpenhomeOrgTestBasic1;
 
 public class TestBasicDv extends DvProviderOpenhomeOrgTestBasic1
@@ -34,82 +35,82 @@ public class TestBasicDv extends DvProviderOpenhomeOrgTestBasic1
 		enableActionSetMultiple();
 	}
 	
-	protected long increment(int aVersion, long aValue)
+	protected long increment(IDvInvocation aInvocation, long aValue)
 	{
 		return aValue + 1;
 	}
 	
-	protected int decrement(int aVersion, int aValue)
+	protected int decrement(IDvInvocation aInvocation, int aValue)
 	{
 		return aValue - 1;
 	}
 	
-	protected boolean toggle(int aVersion, boolean aValue)
+	protected boolean toggle(IDvInvocation aInvocation, boolean aValue)
 	{
 		return !aValue;
 	}
 	
-	protected String echoString(int aVersion, String aValue)
+	protected String echoString(IDvInvocation aInvocation, String aValue)
 	{
 		return aValue;
 	}
 	
-	protected byte[] echoBinary(int aVersion, byte[] aValue)
+	protected byte[] echoBinary(IDvInvocation aInvocation, byte[] aValue)
 	{
 		return aValue;
 	}
 	
-	protected void setUint(int aVersion, long aValueUint)
+	protected void setUint(IDvInvocation aInvocation, long aValueUint)
 	{
 		setPropertyVarUint(aValueUint);
 	}
 	
-	protected long getUint(int aVersion)
+	protected long getUint(IDvInvocation aInvocation)
 	{
 		return getPropertyVarUint();
 	}
 	
-	protected void setInt(int aVersion, int aValueInt)
+	protected void setInt(IDvInvocation aInvocation, int aValueInt)
 	{
 		setPropertyVarInt(aValueInt);
 	}
 	
-	protected int getInt(int aVersion)
+	protected int getInt(IDvInvocation aInvocation)
 	{
 		return getPropertyVarInt();
 	}
 	
-	protected void setBool(int aVersion, boolean aValueBool)
+	protected void setBool(IDvInvocation aInvocation, boolean aValueBool)
 	{
 		setPropertyVarBool(aValueBool);
 	}
 	
-	protected boolean getBool(int aVersion)
+	protected boolean getBool(IDvInvocation aInvocation)
 	{
 		return getPropertyVarBool();
 	}
 	
-	protected void setString(int aVersion, String aValueStr)
+	protected void setString(IDvInvocation aInvocation, String aValueStr)
 	{
 		setPropertyVarStr(aValueStr);
 	}
 	
-	protected String getString(int aVersion)
+	protected String getString(IDvInvocation aInvocation)
 	{
 		return getPropertyVarStr();
 	}
 	
-	protected void setBinary(int aVersion, byte[] aValueBin)
+	protected void setBinary(IDvInvocation aInvocation, byte[] aValueBin)
 	{
 		setPropertyVarBin(aValueBin);
 	}
 	
-	protected byte[] getBinary(int aVersion)
+	protected byte[] getBinary(IDvInvocation aInvocation)
 	{
 		return getPropertyVarBin();
 	}
 	
-	protected void setMultiple(int aVersion, long aValueUint, int aValueInt, boolean aValueBool)
+	protected void setMultiple(IDvInvocation aInvocation, long aValueUint, int aValueInt, boolean aValueBool)
 	{
 		propertiesLock();
 		setPropertyVarUint(aValueUint);

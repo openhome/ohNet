@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using OpenHome.Net.Device;
 
 namespace OpenHome.Net
 {
@@ -105,22 +106,22 @@ namespace OpenHome.Net
             }
         }
 
-        protected override void GetCount(uint aVersion, out uint aCount)
+        protected override void GetCount(IDvInvocation aInvocation, out uint aCount)
         {
             aCount = (uint)iLights.Count;
         }
 
-        protected override void GetRoom(uint aVersion, uint aIndex, out string aRoomName)
+        protected override void GetRoom(IDvInvocation aInvocation, uint aIndex, out string aRoomName)
         {
             aRoomName = Light(aIndex).Room;
         }
 
-        protected override void GetName(uint aVersion, uint aIndex, out string aFriendlyName)
+        protected override void GetName(IDvInvocation aInvocation, uint aIndex, out string aFriendlyName)
         {
             aFriendlyName = Light(aIndex).Name;
         }
 
-        protected override void GetPosition(uint aVersion, uint aIndex, out uint aX, out uint aY, out uint aZ)
+        protected override void GetPosition(IDvInvocation aInvocation, uint aIndex, out uint aX, out uint aY, out uint aZ)
         {
             Light light = Light(aIndex);
             aX = light.PosX;
@@ -128,17 +129,17 @@ namespace OpenHome.Net
             aZ = light.PosZ;
         }
 
-        protected override void SetColor(uint aVersion, uint aIndex, uint aColor)
+        protected override void SetColor(IDvInvocation aInvocation, uint aIndex, uint aColor)
         {
             Light(aIndex).Color = aColor;
         }
 
-        protected override void GetColor(uint aVersion, uint aIndex, out uint aColor)
+        protected override void GetColor(IDvInvocation aInvocation, uint aIndex, out uint aColor)
         {
             aColor = Light(aIndex).Color;
         }
 
-        protected override void GetColorComponents(uint aVersion, uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
+        protected override void GetColorComponents(IDvInvocation aInvocation, uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
             aBrightness = aColor>>24;
             aRed = aColor>>16;

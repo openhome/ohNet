@@ -41,7 +41,7 @@ device_dotnet_assemblies_with_path = \
 device_java_classes_with_path = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-        $(devicejavadir)DvProvider<#=FilePrefixTypeAndVersion(s)#>.class \
+        $(objdir)org/openhome/net/device/providers/DvProvider<#=FilePrefixTypeAndVersion(s)#>.class \
 <#  } #>
 
 devices : ohNetCore $(objects_devices)
@@ -90,7 +90,7 @@ DvDeviceJavaClasses: $(device_java_classes_with_path)
 
 <# foreach (Service s in u.iServices) #>
 <# { #>
-$(devicejavadir)DvProvider<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.jar $(deviceJava)DvProvider<#=FilePrefixTypeAndVersion(s)#>.java
+$(objdir)org/openhome/net/device/providers/DvProvider<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.jar $(deviceJava)DvProvider<#=FilePrefixTypeAndVersion(s)#>.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProvider<#=FilePrefixTypeAndVersion(s)#>.java
 <# } #>
 

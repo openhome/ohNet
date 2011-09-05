@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,63 +22,75 @@ extern "C" {
 /**
  * Callback which runs when the Play action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionPlay
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionPlay
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackReceiver1Play)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackReceiver1Play)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the Stop action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionStop
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionStop
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackReceiver1Stop)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackReceiver1Stop)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
  * Callback which runs when the SetSender action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionSetSender
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionSetSender
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aUri
  * @param[in]  aMetadata
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackReceiver1SetSender)(void* aPtr, uint32_t aVersion, const char* aUri, const char* aMetadata);
+typedef int32_t (STDCALL *CallbackReceiver1SetSender)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aUri, const char* aMetadata);
 /**
  * Callback which runs when the Sender action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionSender
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionSender
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aUri
  * @param[out] aMetadata
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackReceiver1Sender)(void* aPtr, uint32_t aVersion, char** aUri, char** aMetadata);
+typedef int32_t (STDCALL *CallbackReceiver1Sender)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aUri, char** aMetadata);
 /**
  * Callback which runs when the ProtocolInfo action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionProtocolInfo
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionProtocolInfo
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackReceiver1ProtocolInfo)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackReceiver1ProtocolInfo)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aValue);
 /**
  * Callback which runs when the TransportState action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionTransportState
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgReceiver1EnableActionTransportState
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackReceiver1TransportState)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackReceiver1TransportState)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aValue);
 
 /**
  * Provider constructor

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Device List</title>
+
+  <para>A Device List is the object you use in your Control Point application
+  to detect available remote devices for later use. The Device List is
+  represented in code by the protocol-independent base class called
+  <code>CpDeviceList</code>.</para>
+
+  <para>Each protocol uses a different mechanism to locate remote devices.
+  However, the mechanism to add and remove remote devices to the Device List
+  is protocol-independent. They all use two callbacks, called
+  <code>added</code> and <code>removed</code>, which are used to manage the
+  list of available devices.</para>
+
+  <xi:include href="DeviceList.WritingAddedCallback.xml"
+              xpointer="element(/1)" />
+
+  <xi:include href="DeviceList.WritingRemovedCallback.xml"
+              xpointer="element(/1)" />
+
+  <xi:include href="DeviceList.CreatingDeviceList.xml" xpointer="element(/1)" />
+</section>

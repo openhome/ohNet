@@ -619,9 +619,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPlay} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void play(int aVersion)
+    protected void play(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -634,9 +634,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPause} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void pause(int aVersion)
+    protected void pause(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -649,9 +649,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionStop} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void stop(int aVersion)
+    protected void stop(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -664,10 +664,10 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSeekSecondAbsolute} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void seekSecondAbsolute(int aVersion, long aValue)
+    protected void seekSecondAbsolute(IDvInvocation aInvocation, long aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -680,10 +680,10 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSeekSecondRelative} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void seekSecondRelative(int aVersion, int aValue)
+    protected void seekSecondRelative(IDvInvocation aInvocation, int aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -696,9 +696,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionChannel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Channel channel(int aVersion)
+    protected Channel channel(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -711,11 +711,11 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetChannel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aUri
      * @param aMetadata
      */
-    protected void setChannel(int aVersion, String aUri, String aMetadata)
+    protected void setChannel(IDvInvocation aInvocation, String aUri, String aMetadata)
     {
         throw (new ActionDisabledError());
     }
@@ -728,9 +728,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionTransportState} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String transportState(int aVersion)
+    protected String transportState(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -743,9 +743,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionId} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long id(int aVersion)
+    protected long id(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -758,11 +758,11 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetId} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      * @param aUri
      */
-    protected void setId(int aVersion, long aValue, String aUri)
+    protected void setId(IDvInvocation aInvocation, long aValue, String aUri)
     {
         throw (new ActionDisabledError());
     }
@@ -775,10 +775,10 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionRead} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      */
-    protected String read(int aVersion, long aId)
+    protected String read(IDvInvocation aInvocation, long aId)
     {
         throw (new ActionDisabledError());
     }
@@ -791,10 +791,10 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionReadList} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIdList
      */
-    protected String readList(int aVersion, String aIdList)
+    protected String readList(IDvInvocation aInvocation, String aIdList)
     {
         throw (new ActionDisabledError());
     }
@@ -807,9 +807,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionIdArray} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected IdArray idArray(int aVersion)
+    protected IdArray idArray(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -822,10 +822,10 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionIdArrayChanged} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aToken
      */
-    protected boolean idArrayChanged(int aVersion, long aToken)
+    protected boolean idArrayChanged(IDvInvocation aInvocation, long aToken)
     {
         throw (new ActionDisabledError());
     }
@@ -838,9 +838,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionChannelsMax} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long channelsMax(int aVersion)
+    protected long channelsMax(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -853,9 +853,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionProtocolInfo} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String protocolInfo(int aVersion)
+    protected String protocolInfo(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -879,14 +879,14 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoPlay implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                play(aVersion);
+                play(invocation);
             }
             catch (ActionError ae)
             {
@@ -925,14 +925,14 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoPause implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                pause(aVersion);
+                pause(invocation);
             }
             catch (ActionError ae)
             {
@@ -971,14 +971,14 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoStop implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                stop(aVersion);
+                stop(invocation);
             }
             catch (ActionError ae)
             {
@@ -1017,7 +1017,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoSeekSecondAbsolute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1026,7 +1026,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 value = invocation.readUint("Value");
                 invocation.readEnd();
-                seekSecondAbsolute(aVersion, value);
+                seekSecondAbsolute(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1065,7 +1065,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoSeekSecondRelative implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1074,7 +1074,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 value = invocation.readInt("Value");
                 invocation.readEnd();
-                seekSecondRelative(aVersion, value);
+                seekSecondRelative(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1113,7 +1113,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoChannel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -1123,7 +1123,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 invocation.readEnd();
 
-            Channel outArgs = channel(aVersion);
+            Channel outArgs = channel(invocation);
             uri = outArgs.getUri();
             metadata = outArgs.getMetadata();
             }
@@ -1166,7 +1166,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoSetChannel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -1177,7 +1177,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 uri = invocation.readString("Uri");
                 metadata = invocation.readString("Metadata");
                 invocation.readEnd();
-                setChannel(aVersion, uri, metadata);
+                setChannel(invocation, uri, metadata);
             }
             catch (ActionError ae)
             {
@@ -1216,7 +1216,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoTransportState implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1224,7 +1224,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = transportState(aVersion);
+                 value = transportState(invocation);
             }
             catch (ActionError ae)
             {
@@ -1264,7 +1264,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1272,7 +1272,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = id(aVersion);
+                 value = id(invocation);
             }
             catch (ActionError ae)
             {
@@ -1312,7 +1312,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoSetId implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1323,7 +1323,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 value = invocation.readUint("Value");
                 uri = invocation.readString("Uri");
                 invocation.readEnd();
-                setId(aVersion, value, uri);
+                setId(invocation, value, uri);
             }
             catch (ActionError ae)
             {
@@ -1362,7 +1362,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoRead implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
@@ -1372,7 +1372,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 id = invocation.readUint("Id");
                 invocation.readEnd();
-                 metadata = read(aVersion, id);
+                 metadata = read(invocation, id);
             }
             catch (ActionError ae)
             {
@@ -1412,7 +1412,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoReadList implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String idList;
@@ -1422,7 +1422,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 idList = invocation.readString("IdList");
                 invocation.readEnd();
-                 channelList = readList(aVersion, idList);
+                 channelList = readList(invocation, idList);
             }
             catch (ActionError ae)
             {
@@ -1462,7 +1462,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoIdArray implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long token;
@@ -1472,7 +1472,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 invocation.readEnd();
 
-            IdArray outArgs = idArray(aVersion);
+            IdArray outArgs = idArray(invocation);
             token = outArgs.getToken();
             array = outArgs.getArray();
             }
@@ -1515,7 +1515,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoIdArrayChanged implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long token;
@@ -1525,7 +1525,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 invocation.readStart();
                 token = invocation.readUint("Token");
                 invocation.readEnd();
-                 value = idArrayChanged(aVersion, token);
+                 value = idArrayChanged(invocation, token);
             }
             catch (ActionError ae)
             {
@@ -1565,7 +1565,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoChannelsMax implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1573,7 +1573,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = channelsMax(aVersion);
+                 value = channelsMax(invocation);
             }
             catch (ActionError ae)
             {
@@ -1613,7 +1613,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
 
     private class DoProtocolInfo implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1621,7 +1621,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = protocolInfo(aVersion);
+                 value = protocolInfo(invocation);
             }
             catch (ActionError ae)
             {

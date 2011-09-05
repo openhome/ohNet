@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,33 +22,39 @@ extern "C" {
 /**
  * Callback which runs when the SetTarget action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgSwitchPower1EnableActionSetTarget
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgSwitchPower1EnableActionSetTarget
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  anewTargetValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackSwitchPower1SetTarget)(void* aPtr, uint32_t aVersion, uint32_t anewTargetValue);
+typedef int32_t (STDCALL *CallbackSwitchPower1SetTarget)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t anewTargetValue);
 /**
  * Callback which runs when the GetTarget action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgSwitchPower1EnableActionGetTarget
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgSwitchPower1EnableActionGetTarget
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aRetTargetValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackSwitchPower1GetTarget)(void* aPtr, uint32_t aVersion, uint32_t* aRetTargetValue);
+typedef int32_t (STDCALL *CallbackSwitchPower1GetTarget)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aRetTargetValue);
 /**
  * Callback which runs when the GetStatus action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgSwitchPower1EnableActionGetStatus
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderUpnpOrgSwitchPower1EnableActionGetStatus
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aResultStatus
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackSwitchPower1GetStatus)(void* aPtr, uint32_t aVersion, uint32_t* aResultStatus);
+typedef int32_t (STDCALL *CallbackSwitchPower1GetStatus)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aResultStatus);
 
 /**
  * Provider constructor

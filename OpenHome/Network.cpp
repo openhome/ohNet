@@ -178,6 +178,7 @@ void Socket::Close()
     TInt err = OpenHome::Os::NetworkClose(iHandle);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Close H = %d, RETURN VALUE = %d\n", iHandle, err);
+        THROW(NetworkError);
     }
     iHandle = kHandleNull;
 }
@@ -712,7 +713,12 @@ SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aE
 SocketUdpMulticast::~SocketUdpMulticast()
 {
     LOGF(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
-    OpenHome::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
+    try {
+        OpenHome::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
+    }
+    catch (NetworkError&) {
+        LOG2F(kNetwork, kError, "DropMembership failed H = %d\n", iHandle);
+    }
     LOGF(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
 }
 

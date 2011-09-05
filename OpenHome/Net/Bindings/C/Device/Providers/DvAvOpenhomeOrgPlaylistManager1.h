@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,51 +22,61 @@ extern "C" {
 /**
  * Callback which runs when the Metadata action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionMetadata
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionMetadata
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aMetadata
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1Metadata)(void* aPtr, uint32_t aVersion, char** aMetadata);
+typedef int32_t (STDCALL *CallbackPlaylistManager1Metadata)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aMetadata);
 /**
  * Callback which runs when the ImagesXml action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionImagesXml
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionImagesXml
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aImagesXml
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1ImagesXml)(void* aPtr, uint32_t aVersion, char** aImagesXml);
+typedef int32_t (STDCALL *CallbackPlaylistManager1ImagesXml)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aImagesXml);
 /**
  * Callback which runs when the PlaylistReadArray action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadArray
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadArray
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[out] aArray
  * @param[out] aArrayLen
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadArray)(void* aPtr, uint32_t aVersion, uint32_t aId, char** aArray, uint32_t* aArrayLen);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadArray)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, char** aArray, uint32_t* aArrayLen);
 /**
  * Callback which runs when the PlaylistReadList action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadList
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadList
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aIdList
  * @param[out] aPlaylistList
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadList)(void* aPtr, uint32_t aVersion, const char* aIdList, char** aPlaylistList);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadList)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aIdList, char** aPlaylistList);
 /**
  * Callback which runs when the PlaylistRead action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistRead
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistRead
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[out] aName
  * @param[out] aDescription
@@ -73,45 +84,53 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadList)(void* aPtr, 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistRead)(void* aPtr, uint32_t aVersion, uint32_t aId, char** aName, char** aDescription, uint32_t* aImageId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistRead)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, char** aName, char** aDescription, uint32_t* aImageId);
 /**
  * Callback which runs when the PlaylistSetName action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetName
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetName
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aName
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetName)(void* aPtr, uint32_t aVersion, uint32_t aId, const char* aName);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetName)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, const char* aName);
 /**
  * Callback which runs when the PlaylistSetDescription action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetDescription
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetDescription
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aDescription
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetDescription)(void* aPtr, uint32_t aVersion, uint32_t aId, const char* aDescription);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetDescription)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, const char* aDescription);
 /**
  * Callback which runs when the PlaylistSetImageId action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetImageId
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetImageId
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aImageId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetImageId)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aImageId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetImageId)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aImageId);
 /**
  * Callback which runs when the PlaylistInsert action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistInsert
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistInsert
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aAfterId
  * @param[in]  aName
  * @param[in]  aDescription
@@ -120,53 +139,63 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetImageId)(void* aPtr
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistInsert)(void* aPtr, uint32_t aVersion, uint32_t aAfterId, const char* aName, const char* aDescription, uint32_t aImageId, uint32_t* aNewId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistInsert)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aAfterId, const char* aName, const char* aDescription, uint32_t aImageId, uint32_t* aNewId);
 /**
  * Callback which runs when the PlaylistDeleteId action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistDeleteId
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistDeleteId
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistDeleteId)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistDeleteId)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValue);
 /**
  * Callback which runs when the PlaylistMove action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistMove
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistMove
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aAfterId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistMove)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aAfterId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistMove)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aAfterId);
 /**
  * Callback which runs when the PlaylistsMax action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistsMax
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistsMax
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistsMax)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistsMax)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
 /**
  * Callback which runs when the TracksMax action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionTracksMax
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionTracksMax
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1TracksMax)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackPlaylistManager1TracksMax)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
 /**
  * Callback which runs when the PlaylistArrays action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistArrays
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistArrays
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aToken
  * @param[out] aIdArray
  * @param[out] aIdArrayLen
@@ -175,77 +204,90 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1TracksMax)(void* aPtr, uint32_
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistArrays)(void* aPtr, uint32_t aVersion, uint32_t* aToken, char** aIdArray, uint32_t* aIdArrayLen, char** aTokenArray, uint32_t* aTokenArrayLen);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistArrays)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aToken, char** aIdArray, uint32_t* aIdArrayLen, char** aTokenArray, uint32_t* aTokenArrayLen);
 /**
  * Callback which runs when the PlaylistArraysChanged action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistArraysChanged
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistArraysChanged
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aToken
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistArraysChanged)(void* aPtr, uint32_t aVersion, uint32_t aToken, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistArraysChanged)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aToken, uint32_t* aValue);
 /**
  * Callback which runs when the Read action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionRead
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionRead
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aTrackId
+ * @param[out] aUdn
  * @param[out] aMetadata
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1Read)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aTrackId, char** aMetadata);
+typedef int32_t (STDCALL *CallbackPlaylistManager1Read)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aTrackId, char** aUdn, char** aMetadata);
 /**
  * Callback which runs when the ReadList action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionReadList
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionReadList
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aTrackIdList
  * @param[out] aTrackList
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1ReadList)(void* aPtr, uint32_t aVersion, uint32_t aId, const char* aTrackIdList, char** aTrackList);
+typedef int32_t (STDCALL *CallbackPlaylistManager1ReadList)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, const char* aTrackIdList, char** aTrackList);
 /**
  * Callback which runs when the Insert action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionInsert
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionInsert
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aAfterTrackId
  * @param[in]  aUdn
- * @param[in]  aMetadataId
+ * @param[in]  aMetadata
  * @param[out] aNewTrackId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1Insert)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aAfterTrackId, const char* aUdn, const char* aMetadataId, uint32_t* aNewTrackId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1Insert)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aAfterTrackId, const char* aUdn, const char* aMetadata, uint32_t* aNewTrackId);
 /**
  * Callback which runs when the DeleteId action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionDeleteId
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionDeleteId
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aTrackId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1DeleteId)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aTrackId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1DeleteId)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aTrackId);
 /**
  * Callback which runs when the DeleteAll action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionDeleteAll
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionDeleteAll
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1DeleteAll)(void* aPtr, uint32_t aVersion, uint32_t aId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1DeleteAll)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId);
 
 /**
  * Provider constructor

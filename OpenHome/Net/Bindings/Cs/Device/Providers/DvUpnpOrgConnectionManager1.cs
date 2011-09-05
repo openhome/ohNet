@@ -238,10 +238,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetProtocolInfo action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetProtocolInfo was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aSource"></param>
         /// <param name="aSink"></param>
-        protected virtual void GetProtocolInfo(uint aVersion, out string aSource, out string aSink)
+        protected virtual void GetProtocolInfo(IDvInvocation aInvocation, out string aSource, out string aSink)
         {
             throw (new ActionDisabledError());
         }
@@ -253,7 +253,7 @@ namespace OpenHome.Net.Device.Providers
         /// PrepareForConnection action for the owning device.
         ///
         /// Must be implemented iff EnableActionPrepareForConnection was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aRemoteProtocolInfo"></param>
         /// <param name="aPeerConnectionManager"></param>
         /// <param name="aPeerConnectionID"></param>
@@ -261,7 +261,7 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aConnectionID"></param>
         /// <param name="aAVTransportID"></param>
         /// <param name="aRcsID"></param>
-        protected virtual void PrepareForConnection(uint aVersion, string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID)
+        protected virtual void PrepareForConnection(IDvInvocation aInvocation, string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
             throw (new ActionDisabledError());
         }
@@ -273,9 +273,9 @@ namespace OpenHome.Net.Device.Providers
         /// ConnectionComplete action for the owning device.
         ///
         /// Must be implemented iff EnableActionConnectionComplete was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aConnectionID"></param>
-        protected virtual void ConnectionComplete(uint aVersion, int aConnectionID)
+        protected virtual void ConnectionComplete(IDvInvocation aInvocation, int aConnectionID)
         {
             throw (new ActionDisabledError());
         }
@@ -287,9 +287,9 @@ namespace OpenHome.Net.Device.Providers
         /// GetCurrentConnectionIDs action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetCurrentConnectionIDs was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aConnectionIDs"></param>
-        protected virtual void GetCurrentConnectionIDs(uint aVersion, out string aConnectionIDs)
+        protected virtual void GetCurrentConnectionIDs(IDvInvocation aInvocation, out string aConnectionIDs)
         {
             throw (new ActionDisabledError());
         }
@@ -301,7 +301,7 @@ namespace OpenHome.Net.Device.Providers
         /// GetCurrentConnectionInfo action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetCurrentConnectionInfo was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aConnectionID"></param>
         /// <param name="aRcsID"></param>
         /// <param name="aAVTransportID"></param>
@@ -310,12 +310,12 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aPeerConnectionID"></param>
         /// <param name="aDirection"></param>
         /// <param name="aStatus"></param>
-        protected virtual void GetCurrentConnectionInfo(uint aVersion, int aConnectionID, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
+        protected virtual void GetCurrentConnectionInfo(IDvInvocation aInvocation, int aConnectionID, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoGetProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetProtocolInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
@@ -326,22 +326,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetProtocolInfo(aVersion, out source, out sink);
+                self.GetProtocolInfo(invocation, out source, out sink);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetProtocolInfo"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetProtocolInfo"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -364,7 +364,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPrepareForConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPrepareForConnection(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
@@ -384,22 +384,22 @@ namespace OpenHome.Net.Device.Providers
                 peerConnectionID = invocation.ReadInt("PeerConnectionID");
                 direction = invocation.ReadString("Direction");
                 invocation.ReadEnd();
-                self.PrepareForConnection(aVersion, remoteProtocolInfo, peerConnectionManager, peerConnectionID, direction, out connectionID, out aVTransportID, out rcsID);
+                self.PrepareForConnection(invocation, remoteProtocolInfo, peerConnectionManager, peerConnectionID, direction, out connectionID, out aVTransportID, out rcsID);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PrepareForConnection"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PrepareForConnection"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -423,7 +423,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoConnectionComplete(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoConnectionComplete(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
@@ -434,22 +434,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 connectionID = invocation.ReadInt("ConnectionID");
                 invocation.ReadEnd();
-                self.ConnectionComplete(aVersion, connectionID);
+                self.ConnectionComplete(invocation, connectionID);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "ConnectionComplete"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "ConnectionComplete"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -470,7 +470,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetCurrentConnectionIDs(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCurrentConnectionIDs(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
@@ -480,22 +480,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.GetCurrentConnectionIDs(aVersion, out connectionIDs);
+                self.GetCurrentConnectionIDs(invocation, out connectionIDs);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetCurrentConnectionIDs"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetCurrentConnectionIDs"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -517,7 +517,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetCurrentConnectionInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCurrentConnectionInfo(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
@@ -535,22 +535,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 connectionID = invocation.ReadInt("ConnectionID");
                 invocation.ReadEnd();
-                self.GetCurrentConnectionInfo(aVersion, connectionID, out rcsID, out aVTransportID, out protocolInfo, out peerConnectionManager, out peerConnectionID, out direction, out status);
+                self.GetCurrentConnectionInfo(invocation, connectionID, out rcsID, out aVTransportID, out protocolInfo, out peerConnectionManager, out peerConnectionID, out direction, out status);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetCurrentConnectionInfo"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetCurrentConnectionInfo"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try

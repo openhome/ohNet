@@ -81,7 +81,7 @@ private:
      * GetCount action for the owning device.
      * Must be implemented iff EnableActionGetCount was called.
      */
-    virtual void GetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aCount);
+    virtual void GetCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aCount);
     /**
      * GetRoom action.
      *
@@ -89,7 +89,7 @@ private:
      * GetRoom action for the owning device.
      * Must be implemented iff EnableActionGetRoom was called.
      */
-    virtual void GetRoom(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aRoomName);
+    virtual void GetRoom(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseString& aRoomName);
     /**
      * GetName action.
      *
@@ -97,7 +97,7 @@ private:
      * GetName action for the owning device.
      * Must be implemented iff EnableActionGetName was called.
      */
-    virtual void GetName(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aFriendlyName);
+    virtual void GetName(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseString& aFriendlyName);
     /**
      * GetPosition action.
      *
@@ -105,7 +105,7 @@ private:
      * GetPosition action for the owning device.
      * Must be implemented iff EnableActionGetPosition was called.
      */
-    virtual void GetPosition(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ);
+    virtual void GetPosition(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseUint& aX, IDvInvocationResponseUint& aY, IDvInvocationResponseUint& aZ);
     /**
      * SetColor action.
      *
@@ -113,7 +113,7 @@ private:
      * SetColor action for the owning device.
      * Must be implemented iff EnableActionSetColor was called.
      */
-    virtual void SetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, TUint aColor);
+    virtual void SetColor(IDvInvocation& aInvocation, TUint aIndex, TUint aColor);
     /**
      * GetColor action.
      *
@@ -121,7 +121,7 @@ private:
      * GetColor action for the owning device.
      * Must be implemented iff EnableActionGetColor was called.
      */
-    virtual void GetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aColor);
+    virtual void GetColor(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseUint& aColor);
     /**
      * GetColorComponents action.
      *
@@ -129,16 +129,16 @@ private:
      * GetColorComponents action for the owning device.
      * Must be implemented iff EnableActionGetColorComponents was called.
      */
-    virtual void GetColorComponents(IInvocationResponse& aResponse, TUint aVersion, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue);
+    virtual void GetColorComponents(IDvInvocation& aInvocation, TUint aColor, IDvInvocationResponseUint& aBrightness, IDvInvocationResponseUint& aRed, IDvInvocationResponseUint& aGreen, IDvInvocationResponseUint& aBlue);
 private:
     DvProviderOpenhomeOrgTestLights1();
-    void DoGetCount(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRoom(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetName(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetPosition(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetColor(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetColor(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetColorComponents(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetCount(IDviInvocation& aInvocation);
+    void DoGetRoom(IDviInvocation& aInvocation);
+    void DoGetName(IDviInvocation& aInvocation);
+    void DoGetPosition(IDviInvocation& aInvocation);
+    void DoSetColor(IDviInvocation& aInvocation);
+    void DoGetColor(IDviInvocation& aInvocation);
+    void DoGetColorComponents(IDviInvocation& aInvocation);
 private:
 };
 

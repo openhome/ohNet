@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -129,95 +130,100 @@ void DvProviderAvOpenhomeOrgSender1Cpp::EnableActionAttributes()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValue;
-    PresentationUrl(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    PresentationUrl(invocation, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValue;
-    Metadata(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    Metadata(invocation, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     bool respValue;
-    Audio(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    Audio(invocation, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValue(aInvocation, "Value");
+    DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValue;
-    Status(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    Status(invocation, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoAttributes(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoAttributes(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValue;
-    Attributes(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    Attributes(invocation, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::PresentationUrl(uint32_t /*aVersion*/, std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::PresentationUrl(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::Metadata(uint32_t /*aVersion*/, std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::Metadata(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::Audio(uint32_t /*aVersion*/, bool& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::Audio(IDvInvocationStd& /*aInvocation*/, bool& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::Status(uint32_t /*aVersion*/, std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::Status(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::Attributes(uint32_t /*aVersion*/, std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgSender1Cpp::Attributes(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
 {
     ASSERTS();
 }

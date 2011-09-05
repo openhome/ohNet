@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>ohNetGen arguments</title>
+
+  <para>The ohNetGen tool needs several arguments to be defined before you can
+  successfully generate the Provider. All of the following arguments are
+  mandatory.</para>
+
+  <para><table>
+      <title></title>
+
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry align="center">Option</entry>
+
+            <entry align="center">Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><userinput>--language</userinput></entry>
+
+            <entry>The language you want the code to be output in. Options
+            are:cpp — C++ cppcore — OpenHome's own C++ variant, using custom
+            buffers. c — C cs — C# js — JavaScript Note that the js option is
+            used only for generating the proxies. You must specify -- stack=cp
+            to be able to use the js language option.</entry>
+          </row>
+
+          <row>
+            <entry><userinput>--stack</userinput></entry>
+
+            <entry>The stack you are generating files for. Options are: l cp —
+            Control Point stack. Use this option to generate a Proxy. l dv —
+            Device stack. Use this option to generate a Provider. See the
+            <emphasis>OpenHome ohNet Control Point stack</emphasis> document
+            for more details about using Proxies.</entry>
+          </row>
+
+          <row>
+            <entry><userinput>--xml</userinput></entry>
+
+            <entry>The path and name of the service XML file you are using to
+            generate your Provider.</entry>
+          </row>
+
+          <row>
+            <entry><userinput>--output</userinput></entry>
+
+            <entry>The path to the directory where you want your generated
+            files to be created.</entry>
+          </row>
+
+          <row>
+            <entry><userinput>--domain</userinput></entry>
+
+            <entry>The domain for the service. For example:
+            <userinput>openhome.org</userinput>.</entry>
+          </row>
+
+          <row>
+            <entry><userinput>--type</userinput></entry>
+
+            <entry>The service's type. For example:
+            <userinput>Volume</userinput>.</entry>
+          </row>
+
+          <row>
+            <entry><userinput>--version</userinput></entry>
+
+            <entry>The version number of the service. For example:
+            <userinput>1</userinput>.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table></para>
+
+  <para>The domain, type and version options are used to name the generated
+  file. For example, if you specify the following options in an ohNetGen
+  command:</para>
+
+  <para><userinput>ohNetGen.exe --language=cpp --stack=dv
+  --xml=c:\UPNP\Services\Volume.xml --output=c:\ohNet\Providers
+  --domain=openhome.org --type=Volume -- version=1</userinput></para>
+
+  <para>you'll be provided with a Device Provider, which contains code
+  generated in the C++ language, and is called
+  <filename>DvOpenhomeOrgVolume1Std.cpp</filename>.</para>
+
+  <note>
+    <itemizedlist>
+      <listitem>
+        <para>The Dv prefix denotes this file as a Device Provider. In
+        contrast, Control Point Proxies are prefixed with Cp.</para>
+      </listitem>
+
+      <listitem>
+        <para>The output for C and C++ generated files also includes a header
+        file. The header file is also named according to the options you
+        provide in the ohNetGen command. For example, the header file for the
+        sample given above would be called
+        <filename>DvOpenhomeOrgVolume1.h</filename>.</para>
+
+        <para>The Std affix is used only in <filename>.cpp</filename> files
+        and not in the associated header files.</para>
+      </listitem>
+    </itemizedlist>
+  </note>
+</section>

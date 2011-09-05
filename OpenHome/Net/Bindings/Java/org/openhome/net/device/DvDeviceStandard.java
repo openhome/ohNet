@@ -7,7 +7,7 @@ public class DvDeviceStandard extends DvDevice
 {
 	private static native long DvDeviceStandardCreateNoResources(String aUdn);
 	private native DvDeviceStandardInitialised DvDeviceStandardCreate(String aUdn);
-	private static native void DvDeviceDestroy(long aDevice, long aUserData, long aCallback);
+	private static native void DvDeviceDestroy(long aDevice, long aCallback);
 	private static native int DvResourceWriterLanguageCount(long aLanguageList);
 	private static native String DvResourceWriterLanguage(long aLanguageList, int aIndex);
 	
@@ -39,7 +39,6 @@ public class DvDeviceStandard extends DvDevice
 	
 	private IResourceManager iResourceManager;
 	private long iCallback;
-	private long iUserData;
 	
 	/**
 	 * Creates a device capable of operating on any of the protocols the device
@@ -53,7 +52,6 @@ public class DvDeviceStandard extends DvDevice
 		super();
 		iResourceManager = null;
 		iCallback = 0;
-		iUserData = 0;
 		iHandle = DvDeviceStandardCreateNoResources(aUdn);
 	}
 	
@@ -69,7 +67,6 @@ public class DvDeviceStandard extends DvDevice
 	public DvDeviceStandard(String aUdn, IResourceManager aResourceManager)
     {
         iResourceManager = aResourceManager;
-        iUserData = 0;
         DvDeviceStandardInitialised init = DvDeviceStandardCreate(aUdn);
         iHandle = init.getHandle();
         iCallback = init.getCallback();
@@ -81,7 +78,7 @@ public class DvDeviceStandard extends DvDevice
 	 */
 	public void destroy()
 	{
-		DvDeviceDestroy(iHandle, iUserData, iCallback);
+		DvDeviceDestroy(iHandle, iCallback);
 	}
 	
 	
@@ -111,7 +108,6 @@ public class DvDeviceStandard extends DvDevice
 			long aWriteResource,
 			long aWriteEnd)
 	{
-		iUserData = aUserData;
 		List<String> languageList = new LinkedList<String>();
 		int count = DvResourceWriterLanguageCount(aLanguageList);
 		for (int i = 0; i < count; i++)

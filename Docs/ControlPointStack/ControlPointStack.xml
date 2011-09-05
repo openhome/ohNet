@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Control Point stack</title>
+
+  <para>The Control Point stack is designed specifically for use on Control
+  Points. It provides the mechanism used to relay messages from the Control
+  Point to a remote device. The Control Point stack has a layered architecture
+  that respects the layers defined by the UPnP specification.</para>
+
+  <para>The Discovery and Description layers are implemented in Device and
+  Device List classes. The Control and Eventing layers are implemented in
+  Proxy classes.</para>
+
+  <para>You use Devices, Device Lists and Proxies together with the Control
+  Point stack to pass the messages from your Control Point application to the
+  remote device.</para>
+
+  <para>Details on how you use the Control Point stack and the Device, Device
+  List and Proxy classes are contained in the following sections.</para>
+
+  <xi:include href="ControlPointStack.Initializing.xml" xpointer="element(/1)" />
+
+  <xi:include href="ControlPointStack.Closing.xml" xpointer="element(/1)" />
+
+  <xi:include href="DeviceList.xml" xpointer="element(/1)" />
+
+  <xi:include href="Proxy.xml" xpointer="element(/1)" />
+</chapter>

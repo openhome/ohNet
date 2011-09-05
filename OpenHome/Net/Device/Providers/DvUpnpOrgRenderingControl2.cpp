@@ -433,280 +433,280 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetStateVariables()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoListPresets(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoListPresets(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respCurrentPresetNameList(aInvocation, "CurrentPresetNameList");
-    ListPresets(resp, aVersion, InstanceID, respCurrentPresetNameList);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respCurrentPresetNameList(aInvocation, "CurrentPresetNameList");
+    ListPresets(invocation, InstanceID, respCurrentPresetNameList);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSelectPreset(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSelectPreset(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz PresetName;
     aInvocation.InvocationReadString("PresetName", PresetName);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SelectPreset(resp, aVersion, InstanceID, PresetName);
+    DviInvocation invocation(aInvocation);
+    SelectPreset(invocation, InstanceID, PresetName);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetBrightness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetBrightness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentBrightness(aInvocation, "CurrentBrightness");
-    GetBrightness(resp, aVersion, InstanceID, respCurrentBrightness);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentBrightness(aInvocation, "CurrentBrightness");
+    GetBrightness(invocation, InstanceID, respCurrentBrightness);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetBrightness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetBrightness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredBrightness = aInvocation.InvocationReadUint("DesiredBrightness");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetBrightness(resp, aVersion, InstanceID, DesiredBrightness);
+    DviInvocation invocation(aInvocation);
+    SetBrightness(invocation, InstanceID, DesiredBrightness);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetContrast(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetContrast(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentContrast(aInvocation, "CurrentContrast");
-    GetContrast(resp, aVersion, InstanceID, respCurrentContrast);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentContrast(aInvocation, "CurrentContrast");
+    GetContrast(invocation, InstanceID, respCurrentContrast);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetContrast(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetContrast(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredContrast = aInvocation.InvocationReadUint("DesiredContrast");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetContrast(resp, aVersion, InstanceID, DesiredContrast);
+    DviInvocation invocation(aInvocation);
+    SetContrast(invocation, InstanceID, DesiredContrast);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetSharpness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetSharpness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentSharpness(aInvocation, "CurrentSharpness");
-    GetSharpness(resp, aVersion, InstanceID, respCurrentSharpness);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentSharpness(aInvocation, "CurrentSharpness");
+    GetSharpness(invocation, InstanceID, respCurrentSharpness);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetSharpness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetSharpness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredSharpness = aInvocation.InvocationReadUint("DesiredSharpness");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetSharpness(resp, aVersion, InstanceID, DesiredSharpness);
+    DviInvocation invocation(aInvocation);
+    SetSharpness(invocation, InstanceID, DesiredSharpness);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetRedVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentRedVideoGain(aInvocation, "CurrentRedVideoGain");
-    GetRedVideoGain(resp, aVersion, InstanceID, respCurrentRedVideoGain);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentRedVideoGain(aInvocation, "CurrentRedVideoGain");
+    GetRedVideoGain(invocation, InstanceID, respCurrentRedVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetRedVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredRedVideoGain = aInvocation.InvocationReadUint("DesiredRedVideoGain");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetRedVideoGain(resp, aVersion, InstanceID, DesiredRedVideoGain);
+    DviInvocation invocation(aInvocation);
+    SetRedVideoGain(invocation, InstanceID, DesiredRedVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetGreenVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentGreenVideoGain(aInvocation, "CurrentGreenVideoGain");
-    GetGreenVideoGain(resp, aVersion, InstanceID, respCurrentGreenVideoGain);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentGreenVideoGain(aInvocation, "CurrentGreenVideoGain");
+    GetGreenVideoGain(invocation, InstanceID, respCurrentGreenVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetGreenVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredGreenVideoGain = aInvocation.InvocationReadUint("DesiredGreenVideoGain");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetGreenVideoGain(resp, aVersion, InstanceID, DesiredGreenVideoGain);
+    DviInvocation invocation(aInvocation);
+    SetGreenVideoGain(invocation, InstanceID, DesiredGreenVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetBlueVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentBlueVideoGain(aInvocation, "CurrentBlueVideoGain");
-    GetBlueVideoGain(resp, aVersion, InstanceID, respCurrentBlueVideoGain);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentBlueVideoGain(aInvocation, "CurrentBlueVideoGain");
+    GetBlueVideoGain(invocation, InstanceID, respCurrentBlueVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetBlueVideoGain(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredBlueVideoGain = aInvocation.InvocationReadUint("DesiredBlueVideoGain");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetBlueVideoGain(resp, aVersion, InstanceID, DesiredBlueVideoGain);
+    DviInvocation invocation(aInvocation);
+    SetBlueVideoGain(invocation, InstanceID, DesiredBlueVideoGain);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentRedVideoBlackLevel(aInvocation, "CurrentRedVideoBlackLevel");
-    GetRedVideoBlackLevel(resp, aVersion, InstanceID, respCurrentRedVideoBlackLevel);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentRedVideoBlackLevel(aInvocation, "CurrentRedVideoBlackLevel");
+    GetRedVideoBlackLevel(invocation, InstanceID, respCurrentRedVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredRedVideoBlackLevel = aInvocation.InvocationReadUint("DesiredRedVideoBlackLevel");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetRedVideoBlackLevel(resp, aVersion, InstanceID, DesiredRedVideoBlackLevel);
+    DviInvocation invocation(aInvocation);
+    SetRedVideoBlackLevel(invocation, InstanceID, DesiredRedVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentGreenVideoBlackLevel(aInvocation, "CurrentGreenVideoBlackLevel");
-    GetGreenVideoBlackLevel(resp, aVersion, InstanceID, respCurrentGreenVideoBlackLevel);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentGreenVideoBlackLevel(aInvocation, "CurrentGreenVideoBlackLevel");
+    GetGreenVideoBlackLevel(invocation, InstanceID, respCurrentGreenVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredGreenVideoBlackLevel = aInvocation.InvocationReadUint("DesiredGreenVideoBlackLevel");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetGreenVideoBlackLevel(resp, aVersion, InstanceID, DesiredGreenVideoBlackLevel);
+    DviInvocation invocation(aInvocation);
+    SetGreenVideoBlackLevel(invocation, InstanceID, DesiredGreenVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentBlueVideoBlackLevel(aInvocation, "CurrentBlueVideoBlackLevel");
-    GetBlueVideoBlackLevel(resp, aVersion, InstanceID, respCurrentBlueVideoBlackLevel);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentBlueVideoBlackLevel(aInvocation, "CurrentBlueVideoBlackLevel");
+    GetBlueVideoBlackLevel(invocation, InstanceID, respCurrentBlueVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredBlueVideoBlackLevel = aInvocation.InvocationReadUint("DesiredBlueVideoBlackLevel");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetBlueVideoBlackLevel(resp, aVersion, InstanceID, DesiredBlueVideoBlackLevel);
+    DviInvocation invocation(aInvocation);
+    SetBlueVideoBlackLevel(invocation, InstanceID, DesiredBlueVideoBlackLevel);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetColorTemperature(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetColorTemperature(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentColorTemperature(aInvocation, "CurrentColorTemperature");
-    GetColorTemperature(resp, aVersion, InstanceID, respCurrentColorTemperature);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentColorTemperature(aInvocation, "CurrentColorTemperature");
+    GetColorTemperature(invocation, InstanceID, respCurrentColorTemperature);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetColorTemperature(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetColorTemperature(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TUint DesiredColorTemperature = aInvocation.InvocationReadUint("DesiredColorTemperature");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetColorTemperature(resp, aVersion, InstanceID, DesiredColorTemperature);
+    DviInvocation invocation(aInvocation);
+    SetColorTemperature(invocation, InstanceID, DesiredColorTemperature);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetHorizontalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseInt respCurrentHorizontalKeystone(aInvocation, "CurrentHorizontalKeystone");
-    GetHorizontalKeystone(resp, aVersion, InstanceID, respCurrentHorizontalKeystone);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseInt respCurrentHorizontalKeystone(aInvocation, "CurrentHorizontalKeystone");
+    GetHorizontalKeystone(invocation, InstanceID, respCurrentHorizontalKeystone);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetHorizontalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TInt DesiredHorizontalKeystone = aInvocation.InvocationReadInt("DesiredHorizontalKeystone");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetHorizontalKeystone(resp, aVersion, InstanceID, DesiredHorizontalKeystone);
+    DviInvocation invocation(aInvocation);
+    SetHorizontalKeystone(invocation, InstanceID, DesiredHorizontalKeystone);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetVerticalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseInt respCurrentVerticalKeystone(aInvocation, "CurrentVerticalKeystone");
-    GetVerticalKeystone(resp, aVersion, InstanceID, respCurrentVerticalKeystone);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseInt respCurrentVerticalKeystone(aInvocation, "CurrentVerticalKeystone");
+    GetVerticalKeystone(invocation, InstanceID, respCurrentVerticalKeystone);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetVerticalKeystone(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     TInt DesiredVerticalKeystone = aInvocation.InvocationReadInt("DesiredVerticalKeystone");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetVerticalKeystone(resp, aVersion, InstanceID, DesiredVerticalKeystone);
+    DviInvocation invocation(aInvocation);
+    SetVerticalKeystone(invocation, InstanceID, DesiredVerticalKeystone);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetMute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetMute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
     aInvocation.InvocationReadString("Channel", Channel);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseBool respCurrentMute(aInvocation, "CurrentMute");
-    GetMute(resp, aVersion, InstanceID, Channel, respCurrentMute);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseBool respCurrentMute(aInvocation, "CurrentMute");
+    GetMute(invocation, InstanceID, Channel, respCurrentMute);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetMute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetMute(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -714,23 +714,23 @@ void DvProviderUpnpOrgRenderingControl2::DoSetMute(IDviInvocation& aInvocation, 
     aInvocation.InvocationReadString("Channel", Channel);
     TBool DesiredMute = aInvocation.InvocationReadBool("DesiredMute");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetMute(resp, aVersion, InstanceID, Channel, DesiredMute);
+    DviInvocation invocation(aInvocation);
+    SetMute(invocation, InstanceID, Channel, DesiredMute);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetVolume(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetVolume(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
     aInvocation.InvocationReadString("Channel", Channel);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respCurrentVolume(aInvocation, "CurrentVolume");
-    GetVolume(resp, aVersion, InstanceID, Channel, respCurrentVolume);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respCurrentVolume(aInvocation, "CurrentVolume");
+    GetVolume(invocation, InstanceID, Channel, respCurrentVolume);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetVolume(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetVolume(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -738,23 +738,23 @@ void DvProviderUpnpOrgRenderingControl2::DoSetVolume(IDviInvocation& aInvocation
     aInvocation.InvocationReadString("Channel", Channel);
     TUint DesiredVolume = aInvocation.InvocationReadUint("DesiredVolume");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetVolume(resp, aVersion, InstanceID, Channel, DesiredVolume);
+    DviInvocation invocation(aInvocation);
+    SetVolume(invocation, InstanceID, Channel, DesiredVolume);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetVolumeDB(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetVolumeDB(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
     aInvocation.InvocationReadString("Channel", Channel);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseInt respCurrentVolume(aInvocation, "CurrentVolume");
-    GetVolumeDB(resp, aVersion, InstanceID, Channel, respCurrentVolume);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseInt respCurrentVolume(aInvocation, "CurrentVolume");
+    GetVolumeDB(invocation, InstanceID, Channel, respCurrentVolume);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetVolumeDB(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetVolumeDB(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -762,36 +762,36 @@ void DvProviderUpnpOrgRenderingControl2::DoSetVolumeDB(IDviInvocation& aInvocati
     aInvocation.InvocationReadString("Channel", Channel);
     TInt DesiredVolume = aInvocation.InvocationReadInt("DesiredVolume");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetVolumeDB(resp, aVersion, InstanceID, Channel, DesiredVolume);
+    DviInvocation invocation(aInvocation);
+    SetVolumeDB(invocation, InstanceID, Channel, DesiredVolume);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetVolumeDBRange(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
     aInvocation.InvocationReadString("Channel", Channel);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseInt respMinValue(aInvocation, "MinValue");
-    InvocationResponseInt respMaxValue(aInvocation, "MaxValue");
-    GetVolumeDBRange(resp, aVersion, InstanceID, Channel, respMinValue, respMaxValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseInt respMinValue(aInvocation, "MinValue");
+    DviInvocationResponseInt respMaxValue(aInvocation, "MaxValue");
+    GetVolumeDBRange(invocation, InstanceID, Channel, respMinValue, respMaxValue);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetLoudness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetLoudness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz Channel;
     aInvocation.InvocationReadString("Channel", Channel);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseBool respCurrentLoudness(aInvocation, "CurrentLoudness");
-    GetLoudness(resp, aVersion, InstanceID, Channel, respCurrentLoudness);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseBool respCurrentLoudness(aInvocation, "CurrentLoudness");
+    GetLoudness(invocation, InstanceID, Channel, respCurrentLoudness);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetLoudness(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetLoudness(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -799,23 +799,23 @@ void DvProviderUpnpOrgRenderingControl2::DoSetLoudness(IDviInvocation& aInvocati
     aInvocation.InvocationReadString("Channel", Channel);
     TBool DesiredLoudness = aInvocation.InvocationReadBool("DesiredLoudness");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetLoudness(resp, aVersion, InstanceID, Channel, DesiredLoudness);
+    DviInvocation invocation(aInvocation);
+    SetLoudness(invocation, InstanceID, Channel, DesiredLoudness);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoGetStateVariables(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoGetStateVariables(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
     Brhz StateVariableList;
     aInvocation.InvocationReadString("StateVariableList", StateVariableList);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
-    GetStateVariables(resp, aVersion, InstanceID, StateVariableList, respStateVariableValuePairs);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
+    GetStateVariables(invocation, InstanceID, StateVariableList, respStateVariableValuePairs);
 }
 
-void DvProviderUpnpOrgRenderingControl2::DoSetStateVariables(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2::DoSetStateVariables(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -828,192 +828,192 @@ void DvProviderUpnpOrgRenderingControl2::DoSetStateVariables(IDviInvocation& aIn
     Brhz StateVariableValuePairs;
     aInvocation.InvocationReadString("StateVariableValuePairs", StateVariableValuePairs);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respStateVariableList(aInvocation, "StateVariableList");
-    SetStateVariables(resp, aVersion, InstanceID, RenderingControlUDN, ServiceType, ServiceId, StateVariableValuePairs, respStateVariableList);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respStateVariableList(aInvocation, "StateVariableList");
+    SetStateVariables(invocation, InstanceID, RenderingControlUDN, ServiceType, ServiceId, StateVariableValuePairs, respStateVariableList);
 }
 
-void DvProviderUpnpOrgRenderingControl2::ListPresets(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseString& /*aCurrentPresetNameList*/)
+void DvProviderUpnpOrgRenderingControl2::ListPresets(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseString& /*aCurrentPresetNameList*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SelectPreset(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aPresetName*/)
+void DvProviderUpnpOrgRenderingControl2::SelectPreset(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aPresetName*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetBrightness(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentBrightness*/)
+void DvProviderUpnpOrgRenderingControl2::GetBrightness(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentBrightness*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetBrightness(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredBrightness*/)
+void DvProviderUpnpOrgRenderingControl2::SetBrightness(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredBrightness*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetContrast(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentContrast*/)
+void DvProviderUpnpOrgRenderingControl2::GetContrast(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentContrast*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetContrast(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredContrast*/)
+void DvProviderUpnpOrgRenderingControl2::SetContrast(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredContrast*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetSharpness(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentSharpness*/)
+void DvProviderUpnpOrgRenderingControl2::GetSharpness(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentSharpness*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetSharpness(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredSharpness*/)
+void DvProviderUpnpOrgRenderingControl2::SetSharpness(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredSharpness*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetRedVideoGain(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentRedVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2::GetRedVideoGain(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentRedVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetRedVideoGain(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredRedVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2::SetRedVideoGain(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredRedVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetGreenVideoGain(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentGreenVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2::GetGreenVideoGain(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentGreenVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetGreenVideoGain(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredGreenVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2::SetGreenVideoGain(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredGreenVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetBlueVideoGain(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentBlueVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2::GetBlueVideoGain(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentBlueVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetBlueVideoGain(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredBlueVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2::SetBlueVideoGain(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredBlueVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetRedVideoBlackLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentRedVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2::GetRedVideoBlackLevel(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentRedVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetRedVideoBlackLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredRedVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2::SetRedVideoBlackLevel(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredRedVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetGreenVideoBlackLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentGreenVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2::GetGreenVideoBlackLevel(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentGreenVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetGreenVideoBlackLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredGreenVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2::SetGreenVideoBlackLevel(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredGreenVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetBlueVideoBlackLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentBlueVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2::GetBlueVideoBlackLevel(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentBlueVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetBlueVideoBlackLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredBlueVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2::SetBlueVideoBlackLevel(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredBlueVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetColorTemperature(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseUint& /*aCurrentColorTemperature*/)
+void DvProviderUpnpOrgRenderingControl2::GetColorTemperature(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseUint& /*aCurrentColorTemperature*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetColorTemperature(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TUint /*aDesiredColorTemperature*/)
+void DvProviderUpnpOrgRenderingControl2::SetColorTemperature(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TUint /*aDesiredColorTemperature*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetHorizontalKeystone(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseInt& /*aCurrentHorizontalKeystone*/)
+void DvProviderUpnpOrgRenderingControl2::GetHorizontalKeystone(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseInt& /*aCurrentHorizontalKeystone*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetHorizontalKeystone(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TInt /*aDesiredHorizontalKeystone*/)
+void DvProviderUpnpOrgRenderingControl2::SetHorizontalKeystone(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TInt /*aDesiredHorizontalKeystone*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetVerticalKeystone(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, IInvocationResponseInt& /*aCurrentVerticalKeystone*/)
+void DvProviderUpnpOrgRenderingControl2::GetVerticalKeystone(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, IDvInvocationResponseInt& /*aCurrentVerticalKeystone*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetVerticalKeystone(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, TInt /*aDesiredVerticalKeystone*/)
+void DvProviderUpnpOrgRenderingControl2::SetVerticalKeystone(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, TInt /*aDesiredVerticalKeystone*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetMute(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IInvocationResponseBool& /*aCurrentMute*/)
+void DvProviderUpnpOrgRenderingControl2::GetMute(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IDvInvocationResponseBool& /*aCurrentMute*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetMute(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, TBool /*aDesiredMute*/)
+void DvProviderUpnpOrgRenderingControl2::SetMute(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, TBool /*aDesiredMute*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetVolume(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IInvocationResponseUint& /*aCurrentVolume*/)
+void DvProviderUpnpOrgRenderingControl2::GetVolume(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IDvInvocationResponseUint& /*aCurrentVolume*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetVolume(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, TUint /*aDesiredVolume*/)
+void DvProviderUpnpOrgRenderingControl2::SetVolume(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, TUint /*aDesiredVolume*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetVolumeDB(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IInvocationResponseInt& /*aCurrentVolume*/)
+void DvProviderUpnpOrgRenderingControl2::GetVolumeDB(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IDvInvocationResponseInt& /*aCurrentVolume*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetVolumeDB(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, TInt /*aDesiredVolume*/)
+void DvProviderUpnpOrgRenderingControl2::SetVolumeDB(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, TInt /*aDesiredVolume*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetVolumeDBRange(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IInvocationResponseInt& /*aMinValue*/, IInvocationResponseInt& /*aMaxValue*/)
+void DvProviderUpnpOrgRenderingControl2::GetVolumeDBRange(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IDvInvocationResponseInt& /*aMinValue*/, IDvInvocationResponseInt& /*aMaxValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetLoudness(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IInvocationResponseBool& /*aCurrentLoudness*/)
+void DvProviderUpnpOrgRenderingControl2::GetLoudness(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, IDvInvocationResponseBool& /*aCurrentLoudness*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetLoudness(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, TBool /*aDesiredLoudness*/)
+void DvProviderUpnpOrgRenderingControl2::SetLoudness(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aChannel*/, TBool /*aDesiredLoudness*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::GetStateVariables(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aStateVariableList*/, IInvocationResponseString& /*aStateVariableValuePairs*/)
+void DvProviderUpnpOrgRenderingControl2::GetStateVariables(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aStateVariableList*/, IDvInvocationResponseString& /*aStateVariableValuePairs*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgRenderingControl2::SetStateVariables(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aInstanceID*/, const Brx& /*aRenderingControlUDN*/, const Brx& /*aServiceType*/, const Brx& /*aServiceId*/, const Brx& /*aStateVariableValuePairs*/, IInvocationResponseString& /*aStateVariableList*/)
+void DvProviderUpnpOrgRenderingControl2::SetStateVariables(IDvInvocation& /*aResponse*/, TUint /*aInstanceID*/, const Brx& /*aRenderingControlUDN*/, const Brx& /*aServiceType*/, const Brx& /*aServiceId*/, const Brx& /*aStateVariableValuePairs*/, IDvInvocationResponseString& /*aStateVariableList*/)
 {
     ASSERTS();
 }

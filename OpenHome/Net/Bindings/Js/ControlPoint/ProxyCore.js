@@ -501,7 +501,7 @@ OhNet.SubscriptionManager = (function () {
                 if (DEBUG) {
                     console.log("start/websocketServerLocation: " + websocketServerLocation);
                 }
-                websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
+                websocket = new WebSocket(websocketServerLocation, "upnpevent.openhome.org"); // TODO : Needs to acquire the port
                 websocketOpen = true;
 
                 websocket.onmessage = onSocketMessage;
@@ -647,7 +647,6 @@ OhNet.ServiceProperty = function (name, type) {
 * @param {String | Int | Boolean} value The new value for the property
 */
 OhNet.ServiceProperty.prototype.setValue = function (value) {
-    console.log("setValue: ");
     if (this.value != value) {
 
         switch (this.type) {

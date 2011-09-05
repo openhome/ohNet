@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Introduction</title>
+
+  <para>This document is for developers using the OpenHome ohNet stack to
+  publish a device's services over a local network.</para>
+
+  <para>ohNet is a full UPnP stack. The public APIs are protocol independent
+  and offered in C++, C# and C.</para>
+
+  <note>
+    <para>All code examples in this document use C++. Each C++ function used
+    has an equivalent in the other languages. The naming scheme for the
+    functions is consistent between the languages so you can easily find the
+    functions in the other languages published in the API.</para>
+
+    <para>All snippets also assume the use of two namespaces:
+    <code>OpenHome</code> and <code>OpenHome::Net</code>.</para>
+  </note>
+
+  <para>The Device stack exposes the parts of ohNet required to present your
+  device's services to interested clients, such as Control Points.</para>
+
+  <para>Specific emphasis is placed on the use of Providers to publish
+  services, giving access to the actions and properties that define each
+  service. To help you write your Provider, ohNet comes supplied with the
+  tools needed to automatically generate code from the service XML. This
+  document includes details on how to use the generation tool and a detailed
+  walk-through of how to write a Provider using example code.</para>
+
+  <note>
+    <para>You must have detailed knowledge of how the services are implemented
+    on your device. The code generated for the Provider gives you a framework
+    which you can add to. You must add the code in the Provider to fully
+    implement each service's action.</para>
+  </note>
+
+  <xi:include href="Introduction-Prerequisites.xml" xpointer="element(/1)" />
+
+  <xi:include href="Introduction-RelatedDocuments.xml" xpointer="element(/1)" />
+
+  <xi:include href="Introduction-WhyChooseOhNet.xml" xpointer="element(/1)" />
+</chapter>

@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -221,7 +222,7 @@ private:
      * Metadata action for the owning device.
      * Must be implemented iff EnableActionMetadata was called.
      */
-    virtual void Metadata(uint32_t aVersion, std::string& aMetadata);
+    virtual void Metadata(IDvInvocationStd& aInvocation, std::string& aMetadata);
     /**
      * ImagesXml action.
      *
@@ -229,7 +230,7 @@ private:
      * ImagesXml action for the owning device.
      * Must be implemented iff EnableActionImagesXml was called.
      */
-    virtual void ImagesXml(uint32_t aVersion, std::string& aImagesXml);
+    virtual void ImagesXml(IDvInvocationStd& aInvocation, std::string& aImagesXml);
     /**
      * PlaylistReadArray action.
      *
@@ -237,7 +238,7 @@ private:
      * PlaylistReadArray action for the owning device.
      * Must be implemented iff EnableActionPlaylistReadArray was called.
      */
-    virtual void PlaylistReadArray(uint32_t aVersion, uint32_t aId, std::string& aArray);
+    virtual void PlaylistReadArray(IDvInvocationStd& aInvocation, uint32_t aId, std::string& aArray);
     /**
      * PlaylistReadList action.
      *
@@ -245,7 +246,7 @@ private:
      * PlaylistReadList action for the owning device.
      * Must be implemented iff EnableActionPlaylistReadList was called.
      */
-    virtual void PlaylistReadList(uint32_t aVersion, const std::string& aIdList, std::string& aPlaylistList);
+    virtual void PlaylistReadList(IDvInvocationStd& aInvocation, const std::string& aIdList, std::string& aPlaylistList);
     /**
      * PlaylistRead action.
      *
@@ -253,7 +254,7 @@ private:
      * PlaylistRead action for the owning device.
      * Must be implemented iff EnableActionPlaylistRead was called.
      */
-    virtual void PlaylistRead(uint32_t aVersion, uint32_t aId, std::string& aName, std::string& aDescription, uint32_t& aImageId);
+    virtual void PlaylistRead(IDvInvocationStd& aInvocation, uint32_t aId, std::string& aName, std::string& aDescription, uint32_t& aImageId);
     /**
      * PlaylistSetName action.
      *
@@ -261,7 +262,7 @@ private:
      * PlaylistSetName action for the owning device.
      * Must be implemented iff EnableActionPlaylistSetName was called.
      */
-    virtual void PlaylistSetName(uint32_t aVersion, uint32_t aId, const std::string& aName);
+    virtual void PlaylistSetName(IDvInvocationStd& aInvocation, uint32_t aId, const std::string& aName);
     /**
      * PlaylistSetDescription action.
      *
@@ -269,7 +270,7 @@ private:
      * PlaylistSetDescription action for the owning device.
      * Must be implemented iff EnableActionPlaylistSetDescription was called.
      */
-    virtual void PlaylistSetDescription(uint32_t aVersion, uint32_t aId, const std::string& aDescription);
+    virtual void PlaylistSetDescription(IDvInvocationStd& aInvocation, uint32_t aId, const std::string& aDescription);
     /**
      * PlaylistSetImageId action.
      *
@@ -277,7 +278,7 @@ private:
      * PlaylistSetImageId action for the owning device.
      * Must be implemented iff EnableActionPlaylistSetImageId was called.
      */
-    virtual void PlaylistSetImageId(uint32_t aVersion, uint32_t aId, uint32_t aImageId);
+    virtual void PlaylistSetImageId(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aImageId);
     /**
      * PlaylistInsert action.
      *
@@ -285,7 +286,7 @@ private:
      * PlaylistInsert action for the owning device.
      * Must be implemented iff EnableActionPlaylistInsert was called.
      */
-    virtual void PlaylistInsert(uint32_t aVersion, uint32_t aAfterId, const std::string& aName, const std::string& aDescription, uint32_t aImageId, uint32_t& aNewId);
+    virtual void PlaylistInsert(IDvInvocationStd& aInvocation, uint32_t aAfterId, const std::string& aName, const std::string& aDescription, uint32_t aImageId, uint32_t& aNewId);
     /**
      * PlaylistDeleteId action.
      *
@@ -293,7 +294,7 @@ private:
      * PlaylistDeleteId action for the owning device.
      * Must be implemented iff EnableActionPlaylistDeleteId was called.
      */
-    virtual void PlaylistDeleteId(uint32_t aVersion, uint32_t aValue);
+    virtual void PlaylistDeleteId(IDvInvocationStd& aInvocation, uint32_t aValue);
     /**
      * PlaylistMove action.
      *
@@ -301,7 +302,7 @@ private:
      * PlaylistMove action for the owning device.
      * Must be implemented iff EnableActionPlaylistMove was called.
      */
-    virtual void PlaylistMove(uint32_t aVersion, uint32_t aId, uint32_t aAfterId);
+    virtual void PlaylistMove(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aAfterId);
     /**
      * PlaylistsMax action.
      *
@@ -309,7 +310,7 @@ private:
      * PlaylistsMax action for the owning device.
      * Must be implemented iff EnableActionPlaylistsMax was called.
      */
-    virtual void PlaylistsMax(uint32_t aVersion, uint32_t& aValue);
+    virtual void PlaylistsMax(IDvInvocationStd& aInvocation, uint32_t& aValue);
     /**
      * TracksMax action.
      *
@@ -317,7 +318,7 @@ private:
      * TracksMax action for the owning device.
      * Must be implemented iff EnableActionTracksMax was called.
      */
-    virtual void TracksMax(uint32_t aVersion, uint32_t& aValue);
+    virtual void TracksMax(IDvInvocationStd& aInvocation, uint32_t& aValue);
     /**
      * PlaylistArrays action.
      *
@@ -325,7 +326,7 @@ private:
      * PlaylistArrays action for the owning device.
      * Must be implemented iff EnableActionPlaylistArrays was called.
      */
-    virtual void PlaylistArrays(uint32_t aVersion, uint32_t& aToken, std::string& aIdArray, std::string& aTokenArray);
+    virtual void PlaylistArrays(IDvInvocationStd& aInvocation, uint32_t& aToken, std::string& aIdArray, std::string& aTokenArray);
     /**
      * PlaylistArraysChanged action.
      *
@@ -333,7 +334,7 @@ private:
      * PlaylistArraysChanged action for the owning device.
      * Must be implemented iff EnableActionPlaylistArraysChanged was called.
      */
-    virtual void PlaylistArraysChanged(uint32_t aVersion, uint32_t aToken, bool& aValue);
+    virtual void PlaylistArraysChanged(IDvInvocationStd& aInvocation, uint32_t aToken, bool& aValue);
     /**
      * Read action.
      *
@@ -341,7 +342,7 @@ private:
      * Read action for the owning device.
      * Must be implemented iff EnableActionRead was called.
      */
-    virtual void Read(uint32_t aVersion, uint32_t aId, uint32_t aTrackId, std::string& aMetadata);
+    virtual void Read(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aTrackId, std::string& aUdn, std::string& aMetadata);
     /**
      * ReadList action.
      *
@@ -349,7 +350,7 @@ private:
      * ReadList action for the owning device.
      * Must be implemented iff EnableActionReadList was called.
      */
-    virtual void ReadList(uint32_t aVersion, uint32_t aId, const std::string& aTrackIdList, std::string& aTrackList);
+    virtual void ReadList(IDvInvocationStd& aInvocation, uint32_t aId, const std::string& aTrackIdList, std::string& aTrackList);
     /**
      * Insert action.
      *
@@ -357,7 +358,7 @@ private:
      * Insert action for the owning device.
      * Must be implemented iff EnableActionInsert was called.
      */
-    virtual void Insert(uint32_t aVersion, uint32_t aId, uint32_t aAfterTrackId, const std::string& aUdn, const std::string& aMetadataId, uint32_t& aNewTrackId);
+    virtual void Insert(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aAfterTrackId, const std::string& aUdn, const std::string& aMetadata, uint32_t& aNewTrackId);
     /**
      * DeleteId action.
      *
@@ -365,7 +366,7 @@ private:
      * DeleteId action for the owning device.
      * Must be implemented iff EnableActionDeleteId was called.
      */
-    virtual void DeleteId(uint32_t aVersion, uint32_t aId, uint32_t aTrackId);
+    virtual void DeleteId(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aTrackId);
     /**
      * DeleteAll action.
      *
@@ -373,29 +374,29 @@ private:
      * DeleteAll action for the owning device.
      * Must be implemented iff EnableActionDeleteAll was called.
      */
-    virtual void DeleteAll(uint32_t aVersion, uint32_t aId);
+    virtual void DeleteAll(IDvInvocationStd& aInvocation, uint32_t aId);
 private:
     DvProviderAvOpenhomeOrgPlaylistManager1Cpp();
-    void DoMetadata(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoImagesXml(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistReadArray(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistReadList(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistRead(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistSetName(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistSetDescription(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistSetImageId(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistInsert(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistDeleteId(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistMove(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistsMax(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoTracksMax(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistArrays(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPlaylistArraysChanged(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoRead(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoReadList(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoInsert(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoDeleteId(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoDeleteAll(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoMetadata(IDviInvocation& aInvocation);
+    void DoImagesXml(IDviInvocation& aInvocation);
+    void DoPlaylistReadArray(IDviInvocation& aInvocation);
+    void DoPlaylistReadList(IDviInvocation& aInvocation);
+    void DoPlaylistRead(IDviInvocation& aInvocation);
+    void DoPlaylistSetName(IDviInvocation& aInvocation);
+    void DoPlaylistSetDescription(IDviInvocation& aInvocation);
+    void DoPlaylistSetImageId(IDviInvocation& aInvocation);
+    void DoPlaylistInsert(IDviInvocation& aInvocation);
+    void DoPlaylistDeleteId(IDviInvocation& aInvocation);
+    void DoPlaylistMove(IDviInvocation& aInvocation);
+    void DoPlaylistsMax(IDviInvocation& aInvocation);
+    void DoTracksMax(IDviInvocation& aInvocation);
+    void DoPlaylistArrays(IDviInvocation& aInvocation);
+    void DoPlaylistArraysChanged(IDviInvocation& aInvocation);
+    void DoRead(IDviInvocation& aInvocation);
+    void DoReadList(IDviInvocation& aInvocation);
+    void DoInsert(IDviInvocation& aInvocation);
+    void DoDeleteId(IDviInvocation& aInvocation);
+    void DoDeleteAll(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyMetadata;
     PropertyString* iPropertyImagesXml;

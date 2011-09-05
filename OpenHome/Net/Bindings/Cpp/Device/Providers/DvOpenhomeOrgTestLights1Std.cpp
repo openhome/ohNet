@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -80,49 +81,52 @@ void DvProviderOpenhomeOrgTestLights1Cpp::EnableActionGetColorComponents()
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetCount(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetCount(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respCount;
-    GetCount(aVersion, respCount);
+    DvInvocationStd invocation(aInvocation);
+    GetCount(invocation, respCount);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCount(aInvocation, "Count");
+    DviInvocationResponseUint respWriterCount(aInvocation, "Count");
     respWriterCount.Write(respCount);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetRoom(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetRoom(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
     std::string respRoomName;
-    GetRoom(aVersion, Index, respRoomName);
+    DvInvocationStd invocation(aInvocation);
+    GetRoom(invocation, Index, respRoomName);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterRoomName(aInvocation, "RoomName");
+    DviInvocationResponseString respWriterRoomName(aInvocation, "RoomName");
     Brn buf_RoomName((const TByte*)respRoomName.c_str(), (TUint)respRoomName.length());
     respWriterRoomName.Write(buf_RoomName);
     aInvocation.InvocationWriteStringEnd("RoomName");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetName(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetName(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
     std::string respFriendlyName;
-    GetName(aVersion, Index, respFriendlyName);
+    DvInvocationStd invocation(aInvocation);
+    GetName(invocation, Index, respFriendlyName);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterFriendlyName(aInvocation, "FriendlyName");
+    DviInvocationResponseString respWriterFriendlyName(aInvocation, "FriendlyName");
     Brn buf_FriendlyName((const TByte*)respFriendlyName.c_str(), (TUint)respFriendlyName.length());
     respWriterFriendlyName.Write(buf_FriendlyName);
     aInvocation.InvocationWriteStringEnd("FriendlyName");
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetPosition(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetPosition(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
@@ -130,42 +134,45 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetPosition(IDviInvocation& aInvocat
     uint32_t respX;
     uint32_t respY;
     uint32_t respZ;
-    GetPosition(aVersion, Index, respX, respY, respZ);
+    DvInvocationStd invocation(aInvocation);
+    GetPosition(invocation, Index, respX, respY, respZ);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterX(aInvocation, "X");
+    DviInvocationResponseUint respWriterX(aInvocation, "X");
     respWriterX.Write(respX);
-    InvocationResponseUint respWriterY(aInvocation, "Y");
+    DviInvocationResponseUint respWriterY(aInvocation, "Y");
     respWriterY.Write(respY);
-    InvocationResponseUint respWriterZ(aInvocation, "Z");
+    DviInvocationResponseUint respWriterZ(aInvocation, "Z");
     respWriterZ.Write(respZ);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoSetColor(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoSetColor(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
     uint32_t Color = aInvocation.InvocationReadUint("Color");
     aInvocation.InvocationReadEnd();
-    SetColor(aVersion, Index, Color);
+    DvInvocationStd invocation(aInvocation);
+    SetColor(invocation, Index, Color);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColor(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColor(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
     uint32_t respColor;
-    GetColor(aVersion, Index, respColor);
+    DvInvocationStd invocation(aInvocation);
+    GetColor(invocation, Index, respColor);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterColor(aInvocation, "Color");
+    DviInvocationResponseUint respWriterColor(aInvocation, "Color");
     respWriterColor.Write(respColor);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColorComponents(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColorComponents(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     uint32_t Color = aInvocation.InvocationReadUint("Color");
@@ -174,50 +181,51 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColorComponents(IDviInvocation& a
     uint32_t respRed;
     uint32_t respGreen;
     uint32_t respBlue;
-    GetColorComponents(aVersion, Color, respBrightness, respRed, respGreen, respBlue);
+    DvInvocationStd invocation(aInvocation);
+    GetColorComponents(invocation, Color, respBrightness, respRed, respGreen, respBlue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterBrightness(aInvocation, "Brightness");
+    DviInvocationResponseUint respWriterBrightness(aInvocation, "Brightness");
     respWriterBrightness.Write(respBrightness);
-    InvocationResponseUint respWriterRed(aInvocation, "Red");
+    DviInvocationResponseUint respWriterRed(aInvocation, "Red");
     respWriterRed.Write(respRed);
-    InvocationResponseUint respWriterGreen(aInvocation, "Green");
+    DviInvocationResponseUint respWriterGreen(aInvocation, "Green");
     respWriterGreen.Write(respGreen);
-    InvocationResponseUint respWriterBlue(aInvocation, "Blue");
+    DviInvocationResponseUint respWriterBlue(aInvocation, "Blue");
     respWriterBlue.Write(respBlue);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::GetCount(uint32_t /*aVersion*/, uint32_t& /*aCount*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::GetCount(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aCount*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::GetRoom(uint32_t /*aVersion*/, uint32_t /*aIndex*/, std::string& /*aRoomName*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::GetRoom(IDvInvocationStd& /*aInvocation*/, uint32_t /*aIndex*/, std::string& /*aRoomName*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::GetName(uint32_t /*aVersion*/, uint32_t /*aIndex*/, std::string& /*aFriendlyName*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::GetName(IDvInvocationStd& /*aInvocation*/, uint32_t /*aIndex*/, std::string& /*aFriendlyName*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::GetPosition(uint32_t /*aVersion*/, uint32_t /*aIndex*/, uint32_t& /*aX*/, uint32_t& /*aY*/, uint32_t& /*aZ*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::GetPosition(IDvInvocationStd& /*aInvocation*/, uint32_t /*aIndex*/, uint32_t& /*aX*/, uint32_t& /*aY*/, uint32_t& /*aZ*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::SetColor(uint32_t /*aVersion*/, uint32_t /*aIndex*/, uint32_t /*aColor*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::SetColor(IDvInvocationStd& /*aInvocation*/, uint32_t /*aIndex*/, uint32_t /*aColor*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::GetColor(uint32_t /*aVersion*/, uint32_t /*aIndex*/, uint32_t& /*aColor*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::GetColor(IDvInvocationStd& /*aInvocation*/, uint32_t /*aIndex*/, uint32_t& /*aColor*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestLights1Cpp::GetColorComponents(uint32_t /*aVersion*/, uint32_t /*aColor*/, uint32_t& /*aBrightness*/, uint32_t& /*aRed*/, uint32_t& /*aGreen*/, uint32_t& /*aBlue*/)
+void DvProviderOpenhomeOrgTestLights1Cpp::GetColorComponents(IDvInvocationStd& /*aInvocation*/, uint32_t /*aColor*/, uint32_t& /*aBrightness*/, uint32_t& /*aRed*/, uint32_t& /*aGreen*/, uint32_t& /*aBlue*/)
 {
     ASSERTS();
 }

@@ -738,10 +738,10 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
     iWriter.Write(Brn("<device>"));
     iWriter.Write(Brn("<deviceType>"));
     iWriter.Write(Ssdp::kUrn);
-    Brn upnpDomain = iDeviceUpnp.Domain();
-    Bwh canonicalDomain(upnpDomain.Bytes() + 10);
-    Ssdp::UpnpDomainToCanonical(upnpDomain, canonicalDomain);
-    iWriter.Write(canonicalDomain);
+    Brn canonicalDomain = iDeviceUpnp.Domain();
+    Bwh upnpDomain(canonicalDomain.Bytes() + 10);
+    Ssdp::CanonicalDomainToUpnp(canonicalDomain, upnpDomain);
+    iWriter.Write(upnpDomain);
     iWriter.Write(Ssdp::kDeviceSeparator);
     Brn type = iDeviceUpnp.Type();
     iWriter.Write(type);

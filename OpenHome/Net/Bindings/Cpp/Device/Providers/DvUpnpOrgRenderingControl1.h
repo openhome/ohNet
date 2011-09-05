@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -261,7 +262,7 @@ private:
      * ListPresets action for the owning device.
      * Must be implemented iff EnableActionListPresets was called.
      */
-    virtual void ListPresets(uint32_t aVersion, uint32_t aInstanceID, std::string& aCurrentPresetNameList);
+    virtual void ListPresets(IDvInvocationStd& aInvocation, uint32_t aInstanceID, std::string& aCurrentPresetNameList);
     /**
      * SelectPreset action.
      *
@@ -269,7 +270,7 @@ private:
      * SelectPreset action for the owning device.
      * Must be implemented iff EnableActionSelectPreset was called.
      */
-    virtual void SelectPreset(uint32_t aVersion, uint32_t aInstanceID, const std::string& aPresetName);
+    virtual void SelectPreset(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aPresetName);
     /**
      * GetBrightness action.
      *
@@ -277,7 +278,7 @@ private:
      * GetBrightness action for the owning device.
      * Must be implemented iff EnableActionGetBrightness was called.
      */
-    virtual void GetBrightness(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentBrightness);
+    virtual void GetBrightness(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentBrightness);
     /**
      * SetBrightness action.
      *
@@ -285,7 +286,7 @@ private:
      * SetBrightness action for the owning device.
      * Must be implemented iff EnableActionSetBrightness was called.
      */
-    virtual void SetBrightness(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBrightness);
+    virtual void SetBrightness(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredBrightness);
     /**
      * GetContrast action.
      *
@@ -293,7 +294,7 @@ private:
      * GetContrast action for the owning device.
      * Must be implemented iff EnableActionGetContrast was called.
      */
-    virtual void GetContrast(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentContrast);
+    virtual void GetContrast(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentContrast);
     /**
      * SetContrast action.
      *
@@ -301,7 +302,7 @@ private:
      * SetContrast action for the owning device.
      * Must be implemented iff EnableActionSetContrast was called.
      */
-    virtual void SetContrast(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredContrast);
+    virtual void SetContrast(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredContrast);
     /**
      * GetSharpness action.
      *
@@ -309,7 +310,7 @@ private:
      * GetSharpness action for the owning device.
      * Must be implemented iff EnableActionGetSharpness was called.
      */
-    virtual void GetSharpness(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentSharpness);
+    virtual void GetSharpness(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentSharpness);
     /**
      * SetSharpness action.
      *
@@ -317,7 +318,7 @@ private:
      * SetSharpness action for the owning device.
      * Must be implemented iff EnableActionSetSharpness was called.
      */
-    virtual void SetSharpness(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredSharpness);
+    virtual void SetSharpness(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredSharpness);
     /**
      * GetRedVideoGain action.
      *
@@ -325,7 +326,7 @@ private:
      * GetRedVideoGain action for the owning device.
      * Must be implemented iff EnableActionGetRedVideoGain was called.
      */
-    virtual void GetRedVideoGain(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentRedVideoGain);
+    virtual void GetRedVideoGain(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentRedVideoGain);
     /**
      * SetRedVideoGain action.
      *
@@ -333,7 +334,7 @@ private:
      * SetRedVideoGain action for the owning device.
      * Must be implemented iff EnableActionSetRedVideoGain was called.
      */
-    virtual void SetRedVideoGain(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
+    virtual void SetRedVideoGain(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
     /**
      * GetGreenVideoGain action.
      *
@@ -341,7 +342,7 @@ private:
      * GetGreenVideoGain action for the owning device.
      * Must be implemented iff EnableActionGetGreenVideoGain was called.
      */
-    virtual void GetGreenVideoGain(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentGreenVideoGain);
+    virtual void GetGreenVideoGain(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentGreenVideoGain);
     /**
      * SetGreenVideoGain action.
      *
@@ -349,7 +350,7 @@ private:
      * SetGreenVideoGain action for the owning device.
      * Must be implemented iff EnableActionSetGreenVideoGain was called.
      */
-    virtual void SetGreenVideoGain(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
+    virtual void SetGreenVideoGain(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
     /**
      * GetBlueVideoGain action.
      *
@@ -357,7 +358,7 @@ private:
      * GetBlueVideoGain action for the owning device.
      * Must be implemented iff EnableActionGetBlueVideoGain was called.
      */
-    virtual void GetBlueVideoGain(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentBlueVideoGain);
+    virtual void GetBlueVideoGain(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentBlueVideoGain);
     /**
      * SetBlueVideoGain action.
      *
@@ -365,7 +366,7 @@ private:
      * SetBlueVideoGain action for the owning device.
      * Must be implemented iff EnableActionSetBlueVideoGain was called.
      */
-    virtual void SetBlueVideoGain(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
+    virtual void SetBlueVideoGain(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
     /**
      * GetRedVideoBlackLevel action.
      *
@@ -373,7 +374,7 @@ private:
      * GetRedVideoBlackLevel action for the owning device.
      * Must be implemented iff EnableActionGetRedVideoBlackLevel was called.
      */
-    virtual void GetRedVideoBlackLevel(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentRedVideoBlackLevel);
+    virtual void GetRedVideoBlackLevel(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentRedVideoBlackLevel);
     /**
      * SetRedVideoBlackLevel action.
      *
@@ -381,7 +382,7 @@ private:
      * SetRedVideoBlackLevel action for the owning device.
      * Must be implemented iff EnableActionSetRedVideoBlackLevel was called.
      */
-    virtual void SetRedVideoBlackLevel(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
+    virtual void SetRedVideoBlackLevel(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
     /**
      * GetGreenVideoBlackLevel action.
      *
@@ -389,7 +390,7 @@ private:
      * GetGreenVideoBlackLevel action for the owning device.
      * Must be implemented iff EnableActionGetGreenVideoBlackLevel was called.
      */
-    virtual void GetGreenVideoBlackLevel(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentGreenVideoBlackLevel);
+    virtual void GetGreenVideoBlackLevel(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentGreenVideoBlackLevel);
     /**
      * SetGreenVideoBlackLevel action.
      *
@@ -397,7 +398,7 @@ private:
      * SetGreenVideoBlackLevel action for the owning device.
      * Must be implemented iff EnableActionSetGreenVideoBlackLevel was called.
      */
-    virtual void SetGreenVideoBlackLevel(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
+    virtual void SetGreenVideoBlackLevel(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
     /**
      * GetBlueVideoBlackLevel action.
      *
@@ -405,7 +406,7 @@ private:
      * GetBlueVideoBlackLevel action for the owning device.
      * Must be implemented iff EnableActionGetBlueVideoBlackLevel was called.
      */
-    virtual void GetBlueVideoBlackLevel(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentBlueVideoBlackLevel);
+    virtual void GetBlueVideoBlackLevel(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentBlueVideoBlackLevel);
     /**
      * SetBlueVideoBlackLevel action.
      *
@@ -413,7 +414,7 @@ private:
      * SetBlueVideoBlackLevel action for the owning device.
      * Must be implemented iff EnableActionSetBlueVideoBlackLevel was called.
      */
-    virtual void SetBlueVideoBlackLevel(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
+    virtual void SetBlueVideoBlackLevel(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
     /**
      * GetColorTemperature action.
      *
@@ -421,7 +422,7 @@ private:
      * GetColorTemperature action for the owning device.
      * Must be implemented iff EnableActionGetColorTemperature was called.
      */
-    virtual void GetColorTemperature(uint32_t aVersion, uint32_t aInstanceID, uint32_t& aCurrentColorTemperature);
+    virtual void GetColorTemperature(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t& aCurrentColorTemperature);
     /**
      * SetColorTemperature action.
      *
@@ -429,7 +430,7 @@ private:
      * SetColorTemperature action for the owning device.
      * Must be implemented iff EnableActionSetColorTemperature was called.
      */
-    virtual void SetColorTemperature(uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
+    virtual void SetColorTemperature(IDvInvocationStd& aInvocation, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
     /**
      * GetHorizontalKeystone action.
      *
@@ -437,7 +438,7 @@ private:
      * GetHorizontalKeystone action for the owning device.
      * Must be implemented iff EnableActionGetHorizontalKeystone was called.
      */
-    virtual void GetHorizontalKeystone(uint32_t aVersion, uint32_t aInstanceID, int32_t& aCurrentHorizontalKeystone);
+    virtual void GetHorizontalKeystone(IDvInvocationStd& aInvocation, uint32_t aInstanceID, int32_t& aCurrentHorizontalKeystone);
     /**
      * SetHorizontalKeystone action.
      *
@@ -445,7 +446,7 @@ private:
      * SetHorizontalKeystone action for the owning device.
      * Must be implemented iff EnableActionSetHorizontalKeystone was called.
      */
-    virtual void SetHorizontalKeystone(uint32_t aVersion, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
+    virtual void SetHorizontalKeystone(IDvInvocationStd& aInvocation, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
     /**
      * GetVerticalKeystone action.
      *
@@ -453,7 +454,7 @@ private:
      * GetVerticalKeystone action for the owning device.
      * Must be implemented iff EnableActionGetVerticalKeystone was called.
      */
-    virtual void GetVerticalKeystone(uint32_t aVersion, uint32_t aInstanceID, int32_t& aCurrentVerticalKeystone);
+    virtual void GetVerticalKeystone(IDvInvocationStd& aInvocation, uint32_t aInstanceID, int32_t& aCurrentVerticalKeystone);
     /**
      * SetVerticalKeystone action.
      *
@@ -461,7 +462,7 @@ private:
      * SetVerticalKeystone action for the owning device.
      * Must be implemented iff EnableActionSetVerticalKeystone was called.
      */
-    virtual void SetVerticalKeystone(uint32_t aVersion, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
+    virtual void SetVerticalKeystone(IDvInvocationStd& aInvocation, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
     /**
      * GetMute action.
      *
@@ -469,7 +470,7 @@ private:
      * GetMute action for the owning device.
      * Must be implemented iff EnableActionGetMute was called.
      */
-    virtual void GetMute(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, bool& aCurrentMute);
+    virtual void GetMute(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, bool& aCurrentMute);
     /**
      * SetMute action.
      *
@@ -477,7 +478,7 @@ private:
      * SetMute action for the owning device.
      * Must be implemented iff EnableActionSetMute was called.
      */
-    virtual void SetMute(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, bool aDesiredMute);
+    virtual void SetMute(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, bool aDesiredMute);
     /**
      * GetVolume action.
      *
@@ -485,7 +486,7 @@ private:
      * GetVolume action for the owning device.
      * Must be implemented iff EnableActionGetVolume was called.
      */
-    virtual void GetVolume(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, uint32_t& aCurrentVolume);
+    virtual void GetVolume(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, uint32_t& aCurrentVolume);
     /**
      * SetVolume action.
      *
@@ -493,7 +494,7 @@ private:
      * SetVolume action for the owning device.
      * Must be implemented iff EnableActionSetVolume was called.
      */
-    virtual void SetVolume(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, uint32_t aDesiredVolume);
+    virtual void SetVolume(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, uint32_t aDesiredVolume);
     /**
      * GetVolumeDB action.
      *
@@ -501,7 +502,7 @@ private:
      * GetVolumeDB action for the owning device.
      * Must be implemented iff EnableActionGetVolumeDB was called.
      */
-    virtual void GetVolumeDB(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, int32_t& aCurrentVolume);
+    virtual void GetVolumeDB(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, int32_t& aCurrentVolume);
     /**
      * SetVolumeDB action.
      *
@@ -509,7 +510,7 @@ private:
      * SetVolumeDB action for the owning device.
      * Must be implemented iff EnableActionSetVolumeDB was called.
      */
-    virtual void SetVolumeDB(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, int32_t aDesiredVolume);
+    virtual void SetVolumeDB(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, int32_t aDesiredVolume);
     /**
      * GetVolumeDBRange action.
      *
@@ -517,7 +518,7 @@ private:
      * GetVolumeDBRange action for the owning device.
      * Must be implemented iff EnableActionGetVolumeDBRange was called.
      */
-    virtual void GetVolumeDBRange(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, int32_t& aMinValue, int32_t& aMaxValue);
+    virtual void GetVolumeDBRange(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, int32_t& aMinValue, int32_t& aMaxValue);
     /**
      * GetLoudness action.
      *
@@ -525,7 +526,7 @@ private:
      * GetLoudness action for the owning device.
      * Must be implemented iff EnableActionGetLoudness was called.
      */
-    virtual void GetLoudness(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, bool& aCurrentLoudness);
+    virtual void GetLoudness(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, bool& aCurrentLoudness);
     /**
      * SetLoudness action.
      *
@@ -533,44 +534,44 @@ private:
      * SetLoudness action for the owning device.
      * Must be implemented iff EnableActionSetLoudness was called.
      */
-    virtual void SetLoudness(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, bool aDesiredLoudness);
+    virtual void SetLoudness(IDvInvocationStd& aInvocation, uint32_t aInstanceID, const std::string& aChannel, bool aDesiredLoudness);
 private:
     DvProviderUpnpOrgRenderingControl1Cpp();
-    void DoListPresets(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSelectPreset(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetBrightness(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetBrightness(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetContrast(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetContrast(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetSharpness(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetSharpness(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRedVideoGain(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRedVideoGain(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetGreenVideoGain(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetGreenVideoGain(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetBlueVideoGain(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetBlueVideoGain(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetColorTemperature(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetColorTemperature(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetHorizontalKeystone(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetHorizontalKeystone(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetVerticalKeystone(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetVerticalKeystone(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetMute(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetMute(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetVolume(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetVolume(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetVolumeDB(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetVolumeDB(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetVolumeDBRange(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetLoudness(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetLoudness(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoListPresets(IDviInvocation& aInvocation);
+    void DoSelectPreset(IDviInvocation& aInvocation);
+    void DoGetBrightness(IDviInvocation& aInvocation);
+    void DoSetBrightness(IDviInvocation& aInvocation);
+    void DoGetContrast(IDviInvocation& aInvocation);
+    void DoSetContrast(IDviInvocation& aInvocation);
+    void DoGetSharpness(IDviInvocation& aInvocation);
+    void DoSetSharpness(IDviInvocation& aInvocation);
+    void DoGetRedVideoGain(IDviInvocation& aInvocation);
+    void DoSetRedVideoGain(IDviInvocation& aInvocation);
+    void DoGetGreenVideoGain(IDviInvocation& aInvocation);
+    void DoSetGreenVideoGain(IDviInvocation& aInvocation);
+    void DoGetBlueVideoGain(IDviInvocation& aInvocation);
+    void DoSetBlueVideoGain(IDviInvocation& aInvocation);
+    void DoGetRedVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoSetRedVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation);
+    void DoGetColorTemperature(IDviInvocation& aInvocation);
+    void DoSetColorTemperature(IDviInvocation& aInvocation);
+    void DoGetHorizontalKeystone(IDviInvocation& aInvocation);
+    void DoSetHorizontalKeystone(IDviInvocation& aInvocation);
+    void DoGetVerticalKeystone(IDviInvocation& aInvocation);
+    void DoSetVerticalKeystone(IDviInvocation& aInvocation);
+    void DoGetMute(IDviInvocation& aInvocation);
+    void DoSetMute(IDviInvocation& aInvocation);
+    void DoGetVolume(IDviInvocation& aInvocation);
+    void DoSetVolume(IDviInvocation& aInvocation);
+    void DoGetVolumeDB(IDviInvocation& aInvocation);
+    void DoSetVolumeDB(IDviInvocation& aInvocation);
+    void DoGetVolumeDBRange(IDviInvocation& aInvocation);
+    void DoGetLoudness(IDviInvocation& aInvocation);
+    void DoSetLoudness(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyLastChange;
 };

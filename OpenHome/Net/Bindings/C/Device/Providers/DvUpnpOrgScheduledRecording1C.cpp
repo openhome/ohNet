@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -37,24 +39,24 @@ public:
     void EnableActionGetRecordScheduleConflicts(CallbackScheduledRecording1GetRecordScheduleConflicts aCallback, void* aPtr);
     void EnableActionGetRecordTaskConflicts(CallbackScheduledRecording1GetRecordTaskConflicts aCallback, void* aPtr);
 private:
-    void DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetPropertyList(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetAllowedValues(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetStateUpdateID(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBrowseRecordSchedules(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBrowseRecordTasks(IDviInvocation& aInvocation, TUint aVersion);
-    void DoCreateRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEnableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDisableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoEnableRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDisableRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoResetRecordTask(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation);
+    void DoGetPropertyList(IDviInvocation& aInvocation);
+    void DoGetAllowedValues(IDviInvocation& aInvocation);
+    void DoGetStateUpdateID(IDviInvocation& aInvocation);
+    void DoBrowseRecordSchedules(IDviInvocation& aInvocation);
+    void DoBrowseRecordTasks(IDviInvocation& aInvocation);
+    void DoCreateRecordSchedule(IDviInvocation& aInvocation);
+    void DoDeleteRecordSchedule(IDviInvocation& aInvocation);
+    void DoGetRecordSchedule(IDviInvocation& aInvocation);
+    void DoEnableRecordSchedule(IDviInvocation& aInvocation);
+    void DoDisableRecordSchedule(IDviInvocation& aInvocation);
+    void DoDeleteRecordTask(IDviInvocation& aInvocation);
+    void DoGetRecordTask(IDviInvocation& aInvocation);
+    void DoEnableRecordTask(IDviInvocation& aInvocation);
+    void DoDisableRecordTask(IDviInvocation& aInvocation);
+    void DoResetRecordTask(IDviInvocation& aInvocation);
+    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation);
+    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation);
 private:
     CallbackScheduledRecording1GetSortCapabilities iCallbackGetSortCapabilities;
     void* iPtrGetSortCapabilities;
@@ -341,94 +343,114 @@ void DvProviderUpnpOrgScheduledRecording1C::EnableActionGetRecordTaskConflicts(C
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoGetSortCapabilities(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* SortCaps;
     uint32_t SortLevelCap;
     ASSERT(iCallbackGetSortCapabilities != NULL);
-    if (0 != iCallbackGetSortCapabilities(iPtrGetSortCapabilities, aVersion, &SortCaps, &SortLevelCap)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetSortCapabilities(iPtrGetSortCapabilities, invocationC, invocationCPtr, &SortCaps, &SortLevelCap)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respSortCaps(aInvocation, "SortCaps");
-    InvocationResponseUint respSortLevelCap(aInvocation, "SortLevelCap");
-    resp.Start();
+    DviInvocationResponseString respSortCaps(aInvocation, "SortCaps");
+    DviInvocationResponseUint respSortLevelCap(aInvocation, "SortLevelCap");
+    invocation.StartResponse();
     Brhz bufSortCaps((const TChar*)SortCaps);
     OhNetFreeExternal(SortCaps);
     respSortCaps.Write(bufSortCaps);
     respSortCaps.WriteFlush();
     respSortLevelCap.Write(SortLevelCap);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoGetPropertyList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoGetPropertyList(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz DataTypeID;
     aInvocation.InvocationReadString("DataTypeID", DataTypeID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* PropertyList;
     ASSERT(iCallbackGetPropertyList != NULL);
-    if (0 != iCallbackGetPropertyList(iPtrGetPropertyList, aVersion, (const char*)DataTypeID.Ptr(), &PropertyList)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetPropertyList(iPtrGetPropertyList, invocationC, invocationCPtr, (const char*)DataTypeID.Ptr(), &PropertyList)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respPropertyList(aInvocation, "PropertyList");
-    resp.Start();
+    DviInvocationResponseString respPropertyList(aInvocation, "PropertyList");
+    invocation.StartResponse();
     Brhz bufPropertyList((const TChar*)PropertyList);
     OhNetFreeExternal(PropertyList);
     respPropertyList.Write(bufPropertyList);
     respPropertyList.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoGetAllowedValues(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoGetAllowedValues(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz DataTypeID;
     aInvocation.InvocationReadString("DataTypeID", DataTypeID);
     Brhz Filter;
     aInvocation.InvocationReadString("Filter", Filter);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* PropertyInfo;
     ASSERT(iCallbackGetAllowedValues != NULL);
-    if (0 != iCallbackGetAllowedValues(iPtrGetAllowedValues, aVersion, (const char*)DataTypeID.Ptr(), (const char*)Filter.Ptr(), &PropertyInfo)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetAllowedValues(iPtrGetAllowedValues, invocationC, invocationCPtr, (const char*)DataTypeID.Ptr(), (const char*)Filter.Ptr(), &PropertyInfo)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respPropertyInfo(aInvocation, "PropertyInfo");
-    resp.Start();
+    DviInvocationResponseString respPropertyInfo(aInvocation, "PropertyInfo");
+    invocation.StartResponse();
     Brhz bufPropertyInfo((const TChar*)PropertyInfo);
     OhNetFreeExternal(PropertyInfo);
     respPropertyInfo.Write(bufPropertyInfo);
     respPropertyInfo.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoGetStateUpdateID(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoGetStateUpdateID(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Id;
     ASSERT(iCallbackGetStateUpdateID != NULL);
-    if (0 != iCallbackGetStateUpdateID(iPtrGetStateUpdateID, aVersion, &Id)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetStateUpdateID(iPtrGetStateUpdateID, invocationC, invocationCPtr, &Id)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respId(aInvocation, "Id");
-    resp.Start();
+    DviInvocationResponseUint respId(aInvocation, "Id");
+    invocation.StartResponse();
     respId.Write(Id);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoBrowseRecordSchedules(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoBrowseRecordSchedules(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz Filter;
     aInvocation.InvocationReadString("Filter", Filter);
@@ -437,21 +459,21 @@ void DvProviderUpnpOrgScheduledRecording1C::DoBrowseRecordSchedules(IDviInvocati
     Brhz SortCriteria;
     aInvocation.InvocationReadString("SortCriteria", SortCriteria);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     uint32_t NumberReturned;
     uint32_t TotalMatches;
     uint32_t UpdateID;
     ASSERT(iCallbackBrowseRecordSchedules != NULL);
-    if (0 != iCallbackBrowseRecordSchedules(iPtrBrowseRecordSchedules, aVersion, (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackBrowseRecordSchedules(iPtrBrowseRecordSchedules, invocationC, invocationCPtr, (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
-    InvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
@@ -459,11 +481,15 @@ void DvProviderUpnpOrgScheduledRecording1C::DoBrowseRecordSchedules(IDviInvocati
     respNumberReturned.Write(NumberReturned);
     respTotalMatches.Write(TotalMatches);
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoBrowseRecordTasks(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoBrowseRecordTasks(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
     aInvocation.InvocationReadString("RecordScheduleID", RecordScheduleID);
@@ -474,21 +500,21 @@ void DvProviderUpnpOrgScheduledRecording1C::DoBrowseRecordTasks(IDviInvocation& 
     Brhz SortCriteria;
     aInvocation.InvocationReadString("SortCriteria", SortCriteria);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     uint32_t NumberReturned;
     uint32_t TotalMatches;
     uint32_t UpdateID;
     ASSERT(iCallbackBrowseRecordTasks != NULL);
-    if (0 != iCallbackBrowseRecordTasks(iPtrBrowseRecordTasks, aVersion, (const char*)RecordScheduleID.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackBrowseRecordTasks(iPtrBrowseRecordTasks, invocationC, invocationCPtr, (const char*)RecordScheduleID.Ptr(), (const char*)Filter.Ptr(), StartingIndex, RequestedCount, (const char*)SortCriteria.Ptr(), &Result, &NumberReturned, &TotalMatches, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
-    InvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
@@ -496,28 +522,32 @@ void DvProviderUpnpOrgScheduledRecording1C::DoBrowseRecordTasks(IDviInvocation& 
     respNumberReturned.Write(NumberReturned);
     respTotalMatches.Write(TotalMatches);
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoCreateRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoCreateRecordSchedule(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz Elements;
     aInvocation.InvocationReadString("Elements", Elements);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* RecordScheduleID;
     char* Result;
     uint32_t UpdateID;
     ASSERT(iCallbackCreateRecordSchedule != NULL);
-    if (0 != iCallbackCreateRecordSchedule(iPtrCreateRecordSchedule, aVersion, (const char*)Elements.Ptr(), &RecordScheduleID, &Result, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackCreateRecordSchedule(iPtrCreateRecordSchedule, invocationC, invocationCPtr, (const char*)Elements.Ptr(), &RecordScheduleID, &Result, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respRecordScheduleID(aInvocation, "RecordScheduleID");
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respRecordScheduleID(aInvocation, "RecordScheduleID");
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufRecordScheduleID((const TChar*)RecordScheduleID);
     OhNetFreeExternal(RecordScheduleID);
     respRecordScheduleID.Write(bufRecordScheduleID);
@@ -527,223 +557,267 @@ void DvProviderUpnpOrgScheduledRecording1C::DoCreateRecordSchedule(IDviInvocatio
     respResult.Write(bufResult);
     respResult.WriteFlush();
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoDeleteRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoDeleteRecordSchedule(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
     aInvocation.InvocationReadString("RecordScheduleID", RecordScheduleID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDeleteRecordSchedule != NULL);
-    if (0 != iCallbackDeleteRecordSchedule(iPtrDeleteRecordSchedule, aVersion, (const char*)RecordScheduleID.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackDeleteRecordSchedule(iPtrDeleteRecordSchedule, invocationC, invocationCPtr, (const char*)RecordScheduleID.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordSchedule(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
     aInvocation.InvocationReadString("RecordScheduleID", RecordScheduleID);
     Brhz Filter;
     aInvocation.InvocationReadString("Filter", Filter);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     uint32_t UpdateID;
     ASSERT(iCallbackGetRecordSchedule != NULL);
-    if (0 != iCallbackGetRecordSchedule(iPtrGetRecordSchedule, aVersion, (const char*)RecordScheduleID.Ptr(), (const char*)Filter.Ptr(), &Result, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetRecordSchedule(iPtrGetRecordSchedule, invocationC, invocationCPtr, (const char*)RecordScheduleID.Ptr(), (const char*)Filter.Ptr(), &Result, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoEnableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoEnableRecordSchedule(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
     aInvocation.InvocationReadString("RecordScheduleID", RecordScheduleID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackEnableRecordSchedule != NULL);
-    if (0 != iCallbackEnableRecordSchedule(iPtrEnableRecordSchedule, aVersion, (const char*)RecordScheduleID.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackEnableRecordSchedule(iPtrEnableRecordSchedule, invocationC, invocationCPtr, (const char*)RecordScheduleID.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoDisableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoDisableRecordSchedule(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
     aInvocation.InvocationReadString("RecordScheduleID", RecordScheduleID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDisableRecordSchedule != NULL);
-    if (0 != iCallbackDisableRecordSchedule(iPtrDisableRecordSchedule, aVersion, (const char*)RecordScheduleID.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackDisableRecordSchedule(iPtrDisableRecordSchedule, invocationC, invocationCPtr, (const char*)RecordScheduleID.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoDeleteRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoDeleteRecordTask(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
     aInvocation.InvocationReadString("RecordTaskID", RecordTaskID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDeleteRecordTask != NULL);
-    if (0 != iCallbackDeleteRecordTask(iPtrDeleteRecordTask, aVersion, (const char*)RecordTaskID.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackDeleteRecordTask(iPtrDeleteRecordTask, invocationC, invocationCPtr, (const char*)RecordTaskID.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordTask(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
     aInvocation.InvocationReadString("RecordTaskID", RecordTaskID);
     Brhz Filter;
     aInvocation.InvocationReadString("Filter", Filter);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     uint32_t UpdateID;
     ASSERT(iCallbackGetRecordTask != NULL);
-    if (0 != iCallbackGetRecordTask(iPtrGetRecordTask, aVersion, (const char*)RecordTaskID.Ptr(), (const char*)Filter.Ptr(), &Result, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetRecordTask(iPtrGetRecordTask, invocationC, invocationCPtr, (const char*)RecordTaskID.Ptr(), (const char*)Filter.Ptr(), &Result, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoEnableRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoEnableRecordTask(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
     aInvocation.InvocationReadString("RecordTaskID", RecordTaskID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackEnableRecordTask != NULL);
-    if (0 != iCallbackEnableRecordTask(iPtrEnableRecordTask, aVersion, (const char*)RecordTaskID.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackEnableRecordTask(iPtrEnableRecordTask, invocationC, invocationCPtr, (const char*)RecordTaskID.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoDisableRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoDisableRecordTask(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
     aInvocation.InvocationReadString("RecordTaskID", RecordTaskID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackDisableRecordTask != NULL);
-    if (0 != iCallbackDisableRecordTask(iPtrDisableRecordTask, aVersion, (const char*)RecordTaskID.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackDisableRecordTask(iPtrDisableRecordTask, invocationC, invocationCPtr, (const char*)RecordTaskID.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoResetRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoResetRecordTask(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
     aInvocation.InvocationReadString("RecordTaskID", RecordTaskID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackResetRecordTask != NULL);
-    if (0 != iCallbackResetRecordTask(iPtrResetRecordTask, aVersion, (const char*)RecordTaskID.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackResetRecordTask(iPtrResetRecordTask, invocationC, invocationCPtr, (const char*)RecordTaskID.Ptr())) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
     aInvocation.InvocationReadString("RecordScheduleID", RecordScheduleID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* RecordScheduleConflictIDList;
     uint32_t UpdateID;
     ASSERT(iCallbackGetRecordScheduleConflicts != NULL);
-    if (0 != iCallbackGetRecordScheduleConflicts(iPtrGetRecordScheduleConflicts, aVersion, (const char*)RecordScheduleID.Ptr(), &RecordScheduleConflictIDList, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetRecordScheduleConflicts(iPtrGetRecordScheduleConflicts, invocationC, invocationCPtr, (const char*)RecordScheduleID.Ptr(), &RecordScheduleConflictIDList, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respRecordScheduleConflictIDList(aInvocation, "RecordScheduleConflictIDList");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respRecordScheduleConflictIDList(aInvocation, "RecordScheduleConflictIDList");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufRecordScheduleConflictIDList((const TChar*)RecordScheduleConflictIDList);
     OhNetFreeExternal(RecordScheduleConflictIDList);
     respRecordScheduleConflictIDList.Write(bufRecordScheduleConflictIDList);
     respRecordScheduleConflictIDList.WriteFlush();
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordTaskConflicts(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordTaskConflicts(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
     aInvocation.InvocationReadString("RecordTaskID", RecordTaskID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* RecordTaskConflictIDList;
     uint32_t UpdateID;
     ASSERT(iCallbackGetRecordTaskConflicts != NULL);
-    if (0 != iCallbackGetRecordTaskConflicts(iPtrGetRecordTaskConflicts, aVersion, (const char*)RecordTaskID.Ptr(), &RecordTaskConflictIDList, &UpdateID)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetRecordTaskConflicts(iPtrGetRecordTaskConflicts, invocationC, invocationCPtr, (const char*)RecordTaskID.Ptr(), &RecordTaskConflictIDList, &UpdateID)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respRecordTaskConflictIDList(aInvocation, "RecordTaskConflictIDList");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
-    resp.Start();
+    DviInvocationResponseString respRecordTaskConflictIDList(aInvocation, "RecordTaskConflictIDList");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    invocation.StartResponse();
     Brhz bufRecordTaskConflictIDList((const TChar*)RecordTaskConflictIDList);
     OhNetFreeExternal(RecordTaskConflictIDList);
     respRecordTaskConflictIDList.Write(bufRecordTaskConflictIDList);
     respRecordTaskConflictIDList.WriteFlush();
     respUpdateID.Write(UpdateID);
-    resp.End();
+    invocation.EndResponse();
 }
 
 

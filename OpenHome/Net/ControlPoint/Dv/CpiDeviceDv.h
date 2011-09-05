@@ -50,6 +50,10 @@ public:
 private: // IDviInvocation
     void Invoke();
 
+    TUint Version() const;
+    TIpAddress Adapter() const;
+    const char* ResourceUriPrefix() const;
+
     void InvocationReadStart();
     TBool InvocationReadBool(const TChar* aName);
     void InvocationReadString(const TChar* aName, Brhz& aString);

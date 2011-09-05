@@ -255,6 +255,11 @@
                     <relatedStateVariable>Id</relatedStateVariable>
                 </argument>
                 <argument>
+                    <name>Udn</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Udn</relatedStateVariable>
+                </argument>
+                <argument>
                     <name>Metadata</name>
                     <direction>out</direction>
                     <relatedStateVariable>Metadata</relatedStateVariable>
@@ -300,9 +305,9 @@
                     <relatedStateVariable>Udn</relatedStateVariable>
                 </argument>
                 <argument>
-                    <name>MetadataId</name>
+                    <name>Metadata</name>
                     <direction>in</direction>
-                    <relatedStateVariable>MetadataId</relatedStateVariable>
+                    <relatedStateVariable>Metadata</relatedStateVariable>
                 </argument>
                 <argument>
                     <name>NewTrackId</name>
@@ -395,10 +400,6 @@
         </stateVariable>
         <stateVariable sendEvents="no">
             <name>Udn</name>
-            <dataType>string</dataType>
-        </stateVariable>
-        <stateVariable sendEvents="no">
-            <name>MetadataId</name>
             <dataType>string</dataType>
         </stateVariable>
         <stateVariable sendEvents="no">

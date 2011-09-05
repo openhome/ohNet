@@ -79,7 +79,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePr
 	ServicePropertyGetValueBinary(property, &data, &len);
 	
 	array = (*aEnv)->NewByteArray(aEnv, len);
-	(*aEnv)->SetByteArrayRegion(aEnv, array, 0, len, (jbyte *) data);
+	(*aEnv)->SetByteArrayRegion(aEnv, array, 0, len, (jbyte *)data);
 	
 	return array;
 }
@@ -93,13 +93,14 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_PropertyBinary_ServiceProperty
   (JNIEnv *aEnv, jclass aClass, jlong aProperty, jbyteArray aData, jint aLen)
 {
 	ServiceProperty property = (ServiceProperty) (size_t)aProperty;
-	uint8_t *data;
+	uint8_t *data = (uint8_t*)malloc(sizeof(uint8_t)*aLen);
 	jint result;
 	aClass = aClass;
 	
-	(*aEnv)->GetByteArrayRegion(aEnv, aData, 0, aLen, (jbyte *) &data);
+	(*aEnv)->GetByteArrayRegion(aEnv, aData, 0, aLen, (jbyte *)data);
 	
 	result = ServicePropertySetValueBinary(property, data, aLen);
+	free(data);
 	
 	return result;
 }

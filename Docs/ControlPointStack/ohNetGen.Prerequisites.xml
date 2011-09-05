@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Prerequisites</title>
+
+  <para>ohNetGen is a .NET development tool and requires a .NET runtime to be
+  able to run. A suitable runtime should already be available if you are using
+  Windows. You may need to install mono if you are using Linux.</para>
+
+  <para>To generate a Control Point stack Proxy:</para>
+
+  <procedure>
+    <step>
+      <para>Open a command line terminal.</para>
+    </step>
+
+    <step>
+      <para>Change to your installed ohNet directory.</para>
+    </step>
+
+    <step>
+      <para>On Windows enter the following command:</para>
+
+      <para><userinput>ohNetGen.exe --language=&lt;...&gt; --stack=&lt;...&gt;
+      --xml=&lt;...&gt; -- output=&lt;...&gt; --domain=&lt;...&gt;
+      --type=&lt;...&gt; --version=&lt;...&gt;</userinput></para>
+
+      <para>On Linux enter the following command:</para>
+
+      <para><userinput>LD_LIBRARY_PATH=&lt;path_to_ohNetGen&gt; mono
+      &lt;path&gt;/ohNetGen.exe -- language=&lt;...&gt; --stack=&lt;...&gt;
+      --xml=&lt;...&gt; --output=&lt;...&gt; -- domain=&lt;...&gt;
+      --type=&lt;...&gt; --version=&lt;...&gt;</userinput></para>
+
+      <para>See the table below for descriptions of each of the arguments you
+      must pass to ohNetGen.</para>
+    </step>
+
+    <step>
+      <para>The tool will parse the XML you supply it and use the T4 templates
+      included in the ohNet code to generate the required code for your
+      Proxy.</para>
+    </step>
+  </procedure>
+
+  <note>
+    <para>ohNetGen can be integrated into the build process for your Control
+    Point application. This allows you to treat your service XML file as a
+    source, rather than the Proxy that the ohNetGen tool will generate.</para>
+  </note>
+</section>

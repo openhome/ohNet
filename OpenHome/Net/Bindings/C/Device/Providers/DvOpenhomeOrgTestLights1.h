@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,40 +22,48 @@ extern "C" {
 /**
  * Callback which runs when the GetCount action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetCount
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetCount
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aCount
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestLights1GetCount)(void* aPtr, uint32_t aVersion, uint32_t* aCount);
+typedef int32_t (STDCALL *CallbackTestLights1GetCount)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aCount);
 /**
  * Callback which runs when the GetRoom action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetRoom
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetRoom
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aIndex
  * @param[out] aRoomName
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestLights1GetRoom)(void* aPtr, uint32_t aVersion, uint32_t aIndex, char** aRoomName);
+typedef int32_t (STDCALL *CallbackTestLights1GetRoom)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aIndex, char** aRoomName);
 /**
  * Callback which runs when the GetName action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetName
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetName
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aIndex
  * @param[out] aFriendlyName
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestLights1GetName)(void* aPtr, uint32_t aVersion, uint32_t aIndex, char** aFriendlyName);
+typedef int32_t (STDCALL *CallbackTestLights1GetName)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aIndex, char** aFriendlyName);
 /**
  * Callback which runs when the GetPosition action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetPosition
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetPosition
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aIndex
  * @param[out] aX
  * @param[out] aY
@@ -62,34 +71,40 @@ typedef int32_t (STDCALL *CallbackTestLights1GetName)(void* aPtr, uint32_t aVers
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestLights1GetPosition)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t* aX, uint32_t* aY, uint32_t* aZ);
+typedef int32_t (STDCALL *CallbackTestLights1GetPosition)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aIndex, uint32_t* aX, uint32_t* aY, uint32_t* aZ);
 /**
  * Callback which runs when the SetColor action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionSetColor
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionSetColor
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aIndex
  * @param[in]  aColor
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestLights1SetColor)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t aColor);
+typedef int32_t (STDCALL *CallbackTestLights1SetColor)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aIndex, uint32_t aColor);
 /**
  * Callback which runs when the GetColor action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetColor
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetColor
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aIndex
  * @param[out] aColor
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestLights1GetColor)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t* aColor);
+typedef int32_t (STDCALL *CallbackTestLights1GetColor)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aIndex, uint32_t* aColor);
 /**
  * Callback which runs when the GetColorComponents action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetColorComponents
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestLights1EnableActionGetColorComponents
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aColor
  * @param[out] aBrightness
  * @param[out] aRed
@@ -98,7 +113,7 @@ typedef int32_t (STDCALL *CallbackTestLights1GetColor)(void* aPtr, uint32_t aVer
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackTestLights1GetColorComponents)(void* aPtr, uint32_t aVersion, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue);
+typedef int32_t (STDCALL *CallbackTestLights1GetColorComponents)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue);
 
 /**
  * Provider constructor

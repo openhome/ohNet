@@ -47,7 +47,7 @@ proxy_dotnet_assemblies_with_path = \
 proxy_java_classes_with_path = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-        $(proxyjavadir)CpProxy<#=FilePrefixTypeAndVersion(s)#>.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxy<#=FilePrefixTypeAndVersion(s)#>.class \
 <#  } #>
 
 
@@ -97,7 +97,7 @@ CpProxyJavaClasses: $(proxy_java_classes_with_path)
 
 <# foreach (Service s in u.iServices) #>
 <# { #>
-$(proxyjavadir)CpProxy<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.jar $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxy<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.jar $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
 <# } #>
 

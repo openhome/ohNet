@@ -519,11 +519,11 @@ namespace OpenHome.Net.Device.Providers
         /// Counters action for the owning device.
         ///
         /// Must be implemented iff EnableActionCounters was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aTrackCount"></param>
         /// <param name="aDetailsCount"></param>
         /// <param name="aMetatextCount"></param>
-        protected virtual void Counters(uint aVersion, out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount)
+        protected virtual void Counters(IDvInvocation aInvocation, out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount)
         {
             throw (new ActionDisabledError());
         }
@@ -535,10 +535,10 @@ namespace OpenHome.Net.Device.Providers
         /// Track action for the owning device.
         ///
         /// Must be implemented iff EnableActionTrack was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aUri"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void Track(uint aVersion, out string aUri, out string aMetadata)
+        protected virtual void Track(IDvInvocation aInvocation, out string aUri, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -550,14 +550,14 @@ namespace OpenHome.Net.Device.Providers
         /// Details action for the owning device.
         ///
         /// Must be implemented iff EnableActionDetails was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aDuration"></param>
         /// <param name="aBitRate"></param>
         /// <param name="aBitDepth"></param>
         /// <param name="aSampleRate"></param>
         /// <param name="aLossless"></param>
         /// <param name="aCodecName"></param>
-        protected virtual void Details(uint aVersion, out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out string aCodecName)
+        protected virtual void Details(IDvInvocation aInvocation, out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out string aCodecName)
         {
             throw (new ActionDisabledError());
         }
@@ -569,14 +569,14 @@ namespace OpenHome.Net.Device.Providers
         /// Metatext action for the owning device.
         ///
         /// Must be implemented iff EnableActionMetatext was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void Metatext(uint aVersion, out string aValue)
+        protected virtual void Metatext(IDvInvocation aInvocation, out string aValue)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoCounters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCounters(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -588,22 +588,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Counters(aVersion, out trackCount, out detailsCount, out metatextCount);
+                self.Counters(invocation, out trackCount, out detailsCount, out metatextCount);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Counters"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Counters"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -627,7 +627,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTrack(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTrack(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -638,22 +638,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Track(aVersion, out uri, out metadata);
+                self.Track(invocation, out uri, out metadata);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Track"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Track"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -676,7 +676,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDetails(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDetails(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -691,22 +691,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Details(aVersion, out duration, out bitRate, out bitDepth, out sampleRate, out lossless, out codecName);
+                self.Details(invocation, out duration, out bitRate, out bitDepth, out sampleRate, out lossless, out codecName);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Details"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Details"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -733,7 +733,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoMetatext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMetatext(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgInfo1 self = (DvProviderAvOpenhomeOrgInfo1)gch.Target;
@@ -743,22 +743,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Metatext(aVersion, out value);
+                self.Metatext(invocation, out value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Metatext"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Metatext"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Writing the removed callback</title>
+
+  <para>When the <code>CpDevice</code> needs to be removed from the Device
+  List (i.e. when the remote device disappears from the network), you do so
+  using the removed callback. You should also remove the <code>CpDevice</code>
+  from your own collection and delete any Proxies created that are using it.
+  For example:</para>
+
+  <programlisting>void CpDevices::Removed(CpDeviceCpp&amp; aDevice)
+{
+    // lock mutex which protects iVector
+    std::string udn = aDevice.Udn();
+    for (size_t i=0; i&lt;iVector.size(); i++ {
+        if (iVector[i]-&gt;Udn() == udn) {
+            iVector[i]-&gt;RemoveRef();
+            iVector.erase(iVector.begin() + i);
+        }
+    } // unlock mutex which protects iVector
+}</programlisting>
+</section>

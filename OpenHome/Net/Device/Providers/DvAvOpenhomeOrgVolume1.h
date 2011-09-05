@@ -245,7 +245,7 @@ private:
      * Characteristics action for the owning device.
      * Must be implemented iff EnableActionCharacteristics was called.
      */
-    virtual void Characteristics(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aVolumeMax, IInvocationResponseUint& aVolumeUnity, IInvocationResponseUint& aVolumeSteps, IInvocationResponseUint& aVolumeMilliDbPerStep, IInvocationResponseUint& aBalanceMax, IInvocationResponseUint& aFadeMax);
+    virtual void Characteristics(IDvInvocation& aInvocation, IDvInvocationResponseUint& aVolumeMax, IDvInvocationResponseUint& aVolumeUnity, IDvInvocationResponseUint& aVolumeSteps, IDvInvocationResponseUint& aVolumeMilliDbPerStep, IDvInvocationResponseUint& aBalanceMax, IDvInvocationResponseUint& aFadeMax);
     /**
      * SetVolume action.
      *
@@ -253,7 +253,7 @@ private:
      * SetVolume action for the owning device.
      * Must be implemented iff EnableActionSetVolume was called.
      */
-    virtual void SetVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    virtual void SetVolume(IDvInvocation& aInvocation, TUint aValue);
     /**
      * VolumeInc action.
      *
@@ -261,7 +261,7 @@ private:
      * VolumeInc action for the owning device.
      * Must be implemented iff EnableActionVolumeInc was called.
      */
-    virtual void VolumeInc(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void VolumeInc(IDvInvocation& aInvocation);
     /**
      * VolumeDec action.
      *
@@ -269,7 +269,7 @@ private:
      * VolumeDec action for the owning device.
      * Must be implemented iff EnableActionVolumeDec was called.
      */
-    virtual void VolumeDec(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void VolumeDec(IDvInvocation& aInvocation);
     /**
      * Volume action.
      *
@@ -277,7 +277,7 @@ private:
      * Volume action for the owning device.
      * Must be implemented iff EnableActionVolume was called.
      */
-    virtual void Volume(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+    virtual void Volume(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
     /**
      * SetBalance action.
      *
@@ -285,7 +285,7 @@ private:
      * SetBalance action for the owning device.
      * Must be implemented iff EnableActionSetBalance was called.
      */
-    virtual void SetBalance(IInvocationResponse& aResponse, TUint aVersion, TInt aValue);
+    virtual void SetBalance(IDvInvocation& aInvocation, TInt aValue);
     /**
      * BalanceInc action.
      *
@@ -293,7 +293,7 @@ private:
      * BalanceInc action for the owning device.
      * Must be implemented iff EnableActionBalanceInc was called.
      */
-    virtual void BalanceInc(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void BalanceInc(IDvInvocation& aInvocation);
     /**
      * BalanceDec action.
      *
@@ -301,7 +301,7 @@ private:
      * BalanceDec action for the owning device.
      * Must be implemented iff EnableActionBalanceDec was called.
      */
-    virtual void BalanceDec(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void BalanceDec(IDvInvocation& aInvocation);
     /**
      * Balance action.
      *
@@ -309,7 +309,7 @@ private:
      * Balance action for the owning device.
      * Must be implemented iff EnableActionBalance was called.
      */
-    virtual void Balance(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseInt& aValue);
+    virtual void Balance(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue);
     /**
      * SetFade action.
      *
@@ -317,7 +317,7 @@ private:
      * SetFade action for the owning device.
      * Must be implemented iff EnableActionSetFade was called.
      */
-    virtual void SetFade(IInvocationResponse& aResponse, TUint aVersion, TInt aValue);
+    virtual void SetFade(IDvInvocation& aInvocation, TInt aValue);
     /**
      * FadeInc action.
      *
@@ -325,7 +325,7 @@ private:
      * FadeInc action for the owning device.
      * Must be implemented iff EnableActionFadeInc was called.
      */
-    virtual void FadeInc(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void FadeInc(IDvInvocation& aInvocation);
     /**
      * FadeDec action.
      *
@@ -333,7 +333,7 @@ private:
      * FadeDec action for the owning device.
      * Must be implemented iff EnableActionFadeDec was called.
      */
-    virtual void FadeDec(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void FadeDec(IDvInvocation& aInvocation);
     /**
      * Fade action.
      *
@@ -341,7 +341,7 @@ private:
      * Fade action for the owning device.
      * Must be implemented iff EnableActionFade was called.
      */
-    virtual void Fade(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseInt& aValue);
+    virtual void Fade(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue);
     /**
      * SetMute action.
      *
@@ -349,7 +349,7 @@ private:
      * SetMute action for the owning device.
      * Must be implemented iff EnableActionSetMute was called.
      */
-    virtual void SetMute(IInvocationResponse& aResponse, TUint aVersion, TBool aValue);
+    virtual void SetMute(IDvInvocation& aInvocation, TBool aValue);
     /**
      * Mute action.
      *
@@ -357,7 +357,7 @@ private:
      * Mute action for the owning device.
      * Must be implemented iff EnableActionMute was called.
      */
-    virtual void Mute(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
+    virtual void Mute(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue);
     /**
      * VolumeLimit action.
      *
@@ -365,25 +365,25 @@ private:
      * VolumeLimit action for the owning device.
      * Must be implemented iff EnableActionVolumeLimit was called.
      */
-    virtual void VolumeLimit(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+    virtual void VolumeLimit(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
 private:
     DvProviderAvOpenhomeOrgVolume1();
-    void DoCharacteristics(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetVolume(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolume(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetBalance(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalanceInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalanceDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoBalance(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetFade(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFadeInc(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFadeDec(IDviInvocation& aInvocation, TUint aVersion);
-    void DoFade(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetMute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoMute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoVolumeLimit(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCharacteristics(IDviInvocation& aInvocation);
+    void DoSetVolume(IDviInvocation& aInvocation);
+    void DoVolumeInc(IDviInvocation& aInvocation);
+    void DoVolumeDec(IDviInvocation& aInvocation);
+    void DoVolume(IDviInvocation& aInvocation);
+    void DoSetBalance(IDviInvocation& aInvocation);
+    void DoBalanceInc(IDviInvocation& aInvocation);
+    void DoBalanceDec(IDviInvocation& aInvocation);
+    void DoBalance(IDviInvocation& aInvocation);
+    void DoSetFade(IDviInvocation& aInvocation);
+    void DoFadeInc(IDviInvocation& aInvocation);
+    void DoFadeDec(IDviInvocation& aInvocation);
+    void DoFade(IDviInvocation& aInvocation);
+    void DoSetMute(IDviInvocation& aInvocation);
+    void DoMute(IDviInvocation& aInvocation);
+    void DoVolumeLimit(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyVolume;
     PropertyBool* iPropertyMute;

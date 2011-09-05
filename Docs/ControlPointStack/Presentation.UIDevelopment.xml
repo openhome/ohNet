@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>UI development</title>
+
+  <para>The primary goal of ohNet is to get you developing your Control
+  Point application's user interface as quickly as possible.</para>
+
+  <para>The ohNet code provides a library of instantly accessible APIs and a
+  robust communications stack, saving you the time you would otherwise have
+  spent hand-crafting complex protocol-specific messages such as UPnP's SOAP
+  messages.</para>
+
+  <para>You can now focus your main development efforts on producing extremely
+  high quality user interface, providing users of your application with as
+  seamless and enjoyable an experience as possible.</para>
+
+  <para>From here the development of your Control Point application is in your
+  hands.</para>
+</section>

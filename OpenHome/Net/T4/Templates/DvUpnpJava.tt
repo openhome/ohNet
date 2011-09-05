@@ -250,13 +250,13 @@ public class <#=className#> extends DvProvider implements I<#=className#>
      *
      * <p>Must be implemented iff {@link #enableAction<#=a.name#>} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
      * @param a<#=i.name#>
 <#      } #>
      */
-    protected <#=ReturnType(a)#> <#=ArgNameLocal(a.name)#>(int aVersion<#=ArgsFull(a)#>)
+    protected <#=ReturnType(a)#> <#=ArgNameLocal(a.name)#>(IDvInvocation aInvocation<#=ArgsFull(a)#>)
     {
         throw (new ActionDisabledError());
     }
@@ -283,7 +283,7 @@ public class <#=className#> extends DvProvider implements I<#=className#>
 
     private class Do<#=a.name#> implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
 <#      foreach (Argument i in a.inargs) #>
@@ -306,14 +306,14 @@ public class <#=className#> extends DvProvider implements I<#=className#>
 <#      { #>
  <#               foreach (Argument o in a.outargs) #>
 <#          { #>
-                <#=ArgNameLocal(o.name)#> = <#=ArgNameLocal(a.name)#>(aVersion<#=ArgNames(a)#>);
+                <#=ArgNameLocal(o.name)#> = <#=ArgNameLocal(a.name)#>(invocation<#=ArgNames(a)#>);
 <#          } #>
 <#      } #>
 <#      else if (a.outargs.Count >= 2) #>
 <#      { #>
 
 <#          string outType = ReturnType(a); #>
-            <#=outType#> outArgs = <#=ArgNameLocal(a.name)#>(aVersion<#=ArgNames(a)#>);
+            <#=outType#> outArgs = <#=ArgNameLocal(a.name)#>(invocation<#=ArgNames(a)#>);
 <#          foreach (Argument o in a.outargs) #>
 <#          { #>
             <#=ArgNameLocal(o.name)#> = outArgs.get<#=ArgName(o)#>();
@@ -321,7 +321,7 @@ public class <#=className#> extends DvProvider implements I<#=className#>
 <#      } #>
 <#      else #>
 <#      { #>
-                <#=ArgNameLocal(a.name)#>(aVersion<#=ArgNames(a)#>);
+                <#=ArgNameLocal(a.name)#>(invocation<#=ArgNames(a)#>);
 <#      } #>
             }
             catch (ActionError ae)

@@ -482,8 +482,10 @@ namespace OpenHome.Net.Device.Providers
         protected void EnableActionRead()
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Read");
+            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterUint("TrackId"));
+            action.AddOutputParameter(new ParameterString("Udn", allowedValues));
             action.AddOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
             iDelegateRead = new ActionDelegate(DoRead);
             EnableAction(action, iDelegateRead, GCHandle.ToIntPtr(iGch));
@@ -517,7 +519,7 @@ namespace OpenHome.Net.Device.Providers
             action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterUint("AfterTrackId"));
             action.AddInputParameter(new ParameterString("Udn", allowedValues));
-            action.AddInputParameter(new ParameterString("MetadataId", allowedValues));
+            action.AddInputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
             action.AddOutputParameter(new ParameterUint("NewTrackId"));
             iDelegateInsert = new ActionDelegate(DoInsert);
             EnableAction(action, iDelegateInsert, GCHandle.ToIntPtr(iGch));
@@ -557,9 +559,9 @@ namespace OpenHome.Net.Device.Providers
         /// Metadata action for the owning device.
         ///
         /// Must be implemented iff EnableActionMetadata was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aMetadata"></param>
-        protected virtual void Metadata(uint aVersion, out string aMetadata)
+        protected virtual void Metadata(IDvInvocation aInvocation, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -571,9 +573,9 @@ namespace OpenHome.Net.Device.Providers
         /// ImagesXml action for the owning device.
         ///
         /// Must be implemented iff EnableActionImagesXml was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aImagesXml"></param>
-        protected virtual void ImagesXml(uint aVersion, out string aImagesXml)
+        protected virtual void ImagesXml(IDvInvocation aInvocation, out string aImagesXml)
         {
             throw (new ActionDisabledError());
         }
@@ -585,10 +587,10 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistReadArray action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistReadArray was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aArray"></param>
-        protected virtual void PlaylistReadArray(uint aVersion, uint aId, out byte[] aArray)
+        protected virtual void PlaylistReadArray(IDvInvocation aInvocation, uint aId, out byte[] aArray)
         {
             throw (new ActionDisabledError());
         }
@@ -600,10 +602,10 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistReadList action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistReadList was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aIdList"></param>
         /// <param name="aPlaylistList"></param>
-        protected virtual void PlaylistReadList(uint aVersion, string aIdList, out string aPlaylistList)
+        protected virtual void PlaylistReadList(IDvInvocation aInvocation, string aIdList, out string aPlaylistList)
         {
             throw (new ActionDisabledError());
         }
@@ -615,12 +617,12 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistRead action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistRead was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aName"></param>
         /// <param name="aDescription"></param>
         /// <param name="aImageId"></param>
-        protected virtual void PlaylistRead(uint aVersion, uint aId, out string aName, out string aDescription, out uint aImageId)
+        protected virtual void PlaylistRead(IDvInvocation aInvocation, uint aId, out string aName, out string aDescription, out uint aImageId)
         {
             throw (new ActionDisabledError());
         }
@@ -632,10 +634,10 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistSetName action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistSetName was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aName"></param>
-        protected virtual void PlaylistSetName(uint aVersion, uint aId, string aName)
+        protected virtual void PlaylistSetName(IDvInvocation aInvocation, uint aId, string aName)
         {
             throw (new ActionDisabledError());
         }
@@ -647,10 +649,10 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistSetDescription action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistSetDescription was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aDescription"></param>
-        protected virtual void PlaylistSetDescription(uint aVersion, uint aId, string aDescription)
+        protected virtual void PlaylistSetDescription(IDvInvocation aInvocation, uint aId, string aDescription)
         {
             throw (new ActionDisabledError());
         }
@@ -662,10 +664,10 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistSetImageId action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistSetImageId was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aImageId"></param>
-        protected virtual void PlaylistSetImageId(uint aVersion, uint aId, uint aImageId)
+        protected virtual void PlaylistSetImageId(IDvInvocation aInvocation, uint aId, uint aImageId)
         {
             throw (new ActionDisabledError());
         }
@@ -677,13 +679,13 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistInsert action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistInsert was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aAfterId"></param>
         /// <param name="aName"></param>
         /// <param name="aDescription"></param>
         /// <param name="aImageId"></param>
         /// <param name="aNewId"></param>
-        protected virtual void PlaylistInsert(uint aVersion, uint aAfterId, string aName, string aDescription, uint aImageId, out uint aNewId)
+        protected virtual void PlaylistInsert(IDvInvocation aInvocation, uint aAfterId, string aName, string aDescription, uint aImageId, out uint aNewId)
         {
             throw (new ActionDisabledError());
         }
@@ -695,9 +697,9 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistDeleteId action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistDeleteId was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void PlaylistDeleteId(uint aVersion, uint aValue)
+        protected virtual void PlaylistDeleteId(IDvInvocation aInvocation, uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -709,10 +711,10 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistMove action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistMove was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aAfterId"></param>
-        protected virtual void PlaylistMove(uint aVersion, uint aId, uint aAfterId)
+        protected virtual void PlaylistMove(IDvInvocation aInvocation, uint aId, uint aAfterId)
         {
             throw (new ActionDisabledError());
         }
@@ -724,9 +726,9 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistsMax action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistsMax was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void PlaylistsMax(uint aVersion, out uint aValue)
+        protected virtual void PlaylistsMax(IDvInvocation aInvocation, out uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -738,9 +740,9 @@ namespace OpenHome.Net.Device.Providers
         /// TracksMax action for the owning device.
         ///
         /// Must be implemented iff EnableActionTracksMax was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
-        protected virtual void TracksMax(uint aVersion, out uint aValue)
+        protected virtual void TracksMax(IDvInvocation aInvocation, out uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -752,11 +754,11 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistArrays action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistArrays was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aToken"></param>
         /// <param name="aIdArray"></param>
         /// <param name="aTokenArray"></param>
-        protected virtual void PlaylistArrays(uint aVersion, out uint aToken, out byte[] aIdArray, out byte[] aTokenArray)
+        protected virtual void PlaylistArrays(IDvInvocation aInvocation, out uint aToken, out byte[] aIdArray, out byte[] aTokenArray)
         {
             throw (new ActionDisabledError());
         }
@@ -768,10 +770,10 @@ namespace OpenHome.Net.Device.Providers
         /// PlaylistArraysChanged action for the owning device.
         ///
         /// Must be implemented iff EnableActionPlaylistArraysChanged was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aToken"></param>
         /// <param name="aValue"></param>
-        protected virtual void PlaylistArraysChanged(uint aVersion, uint aToken, out bool aValue)
+        protected virtual void PlaylistArraysChanged(IDvInvocation aInvocation, uint aToken, out bool aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -783,11 +785,12 @@ namespace OpenHome.Net.Device.Providers
         /// Read action for the owning device.
         ///
         /// Must be implemented iff EnableActionRead was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aTrackId"></param>
+        /// <param name="aUdn"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void Read(uint aVersion, uint aId, uint aTrackId, out string aMetadata)
+        protected virtual void Read(IDvInvocation aInvocation, uint aId, uint aTrackId, out string aUdn, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -799,11 +802,11 @@ namespace OpenHome.Net.Device.Providers
         /// ReadList action for the owning device.
         ///
         /// Must be implemented iff EnableActionReadList was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aTrackIdList"></param>
         /// <param name="aTrackList"></param>
-        protected virtual void ReadList(uint aVersion, uint aId, string aTrackIdList, out string aTrackList)
+        protected virtual void ReadList(IDvInvocation aInvocation, uint aId, string aTrackIdList, out string aTrackList)
         {
             throw (new ActionDisabledError());
         }
@@ -815,13 +818,13 @@ namespace OpenHome.Net.Device.Providers
         /// Insert action for the owning device.
         ///
         /// Must be implemented iff EnableActionInsert was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aAfterTrackId"></param>
         /// <param name="aUdn"></param>
-        /// <param name="aMetadataId"></param>
+        /// <param name="aMetadata"></param>
         /// <param name="aNewTrackId"></param>
-        protected virtual void Insert(uint aVersion, uint aId, uint aAfterTrackId, string aUdn, string aMetadataId, out uint aNewTrackId)
+        protected virtual void Insert(IDvInvocation aInvocation, uint aId, uint aAfterTrackId, string aUdn, string aMetadata, out uint aNewTrackId)
         {
             throw (new ActionDisabledError());
         }
@@ -833,10 +836,10 @@ namespace OpenHome.Net.Device.Providers
         /// DeleteId action for the owning device.
         ///
         /// Must be implemented iff EnableActionDeleteId was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aTrackId"></param>
-        protected virtual void DeleteId(uint aVersion, uint aId, uint aTrackId)
+        protected virtual void DeleteId(IDvInvocation aInvocation, uint aId, uint aTrackId)
         {
             throw (new ActionDisabledError());
         }
@@ -848,14 +851,14 @@ namespace OpenHome.Net.Device.Providers
         /// DeleteAll action for the owning device.
         ///
         /// Must be implemented iff EnableActionDeleteAll was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
-        protected virtual void DeleteAll(uint aVersion, uint aId)
+        protected virtual void DeleteAll(IDvInvocation aInvocation, uint aId)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoMetadata(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMetadata(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -865,22 +868,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Metadata(aVersion, out metadata);
+                self.Metadata(invocation, out metadata);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Metadata"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Metadata"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -902,7 +905,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoImagesXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoImagesXml(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -912,22 +915,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.ImagesXml(aVersion, out imagesXml);
+                self.ImagesXml(invocation, out imagesXml);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "ImagesXml"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "ImagesXml"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -949,7 +952,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistReadArray(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistReadArray(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -961,22 +964,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 id = invocation.ReadUint("Id");
                 invocation.ReadEnd();
-                self.PlaylistReadArray(aVersion, id, out array);
+                self.PlaylistReadArray(invocation, id, out array);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistReadArray"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistReadArray"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -998,7 +1001,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistReadList(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1010,22 +1013,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 idList = invocation.ReadString("IdList");
                 invocation.ReadEnd();
-                self.PlaylistReadList(aVersion, idList, out playlistList);
+                self.PlaylistReadList(invocation, idList, out playlistList);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistReadList"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistReadList"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1047,7 +1050,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistRead(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1061,22 +1064,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 id = invocation.ReadUint("Id");
                 invocation.ReadEnd();
-                self.PlaylistRead(aVersion, id, out name, out description, out imageId);
+                self.PlaylistRead(invocation, id, out name, out description, out imageId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistRead"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistRead"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1100,7 +1103,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistSetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistSetName(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1113,22 +1116,22 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 name = invocation.ReadString("Name");
                 invocation.ReadEnd();
-                self.PlaylistSetName(aVersion, id, name);
+                self.PlaylistSetName(invocation, id, name);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistSetName"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistSetName"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1149,7 +1152,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistSetDescription(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistSetDescription(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1162,22 +1165,22 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 description = invocation.ReadString("Description");
                 invocation.ReadEnd();
-                self.PlaylistSetDescription(aVersion, id, description);
+                self.PlaylistSetDescription(invocation, id, description);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistSetDescription"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistSetDescription"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1198,7 +1201,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistSetImageId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistSetImageId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1211,22 +1214,22 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 imageId = invocation.ReadUint("ImageId");
                 invocation.ReadEnd();
-                self.PlaylistSetImageId(aVersion, id, imageId);
+                self.PlaylistSetImageId(invocation, id, imageId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistSetImageId"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistSetImageId"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1247,7 +1250,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistInsert(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistInsert(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1265,22 +1268,22 @@ namespace OpenHome.Net.Device.Providers
                 description = invocation.ReadString("Description");
                 imageId = invocation.ReadUint("ImageId");
                 invocation.ReadEnd();
-                self.PlaylistInsert(aVersion, afterId, name, description, imageId, out newId);
+                self.PlaylistInsert(invocation, afterId, name, description, imageId, out newId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistInsert"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistInsert"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1302,7 +1305,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistDeleteId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistDeleteId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1313,22 +1316,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 value = invocation.ReadUint("Value");
                 invocation.ReadEnd();
-                self.PlaylistDeleteId(aVersion, value);
+                self.PlaylistDeleteId(invocation, value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistDeleteId"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistDeleteId"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1349,7 +1352,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistMove(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistMove(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1362,22 +1365,22 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 afterId = invocation.ReadUint("AfterId");
                 invocation.ReadEnd();
-                self.PlaylistMove(aVersion, id, afterId);
+                self.PlaylistMove(invocation, id, afterId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistMove"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistMove"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1398,7 +1401,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistsMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistsMax(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1408,22 +1411,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.PlaylistsMax(aVersion, out value);
+                self.PlaylistsMax(invocation, out value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistsMax"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistsMax"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1445,7 +1448,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoTracksMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTracksMax(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1455,22 +1458,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.TracksMax(aVersion, out value);
+                self.TracksMax(invocation, out value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "TracksMax"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "TracksMax"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1492,7 +1495,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistArrays(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistArrays(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1504,22 +1507,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.PlaylistArrays(aVersion, out token, out idArray, out tokenArray);
+                self.PlaylistArrays(invocation, out token, out idArray, out tokenArray);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistArrays"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistArrays"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1543,7 +1546,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistArraysChanged(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistArraysChanged(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1555,22 +1558,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 token = invocation.ReadUint("Token");
                 invocation.ReadEnd();
-                self.PlaylistArraysChanged(aVersion, token, out value);
+                self.PlaylistArraysChanged(invocation, token, out value);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "PlaylistArraysChanged"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "PlaylistArraysChanged"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1592,13 +1595,14 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRead(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint id;
             uint trackId;
+            string udn;
             string metadata;
             try
             {
@@ -1606,27 +1610,28 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 trackId = invocation.ReadUint("TrackId");
                 invocation.ReadEnd();
-                self.Read(aVersion, id, trackId, out metadata);
+                self.Read(invocation, id, trackId, out udn, out metadata);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Read"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Read"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
             {
                 invocation.WriteStart();
+                invocation.WriteString("Udn", udn);
                 invocation.WriteString("Metadata", metadata);
                 invocation.WriteEnd();
             }
@@ -1643,7 +1648,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1657,22 +1662,22 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 trackIdList = invocation.ReadString("TrackIdList");
                 invocation.ReadEnd();
-                self.ReadList(aVersion, id, trackIdList, out trackList);
+                self.ReadList(invocation, id, trackIdList, out trackList);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "ReadList"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "ReadList"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1694,7 +1699,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoInsert(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoInsert(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1702,7 +1707,7 @@ namespace OpenHome.Net.Device.Providers
             uint id;
             uint afterTrackId;
             string udn;
-            string metadataId;
+            string metadata;
             uint newTrackId;
             try
             {
@@ -1710,24 +1715,24 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 afterTrackId = invocation.ReadUint("AfterTrackId");
                 udn = invocation.ReadString("Udn");
-                metadataId = invocation.ReadString("MetadataId");
+                metadata = invocation.ReadString("Metadata");
                 invocation.ReadEnd();
-                self.Insert(aVersion, id, afterTrackId, udn, metadataId, out newTrackId);
+                self.Insert(invocation, id, afterTrackId, udn, metadata, out newTrackId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Insert"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Insert"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1749,7 +1754,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteId(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1762,22 +1767,22 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 trackId = invocation.ReadUint("TrackId");
                 invocation.ReadEnd();
-                self.DeleteId(aVersion, id, trackId);
+                self.DeleteId(invocation, id, trackId);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "DeleteId"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "DeleteId"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1798,7 +1803,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoDeleteAll(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteAll(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
@@ -1809,22 +1814,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 id = invocation.ReadUint("Id");
                 invocation.ReadEnd();
-                self.DeleteAll(aVersion, id);
+                self.DeleteAll(invocation, id);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "DeleteAll"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "DeleteAll"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try

@@ -226,6 +226,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionRead()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
+    action->AddOutputParameter(new ParameterString("Udn"));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoRead);
     iService->AddAction(action, functor);
@@ -247,7 +248,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionInsert()
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("AfterTrackId"));
     action->AddInputParameter(new ParameterString("Udn"));
-    action->AddInputParameter(new ParameterString("MetadataId"));
+    action->AddInputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     action->AddOutputParameter(new ParameterUint("NewTrackId"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoInsert);
     iService->AddAction(action, functor);
@@ -270,90 +271,90 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionDeleteAll()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoMetadata(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoMetadata(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respMetadata(aInvocation, "Metadata");
-    Metadata(resp, aVersion, respMetadata);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respMetadata(aInvocation, "Metadata");
+    Metadata(invocation, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoImagesXml(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoImagesXml(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respImagesXml(aInvocation, "ImagesXml");
-    ImagesXml(resp, aVersion, respImagesXml);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respImagesXml(aInvocation, "ImagesXml");
+    ImagesXml(invocation, respImagesXml);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadArray(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadArray(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseBinary respArray(aInvocation, "Array");
-    PlaylistReadArray(resp, aVersion, Id, respArray);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseBinary respArray(aInvocation, "Array");
+    PlaylistReadArray(invocation, Id, respArray);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadList(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz IdList;
     aInvocation.InvocationReadString("IdList", IdList);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respPlaylistList(aInvocation, "PlaylistList");
-    PlaylistReadList(resp, aVersion, IdList, respPlaylistList);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respPlaylistList(aInvocation, "PlaylistList");
+    PlaylistReadList(invocation, IdList, respPlaylistList);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistRead(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistRead(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respDescription(aInvocation, "Description");
-    InvocationResponseUint respImageId(aInvocation, "ImageId");
-    PlaylistRead(resp, aVersion, Id, respName, respDescription, respImageId);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respDescription(aInvocation, "Description");
+    DviInvocationResponseUint respImageId(aInvocation, "ImageId");
+    PlaylistRead(invocation, Id, respName, respDescription, respImageId);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetName(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetName(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz Name;
     aInvocation.InvocationReadString("Name", Name);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    PlaylistSetName(resp, aVersion, Id, Name);
+    DviInvocation invocation(aInvocation);
+    PlaylistSetName(invocation, Id, Name);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetDescription(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz Description;
     aInvocation.InvocationReadString("Description", Description);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    PlaylistSetDescription(resp, aVersion, Id, Description);
+    DviInvocation invocation(aInvocation);
+    PlaylistSetDescription(invocation, Id, Description);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetImageId(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint ImageId = aInvocation.InvocationReadUint("ImageId");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    PlaylistSetImageId(resp, aVersion, Id, ImageId);
+    DviInvocation invocation(aInvocation);
+    PlaylistSetImageId(invocation, Id, ImageId);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistInsert(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistInsert(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint AfterId = aInvocation.InvocationReadUint("AfterId");
@@ -363,222 +364,223 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistInsert(IDviInvocation& a
     aInvocation.InvocationReadString("Description", Description);
     TUint ImageId = aInvocation.InvocationReadUint("ImageId");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respNewId(aInvocation, "NewId");
-    PlaylistInsert(resp, aVersion, AfterId, Name, Description, ImageId, respNewId);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respNewId(aInvocation, "NewId");
+    PlaylistInsert(invocation, AfterId, Name, Description, ImageId, respNewId);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistDeleteId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistDeleteId(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    PlaylistDeleteId(resp, aVersion, Value);
+    DviInvocation invocation(aInvocation);
+    PlaylistDeleteId(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistMove(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistMove(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint AfterId = aInvocation.InvocationReadUint("AfterId");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    PlaylistMove(resp, aVersion, Id, AfterId);
+    DviInvocation invocation(aInvocation);
+    PlaylistMove(invocation, Id, AfterId);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistsMax(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistsMax(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respValue(aInvocation, "Value");
-    PlaylistsMax(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respValue(aInvocation, "Value");
+    PlaylistsMax(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoTracksMax(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoTracksMax(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respValue(aInvocation, "Value");
-    TracksMax(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respValue(aInvocation, "Value");
+    TracksMax(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistArrays(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistArrays(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respToken(aInvocation, "Token");
-    InvocationResponseBinary respIdArray(aInvocation, "IdArray");
-    InvocationResponseBinary respTokenArray(aInvocation, "TokenArray");
-    PlaylistArrays(resp, aVersion, respToken, respIdArray, respTokenArray);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respToken(aInvocation, "Token");
+    DviInvocationResponseBinary respIdArray(aInvocation, "IdArray");
+    DviInvocationResponseBinary respTokenArray(aInvocation, "TokenArray");
+    PlaylistArrays(invocation, respToken, respIdArray, respTokenArray);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistArraysChanged(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistArraysChanged(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Token = aInvocation.InvocationReadUint("Token");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseBool respValue(aInvocation, "Value");
-    PlaylistArraysChanged(resp, aVersion, Token, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseBool respValue(aInvocation, "Value");
+    PlaylistArraysChanged(invocation, Token, respValue);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoRead(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoRead(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respMetadata(aInvocation, "Metadata");
-    Read(resp, aVersion, Id, TrackId, respMetadata);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respUdn(aInvocation, "Udn");
+    DviInvocationResponseString respMetadata(aInvocation, "Metadata");
+    Read(invocation, Id, TrackId, respUdn, respMetadata);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoReadList(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz TrackIdList;
     aInvocation.InvocationReadString("TrackIdList", TrackIdList);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respTrackList(aInvocation, "TrackList");
-    ReadList(resp, aVersion, Id, TrackIdList, respTrackList);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respTrackList(aInvocation, "TrackList");
+    ReadList(invocation, Id, TrackIdList, respTrackList);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoInsert(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoInsert(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint AfterTrackId = aInvocation.InvocationReadUint("AfterTrackId");
     Brhz Udn;
     aInvocation.InvocationReadString("Udn", Udn);
-    Brhz MetadataId;
-    aInvocation.InvocationReadString("MetadataId", MetadataId);
+    Brhz Metadata;
+    aInvocation.InvocationReadString("Metadata", Metadata);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respNewTrackId(aInvocation, "NewTrackId");
-    Insert(resp, aVersion, Id, AfterTrackId, Udn, MetadataId, respNewTrackId);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respNewTrackId(aInvocation, "NewTrackId");
+    Insert(invocation, Id, AfterTrackId, Udn, Metadata, respNewTrackId);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteId(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    DeleteId(resp, aVersion, Id, TrackId);
+    DviInvocation invocation(aInvocation);
+    DeleteId(invocation, Id, TrackId);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteAll(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    DeleteAll(resp, aVersion, Id);
+    DviInvocation invocation(aInvocation);
+    DeleteAll(invocation, Id);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::Metadata(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::Metadata(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::ImagesXml(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aImagesXml*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::ImagesXml(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aImagesXml*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistReadArray(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, IInvocationResponseBinary& /*aArray*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistReadArray(IDvInvocation& /*aResponse*/, TUint /*aId*/, IDvInvocationResponseBinary& /*aArray*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistReadList(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aIdList*/, IInvocationResponseString& /*aPlaylistList*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistReadList(IDvInvocation& /*aResponse*/, const Brx& /*aIdList*/, IDvInvocationResponseString& /*aPlaylistList*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistRead(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, IInvocationResponseString& /*aName*/, IInvocationResponseString& /*aDescription*/, IInvocationResponseUint& /*aImageId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistRead(IDvInvocation& /*aResponse*/, TUint /*aId*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseString& /*aDescription*/, IDvInvocationResponseUint& /*aImageId*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, const Brx& /*aName*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetName(IDvInvocation& /*aResponse*/, TUint /*aId*/, const Brx& /*aName*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetDescription(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, const Brx& /*aDescription*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetDescription(IDvInvocation& /*aResponse*/, TUint /*aId*/, const Brx& /*aDescription*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetImageId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aImageId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetImageId(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aImageId*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistInsert(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aAfterId*/, const Brx& /*aName*/, const Brx& /*aDescription*/, TUint /*aImageId*/, IInvocationResponseUint& /*aNewId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistInsert(IDvInvocation& /*aResponse*/, TUint /*aAfterId*/, const Brx& /*aName*/, const Brx& /*aDescription*/, TUint /*aImageId*/, IDvInvocationResponseUint& /*aNewId*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistDeleteId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistDeleteId(IDvInvocation& /*aResponse*/, TUint /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistMove(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aAfterId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistMove(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aAfterId*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistsMax(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistsMax(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::TracksMax(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::TracksMax(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistArrays(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aToken*/, IInvocationResponseBinary& /*aIdArray*/, IInvocationResponseBinary& /*aTokenArray*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistArrays(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aToken*/, IDvInvocationResponseBinary& /*aIdArray*/, IDvInvocationResponseBinary& /*aTokenArray*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistArraysChanged(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aToken*/, IInvocationResponseBool& /*aValue*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistArraysChanged(IDvInvocation& /*aResponse*/, TUint /*aToken*/, IDvInvocationResponseBool& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::Read(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aTrackId*/, IInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::Read(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aTrackId*/, IDvInvocationResponseString& /*aUdn*/, IDvInvocationResponseString& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::ReadList(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, const Brx& /*aTrackIdList*/, IInvocationResponseString& /*aTrackList*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::ReadList(IDvInvocation& /*aResponse*/, TUint /*aId*/, const Brx& /*aTrackIdList*/, IDvInvocationResponseString& /*aTrackList*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::Insert(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aAfterTrackId*/, const Brx& /*aUdn*/, const Brx& /*aMetadataId*/, IInvocationResponseUint& /*aNewTrackId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::Insert(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aAfterTrackId*/, const Brx& /*aUdn*/, const Brx& /*aMetadata*/, IDvInvocationResponseUint& /*aNewTrackId*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DeleteId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aTrackId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DeleteId(IDvInvocation& /*aResponse*/, TUint /*aId*/, TUint /*aTrackId*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DeleteAll(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DeleteAll(IDvInvocation& /*aResponse*/, TUint /*aId*/)
 {
     ASSERTS();
 }

@@ -155,16 +155,16 @@ namespace OpenHome.Net.Device.Providers
         /// Time action for the owning device.
         ///
         /// Must be implemented iff EnableActionTime was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aTrackCount"></param>
         /// <param name="aDuration"></param>
         /// <param name="aSeconds"></param>
-        protected virtual void Time(uint aVersion, out uint aTrackCount, out uint aDuration, out uint aSeconds)
+        protected virtual void Time(IDvInvocation aInvocation, out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoTime(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTime(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgTime1 self = (DvProviderAvOpenhomeOrgTime1)gch.Target;
@@ -176,22 +176,22 @@ namespace OpenHome.Net.Device.Providers
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Time(aVersion, out trackCount, out duration, out seconds);
+                self.Time(invocation, out trackCount, out duration, out seconds);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "Time"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Time"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try

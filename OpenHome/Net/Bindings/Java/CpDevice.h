@@ -34,10 +34,10 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDevice_CpDeviceCRemo
 /*
  * Class:     org_openhome_net_controlpoint_CpDevice
  * Method:    CpDeviceCGetAttribute
- * Signature: (JLjava/lang/String;[Ljava/lang/String;)I
+ * Signature: (JLjava/lang/String;)Lorg/openhome/net/controlpoint/CpAttribute;
  */
-JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_CpDevice_CpDeviceCGetAttribute
-  (JNIEnv *, jclass, jlong, jstring, jobjectArray);
+JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_CpDevice_CpDeviceCGetAttribute
+  (JNIEnv *, jclass, jlong, jstring);
 
 #ifdef __cplusplus
 }

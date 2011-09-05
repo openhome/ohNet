@@ -41,7 +41,7 @@ private:
     virtual void Output(IAsyncOutput& aConsole);
     virtual TUint Type() const;
 private:
-    static const TUint kRwBufferLength = 1024;
+    static const TUint kRwBufferLength = 16*1024;
     OpenHome::Uri* iUri;
     FunctorAsync iFunctor;
     TUint iSequenceNumber;

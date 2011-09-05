@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Initializing the Device stack</title>
+
+  <para>You must initialize the Device stack before you can use any of the
+  other ohNet code.</para>
+
+  <para>To initialize the Device stack, include the following three lines of
+  code:</para>
+
+  <programlisting>InitialisationParams* initParams = new InitialisationParams(); 
+// initParams defaults to useful values for all fields but you can 
+// optionally change any values here 
+UpnpLibrary::Initialise(initParams); 
+UpnpLibrary::StartDv();</programlisting>
+
+  <para>See the ohNet API's listing of UpnpLibrary for more details on
+  initializing the stack.</para>
+</section>

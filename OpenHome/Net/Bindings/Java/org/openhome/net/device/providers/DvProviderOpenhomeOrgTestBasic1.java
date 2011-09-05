@@ -533,10 +533,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionIncrement} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected long increment(int aVersion, long aValue)
+    protected long increment(IDvInvocation aInvocation, long aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -549,10 +549,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionDecrement} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected int decrement(int aVersion, int aValue)
+    protected int decrement(IDvInvocation aInvocation, int aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -565,10 +565,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionToggle} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected boolean toggle(int aVersion, boolean aValue)
+    protected boolean toggle(IDvInvocation aInvocation, boolean aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -581,10 +581,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionEchoString} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected String echoString(int aVersion, String aValue)
+    protected String echoString(IDvInvocation aInvocation, String aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -597,10 +597,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionEchoBinary} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected byte[] echoBinary(int aVersion, byte[] aValue)
+    protected byte[] echoBinary(IDvInvocation aInvocation, byte[] aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -613,10 +613,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetUint} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValueUint
      */
-    protected void setUint(int aVersion, long aValueUint)
+    protected void setUint(IDvInvocation aInvocation, long aValueUint)
     {
         throw (new ActionDisabledError());
     }
@@ -629,9 +629,9 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionGetUint} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long getUint(int aVersion)
+    protected long getUint(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -644,10 +644,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetInt} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValueInt
      */
-    protected void setInt(int aVersion, int aValueInt)
+    protected void setInt(IDvInvocation aInvocation, int aValueInt)
     {
         throw (new ActionDisabledError());
     }
@@ -660,9 +660,9 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionGetInt} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected int getInt(int aVersion)
+    protected int getInt(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -675,10 +675,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetBool} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValueBool
      */
-    protected void setBool(int aVersion, boolean aValueBool)
+    protected void setBool(IDvInvocation aInvocation, boolean aValueBool)
     {
         throw (new ActionDisabledError());
     }
@@ -691,9 +691,9 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionGetBool} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean getBool(int aVersion)
+    protected boolean getBool(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -706,12 +706,12 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetMultiple} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValueUint
      * @param aValueInt
      * @param aValueBool
      */
-    protected void setMultiple(int aVersion, long aValueUint, int aValueInt, boolean aValueBool)
+    protected void setMultiple(IDvInvocation aInvocation, long aValueUint, int aValueInt, boolean aValueBool)
     {
         throw (new ActionDisabledError());
     }
@@ -724,10 +724,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetString} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValueStr
      */
-    protected void setString(int aVersion, String aValueStr)
+    protected void setString(IDvInvocation aInvocation, String aValueStr)
     {
         throw (new ActionDisabledError());
     }
@@ -740,9 +740,9 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionGetString} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String getString(int aVersion)
+    protected String getString(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -755,10 +755,10 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetBinary} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValueBin
      */
-    protected void setBinary(int aVersion, byte[] aValueBin)
+    protected void setBinary(IDvInvocation aInvocation, byte[] aValueBin)
     {
         throw (new ActionDisabledError());
     }
@@ -771,9 +771,9 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionGetBinary} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected byte[] getBinary(int aVersion)
+    protected byte[] getBinary(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -786,9 +786,9 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionToggleBool} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void toggleBool(int aVersion)
+    protected void toggleBool(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -801,11 +801,11 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionWriteFile} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aData
      * @param aFileFullName
      */
-    protected void writeFile(int aVersion, String aData, String aFileFullName)
+    protected void writeFile(IDvInvocation aInvocation, String aData, String aFileFullName)
     {
         throw (new ActionDisabledError());
     }
@@ -818,9 +818,9 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionShutdown} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void shutdown(int aVersion)
+    protected void shutdown(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -844,7 +844,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoIncrement implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -854,7 +854,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 value = invocation.readUint("Value");
                 invocation.readEnd();
-                 result = increment(aVersion, value);
+                 result = increment(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -894,7 +894,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoDecrement implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -904,7 +904,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 value = invocation.readInt("Value");
                 invocation.readEnd();
-                 result = decrement(aVersion, value);
+                 result = decrement(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -944,7 +944,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoToggle implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -954,7 +954,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 value = invocation.readBool("Value");
                 invocation.readEnd();
-                 result = toggle(aVersion, value);
+                 result = toggle(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -994,7 +994,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoEchoString implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1004,7 +1004,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 value = invocation.readString("Value");
                 invocation.readEnd();
-                 result = echoString(aVersion, value);
+                 result = echoString(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1044,7 +1044,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoEchoBinary implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             byte[] value;
@@ -1054,7 +1054,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 value = invocation.readBinary("Value");
                 invocation.readEnd();
-                 result = echoBinary(aVersion, value);
+                 result = echoBinary(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1094,7 +1094,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetUint implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long valueUint;
@@ -1103,7 +1103,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 valueUint = invocation.readUint("ValueUint");
                 invocation.readEnd();
-                setUint(aVersion, valueUint);
+                setUint(invocation, valueUint);
             }
             catch (ActionError ae)
             {
@@ -1142,7 +1142,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetUint implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long valueUint;
@@ -1150,7 +1150,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 valueUint = getUint(aVersion);
+                 valueUint = getUint(invocation);
             }
             catch (ActionError ae)
             {
@@ -1190,7 +1190,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetInt implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int valueInt;
@@ -1199,7 +1199,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 valueInt = invocation.readInt("ValueInt");
                 invocation.readEnd();
-                setInt(aVersion, valueInt);
+                setInt(invocation, valueInt);
             }
             catch (ActionError ae)
             {
@@ -1238,7 +1238,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetInt implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int valueInt;
@@ -1246,7 +1246,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 valueInt = getInt(aVersion);
+                 valueInt = getInt(invocation);
             }
             catch (ActionError ae)
             {
@@ -1286,7 +1286,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetBool implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean valueBool;
@@ -1295,7 +1295,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 valueBool = invocation.readBool("ValueBool");
                 invocation.readEnd();
-                setBool(aVersion, valueBool);
+                setBool(invocation, valueBool);
             }
             catch (ActionError ae)
             {
@@ -1334,7 +1334,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetBool implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean valueBool;
@@ -1342,7 +1342,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 valueBool = getBool(aVersion);
+                 valueBool = getBool(invocation);
             }
             catch (ActionError ae)
             {
@@ -1382,7 +1382,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetMultiple implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long valueUint;
@@ -1395,7 +1395,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 valueInt = invocation.readInt("ValueInt");
                 valueBool = invocation.readBool("ValueBool");
                 invocation.readEnd();
-                setMultiple(aVersion, valueUint, valueInt, valueBool);
+                setMultiple(invocation, valueUint, valueInt, valueBool);
             }
             catch (ActionError ae)
             {
@@ -1434,7 +1434,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetString implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String valueStr;
@@ -1443,7 +1443,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 valueStr = invocation.readString("ValueStr");
                 invocation.readEnd();
-                setString(aVersion, valueStr);
+                setString(invocation, valueStr);
             }
             catch (ActionError ae)
             {
@@ -1482,7 +1482,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetString implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String valueStr;
@@ -1490,7 +1490,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 valueStr = getString(aVersion);
+                 valueStr = getString(invocation);
             }
             catch (ActionError ae)
             {
@@ -1530,7 +1530,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoSetBinary implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             byte[] valueBin;
@@ -1539,7 +1539,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 invocation.readStart();
                 valueBin = invocation.readBinary("ValueBin");
                 invocation.readEnd();
-                setBinary(aVersion, valueBin);
+                setBinary(invocation, valueBin);
             }
             catch (ActionError ae)
             {
@@ -1578,7 +1578,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoGetBinary implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             byte[] valueBin;
@@ -1586,7 +1586,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 valueBin = getBinary(aVersion);
+                 valueBin = getBinary(invocation);
             }
             catch (ActionError ae)
             {
@@ -1626,14 +1626,14 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoToggleBool implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                toggleBool(aVersion);
+                toggleBool(invocation);
             }
             catch (ActionError ae)
             {
@@ -1672,7 +1672,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoWriteFile implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String data;
@@ -1683,7 +1683,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
                 data = invocation.readString("Data");
                 fileFullName = invocation.readString("FileFullName");
                 invocation.readEnd();
-                writeFile(aVersion, data, fileFullName);
+                writeFile(invocation, data, fileFullName);
             }
             catch (ActionError ae)
             {
@@ -1722,14 +1722,14 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
 
     private class DoShutdown implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                shutdown(aVersion);
+                shutdown(invocation);
             }
             catch (ActionError ae)
             {

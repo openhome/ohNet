@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Device stack</title>
+
+  <para>The Device stack has been designed specifically for use by software
+  that offers services on a local network. It provides the mechanism used to
+  receive and respond to messages requesting a change in a physical device's
+  state.</para>
+
+  <para>The Device stack uses a class-based architecture to present the device
+  and its services on the network. The physical device is implemented in a
+  Device class. The physical device's services are implemented in Provider
+  classes.</para>
+
+  <para>You use Devices and Providers together with the Device stack to send
+  updates about the physical device's state to interested clients, such as
+  Control Points.</para>
+
+  <para>Details on how you use the Device stack and the Device and Provider
+  classes are contained in the following sections.</para>
+
+  <xi:include href="DeviceStack-Initializing.xml" xpointer="element(/1)" />
+
+  <xi:include href="DeviceStack-Closing.xml" xpointer="element(/1)" />
+</chapter>

@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -217,7 +218,7 @@ private:
      * SetLoadLevelTarget action for the owning device.
      * Must be implemented iff EnableActionSetLoadLevelTarget was called.
      */
-    virtual void SetLoadLevelTarget(uint32_t aVersion, uint32_t anewLoadlevelTarget);
+    virtual void SetLoadLevelTarget(IDvInvocationStd& aInvocation, uint32_t anewLoadlevelTarget);
     /**
      * GetLoadLevelTarget action.
      *
@@ -225,7 +226,7 @@ private:
      * GetLoadLevelTarget action for the owning device.
      * Must be implemented iff EnableActionGetLoadLevelTarget was called.
      */
-    virtual void GetLoadLevelTarget(uint32_t aVersion, uint32_t& aGetLoadlevelTarget);
+    virtual void GetLoadLevelTarget(IDvInvocationStd& aInvocation, uint32_t& aGetLoadlevelTarget);
     /**
      * GetLoadLevelStatus action.
      *
@@ -233,7 +234,7 @@ private:
      * GetLoadLevelStatus action for the owning device.
      * Must be implemented iff EnableActionGetLoadLevelStatus was called.
      */
-    virtual void GetLoadLevelStatus(uint32_t aVersion, uint32_t& aretLoadlevelStatus);
+    virtual void GetLoadLevelStatus(IDvInvocationStd& aInvocation, uint32_t& aretLoadlevelStatus);
     /**
      * SetOnEffectLevel action.
      *
@@ -241,7 +242,7 @@ private:
      * SetOnEffectLevel action for the owning device.
      * Must be implemented iff EnableActionSetOnEffectLevel was called.
      */
-    virtual void SetOnEffectLevel(uint32_t aVersion, uint32_t anewOnEffectLevel);
+    virtual void SetOnEffectLevel(IDvInvocationStd& aInvocation, uint32_t anewOnEffectLevel);
     /**
      * SetOnEffect action.
      *
@@ -249,7 +250,7 @@ private:
      * SetOnEffect action for the owning device.
      * Must be implemented iff EnableActionSetOnEffect was called.
      */
-    virtual void SetOnEffect(uint32_t aVersion, const std::string& anewOnEffect);
+    virtual void SetOnEffect(IDvInvocationStd& aInvocation, const std::string& anewOnEffect);
     /**
      * GetOnEffectParameters action.
      *
@@ -257,7 +258,7 @@ private:
      * GetOnEffectParameters action for the owning device.
      * Must be implemented iff EnableActionGetOnEffectParameters was called.
      */
-    virtual void GetOnEffectParameters(uint32_t aVersion, std::string& aretOnEffect, uint32_t& aretOnEffectLevel);
+    virtual void GetOnEffectParameters(IDvInvocationStd& aInvocation, std::string& aretOnEffect, uint32_t& aretOnEffectLevel);
     /**
      * StepUp action.
      *
@@ -265,7 +266,7 @@ private:
      * StepUp action for the owning device.
      * Must be implemented iff EnableActionStepUp was called.
      */
-    virtual void StepUp(uint32_t aVersion);
+    virtual void StepUp(IDvInvocationStd& aInvocation);
     /**
      * StepDown action.
      *
@@ -273,7 +274,7 @@ private:
      * StepDown action for the owning device.
      * Must be implemented iff EnableActionStepDown was called.
      */
-    virtual void StepDown(uint32_t aVersion);
+    virtual void StepDown(IDvInvocationStd& aInvocation);
     /**
      * StartRampUp action.
      *
@@ -281,7 +282,7 @@ private:
      * StartRampUp action for the owning device.
      * Must be implemented iff EnableActionStartRampUp was called.
      */
-    virtual void StartRampUp(uint32_t aVersion);
+    virtual void StartRampUp(IDvInvocationStd& aInvocation);
     /**
      * StartRampDown action.
      *
@@ -289,7 +290,7 @@ private:
      * StartRampDown action for the owning device.
      * Must be implemented iff EnableActionStartRampDown was called.
      */
-    virtual void StartRampDown(uint32_t aVersion);
+    virtual void StartRampDown(IDvInvocationStd& aInvocation);
     /**
      * StopRamp action.
      *
@@ -297,7 +298,7 @@ private:
      * StopRamp action for the owning device.
      * Must be implemented iff EnableActionStopRamp was called.
      */
-    virtual void StopRamp(uint32_t aVersion);
+    virtual void StopRamp(IDvInvocationStd& aInvocation);
     /**
      * StartRampToLevel action.
      *
@@ -305,7 +306,7 @@ private:
      * StartRampToLevel action for the owning device.
      * Must be implemented iff EnableActionStartRampToLevel was called.
      */
-    virtual void StartRampToLevel(uint32_t aVersion, uint32_t anewLoadLevelTarget, uint32_t anewRampTime);
+    virtual void StartRampToLevel(IDvInvocationStd& aInvocation, uint32_t anewLoadLevelTarget, uint32_t anewRampTime);
     /**
      * SetStepDelta action.
      *
@@ -313,7 +314,7 @@ private:
      * SetStepDelta action for the owning device.
      * Must be implemented iff EnableActionSetStepDelta was called.
      */
-    virtual void SetStepDelta(uint32_t aVersion, uint32_t anewStepDelta);
+    virtual void SetStepDelta(IDvInvocationStd& aInvocation, uint32_t anewStepDelta);
     /**
      * GetStepDelta action.
      *
@@ -321,7 +322,7 @@ private:
      * GetStepDelta action for the owning device.
      * Must be implemented iff EnableActionGetStepDelta was called.
      */
-    virtual void GetStepDelta(uint32_t aVersion, uint32_t& aretStepDelta);
+    virtual void GetStepDelta(IDvInvocationStd& aInvocation, uint32_t& aretStepDelta);
     /**
      * SetRampRate action.
      *
@@ -329,7 +330,7 @@ private:
      * SetRampRate action for the owning device.
      * Must be implemented iff EnableActionSetRampRate was called.
      */
-    virtual void SetRampRate(uint32_t aVersion, uint32_t anewRampRate);
+    virtual void SetRampRate(IDvInvocationStd& aInvocation, uint32_t anewRampRate);
     /**
      * GetRampRate action.
      *
@@ -337,7 +338,7 @@ private:
      * GetRampRate action for the owning device.
      * Must be implemented iff EnableActionGetRampRate was called.
      */
-    virtual void GetRampRate(uint32_t aVersion, uint32_t& aretRampRate);
+    virtual void GetRampRate(IDvInvocationStd& aInvocation, uint32_t& aretRampRate);
     /**
      * PauseRamp action.
      *
@@ -345,7 +346,7 @@ private:
      * PauseRamp action for the owning device.
      * Must be implemented iff EnableActionPauseRamp was called.
      */
-    virtual void PauseRamp(uint32_t aVersion);
+    virtual void PauseRamp(IDvInvocationStd& aInvocation);
     /**
      * ResumeRamp action.
      *
@@ -353,7 +354,7 @@ private:
      * ResumeRamp action for the owning device.
      * Must be implemented iff EnableActionResumeRamp was called.
      */
-    virtual void ResumeRamp(uint32_t aVersion);
+    virtual void ResumeRamp(IDvInvocationStd& aInvocation);
     /**
      * GetIsRamping action.
      *
@@ -361,7 +362,7 @@ private:
      * GetIsRamping action for the owning device.
      * Must be implemented iff EnableActionGetIsRamping was called.
      */
-    virtual void GetIsRamping(uint32_t aVersion, bool& aretIsRamping);
+    virtual void GetIsRamping(IDvInvocationStd& aInvocation, bool& aretIsRamping);
     /**
      * GetRampPaused action.
      *
@@ -369,7 +370,7 @@ private:
      * GetRampPaused action for the owning device.
      * Must be implemented iff EnableActionGetRampPaused was called.
      */
-    virtual void GetRampPaused(uint32_t aVersion, bool& aretRampPaused);
+    virtual void GetRampPaused(IDvInvocationStd& aInvocation, bool& aretRampPaused);
     /**
      * GetRampTime action.
      *
@@ -377,30 +378,30 @@ private:
      * GetRampTime action for the owning device.
      * Must be implemented iff EnableActionGetRampTime was called.
      */
-    virtual void GetRampTime(uint32_t aVersion, uint32_t& aretRampTime);
+    virtual void GetRampTime(IDvInvocationStd& aInvocation, uint32_t& aretRampTime);
 private:
     DvProviderUpnpOrgDimming1Cpp();
-    void DoSetLoadLevelTarget(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetLoadLevelTarget(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetLoadLevelStatus(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetOnEffectLevel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetOnEffect(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetOnEffectParameters(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStepUp(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStepDown(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStartRampUp(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStartRampDown(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStopRamp(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoStartRampToLevel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStepDelta(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetStepDelta(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRampRate(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRampRate(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoPauseRamp(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoResumeRamp(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetIsRamping(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRampPaused(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRampTime(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetLoadLevelTarget(IDviInvocation& aInvocation);
+    void DoGetLoadLevelTarget(IDviInvocation& aInvocation);
+    void DoGetLoadLevelStatus(IDviInvocation& aInvocation);
+    void DoSetOnEffectLevel(IDviInvocation& aInvocation);
+    void DoSetOnEffect(IDviInvocation& aInvocation);
+    void DoGetOnEffectParameters(IDviInvocation& aInvocation);
+    void DoStepUp(IDviInvocation& aInvocation);
+    void DoStepDown(IDviInvocation& aInvocation);
+    void DoStartRampUp(IDviInvocation& aInvocation);
+    void DoStartRampDown(IDviInvocation& aInvocation);
+    void DoStopRamp(IDviInvocation& aInvocation);
+    void DoStartRampToLevel(IDviInvocation& aInvocation);
+    void DoSetStepDelta(IDviInvocation& aInvocation);
+    void DoGetStepDelta(IDviInvocation& aInvocation);
+    void DoSetRampRate(IDviInvocation& aInvocation);
+    void DoGetRampRate(IDviInvocation& aInvocation);
+    void DoPauseRamp(IDviInvocation& aInvocation);
+    void DoResumeRamp(IDviInvocation& aInvocation);
+    void DoGetIsRamping(IDviInvocation& aInvocation);
+    void DoGetRampPaused(IDviInvocation& aInvocation);
+    void DoGetRampTime(IDviInvocation& aInvocation);
 private:
     PropertyUint* iPropertyLoadLevelStatus;
     PropertyUint* iPropertyStepDelta;

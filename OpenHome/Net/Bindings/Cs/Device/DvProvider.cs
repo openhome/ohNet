@@ -36,7 +36,7 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern unsafe int DvProviderSetPropertyBinary(IntPtr aProvider, IntPtr aProperty, byte* aData, uint aLen, uint* aChanged);
 
-        protected delegate int ActionDelegate(IntPtr aPtr, IntPtr aInvocation, uint aVersion);
+        protected delegate int ActionDelegate(IntPtr aPtr, IntPtr aInvocation);
 
         protected IntPtr iHandle;
         private List<OpenHome.Net.Core.Action> iActions;
@@ -237,12 +237,37 @@ namespace OpenHome.Net.Device
         }
     }
 
+    public interface IDvInvocation
+    {
+        /// <summary>
+        /// Get the version number of the service requested by the caller.
+        /// </summary>
+        /// <returns>The version number of the service the caller expects.</returns>
+        uint Version();
+        /// <summary>
+        /// Get the network adapter an action was invoked using.
+        /// </summary>
+        /// <returns>The network adapter used to invoke this action.</returns>
+        uint Adapter();
+        /// <summary>
+        /// Get the prefix to use on any uris to resources offered by the provider.
+        /// </summary>
+        /// <returns>The prefix to resource uris.</returns>
+        string ResourceUriPrefix();
+    }
+
     /// <summary>
     /// Utility class used by providers to read input and write output arguments
     /// </summary>
     /// <remarks>Only intended for use by auto-generated providers</remarks>
-    public class DvInvocation
+    public class DvInvocation : IDvInvocation
     {
+        [DllImport("ohNet")]
+        static extern unsafe void DvInvocationGetVersion(IntPtr aInvocation, uint* aVersion);
+        [DllImport("ohNet")]
+        static extern unsafe void DvInvocationGetAdapter(IntPtr aInvocation, uint* aAdapter);
+        [DllImport("ohNet")]
+        static extern unsafe void DvInvocationGetResourceUriPrefix(IntPtr aInvocation, IntPtr* aPrefix);
         [DllImport("ohNet")]
         static extern int DvInvocationReadStart(IntPtr aInvocation);
         [DllImport("ohNet")]
@@ -293,6 +318,37 @@ namespace OpenHome.Net.Device
         public DvInvocation(IntPtr aHandle)
         {
             iHandle = aHandle;
+        }
+        /// <summary>
+        /// Get the version number of the service requested by the caller.
+        /// </summary>
+        /// <returns>The version number of the service the caller expects.</returns>
+        public unsafe uint Version()
+        {
+            uint version;
+            DvInvocationGetVersion(iHandle, &version);
+            return version;
+        }
+        /// <summary>
+        /// Get the network adapter an action was invoked using.
+        /// </summary>
+        /// <returns>The network adapter used to invoke this action.</returns>
+        public unsafe uint Adapter()
+        {
+            uint adapter;
+            DvInvocationGetAdapter(iHandle, &adapter);
+            return adapter;
+        }
+        /// <summary>
+        /// Get the prefix to use on any uris to resources offered by the provider.
+        /// </summary>
+        /// <returns>The prefix to resource uris.</returns>
+        public unsafe string ResourceUriPrefix()
+        {
+            IntPtr cPrefix;
+            DvInvocationGetResourceUriPrefix(iHandle, &cPrefix);
+            String prefix = (cPrefix == IntPtr.Zero? "" : Marshal.PtrToStringAnsi(cPrefix));
+            return prefix;
         }
         /// <summary>
         /// Begin reading (input arguments for) an invocation
@@ -464,6 +520,10 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteString(String aName, String aValue)
         {
+            if (aValue == null)
+            {
+                aValue = "";
+            }
             IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             IntPtr value = Marshal.StringToHGlobalAnsi(aValue);
             int err = DvInvocationWriteStringStart(iHandle, name);
@@ -510,6 +570,28 @@ namespace OpenHome.Net.Device
         public void WriteEnd()
         {
             CheckError(DvInvocationWriteEnd(iHandle));
+        }
+        public void ReportActionError(Exception aException, string aActionName)
+        {
+            String msg = aException.Message;
+            uint errNum = 1;
+            int index = msg.IndexOf(':');
+            if (index != -1)
+            {
+                try
+                {
+                    errNum = Convert.ToUInt32(msg.Substring(0, index));
+                    msg = msg.Substring(index + 1);
+                }
+                catch (FormatException) {}
+                catch (OverflowException) {}
+            }
+            errNum += 500;
+            if (msg.Length == 0)
+            {
+                msg = String.Format("Action {0} failed", aActionName);
+            }
+            ReportError(errNum, msg);
         }
         private void CheckError(int aError)
         {

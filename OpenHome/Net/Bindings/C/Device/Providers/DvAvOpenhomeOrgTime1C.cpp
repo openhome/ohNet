@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -24,7 +26,7 @@ public:
     void GetPropertySeconds(TUint& aValue);
     void EnableActionTime(CallbackTime1Time aCallback, void* aPtr);
 private:
-    void DoTime(IDviInvocation& aInvocation, TUint aVersion);
+    void DoTime(IDviInvocation& aInvocation);
 private:
     CallbackTime1Time iCallbackTime;
     void* iPtrTime;
@@ -87,27 +89,31 @@ void DvProviderAvOpenhomeOrgTime1C::EnableActionTime(CallbackTime1Time aCallback
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t TrackCount;
     uint32_t Duration;
     uint32_t Seconds;
     ASSERT(iCallbackTime != NULL);
-    if (0 != iCallbackTime(iPtrTime, aVersion, &TrackCount, &Duration, &Seconds)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackTime(iPtrTime, invocationC, invocationCPtr, &TrackCount, &Duration, &Seconds)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respTrackCount(aInvocation, "TrackCount");
-    InvocationResponseUint respDuration(aInvocation, "Duration");
-    InvocationResponseUint respSeconds(aInvocation, "Seconds");
-    resp.Start();
+    DviInvocationResponseUint respTrackCount(aInvocation, "TrackCount");
+    DviInvocationResponseUint respDuration(aInvocation, "Duration");
+    DviInvocationResponseUint respSeconds(aInvocation, "Seconds");
+    invocation.StartResponse();
     respTrackCount.Write(TrackCount);
     respDuration.Write(Duration);
     respSeconds.Write(Seconds);
-    resp.End();
+    invocation.EndResponse();
 }
 
 

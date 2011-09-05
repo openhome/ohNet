@@ -47,6 +47,8 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)DvDeviceStd.$(objext) \
     		   $(objdir)DvDeviceC.$(objext) \
     		   $(objdir)DviDevice.$(objext) \
+               $(objdir)DvInvocationC.$(objext) \
+               $(objdir)DvInvocationStd.$(objext) \
     		   $(objdir)DviProtocolUpnp.$(objext) \
     		   $(objdir)DviServer.$(objext) \
     		   $(objdir)DviServerUpnp.$(objext) \
@@ -81,6 +83,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)RefCounter.$(objext) \
     		   $(objdir)Service.$(objext) \
     		   $(objdir)ServiceC.$(objext) \
+    		   $(objdir)sha1.$(objext) \
     		   $(objdir)Ssdp.$(objext) \
     		   $(objdir)SsdpDv.$(objext) \
     		   $(objdir)Stack.$(objext) \
@@ -263,6 +266,10 @@ $(objdir)DvDeviceC.$(objext) : OpenHome/Net/Bindings/C/Device/DvDeviceC.cpp $(he
 	$(compiler)DvDeviceC.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/C/Device/DvDeviceC.cpp
 $(objdir)DviDevice.$(objext) : OpenHome/Net/Device/DviDevice.cpp $(headers)
 	$(compiler)DviDevice.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviDevice.cpp
+$(objdir)DvInvocationC.$(objext) : OpenHome/Net/Bindings/C/Device/DvInvocationC.cpp $(headers)
+	$(compiler)DvInvocationC.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/C/Device/DvInvocationC.cpp
+$(objdir)DvInvocationStd.$(objext) : OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp $(headers)
+	$(compiler)DvInvocationStd.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp
 $(objdir)DviProtocolUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp $(headers)
 	$(compiler)DviProtocolUpnp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp
 $(objdir)DviServer.$(objext) : OpenHome/Net/Device/DviServer.cpp $(headers)
@@ -331,6 +338,8 @@ $(objdir)Service.$(objext) : OpenHome/Net/Service.cpp $(headers)
 	$(compiler)Service.$(objext) -c $(cflags) $(includes) OpenHome/Net/Service.cpp
 $(objdir)ServiceC.$(objext) : OpenHome/Net/Bindings/C/ServiceC.cpp $(headers)
 	$(compiler)ServiceC.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/C/ServiceC.cpp
+$(objdir)sha1.$(objext) : OpenHome/sha1.c $(headers)
+	$(compiler)sha1.$(objext) -c $(cflags) $(includes) OpenHome/sha1.c
 $(objdir)Ssdp.$(objext) : OpenHome/Net/Ssdp.cpp $(headers)
 	$(compiler)Ssdp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Ssdp.cpp
 $(objdir)SsdpDv.$(objext) : OpenHome/Net/SsdpDv.cpp $(headers)
@@ -775,7 +784,7 @@ $(objdir)TestPerformanceCpCs.exe: \
 		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 		$(csCpTests)TestPerformanceCp.cs
 
-ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses ohNetJavaSrc
+ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses DvDeviceJavaClasses ohNetJavaSrc
 
 objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniArgumentBinary.$(objext) \
@@ -820,7 +829,7 @@ objects_jni = $(objdir)JniAction.$(objext) \
 		
 ohNetJni : $(objdir)$(dllprefix)ohNetJni.$(dllext)
 $(objdir)$(dllprefix)ohNetJni.$(dllext) : ohNetDll $(objects_jni)
-	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohNetJni.$(dllext) $(objects_jni) $(objdir)$(libprefix)ohNetCore.$(libext) $(link_jvm)
+	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohNetJni.$(dllext) $(objects_jni) $(objdir)ohNet.$(libext) $(link_jvm)
 $(objdir)JniAction.$(objext) : $(publicjavadir)Action.c $(headers)
 	$(compiler)JniAction.$(objext) -c $(java_cflags) $(includes) $(includes_jni) $(publicjavadir)Action.c
 $(objdir)JniArgumentBinary.$(objext) : $(publicjavadir)ArgumentBinary.c $(headers)
@@ -908,6 +917,7 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/controlpoint/ArgumentInt.class \
 			   $(objdir)org/openhome/net/controlpoint/ArgumentString.class \
 			   $(objdir)org/openhome/net/controlpoint/ArgumentUint.class \
+			   $(objdir)org/openhome/net/controlpoint/CpAttribute.class \
 			   $(objdir)org/openhome/net/controlpoint/CpDevice.class \
 			   $(objdir)org/openhome/net/controlpoint/CpDeviceDv.class \
 			   $(objdir)org/openhome/net/controlpoint/CpDeviceList.class \
@@ -994,6 +1004,8 @@ $(objdir)org/openhome/net/controlpoint/ArgumentString.class : $(publicjavadir)or
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/ArgumentString.java
 $(objdir)org/openhome/net/controlpoint/ArgumentUint.class : $(publicjavadir)org/openhome/net/controlpoint/ArgumentUint.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/ArgumentUint.java
+$(objdir)org/openhome/net/controlpoint/CpAttribute.class : $(publicjavadir)org/openhome/net/controlpoint/CpAttribute.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/CpAttribute.java
 $(objdir)org/openhome/net/controlpoint/CpDevice.class : $(publicjavadir)org/openhome/net/controlpoint/CpDevice.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/CpDevice.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceDv.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceDv.java

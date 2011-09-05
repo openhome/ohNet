@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -69,7 +70,7 @@ private:
      * SetTarget action for the owning device.
      * Must be implemented iff EnableActionSetTarget was called.
      */
-    virtual void SetTarget(uint32_t aVersion, bool anewTargetValue);
+    virtual void SetTarget(IDvInvocationStd& aInvocation, bool anewTargetValue);
     /**
      * GetTarget action.
      *
@@ -77,7 +78,7 @@ private:
      * GetTarget action for the owning device.
      * Must be implemented iff EnableActionGetTarget was called.
      */
-    virtual void GetTarget(uint32_t aVersion, bool& aRetTargetValue);
+    virtual void GetTarget(IDvInvocationStd& aInvocation, bool& aRetTargetValue);
     /**
      * GetStatus action.
      *
@@ -85,12 +86,12 @@ private:
      * GetStatus action for the owning device.
      * Must be implemented iff EnableActionGetStatus was called.
      */
-    virtual void GetStatus(uint32_t aVersion, bool& aResultStatus);
+    virtual void GetStatus(IDvInvocationStd& aInvocation, bool& aResultStatus);
 private:
     DvProviderUpnpOrgSwitchPower1Cpp();
-    void DoSetTarget(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetTarget(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoGetStatus(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetTarget(IDviInvocation& aInvocation);
+    void DoGetTarget(IDviInvocation& aInvocation);
+    void DoGetStatus(IDviInvocation& aInvocation);
 private:
     PropertyBool* iPropertyStatus;
 };

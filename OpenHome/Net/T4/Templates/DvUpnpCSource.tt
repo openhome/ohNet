@@ -52,6 +52,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -72,7 +74,7 @@ public:
 private:
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-    void Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion);
+    void Do<#=a.name#>(IDviInvocation& aInvocation);
 <#  } #>
 private:
 <#  foreach (Method a in u.methods) #>
@@ -192,8 +194,12 @@ void <#=className#>C::EnableAction<#=a.name#>(<#=callbackPrefix#><#=a.name#> aCa
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
+void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
@@ -208,7 +214,7 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 <#          } #>
 <#      } #>
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type=="bin.base64") #>
@@ -230,15 +236,15 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 <#          } #>
 <#      } #>
     ASSERT(iCallback<#=a.name#> != NULL);
-    if (0 != iCallback<#=a.name#>(iPtr<#=a.name#>, aVersion<#=CallbackArgs(a)#>)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallback<#=a.name#>(iPtr<#=a.name#>, invocationC, invocationCPtr<#=CallbackArgs(a)#>)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
     <#=invRespType[o.variable.type]#> resp<#=o.name#>(aInvocation, "<#=o.name#>");
 <#      } #>
-    resp.Start();
+    invocation.StartResponse();
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type=="bin.base64") #>
@@ -265,7 +271,7 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
     resp<#=o.name#>.Write(<#=o.name#>);
 <#          } #>
 <#      } #>
-    resp.End();
+    invocation.EndResponse();
 }
 <#  } #>
 
@@ -421,16 +427,16 @@ void Initialise()
     invReadType.Add("bin.base64", "InvocationReadBinary");
     invReadType.Add("uri", "InvocationReadString");
 
-    invRespType.Add("string", "InvocationResponseString");
-    invRespType.Add("ui1", "InvocationResponseUint");
-    invRespType.Add("ui2", "InvocationResponseUint");
-    invRespType.Add("ui4", "InvocationResponseUint");
-    invRespType.Add("boolean", "InvocationResponseBool");
-    invRespType.Add("i1", "InvocationResponseInt");
-    invRespType.Add("i2", "InvocationResponseInt");
-    invRespType.Add("i4", "InvocationResponseInt");
-    invRespType.Add("bin.base64", "InvocationResponseBinary");
-    invRespType.Add("uri", "InvocationResponseString");
+    invRespType.Add("string", "DviInvocationResponseString");
+    invRespType.Add("ui1", "DviInvocationResponseUint");
+    invRespType.Add("ui2", "DviInvocationResponseUint");
+    invRespType.Add("ui4", "DviInvocationResponseUint");
+    invRespType.Add("boolean", "DviInvocationResponseBool");
+    invRespType.Add("i1", "DviInvocationResponseInt");
+    invRespType.Add("i2", "DviInvocationResponseInt");
+    invRespType.Add("i4", "DviInvocationResponseInt");
+    invRespType.Add("bin.base64", "DviInvocationResponseBinary");
+    invRespType.Add("uri", "DviInvocationResponseString");
 
     invRespParamType.Add("string", "IInvocationResponseString");
     invRespParamType.Add("ui1", "IInvocationResponseUint");

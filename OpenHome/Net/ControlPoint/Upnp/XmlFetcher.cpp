@@ -142,7 +142,7 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
     Sws<kRwBufferLength> writeBuffer(aSocket);
     WriterHttpRequest writerRequest(writeBuffer);
 
-    writerRequest.WriteMethod(Http::kMethodGet, iUri->Path(), Http::eHttp11);
+    writerRequest.WriteMethod(Http::kMethodGet, iUri->PathAndQuery(), Http::eHttp11);
     Http::WriteHeaderHost(writerRequest, *iUri);
     Http::WriteHeaderContentLength(writerRequest, 0);
     Http::WriteHeaderConnectionClose(writerRequest);
@@ -151,7 +151,7 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
 
 void XmlFetch::Read(SocketTcpClient& aSocket)
 {
-    Srs<kRwBufferLength> readBuffer(aSocket);
+    Srd readBuffer(kRwBufferLength, aSocket);
     ReaderHttpResponse readerResponse(readBuffer);
     HttpHeaderContentLength headerContentLength;
     HttpHeaderTransferEncoding headerTransferEncoding;

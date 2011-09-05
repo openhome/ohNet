@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Proxy</title>
+
+  <para>Remote devices provide at least one service, with each service
+  offering a list of actions and a list of properties. Each service, and its
+  associated actions and properties, is described in XML. The XML is used to
+  generate code which a Control Point application uses to communicate with
+  devices that offer that specific service.</para>
+
+  <para>This code is called a Proxy. A Proxy encapsulates the service, turning
+  the actions into functions and properties into variables. Each Proxy
+  presents the service it represents as an API that you can program to.</para>
+
+  <note>
+    <para>All code for Proxies can be auto-generated from a service XML file.
+    Every AV service from both UPnP and OpenHome is included in the ohNet
+    library as pre-generated Proxies available for immediate use.</para>
+
+    <para>If you need to generate your own Proxy you can use the tools
+    provided with ohNet. See ohNetGen on <xref linkend="ohNetGen.xml" xrefstyle="select: Page" /> for more information on
+    generating your own Proxy from a service XML.</para>
+  </note>
+
+  <para>When creating a Proxy in your Control Point application, you take a
+  CpDevice as an argument:</para>
+
+  <programlisting>void VolumeControlCp::VolumeControl(CpDeviceCpp&amp; aDevice) 
+{ 
+    CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new 
+        CpProxyOpenhomeOrgTestBasic1Cpp(aDevice);</programlisting>
+
+  <para>You can instantiate your Proxy at any point after you have discovered
+  the remote devices and added them to your Device List. This does not have to
+  happen immediately after you discover each remote device.</para>
+
+  <xi:include href="Proxy.Actions.xml" xpointer="element(/1)" />
+
+  <xi:include href="Proxy.Properties.xml" xpointer="element(/1)" />
+</section>

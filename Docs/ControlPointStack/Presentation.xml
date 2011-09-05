@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Presentation</title>
+
+  <para>Presentation is the key to any Control Point software interface and
+  ohNet has been developed with this in mind. The entire OpenHome ethos is to
+  remove the focus from developing access to a device's services to allow you
+  to spend all of your available time focused on what matters for you and your
+  customer — user interface.</para>
+
+  <para>The Presentation layer is not directly supported or discussed in this
+  document, but ohNet greatly supports the development of user
+  interfaces for use at the Presentation layer.</para>
+
+  <xi:include href="Presentation.WebUI.xml" xpointer="element(/1)" />
+
+  <xi:include href="Presentation.UIDevelopment.xml" xpointer="element(/1)" />
+</chapter>

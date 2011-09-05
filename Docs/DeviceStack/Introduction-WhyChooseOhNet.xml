@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Why choose ohNet?</title>
+
+  <para>The ohNet Device stack provides developers with several benefits to
+  quickly and efficiently generate code required to access devices.</para>
+
+  <para>The benefits to using the ohNet Device stack are:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para><emphasis role="bold">Multiple API support</emphasis> — ohNet is
+      developed in C++ but the API is published in C++, C and C# to cover a
+      wide range of developer experience and preference.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis role="bold">Open source</emphasis> — OpenHome is
+      committed to the continued open development of the UPnP protocol and
+      provides the ohNet stack completely free and open under a BSD-style
+      license.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis role="bold">Rapid development</emphasis> — ohNet
+      provides developers with tools to automatically generate code from the
+      associated XML files, removing the possibility of error prone code and
+      automating an otherwise manual process. Generated code presents services
+      as classes with consistent and intuitive naming conventions. Updates to
+      your device's state are automatically pushed out to registered
+      subscribers. No extra work is required to keep Control Points and users
+      up-to-date with live updates.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis role="bold">Readability</emphasis> — APIs use function
+      and variable names generated from the action and property names
+      contained in the original service XML for maximum readability. New code
+      generated from new service XML is also intelligently named following
+      this model.</para>
+    </listitem>
+  </itemizedlist>
+</section>

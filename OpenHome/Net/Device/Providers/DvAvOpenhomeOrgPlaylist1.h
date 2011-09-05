@@ -253,7 +253,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Play(IDvInvocation& aInvocation);
     /**
      * Pause action.
      *
@@ -261,7 +261,7 @@ private:
      * Pause action for the owning device.
      * Must be implemented iff EnableActionPause was called.
      */
-    virtual void Pause(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Pause(IDvInvocation& aInvocation);
     /**
      * Stop action.
      *
@@ -269,7 +269,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Stop(IDvInvocation& aInvocation);
     /**
      * Next action.
      *
@@ -277,7 +277,7 @@ private:
      * Next action for the owning device.
      * Must be implemented iff EnableActionNext was called.
      */
-    virtual void Next(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Next(IDvInvocation& aInvocation);
     /**
      * Previous action.
      *
@@ -285,7 +285,7 @@ private:
      * Previous action for the owning device.
      * Must be implemented iff EnableActionPrevious was called.
      */
-    virtual void Previous(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Previous(IDvInvocation& aInvocation);
     /**
      * SetRepeat action.
      *
@@ -293,7 +293,7 @@ private:
      * SetRepeat action for the owning device.
      * Must be implemented iff EnableActionSetRepeat was called.
      */
-    virtual void SetRepeat(IInvocationResponse& aResponse, TUint aVersion, TBool aValue);
+    virtual void SetRepeat(IDvInvocation& aInvocation, TBool aValue);
     /**
      * Repeat action.
      *
@@ -301,7 +301,7 @@ private:
      * Repeat action for the owning device.
      * Must be implemented iff EnableActionRepeat was called.
      */
-    virtual void Repeat(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
+    virtual void Repeat(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue);
     /**
      * SetShuffle action.
      *
@@ -309,7 +309,7 @@ private:
      * SetShuffle action for the owning device.
      * Must be implemented iff EnableActionSetShuffle was called.
      */
-    virtual void SetShuffle(IInvocationResponse& aResponse, TUint aVersion, TBool aValue);
+    virtual void SetShuffle(IDvInvocation& aInvocation, TBool aValue);
     /**
      * Shuffle action.
      *
@@ -317,7 +317,7 @@ private:
      * Shuffle action for the owning device.
      * Must be implemented iff EnableActionShuffle was called.
      */
-    virtual void Shuffle(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
+    virtual void Shuffle(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue);
     /**
      * SeekSecondAbsolute action.
      *
@@ -325,7 +325,7 @@ private:
      * SeekSecondAbsolute action for the owning device.
      * Must be implemented iff EnableActionSeekSecondAbsolute was called.
      */
-    virtual void SeekSecondAbsolute(IInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    virtual void SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue);
     /**
      * SeekSecondRelative action.
      *
@@ -333,7 +333,7 @@ private:
      * SeekSecondRelative action for the owning device.
      * Must be implemented iff EnableActionSeekSecondRelative was called.
      */
-    virtual void SeekSecondRelative(IInvocationResponse& aResponse, TUint aVersion, TInt aValue);
+    virtual void SeekSecondRelative(IDvInvocation& aInvocation, TInt aValue);
     /**
      * SeekId action.
      *
@@ -341,7 +341,7 @@ private:
      * SeekId action for the owning device.
      * Must be implemented iff EnableActionSeekId was called.
      */
-    virtual void SeekId(IInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    virtual void SeekId(IDvInvocation& aInvocation, TUint aValue);
     /**
      * SeekIndex action.
      *
@@ -349,7 +349,7 @@ private:
      * SeekIndex action for the owning device.
      * Must be implemented iff EnableActionSeekIndex was called.
      */
-    virtual void SeekIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    virtual void SeekIndex(IDvInvocation& aInvocation, TUint aValue);
     /**
      * TransportState action.
      *
@@ -357,7 +357,7 @@ private:
      * TransportState action for the owning device.
      * Must be implemented iff EnableActionTransportState was called.
      */
-    virtual void TransportState(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
     /**
      * Id action.
      *
@@ -365,7 +365,7 @@ private:
      * Id action for the owning device.
      * Must be implemented iff EnableActionId was called.
      */
-    virtual void Id(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+    virtual void Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
     /**
      * Read action.
      *
@@ -373,7 +373,7 @@ private:
      * Read action for the owning device.
      * Must be implemented iff EnableActionRead was called.
      */
-    virtual void Read(IInvocationResponse& aResponse, TUint aVersion, TUint aId, IInvocationResponseString& aUri, IInvocationResponseString& aMetadata);
+    virtual void Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
     /**
      * ReadList action.
      *
@@ -381,7 +381,7 @@ private:
      * ReadList action for the owning device.
      * Must be implemented iff EnableActionReadList was called.
      */
-    virtual void ReadList(IInvocationResponse& aResponse, TUint aVersion, const Brx& aIdList, IInvocationResponseString& aTrackList);
+    virtual void ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDvInvocationResponseString& aTrackList);
     /**
      * Insert action.
      *
@@ -389,7 +389,7 @@ private:
      * Insert action for the owning device.
      * Must be implemented iff EnableActionInsert was called.
      */
-    virtual void Insert(IInvocationResponse& aResponse, TUint aVersion, TUint aAfterId, const Brx& aUri, const Brx& aMetadata, IInvocationResponseUint& aNewId);
+    virtual void Insert(IDvInvocation& aInvocation, TUint aAfterId, const Brx& aUri, const Brx& aMetadata, IDvInvocationResponseUint& aNewId);
     /**
      * DeleteId action.
      *
@@ -397,7 +397,7 @@ private:
      * DeleteId action for the owning device.
      * Must be implemented iff EnableActionDeleteId was called.
      */
-    virtual void DeleteId(IInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    virtual void DeleteId(IDvInvocation& aInvocation, TUint aValue);
     /**
      * DeleteAll action.
      *
@@ -405,7 +405,7 @@ private:
      * DeleteAll action for the owning device.
      * Must be implemented iff EnableActionDeleteAll was called.
      */
-    virtual void DeleteAll(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void DeleteAll(IDvInvocation& aInvocation);
     /**
      * TracksMax action.
      *
@@ -413,7 +413,7 @@ private:
      * TracksMax action for the owning device.
      * Must be implemented iff EnableActionTracksMax was called.
      */
-    virtual void TracksMax(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+    virtual void TracksMax(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
     /**
      * IdArray action.
      *
@@ -421,7 +421,7 @@ private:
      * IdArray action for the owning device.
      * Must be implemented iff EnableActionIdArray was called.
      */
-    virtual void IdArray(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aToken, IInvocationResponseBinary& aArray);
+    virtual void IdArray(IDvInvocation& aInvocation, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aArray);
     /**
      * IdArrayChanged action.
      *
@@ -429,7 +429,7 @@ private:
      * IdArrayChanged action for the owning device.
      * Must be implemented iff EnableActionIdArrayChanged was called.
      */
-    virtual void IdArrayChanged(IInvocationResponse& aResponse, TUint aVersion, TUint aToken, IInvocationResponseBool& aValue);
+    virtual void IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDvInvocationResponseBool& aValue);
     /**
      * ProtocolInfo action.
      *
@@ -437,33 +437,33 @@ private:
      * ProtocolInfo action for the owning device.
      * Must be implemented iff EnableActionProtocolInfo was called.
      */
-    virtual void ProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgPlaylist1();
-    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPause(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
-    void DoNext(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPrevious(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetRepeat(IDviInvocation& aInvocation, TUint aVersion);
-    void DoRepeat(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetShuffle(IDviInvocation& aInvocation, TUint aVersion);
-    void DoShuffle(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSeekSecondRelative(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSeekId(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSeekIndex(IDviInvocation& aInvocation, TUint aVersion);
-    void DoTransportState(IDviInvocation& aInvocation, TUint aVersion);
-    void DoId(IDviInvocation& aInvocation, TUint aVersion);
-    void DoRead(IDviInvocation& aInvocation, TUint aVersion);
-    void DoReadList(IDviInvocation& aInvocation, TUint aVersion);
-    void DoInsert(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteId(IDviInvocation& aInvocation, TUint aVersion);
-    void DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion);
-    void DoTracksMax(IDviInvocation& aInvocation, TUint aVersion);
-    void DoIdArray(IDviInvocation& aInvocation, TUint aVersion);
-    void DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion);
-    void DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoPause(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoNext(IDviInvocation& aInvocation);
+    void DoPrevious(IDviInvocation& aInvocation);
+    void DoSetRepeat(IDviInvocation& aInvocation);
+    void DoRepeat(IDviInvocation& aInvocation);
+    void DoSetShuffle(IDviInvocation& aInvocation);
+    void DoShuffle(IDviInvocation& aInvocation);
+    void DoSeekSecondAbsolute(IDviInvocation& aInvocation);
+    void DoSeekSecondRelative(IDviInvocation& aInvocation);
+    void DoSeekId(IDviInvocation& aInvocation);
+    void DoSeekIndex(IDviInvocation& aInvocation);
+    void DoTransportState(IDviInvocation& aInvocation);
+    void DoId(IDviInvocation& aInvocation);
+    void DoRead(IDviInvocation& aInvocation);
+    void DoReadList(IDviInvocation& aInvocation);
+    void DoInsert(IDviInvocation& aInvocation);
+    void DoDeleteId(IDviInvocation& aInvocation);
+    void DoDeleteAll(IDviInvocation& aInvocation);
+    void DoTracksMax(IDviInvocation& aInvocation);
+    void DoIdArray(IDviInvocation& aInvocation);
+    void DoIdArrayChanged(IDviInvocation& aInvocation);
+    void DoProtocolInfo(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyTransportState;
     PropertyBool* iPropertyRepeat;

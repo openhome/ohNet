@@ -347,199 +347,199 @@ void DvProviderAvOpenhomeOrgProduct1::EnableActionSourceXmlChangeCount()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoManufacturer(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoManufacturer(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    Manufacturer(resp, aVersion, respName, respInfo, respUrl, respImageUri);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    Manufacturer(invocation, respName, respInfo, respUrl, respImageUri);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoModel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoModel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    Model(resp, aVersion, respName, respInfo, respUrl, respImageUri);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    Model(invocation, respName, respInfo, respUrl, respImageUri);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoProduct(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoProduct(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respRoom(aInvocation, "Room");
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    Product(resp, aVersion, respRoom, respName, respInfo, respUrl, respImageUri);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respRoom(aInvocation, "Room");
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    Product(invocation, respRoom, respName, respInfo, respUrl, respImageUri);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoStandby(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoStandby(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseBool respValue(aInvocation, "Value");
-    Standby(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseBool respValue(aInvocation, "Value");
+    Standby(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoSetStandby(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoSetStandby(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TBool Value = aInvocation.InvocationReadBool("Value");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetStandby(resp, aVersion, Value);
+    DviInvocation invocation(aInvocation);
+    SetStandby(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoSourceCount(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoSourceCount(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respValue(aInvocation, "Value");
-    SourceCount(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respValue(aInvocation, "Value");
+    SourceCount(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoSourceXml(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoSourceXml(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respValue(aInvocation, "Value");
-    SourceXml(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respValue(aInvocation, "Value");
+    SourceXml(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoSourceIndex(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respValue(aInvocation, "Value");
-    SourceIndex(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respValue(aInvocation, "Value");
+    SourceIndex(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoSetSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoSetSourceIndex(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetSourceIndex(resp, aVersion, Value);
+    DviInvocation invocation(aInvocation);
+    SetSourceIndex(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoSetSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoSetSourceIndexByName(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz Value;
     aInvocation.InvocationReadString("Value", Value);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    SetSourceIndexByName(resp, aVersion, Value);
+    DviInvocation invocation(aInvocation);
+    SetSourceIndexByName(invocation, Value);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoSource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoSource(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respSystemName(aInvocation, "SystemName");
-    InvocationResponseString respType(aInvocation, "Type");
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseBool respVisible(aInvocation, "Visible");
-    Source(resp, aVersion, Index, respSystemName, respType, respName, respVisible);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respSystemName(aInvocation, "SystemName");
+    DviInvocationResponseString respType(aInvocation, "Type");
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseBool respVisible(aInvocation, "Visible");
+    Source(invocation, Index, respSystemName, respType, respName, respVisible);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoAttributes(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoAttributes(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respValue(aInvocation, "Value");
-    Attributes(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respValue(aInvocation, "Value");
+    Attributes(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::DoSourceXmlChangeCount(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgProduct1::DoSourceXmlChangeCount(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respValue(aInvocation, "Value");
-    SourceXmlChangeCount(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respValue(aInvocation, "Value");
+    SourceXmlChangeCount(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgProduct1::Manufacturer(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aName*/, IInvocationResponseString& /*aInfo*/, IInvocationResponseString& /*aUrl*/, IInvocationResponseString& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgProduct1::Manufacturer(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseString& /*aInfo*/, IDvInvocationResponseString& /*aUrl*/, IDvInvocationResponseString& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::Model(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aName*/, IInvocationResponseString& /*aInfo*/, IInvocationResponseString& /*aUrl*/, IInvocationResponseString& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgProduct1::Model(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseString& /*aInfo*/, IDvInvocationResponseString& /*aUrl*/, IDvInvocationResponseString& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::Product(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aRoom*/, IInvocationResponseString& /*aName*/, IInvocationResponseString& /*aInfo*/, IInvocationResponseString& /*aUrl*/, IInvocationResponseString& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgProduct1::Product(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aRoom*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseString& /*aInfo*/, IDvInvocationResponseString& /*aUrl*/, IDvInvocationResponseString& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::Standby(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::Standby(IDvInvocation& /*aResponse*/, IDvInvocationResponseBool& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::SetStandby(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::SetStandby(IDvInvocation& /*aResponse*/, TBool /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::SourceCount(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::SourceCount(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::SourceXml(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::SourceXml(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::SourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::SourceIndex(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::SetSourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::SetSourceIndex(IDvInvocation& /*aResponse*/, TUint /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::SetSourceIndexByName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::SetSourceIndexByName(IDvInvocation& /*aResponse*/, const Brx& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::Source(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aIndex*/, IInvocationResponseString& /*aSystemName*/, IInvocationResponseString& /*aType*/, IInvocationResponseString& /*aName*/, IInvocationResponseBool& /*aVisible*/)
+void DvProviderAvOpenhomeOrgProduct1::Source(IDvInvocation& /*aResponse*/, TUint /*aIndex*/, IDvInvocationResponseString& /*aSystemName*/, IDvInvocationResponseString& /*aType*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseBool& /*aVisible*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::Attributes(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::Attributes(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1::SourceXmlChangeCount(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1::SourceXmlChangeCount(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
 {
     ASSERTS();
 }

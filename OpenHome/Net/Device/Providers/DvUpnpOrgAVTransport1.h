@@ -151,7 +151,7 @@ private:
      * SetAVTransportURI action for the owning device.
      * Must be implemented iff EnableActionSetAVTransportURI was called.
      */
-    virtual void SetAVTransportURI(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData);
+    virtual void SetAVTransportURI(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData);
     /**
      * SetNextAVTransportURI action.
      *
@@ -159,7 +159,7 @@ private:
      * SetNextAVTransportURI action for the owning device.
      * Must be implemented iff EnableActionSetNextAVTransportURI was called.
      */
-    virtual void SetNextAVTransportURI(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNextURI, const Brx& aNextURIMetaData);
+    virtual void SetNextAVTransportURI(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aNextURI, const Brx& aNextURIMetaData);
     /**
      * GetMediaInfo action.
      *
@@ -167,7 +167,7 @@ private:
      * GetMediaInfo action for the owning device.
      * Must be implemented iff EnableActionGetMediaInfo was called.
      */
-    virtual void GetMediaInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aNrTracks, IInvocationResponseString& aMediaDuration, IInvocationResponseString& aCurrentURI, IInvocationResponseString& aCurrentURIMetaData, IInvocationResponseString& aNextURI, IInvocationResponseString& aNextURIMetaData, IInvocationResponseString& aPlayMedium, IInvocationResponseString& aRecordMedium, IInvocationResponseString& aWriteStatus);
+    virtual void GetMediaInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseUint& aNrTracks, IDvInvocationResponseString& aMediaDuration, IDvInvocationResponseString& aCurrentURI, IDvInvocationResponseString& aCurrentURIMetaData, IDvInvocationResponseString& aNextURI, IDvInvocationResponseString& aNextURIMetaData, IDvInvocationResponseString& aPlayMedium, IDvInvocationResponseString& aRecordMedium, IDvInvocationResponseString& aWriteStatus);
     /**
      * GetTransportInfo action.
      *
@@ -175,7 +175,7 @@ private:
      * GetTransportInfo action for the owning device.
      * Must be implemented iff EnableActionGetTransportInfo was called.
      */
-    virtual void GetTransportInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aCurrentTransportState, IInvocationResponseString& aCurrentTransportStatus, IInvocationResponseString& aCurrentSpeed);
+    virtual void GetTransportInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentTransportState, IDvInvocationResponseString& aCurrentTransportStatus, IDvInvocationResponseString& aCurrentSpeed);
     /**
      * GetPositionInfo action.
      *
@@ -183,7 +183,7 @@ private:
      * GetPositionInfo action for the owning device.
      * Must be implemented iff EnableActionGetPositionInfo was called.
      */
-    virtual void GetPositionInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aTrack, IInvocationResponseString& aTrackDuration, IInvocationResponseString& aTrackMetaData, IInvocationResponseString& aTrackURI, IInvocationResponseString& aRelTime, IInvocationResponseString& aAbsTime, IInvocationResponseInt& aRelCount, IInvocationResponseInt& aAbsCount);
+    virtual void GetPositionInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseUint& aTrack, IDvInvocationResponseString& aTrackDuration, IDvInvocationResponseString& aTrackMetaData, IDvInvocationResponseString& aTrackURI, IDvInvocationResponseString& aRelTime, IDvInvocationResponseString& aAbsTime, IDvInvocationResponseInt& aRelCount, IDvInvocationResponseInt& aAbsCount);
     /**
      * GetDeviceCapabilities action.
      *
@@ -191,7 +191,7 @@ private:
      * GetDeviceCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetDeviceCapabilities was called.
      */
-    virtual void GetDeviceCapabilities(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aPlayMedia, IInvocationResponseString& aRecMedia, IInvocationResponseString& aRecQualityModes);
+    virtual void GetDeviceCapabilities(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMedia, IDvInvocationResponseString& aRecMedia, IDvInvocationResponseString& aRecQualityModes);
     /**
      * GetTransportSettings action.
      *
@@ -199,7 +199,7 @@ private:
      * GetTransportSettings action for the owning device.
      * Must be implemented iff EnableActionGetTransportSettings was called.
      */
-    virtual void GetTransportSettings(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aPlayMode, IInvocationResponseString& aRecQualityMode);
+    virtual void GetTransportSettings(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMode, IDvInvocationResponseString& aRecQualityMode);
     /**
      * Stop action.
      *
@@ -207,7 +207,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
+    virtual void Stop(IDvInvocation& aInvocation, TUint aInstanceID);
     /**
      * Play action.
      *
@@ -215,7 +215,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aSpeed);
+    virtual void Play(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aSpeed);
     /**
      * Pause action.
      *
@@ -223,7 +223,7 @@ private:
      * Pause action for the owning device.
      * Must be implemented iff EnableActionPause was called.
      */
-    virtual void Pause(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
+    virtual void Pause(IDvInvocation& aInvocation, TUint aInstanceID);
     /**
      * Record action.
      *
@@ -231,7 +231,7 @@ private:
      * Record action for the owning device.
      * Must be implemented iff EnableActionRecord was called.
      */
-    virtual void Record(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
+    virtual void Record(IDvInvocation& aInvocation, TUint aInstanceID);
     /**
      * Seek action.
      *
@@ -239,7 +239,7 @@ private:
      * Seek action for the owning device.
      * Must be implemented iff EnableActionSeek was called.
      */
-    virtual void Seek(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget);
+    virtual void Seek(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget);
     /**
      * Next action.
      *
@@ -247,7 +247,7 @@ private:
      * Next action for the owning device.
      * Must be implemented iff EnableActionNext was called.
      */
-    virtual void Next(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
+    virtual void Next(IDvInvocation& aInvocation, TUint aInstanceID);
     /**
      * Previous action.
      *
@@ -255,7 +255,7 @@ private:
      * Previous action for the owning device.
      * Must be implemented iff EnableActionPrevious was called.
      */
-    virtual void Previous(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
+    virtual void Previous(IDvInvocation& aInvocation, TUint aInstanceID);
     /**
      * SetPlayMode action.
      *
@@ -263,7 +263,7 @@ private:
      * SetPlayMode action for the owning device.
      * Must be implemented iff EnableActionSetPlayMode was called.
      */
-    virtual void SetPlayMode(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNewPlayMode);
+    virtual void SetPlayMode(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aNewPlayMode);
     /**
      * SetRecordQualityMode action.
      *
@@ -271,7 +271,7 @@ private:
      * SetRecordQualityMode action for the owning device.
      * Must be implemented iff EnableActionSetRecordQualityMode was called.
      */
-    virtual void SetRecordQualityMode(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNewRecordQualityMode);
+    virtual void SetRecordQualityMode(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aNewRecordQualityMode);
     /**
      * GetCurrentTransportActions action.
      *
@@ -279,26 +279,26 @@ private:
      * GetCurrentTransportActions action for the owning device.
      * Must be implemented iff EnableActionGetCurrentTransportActions was called.
      */
-    virtual void GetCurrentTransportActions(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aActions);
+    virtual void GetCurrentTransportActions(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aActions);
 private:
     DvProviderUpnpOrgAVTransport1();
-    void DoSetAVTransportURI(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetNextAVTransportURI(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetMediaInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTransportInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetPositionInfo(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetDeviceCapabilities(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetTransportSettings(IDviInvocation& aInvocation, TUint aVersion);
-    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPause(IDviInvocation& aInvocation, TUint aVersion);
-    void DoRecord(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSeek(IDviInvocation& aInvocation, TUint aVersion);
-    void DoNext(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPrevious(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetPlayMode(IDviInvocation& aInvocation, TUint aVersion);
-    void DoSetRecordQualityMode(IDviInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentTransportActions(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetAVTransportURI(IDviInvocation& aInvocation);
+    void DoSetNextAVTransportURI(IDviInvocation& aInvocation);
+    void DoGetMediaInfo(IDviInvocation& aInvocation);
+    void DoGetTransportInfo(IDviInvocation& aInvocation);
+    void DoGetPositionInfo(IDviInvocation& aInvocation);
+    void DoGetDeviceCapabilities(IDviInvocation& aInvocation);
+    void DoGetTransportSettings(IDviInvocation& aInvocation);
+    void DoStop(IDviInvocation& aInvocation);
+    void DoPlay(IDviInvocation& aInvocation);
+    void DoPause(IDviInvocation& aInvocation);
+    void DoRecord(IDviInvocation& aInvocation);
+    void DoSeek(IDviInvocation& aInvocation);
+    void DoNext(IDviInvocation& aInvocation);
+    void DoPrevious(IDviInvocation& aInvocation);
+    void DoSetPlayMode(IDviInvocation& aInvocation);
+    void DoSetRecordQualityMode(IDviInvocation& aInvocation);
+    void DoGetCurrentTransportActions(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyLastChange;
 };

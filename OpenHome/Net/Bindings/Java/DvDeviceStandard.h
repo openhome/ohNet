@@ -26,10 +26,10 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDevice
 /*
  * Class:     org_openhome_net_device_DvDeviceStandard
  * Method:    DvDeviceDestroy
- * Signature: (JJJ)V
+ * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceDestroy
-  (JNIEnv *, jclass, jlong, jlong, jlong);
+  (JNIEnv *, jclass, jlong, jlong);
 
 /*
  * Class:     org_openhome_net_device_DvDeviceStandard

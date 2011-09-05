@@ -701,9 +701,9 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionCounters} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Counters counters(int aVersion)
+    protected Counters counters(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -716,9 +716,9 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionTrack} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Track track(int aVersion)
+    protected Track track(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -731,9 +731,9 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionDetails} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Details details(int aVersion)
+    protected Details details(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -746,9 +746,9 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionMetatext} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String metatext(int aVersion)
+    protected String metatext(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -772,7 +772,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
 
     private class DoCounters implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long trackCount;
@@ -783,7 +783,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
                 invocation.readStart();
                 invocation.readEnd();
 
-            Counters outArgs = counters(aVersion);
+            Counters outArgs = counters(invocation);
             trackCount = outArgs.getTrackCount();
             detailsCount = outArgs.getDetailsCount();
             metatextCount = outArgs.getMetatextCount();
@@ -828,7 +828,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
 
     private class DoTrack implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String uri;
@@ -838,7 +838,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
                 invocation.readStart();
                 invocation.readEnd();
 
-            Track outArgs = track(aVersion);
+            Track outArgs = track(invocation);
             uri = outArgs.getUri();
             metadata = outArgs.getMetadata();
             }
@@ -881,7 +881,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
 
     private class DoDetails implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long duration;
@@ -895,7 +895,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
                 invocation.readStart();
                 invocation.readEnd();
 
-            Details outArgs = details(aVersion);
+            Details outArgs = details(invocation);
             duration = outArgs.getDuration();
             bitRate = outArgs.getBitRate();
             bitDepth = outArgs.getBitDepth();
@@ -946,7 +946,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
 
     private class DoMetatext implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -954,7 +954,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = metatext(aVersion);
+                 value = metatext(invocation);
             }
             catch (ActionError ae)
             {

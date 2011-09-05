@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Why choose ohNet</title>
+
+  <para>The ohNet Control Point stack provides developers with several
+  benefits to quickly and efficiently generate required code to access
+  devices.</para>
+
+  <para>The benefits to using the ohNet Control Point stack are:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para><emphasis role="bold">Multiple API support</emphasis> — ohNet is
+      developed in C++ but the API is published in C++, C and C# to cover a
+      wide range of developer experience and preference.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis role="bold">Open source</emphasis> — OpenHome is
+      committed to the continued open development of the UPnP protocol and
+      provides the Control Point stack completely free and open under a
+      Simplified BSD license.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis role="bold">Rapid development</emphasis> — ohNet
+      provides developers with tools to automatically generate code from the
+      associated XML files, removing the possibility of error prone code and
+      automating an otherwise manual process. Generated code presents services
+      as classes with consistent and intuitive naming conventions.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis role="bold">UI focus</emphasis> — UI design and
+      development is not an afterthought or rushed effort. Code generation and
+      published APIs cover the bulk of the communications development effort.
+      Use this saved time on refining your user-centric Control Point
+      application and developing a first-class UI.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis role="bold">Readability</emphasis> — APIs use function
+      and variable names generated from the action and property names
+      contained in the original service XML for maximum readability. New code
+      generated from new service XML is also intelligently named following
+      this model.</para>
+    </listitem>
+  </itemizedlist>
+</section>

@@ -673,10 +673,10 @@ namespace OpenHome.Net.Device.Providers
         /// ListPresets action for the owning device.
         ///
         /// Must be implemented iff EnableActionListPresets was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentPresetNameList"></param>
-        protected virtual void ListPresets(uint aVersion, uint aInstanceID, out string aCurrentPresetNameList)
+        protected virtual void ListPresets(IDvInvocation aInvocation, uint aInstanceID, out string aCurrentPresetNameList)
         {
             throw (new ActionDisabledError());
         }
@@ -688,10 +688,10 @@ namespace OpenHome.Net.Device.Providers
         /// SelectPreset action for the owning device.
         ///
         /// Must be implemented iff EnableActionSelectPreset was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aPresetName"></param>
-        protected virtual void SelectPreset(uint aVersion, uint aInstanceID, string aPresetName)
+        protected virtual void SelectPreset(IDvInvocation aInvocation, uint aInstanceID, string aPresetName)
         {
             throw (new ActionDisabledError());
         }
@@ -703,10 +703,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetBrightness action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetBrightness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBrightness"></param>
-        protected virtual void GetBrightness(uint aVersion, uint aInstanceID, out uint aCurrentBrightness)
+        protected virtual void GetBrightness(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentBrightness)
         {
             throw (new ActionDisabledError());
         }
@@ -718,10 +718,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetBrightness action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetBrightness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBrightness"></param>
-        protected virtual void SetBrightness(uint aVersion, uint aInstanceID, uint aDesiredBrightness)
+        protected virtual void SetBrightness(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredBrightness)
         {
             throw (new ActionDisabledError());
         }
@@ -733,10 +733,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetContrast action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetContrast was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentContrast"></param>
-        protected virtual void GetContrast(uint aVersion, uint aInstanceID, out uint aCurrentContrast)
+        protected virtual void GetContrast(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentContrast)
         {
             throw (new ActionDisabledError());
         }
@@ -748,10 +748,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetContrast action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetContrast was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredContrast"></param>
-        protected virtual void SetContrast(uint aVersion, uint aInstanceID, uint aDesiredContrast)
+        protected virtual void SetContrast(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredContrast)
         {
             throw (new ActionDisabledError());
         }
@@ -763,10 +763,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetSharpness action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetSharpness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentSharpness"></param>
-        protected virtual void GetSharpness(uint aVersion, uint aInstanceID, out uint aCurrentSharpness)
+        protected virtual void GetSharpness(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentSharpness)
         {
             throw (new ActionDisabledError());
         }
@@ -778,10 +778,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetSharpness action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetSharpness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredSharpness"></param>
-        protected virtual void SetSharpness(uint aVersion, uint aInstanceID, uint aDesiredSharpness)
+        protected virtual void SetSharpness(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredSharpness)
         {
             throw (new ActionDisabledError());
         }
@@ -793,10 +793,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetRedVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRedVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentRedVideoGain"></param>
-        protected virtual void GetRedVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentRedVideoGain)
+        protected virtual void GetRedVideoGain(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentRedVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -808,10 +808,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetRedVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetRedVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredRedVideoGain"></param>
-        protected virtual void SetRedVideoGain(uint aVersion, uint aInstanceID, uint aDesiredRedVideoGain)
+        protected virtual void SetRedVideoGain(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredRedVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -823,10 +823,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetGreenVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetGreenVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentGreenVideoGain"></param>
-        protected virtual void GetGreenVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentGreenVideoGain)
+        protected virtual void GetGreenVideoGain(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentGreenVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -838,10 +838,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetGreenVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetGreenVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredGreenVideoGain"></param>
-        protected virtual void SetGreenVideoGain(uint aVersion, uint aInstanceID, uint aDesiredGreenVideoGain)
+        protected virtual void SetGreenVideoGain(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredGreenVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -853,10 +853,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetBlueVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetBlueVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBlueVideoGain"></param>
-        protected virtual void GetBlueVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentBlueVideoGain)
+        protected virtual void GetBlueVideoGain(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentBlueVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -868,10 +868,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetBlueVideoGain action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetBlueVideoGain was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBlueVideoGain"></param>
-        protected virtual void SetBlueVideoGain(uint aVersion, uint aInstanceID, uint aDesiredBlueVideoGain)
+        protected virtual void SetBlueVideoGain(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredBlueVideoGain)
         {
             throw (new ActionDisabledError());
         }
@@ -883,10 +883,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetRedVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetRedVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentRedVideoBlackLevel"></param>
-        protected virtual void GetRedVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentRedVideoBlackLevel)
+        protected virtual void GetRedVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentRedVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -898,10 +898,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetRedVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetRedVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredRedVideoBlackLevel"></param>
-        protected virtual void SetRedVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredRedVideoBlackLevel)
+        protected virtual void SetRedVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredRedVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -913,10 +913,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetGreenVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetGreenVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentGreenVideoBlackLevel"></param>
-        protected virtual void GetGreenVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentGreenVideoBlackLevel)
+        protected virtual void GetGreenVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentGreenVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -928,10 +928,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetGreenVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetGreenVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredGreenVideoBlackLevel"></param>
-        protected virtual void SetGreenVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
+        protected virtual void SetGreenVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -943,10 +943,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetBlueVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetBlueVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBlueVideoBlackLevel"></param>
-        protected virtual void GetBlueVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentBlueVideoBlackLevel)
+        protected virtual void GetBlueVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentBlueVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -958,10 +958,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetBlueVideoBlackLevel action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetBlueVideoBlackLevel was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBlueVideoBlackLevel"></param>
-        protected virtual void SetBlueVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
+        protected virtual void SetBlueVideoBlackLevel(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
@@ -973,10 +973,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetColorTemperature action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetColorTemperature was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentColorTemperature"></param>
-        protected virtual void GetColorTemperature(uint aVersion, uint aInstanceID, out uint aCurrentColorTemperature)
+        protected virtual void GetColorTemperature(IDvInvocation aInvocation, uint aInstanceID, out uint aCurrentColorTemperature)
         {
             throw (new ActionDisabledError());
         }
@@ -988,10 +988,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetColorTemperature action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetColorTemperature was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredColorTemperature"></param>
-        protected virtual void SetColorTemperature(uint aVersion, uint aInstanceID, uint aDesiredColorTemperature)
+        protected virtual void SetColorTemperature(IDvInvocation aInvocation, uint aInstanceID, uint aDesiredColorTemperature)
         {
             throw (new ActionDisabledError());
         }
@@ -1003,10 +1003,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetHorizontalKeystone action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetHorizontalKeystone was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentHorizontalKeystone"></param>
-        protected virtual void GetHorizontalKeystone(uint aVersion, uint aInstanceID, out int aCurrentHorizontalKeystone)
+        protected virtual void GetHorizontalKeystone(IDvInvocation aInvocation, uint aInstanceID, out int aCurrentHorizontalKeystone)
         {
             throw (new ActionDisabledError());
         }
@@ -1018,10 +1018,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetHorizontalKeystone action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetHorizontalKeystone was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredHorizontalKeystone"></param>
-        protected virtual void SetHorizontalKeystone(uint aVersion, uint aInstanceID, int aDesiredHorizontalKeystone)
+        protected virtual void SetHorizontalKeystone(IDvInvocation aInvocation, uint aInstanceID, int aDesiredHorizontalKeystone)
         {
             throw (new ActionDisabledError());
         }
@@ -1033,10 +1033,10 @@ namespace OpenHome.Net.Device.Providers
         /// GetVerticalKeystone action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetVerticalKeystone was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentVerticalKeystone"></param>
-        protected virtual void GetVerticalKeystone(uint aVersion, uint aInstanceID, out int aCurrentVerticalKeystone)
+        protected virtual void GetVerticalKeystone(IDvInvocation aInvocation, uint aInstanceID, out int aCurrentVerticalKeystone)
         {
             throw (new ActionDisabledError());
         }
@@ -1048,10 +1048,10 @@ namespace OpenHome.Net.Device.Providers
         /// SetVerticalKeystone action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetVerticalKeystone was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredVerticalKeystone"></param>
-        protected virtual void SetVerticalKeystone(uint aVersion, uint aInstanceID, int aDesiredVerticalKeystone)
+        protected virtual void SetVerticalKeystone(IDvInvocation aInvocation, uint aInstanceID, int aDesiredVerticalKeystone)
         {
             throw (new ActionDisabledError());
         }
@@ -1063,11 +1063,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetMute action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetMute was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentMute"></param>
-        protected virtual void GetMute(uint aVersion, uint aInstanceID, string aChannel, out bool aCurrentMute)
+        protected virtual void GetMute(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out bool aCurrentMute)
         {
             throw (new ActionDisabledError());
         }
@@ -1079,11 +1079,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetMute action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetMute was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredMute"></param>
-        protected virtual void SetMute(uint aVersion, uint aInstanceID, string aChannel, bool aDesiredMute)
+        protected virtual void SetMute(IDvInvocation aInvocation, uint aInstanceID, string aChannel, bool aDesiredMute)
         {
             throw (new ActionDisabledError());
         }
@@ -1095,11 +1095,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetVolume action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetVolume was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentVolume"></param>
-        protected virtual void GetVolume(uint aVersion, uint aInstanceID, string aChannel, out uint aCurrentVolume)
+        protected virtual void GetVolume(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out uint aCurrentVolume)
         {
             throw (new ActionDisabledError());
         }
@@ -1111,11 +1111,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetVolume action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetVolume was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredVolume"></param>
-        protected virtual void SetVolume(uint aVersion, uint aInstanceID, string aChannel, uint aDesiredVolume)
+        protected virtual void SetVolume(IDvInvocation aInvocation, uint aInstanceID, string aChannel, uint aDesiredVolume)
         {
             throw (new ActionDisabledError());
         }
@@ -1127,11 +1127,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetVolumeDB action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetVolumeDB was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentVolume"></param>
-        protected virtual void GetVolumeDB(uint aVersion, uint aInstanceID, string aChannel, out int aCurrentVolume)
+        protected virtual void GetVolumeDB(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out int aCurrentVolume)
         {
             throw (new ActionDisabledError());
         }
@@ -1143,11 +1143,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetVolumeDB action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetVolumeDB was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredVolume"></param>
-        protected virtual void SetVolumeDB(uint aVersion, uint aInstanceID, string aChannel, int aDesiredVolume)
+        protected virtual void SetVolumeDB(IDvInvocation aInvocation, uint aInstanceID, string aChannel, int aDesiredVolume)
         {
             throw (new ActionDisabledError());
         }
@@ -1159,12 +1159,12 @@ namespace OpenHome.Net.Device.Providers
         /// GetVolumeDBRange action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetVolumeDBRange was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aMinValue"></param>
         /// <param name="aMaxValue"></param>
-        protected virtual void GetVolumeDBRange(uint aVersion, uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue)
+        protected virtual void GetVolumeDBRange(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue)
         {
             throw (new ActionDisabledError());
         }
@@ -1176,11 +1176,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetLoudness action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetLoudness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentLoudness"></param>
-        protected virtual void GetLoudness(uint aVersion, uint aInstanceID, string aChannel, out bool aCurrentLoudness)
+        protected virtual void GetLoudness(IDvInvocation aInvocation, uint aInstanceID, string aChannel, out bool aCurrentLoudness)
         {
             throw (new ActionDisabledError());
         }
@@ -1192,11 +1192,11 @@ namespace OpenHome.Net.Device.Providers
         /// SetLoudness action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetLoudness was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredLoudness"></param>
-        protected virtual void SetLoudness(uint aVersion, uint aInstanceID, string aChannel, bool aDesiredLoudness)
+        protected virtual void SetLoudness(IDvInvocation aInvocation, uint aInstanceID, string aChannel, bool aDesiredLoudness)
         {
             throw (new ActionDisabledError());
         }
@@ -1208,11 +1208,11 @@ namespace OpenHome.Net.Device.Providers
         /// GetStateVariables action for the owning device.
         ///
         /// Must be implemented iff EnableActionGetStateVariables was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aStateVariableList"></param>
         /// <param name="aStateVariableValuePairs"></param>
-        protected virtual void GetStateVariables(uint aVersion, uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs)
+        protected virtual void GetStateVariables(IDvInvocation aInvocation, uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs)
         {
             throw (new ActionDisabledError());
         }
@@ -1224,19 +1224,19 @@ namespace OpenHome.Net.Device.Providers
         /// SetStateVariables action for the owning device.
         ///
         /// Must be implemented iff EnableActionSetStateVariables was called.</remarks>
-        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aInstanceID"></param>
         /// <param name="aRenderingControlUDN"></param>
         /// <param name="aServiceType"></param>
         /// <param name="aServiceId"></param>
         /// <param name="aStateVariableValuePairs"></param>
         /// <param name="aStateVariableList"></param>
-        protected virtual void SetStateVariables(uint aVersion, uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList)
+        protected virtual void SetStateVariables(IDvInvocation aInvocation, uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoListPresets(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoListPresets(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1248,22 +1248,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.ListPresets(aVersion, instanceID, out currentPresetNameList);
+                self.ListPresets(invocation, instanceID, out currentPresetNameList);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "ListPresets"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "ListPresets"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1285,7 +1285,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSelectPreset(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSelectPreset(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1298,22 +1298,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 presetName = invocation.ReadString("PresetName");
                 invocation.ReadEnd();
-                self.SelectPreset(aVersion, instanceID, presetName);
+                self.SelectPreset(invocation, instanceID, presetName);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SelectPreset"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SelectPreset"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1334,7 +1334,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBrightness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1346,22 +1346,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetBrightness(aVersion, instanceID, out currentBrightness);
+                self.GetBrightness(invocation, instanceID, out currentBrightness);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetBrightness"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetBrightness"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1383,7 +1383,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBrightness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1396,22 +1396,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredBrightness = invocation.ReadUint("DesiredBrightness");
                 invocation.ReadEnd();
-                self.SetBrightness(aVersion, instanceID, desiredBrightness);
+                self.SetBrightness(invocation, instanceID, desiredBrightness);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetBrightness"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetBrightness"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1432,7 +1432,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetContrast(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetContrast(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1444,22 +1444,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetContrast(aVersion, instanceID, out currentContrast);
+                self.GetContrast(invocation, instanceID, out currentContrast);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetContrast"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetContrast"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1481,7 +1481,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetContrast(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetContrast(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1494,22 +1494,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredContrast = invocation.ReadUint("DesiredContrast");
                 invocation.ReadEnd();
-                self.SetContrast(aVersion, instanceID, desiredContrast);
+                self.SetContrast(invocation, instanceID, desiredContrast);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetContrast"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetContrast"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1530,7 +1530,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetSharpness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSharpness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1542,22 +1542,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetSharpness(aVersion, instanceID, out currentSharpness);
+                self.GetSharpness(invocation, instanceID, out currentSharpness);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetSharpness"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetSharpness"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1579,7 +1579,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetSharpness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSharpness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1592,22 +1592,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredSharpness = invocation.ReadUint("DesiredSharpness");
                 invocation.ReadEnd();
-                self.SetSharpness(aVersion, instanceID, desiredSharpness);
+                self.SetSharpness(invocation, instanceID, desiredSharpness);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetSharpness"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetSharpness"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1628,7 +1628,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRedVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRedVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1640,22 +1640,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetRedVideoGain(aVersion, instanceID, out currentRedVideoGain);
+                self.GetRedVideoGain(invocation, instanceID, out currentRedVideoGain);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetRedVideoGain"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetRedVideoGain"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1677,7 +1677,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetRedVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRedVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1690,22 +1690,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredRedVideoGain = invocation.ReadUint("DesiredRedVideoGain");
                 invocation.ReadEnd();
-                self.SetRedVideoGain(aVersion, instanceID, desiredRedVideoGain);
+                self.SetRedVideoGain(invocation, instanceID, desiredRedVideoGain);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetRedVideoGain"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetRedVideoGain"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1726,7 +1726,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1738,22 +1738,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetGreenVideoGain(aVersion, instanceID, out currentGreenVideoGain);
+                self.GetGreenVideoGain(invocation, instanceID, out currentGreenVideoGain);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetGreenVideoGain"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetGreenVideoGain"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1775,7 +1775,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1788,22 +1788,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredGreenVideoGain = invocation.ReadUint("DesiredGreenVideoGain");
                 invocation.ReadEnd();
-                self.SetGreenVideoGain(aVersion, instanceID, desiredGreenVideoGain);
+                self.SetGreenVideoGain(invocation, instanceID, desiredGreenVideoGain);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetGreenVideoGain"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetGreenVideoGain"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1824,7 +1824,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1836,22 +1836,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetBlueVideoGain(aVersion, instanceID, out currentBlueVideoGain);
+                self.GetBlueVideoGain(invocation, instanceID, out currentBlueVideoGain);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetBlueVideoGain"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetBlueVideoGain"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1873,7 +1873,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1886,22 +1886,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredBlueVideoGain = invocation.ReadUint("DesiredBlueVideoGain");
                 invocation.ReadEnd();
-                self.SetBlueVideoGain(aVersion, instanceID, desiredBlueVideoGain);
+                self.SetBlueVideoGain(invocation, instanceID, desiredBlueVideoGain);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetBlueVideoGain"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetBlueVideoGain"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1922,7 +1922,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1934,22 +1934,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetRedVideoBlackLevel(aVersion, instanceID, out currentRedVideoBlackLevel);
+                self.GetRedVideoBlackLevel(invocation, instanceID, out currentRedVideoBlackLevel);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetRedVideoBlackLevel"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetRedVideoBlackLevel"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -1971,7 +1971,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -1984,22 +1984,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredRedVideoBlackLevel = invocation.ReadUint("DesiredRedVideoBlackLevel");
                 invocation.ReadEnd();
-                self.SetRedVideoBlackLevel(aVersion, instanceID, desiredRedVideoBlackLevel);
+                self.SetRedVideoBlackLevel(invocation, instanceID, desiredRedVideoBlackLevel);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetRedVideoBlackLevel"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetRedVideoBlackLevel"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2020,7 +2020,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2032,22 +2032,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetGreenVideoBlackLevel(aVersion, instanceID, out currentGreenVideoBlackLevel);
+                self.GetGreenVideoBlackLevel(invocation, instanceID, out currentGreenVideoBlackLevel);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetGreenVideoBlackLevel"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetGreenVideoBlackLevel"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2069,7 +2069,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2082,22 +2082,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredGreenVideoBlackLevel = invocation.ReadUint("DesiredGreenVideoBlackLevel");
                 invocation.ReadEnd();
-                self.SetGreenVideoBlackLevel(aVersion, instanceID, desiredGreenVideoBlackLevel);
+                self.SetGreenVideoBlackLevel(invocation, instanceID, desiredGreenVideoBlackLevel);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetGreenVideoBlackLevel"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetGreenVideoBlackLevel"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2118,7 +2118,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2130,22 +2130,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetBlueVideoBlackLevel(aVersion, instanceID, out currentBlueVideoBlackLevel);
+                self.GetBlueVideoBlackLevel(invocation, instanceID, out currentBlueVideoBlackLevel);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetBlueVideoBlackLevel"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetBlueVideoBlackLevel"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2167,7 +2167,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2180,22 +2180,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredBlueVideoBlackLevel = invocation.ReadUint("DesiredBlueVideoBlackLevel");
                 invocation.ReadEnd();
-                self.SetBlueVideoBlackLevel(aVersion, instanceID, desiredBlueVideoBlackLevel);
+                self.SetBlueVideoBlackLevel(invocation, instanceID, desiredBlueVideoBlackLevel);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetBlueVideoBlackLevel"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetBlueVideoBlackLevel"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2216,7 +2216,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetColorTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColorTemperature(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2228,22 +2228,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetColorTemperature(aVersion, instanceID, out currentColorTemperature);
+                self.GetColorTemperature(invocation, instanceID, out currentColorTemperature);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetColorTemperature"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetColorTemperature"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2265,7 +2265,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetColorTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetColorTemperature(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2278,22 +2278,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredColorTemperature = invocation.ReadUint("DesiredColorTemperature");
                 invocation.ReadEnd();
-                self.SetColorTemperature(aVersion, instanceID, desiredColorTemperature);
+                self.SetColorTemperature(invocation, instanceID, desiredColorTemperature);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetColorTemperature"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetColorTemperature"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2314,7 +2314,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2326,22 +2326,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetHorizontalKeystone(aVersion, instanceID, out currentHorizontalKeystone);
+                self.GetHorizontalKeystone(invocation, instanceID, out currentHorizontalKeystone);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetHorizontalKeystone"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetHorizontalKeystone"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2363,7 +2363,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2376,22 +2376,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredHorizontalKeystone = invocation.ReadInt("DesiredHorizontalKeystone");
                 invocation.ReadEnd();
-                self.SetHorizontalKeystone(aVersion, instanceID, desiredHorizontalKeystone);
+                self.SetHorizontalKeystone(invocation, instanceID, desiredHorizontalKeystone);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetHorizontalKeystone"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetHorizontalKeystone"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2412,7 +2412,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2424,22 +2424,22 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                self.GetVerticalKeystone(aVersion, instanceID, out currentVerticalKeystone);
+                self.GetVerticalKeystone(invocation, instanceID, out currentVerticalKeystone);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetVerticalKeystone"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetVerticalKeystone"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2461,7 +2461,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2474,22 +2474,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 desiredVerticalKeystone = invocation.ReadInt("DesiredVerticalKeystone");
                 invocation.ReadEnd();
-                self.SetVerticalKeystone(aVersion, instanceID, desiredVerticalKeystone);
+                self.SetVerticalKeystone(invocation, instanceID, desiredVerticalKeystone);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetVerticalKeystone"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetVerticalKeystone"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2510,7 +2510,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetMute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2524,22 +2524,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetMute(aVersion, instanceID, channel, out currentMute);
+                self.GetMute(invocation, instanceID, channel, out currentMute);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetMute"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetMute"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2561,7 +2561,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2576,22 +2576,22 @@ namespace OpenHome.Net.Device.Providers
                 channel = invocation.ReadString("Channel");
                 desiredMute = invocation.ReadBool("DesiredMute");
                 invocation.ReadEnd();
-                self.SetMute(aVersion, instanceID, channel, desiredMute);
+                self.SetMute(invocation, instanceID, channel, desiredMute);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetMute"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetMute"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2612,7 +2612,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolume(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2626,22 +2626,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetVolume(aVersion, instanceID, channel, out currentVolume);
+                self.GetVolume(invocation, instanceID, channel, out currentVolume);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetVolume"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetVolume"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2663,7 +2663,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2678,22 +2678,22 @@ namespace OpenHome.Net.Device.Providers
                 channel = invocation.ReadString("Channel");
                 desiredVolume = invocation.ReadUint("DesiredVolume");
                 invocation.ReadEnd();
-                self.SetVolume(aVersion, instanceID, channel, desiredVolume);
+                self.SetVolume(invocation, instanceID, channel, desiredVolume);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetVolume"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetVolume"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2714,7 +2714,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetVolumeDB(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolumeDB(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2728,22 +2728,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetVolumeDB(aVersion, instanceID, channel, out currentVolume);
+                self.GetVolumeDB(invocation, instanceID, channel, out currentVolume);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetVolumeDB"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetVolumeDB"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2765,7 +2765,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetVolumeDB(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolumeDB(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2780,22 +2780,22 @@ namespace OpenHome.Net.Device.Providers
                 channel = invocation.ReadString("Channel");
                 desiredVolume = invocation.ReadInt("DesiredVolume");
                 invocation.ReadEnd();
-                self.SetVolumeDB(aVersion, instanceID, channel, desiredVolume);
+                self.SetVolumeDB(invocation, instanceID, channel, desiredVolume);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetVolumeDB"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetVolumeDB"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2816,7 +2816,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetVolumeDBRange(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolumeDBRange(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2831,22 +2831,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetVolumeDBRange(aVersion, instanceID, channel, out minValue, out maxValue);
+                self.GetVolumeDBRange(invocation, instanceID, channel, out minValue, out maxValue);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetVolumeDBRange"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetVolumeDBRange"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2869,7 +2869,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetLoudness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLoudness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2883,22 +2883,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                self.GetLoudness(aVersion, instanceID, channel, out currentLoudness);
+                self.GetLoudness(invocation, instanceID, channel, out currentLoudness);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetLoudness"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetLoudness"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2920,7 +2920,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetLoudness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetLoudness(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2935,22 +2935,22 @@ namespace OpenHome.Net.Device.Providers
                 channel = invocation.ReadString("Channel");
                 desiredLoudness = invocation.ReadBool("DesiredLoudness");
                 invocation.ReadEnd();
-                self.SetLoudness(aVersion, instanceID, channel, desiredLoudness);
+                self.SetLoudness(invocation, instanceID, channel, desiredLoudness);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetLoudness"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetLoudness"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -2971,7 +2971,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoGetStateVariables(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetStateVariables(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -2985,22 +2985,22 @@ namespace OpenHome.Net.Device.Providers
                 instanceID = invocation.ReadUint("InstanceID");
                 stateVariableList = invocation.ReadString("StateVariableList");
                 invocation.ReadEnd();
-                self.GetStateVariables(aVersion, instanceID, stateVariableList, out stateVariableValuePairs);
+                self.GetStateVariables(invocation, instanceID, stateVariableList, out stateVariableValuePairs);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "GetStateVariables"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetStateVariables"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -3022,7 +3022,7 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoSetStateVariables(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStateVariables(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
@@ -3042,22 +3042,22 @@ namespace OpenHome.Net.Device.Providers
                 serviceId = invocation.ReadString("ServiceId");
                 stateVariableValuePairs = invocation.ReadString("StateVariableValuePairs");
                 invocation.ReadEnd();
-                self.SetStateVariables(aVersion, instanceID, renderingControlUDN, serviceType, serviceId, stateVariableValuePairs, out stateVariableList);
+                self.SetStateVariables(invocation, instanceID, renderingControlUDN, serviceType, serviceId, stateVariableValuePairs, out stateVariableList);
             }
-            catch (ActionError)
+            catch (ActionError e)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportActionError(e, String.Format("Set{0}", "SetStateVariables"));
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML");
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "SetStateVariables"));
                 return -1;
             }
             catch (Exception e)
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try

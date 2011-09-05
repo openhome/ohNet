@@ -1,4 +1,6 @@
 #include <jni.h>
+#include <malloc.h>
+#include <stdlib.h>
 #include "ResourceWriter.h"
 #include "OpenHome/Net/C/DvDevice.h"
 
@@ -24,7 +26,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_device_ResourceWriter_CallbackWrite
 	
 	callback.data = (void*) (size_t)aWriteBegin;
 	writeBegin = callback.function;
-	
+
 	writeBegin((void*)(size_t)aWriterData, aTotalBytes, mimeType);
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aMimeType, mimeType);
 }
@@ -43,14 +45,16 @@ JNIEXPORT void JNICALL Java_org_openhome_net_device_ResourceWriter_CallbackWrite
 		void*							data;
 	} callback;
 	OhNetCallbackWriteResource writeResource;
-	uint8_t* data;
+	uint8_t* data = (uint8_t*)malloc(sizeof(uint8_t)*aBytes);
 	aClass = aClass;
-	
+
 	callback.data = (void*) (size_t)aWriteResource;
 	writeResource = callback.function;
-	
-	(*aEnv)->GetByteArrayRegion(aEnv, aData, 0, aBytes, (jbyte *) &data);
+
+	(*aEnv)->GetByteArrayRegion(aEnv, aData, 0, aBytes, (jbyte *)data);
+
 	writeResource((void*)(size_t)aWriterData, data, aBytes);
+	free(data);
 }
 
 /*

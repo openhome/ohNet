@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Introduction</title>
+
+  <para>This document is for developers using the ohNet stack to
+  develop Control Point applications.</para>
+
+  <para>ohNet is a full UPnP stack, the public APIs of which are protocol
+  independent. The Control Point stack exposes the parts of ohNet required to
+  develop a Control Point application. It offers APIs using C++, C# and
+  C.</para>
+
+  <note>
+    <para>All code examples in this document use C++. Each C++ function used
+    has an equivalent in the other languages. The naming scheme for the
+    functions is consistent between the languages so you can easily find the
+    functions in the other languages published in the API.</para>
+  </note>
+
+  <para>Specific emphasis is placed on the use of Proxies in the development
+  of a Control Point application. The generation of Proxy code from simple XML
+  is demonstrated, which shows how the use of Proxies allows the stack to
+  remain device and protocol independent.</para>
+
+  <xi:include href="Introduction.Prerequisites.xml" xpointer="element(/1)" />
+
+  <xi:include href="Introduction.RelatedDocuments.xml" xpointer="element(/1)" />
+
+  <xi:include href="Introduction.WhyChooseohNet.xml" xpointer="element(/1)" />
+</chapter>

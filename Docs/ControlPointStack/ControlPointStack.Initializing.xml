@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Initializing the Control Point stack</title>
+
+  <para>Your application must initialize the Control Point stack before you
+  can use any of the other ohNet code available either in the published APIs
+  or in your own Proxy's API.</para>
+
+  <para>To initialize the Control Point stack, you must include the following
+  three lines of code in your Control Point application:</para>
+
+  <programlisting>
+  InitialisationParams* initParams = new InitialisationParams();
+  // initParams defaults to useful values for all fields but you
+  // can optionally change any values here.
+  UpnpLibrary::Initialise(initParams);
+  // real control points would read the target subnet from disk;
+  // we just choose one arbitrarily here
+  std::vector&lt;NetworkAdapter*&gt;* subnetList =
+                                  UpnpLibrary::CreateSubnetList();
+  TIpAddress subnet = (*subnetList)[0]->Subnet();
+  UpnpLibrary::DestroySubnetList(subnetList);
+  UpnpLibrary::StartCp(subnet);</programlisting>
+
+  <para>See the ohNet API's listing of <code>UpnpLibrary</code> for more
+  details on initializing the stack.</para>
+</section>

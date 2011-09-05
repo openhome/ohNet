@@ -778,9 +778,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionCharacteristics} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Characteristics characteristics(int aVersion)
+    protected Characteristics characteristics(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -793,10 +793,10 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionSetVolume} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setVolume(int aVersion, long aValue)
+    protected void setVolume(IDvInvocation aInvocation, long aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -809,9 +809,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionVolumeInc} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void volumeInc(int aVersion)
+    protected void volumeInc(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -824,9 +824,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionVolumeDec} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void volumeDec(int aVersion)
+    protected void volumeDec(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -839,9 +839,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionVolume} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long volume(int aVersion)
+    protected long volume(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -854,10 +854,10 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionSetBalance} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setBalance(int aVersion, int aValue)
+    protected void setBalance(IDvInvocation aInvocation, int aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -870,9 +870,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionBalanceInc} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void balanceInc(int aVersion)
+    protected void balanceInc(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -885,9 +885,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionBalanceDec} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void balanceDec(int aVersion)
+    protected void balanceDec(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -900,9 +900,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionBalance} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected int balance(int aVersion)
+    protected int balance(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -915,10 +915,10 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionSetFade} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setFade(int aVersion, int aValue)
+    protected void setFade(IDvInvocation aInvocation, int aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -931,9 +931,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionFadeInc} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void fadeInc(int aVersion)
+    protected void fadeInc(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -946,9 +946,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionFadeDec} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected void fadeDec(int aVersion)
+    protected void fadeDec(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -961,9 +961,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionFade} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected int fade(int aVersion)
+    protected int fade(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -976,10 +976,10 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionSetMute} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
-    protected void setMute(int aVersion, boolean aValue)
+    protected void setMute(IDvInvocation aInvocation, boolean aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -992,9 +992,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionMute} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected boolean mute(int aVersion)
+    protected boolean mute(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1007,9 +1007,9 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionVolumeLimit} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected long volumeLimit(int aVersion)
+    protected long volumeLimit(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1033,7 +1033,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoCharacteristics implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long volumeMax;
@@ -1047,7 +1047,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 invocation.readStart();
                 invocation.readEnd();
 
-            Characteristics outArgs = characteristics(aVersion);
+            Characteristics outArgs = characteristics(invocation);
             volumeMax = outArgs.getVolumeMax();
             volumeUnity = outArgs.getVolumeUnity();
             volumeSteps = outArgs.getVolumeSteps();
@@ -1098,7 +1098,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoSetVolume implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1107,7 +1107,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 invocation.readStart();
                 value = invocation.readUint("Value");
                 invocation.readEnd();
-                setVolume(aVersion, value);
+                setVolume(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1146,14 +1146,14 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoVolumeInc implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                volumeInc(aVersion);
+                volumeInc(invocation);
             }
             catch (ActionError ae)
             {
@@ -1192,14 +1192,14 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoVolumeDec implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                volumeDec(aVersion);
+                volumeDec(invocation);
             }
             catch (ActionError ae)
             {
@@ -1238,7 +1238,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoVolume implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1246,7 +1246,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = volume(aVersion);
+                 value = volume(invocation);
             }
             catch (ActionError ae)
             {
@@ -1286,7 +1286,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoSetBalance implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1295,7 +1295,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 invocation.readStart();
                 value = invocation.readInt("Value");
                 invocation.readEnd();
-                setBalance(aVersion, value);
+                setBalance(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1334,14 +1334,14 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoBalanceInc implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                balanceInc(aVersion);
+                balanceInc(invocation);
             }
             catch (ActionError ae)
             {
@@ -1380,14 +1380,14 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoBalanceDec implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                balanceDec(aVersion);
+                balanceDec(invocation);
             }
             catch (ActionError ae)
             {
@@ -1426,7 +1426,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoBalance implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1434,7 +1434,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = balance(aVersion);
+                 value = balance(invocation);
             }
             catch (ActionError ae)
             {
@@ -1474,7 +1474,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoSetFade implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1483,7 +1483,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 invocation.readStart();
                 value = invocation.readInt("Value");
                 invocation.readEnd();
-                setFade(aVersion, value);
+                setFade(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1522,14 +1522,14 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoFadeInc implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                fadeInc(aVersion);
+                fadeInc(invocation);
             }
             catch (ActionError ae)
             {
@@ -1568,14 +1568,14 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoFadeDec implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-                fadeDec(aVersion);
+                fadeDec(invocation);
             }
             catch (ActionError ae)
             {
@@ -1614,7 +1614,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoFade implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             int value;
@@ -1622,7 +1622,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = fade(aVersion);
+                 value = fade(invocation);
             }
             catch (ActionError ae)
             {
@@ -1662,7 +1662,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoSetMute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1671,7 +1671,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 invocation.readStart();
                 value = invocation.readBool("Value");
                 invocation.readEnd();
-                setMute(aVersion, value);
+                setMute(invocation, value);
             }
             catch (ActionError ae)
             {
@@ -1710,7 +1710,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoMute implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             boolean value;
@@ -1718,7 +1718,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = mute(aVersion);
+                 value = mute(invocation);
             }
             catch (ActionError ae)
             {
@@ -1758,7 +1758,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
 
     private class DoVolumeLimit implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
@@ -1766,7 +1766,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = volumeLimit(aVersion);
+                 value = volumeLimit(invocation);
             }
             catch (ActionError ae)
             {
