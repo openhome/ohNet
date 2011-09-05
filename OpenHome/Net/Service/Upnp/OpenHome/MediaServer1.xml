@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <actionList>
+    <action>
+      <name>Manufacturer</name>
+      <argumentList>
+        <argument>
+          <name>Name</name>
+          <direction>out</direction>
+          <relatedStateVariable>ManufacturerName</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Info</name>
+          <direction>out</direction>
+          <relatedStateVariable>ManufacturerInfo</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Url</name>
+          <direction>out</direction>
+          <relatedStateVariable>ManufacturerUrl</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>ImageUri</name>
+          <direction>out</direction>
+          <relatedStateVariable>ManufacturerImageUri</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Model</name>
+      <argumentList>
+        <argument>
+          <name>Name</name>
+          <direction>out</direction>
+          <relatedStateVariable>ModelName</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Info</name>
+          <direction>out</direction>
+          <relatedStateVariable>ModelInfo</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Url</name>
+          <direction>out</direction>
+          <relatedStateVariable>ModelUrl</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>ImageUri</name>
+          <direction>out</direction>
+          <relatedStateVariable>ModelImageUri</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Product</name>
+      <argumentList>
+        <argument>
+          <name>Name</name>
+          <direction>out</direction>
+          <relatedStateVariable>ProductName</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Info</name>
+          <direction>out</direction>
+          <relatedStateVariable>ProductInfo</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Url</name>
+          <direction>out</direction>
+          <relatedStateVariable>ProductUrl</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>ImageUri</name>
+          <direction>out</direction>
+          <relatedStateVariable>ProductImageUri</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Attributes</name>
+      <argumentList>
+        <argument>
+          <name>Value</name>
+          <direction>out</direction>
+          <relatedStateVariable>Attributes</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Query</name>
+      <argumentList>
+        <argument>
+          <name>Request</name>
+          <direction>in</direction>
+          <relatedStateVariable>Request</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Result</name>
+          <direction>out</direction>
+          <relatedStateVariable>Result</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+  </actionList>
+  <serviceStateTable>
+    <stateVariable sendEvents="yes">
+      <name>ManufacturerName</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ManufacturerInfo</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ManufacturerUrl</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ManufacturerImageUri</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ModelName</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ModelInfo</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ModelUrl</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ModelImageUri</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ProductName</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ProductInfo</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ProductUrl</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ProductImageUri</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>Attributes</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>Request</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>Result</name>
+      <dataType>string</dataType>
+    </stateVariable>
+  </serviceStateTable>
+</scpd>
