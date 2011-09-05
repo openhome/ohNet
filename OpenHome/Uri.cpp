@@ -1,6 +1,7 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 
@@ -50,57 +51,51 @@ void Uri::Replace(const Brx& aBaseUri, const Brx& aRelativeUri)
     iRelative.Replace(aRelativeUri);
     Ascii::Substitute(iRelative, '\\', '/'); // convert path to use only back slashes
     
-    // if no ':' in the path, then it is a relative path, otherwise already an absolute path
-    if (!Ascii::Contains(aRelativeUri, ':')) {
-        if (aBaseUri.Equals(Brx::Empty())) {
-            THROW(UriError);
-        }
-        iBase.Replace(aBaseUri);
-        Ascii::Substitute(iBase, '\\', '/'); // convert path to use only back slashes
+    iBase.Replace(aBaseUri);
+    Ascii::Substitute(iBase, '\\', '/'); // convert path to use only back slashes
     
-        while (iRelative.At(0) == '/') { // insure relative path starts without back slash
-            iRelative.Replace(iRelative.Split(1,iRelative.Bytes()-1));
-        }
-        if (iBase.At(iBase.Bytes()-1) != '/') { // insure base path ends with back slash
-            iBase.Append('/');
-        }
+    while (iRelative.At(0) == '/') { // insure relative path starts without back slash
+        iRelative.Replace(iRelative.Split(1,iRelative.Bytes()-1));
+    }
+    if (iBase.At(iBase.Bytes()-1) != '/') { // insure base path ends with back slash
+        iBase.Append('/');
+    }
     
-        Parser parser(iRelative);
-        Brn section;
-        TUint relCount = 0, relIndex = 0;
+    Parser parser(iRelative);
+    Brn section;
+    TUint relCount = 0, relIndex = 0;
+    while (!parser.Finished()) {
+        section.Set(parser.Next('/'));
+        if (section.Bytes() > 0) {
+            if (section.At(0) == '.') {
+                relCount++;
+                relIndex = parser.Index();
+            }
+            else {
+                break;
+            }
+        }
+    }
+    if (relCount > kMaxDirLevels) {
+        THROW(UriError);
+    }
+    iRelative.Replace(iRelative.Split(relIndex, iRelative.Bytes()-relIndex));
+        
+    if (relCount > 0) {
+        parser.Set(iBase);
+        TUint baseCount = 0;
+        TUint baseIndex[kMaxDirLevels];
         while (!parser.Finished()) {
             section.Set(parser.Next('/'));
-            if (section.Bytes() > 0) {
-                if (section.At(0) == '.') {
-                    relCount++;
-                    relIndex = parser.Index();
-                }
-                else {
-                    break;
-                }
-            }
+            baseIndex[baseCount] = parser.Index();
+            baseCount++;
         }
-        if (relCount > kMaxDirLevels) {
+        if (relCount >= baseCount) {
             THROW(UriError);
         }
-        iRelative.Replace(iRelative.Split(relIndex, iRelative.Bytes()-relIndex));
-        
-        if (relCount > 0) {
-            parser.Set(iBase);
-            TUint baseCount = 0;
-            TUint baseIndex[kMaxDirLevels];
-            while (!parser.Finished()) {
-                section.Set(parser.Next('/'));
-                baseIndex[baseCount] = parser.Index();
-                baseCount++;
-            }
-            if (relCount >= baseCount) {
-                THROW(UriError);
-            }
-            iBase.Replace(iBase.Split(0, baseIndex[(baseCount-1)-relCount]));
-        }
-        iAbsoluteUri.Append(iBase);
+        iBase.Replace(iBase.Split(0, baseIndex[(baseCount-1)-relCount]));
     }
+    iAbsoluteUri.Append(iBase);
     iAbsoluteUri.Append(iRelative);
     iBase.Replace(iAbsoluteUri);
     Replace(iBase);
