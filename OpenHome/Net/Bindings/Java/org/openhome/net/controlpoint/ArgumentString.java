@@ -32,7 +32,7 @@ public class ArgumentString extends Argument
 	{
 		if (aValue == null)
 		{
-			throw new IllegalArgumentException("Value must not be null");
+			throw new NullPointerException("Value must not be null");
 		}
 		iHandle = ActionArgumentCreateStringInput(aParameter.getHandle(), aValue);
 	}

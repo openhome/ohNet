@@ -29,7 +29,7 @@ public class PropertyString extends Property
 		super(aListener);
 		if (aName == null)
 		{
-			throw new IllegalArgumentException("Name must not be null");
+			throw new NullPointerException("Name must not be null");
 		}
 		PropertyInitialised init = ServicePropertyCreateStringCp(aName, aListener);
 		iHandle = init.getHandle();

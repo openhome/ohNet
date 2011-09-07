@@ -38,7 +38,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterString_ServiceParame
 				free(allowed);
 			}
 			exc = (*aEnv)->FindClass(aEnv, 
-					"java/lang/IllegalArgumentException");
+					"java/lang/NullPointerException");
 			if (exc == NULL) {
 				return 0;
 			}
