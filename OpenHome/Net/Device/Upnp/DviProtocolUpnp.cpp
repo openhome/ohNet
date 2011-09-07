@@ -41,6 +41,7 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     NetworkAdapter* current = adapterList.CurrentAdapter();
     if (current != NULL) {
         AddInterface(*current);
+        current->RemoveRef();
     }
     else {
         for (TUint i=0; i<subnetList->size(); i++) {
