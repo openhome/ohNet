@@ -630,7 +630,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetMediaInfo = new OpenHome.Net.Core.Action("GetMediaInfo");
             param = new ParameterUint("InstanceID");
             iActionGetMediaInfo.AddInputParameter(param);
-            param = new ParameterUint("NrTracks", 0, 0);
+            param = new ParameterUint("NrTracks", 0, 2147483647);
             iActionGetMediaInfo.AddOutputParameter(param);
             param = new ParameterString("MediaDuration", allowedValues);
             iActionGetMediaInfo.AddOutputParameter(param);
@@ -658,7 +658,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterString("CurrentType", allowedValues);
             iActionGetMediaInfo_Ext.AddOutputParameter(param);
             allowedValues.Clear();
-            param = new ParameterUint("NrTracks", 0, 0);
+            param = new ParameterUint("NrTracks", 0, 2147483647);
             iActionGetMediaInfo_Ext.AddOutputParameter(param);
             param = new ParameterString("MediaDuration", allowedValues);
             iActionGetMediaInfo_Ext.AddOutputParameter(param);
@@ -698,7 +698,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetPositionInfo = new OpenHome.Net.Core.Action("GetPositionInfo");
             param = new ParameterUint("InstanceID");
             iActionGetPositionInfo.AddInputParameter(param);
-            param = new ParameterUint("Track", 0, 0, 1);
+            param = new ParameterUint("Track", 0, 2147483647, 1);
             iActionGetPositionInfo.AddOutputParameter(param);
             param = new ParameterString("TrackDuration", allowedValues);
             iActionGetPositionInfo.AddOutputParameter(param);

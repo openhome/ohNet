@@ -776,37 +776,37 @@ CpProxyUpnpOrgRenderingControl1Cpp::CpProxyUpnpOrgRenderingControl1Cpp(CpDeviceC
     iActionGetBrightness = new Action("GetBrightness");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetBrightness->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentBrightness", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentBrightness", 0, 2147483647, 1);
     iActionGetBrightness->AddOutputParameter(param);
 
     iActionSetBrightness = new Action("SetBrightness");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetBrightness->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredBrightness", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredBrightness", 0, 2147483647, 1);
     iActionSetBrightness->AddInputParameter(param);
 
     iActionGetContrast = new Action("GetContrast");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetContrast->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentContrast", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentContrast", 0, 2147483647, 1);
     iActionGetContrast->AddOutputParameter(param);
 
     iActionSetContrast = new Action("SetContrast");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetContrast->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredContrast", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredContrast", 0, 2147483647, 1);
     iActionSetContrast->AddInputParameter(param);
 
     iActionGetSharpness = new Action("GetSharpness");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetSharpness->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentSharpness", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentSharpness", 0, 2147483647, 1);
     iActionGetSharpness->AddOutputParameter(param);
 
     iActionSetSharpness = new Action("SetSharpness");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetSharpness->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredSharpness", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredSharpness", 0, 2147483647, 1);
     iActionSetSharpness->AddInputParameter(param);
 
     iActionGetRedVideoGain = new Action("GetRedVideoGain");
@@ -824,73 +824,73 @@ CpProxyUpnpOrgRenderingControl1Cpp::CpProxyUpnpOrgRenderingControl1Cpp(CpDeviceC
     iActionGetGreenVideoGain = new Action("GetGreenVideoGain");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetGreenVideoGain->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentGreenVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentGreenVideoGain", 0, 2147483647, 1);
     iActionGetGreenVideoGain->AddOutputParameter(param);
 
     iActionSetGreenVideoGain = new Action("SetGreenVideoGain");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetGreenVideoGain->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredGreenVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredGreenVideoGain", 0, 2147483647, 1);
     iActionSetGreenVideoGain->AddInputParameter(param);
 
     iActionGetBlueVideoGain = new Action("GetBlueVideoGain");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetBlueVideoGain->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentBlueVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentBlueVideoGain", 0, 2147483647, 1);
     iActionGetBlueVideoGain->AddOutputParameter(param);
 
     iActionSetBlueVideoGain = new Action("SetBlueVideoGain");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetBlueVideoGain->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredBlueVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredBlueVideoGain", 0, 2147483647, 1);
     iActionSetBlueVideoGain->AddInputParameter(param);
 
     iActionGetRedVideoBlackLevel = new Action("GetRedVideoBlackLevel");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetRedVideoBlackLevel->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentRedVideoBlackLevel", 0, 2147483647, 1);
     iActionGetRedVideoBlackLevel->AddOutputParameter(param);
 
     iActionSetRedVideoBlackLevel = new Action("SetRedVideoBlackLevel");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetRedVideoBlackLevel->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredRedVideoBlackLevel", 0, 2147483647, 1);
     iActionSetRedVideoBlackLevel->AddInputParameter(param);
 
     iActionGetGreenVideoBlackLevel = new Action("GetGreenVideoBlackLevel");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetGreenVideoBlackLevel->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentGreenVideoBlackLevel", 0, 2147483647, 1);
     iActionGetGreenVideoBlackLevel->AddOutputParameter(param);
 
     iActionSetGreenVideoBlackLevel = new Action("SetGreenVideoBlackLevel");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetGreenVideoBlackLevel->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredGreenVideoBlackLevel", 0, 2147483647, 1);
     iActionSetGreenVideoBlackLevel->AddInputParameter(param);
 
     iActionGetBlueVideoBlackLevel = new Action("GetBlueVideoBlackLevel");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetBlueVideoBlackLevel->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentBlueVideoBlackLevel", 0, 2147483647, 1);
     iActionGetBlueVideoBlackLevel->AddOutputParameter(param);
 
     iActionSetBlueVideoBlackLevel = new Action("SetBlueVideoBlackLevel");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetBlueVideoBlackLevel->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredBlueVideoBlackLevel", 0, 2147483647, 1);
     iActionSetBlueVideoBlackLevel->AddInputParameter(param);
 
     iActionGetColorTemperature = new Action("GetColorTemperature");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetColorTemperature->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("CurrentColorTemperature", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentColorTemperature", 0, 2147483647, 1);
     iActionGetColorTemperature->AddOutputParameter(param);
 
     iActionSetColorTemperature = new Action("SetColorTemperature");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetColorTemperature->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("DesiredColorTemperature", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredColorTemperature", 0, 2147483647, 1);
     iActionSetColorTemperature->AddInputParameter(param);
 
     iActionGetHorizontalKeystone = new Action("GetHorizontalKeystone");
@@ -950,7 +950,7 @@ CpProxyUpnpOrgRenderingControl1Cpp::CpProxyUpnpOrgRenderingControl1Cpp(CpDeviceC
     param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionGetVolume->AddInputParameter(param);
     delete[] allowedValues;
-    param = new OpenHome::Net::ParameterUint("CurrentVolume", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentVolume", 0, 2147483647, 1);
     iActionGetVolume->AddOutputParameter(param);
 
     iActionSetVolume = new Action("SetVolume");
@@ -962,7 +962,7 @@ CpProxyUpnpOrgRenderingControl1Cpp::CpProxyUpnpOrgRenderingControl1Cpp(CpDeviceC
     param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionSetVolume->AddInputParameter(param);
     delete[] allowedValues;
-    param = new OpenHome::Net::ParameterUint("DesiredVolume", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredVolume", 0, 2147483647, 1);
     iActionSetVolume->AddInputParameter(param);
 
     iActionGetVolumeDB = new Action("GetVolumeDB");
