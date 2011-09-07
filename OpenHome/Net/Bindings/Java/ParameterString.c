@@ -25,7 +25,19 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterString_ServiceParame
 	for (i = 0; i < aCount; i++)
 	{
 		jstring allowedString = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, i);
-		const char* nativeAllowedString = (*aEnv)->GetStringUTFChars(aEnv, allowedString, NULL);
+		const char* nativeAllowedString;
+		if (allowedString == NULL)
+		{
+			jclass exc;
+			exc = (*aEnv)->FindClass(aEnv, 
+					"java/lang/IllegalArgumentException");
+			if (exc == NULL) {
+				return 0;
+			}
+			(*aEnv)->ThrowNew(aEnv, exc, "Allowed values list must not contain null values");
+			return 0;
+		}
+		nativeAllowedString = (*aEnv)->GetStringUTFChars(aEnv, allowedString, NULL);
 		allowed[i] = (char *) nativeAllowedString;
 	}
     

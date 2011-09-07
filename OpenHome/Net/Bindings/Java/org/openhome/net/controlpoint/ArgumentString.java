@@ -30,6 +30,10 @@ public class ArgumentString extends Argument
 	 */
 	public ArgumentString(ParameterString aParameter, String aValue)
 	{
+		if (aValue == null)
+		{
+			throw new IllegalArgumentException("Value must not be null");
+		}
 		iHandle = ActionArgumentCreateStringInput(aParameter.getHandle(), aValue);
 	}
 	

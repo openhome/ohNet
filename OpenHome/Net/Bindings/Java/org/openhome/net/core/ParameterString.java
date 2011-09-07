@@ -23,6 +23,12 @@ public class ParameterString extends Parameter
 	 */
 	public ParameterString(String aName, List<String> aAllowedValues)
 	{
+		if (aName == null)
+		{
+			throw new IllegalArgumentException("Name must not be null");
+		}
+		// Check for null strings in aAllowedValues is made within native
+		// ServiceParameterCreateString code.
 		String[] allowedValues = new String[aAllowedValues.size()];
 		allowedValues = aAllowedValues.toArray(allowedValues);
 		iHandle = ServiceParameterCreateString(aName, allowedValues, allowedValues.length);

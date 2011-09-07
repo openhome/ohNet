@@ -27,6 +27,10 @@ public class PropertyString extends Property
 	public PropertyString(String aName, IPropertyChangeListener aListener)
 	{
 		super(aListener);
+		if (aName == null)
+		{
+			throw new IllegalArgumentException("Name must not be null");
+		}
 		PropertyInitialised init = ServicePropertyCreateStringCp(aName, aListener);
 		iHandle = init.getHandle();
 		iCallback = init.getCallback();
