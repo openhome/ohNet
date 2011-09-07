@@ -27,7 +27,6 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterString_ServiceParame
 		jstring allowedString = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, i);
 		const char* nativeAllowedString = (*aEnv)->GetStringUTFChars(aEnv, allowedString, NULL);
 		allowed[i] = (char *) nativeAllowedString;
-		(*aEnv)->ReleaseStringUTFChars(aEnv, allowedString, allowed[i]);
 	}
     
     param = ServiceParameterCreateString(name, allowed, aCount);
