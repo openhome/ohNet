@@ -29,8 +29,15 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterString_ServiceParame
 		allowed[i] = (char *) nativeAllowedString;
 		(*aEnv)->ReleaseStringUTFChars(aEnv, allowedString, allowed[i]);
 	}
+    
+    param = ServiceParameterCreateString(name, allowed, aCount);
 
-	param = ServiceParameterCreateString(name, allowed, aCount);
+    for (i = 0; i < aCount; i++)
+    {
+        jstring allowedString = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, i);
+        (*aEnv)->ReleaseStringUTFChars(aEnv, allowedString, allowed[i]);
+    }
+
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	free(allowed);
 	

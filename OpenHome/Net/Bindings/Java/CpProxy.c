@@ -229,7 +229,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPro
 	
 	InitialiseReferences(aEnv, aCallback, &ref);
 	
-	CpProxySetPropertyChanged(proxy, callback, NULL);
+	CpProxySetPropertyInitialEvent(proxy, callback, ref);
 	
 	return (jlong) (size_t)ref;
 }
