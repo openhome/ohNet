@@ -29,6 +29,14 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterString_ServiceParame
 		if (allowedString == NULL)
 		{
 			jclass exc;
+			int j;
+			for (j = 0; j < i; j++)
+			{
+				// Free memory before we throw the exception.
+				jstring allowedString = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, i);
+				(*aEnv)->ReleaseStringUTFChars(aEnv, allowedString, allowed[i]);
+				free(allowed);
+			}
 			exc = (*aEnv)->FindClass(aEnv, 
 					"java/lang/IllegalArgumentException");
 			if (exc == NULL) {
