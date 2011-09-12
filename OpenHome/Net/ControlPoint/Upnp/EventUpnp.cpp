@@ -180,7 +180,19 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
             }
             Parser parser(prop);
             (void)parser.Next('<');
-            Brn tagName = parser.Next('>');
+            Brn tagNameFull = parser.Next('>');
+			Brn tagName = tagNameFull;
+			TUint bytes = tagNameFull.Bytes();
+			TUint i;
+			for (i = 0; i < bytes; i++) {
+				if (Ascii::IsWhitespace(tagNameFull[i])) {
+					break;
+				}
+			}
+			if (i < bytes)
+			{
+				tagName.Set(tagNameFull.Split(0, i));
+			}
             Brn val = parser.Next('<');
             Brn closingTag = parser.Next('/');
             closingTag.Set(parser.Next('>'));
