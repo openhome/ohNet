@@ -7,6 +7,7 @@
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
+#include <OpenHome/Net/C/DvInvocation.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,8 +22,10 @@ extern "C" {
 /**
  * Callback which runs when the Manufacturer action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionManufacturer
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionManufacturer
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aName
  * @param[out] aInfo
  * @param[out] aUrl
@@ -30,12 +33,14 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackMediaServer1Manufacturer)(void* aPtr, uint32_t aVersion, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+typedef int32_t (STDCALL *CallbackMediaServer1Manufacturer)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Callback which runs when the Model action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionModel
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionModel
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aName
  * @param[out] aInfo
  * @param[out] aUrl
@@ -43,12 +48,14 @@ typedef int32_t (STDCALL *CallbackMediaServer1Manufacturer)(void* aPtr, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackMediaServer1Model)(void* aPtr, uint32_t aVersion, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+typedef int32_t (STDCALL *CallbackMediaServer1Model)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Callback which runs when the Product action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionProduct
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionProduct
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aName
  * @param[out] aInfo
  * @param[out] aUrl
@@ -56,28 +63,32 @@ typedef int32_t (STDCALL *CallbackMediaServer1Model)(void* aPtr, uint32_t aVersi
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackMediaServer1Product)(void* aPtr, uint32_t aVersion, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+typedef int32_t (STDCALL *CallbackMediaServer1Product)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Callback which runs when the Attributes action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionAttributes
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionAttributes
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[out] aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackMediaServer1Attributes)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackMediaServer1Attributes)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aValue);
 /**
  * Callback which runs when the Query action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionQuery
- * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionQuery
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aRequest
  * @param[out] aResult
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackMediaServer1Query)(void* aPtr, uint32_t aVersion, const char* aRequest, char** aResult);
+typedef int32_t (STDCALL *CallbackMediaServer1Query)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRequest, char** aResult);
 
 /**
  * Provider constructor

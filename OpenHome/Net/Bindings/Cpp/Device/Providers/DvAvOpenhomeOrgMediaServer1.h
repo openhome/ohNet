@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -201,7 +202,7 @@ private:
      * Manufacturer action for the owning device.
      * Must be implemented iff EnableActionManufacturer was called.
      */
-    virtual void Manufacturer(uint32_t aVersion, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
+    virtual void Manufacturer(IDvInvocationStd& aInvocation, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     /**
      * Model action.
      *
@@ -209,7 +210,7 @@ private:
      * Model action for the owning device.
      * Must be implemented iff EnableActionModel was called.
      */
-    virtual void Model(uint32_t aVersion, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
+    virtual void Model(IDvInvocationStd& aInvocation, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     /**
      * Product action.
      *
@@ -217,7 +218,7 @@ private:
      * Product action for the owning device.
      * Must be implemented iff EnableActionProduct was called.
      */
-    virtual void Product(uint32_t aVersion, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
+    virtual void Product(IDvInvocationStd& aInvocation, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     /**
      * Attributes action.
      *
@@ -225,7 +226,7 @@ private:
      * Attributes action for the owning device.
      * Must be implemented iff EnableActionAttributes was called.
      */
-    virtual void Attributes(uint32_t aVersion, std::string& aValue);
+    virtual void Attributes(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * Query action.
      *
@@ -233,14 +234,14 @@ private:
      * Query action for the owning device.
      * Must be implemented iff EnableActionQuery was called.
      */
-    virtual void Query(uint32_t aVersion, const std::string& aRequest, std::string& aResult);
+    virtual void Query(IDvInvocationStd& aInvocation, const std::string& aRequest, std::string& aResult);
 private:
     DvProviderAvOpenhomeOrgMediaServer1Cpp();
-    void DoManufacturer(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoModel(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoProduct(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoAttributes(IDviInvocation& aInvocation, uint32_t aVersion);
-    void DoQuery(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoManufacturer(IDviInvocation& aInvocation);
+    void DoModel(IDviInvocation& aInvocation);
+    void DoProduct(IDviInvocation& aInvocation);
+    void DoAttributes(IDviInvocation& aInvocation);
+    void DoQuery(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyManufacturerName;
     PropertyString* iPropertyManufacturerInfo;

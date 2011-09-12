@@ -199,7 +199,7 @@ private:
      * Manufacturer action for the owning device.
      * Must be implemented iff EnableActionManufacturer was called.
      */
-    virtual void Manufacturer(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri);
+    virtual void Manufacturer(IDvInvocation& aInvocation, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
     /**
      * Model action.
      *
@@ -207,7 +207,7 @@ private:
      * Model action for the owning device.
      * Must be implemented iff EnableActionModel was called.
      */
-    virtual void Model(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri);
+    virtual void Model(IDvInvocation& aInvocation, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
     /**
      * Product action.
      *
@@ -215,7 +215,7 @@ private:
      * Product action for the owning device.
      * Must be implemented iff EnableActionProduct was called.
      */
-    virtual void Product(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri);
+    virtual void Product(IDvInvocation& aInvocation, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
     /**
      * Attributes action.
      *
@@ -223,7 +223,7 @@ private:
      * Attributes action for the owning device.
      * Must be implemented iff EnableActionAttributes was called.
      */
-    virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void Attributes(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
     /**
      * Query action.
      *
@@ -231,14 +231,14 @@ private:
      * Query action for the owning device.
      * Must be implemented iff EnableActionQuery was called.
      */
-    virtual void Query(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRequest, IInvocationResponseString& aResult);
+    virtual void Query(IDvInvocation& aInvocation, const Brx& aRequest, IDvInvocationResponseString& aResult);
 private:
     DvProviderAvOpenhomeOrgMediaServer1();
-    void DoManufacturer(IDviInvocation& aInvocation, TUint aVersion);
-    void DoModel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoProduct(IDviInvocation& aInvocation, TUint aVersion);
-    void DoAttributes(IDviInvocation& aInvocation, TUint aVersion);
-    void DoQuery(IDviInvocation& aInvocation, TUint aVersion);
+    void DoManufacturer(IDviInvocation& aInvocation);
+    void DoModel(IDviInvocation& aInvocation);
+    void DoProduct(IDviInvocation& aInvocation);
+    void DoAttributes(IDviInvocation& aInvocation);
+    void DoQuery(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyManufacturerName;
     PropertyString* iPropertyManufacturerInfo;

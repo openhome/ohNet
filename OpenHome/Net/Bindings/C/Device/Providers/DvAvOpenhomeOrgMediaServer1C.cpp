@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/C/DvInvocation.h>
+#include <OpenHome/Net/C/DvInvocationPrivate.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -48,11 +50,11 @@ public:
     void EnableActionAttributes(CallbackMediaServer1Attributes aCallback, void* aPtr);
     void EnableActionQuery(CallbackMediaServer1Query aCallback, void* aPtr);
 private:
-    void DoManufacturer(IDviInvocation& aInvocation, TUint aVersion);
-    void DoModel(IDviInvocation& aInvocation, TUint aVersion);
-    void DoProduct(IDviInvocation& aInvocation, TUint aVersion);
-    void DoAttributes(IDviInvocation& aInvocation, TUint aVersion);
-    void DoQuery(IDviInvocation& aInvocation, TUint aVersion);
+    void DoManufacturer(IDviInvocation& aInvocation);
+    void DoModel(IDviInvocation& aInvocation);
+    void DoProduct(IDviInvocation& aInvocation);
+    void DoAttributes(IDviInvocation& aInvocation);
+    void DoQuery(IDviInvocation& aInvocation);
 private:
     CallbackMediaServer1Manufacturer iCallbackManufacturer;
     void* iPtrManufacturer;
@@ -301,25 +303,29 @@ void DvProviderAvOpenhomeOrgMediaServer1C::EnableActionQuery(CallbackMediaServer
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1C::DoManufacturer(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1C::DoManufacturer(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Name;
     char* Info;
     char* Url;
     char* ImageUri;
     ASSERT(iCallbackManufacturer != NULL);
-    if (0 != iCallbackManufacturer(iPtrManufacturer, aVersion, &Name, &Info, &Url, &ImageUri)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackManufacturer(iPtrManufacturer, invocationC, invocationCPtr, &Name, &Info, &Url, &ImageUri)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    resp.Start();
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    invocation.StartResponse();
     Brhz bufName((const TChar*)Name);
     OhNetFreeExternal(Name);
     respName.Write(bufName);
@@ -336,28 +342,32 @@ void DvProviderAvOpenhomeOrgMediaServer1C::DoManufacturer(IDviInvocation& aInvoc
     OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1C::DoModel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1C::DoModel(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Name;
     char* Info;
     char* Url;
     char* ImageUri;
     ASSERT(iCallbackModel != NULL);
-    if (0 != iCallbackModel(iPtrModel, aVersion, &Name, &Info, &Url, &ImageUri)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackModel(iPtrModel, invocationC, invocationCPtr, &Name, &Info, &Url, &ImageUri)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    resp.Start();
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    invocation.StartResponse();
     Brhz bufName((const TChar*)Name);
     OhNetFreeExternal(Name);
     respName.Write(bufName);
@@ -374,28 +384,32 @@ void DvProviderAvOpenhomeOrgMediaServer1C::DoModel(IDviInvocation& aInvocation, 
     OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1C::DoProduct(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1C::DoProduct(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Name;
     char* Info;
     char* Url;
     char* ImageUri;
     ASSERT(iCallbackProduct != NULL);
-    if (0 != iCallbackProduct(iPtrProduct, aVersion, &Name, &Info, &Url, &ImageUri)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackProduct(iPtrProduct, invocationC, invocationCPtr, &Name, &Info, &Url, &ImageUri)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    resp.Start();
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    invocation.StartResponse();
     Brhz bufName((const TChar*)Name);
     OhNetFreeExternal(Name);
     respName.Write(bufName);
@@ -412,49 +426,57 @@ void DvProviderAvOpenhomeOrgMediaServer1C::DoProduct(IDviInvocation& aInvocation
     OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1C::DoAttributes(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1C::DoAttributes(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackAttributes != NULL);
-    if (0 != iCallbackAttributes(iPtrAttributes, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackAttributes(iPtrAttributes, invocationC, invocationCPtr, &Value)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respValue(aInvocation, "Value");
-    resp.Start();
+    DviInvocationResponseString respValue(aInvocation, "Value");
+    invocation.StartResponse();
     Brhz bufValue((const TChar*)Value);
     OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1C::DoQuery(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1C::DoQuery(IDviInvocation& aInvocation)
 {
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
     aInvocation.InvocationReadStart();
     Brhz Request;
     aInvocation.InvocationReadString("Request", Request);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     ASSERT(iCallbackQuery != NULL);
-    if (0 != iCallbackQuery(iPtrQuery, aVersion, (const char*)Request.Ptr(), &Result)) {
-        resp.Error(502, Brn("Action failed"));
+    if (0 != iCallbackQuery(iPtrQuery, invocationC, invocationCPtr, (const char*)Request.Ptr(), &Result)) {
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    resp.Start();
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    invocation.StartResponse();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 

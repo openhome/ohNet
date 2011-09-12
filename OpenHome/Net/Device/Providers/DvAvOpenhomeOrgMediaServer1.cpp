@@ -219,83 +219,83 @@ void DvProviderAvOpenhomeOrgMediaServer1::EnableActionQuery()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::DoManufacturer(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1::DoManufacturer(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    Manufacturer(resp, aVersion, respName, respInfo, respUrl, respImageUri);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    Manufacturer(invocation, respName, respInfo, respUrl, respImageUri);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::DoModel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1::DoModel(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    Model(resp, aVersion, respName, respInfo, respUrl, respImageUri);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    Model(invocation, respName, respInfo, respUrl, respImageUri);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::DoProduct(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1::DoProduct(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respName(aInvocation, "Name");
-    InvocationResponseString respInfo(aInvocation, "Info");
-    InvocationResponseString respUrl(aInvocation, "Url");
-    InvocationResponseString respImageUri(aInvocation, "ImageUri");
-    Product(resp, aVersion, respName, respInfo, respUrl, respImageUri);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respName(aInvocation, "Name");
+    DviInvocationResponseString respInfo(aInvocation, "Info");
+    DviInvocationResponseString respUrl(aInvocation, "Url");
+    DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
+    Product(invocation, respName, respInfo, respUrl, respImageUri);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::DoAttributes(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1::DoAttributes(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respValue(aInvocation, "Value");
-    Attributes(resp, aVersion, respValue);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respValue(aInvocation, "Value");
+    Attributes(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::DoQuery(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgMediaServer1::DoQuery(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
     Brhz Request;
     aInvocation.InvocationReadString("Request", Request);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respResult(aInvocation, "Result");
-    Query(resp, aVersion, Request, respResult);
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    Query(invocation, Request, respResult);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::Manufacturer(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aName*/, IInvocationResponseString& /*aInfo*/, IInvocationResponseString& /*aUrl*/, IInvocationResponseString& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgMediaServer1::Manufacturer(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseString& /*aInfo*/, IDvInvocationResponseString& /*aUrl*/, IDvInvocationResponseString& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::Model(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aName*/, IInvocationResponseString& /*aInfo*/, IInvocationResponseString& /*aUrl*/, IInvocationResponseString& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgMediaServer1::Model(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseString& /*aInfo*/, IDvInvocationResponseString& /*aUrl*/, IDvInvocationResponseString& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::Product(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aName*/, IInvocationResponseString& /*aInfo*/, IInvocationResponseString& /*aUrl*/, IInvocationResponseString& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgMediaServer1::Product(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseString& /*aInfo*/, IDvInvocationResponseString& /*aUrl*/, IDvInvocationResponseString& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::Attributes(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgMediaServer1::Attributes(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::Query(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRequest*/, IInvocationResponseString& /*aResult*/)
+void DvProviderAvOpenhomeOrgMediaServer1::Query(IDvInvocation& /*aResponse*/, const Brx& /*aRequest*/, IDvInvocationResponseString& /*aResult*/)
 {
     ASSERTS();
 }
