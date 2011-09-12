@@ -75,8 +75,9 @@ public:
      * CpProxy::SetPropertyChanged().  The next callback after a call to Subscribe()
      * implies that a subscription has completed
      * It is safe to delete a Service while a subscription is in progress.
+     * Returns true if a subscription request was queued or false if it couldn't be queued.
      */
-    void Subscribe(IEventProcessor& aEventProcessor);
+    TBool Subscribe(IEventProcessor& aEventProcessor);
 
     /**
      * Unsubscribe to updates on properties for this Service

@@ -906,121 +906,121 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iActionGetBrightness = new Action("GetBrightness");
         param = new ParameterUint("InstanceID");
 		iActionGetBrightness.addInputParameter(param);
-        param = new ParameterUint("CurrentBrightness", 0, 0, 1);
+        param = new ParameterUint("CurrentBrightness", 0, 2147483647, 1);
 		iActionGetBrightness.addOutputParameter(param);
 
         iActionSetBrightness = new Action("SetBrightness");
         param = new ParameterUint("InstanceID");
 		iActionSetBrightness.addInputParameter(param);
-        param = new ParameterUint("DesiredBrightness", 0, 0, 1);
+        param = new ParameterUint("DesiredBrightness", 0, 2147483647, 1);
 		iActionSetBrightness.addInputParameter(param);
 
         iActionGetContrast = new Action("GetContrast");
         param = new ParameterUint("InstanceID");
 		iActionGetContrast.addInputParameter(param);
-        param = new ParameterUint("CurrentContrast", 0, 0, 1);
+        param = new ParameterUint("CurrentContrast", 0, 2147483647, 1);
 		iActionGetContrast.addOutputParameter(param);
 
         iActionSetContrast = new Action("SetContrast");
         param = new ParameterUint("InstanceID");
 		iActionSetContrast.addInputParameter(param);
-        param = new ParameterUint("DesiredContrast", 0, 0, 1);
+        param = new ParameterUint("DesiredContrast", 0, 2147483647, 1);
 		iActionSetContrast.addInputParameter(param);
 
         iActionGetSharpness = new Action("GetSharpness");
         param = new ParameterUint("InstanceID");
 		iActionGetSharpness.addInputParameter(param);
-        param = new ParameterUint("CurrentSharpness", 0, 0, 1);
+        param = new ParameterUint("CurrentSharpness", 0, 2147483647, 1);
 		iActionGetSharpness.addOutputParameter(param);
 
         iActionSetSharpness = new Action("SetSharpness");
         param = new ParameterUint("InstanceID");
 		iActionSetSharpness.addInputParameter(param);
-        param = new ParameterUint("DesiredSharpness", 0, 0, 1);
+        param = new ParameterUint("DesiredSharpness", 0, 2147483647, 1);
 		iActionSetSharpness.addInputParameter(param);
 
         iActionGetRedVideoGain = new Action("GetRedVideoGain");
         param = new ParameterUint("InstanceID");
 		iActionGetRedVideoGain.addInputParameter(param);
-        param = new ParameterUint("CurrentRedVideoGain", 0, 0, 1);
+        param = new ParameterUint("CurrentRedVideoGain", 0, 2147483647, 1);
 		iActionGetRedVideoGain.addOutputParameter(param);
 
         iActionSetRedVideoGain = new Action("SetRedVideoGain");
         param = new ParameterUint("InstanceID");
 		iActionSetRedVideoGain.addInputParameter(param);
-        param = new ParameterUint("DesiredRedVideoGain", 0, 0, 1);
+        param = new ParameterUint("DesiredRedVideoGain", 0, 2147483647, 1);
 		iActionSetRedVideoGain.addInputParameter(param);
 
         iActionGetGreenVideoGain = new Action("GetGreenVideoGain");
         param = new ParameterUint("InstanceID");
 		iActionGetGreenVideoGain.addInputParameter(param);
-        param = new ParameterUint("CurrentGreenVideoGain", 0, 0, 1);
+        param = new ParameterUint("CurrentGreenVideoGain", 0, 2147483647, 1);
 		iActionGetGreenVideoGain.addOutputParameter(param);
 
         iActionSetGreenVideoGain = new Action("SetGreenVideoGain");
         param = new ParameterUint("InstanceID");
 		iActionSetGreenVideoGain.addInputParameter(param);
-        param = new ParameterUint("DesiredGreenVideoGain", 0, 0, 1);
+        param = new ParameterUint("DesiredGreenVideoGain", 0, 2147483647, 1);
 		iActionSetGreenVideoGain.addInputParameter(param);
 
         iActionGetBlueVideoGain = new Action("GetBlueVideoGain");
         param = new ParameterUint("InstanceID");
 		iActionGetBlueVideoGain.addInputParameter(param);
-        param = new ParameterUint("CurrentBlueVideoGain", 0, 0, 1);
+        param = new ParameterUint("CurrentBlueVideoGain", 0, 2147483647, 1);
 		iActionGetBlueVideoGain.addOutputParameter(param);
 
         iActionSetBlueVideoGain = new Action("SetBlueVideoGain");
         param = new ParameterUint("InstanceID");
 		iActionSetBlueVideoGain.addInputParameter(param);
-        param = new ParameterUint("DesiredBlueVideoGain", 0, 0, 1);
+        param = new ParameterUint("DesiredBlueVideoGain", 0, 2147483647, 1);
 		iActionSetBlueVideoGain.addInputParameter(param);
 
         iActionGetRedVideoBlackLevel = new Action("GetRedVideoBlackLevel");
         param = new ParameterUint("InstanceID");
 		iActionGetRedVideoBlackLevel.addInputParameter(param);
-        param = new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1);
+        param = new ParameterUint("CurrentRedVideoBlackLevel", 0, 2147483647, 1);
 		iActionGetRedVideoBlackLevel.addOutputParameter(param);
 
         iActionSetRedVideoBlackLevel = new Action("SetRedVideoBlackLevel");
         param = new ParameterUint("InstanceID");
 		iActionSetRedVideoBlackLevel.addInputParameter(param);
-        param = new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1);
+        param = new ParameterUint("DesiredRedVideoBlackLevel", 0, 2147483647, 1);
 		iActionSetRedVideoBlackLevel.addInputParameter(param);
 
         iActionGetGreenVideoBlackLevel = new Action("GetGreenVideoBlackLevel");
         param = new ParameterUint("InstanceID");
 		iActionGetGreenVideoBlackLevel.addInputParameter(param);
-        param = new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1);
+        param = new ParameterUint("CurrentGreenVideoBlackLevel", 0, 2147483647, 1);
 		iActionGetGreenVideoBlackLevel.addOutputParameter(param);
 
         iActionSetGreenVideoBlackLevel = new Action("SetGreenVideoBlackLevel");
         param = new ParameterUint("InstanceID");
 		iActionSetGreenVideoBlackLevel.addInputParameter(param);
-        param = new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1);
+        param = new ParameterUint("DesiredGreenVideoBlackLevel", 0, 2147483647, 1);
 		iActionSetGreenVideoBlackLevel.addInputParameter(param);
 
         iActionGetBlueVideoBlackLevel = new Action("GetBlueVideoBlackLevel");
         param = new ParameterUint("InstanceID");
 		iActionGetBlueVideoBlackLevel.addInputParameter(param);
-        param = new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1);
+        param = new ParameterUint("CurrentBlueVideoBlackLevel", 0, 2147483647, 1);
 		iActionGetBlueVideoBlackLevel.addOutputParameter(param);
 
         iActionSetBlueVideoBlackLevel = new Action("SetBlueVideoBlackLevel");
         param = new ParameterUint("InstanceID");
 		iActionSetBlueVideoBlackLevel.addInputParameter(param);
-        param = new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1);
+        param = new ParameterUint("DesiredBlueVideoBlackLevel", 0, 2147483647, 1);
 		iActionSetBlueVideoBlackLevel.addInputParameter(param);
 
         iActionGetColorTemperature = new Action("GetColorTemperature");
         param = new ParameterUint("InstanceID");
 		iActionGetColorTemperature.addInputParameter(param);
-        param = new ParameterUint("CurrentColorTemperature", 0, 0, 1);
+        param = new ParameterUint("CurrentColorTemperature", 0, 2147483647, 1);
 		iActionGetColorTemperature.addOutputParameter(param);
 
         iActionSetColorTemperature = new Action("SetColorTemperature");
         param = new ParameterUint("InstanceID");
 		iActionSetColorTemperature.addInputParameter(param);
-        param = new ParameterUint("DesiredColorTemperature", 0, 0, 1);
+        param = new ParameterUint("DesiredColorTemperature", 0, 2147483647, 1);
 		iActionSetColorTemperature.addInputParameter(param);
 
         iActionGetHorizontalKeystone = new Action("GetHorizontalKeystone");
@@ -1074,7 +1074,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         param = new ParameterString("Channel", allowedValues);
 		iActionGetVolume.addInputParameter(param);
         allowedValues.clear();
-        param = new ParameterUint("CurrentVolume", 0, 0, 1);
+        param = new ParameterUint("CurrentVolume", 0, 2147483647, 1);
 		iActionGetVolume.addOutputParameter(param);
 
         iActionSetVolume = new Action("SetVolume");
@@ -1084,7 +1084,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         param = new ParameterString("Channel", allowedValues);
 		iActionSetVolume.addInputParameter(param);
         allowedValues.clear();
-        param = new ParameterUint("DesiredVolume", 0, 0, 1);
+        param = new ParameterUint("DesiredVolume", 0, 2147483647, 1);
 		iActionSetVolume.addInputParameter(param);
 
         iActionGetVolumeDB = new Action("GetVolumeDB");

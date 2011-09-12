@@ -776,37 +776,37 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetBrightness = new OpenHome.Net.Core.Action("GetBrightness");
             param = new ParameterUint("InstanceID");
             iActionGetBrightness.AddInputParameter(param);
-            param = new ParameterUint("CurrentBrightness", 0, 0, 1);
+            param = new ParameterUint("CurrentBrightness", 0, 2147483647, 1);
             iActionGetBrightness.AddOutputParameter(param);
 
             iActionSetBrightness = new OpenHome.Net.Core.Action("SetBrightness");
             param = new ParameterUint("InstanceID");
             iActionSetBrightness.AddInputParameter(param);
-            param = new ParameterUint("DesiredBrightness", 0, 0, 1);
+            param = new ParameterUint("DesiredBrightness", 0, 2147483647, 1);
             iActionSetBrightness.AddInputParameter(param);
 
             iActionGetContrast = new OpenHome.Net.Core.Action("GetContrast");
             param = new ParameterUint("InstanceID");
             iActionGetContrast.AddInputParameter(param);
-            param = new ParameterUint("CurrentContrast", 0, 0, 1);
+            param = new ParameterUint("CurrentContrast", 0, 2147483647, 1);
             iActionGetContrast.AddOutputParameter(param);
 
             iActionSetContrast = new OpenHome.Net.Core.Action("SetContrast");
             param = new ParameterUint("InstanceID");
             iActionSetContrast.AddInputParameter(param);
-            param = new ParameterUint("DesiredContrast", 0, 0, 1);
+            param = new ParameterUint("DesiredContrast", 0, 2147483647, 1);
             iActionSetContrast.AddInputParameter(param);
 
             iActionGetSharpness = new OpenHome.Net.Core.Action("GetSharpness");
             param = new ParameterUint("InstanceID");
             iActionGetSharpness.AddInputParameter(param);
-            param = new ParameterUint("CurrentSharpness", 0, 0, 1);
+            param = new ParameterUint("CurrentSharpness", 0, 2147483647, 1);
             iActionGetSharpness.AddOutputParameter(param);
 
             iActionSetSharpness = new OpenHome.Net.Core.Action("SetSharpness");
             param = new ParameterUint("InstanceID");
             iActionSetSharpness.AddInputParameter(param);
-            param = new ParameterUint("DesiredSharpness", 0, 0, 1);
+            param = new ParameterUint("DesiredSharpness", 0, 2147483647, 1);
             iActionSetSharpness.AddInputParameter(param);
 
             iActionGetRedVideoGain = new OpenHome.Net.Core.Action("GetRedVideoGain");
@@ -824,73 +824,73 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetGreenVideoGain = new OpenHome.Net.Core.Action("GetGreenVideoGain");
             param = new ParameterUint("InstanceID");
             iActionGetGreenVideoGain.AddInputParameter(param);
-            param = new ParameterUint("CurrentGreenVideoGain", 0, 0, 1);
+            param = new ParameterUint("CurrentGreenVideoGain", 0, 2147483647, 1);
             iActionGetGreenVideoGain.AddOutputParameter(param);
 
             iActionSetGreenVideoGain = new OpenHome.Net.Core.Action("SetGreenVideoGain");
             param = new ParameterUint("InstanceID");
             iActionSetGreenVideoGain.AddInputParameter(param);
-            param = new ParameterUint("DesiredGreenVideoGain", 0, 0, 1);
+            param = new ParameterUint("DesiredGreenVideoGain", 0, 2147483647, 1);
             iActionSetGreenVideoGain.AddInputParameter(param);
 
             iActionGetBlueVideoGain = new OpenHome.Net.Core.Action("GetBlueVideoGain");
             param = new ParameterUint("InstanceID");
             iActionGetBlueVideoGain.AddInputParameter(param);
-            param = new ParameterUint("CurrentBlueVideoGain", 0, 0, 1);
+            param = new ParameterUint("CurrentBlueVideoGain", 0, 2147483647, 1);
             iActionGetBlueVideoGain.AddOutputParameter(param);
 
             iActionSetBlueVideoGain = new OpenHome.Net.Core.Action("SetBlueVideoGain");
             param = new ParameterUint("InstanceID");
             iActionSetBlueVideoGain.AddInputParameter(param);
-            param = new ParameterUint("DesiredBlueVideoGain", 0, 0, 1);
+            param = new ParameterUint("DesiredBlueVideoGain", 0, 2147483647, 1);
             iActionSetBlueVideoGain.AddInputParameter(param);
 
             iActionGetRedVideoBlackLevel = new OpenHome.Net.Core.Action("GetRedVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionGetRedVideoBlackLevel.AddInputParameter(param);
-            param = new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1);
+            param = new ParameterUint("CurrentRedVideoBlackLevel", 0, 2147483647, 1);
             iActionGetRedVideoBlackLevel.AddOutputParameter(param);
 
             iActionSetRedVideoBlackLevel = new OpenHome.Net.Core.Action("SetRedVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionSetRedVideoBlackLevel.AddInputParameter(param);
-            param = new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1);
+            param = new ParameterUint("DesiredRedVideoBlackLevel", 0, 2147483647, 1);
             iActionSetRedVideoBlackLevel.AddInputParameter(param);
 
             iActionGetGreenVideoBlackLevel = new OpenHome.Net.Core.Action("GetGreenVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionGetGreenVideoBlackLevel.AddInputParameter(param);
-            param = new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1);
+            param = new ParameterUint("CurrentGreenVideoBlackLevel", 0, 2147483647, 1);
             iActionGetGreenVideoBlackLevel.AddOutputParameter(param);
 
             iActionSetGreenVideoBlackLevel = new OpenHome.Net.Core.Action("SetGreenVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionSetGreenVideoBlackLevel.AddInputParameter(param);
-            param = new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1);
+            param = new ParameterUint("DesiredGreenVideoBlackLevel", 0, 2147483647, 1);
             iActionSetGreenVideoBlackLevel.AddInputParameter(param);
 
             iActionGetBlueVideoBlackLevel = new OpenHome.Net.Core.Action("GetBlueVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionGetBlueVideoBlackLevel.AddInputParameter(param);
-            param = new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1);
+            param = new ParameterUint("CurrentBlueVideoBlackLevel", 0, 2147483647, 1);
             iActionGetBlueVideoBlackLevel.AddOutputParameter(param);
 
             iActionSetBlueVideoBlackLevel = new OpenHome.Net.Core.Action("SetBlueVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionSetBlueVideoBlackLevel.AddInputParameter(param);
-            param = new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1);
+            param = new ParameterUint("DesiredBlueVideoBlackLevel", 0, 2147483647, 1);
             iActionSetBlueVideoBlackLevel.AddInputParameter(param);
 
             iActionGetColorTemperature = new OpenHome.Net.Core.Action("GetColorTemperature");
             param = new ParameterUint("InstanceID");
             iActionGetColorTemperature.AddInputParameter(param);
-            param = new ParameterUint("CurrentColorTemperature", 0, 0, 1);
+            param = new ParameterUint("CurrentColorTemperature", 0, 2147483647, 1);
             iActionGetColorTemperature.AddOutputParameter(param);
 
             iActionSetColorTemperature = new OpenHome.Net.Core.Action("SetColorTemperature");
             param = new ParameterUint("InstanceID");
             iActionSetColorTemperature.AddInputParameter(param);
-            param = new ParameterUint("DesiredColorTemperature", 0, 0, 1);
+            param = new ParameterUint("DesiredColorTemperature", 0, 2147483647, 1);
             iActionSetColorTemperature.AddInputParameter(param);
 
             iActionGetHorizontalKeystone = new OpenHome.Net.Core.Action("GetHorizontalKeystone");
@@ -944,7 +944,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterString("Channel", allowedValues);
             iActionGetVolume.AddInputParameter(param);
             allowedValues.Clear();
-            param = new ParameterUint("CurrentVolume", 0, 0, 1);
+            param = new ParameterUint("CurrentVolume", 0, 2147483647, 1);
             iActionGetVolume.AddOutputParameter(param);
 
             iActionSetVolume = new OpenHome.Net.Core.Action("SetVolume");
@@ -954,7 +954,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterString("Channel", allowedValues);
             iActionSetVolume.AddInputParameter(param);
             allowedValues.Clear();
-            param = new ParameterUint("DesiredVolume", 0, 0, 1);
+            param = new ParameterUint("DesiredVolume", 0, 2147483647, 1);
             iActionSetVolume.AddInputParameter(param);
 
             iActionGetVolumeDB = new OpenHome.Net.Core.Action("GetVolumeDB");

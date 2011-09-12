@@ -149,7 +149,7 @@ void InvocationUpnp::WriteHeaders(WriterHttpRequest& aWriterRequest, const Uri& 
     const Brn kContentType("text/xml; charset=\"utf-8\"");
     const Brn kSoapAction("SOAPACTION");
 
-    aWriterRequest.WriteMethod(Http::kMethodPost, aUri.Path(), Http::eHttp10);
+    aWriterRequest.WriteMethod(Http::kMethodPost, aUri.PathAndQuery(), Http::eHttp10);
 
     Http::WriteHeaderHostAndPort(aWriterRequest, aUri);
     Http::WriteHeaderContentLength(aWriterRequest, aBodyBytes);
@@ -395,7 +395,7 @@ void EventUpnp::RenewSubscriptionWriteRequest(const Uri& aPublisher, TUint aDura
     WriterHttpRequest writerRequest(writeBuffer);
     WriterAscii writerAscii(writeBuffer);
 
-    writerRequest.WriteMethod(kRequestMethod, aPublisher.Path(), Http::eHttp11);
+    writerRequest.WriteMethod(kRequestMethod, aPublisher.PathAndQuery(), Http::eHttp11);
     Http::WriteHeaderHostAndPort(writerRequest, aPublisher);
     WriteHeaderSid(writerRequest, iSubscription.Sid());
     WriteHeaderTimeout(writerRequest, aDurationSecs);
@@ -410,7 +410,7 @@ void EventUpnp::UnsubscribeWriteRequest(const Uri& aPublisher, const Brx& aSid)
     WriterHttpRequest writerRequest(writeBuffer);
     WriterAscii writerAscii(writeBuffer);
 
-    writerRequest.WriteMethod(kRequestMethod, aPublisher.Path(), Http::eHttp11);
+    writerRequest.WriteMethod(kRequestMethod, aPublisher.PathAndQuery(), Http::eHttp11);
     Http::WriteHeaderHostAndPort(writerRequest, aPublisher);
     WriteHeaderSid(writerRequest, aSid);
     writerAscii.WriteNewline();

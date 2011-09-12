@@ -124,6 +124,17 @@ public:
      * Not intended for use outside this module
      */
     TBool HasExpired() const;
+
+    /**
+     * Not intended for use outside this module
+     */
+    void SetRemoved();
+
+    /**
+     * True if a device has been removed.
+     * The object may persist for some time after this as its references are released.
+     */
+    TBool IsRemoved() const;
 private:
     /**
      * Not intended for client use.  The call to RemoveRef() which reduces the
@@ -139,6 +150,7 @@ private:
     TInt iRefCount;
     TBool iReady;
     TBool iExpired;
+    TBool iRemoved;
 
     friend class CpiDeviceList;
 };
@@ -308,6 +320,32 @@ private:
 private:
     OpenHome::Mutex iLock;
     std::list<UpdateBase*> iList;
+};
+
+class CpiService;
+class CpiActiveDevices
+{
+public:
+    CpiActiveDevices();
+    ~CpiActiveDevices();
+    void AddDevice(CpiDevice& aDevice);
+    void RemoveDevice(const Brx& aUdn);
+    void AddService(CpiService& aService);
+    void RemoveService(CpiService& aService);
+private:
+    class ActiveDevice : private INonCopyable
+    {
+    public:
+        ActiveDevice(CpiDevice& aDevice);
+        ~ActiveDevice();
+    public:
+        CpiDevice& iDevice;
+        std::vector<CpiService*> iServices;
+    };
+private:
+    Mutex iLock;
+    typedef std::map<Brn,ActiveDevice*,BufferCmp> Map;
+    Map iMap;
 };
 
 } // namespace Net

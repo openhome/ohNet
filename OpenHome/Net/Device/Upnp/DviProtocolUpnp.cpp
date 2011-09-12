@@ -38,9 +38,16 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetListChanged);
     iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
     std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
-    for (TUint i=0; i<subnetList->size(); i++) {
-        NetworkAdapter* subnet = (*subnetList)[i];
-        AddInterface(*subnet);
+    NetworkAdapter* current = adapterList.CurrentAdapter();
+    if (current != NULL) {
+        AddInterface(*current);
+        current->RemoveRef();
+    }
+    else {
+        for (TUint i=0; i<subnetList->size(); i++) {
+            NetworkAdapter* subnet = (*subnetList)[i];
+            AddInterface(*subnet);
+        }
     }
     NetworkAdapterList::DestroySubnetList(subnetList);
     iAliveTimer = new Timer(MakeFunctor(*this, &DviProtocolUpnp::SendAliveNotifications));
