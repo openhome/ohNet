@@ -864,14 +864,14 @@ TBool DviSessionUpnp::InvocationReadBool(const TChar* aName)
 void DviSessionUpnp::InvocationReadString(const TChar* aName, Brhz& aString)
 {
     try {
-        Brn value = XmlParserBasic::Find(aName, iSoapRequest);
-        if (value.Bytes()) {
-            Bwh writable(value.Bytes()+1);
+		Brn value = XmlParserBasic::Find(aName, iSoapRequest);
+		Bwh writable(value.Bytes()+1);
+		if (value.Bytes()) {
 			writable.Append(value);
-            Converter::FromXmlEscaped(writable);
-            writable.PtrZ();
-            writable.TransferTo(aString);
-        }
+			Converter::FromXmlEscaped(writable);
+		}
+		writable.PtrZ();
+		writable.TransferTo(aString);
     }
     catch (XmlError&) {
         InvocationReportError(501, Brn("Invalid XML"));

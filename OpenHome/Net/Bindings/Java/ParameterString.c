@@ -25,12 +25,38 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterString_ServiceParame
 	for (i = 0; i < aCount; i++)
 	{
 		jstring allowedString = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, i);
-		const char* nativeAllowedString = (*aEnv)->GetStringUTFChars(aEnv, allowedString, NULL);
+		const char* nativeAllowedString;
+		if (allowedString == NULL)
+		{
+			jclass exc;
+			int j;
+			for (j = 0; j < i; j++)
+			{
+				// Free memory before we throw the exception.
+				jstring allowedString = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, i);
+				(*aEnv)->ReleaseStringUTFChars(aEnv, allowedString, allowed[i]);
+				free(allowed);
+			}
+			exc = (*aEnv)->FindClass(aEnv, 
+					"java/lang/NullPointerException");
+			if (exc == NULL) {
+				return 0;
+			}
+			(*aEnv)->ThrowNew(aEnv, exc, "Allowed values list must not contain null values");
+			return 0;
+		}
+		nativeAllowedString = (*aEnv)->GetStringUTFChars(aEnv, allowedString, NULL);
 		allowed[i] = (char *) nativeAllowedString;
-		(*aEnv)->ReleaseStringUTFChars(aEnv, allowedString, allowed[i]);
 	}
+    
+    param = ServiceParameterCreateString(name, allowed, aCount);
 
-	param = ServiceParameterCreateString(name, allowed, aCount);
+    for (i = 0; i < aCount; i++)
+    {
+        jstring allowedString = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, i);
+        (*aEnv)->ReleaseStringUTFChars(aEnv, allowedString, allowed[i]);
+    }
+
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	free(allowed);
 	

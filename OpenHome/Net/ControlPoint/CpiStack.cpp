@@ -17,12 +17,14 @@ CpiStack::CpiStack()
     iInvocationManager = new OpenHome::Net::InvocationManager;
     iXmlFetchManager = new OpenHome::Net::XmlFetchManager;
     iSubscriptionManager = new CpiSubscriptionManager;
+    iActiveDevices = new CpiActiveDevices;
     iDeviceListUpdater = new CpiDeviceListUpdater;
 }
 
 CpiStack::~CpiStack()
 {
     delete iDeviceListUpdater;
+    delete iActiveDevices;
     delete iSubscriptionManager;
     delete iXmlFetchManager;
     delete iInvocationManager;
@@ -44,6 +46,12 @@ CpiSubscriptionManager& CpiStack::SubscriptionManager()
 {
     CpiStack* self = CpiStack::Self();
     return *(self->iSubscriptionManager);
+}
+
+CpiActiveDevices& CpiStack::ActiveDevices()
+{
+    CpiStack* self = CpiStack::Self();
+    return *(self->iActiveDevices);
 }
 
 CpiDeviceListUpdater& CpiStack::DeviceListUpdater()

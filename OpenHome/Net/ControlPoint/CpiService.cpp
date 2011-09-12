@@ -28,10 +28,12 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
 {
 	iDevice.AddRef();
 	Stack::AddObject(this, "CpiService");
+    CpiStack::ActiveDevices().AddService(*this);
 }
 
 CpiService::~CpiService()
 {
+    CpiStack::ActiveDevices().RemoveService(*this);
     iInterrupt = true;
     try {
         InvocationManager::Interrupt(*this);
@@ -60,10 +62,14 @@ Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor
     return invocation;
 }
 
-void CpiService::Subscribe(IEventProcessor& aEventProcessor)
+TBool CpiService::Subscribe(IEventProcessor& aEventProcessor)
 {
     ASSERT(iSubscription == NULL);
+    if (iDevice.IsRemoved()) {
+        return false;
+    }
     iSubscription = CpiSubscriptionManager::NewSubscription(iDevice, aEventProcessor, iServiceType);
+    return true;
 }
 
 void CpiService::Unsubscribe()

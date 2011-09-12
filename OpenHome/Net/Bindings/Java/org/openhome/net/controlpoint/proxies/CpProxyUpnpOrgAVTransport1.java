@@ -755,7 +755,7 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iActionGetMediaInfo = new Action("GetMediaInfo");
         param = new ParameterUint("InstanceID");
 		iActionGetMediaInfo.addInputParameter(param);
-        param = new ParameterUint("NrTracks", 0, 0);
+        param = new ParameterUint("NrTracks", 0, 2147483647);
 		iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("MediaDuration", allowedValues);
 		iActionGetMediaInfo.addOutputParameter(param);
@@ -795,7 +795,7 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iActionGetPositionInfo = new Action("GetPositionInfo");
         param = new ParameterUint("InstanceID");
 		iActionGetPositionInfo.addInputParameter(param);
-        param = new ParameterUint("Track", 0, 0, 1);
+        param = new ParameterUint("Track", 0, 2147483647, 1);
 		iActionGetPositionInfo.addOutputParameter(param);
         param = new ParameterString("TrackDuration", allowedValues);
 		iActionGetPositionInfo.addOutputParameter(param);

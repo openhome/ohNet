@@ -518,7 +518,14 @@ string ParameterAllowedValues(Argument a)
         result += ", ";
         result += v.min;
         result += ", ";
-        result += v.max;
+        if (v.maxspecified)
+        {
+            result += v.max;
+        }
+        else
+        {
+            result += int.MaxValue;
+        }
         if (v.stepspecified)
         {
             result += ", ";

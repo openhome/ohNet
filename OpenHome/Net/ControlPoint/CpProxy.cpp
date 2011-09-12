@@ -11,9 +11,10 @@ void CpProxy::Subscribe()
         iInitialEventLock = new OpenHome::Mutex("PRX4");
     }
     iLock->Wait();
-    iCpSubscriptionStatus = eSubscribing;
+    if (iService->Subscribe(*this)) {
+        iCpSubscriptionStatus = eSubscribing;
+    }
     iLock->Signal();
-    iService->Subscribe(*this);
 }
 
 void CpProxy::Unsubscribe()

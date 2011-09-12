@@ -536,7 +536,7 @@ CpProxyUpnpOrgAVTransport2Cpp::CpProxyUpnpOrgAVTransport2Cpp(CpDeviceCpp& aDevic
     iActionGetMediaInfo = new Action("GetMediaInfo");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetMediaInfo->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("NrTracks", 0, 0);
+    param = new OpenHome::Net::ParameterUint("NrTracks", 0, 2147483647);
     iActionGetMediaInfo->AddOutputParameter(param);
     param = new OpenHome::Net::ParameterString("MediaDuration");
     iActionGetMediaInfo->AddOutputParameter(param);
@@ -566,7 +566,7 @@ CpProxyUpnpOrgAVTransport2Cpp::CpProxyUpnpOrgAVTransport2Cpp(CpDeviceCpp& aDevic
     param = new OpenHome::Net::ParameterString("CurrentType", allowedValues, 3);
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
     delete[] allowedValues;
-    param = new OpenHome::Net::ParameterUint("NrTracks", 0, 0);
+    param = new OpenHome::Net::ParameterUint("NrTracks", 0, 2147483647);
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
     param = new OpenHome::Net::ParameterString("MediaDuration");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
@@ -612,7 +612,7 @@ CpProxyUpnpOrgAVTransport2Cpp::CpProxyUpnpOrgAVTransport2Cpp(CpDeviceCpp& aDevic
     iActionGetPositionInfo = new Action("GetPositionInfo");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetPositionInfo->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("Track", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("Track", 0, 2147483647, 1);
     iActionGetPositionInfo->AddOutputParameter(param);
     param = new OpenHome::Net::ParameterString("TrackDuration");
     iActionGetPositionInfo->AddOutputParameter(param);
