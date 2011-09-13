@@ -578,7 +578,7 @@ void CpiActiveDevices::RemoveService(CpiService& aService)
     if (it != iMap.end()) {
         ActiveDevice* ad = it->second;
         for (TUint i=0; i<(TUint)ad->iServices.size(); i++) {
-            if ((TUint)ad->iServices[i] == (TUint)&aService) {
+            if ((void*)ad->iServices[i] == (void*)&aService) {
                 ad->iServices.erase(ad->iServices.begin() + i);
             }
         }
