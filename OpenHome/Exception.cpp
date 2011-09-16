@@ -46,25 +46,45 @@ void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
     Os::Quit();
 }
 
+static void GetThreadName(Bws<20>& aThName)
+{
+    aThName.SetBytes(0);
+    aThName.Append("(unknown)");
+    Thread* th = Thread::Current();
+    if (th != NULL) {
+        aThName.SetBytes(0);
+        aThName.Append(th->Name());
+        aThName.PtrZ();
+    }
+}
+
 void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine)
 {
+    Bws<20> thName;
+    GetThreadName(thName);
     char buf[1024];
-    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%d\n", aExceptionMessage, aFile, aLine);
+    Log::Print("boo\n");
+    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%d in thread %s\n", aExceptionMessage, aFile, aLine, thName.Ptr());
     CallFatalErrorHandler(buf);
 }
 
 void OpenHome::UnhandledExceptionHandler(Exception& aException)
 {
+    Bws<20> thName;
+    GetThreadName(thName);
     char buf[1024];
-    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%d\n",
-                   aException.Message(), aException.File(), aException.Line());
+    Log::Print("woo\n");
+    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%d in thread %s\n",
+                   aException.Message(), aException.File(), aException.Line(), thName.Ptr());
     CallFatalErrorHandler(buf);
 }
 
 void OpenHome::UnhandledExceptionHandler(std::exception& aException)
 {
+    Bws<20> thName;
+    GetThreadName(thName);
     char buf[1024];
-    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s\n", aException.what());
+    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s in thread %s\n", aException.what(), thName.Ptr());
     CallFatalErrorHandler(buf);
 }
 
