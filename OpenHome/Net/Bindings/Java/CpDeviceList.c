@@ -9,6 +9,8 @@
 #include "OpenHome/Net/C/CpDevice.h"
 #include "OpenHome/Net/C/CpDeviceUpnp.h"
 
+#include <android/log.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -43,7 +45,7 @@ void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
 		fflush(stdout);
 		return;
 	}
-	(*env)->CallVoidMethod(env, ref->callbackObj, mid, aDevice);
+	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aDevice);
 	if (attached < 0)
     {
 		(*(ref->vm))->DetachCurrentThread(ref->vm);
@@ -81,7 +83,7 @@ void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
 		fflush(stdout);
 		return;
 	}
-	(*env)->CallVoidMethod(env, ref->callbackObj, mid, aDevice);
+	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aDevice);
 	if (attached < 0)
 	{
 		(*(ref->vm))->DetachCurrentThread(ref->vm);
