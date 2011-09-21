@@ -9,8 +9,6 @@
 #include "OpenHome/Net/C/CpDevice.h"
 #include "OpenHome/Net/C/CpDeviceUpnp.h"
 
-#include <android/log.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
