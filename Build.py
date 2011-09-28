@@ -138,8 +138,8 @@ def getArguments(module,nightly,arch,valgrind,os):
         args += ' --js --java'
     if os == 'Windows' or nightly == '1':
         args += ' --release'
-	if os == 'Linux' and arch == 'x86':
-		args += ' --java'
+    if os == 'Linux' and arch == 'x86':
+	args += ' --java'
     if nightly == '1':
         args += ' --full'
         if os == 'Linux' and arch == 'x86':
