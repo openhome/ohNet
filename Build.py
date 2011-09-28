@@ -144,12 +144,13 @@ def getArguments(module,nightly,arch,valgrind,os):
         args += ' --full'
         if os == 'Linux' and arch == 'x86':
             args += ' --valgrind'
-
+	
     return {'args':args}
     
             
 
 def Build(tool, cmd, args):
+	print "Build args are "	+args
 	
     ret = subprocess.check_call(tool + '&&' + cmd + args, shell=True)
     if ret != 0:
