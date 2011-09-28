@@ -150,8 +150,9 @@ def getArguments(module,nightly,arch,valgrind,os):
             
 
 def Build(tool, cmd, args):
-	print "Build args are "	+args
-	
+
+    print "Build args are "	+args
+
     ret = subprocess.check_call(tool + '&&' + cmd + args, shell=True)
     if ret != 0:
         print ret        
