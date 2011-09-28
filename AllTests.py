@@ -76,7 +76,7 @@ def runTests():
                 cmdLine.append('java')
             cmdLine.append('-Djava.library.path=' + objPath())
             cmdLine.append('-classpath')
-            cmdLine.append(os.path.join(objPath(), 'ohnet.jar '))
+            cmdLine.append(objPath())
             cmdLine.append('-enableassertions')
             cmdLine.append(test.name)
             ret = subprocess.call(cmdLine)
