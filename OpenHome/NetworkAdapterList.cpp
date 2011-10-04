@@ -216,7 +216,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 {
     iListLock.Wait();
     std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter());
-    TIpAddress oldAddress = (iCurrent==NULL? 0 : iCurrent->Address());
+    TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;
 
