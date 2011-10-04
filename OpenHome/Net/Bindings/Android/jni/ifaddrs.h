@@ -109,7 +109,7 @@ struct ifaddrs {
     // sockaddr_in or sockaddr_in6 bytes as the payload. We need to
     // stitch the two bits together into the sockaddr that's part of
     // our portable interface.
-    void setAddress(int family, void* data, size_t byteCount) {
+    void setAddress(unsigned char family, void* data, size_t byteCount) {
         sockaddr_storage* ss = new sockaddr_storage;
         ss->ss_family = family;
         if (family == AF_INET) {
@@ -121,6 +121,21 @@ struct ifaddrs {
         }
         ifa_addr = reinterpret_cast<sockaddr*>(ss);
     }
+
+    // Netlink gives us the prefix length of the IP address, so we
+    // use this to construct the netmask.
+    void setNetmask(unsigned char family, unsigned char prefixlen) {
+        if (family == AF_INET) {
+            __uint32_t netmask = 0xffffffff;
+            netmask = netmask << (32 - prefixlen);
+            sockaddr_in* netmask_addr = new sockaddr_in;
+            netmask_addr->sin_family = family;
+            netmask_addr->sin_port = 0;
+            netmask_addr->sin_addr.s_addr = htonl(netmask);
+            ifa_netmask = reinterpret_cast<sockaddr*>(netmask_addr);
+        }
+    }
+
     #endif
 };
 

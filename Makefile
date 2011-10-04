@@ -50,6 +50,8 @@ osdir = Posix
 objext = o
 libprefix = lib
 libext = a
+sharedlibprefix = lib
+sharedlibext = so
 exeext = elf
 
 

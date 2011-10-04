@@ -71,6 +71,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/RefCounter.cpp \
                    $(ohroot)OpenHome/Net/Service.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/ServiceC.cpp \
+                   $(ohroot)OpenHome/sha1.c \
                    $(ohroot)OpenHome/Net/Ssdp.cpp \
                    $(ohroot)OpenHome/Net/SsdpDv.cpp \
                    $(ohroot)OpenHome/Net/Stack.cpp \

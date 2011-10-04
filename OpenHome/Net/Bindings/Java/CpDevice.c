@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "CpDevice.h"
 #include "OpenHome/Net/C/CpDevice.h"
 #include "OpenHome/Net/C/CpDeviceUpnp.h"
