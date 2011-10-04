@@ -766,9 +766,9 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionManufacturer} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Manufacturer manufacturer(int aVersion)
+    protected Manufacturer manufacturer(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -781,9 +781,9 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionModel} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Model model(int aVersion)
+    protected Model model(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -796,9 +796,9 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionProduct} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected Product product(int aVersion)
+    protected Product product(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -811,9 +811,9 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionAttributes} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      */
-    protected String attributes(int aVersion)
+    protected String attributes(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -826,10 +826,10 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionQuery} was called.</remarks>
      *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRequest
      */
-    protected String query(int aVersion, String aRequest)
+    protected String query(IDvInvocation aInvocation, String aRequest)
     {
         throw (new ActionDisabledError());
     }
@@ -853,7 +853,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
 
     private class DoManufacturer implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String name;
@@ -865,7 +865,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 invocation.readStart();
                 invocation.readEnd();
 
-            Manufacturer outArgs = manufacturer(aVersion);
+            Manufacturer outArgs = manufacturer(invocation);
             name = outArgs.getName();
             info = outArgs.getInfo();
             url = outArgs.getUrl();
@@ -912,7 +912,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
 
     private class DoModel implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String name;
@@ -924,7 +924,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 invocation.readStart();
                 invocation.readEnd();
 
-            Model outArgs = model(aVersion);
+            Model outArgs = model(invocation);
             name = outArgs.getName();
             info = outArgs.getInfo();
             url = outArgs.getUrl();
@@ -971,7 +971,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
 
     private class DoProduct implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String name;
@@ -983,7 +983,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 invocation.readStart();
                 invocation.readEnd();
 
-            Product outArgs = product(aVersion);
+            Product outArgs = product(invocation);
             name = outArgs.getName();
             info = outArgs.getInfo();
             url = outArgs.getUrl();
@@ -1030,7 +1030,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
 
     private class DoAttributes implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String value;
@@ -1038,7 +1038,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = attributes(aVersion);
+                 value = attributes(invocation);
             }
             catch (ActionError ae)
             {
@@ -1078,7 +1078,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
 
     private class DoQuery implements IDvInvocationListener
     {
-        public void actionInvoked(long aInvocation, int aVersion)
+        public void actionInvoked(long aInvocation)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String request;
@@ -1088,7 +1088,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 invocation.readStart();
                 request = invocation.readString("Request");
                 invocation.readEnd();
-                 result = query(aVersion, request);
+                 result = query(invocation, request);
             }
             catch (ActionError ae)
             {
