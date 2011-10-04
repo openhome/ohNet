@@ -470,6 +470,11 @@ void CpiDeviceListUpnp::SubnetListChanged()
 void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 {
     NetworkAdapter* current = Stack::NetworkAdapterList().CurrentAdapter();
+    if (aNewSubnet && current != NULL && current->Address() == iInterface) {
+        // list of subnets has changed but our interface is still available so there's nothing for us to do here
+        current->RemoveRef();
+        return;
+    }
     iLock.Wait();
     delete iUnicastListener;
     iUnicastListener = NULL;
