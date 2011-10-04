@@ -10,12 +10,14 @@ using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgScheduledRecording2Cpp::SetPropertyLastChange(const std::string& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyLastChange, buf);
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::GetPropertyLastChange(std::string& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     const Brx& val = iPropertyLastChange->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -23,7 +25,11 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::GetPropertyLastChange(std::string&
 DvProviderUpnpOrgScheduledRecording2Cpp::DvProviderUpnpOrgScheduledRecording2Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ScheduledRecording", 2)
 {
-    
+    iPropertyLastChange = NULL;
+}
+
+void DvProviderUpnpOrgScheduledRecording2Cpp::EnablePropertyLastChange()
+{
     iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }

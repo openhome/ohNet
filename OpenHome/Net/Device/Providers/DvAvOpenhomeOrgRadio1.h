@@ -27,71 +27,99 @@ public:
     /**
      * Set the value of the Uri property
      *
+     * Can only be called if EnablePropertyUri has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyUri(const Brx& aValue);
     /**
      * Get a copy of the value of the Uri property
+     *
+     * Can only be called if EnablePropertyUri has previously been called.
      */
     void GetPropertyUri(Brhz& aValue);
     /**
      * Set the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyMetadata(const Brx& aValue);
     /**
      * Get a copy of the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      */
     void GetPropertyMetadata(Brhz& aValue);
     /**
      * Set the value of the TransportState property
+     *
+     * Can only be called if EnablePropertyTransportState has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyTransportState(const Brx& aValue);
     /**
      * Get a copy of the value of the TransportState property
+     *
+     * Can only be called if EnablePropertyTransportState has previously been called.
      */
     void GetPropertyTransportState(Brhz& aValue);
     /**
      * Set the value of the Id property
+     *
+     * Can only be called if EnablePropertyId has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyId(TUint aValue);
     /**
      * Get a copy of the value of the Id property
+     *
+     * Can only be called if EnablePropertyId has previously been called.
      */
     void GetPropertyId(TUint& aValue);
     /**
      * Set the value of the IdArray property
+     *
+     * Can only be called if EnablePropertyIdArray has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyIdArray(const Brx& aValue);
     /**
      * Get a copy of the value of the IdArray property
+     *
+     * Can only be called if EnablePropertyIdArray has previously been called.
      */
     void GetPropertyIdArray(Brh& aValue);
     /**
      * Set the value of the ChannelsMax property
+     *
+     * Can only be called if EnablePropertyChannelsMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyChannelsMax(TUint aValue);
     /**
      * Get a copy of the value of the ChannelsMax property
+     *
+     * Can only be called if EnablePropertyChannelsMax has previously been called.
      */
     void GetPropertyChannelsMax(TUint& aValue);
     /**
      * Set the value of the ProtocolInfo property
+     *
+     * Can only be called if EnablePropertyProtocolInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyProtocolInfo(const Brx& aValue);
     /**
      * Get a copy of the value of the ProtocolInfo property
+     *
+     * Can only be called if EnablePropertyProtocolInfo has previously been called.
      */
     void GetPropertyProtocolInfo(Brhz& aValue);
 protected:
@@ -101,6 +129,34 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgRadio1(DvDevice& aDevice);
+    /**
+     * Enable the Uri property.
+     */
+    void EnablePropertyUri();
+    /**
+     * Enable the Metadata property.
+     */
+    void EnablePropertyMetadata();
+    /**
+     * Enable the TransportState property.
+     */
+    void EnablePropertyTransportState();
+    /**
+     * Enable the Id property.
+     */
+    void EnablePropertyId();
+    /**
+     * Enable the IdArray property.
+     */
+    void EnablePropertyIdArray();
+    /**
+     * Enable the ChannelsMax property.
+     */
+    void EnablePropertyChannelsMax();
+    /**
+     * Enable the ProtocolInfo property.
+     */
+    void EnablePropertyProtocolInfo();
     /**
      * Signal that the action Play is supported.
      * The action's availability will be published in the device's service.xml.

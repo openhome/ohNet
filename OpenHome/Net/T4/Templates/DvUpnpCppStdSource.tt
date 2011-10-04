@@ -55,6 +55,7 @@ using namespace OpenHome::Net;
 
 bool <#=className#>::SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue)
 {
+    ASSERT(iProperty<#=s.name#> != NULL);
 <#      if (IsStringType(s)) #>
 <#      { #>
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
@@ -68,6 +69,7 @@ bool <#=className#>::SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue)
 
 void <#=className#>::GetProperty<#=s.name#>(<#=outArgType[s.type]#> aValue)
 {
+    ASSERT(iProperty<#=s.name#> != NULL);
 <#      if (IsStringType(s)) #>
 <#      { #>
     const Brx& val = iProperty<#=s.name#>->Value();
@@ -83,12 +85,20 @@ void <#=className#>::GetProperty<#=s.name#>(<#=outArgType[s.type]#> aValue)
 <#=className#>::<#=className#>(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
-    <#=DeclareAllowedValuesForProperties(u)#>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
+    iProperty<#=s.name#> = NULL;
+<#  } #>
+}
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>::EnableProperty<#=s.name#>()
+{
 <#      if (s.values.Count > 0) #>
 <#      { #>
-    index = 0;
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[<#=s.values.Count#>];
 <#          foreach (string val in s.values) #>
 <#          { #>
@@ -101,8 +111,8 @@ void <#=className#>::GetProperty<#=s.name#>(<#=outArgType[s.type]#> aValue)
     delete[] allowedValues;
 <#      } #>
     iService->AddProperty(iProperty<#=s.name#>); // passes ownership
-<#  } #>
 }
+<#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
@@ -397,18 +407,6 @@ string ActionArgTypesAndNames(Method a)
 string DeclareAllowedValues()
 {
     return "\n    TChar** allowedValues;\n    TUint index;";
-}
-
-string DeclareAllowedValuesForProperties(Document u)
-{
-    foreach (Variable s in u.evented)
-    {
-        if (s.values.Count > 0)
-        {
-            return DeclareAllowedValues();
-        }
-    }
-    return "";
 }
 
 string DeclareAllowedValuesForMethod(Method a)

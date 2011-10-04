@@ -284,6 +284,27 @@ DllExport THandle STDCALL DvProviderUpnpOrgDimming1Create(DvDeviceC aDevice);
 DllExport void STDCALL DvProviderUpnpOrgDimming1Destroy(THandle aProvider);
 
 /**
+ * Enable the LoadLevelStatus property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgDimming1EnablePropertyLoadLevelStatus(THandle aProvider);
+/**
+ * Enable the StepDelta property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgDimming1EnablePropertyStepDelta(THandle aProvider);
+/**
+ * Enable the RampRate property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgDimming1EnablePropertyRampRate(THandle aProvider);
+/**
+ * Enable the IsRamping property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgDimming1EnablePropertyIsRamping(THandle aProvider);
+/**
+ * Enable the RampPaused property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgDimming1EnablePropertyRampPaused(THandle aProvider);
+
+/**
  * Register a callback for the action SetLoadLevelTarget
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -518,6 +539,8 @@ DllExport void STDCALL DvProviderUpnpOrgDimming1EnableActionGetRampTime(THandle 
 /**
  * Set the value of the LoadLevelStatus property
  *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyLoadLevelStatus has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[in]  aValue     New value for the property
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -529,12 +552,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(TH
 /**
  * Get a copy of the value of the LoadLevelStatus property
  *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyLoadLevelStatus has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the StepDelta property
+ *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyStepDelta has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[in]  aValue     New value for the property
@@ -547,12 +574,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgDimming1SetPropertyStepDelta(THandle 
 /**
  * Get a copy of the value of the StepDelta property
  *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyStepDelta has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderUpnpOrgDimming1GetPropertyStepDelta(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the RampRate property
+ *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyRampRate has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[in]  aValue     New value for the property
@@ -565,12 +596,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgDimming1SetPropertyRampRate(THandle a
 /**
  * Get a copy of the value of the RampRate property
  *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyRampRate has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderUpnpOrgDimming1GetPropertyRampRate(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the IsRamping property
+ *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyIsRamping has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[in]  aValue     New value for the property
@@ -583,12 +618,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgDimming1SetPropertyIsRamping(THandle 
 /**
  * Get a copy of the value of the IsRamping property
  *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyIsRamping has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderUpnpOrgDimming1GetPropertyIsRamping(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the RampPaused property
+ *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyRampPaused has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[in]  aValue     New value for the property
@@ -600,6 +639,8 @@ DllExport void STDCALL DvProviderUpnpOrgDimming1GetPropertyIsRamping(THandle aPr
 DllExport int32_t STDCALL DvProviderUpnpOrgDimming1SetPropertyRampPaused(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the RampPaused property
+ *
+ * Can only be called if DvProviderUpnpOrgDimming1EnablePropertyRampPaused has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgDimming1Create
  * @param[out] aValue     Value for the property

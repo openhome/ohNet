@@ -27,61 +27,85 @@ public:
     /**
      * Set the value of the Metadata property
      *
+     * Can only be called if EnablePropertyMetadata has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyMetadata(const Brx& aValue);
     /**
      * Get a copy of the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      */
     void GetPropertyMetadata(Brhz& aValue);
     /**
      * Set the value of the ImagesXml property
+     *
+     * Can only be called if EnablePropertyImagesXml has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyImagesXml(const Brx& aValue);
     /**
      * Get a copy of the value of the ImagesXml property
+     *
+     * Can only be called if EnablePropertyImagesXml has previously been called.
      */
     void GetPropertyImagesXml(Brhz& aValue);
     /**
      * Set the value of the IdArray property
+     *
+     * Can only be called if EnablePropertyIdArray has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyIdArray(const Brx& aValue);
     /**
      * Get a copy of the value of the IdArray property
+     *
+     * Can only be called if EnablePropertyIdArray has previously been called.
      */
     void GetPropertyIdArray(Brh& aValue);
     /**
      * Set the value of the TokenArray property
+     *
+     * Can only be called if EnablePropertyTokenArray has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyTokenArray(const Brx& aValue);
     /**
      * Get a copy of the value of the TokenArray property
+     *
+     * Can only be called if EnablePropertyTokenArray has previously been called.
      */
     void GetPropertyTokenArray(Brh& aValue);
     /**
      * Set the value of the PlaylistsMax property
+     *
+     * Can only be called if EnablePropertyPlaylistsMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyPlaylistsMax(TUint aValue);
     /**
      * Get a copy of the value of the PlaylistsMax property
+     *
+     * Can only be called if EnablePropertyPlaylistsMax has previously been called.
      */
     void GetPropertyPlaylistsMax(TUint& aValue);
     /**
      * Set the value of the TracksMax property
+     *
+     * Can only be called if EnablePropertyTracksMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyTracksMax(TUint aValue);
     /**
      * Get a copy of the value of the TracksMax property
+     *
+     * Can only be called if EnablePropertyTracksMax has previously been called.
      */
     void GetPropertyTracksMax(TUint& aValue);
 protected:
@@ -91,6 +115,30 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgPlaylistManager1(DvDevice& aDevice);
+    /**
+     * Enable the Metadata property.
+     */
+    void EnablePropertyMetadata();
+    /**
+     * Enable the ImagesXml property.
+     */
+    void EnablePropertyImagesXml();
+    /**
+     * Enable the IdArray property.
+     */
+    void EnablePropertyIdArray();
+    /**
+     * Enable the TokenArray property.
+     */
+    void EnablePropertyTokenArray();
+    /**
+     * Enable the PlaylistsMax property.
+     */
+    void EnablePropertyPlaylistsMax();
+    /**
+     * Enable the TracksMax property.
+     */
+    void EnablePropertyTracksMax();
     /**
      * Signal that the action Metadata is supported.
      * The action's availability will be published in the device's service.xml.

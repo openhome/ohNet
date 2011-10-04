@@ -26,6 +26,10 @@ public:
     void GetPropertyTransportState(Brhz& aValue);
     TBool SetPropertyProtocolInfo(const Brx& aValue);
     void GetPropertyProtocolInfo(Brhz& aValue);
+    void EnablePropertyUri();
+    void EnablePropertyMetadata();
+    void EnablePropertyTransportState();
+    void EnablePropertyProtocolInfo();
     void EnableActionPlay(CallbackReceiver1Play aCallback, void* aPtr);
     void EnableActionStop(CallbackReceiver1Stop aCallback, void* aPtr);
     void EnableActionSetSender(CallbackReceiver1SetSender aCallback, void* aPtr);
@@ -61,14 +65,76 @@ private:
 DvProviderAvOpenhomeOrgReceiver1C::DvProviderAvOpenhomeOrgReceiver1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "av.openhome.org", "Receiver", 1)
 {
-    
-    TChar** allowedValues;
-    TUint index;
+    iPropertyUri = NULL;
+    iPropertyMetadata = NULL;
+    iPropertyTransportState = NULL;
+    iPropertyProtocolInfo = NULL;
+}
+
+TBool DvProviderAvOpenhomeOrgReceiver1C::SetPropertyUri(const Brx& aValue)
+{
+    ASSERT(iPropertyUri != NULL);
+    return SetPropertyString(*iPropertyUri, aValue);
+}
+
+void DvProviderAvOpenhomeOrgReceiver1C::GetPropertyUri(Brhz& aValue)
+{
+    ASSERT(iPropertyUri != NULL);
+    aValue.Set(iPropertyUri->Value());
+}
+
+TBool DvProviderAvOpenhomeOrgReceiver1C::SetPropertyMetadata(const Brx& aValue)
+{
+    ASSERT(iPropertyMetadata != NULL);
+    return SetPropertyString(*iPropertyMetadata, aValue);
+}
+
+void DvProviderAvOpenhomeOrgReceiver1C::GetPropertyMetadata(Brhz& aValue)
+{
+    ASSERT(iPropertyMetadata != NULL);
+    aValue.Set(iPropertyMetadata->Value());
+}
+
+TBool DvProviderAvOpenhomeOrgReceiver1C::SetPropertyTransportState(const Brx& aValue)
+{
+    ASSERT(iPropertyTransportState != NULL);
+    return SetPropertyString(*iPropertyTransportState, aValue);
+}
+
+void DvProviderAvOpenhomeOrgReceiver1C::GetPropertyTransportState(Brhz& aValue)
+{
+    ASSERT(iPropertyTransportState != NULL);
+    aValue.Set(iPropertyTransportState->Value());
+}
+
+TBool DvProviderAvOpenhomeOrgReceiver1C::SetPropertyProtocolInfo(const Brx& aValue)
+{
+    ASSERT(iPropertyProtocolInfo != NULL);
+    return SetPropertyString(*iPropertyProtocolInfo, aValue);
+}
+
+void DvProviderAvOpenhomeOrgReceiver1C::GetPropertyProtocolInfo(Brhz& aValue)
+{
+    ASSERT(iPropertyProtocolInfo != NULL);
+    aValue.Set(iPropertyProtocolInfo->Value());
+}
+
+void DvProviderAvOpenhomeOrgReceiver1C::EnablePropertyUri()
+{
     iPropertyUri = new PropertyString(new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgReceiver1C::EnablePropertyMetadata()
+{
     iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
-    index = 0;
+}
+
+void DvProviderAvOpenhomeOrgReceiver1C::EnablePropertyTransportState()
+{
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[4];
     allowedValues[index++] = (TChar*)"Stopped";
     allowedValues[index++] = (TChar*)"Playing";
@@ -77,48 +143,12 @@ DvProviderAvOpenhomeOrgReceiver1C::DvProviderAvOpenhomeOrgReceiver1C(DvDeviceC a
     iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgReceiver1C::EnablePropertyProtocolInfo()
+{
     iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo"));
     iService->AddProperty(iPropertyProtocolInfo); // passes ownership
-}
-
-TBool DvProviderAvOpenhomeOrgReceiver1C::SetPropertyUri(const Brx& aValue)
-{
-    return SetPropertyString(*iPropertyUri, aValue);
-}
-
-void DvProviderAvOpenhomeOrgReceiver1C::GetPropertyUri(Brhz& aValue)
-{
-    aValue.Set(iPropertyUri->Value());
-}
-
-TBool DvProviderAvOpenhomeOrgReceiver1C::SetPropertyMetadata(const Brx& aValue)
-{
-    return SetPropertyString(*iPropertyMetadata, aValue);
-}
-
-void DvProviderAvOpenhomeOrgReceiver1C::GetPropertyMetadata(Brhz& aValue)
-{
-    aValue.Set(iPropertyMetadata->Value());
-}
-
-TBool DvProviderAvOpenhomeOrgReceiver1C::SetPropertyTransportState(const Brx& aValue)
-{
-    return SetPropertyString(*iPropertyTransportState, aValue);
-}
-
-void DvProviderAvOpenhomeOrgReceiver1C::GetPropertyTransportState(Brhz& aValue)
-{
-    aValue.Set(iPropertyTransportState->Value());
-}
-
-TBool DvProviderAvOpenhomeOrgReceiver1C::SetPropertyProtocolInfo(const Brx& aValue)
-{
-    return SetPropertyString(*iPropertyProtocolInfo, aValue);
-}
-
-void DvProviderAvOpenhomeOrgReceiver1C::GetPropertyProtocolInfo(Brhz& aValue)
-{
-    aValue.Set(iPropertyProtocolInfo->Value());
 }
 
 void DvProviderAvOpenhomeOrgReceiver1C::EnableActionPlay(CallbackReceiver1Play aCallback, void* aPtr)
@@ -413,5 +443,25 @@ void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyProtocolInfo(THandle aPr
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->GetPropertyProtocolInfo(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnablePropertyUri(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnablePropertyUri();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnablePropertyMetadata(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnablePropertyMetadata();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnablePropertyTransportState(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnablePropertyTransportState();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnablePropertyProtocolInfo(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnablePropertyProtocolInfo();
 }
 

@@ -195,26 +195,103 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "av.openhome.org", "Volume", 1)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the Volume property.
+        /// </summary>
+        public void EnablePropertyVolume()
+        {
             iPropertyVolume = new PropertyUint(new ParameterUint("Volume"));
             AddProperty(iPropertyVolume);
+        }
+
+        /// <summary>
+        /// Enable the Mute property.
+        /// </summary>
+        public void EnablePropertyMute()
+        {
             iPropertyMute = new PropertyBool(new ParameterBool("Mute"));
             AddProperty(iPropertyMute);
+        }
+
+        /// <summary>
+        /// Enable the Balance property.
+        /// </summary>
+        public void EnablePropertyBalance()
+        {
             iPropertyBalance = new PropertyInt(new ParameterInt("Balance"));
             AddProperty(iPropertyBalance);
+        }
+
+        /// <summary>
+        /// Enable the Fade property.
+        /// </summary>
+        public void EnablePropertyFade()
+        {
             iPropertyFade = new PropertyInt(new ParameterInt("Fade"));
             AddProperty(iPropertyFade);
+        }
+
+        /// <summary>
+        /// Enable the VolumeLimit property.
+        /// </summary>
+        public void EnablePropertyVolumeLimit()
+        {
             iPropertyVolumeLimit = new PropertyUint(new ParameterUint("VolumeLimit"));
             AddProperty(iPropertyVolumeLimit);
+        }
+
+        /// <summary>
+        /// Enable the VolumeMax property.
+        /// </summary>
+        public void EnablePropertyVolumeMax()
+        {
             iPropertyVolumeMax = new PropertyUint(new ParameterUint("VolumeMax"));
             AddProperty(iPropertyVolumeMax);
+        }
+
+        /// <summary>
+        /// Enable the VolumeUnity property.
+        /// </summary>
+        public void EnablePropertyVolumeUnity()
+        {
             iPropertyVolumeUnity = new PropertyUint(new ParameterUint("VolumeUnity"));
             AddProperty(iPropertyVolumeUnity);
+        }
+
+        /// <summary>
+        /// Enable the VolumeSteps property.
+        /// </summary>
+        public void EnablePropertyVolumeSteps()
+        {
             iPropertyVolumeSteps = new PropertyUint(new ParameterUint("VolumeSteps"));
             AddProperty(iPropertyVolumeSteps);
+        }
+
+        /// <summary>
+        /// Enable the VolumeMilliDbPerStep property.
+        /// </summary>
+        public void EnablePropertyVolumeMilliDbPerStep()
+        {
             iPropertyVolumeMilliDbPerStep = new PropertyUint(new ParameterUint("VolumeMilliDbPerStep"));
             AddProperty(iPropertyVolumeMilliDbPerStep);
+        }
+
+        /// <summary>
+        /// Enable the BalanceMax property.
+        /// </summary>
+        public void EnablePropertyBalanceMax()
+        {
             iPropertyBalanceMax = new PropertyUint(new ParameterUint("BalanceMax"));
             AddProperty(iPropertyBalanceMax);
+        }
+
+        /// <summary>
+        /// Enable the FadeMax property.
+        /// </summary>
+        public void EnablePropertyFadeMax()
+        {
             iPropertyFadeMax = new PropertyUint(new ParameterUint("FadeMax"));
             AddProperty(iPropertyFadeMax);
         }
@@ -222,209 +299,275 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the Volume property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolume has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVolume(uint aValue)
         {
+            if (iPropertyVolume == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyVolume, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Volume property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolume has previously been called.</remarks>
         /// <returns>Value of the Volume property.</returns>
         public uint PropertyVolume()
         {
+            if (iPropertyVolume == null)
+                throw new PropertyDisabledError();
             return iPropertyVolume.Value();
         }
 
         /// <summary>
         /// Set the value of the Mute property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMute has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyMute(bool aValue)
         {
+            if (iPropertyMute == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyMute, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Mute property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMute has previously been called.</remarks>
         /// <returns>Value of the Mute property.</returns>
         public bool PropertyMute()
         {
+            if (iPropertyMute == null)
+                throw new PropertyDisabledError();
             return iPropertyMute.Value();
         }
 
         /// <summary>
         /// Set the value of the Balance property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBalance has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyBalance(int aValue)
         {
+            if (iPropertyBalance == null)
+                throw new PropertyDisabledError();
             return SetPropertyInt(iPropertyBalance, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Balance property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBalance has previously been called.</remarks>
         /// <returns>Value of the Balance property.</returns>
         public int PropertyBalance()
         {
+            if (iPropertyBalance == null)
+                throw new PropertyDisabledError();
             return iPropertyBalance.Value();
         }
 
         /// <summary>
         /// Set the value of the Fade property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyFade has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyFade(int aValue)
         {
+            if (iPropertyFade == null)
+                throw new PropertyDisabledError();
             return SetPropertyInt(iPropertyFade, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Fade property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyFade has previously been called.</remarks>
         /// <returns>Value of the Fade property.</returns>
         public int PropertyFade()
         {
+            if (iPropertyFade == null)
+                throw new PropertyDisabledError();
             return iPropertyFade.Value();
         }
 
         /// <summary>
         /// Set the value of the VolumeLimit property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeLimit has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVolumeLimit(uint aValue)
         {
+            if (iPropertyVolumeLimit == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyVolumeLimit, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VolumeLimit property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeLimit has previously been called.</remarks>
         /// <returns>Value of the VolumeLimit property.</returns>
         public uint PropertyVolumeLimit()
         {
+            if (iPropertyVolumeLimit == null)
+                throw new PropertyDisabledError();
             return iPropertyVolumeLimit.Value();
         }
 
         /// <summary>
         /// Set the value of the VolumeMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeMax has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVolumeMax(uint aValue)
         {
+            if (iPropertyVolumeMax == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyVolumeMax, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VolumeMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeMax has previously been called.</remarks>
         /// <returns>Value of the VolumeMax property.</returns>
         public uint PropertyVolumeMax()
         {
+            if (iPropertyVolumeMax == null)
+                throw new PropertyDisabledError();
             return iPropertyVolumeMax.Value();
         }
 
         /// <summary>
         /// Set the value of the VolumeUnity property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeUnity has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVolumeUnity(uint aValue)
         {
+            if (iPropertyVolumeUnity == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyVolumeUnity, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VolumeUnity property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeUnity has previously been called.</remarks>
         /// <returns>Value of the VolumeUnity property.</returns>
         public uint PropertyVolumeUnity()
         {
+            if (iPropertyVolumeUnity == null)
+                throw new PropertyDisabledError();
             return iPropertyVolumeUnity.Value();
         }
 
         /// <summary>
         /// Set the value of the VolumeSteps property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeSteps has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVolumeSteps(uint aValue)
         {
+            if (iPropertyVolumeSteps == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyVolumeSteps, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VolumeSteps property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeSteps has previously been called.</remarks>
         /// <returns>Value of the VolumeSteps property.</returns>
         public uint PropertyVolumeSteps()
         {
+            if (iPropertyVolumeSteps == null)
+                throw new PropertyDisabledError();
             return iPropertyVolumeSteps.Value();
         }
 
         /// <summary>
         /// Set the value of the VolumeMilliDbPerStep property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeMilliDbPerStep has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVolumeMilliDbPerStep(uint aValue)
         {
+            if (iPropertyVolumeMilliDbPerStep == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyVolumeMilliDbPerStep, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VolumeMilliDbPerStep property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVolumeMilliDbPerStep has previously been called.</remarks>
         /// <returns>Value of the VolumeMilliDbPerStep property.</returns>
         public uint PropertyVolumeMilliDbPerStep()
         {
+            if (iPropertyVolumeMilliDbPerStep == null)
+                throw new PropertyDisabledError();
             return iPropertyVolumeMilliDbPerStep.Value();
         }
 
         /// <summary>
         /// Set the value of the BalanceMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBalanceMax has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyBalanceMax(uint aValue)
         {
+            if (iPropertyBalanceMax == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyBalanceMax, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the BalanceMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBalanceMax has previously been called.</remarks>
         /// <returns>Value of the BalanceMax property.</returns>
         public uint PropertyBalanceMax()
         {
+            if (iPropertyBalanceMax == null)
+                throw new PropertyDisabledError();
             return iPropertyBalanceMax.Value();
         }
 
         /// <summary>
         /// Set the value of the FadeMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyFadeMax has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyFadeMax(uint aValue)
         {
+            if (iPropertyFadeMax == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyFadeMax, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the FadeMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyFadeMax has previously been called.</remarks>
         /// <returns>Value of the FadeMax property.</returns>
         public uint PropertyFadeMax()
         {
+            if (iPropertyFadeMax == null)
+                throw new PropertyDisabledError();
             return iPropertyFadeMax.Value();
         }
 

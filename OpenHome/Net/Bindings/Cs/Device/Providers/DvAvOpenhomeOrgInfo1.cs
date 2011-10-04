@@ -197,29 +197,116 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "av.openhome.org", "Info", 1)
         {
             iGch = GCHandle.Alloc(this);
-            List<String> allowedValues = new List<String>();
+        }
+
+        /// <summary>
+        /// Enable the TrackCount property.
+        /// </summary>
+        public void EnablePropertyTrackCount()
+        {
             iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
             AddProperty(iPropertyTrackCount);
+        }
+
+        /// <summary>
+        /// Enable the DetailsCount property.
+        /// </summary>
+        public void EnablePropertyDetailsCount()
+        {
             iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"));
             AddProperty(iPropertyDetailsCount);
+        }
+
+        /// <summary>
+        /// Enable the MetatextCount property.
+        /// </summary>
+        public void EnablePropertyMetatextCount()
+        {
             iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"));
             AddProperty(iPropertyMetatextCount);
+        }
+
+        /// <summary>
+        /// Enable the Uri property.
+        /// </summary>
+        public void EnablePropertyUri()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyUri = new PropertyString(new ParameterString("Uri", allowedValues));
             AddProperty(iPropertyUri);
+        }
+
+        /// <summary>
+        /// Enable the Metadata property.
+        /// </summary>
+        public void EnablePropertyMetadata()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
             AddProperty(iPropertyMetadata);
+        }
+
+        /// <summary>
+        /// Enable the Duration property.
+        /// </summary>
+        public void EnablePropertyDuration()
+        {
             iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
             AddProperty(iPropertyDuration);
+        }
+
+        /// <summary>
+        /// Enable the BitRate property.
+        /// </summary>
+        public void EnablePropertyBitRate()
+        {
             iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"));
             AddProperty(iPropertyBitRate);
+        }
+
+        /// <summary>
+        /// Enable the BitDepth property.
+        /// </summary>
+        public void EnablePropertyBitDepth()
+        {
             iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"));
             AddProperty(iPropertyBitDepth);
+        }
+
+        /// <summary>
+        /// Enable the SampleRate property.
+        /// </summary>
+        public void EnablePropertySampleRate()
+        {
             iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"));
             AddProperty(iPropertySampleRate);
+        }
+
+        /// <summary>
+        /// Enable the Lossless property.
+        /// </summary>
+        public void EnablePropertyLossless()
+        {
             iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"));
             AddProperty(iPropertyLossless);
+        }
+
+        /// <summary>
+        /// Enable the CodecName property.
+        /// </summary>
+        public void EnablePropertyCodecName()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyCodecName = new PropertyString(new ParameterString("CodecName", allowedValues));
             AddProperty(iPropertyCodecName);
+        }
+
+        /// <summary>
+        /// Enable the Metatext property.
+        /// </summary>
+        public void EnablePropertyMetatext()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyMetatext = new PropertyString(new ParameterString("Metatext", allowedValues));
             AddProperty(iPropertyMetatext);
         }
@@ -227,228 +314,300 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the TrackCount property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTrackCount has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyTrackCount(uint aValue)
         {
+            if (iPropertyTrackCount == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyTrackCount, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackCount property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTrackCount has previously been called.</remarks>
         /// <returns>Value of the TrackCount property.</returns>
         public uint PropertyTrackCount()
         {
+            if (iPropertyTrackCount == null)
+                throw new PropertyDisabledError();
             return iPropertyTrackCount.Value();
         }
 
         /// <summary>
         /// Set the value of the DetailsCount property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyDetailsCount has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyDetailsCount(uint aValue)
         {
+            if (iPropertyDetailsCount == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyDetailsCount, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DetailsCount property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyDetailsCount has previously been called.</remarks>
         /// <returns>Value of the DetailsCount property.</returns>
         public uint PropertyDetailsCount()
         {
+            if (iPropertyDetailsCount == null)
+                throw new PropertyDisabledError();
             return iPropertyDetailsCount.Value();
         }
 
         /// <summary>
         /// Set the value of the MetatextCount property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetatextCount has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyMetatextCount(uint aValue)
         {
+            if (iPropertyMetatextCount == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyMetatextCount, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the MetatextCount property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetatextCount has previously been called.</remarks>
         /// <returns>Value of the MetatextCount property.</returns>
         public uint PropertyMetatextCount()
         {
+            if (iPropertyMetatextCount == null)
+                throw new PropertyDisabledError();
             return iPropertyMetatextCount.Value();
         }
 
         /// <summary>
         /// Set the value of the Uri property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyUri has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyUri(string aValue)
         {
+            if (iPropertyUri == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyUri, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Uri property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyUri has previously been called.</remarks>
         /// <returns>Value of the Uri property.</returns>
         public string PropertyUri()
         {
+            if (iPropertyUri == null)
+                throw new PropertyDisabledError();
             return iPropertyUri.Value();
         }
 
         /// <summary>
         /// Set the value of the Metadata property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetadata has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyMetadata(string aValue)
         {
+            if (iPropertyMetadata == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyMetadata, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetadata has previously been called.</remarks>
         /// <returns>Value of the Metadata property.</returns>
         public string PropertyMetadata()
         {
+            if (iPropertyMetadata == null)
+                throw new PropertyDisabledError();
             return iPropertyMetadata.Value();
         }
 
         /// <summary>
         /// Set the value of the Duration property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyDuration has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyDuration(uint aValue)
         {
+            if (iPropertyDuration == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyDuration, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Duration property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyDuration has previously been called.</remarks>
         /// <returns>Value of the Duration property.</returns>
         public uint PropertyDuration()
         {
+            if (iPropertyDuration == null)
+                throw new PropertyDisabledError();
             return iPropertyDuration.Value();
         }
 
         /// <summary>
         /// Set the value of the BitRate property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBitRate has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyBitRate(uint aValue)
         {
+            if (iPropertyBitRate == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyBitRate, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the BitRate property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBitRate has previously been called.</remarks>
         /// <returns>Value of the BitRate property.</returns>
         public uint PropertyBitRate()
         {
+            if (iPropertyBitRate == null)
+                throw new PropertyDisabledError();
             return iPropertyBitRate.Value();
         }
 
         /// <summary>
         /// Set the value of the BitDepth property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBitDepth has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyBitDepth(uint aValue)
         {
+            if (iPropertyBitDepth == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyBitDepth, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the BitDepth property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBitDepth has previously been called.</remarks>
         /// <returns>Value of the BitDepth property.</returns>
         public uint PropertyBitDepth()
         {
+            if (iPropertyBitDepth == null)
+                throw new PropertyDisabledError();
             return iPropertyBitDepth.Value();
         }
 
         /// <summary>
         /// Set the value of the SampleRate property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySampleRate has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertySampleRate(uint aValue)
         {
+            if (iPropertySampleRate == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertySampleRate, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the SampleRate property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySampleRate has previously been called.</remarks>
         /// <returns>Value of the SampleRate property.</returns>
         public uint PropertySampleRate()
         {
+            if (iPropertySampleRate == null)
+                throw new PropertyDisabledError();
             return iPropertySampleRate.Value();
         }
 
         /// <summary>
         /// Set the value of the Lossless property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyLossless has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyLossless(bool aValue)
         {
+            if (iPropertyLossless == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyLossless, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Lossless property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyLossless has previously been called.</remarks>
         /// <returns>Value of the Lossless property.</returns>
         public bool PropertyLossless()
         {
+            if (iPropertyLossless == null)
+                throw new PropertyDisabledError();
             return iPropertyLossless.Value();
         }
 
         /// <summary>
         /// Set the value of the CodecName property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyCodecName has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyCodecName(string aValue)
         {
+            if (iPropertyCodecName == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyCodecName, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the CodecName property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyCodecName has previously been called.</remarks>
         /// <returns>Value of the CodecName property.</returns>
         public string PropertyCodecName()
         {
+            if (iPropertyCodecName == null)
+                throw new PropertyDisabledError();
             return iPropertyCodecName.Value();
         }
 
         /// <summary>
         /// Set the value of the Metatext property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetatext has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyMetatext(string aValue)
         {
+            if (iPropertyMetatext == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyMetatext, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Metatext property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetatext has previously been called.</remarks>
         /// <returns>Value of the Metatext property.</returns>
         public string PropertyMetatext()
         {
+            if (iPropertyMetatext == null)
+                throw new PropertyDisabledError();
             return iPropertyMetatext.Value();
         }
 

@@ -75,11 +75,15 @@ public:
     /**
      * Set the value of the <#=s.name#> property
      *
+     * Can only be called if EnableProperty<#=s.name#> has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue);
     /**
      * Get a copy of the value of the <#=s.name#> property
+     *
+     * Can only be called if EnableProperty<#=s.name#> has previously been called.
      */
     void GetProperty<#=s.name#>(<#=outArgType[s.type]#> aValue);
 <#  } #>
@@ -90,6 +94,13 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     <#=className#>(DvDeviceStd& aDevice);
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    /**
+     * Enable the <#=s.name#> property.
+     */
+    void EnableProperty<#=s.name#>();
+<#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     /**

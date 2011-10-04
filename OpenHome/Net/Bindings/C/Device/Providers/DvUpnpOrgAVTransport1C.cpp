@@ -20,6 +20,7 @@ public:
     DvProviderUpnpOrgAVTransport1C(DvDeviceC aDevice);
     TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
+    void EnablePropertyLastChange();
     void EnableActionSetAVTransportURI(CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr);
     void EnableActionSetNextAVTransportURI(CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr);
     void EnableActionGetMediaInfo(CallbackAVTransport1GetMediaInfo aCallback, void* aPtr);
@@ -96,19 +97,25 @@ private:
 DvProviderUpnpOrgAVTransport1C::DvProviderUpnpOrgAVTransport1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "AVTransport", 1)
 {
-    
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
-    iService->AddProperty(iPropertyLastChange); // passes ownership
+    iPropertyLastChange = NULL;
 }
 
 TBool DvProviderUpnpOrgAVTransport1C::SetPropertyLastChange(const Brx& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvProviderUpnpOrgAVTransport1C::GetPropertyLastChange(Brhz& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     aValue.Set(iPropertyLastChange->Value());
+}
+
+void DvProviderUpnpOrgAVTransport1C::EnablePropertyLastChange()
+{
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionSetAVTransportURI(CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr)
@@ -950,5 +957,10 @@ void STDCALL DvProviderUpnpOrgAVTransport1GetPropertyLastChange(THandle aProvide
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->GetPropertyLastChange(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderUpnpOrgAVTransport1EnablePropertyLastChange(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnablePropertyLastChange();
 }
 

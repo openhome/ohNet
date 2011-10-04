@@ -328,6 +328,35 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgPlaylist1Create(DvDeviceC aDevi
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1Destroy(THandle aProvider);
 
 /**
+ * Enable the TransportState property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnablePropertyTransportState(THandle aProvider);
+/**
+ * Enable the Repeat property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnablePropertyRepeat(THandle aProvider);
+/**
+ * Enable the Shuffle property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnablePropertyShuffle(THandle aProvider);
+/**
+ * Enable the Id property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnablePropertyId(THandle aProvider);
+/**
+ * Enable the IdArray property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnablePropertyIdArray(THandle aProvider);
+/**
+ * Enable the TracksMax property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnablePropertyTracksMax(THandle aProvider);
+/**
+ * Enable the ProtocolInfo property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnablePropertyProtocolInfo(THandle aProvider);
+
+/**
  * Register a callback for the action Play
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -595,6 +624,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionProtocolInfo(
 /**
  * Set the value of the TransportState property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyTransportState has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -606,12 +637,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyTransportSt
 /**
  * Get a copy of the value of the TransportState property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyTransportState has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyTransportState(THandle aProvider, char** aValue);
 /**
  * Set the value of the Repeat property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyRepeat has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[in]  aValue     New value for the property
@@ -624,12 +659,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyRepeat(THan
 /**
  * Get a copy of the value of the Repeat property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyRepeat has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyRepeat(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Shuffle property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyShuffle has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[in]  aValue     New value for the property
@@ -642,12 +681,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyShuffle(THa
 /**
  * Get a copy of the value of the Shuffle property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyShuffle has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyShuffle(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Id property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyId has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[in]  aValue     New value for the property
@@ -660,12 +703,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyId(THandle 
 /**
  * Get a copy of the value of the Id property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyId has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyId(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the IdArray property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyIdArray has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -679,6 +726,8 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyIdArray(THa
 /**
  * Get a copy of the value of the IdArray property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyIdArray has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  * @param[out] aValueLen  Size in bytes pointed to by aValue
@@ -686,6 +735,8 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyIdArray(THa
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen);
 /**
  * Set the value of the TracksMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyTracksMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[in]  aValue     New value for the property
@@ -698,12 +749,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyTracksMax(T
 /**
  * Get a copy of the value of the TracksMax property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyTracksMax has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyTracksMax(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the ProtocolInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyProtocolInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -715,6 +770,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyTracksMax(THan
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProtocolInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylist1EnablePropertyProtocolInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

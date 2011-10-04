@@ -100,19 +100,57 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "av.openhome.org", "Sender", 1)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the PresentationUrl property.
+        /// </summary>
+        public void EnablePropertyPresentationUrl()
+        {
             List<String> allowedValues = new List<String>();
             iPropertyPresentationUrl = new PropertyString(new ParameterString("PresentationUrl", allowedValues));
             AddProperty(iPropertyPresentationUrl);
+        }
+
+        /// <summary>
+        /// Enable the Metadata property.
+        /// </summary>
+        public void EnablePropertyMetadata()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
             AddProperty(iPropertyMetadata);
+        }
+
+        /// <summary>
+        /// Enable the Audio property.
+        /// </summary>
+        public void EnablePropertyAudio()
+        {
             iPropertyAudio = new PropertyBool(new ParameterBool("Audio"));
             AddProperty(iPropertyAudio);
+        }
+
+        /// <summary>
+        /// Enable the Status property.
+        /// </summary>
+        public void EnablePropertyStatus()
+        {
+            List<String> allowedValues = new List<String>();
             allowedValues.Add("Enabled");
             allowedValues.Add("Disabled");
             allowedValues.Add("Blocked");
             iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues));
             AddProperty(iPropertyStatus);
             allowedValues.Clear();
+        }
+
+        /// <summary>
+        /// Enable the Attributes property.
+        /// </summary>
+        public void EnablePropertyAttributes()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyAttributes = new PropertyString(new ParameterString("Attributes", allowedValues));
             AddProperty(iPropertyAttributes);
         }
@@ -120,95 +158,125 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the PresentationUrl property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyPresentationUrl has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyPresentationUrl(string aValue)
         {
+            if (iPropertyPresentationUrl == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyPresentationUrl, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the PresentationUrl property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyPresentationUrl has previously been called.</remarks>
         /// <returns>Value of the PresentationUrl property.</returns>
         public string PropertyPresentationUrl()
         {
+            if (iPropertyPresentationUrl == null)
+                throw new PropertyDisabledError();
             return iPropertyPresentationUrl.Value();
         }
 
         /// <summary>
         /// Set the value of the Metadata property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetadata has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyMetadata(string aValue)
         {
+            if (iPropertyMetadata == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyMetadata, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetadata has previously been called.</remarks>
         /// <returns>Value of the Metadata property.</returns>
         public string PropertyMetadata()
         {
+            if (iPropertyMetadata == null)
+                throw new PropertyDisabledError();
             return iPropertyMetadata.Value();
         }
 
         /// <summary>
         /// Set the value of the Audio property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyAudio has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyAudio(bool aValue)
         {
+            if (iPropertyAudio == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyAudio, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Audio property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyAudio has previously been called.</remarks>
         /// <returns>Value of the Audio property.</returns>
         public bool PropertyAudio()
         {
+            if (iPropertyAudio == null)
+                throw new PropertyDisabledError();
             return iPropertyAudio.Value();
         }
 
         /// <summary>
         /// Set the value of the Status property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyStatus has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyStatus(string aValue)
         {
+            if (iPropertyStatus == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyStatus, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Status property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyStatus has previously been called.</remarks>
         /// <returns>Value of the Status property.</returns>
         public string PropertyStatus()
         {
+            if (iPropertyStatus == null)
+                throw new PropertyDisabledError();
             return iPropertyStatus.Value();
         }
 
         /// <summary>
         /// Set the value of the Attributes property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyAttributes has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyAttributes(string aValue)
         {
+            if (iPropertyAttributes == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyAttributes, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Attributes property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyAttributes has previously been called.</remarks>
         /// <returns>Value of the Attributes property.</returns>
         public string PropertyAttributes()
         {
+            if (iPropertyAttributes == null)
+                throw new PropertyDisabledError();
             return iPropertyAttributes.Value();
         }
 

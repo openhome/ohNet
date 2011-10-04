@@ -342,6 +342,15 @@ DllExport THandle STDCALL DvProviderUpnpOrgAVTransport2Create(DvDeviceC aDevice)
 DllExport void STDCALL DvProviderUpnpOrgAVTransport2Destroy(THandle aProvider);
 
 /**
+ * Enable the LastChange property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgAVTransport2EnablePropertyLastChange(THandle aProvider);
+/**
+ * Enable the DRMState property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgAVTransport2EnablePropertyDRMState(THandle aProvider);
+
+/**
  * Register a callback for the action SetAVTransportURI
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -576,6 +585,8 @@ DllExport void STDCALL DvProviderUpnpOrgAVTransport2EnableActionSetStateVariable
 /**
  * Set the value of the LastChange property
  *
+ * Can only be called if DvProviderUpnpOrgAVTransport2EnablePropertyLastChange has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgAVTransport2Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -587,12 +598,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgAVTransport2SetPropertyLastChange(THa
 /**
  * Get a copy of the value of the LastChange property
  *
+ * Can only be called if DvProviderUpnpOrgAVTransport2EnablePropertyLastChange has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgAVTransport2Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderUpnpOrgAVTransport2GetPropertyLastChange(THandle aProvider, char** aValue);
 /**
  * Set the value of the DRMState property
+ *
+ * Can only be called if DvProviderUpnpOrgAVTransport2EnablePropertyDRMState has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgAVTransport2Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -604,6 +619,8 @@ DllExport void STDCALL DvProviderUpnpOrgAVTransport2GetPropertyLastChange(THandl
 DllExport int32_t STDCALL DvProviderUpnpOrgAVTransport2SetPropertyDRMState(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the DRMState property
+ *
+ * Can only be called if DvProviderUpnpOrgAVTransport2EnablePropertyDRMState has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgAVTransport2Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

@@ -44,6 +44,11 @@ ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     : DvProviderOpenhomeOrgTestBasic1(aDevice)
 {
     // Initialise all properties in case external control points decide to subscribe to this service
+    EnablePropertyVarUint();
+    EnablePropertyVarInt();
+    EnablePropertyVarBool();
+    EnablePropertyVarStr();
+    EnablePropertyVarBin();
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
     SetPropertyVarBool(false);

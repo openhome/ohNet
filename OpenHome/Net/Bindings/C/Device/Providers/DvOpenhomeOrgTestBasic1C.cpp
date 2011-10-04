@@ -28,6 +28,11 @@ public:
     void GetPropertyVarStr(Brhz& aValue);
     TBool SetPropertyVarBin(const Brx& aValue);
     void GetPropertyVarBin(Brh& aValue);
+    void EnablePropertyVarUint();
+    void EnablePropertyVarInt();
+    void EnablePropertyVarBool();
+    void EnablePropertyVarStr();
+    void EnablePropertyVarBin();
     void EnableActionIncrement(CallbackTestBasic1Increment aCallback, void* aPtr);
     void EnableActionDecrement(CallbackTestBasic1Decrement aCallback, void* aPtr);
     void EnableActionToggle(CallbackTestBasic1Toggle aCallback, void* aPtr);
@@ -116,67 +121,101 @@ private:
 DvProviderOpenhomeOrgTestBasic1C::DvProviderOpenhomeOrgTestBasic1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "openhome.org", "TestBasic", 1)
 {
-    
-    iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
-    iService->AddProperty(iPropertyVarUint); // passes ownership
-    iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
-    iService->AddProperty(iPropertyVarInt); // passes ownership
-    iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
-    iService->AddProperty(iPropertyVarBool); // passes ownership
-    iPropertyVarStr = new PropertyString(new ParameterString("VarStr"));
-    iService->AddProperty(iPropertyVarStr); // passes ownership
-    iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
-    iService->AddProperty(iPropertyVarBin); // passes ownership
+    iPropertyVarUint = NULL;
+    iPropertyVarInt = NULL;
+    iPropertyVarBool = NULL;
+    iPropertyVarStr = NULL;
+    iPropertyVarBin = NULL;
 }
 
 TBool DvProviderOpenhomeOrgTestBasic1C::SetPropertyVarUint(TUint aValue)
 {
+    ASSERT(iPropertyVarUint != NULL);
     return SetPropertyUint(*iPropertyVarUint, aValue);
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::GetPropertyVarUint(TUint& aValue)
 {
+    ASSERT(iPropertyVarUint != NULL);
     aValue = iPropertyVarUint->Value();
 }
 
 TBool DvProviderOpenhomeOrgTestBasic1C::SetPropertyVarInt(TInt aValue)
 {
+    ASSERT(iPropertyVarInt != NULL);
     return SetPropertyInt(*iPropertyVarInt, aValue);
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::GetPropertyVarInt(TInt& aValue)
 {
+    ASSERT(iPropertyVarInt != NULL);
     aValue = iPropertyVarInt->Value();
 }
 
 TBool DvProviderOpenhomeOrgTestBasic1C::SetPropertyVarBool(TBool aValue)
 {
+    ASSERT(iPropertyVarBool != NULL);
     return SetPropertyBool(*iPropertyVarBool, aValue);
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::GetPropertyVarBool(TBool& aValue)
 {
+    ASSERT(iPropertyVarBool != NULL);
     aValue = iPropertyVarBool->Value();
 }
 
 TBool DvProviderOpenhomeOrgTestBasic1C::SetPropertyVarStr(const Brx& aValue)
 {
+    ASSERT(iPropertyVarStr != NULL);
     return SetPropertyString(*iPropertyVarStr, aValue);
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::GetPropertyVarStr(Brhz& aValue)
 {
+    ASSERT(iPropertyVarStr != NULL);
     aValue.Set(iPropertyVarStr->Value());
 }
 
 TBool DvProviderOpenhomeOrgTestBasic1C::SetPropertyVarBin(const Brx& aValue)
 {
+    ASSERT(iPropertyVarBin != NULL);
     return SetPropertyBinary(*iPropertyVarBin, aValue);
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::GetPropertyVarBin(Brh& aValue)
 {
+    ASSERT(iPropertyVarBin != NULL);
     aValue.Set(iPropertyVarBin->Value());
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::EnablePropertyVarUint()
+{
+    iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
+    iService->AddProperty(iPropertyVarUint); // passes ownership
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::EnablePropertyVarInt()
+{
+    iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
+    iService->AddProperty(iPropertyVarInt); // passes ownership
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::EnablePropertyVarBool()
+{
+    iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
+    iService->AddProperty(iPropertyVarBool); // passes ownership
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::EnablePropertyVarStr()
+{
+    iPropertyVarStr = new PropertyString(new ParameterString("VarStr"));
+    iService->AddProperty(iPropertyVarStr); // passes ownership
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::EnablePropertyVarBin()
+{
+    iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
+    iService->AddProperty(iPropertyVarBin); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::EnableActionIncrement(CallbackTestBasic1Increment aCallback, void* aPtr)
@@ -958,5 +997,30 @@ void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarBin(THandle aProvider,
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->GetPropertyVarBin(buf);
     *aValueLen = buf.Bytes();
     *aValue = (char*)buf.Extract();
+}
+
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarUint(THandle aProvider)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnablePropertyVarUint();
+}
+
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarInt(THandle aProvider)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnablePropertyVarInt();
+}
+
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBool(THandle aProvider)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnablePropertyVarBool();
+}
+
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarStr(THandle aProvider)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnablePropertyVarStr();
+}
+
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBin(THandle aProvider)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnablePropertyVarBin();
 }
 

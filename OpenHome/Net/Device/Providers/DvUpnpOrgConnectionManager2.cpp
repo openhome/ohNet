@@ -9,42 +9,62 @@ using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgConnectionManager2::SetPropertySourceProtocolInfo(const Brx& aValue)
 {
+    ASSERT(iPropertySourceProtocolInfo != NULL);
     return SetPropertyString(*iPropertySourceProtocolInfo, aValue);
 }
 
 void DvProviderUpnpOrgConnectionManager2::GetPropertySourceProtocolInfo(Brhz& aValue)
 {
+    ASSERT(iPropertySourceProtocolInfo != NULL);
     aValue.Set(iPropertySourceProtocolInfo->Value());
 }
 
 TBool DvProviderUpnpOrgConnectionManager2::SetPropertySinkProtocolInfo(const Brx& aValue)
 {
+    ASSERT(iPropertySinkProtocolInfo != NULL);
     return SetPropertyString(*iPropertySinkProtocolInfo, aValue);
 }
 
 void DvProviderUpnpOrgConnectionManager2::GetPropertySinkProtocolInfo(Brhz& aValue)
 {
+    ASSERT(iPropertySinkProtocolInfo != NULL);
     aValue.Set(iPropertySinkProtocolInfo->Value());
 }
 
 TBool DvProviderUpnpOrgConnectionManager2::SetPropertyCurrentConnectionIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyCurrentConnectionIDs != NULL);
     return SetPropertyString(*iPropertyCurrentConnectionIDs, aValue);
 }
 
 void DvProviderUpnpOrgConnectionManager2::GetPropertyCurrentConnectionIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyCurrentConnectionIDs != NULL);
     aValue.Set(iPropertyCurrentConnectionIDs->Value());
 }
 
 DvProviderUpnpOrgConnectionManager2::DvProviderUpnpOrgConnectionManager2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ConnectionManager", 2)
 {
-    
+    iPropertySourceProtocolInfo = NULL;
+    iPropertySinkProtocolInfo = NULL;
+    iPropertyCurrentConnectionIDs = NULL;
+}
+
+void DvProviderUpnpOrgConnectionManager2::EnablePropertySourceProtocolInfo()
+{
     iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"));
     iService->AddProperty(iPropertySourceProtocolInfo); // passes ownership
+}
+
+void DvProviderUpnpOrgConnectionManager2::EnablePropertySinkProtocolInfo()
+{
     iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"));
     iService->AddProperty(iPropertySinkProtocolInfo); // passes ownership
+}
+
+void DvProviderUpnpOrgConnectionManager2::EnablePropertyCurrentConnectionIDs()
+{
     iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"));
     iService->AddProperty(iPropertyCurrentConnectionIDs); // passes ownership
 }

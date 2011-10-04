@@ -13,6 +13,11 @@ namespace OpenHome.Net
         public ProviderTestBasic(DvDevice aDevice)
             : base(aDevice)
         {
+            EnablePropertyVarUint();
+            EnablePropertyVarInt();
+            EnablePropertyVarBool();
+            EnablePropertyVarStr();
+            EnablePropertyVarBin();
             SetPropertyVarUint(0);
             SetPropertyVarInt(0);
             SetPropertyVarBool(false);

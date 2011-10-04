@@ -30,31 +30,43 @@ public:
     /**
      * Set the value of the SourceProtocolInfo property
      *
+     * Can only be called if EnablePropertySourceProtocolInfo has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertySourceProtocolInfo(const std::string& aValue);
     /**
      * Get a copy of the value of the SourceProtocolInfo property
+     *
+     * Can only be called if EnablePropertySourceProtocolInfo has previously been called.
      */
     void GetPropertySourceProtocolInfo(std::string& aValue);
     /**
      * Set the value of the SinkProtocolInfo property
+     *
+     * Can only be called if EnablePropertySinkProtocolInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertySinkProtocolInfo(const std::string& aValue);
     /**
      * Get a copy of the value of the SinkProtocolInfo property
+     *
+     * Can only be called if EnablePropertySinkProtocolInfo has previously been called.
      */
     void GetPropertySinkProtocolInfo(std::string& aValue);
     /**
      * Set the value of the CurrentConnectionIDs property
+     *
+     * Can only be called if EnablePropertyCurrentConnectionIDs has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyCurrentConnectionIDs(const std::string& aValue);
     /**
      * Get a copy of the value of the CurrentConnectionIDs property
+     *
+     * Can only be called if EnablePropertyCurrentConnectionIDs has previously been called.
      */
     void GetPropertyCurrentConnectionIDs(std::string& aValue);
 protected:
@@ -64,6 +76,18 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgConnectionManager2Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the SourceProtocolInfo property.
+     */
+    void EnablePropertySourceProtocolInfo();
+    /**
+     * Enable the SinkProtocolInfo property.
+     */
+    void EnablePropertySinkProtocolInfo();
+    /**
+     * Enable the CurrentConnectionIDs property.
+     */
+    void EnablePropertyCurrentConnectionIDs();
     /**
      * Signal that the action GetProtocolInfo is supported.
      * The action's availability will be published in the device's service.xml.

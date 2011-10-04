@@ -26,6 +26,10 @@ public:
     void GetPropertyLastChange(Brhz& aValue);
     TBool SetPropertyTransferIDs(const Brx& aValue);
     void GetPropertyTransferIDs(Brhz& aValue);
+    void EnablePropertySystemUpdateID();
+    void EnablePropertyContainerUpdateIDs();
+    void EnablePropertyLastChange();
+    void EnablePropertyTransferIDs();
     void EnableActionGetSearchCapabilities(CallbackContentDirectory3GetSearchCapabilities aCallback, void* aPtr);
     void EnableActionGetSortCapabilities(CallbackContentDirectory3GetSortCapabilities aCallback, void* aPtr);
     void EnableActionGetSortExtensionCapabilities(CallbackContentDirectory3GetSortExtensionCapabilities aCallback, void* aPtr);
@@ -117,55 +121,82 @@ private:
 DvProviderUpnpOrgContentDirectory3C::DvProviderUpnpOrgContentDirectory3C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "ContentDirectory", 3)
 {
-    
-    iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
-    iService->AddProperty(iPropertySystemUpdateID); // passes ownership
-    iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
-    iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
-    iService->AddProperty(iPropertyLastChange); // passes ownership
-    iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
-    iService->AddProperty(iPropertyTransferIDs); // passes ownership
+    iPropertySystemUpdateID = NULL;
+    iPropertyContainerUpdateIDs = NULL;
+    iPropertyLastChange = NULL;
+    iPropertyTransferIDs = NULL;
 }
 
 TBool DvProviderUpnpOrgContentDirectory3C::SetPropertySystemUpdateID(TUint aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     return SetPropertyUint(*iPropertySystemUpdateID, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory3C::GetPropertySystemUpdateID(TUint& aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     aValue = iPropertySystemUpdateID->Value();
 }
 
 TBool DvProviderUpnpOrgContentDirectory3C::SetPropertyContainerUpdateIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     return SetPropertyString(*iPropertyContainerUpdateIDs, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory3C::GetPropertyContainerUpdateIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     aValue.Set(iPropertyContainerUpdateIDs->Value());
 }
 
 TBool DvProviderUpnpOrgContentDirectory3C::SetPropertyLastChange(const Brx& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory3C::GetPropertyLastChange(Brhz& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     aValue.Set(iPropertyLastChange->Value());
 }
 
 TBool DvProviderUpnpOrgContentDirectory3C::SetPropertyTransferIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     return SetPropertyString(*iPropertyTransferIDs, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory3C::GetPropertyTransferIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     aValue.Set(iPropertyTransferIDs->Value());
+}
+
+void DvProviderUpnpOrgContentDirectory3C::EnablePropertySystemUpdateID()
+{
+    iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
+    iService->AddProperty(iPropertySystemUpdateID); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory3C::EnablePropertyContainerUpdateIDs()
+{
+    iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
+    iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory3C::EnablePropertyLastChange()
+{
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iService->AddProperty(iPropertyLastChange); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory3C::EnablePropertyTransferIDs()
+{
+    iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
+    iService->AddProperty(iPropertyTransferIDs); // passes ownership
 }
 
 void DvProviderUpnpOrgContentDirectory3C::EnableActionGetSearchCapabilities(CallbackContentDirectory3GetSearchCapabilities aCallback, void* aPtr)
@@ -1130,5 +1161,25 @@ void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertyTransferIDs(THandle aP
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgContentDirectory3C*>(aProvider)->GetPropertyTransferIDs(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderUpnpOrgContentDirectory3EnablePropertySystemUpdateID(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory3C*>(aProvider)->EnablePropertySystemUpdateID();
+}
+
+void STDCALL DvProviderUpnpOrgContentDirectory3EnablePropertyContainerUpdateIDs(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory3C*>(aProvider)->EnablePropertyContainerUpdateIDs();
+}
+
+void STDCALL DvProviderUpnpOrgContentDirectory3EnablePropertyLastChange(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory3C*>(aProvider)->EnablePropertyLastChange();
+}
+
+void STDCALL DvProviderUpnpOrgContentDirectory3EnablePropertyTransferIDs(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory3C*>(aProvider)->EnablePropertyTransferIDs();
 }
 

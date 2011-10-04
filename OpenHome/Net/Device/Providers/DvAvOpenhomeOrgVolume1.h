@@ -27,111 +27,155 @@ public:
     /**
      * Set the value of the Volume property
      *
+     * Can only be called if EnablePropertyVolume has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVolume(TUint aValue);
     /**
      * Get a copy of the value of the Volume property
+     *
+     * Can only be called if EnablePropertyVolume has previously been called.
      */
     void GetPropertyVolume(TUint& aValue);
     /**
      * Set the value of the Mute property
+     *
+     * Can only be called if EnablePropertyMute has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyMute(TBool aValue);
     /**
      * Get a copy of the value of the Mute property
+     *
+     * Can only be called if EnablePropertyMute has previously been called.
      */
     void GetPropertyMute(TBool& aValue);
     /**
      * Set the value of the Balance property
+     *
+     * Can only be called if EnablePropertyBalance has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyBalance(TInt aValue);
     /**
      * Get a copy of the value of the Balance property
+     *
+     * Can only be called if EnablePropertyBalance has previously been called.
      */
     void GetPropertyBalance(TInt& aValue);
     /**
      * Set the value of the Fade property
+     *
+     * Can only be called if EnablePropertyFade has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyFade(TInt aValue);
     /**
      * Get a copy of the value of the Fade property
+     *
+     * Can only be called if EnablePropertyFade has previously been called.
      */
     void GetPropertyFade(TInt& aValue);
     /**
      * Set the value of the VolumeLimit property
+     *
+     * Can only be called if EnablePropertyVolumeLimit has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVolumeLimit(TUint aValue);
     /**
      * Get a copy of the value of the VolumeLimit property
+     *
+     * Can only be called if EnablePropertyVolumeLimit has previously been called.
      */
     void GetPropertyVolumeLimit(TUint& aValue);
     /**
      * Set the value of the VolumeMax property
+     *
+     * Can only be called if EnablePropertyVolumeMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVolumeMax(TUint aValue);
     /**
      * Get a copy of the value of the VolumeMax property
+     *
+     * Can only be called if EnablePropertyVolumeMax has previously been called.
      */
     void GetPropertyVolumeMax(TUint& aValue);
     /**
      * Set the value of the VolumeUnity property
+     *
+     * Can only be called if EnablePropertyVolumeUnity has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVolumeUnity(TUint aValue);
     /**
      * Get a copy of the value of the VolumeUnity property
+     *
+     * Can only be called if EnablePropertyVolumeUnity has previously been called.
      */
     void GetPropertyVolumeUnity(TUint& aValue);
     /**
      * Set the value of the VolumeSteps property
+     *
+     * Can only be called if EnablePropertyVolumeSteps has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVolumeSteps(TUint aValue);
     /**
      * Get a copy of the value of the VolumeSteps property
+     *
+     * Can only be called if EnablePropertyVolumeSteps has previously been called.
      */
     void GetPropertyVolumeSteps(TUint& aValue);
     /**
      * Set the value of the VolumeMilliDbPerStep property
+     *
+     * Can only be called if EnablePropertyVolumeMilliDbPerStep has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVolumeMilliDbPerStep(TUint aValue);
     /**
      * Get a copy of the value of the VolumeMilliDbPerStep property
+     *
+     * Can only be called if EnablePropertyVolumeMilliDbPerStep has previously been called.
      */
     void GetPropertyVolumeMilliDbPerStep(TUint& aValue);
     /**
      * Set the value of the BalanceMax property
+     *
+     * Can only be called if EnablePropertyBalanceMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyBalanceMax(TUint aValue);
     /**
      * Get a copy of the value of the BalanceMax property
+     *
+     * Can only be called if EnablePropertyBalanceMax has previously been called.
      */
     void GetPropertyBalanceMax(TUint& aValue);
     /**
      * Set the value of the FadeMax property
+     *
+     * Can only be called if EnablePropertyFadeMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyFadeMax(TUint aValue);
     /**
      * Get a copy of the value of the FadeMax property
+     *
+     * Can only be called if EnablePropertyFadeMax has previously been called.
      */
     void GetPropertyFadeMax(TUint& aValue);
 protected:
@@ -141,6 +185,50 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgVolume1(DvDevice& aDevice);
+    /**
+     * Enable the Volume property.
+     */
+    void EnablePropertyVolume();
+    /**
+     * Enable the Mute property.
+     */
+    void EnablePropertyMute();
+    /**
+     * Enable the Balance property.
+     */
+    void EnablePropertyBalance();
+    /**
+     * Enable the Fade property.
+     */
+    void EnablePropertyFade();
+    /**
+     * Enable the VolumeLimit property.
+     */
+    void EnablePropertyVolumeLimit();
+    /**
+     * Enable the VolumeMax property.
+     */
+    void EnablePropertyVolumeMax();
+    /**
+     * Enable the VolumeUnity property.
+     */
+    void EnablePropertyVolumeUnity();
+    /**
+     * Enable the VolumeSteps property.
+     */
+    void EnablePropertyVolumeSteps();
+    /**
+     * Enable the VolumeMilliDbPerStep property.
+     */
+    void EnablePropertyVolumeMilliDbPerStep();
+    /**
+     * Enable the BalanceMax property.
+     */
+    void EnablePropertyBalanceMax();
+    /**
+     * Enable the FadeMax property.
+     */
+    void EnablePropertyFadeMax();
     /**
      * Signal that the action Characteristics is supported.
      * The action's availability will be published in the device's service.xml.

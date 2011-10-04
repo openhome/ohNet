@@ -51,6 +51,19 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgTime1Create(DvDeviceC aDevice);
 DllExport void STDCALL DvProviderAvOpenhomeOrgTime1Destroy(THandle aProvider);
 
 /**
+ * Enable the TrackCount property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgTime1EnablePropertyTrackCount(THandle aProvider);
+/**
+ * Enable the Duration property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgTime1EnablePropertyDuration(THandle aProvider);
+/**
+ * Enable the Seconds property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgTime1EnablePropertySeconds(THandle aProvider);
+
+/**
  * Register a callback for the action Time
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -65,6 +78,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgTime1EnableActionTime(THandle aPro
 /**
  * Set the value of the TrackCount property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgTime1EnablePropertyTrackCount has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgTime1Create
  * @param[in]  aValue     New value for the property
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -76,12 +91,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgTime1SetPropertyTrackCount(THan
 /**
  * Get a copy of the value of the TrackCount property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgTime1EnablePropertyTrackCount has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgTime1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgTime1GetPropertyTrackCount(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Duration property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgTime1EnablePropertyDuration has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgTime1Create
  * @param[in]  aValue     New value for the property
@@ -94,12 +113,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgTime1SetPropertyDuration(THandl
 /**
  * Get a copy of the value of the Duration property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgTime1EnablePropertyDuration has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgTime1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgTime1GetPropertyDuration(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Seconds property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgTime1EnablePropertySeconds has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgTime1Create
  * @param[in]  aValue     New value for the property
@@ -111,6 +134,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgTime1GetPropertyDuration(THandle a
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgTime1SetPropertySeconds(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Seconds property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgTime1EnablePropertySeconds has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgTime1Create
  * @param[out] aValue     Value for the property

@@ -10,128 +10,152 @@ using namespace OpenHome::Net;
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyTrackCount(uint32_t aValue)
 {
+    ASSERT(iPropertyTrackCount != NULL);
     return SetPropertyUint(*iPropertyTrackCount, aValue);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyTrackCount(uint32_t& aValue)
 {
+    ASSERT(iPropertyTrackCount != NULL);
     aValue = iPropertyTrackCount->Value();
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyDetailsCount(uint32_t aValue)
 {
+    ASSERT(iPropertyDetailsCount != NULL);
     return SetPropertyUint(*iPropertyDetailsCount, aValue);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyDetailsCount(uint32_t& aValue)
 {
+    ASSERT(iPropertyDetailsCount != NULL);
     aValue = iPropertyDetailsCount->Value();
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyMetatextCount(uint32_t aValue)
 {
+    ASSERT(iPropertyMetatextCount != NULL);
     return SetPropertyUint(*iPropertyMetatextCount, aValue);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyMetatextCount(uint32_t& aValue)
 {
+    ASSERT(iPropertyMetatextCount != NULL);
     aValue = iPropertyMetatextCount->Value();
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyUri(const std::string& aValue)
 {
+    ASSERT(iPropertyUri != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyUri, buf);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyUri(std::string& aValue)
 {
+    ASSERT(iPropertyUri != NULL);
     const Brx& val = iPropertyUri->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyMetadata(const std::string& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyMetadata, buf);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyMetadata(std::string& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     const Brx& val = iPropertyMetadata->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyDuration(uint32_t aValue)
 {
+    ASSERT(iPropertyDuration != NULL);
     return SetPropertyUint(*iPropertyDuration, aValue);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyDuration(uint32_t& aValue)
 {
+    ASSERT(iPropertyDuration != NULL);
     aValue = iPropertyDuration->Value();
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyBitRate(uint32_t aValue)
 {
+    ASSERT(iPropertyBitRate != NULL);
     return SetPropertyUint(*iPropertyBitRate, aValue);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyBitRate(uint32_t& aValue)
 {
+    ASSERT(iPropertyBitRate != NULL);
     aValue = iPropertyBitRate->Value();
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyBitDepth(uint32_t aValue)
 {
+    ASSERT(iPropertyBitDepth != NULL);
     return SetPropertyUint(*iPropertyBitDepth, aValue);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyBitDepth(uint32_t& aValue)
 {
+    ASSERT(iPropertyBitDepth != NULL);
     aValue = iPropertyBitDepth->Value();
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertySampleRate(uint32_t aValue)
 {
+    ASSERT(iPropertySampleRate != NULL);
     return SetPropertyUint(*iPropertySampleRate, aValue);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertySampleRate(uint32_t& aValue)
 {
+    ASSERT(iPropertySampleRate != NULL);
     aValue = iPropertySampleRate->Value();
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyLossless(bool aValue)
 {
+    ASSERT(iPropertyLossless != NULL);
     return SetPropertyBool(*iPropertyLossless, aValue);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyLossless(bool& aValue)
 {
+    ASSERT(iPropertyLossless != NULL);
     aValue = iPropertyLossless->Value();
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyCodecName(const std::string& aValue)
 {
+    ASSERT(iPropertyCodecName != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyCodecName, buf);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyCodecName(std::string& aValue)
 {
+    ASSERT(iPropertyCodecName != NULL);
     const Brx& val = iPropertyCodecName->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyMetatext(const std::string& aValue)
 {
+    ASSERT(iPropertyMetatext != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyMetatext, buf);
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyMetatext(std::string& aValue)
 {
+    ASSERT(iPropertyMetatext != NULL);
     const Brx& val = iPropertyMetatext->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -139,29 +163,88 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::GetPropertyMetatext(std::string& aValue)
 DvProviderAvOpenhomeOrgInfo1Cpp::DvProviderAvOpenhomeOrgInfo1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Info", 1)
 {
-    
+    iPropertyTrackCount = NULL;
+    iPropertyDetailsCount = NULL;
+    iPropertyMetatextCount = NULL;
+    iPropertyUri = NULL;
+    iPropertyMetadata = NULL;
+    iPropertyDuration = NULL;
+    iPropertyBitRate = NULL;
+    iPropertyBitDepth = NULL;
+    iPropertySampleRate = NULL;
+    iPropertyLossless = NULL;
+    iPropertyCodecName = NULL;
+    iPropertyMetatext = NULL;
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyTrackCount()
+{
     iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyDetailsCount()
+{
     iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"));
     iService->AddProperty(iPropertyDetailsCount); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyMetatextCount()
+{
     iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"));
     iService->AddProperty(iPropertyMetatextCount); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyUri()
+{
     iPropertyUri = new PropertyString(new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyMetadata()
+{
     iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyDuration()
+{
     iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyBitRate()
+{
     iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"));
     iService->AddProperty(iPropertyBitRate); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyBitDepth()
+{
     iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"));
     iService->AddProperty(iPropertyBitDepth); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertySampleRate()
+{
     iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"));
     iService->AddProperty(iPropertySampleRate); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyLossless()
+{
     iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"));
     iService->AddProperty(iPropertyLossless); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyCodecName()
+{
     iPropertyCodecName = new PropertyString(new ParameterString("CodecName"));
     iService->AddProperty(iPropertyCodecName); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyMetatext()
+{
     iPropertyMetatext = new PropertyString(new ParameterString("Metatext"));
     iService->AddProperty(iPropertyMetatext); // passes ownership
 }

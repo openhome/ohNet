@@ -10,58 +10,68 @@ using namespace OpenHome::Net;
 
 bool DvProviderAvOpenhomeOrgSender1Cpp::SetPropertyPresentationUrl(const std::string& aValue)
 {
+    ASSERT(iPropertyPresentationUrl != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyPresentationUrl, buf);
 }
 
 void DvProviderAvOpenhomeOrgSender1Cpp::GetPropertyPresentationUrl(std::string& aValue)
 {
+    ASSERT(iPropertyPresentationUrl != NULL);
     const Brx& val = iPropertyPresentationUrl->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgSender1Cpp::SetPropertyMetadata(const std::string& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyMetadata, buf);
 }
 
 void DvProviderAvOpenhomeOrgSender1Cpp::GetPropertyMetadata(std::string& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     const Brx& val = iPropertyMetadata->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgSender1Cpp::SetPropertyAudio(bool aValue)
 {
+    ASSERT(iPropertyAudio != NULL);
     return SetPropertyBool(*iPropertyAudio, aValue);
 }
 
 void DvProviderAvOpenhomeOrgSender1Cpp::GetPropertyAudio(bool& aValue)
 {
+    ASSERT(iPropertyAudio != NULL);
     aValue = iPropertyAudio->Value();
 }
 
 bool DvProviderAvOpenhomeOrgSender1Cpp::SetPropertyStatus(const std::string& aValue)
 {
+    ASSERT(iPropertyStatus != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyStatus, buf);
 }
 
 void DvProviderAvOpenhomeOrgSender1Cpp::GetPropertyStatus(std::string& aValue)
 {
+    ASSERT(iPropertyStatus != NULL);
     const Brx& val = iPropertyStatus->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgSender1Cpp::SetPropertyAttributes(const std::string& aValue)
 {
+    ASSERT(iPropertyAttributes != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyAttributes, buf);
 }
 
 void DvProviderAvOpenhomeOrgSender1Cpp::GetPropertyAttributes(std::string& aValue)
 {
+    ASSERT(iPropertyAttributes != NULL);
     const Brx& val = iPropertyAttributes->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -69,16 +79,35 @@ void DvProviderAvOpenhomeOrgSender1Cpp::GetPropertyAttributes(std::string& aValu
 DvProviderAvOpenhomeOrgSender1Cpp::DvProviderAvOpenhomeOrgSender1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Sender", 1)
 {
-    
-    TChar** allowedValues;
-    TUint index;
+    iPropertyPresentationUrl = NULL;
+    iPropertyMetadata = NULL;
+    iPropertyAudio = NULL;
+    iPropertyStatus = NULL;
+    iPropertyAttributes = NULL;
+}
+
+void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyPresentationUrl()
+{
     iPropertyPresentationUrl = new PropertyString(new ParameterString("PresentationUrl"));
     iService->AddProperty(iPropertyPresentationUrl); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyMetadata()
+{
     iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyAudio()
+{
     iPropertyAudio = new PropertyBool(new ParameterBool("Audio"));
     iService->AddProperty(iPropertyAudio); // passes ownership
-    index = 0;
+}
+
+void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyStatus()
+{
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[3];
     allowedValues[index++] = (TChar*)"Enabled";
     allowedValues[index++] = (TChar*)"Disabled";
@@ -86,6 +115,10 @@ DvProviderAvOpenhomeOrgSender1Cpp::DvProviderAvOpenhomeOrgSender1Cpp(DvDeviceStd
     iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues, 3));
     delete[] allowedValues;
     iService->AddProperty(iPropertyStatus); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyAttributes()
+{
     iPropertyAttributes = new PropertyString(new ParameterString("Attributes"));
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }

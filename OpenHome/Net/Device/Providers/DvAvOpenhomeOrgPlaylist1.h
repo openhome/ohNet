@@ -27,71 +27,99 @@ public:
     /**
      * Set the value of the TransportState property
      *
+     * Can only be called if EnablePropertyTransportState has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyTransportState(const Brx& aValue);
     /**
      * Get a copy of the value of the TransportState property
+     *
+     * Can only be called if EnablePropertyTransportState has previously been called.
      */
     void GetPropertyTransportState(Brhz& aValue);
     /**
      * Set the value of the Repeat property
+     *
+     * Can only be called if EnablePropertyRepeat has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyRepeat(TBool aValue);
     /**
      * Get a copy of the value of the Repeat property
+     *
+     * Can only be called if EnablePropertyRepeat has previously been called.
      */
     void GetPropertyRepeat(TBool& aValue);
     /**
      * Set the value of the Shuffle property
+     *
+     * Can only be called if EnablePropertyShuffle has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyShuffle(TBool aValue);
     /**
      * Get a copy of the value of the Shuffle property
+     *
+     * Can only be called if EnablePropertyShuffle has previously been called.
      */
     void GetPropertyShuffle(TBool& aValue);
     /**
      * Set the value of the Id property
+     *
+     * Can only be called if EnablePropertyId has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyId(TUint aValue);
     /**
      * Get a copy of the value of the Id property
+     *
+     * Can only be called if EnablePropertyId has previously been called.
      */
     void GetPropertyId(TUint& aValue);
     /**
      * Set the value of the IdArray property
+     *
+     * Can only be called if EnablePropertyIdArray has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyIdArray(const Brx& aValue);
     /**
      * Get a copy of the value of the IdArray property
+     *
+     * Can only be called if EnablePropertyIdArray has previously been called.
      */
     void GetPropertyIdArray(Brh& aValue);
     /**
      * Set the value of the TracksMax property
+     *
+     * Can only be called if EnablePropertyTracksMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyTracksMax(TUint aValue);
     /**
      * Get a copy of the value of the TracksMax property
+     *
+     * Can only be called if EnablePropertyTracksMax has previously been called.
      */
     void GetPropertyTracksMax(TUint& aValue);
     /**
      * Set the value of the ProtocolInfo property
+     *
+     * Can only be called if EnablePropertyProtocolInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyProtocolInfo(const Brx& aValue);
     /**
      * Get a copy of the value of the ProtocolInfo property
+     *
+     * Can only be called if EnablePropertyProtocolInfo has previously been called.
      */
     void GetPropertyProtocolInfo(Brhz& aValue);
 protected:
@@ -101,6 +129,34 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgPlaylist1(DvDevice& aDevice);
+    /**
+     * Enable the TransportState property.
+     */
+    void EnablePropertyTransportState();
+    /**
+     * Enable the Repeat property.
+     */
+    void EnablePropertyRepeat();
+    /**
+     * Enable the Shuffle property.
+     */
+    void EnablePropertyShuffle();
+    /**
+     * Enable the Id property.
+     */
+    void EnablePropertyId();
+    /**
+     * Enable the IdArray property.
+     */
+    void EnablePropertyIdArray();
+    /**
+     * Enable the TracksMax property.
+     */
+    void EnablePropertyTracksMax();
+    /**
+     * Enable the ProtocolInfo property.
+     */
+    void EnablePropertyProtocolInfo();
     /**
      * Signal that the action Play is supported.
      * The action's availability will be published in the device's service.xml.

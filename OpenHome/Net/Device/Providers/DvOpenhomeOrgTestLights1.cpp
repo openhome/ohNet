@@ -10,7 +10,6 @@ using namespace OpenHome::Net;
 DvProviderOpenhomeOrgTestLights1::DvProviderOpenhomeOrgTestLights1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "openhome.org", "TestLights", 1)
 {
-    
 }
 
 void DvProviderOpenhomeOrgTestLights1::EnableActionGetCount()

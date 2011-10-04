@@ -30,31 +30,43 @@ public:
     /**
      * Set the value of the TrackCount property
      *
+     * Can only be called if EnablePropertyTrackCount has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyTrackCount(uint32_t aValue);
     /**
      * Get a copy of the value of the TrackCount property
+     *
+     * Can only be called if EnablePropertyTrackCount has previously been called.
      */
     void GetPropertyTrackCount(uint32_t& aValue);
     /**
      * Set the value of the Duration property
+     *
+     * Can only be called if EnablePropertyDuration has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyDuration(uint32_t aValue);
     /**
      * Get a copy of the value of the Duration property
+     *
+     * Can only be called if EnablePropertyDuration has previously been called.
      */
     void GetPropertyDuration(uint32_t& aValue);
     /**
      * Set the value of the Seconds property
+     *
+     * Can only be called if EnablePropertySeconds has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertySeconds(uint32_t aValue);
     /**
      * Get a copy of the value of the Seconds property
+     *
+     * Can only be called if EnablePropertySeconds has previously been called.
      */
     void GetPropertySeconds(uint32_t& aValue);
 protected:
@@ -64,6 +76,18 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgTime1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the TrackCount property.
+     */
+    void EnablePropertyTrackCount();
+    /**
+     * Enable the Duration property.
+     */
+    void EnablePropertyDuration();
+    /**
+     * Enable the Seconds property.
+     */
+    void EnablePropertySeconds();
     /**
      * Signal that the action Time is supported.
      * The action's availability will be published in the device's service.xml.

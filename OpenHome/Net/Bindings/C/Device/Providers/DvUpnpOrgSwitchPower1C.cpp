@@ -20,6 +20,7 @@ public:
     DvProviderUpnpOrgSwitchPower1C(DvDeviceC aDevice);
     TBool SetPropertyStatus(TBool aValue);
     void GetPropertyStatus(TBool& aValue);
+    void EnablePropertyStatus();
     void EnableActionSetTarget(CallbackSwitchPower1SetTarget aCallback, void* aPtr);
     void EnableActionGetTarget(CallbackSwitchPower1GetTarget aCallback, void* aPtr);
     void EnableActionGetStatus(CallbackSwitchPower1GetStatus aCallback, void* aPtr);
@@ -40,19 +41,25 @@ private:
 DvProviderUpnpOrgSwitchPower1C::DvProviderUpnpOrgSwitchPower1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "SwitchPower", 1)
 {
-    
-    iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
-    iService->AddProperty(iPropertyStatus); // passes ownership
+    iPropertyStatus = NULL;
 }
 
 TBool DvProviderUpnpOrgSwitchPower1C::SetPropertyStatus(TBool aValue)
 {
+    ASSERT(iPropertyStatus != NULL);
     return SetPropertyBool(*iPropertyStatus, aValue);
 }
 
 void DvProviderUpnpOrgSwitchPower1C::GetPropertyStatus(TBool& aValue)
 {
+    ASSERT(iPropertyStatus != NULL);
     aValue = iPropertyStatus->Value();
+}
+
+void DvProviderUpnpOrgSwitchPower1C::EnablePropertyStatus()
+{
+    iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
+    iService->AddProperty(iPropertyStatus); // passes ownership
 }
 
 void DvProviderUpnpOrgSwitchPower1C::EnableActionSetTarget(CallbackSwitchPower1SetTarget aCallback, void* aPtr)
@@ -184,5 +191,10 @@ void STDCALL DvProviderUpnpOrgSwitchPower1GetPropertyStatus(THandle aProvider, u
     TBool val;
     reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->GetPropertyStatus(val);
     *aValue = (val? 1 : 0);
+}
+
+void STDCALL DvProviderUpnpOrgSwitchPower1EnablePropertyStatus(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->EnablePropertyStatus();
 }
 

@@ -10,18 +10,24 @@ using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgSwitchPower1Cpp::SetPropertyStatus(bool aValue)
 {
+    ASSERT(iPropertyStatus != NULL);
     return SetPropertyBool(*iPropertyStatus, aValue);
 }
 
 void DvProviderUpnpOrgSwitchPower1Cpp::GetPropertyStatus(bool& aValue)
 {
+    ASSERT(iPropertyStatus != NULL);
     aValue = iPropertyStatus->Value();
 }
 
 DvProviderUpnpOrgSwitchPower1Cpp::DvProviderUpnpOrgSwitchPower1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "SwitchPower", 1)
 {
-    
+    iPropertyStatus = NULL;
+}
+
+void DvProviderUpnpOrgSwitchPower1Cpp::EnablePropertyStatus()
+{
     iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
     iService->AddProperty(iPropertyStatus); // passes ownership
 }

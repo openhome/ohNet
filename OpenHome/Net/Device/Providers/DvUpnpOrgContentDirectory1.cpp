@@ -9,42 +9,62 @@ using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgContentDirectory1::SetPropertyTransferIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     return SetPropertyString(*iPropertyTransferIDs, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory1::GetPropertyTransferIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     aValue.Set(iPropertyTransferIDs->Value());
 }
 
 TBool DvProviderUpnpOrgContentDirectory1::SetPropertySystemUpdateID(TUint aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     return SetPropertyUint(*iPropertySystemUpdateID, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory1::GetPropertySystemUpdateID(TUint& aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     aValue = iPropertySystemUpdateID->Value();
 }
 
 TBool DvProviderUpnpOrgContentDirectory1::SetPropertyContainerUpdateIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     return SetPropertyString(*iPropertyContainerUpdateIDs, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory1::GetPropertyContainerUpdateIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     aValue.Set(iPropertyContainerUpdateIDs->Value());
 }
 
 DvProviderUpnpOrgContentDirectory1::DvProviderUpnpOrgContentDirectory1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ContentDirectory", 1)
 {
-    
+    iPropertyTransferIDs = NULL;
+    iPropertySystemUpdateID = NULL;
+    iPropertyContainerUpdateIDs = NULL;
+}
+
+void DvProviderUpnpOrgContentDirectory1::EnablePropertyTransferIDs()
+{
     iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
     iService->AddProperty(iPropertyTransferIDs); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory1::EnablePropertySystemUpdateID()
+{
     iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
     iService->AddProperty(iPropertySystemUpdateID); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory1::EnablePropertyContainerUpdateIDs()
+{
     iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
     iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
 }

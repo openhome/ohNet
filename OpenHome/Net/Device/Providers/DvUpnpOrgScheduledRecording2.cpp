@@ -9,18 +9,24 @@ using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgScheduledRecording2::SetPropertyLastChange(const Brx& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvProviderUpnpOrgScheduledRecording2::GetPropertyLastChange(Brhz& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     aValue.Set(iPropertyLastChange->Value());
 }
 
 DvProviderUpnpOrgScheduledRecording2::DvProviderUpnpOrgScheduledRecording2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ScheduledRecording", 2)
 {
-    
+    iPropertyLastChange = NULL;
+}
+
+void DvProviderUpnpOrgScheduledRecording2::EnablePropertyLastChange()
+{
     iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }

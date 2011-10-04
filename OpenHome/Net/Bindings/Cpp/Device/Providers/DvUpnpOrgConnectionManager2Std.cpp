@@ -10,36 +10,42 @@ using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgConnectionManager2Cpp::SetPropertySourceProtocolInfo(const std::string& aValue)
 {
+    ASSERT(iPropertySourceProtocolInfo != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertySourceProtocolInfo, buf);
 }
 
 void DvProviderUpnpOrgConnectionManager2Cpp::GetPropertySourceProtocolInfo(std::string& aValue)
 {
+    ASSERT(iPropertySourceProtocolInfo != NULL);
     const Brx& val = iPropertySourceProtocolInfo->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderUpnpOrgConnectionManager2Cpp::SetPropertySinkProtocolInfo(const std::string& aValue)
 {
+    ASSERT(iPropertySinkProtocolInfo != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertySinkProtocolInfo, buf);
 }
 
 void DvProviderUpnpOrgConnectionManager2Cpp::GetPropertySinkProtocolInfo(std::string& aValue)
 {
+    ASSERT(iPropertySinkProtocolInfo != NULL);
     const Brx& val = iPropertySinkProtocolInfo->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderUpnpOrgConnectionManager2Cpp::SetPropertyCurrentConnectionIDs(const std::string& aValue)
 {
+    ASSERT(iPropertyCurrentConnectionIDs != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyCurrentConnectionIDs, buf);
 }
 
 void DvProviderUpnpOrgConnectionManager2Cpp::GetPropertyCurrentConnectionIDs(std::string& aValue)
 {
+    ASSERT(iPropertyCurrentConnectionIDs != NULL);
     const Brx& val = iPropertyCurrentConnectionIDs->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -47,11 +53,25 @@ void DvProviderUpnpOrgConnectionManager2Cpp::GetPropertyCurrentConnectionIDs(std
 DvProviderUpnpOrgConnectionManager2Cpp::DvProviderUpnpOrgConnectionManager2Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ConnectionManager", 2)
 {
-    
+    iPropertySourceProtocolInfo = NULL;
+    iPropertySinkProtocolInfo = NULL;
+    iPropertyCurrentConnectionIDs = NULL;
+}
+
+void DvProviderUpnpOrgConnectionManager2Cpp::EnablePropertySourceProtocolInfo()
+{
     iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"));
     iService->AddProperty(iPropertySourceProtocolInfo); // passes ownership
+}
+
+void DvProviderUpnpOrgConnectionManager2Cpp::EnablePropertySinkProtocolInfo()
+{
     iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"));
     iService->AddProperty(iPropertySinkProtocolInfo); // passes ownership
+}
+
+void DvProviderUpnpOrgConnectionManager2Cpp::EnablePropertyCurrentConnectionIDs()
+{
     iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"));
     iService->AddProperty(iPropertyCurrentConnectionIDs); // passes ownership
 }

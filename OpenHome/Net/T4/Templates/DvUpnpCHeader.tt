@@ -110,6 +110,14 @@ DllExport THandle STDCALL <#=className#>Create(DvDeviceC aDevice);
  */
 DllExport void STDCALL <#=className#>Destroy(THandle aProvider);
 
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+/**
+ * Enable the <#=s.name#> property.
+ */
+DllExport void STDCALL <#=className#>EnableProperty<#=s.name#>(THandle aProvider);
+<#  } #>
+
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 /**
@@ -129,6 +137,8 @@ DllExport void STDCALL <#=className#>EnableAction<#=a.name#>(THandle aProvider, 
 <#  { #>
 /**
  * Set the value of the <#=s.name#> property
+ *
+ * Can only be called if <#=className#>EnableProperty<#=s.name#> has previously been called.
  *
  * @param[in]  aProvider  Handle returned by <#=className#>Create
 <#      if (s.type == "string" || s.type == "uri" || s.type == "bin.base64") #>
@@ -151,6 +161,8 @@ DllExport void STDCALL <#=className#>EnableAction<#=a.name#>(THandle aProvider, 
 DllExport int32_t STDCALL <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged);
 /**
  * Get a copy of the value of the <#=s.name#> property
+ *
+ * Can only be called if <#=className#>EnableProperty<#=s.name#> has previously been called.
  *
  * @param[in]  aProvider  Handle returned by <#=className#>Create
 <#      if (s.type == "string" || s.type == "uri" || s.type == "bin.base64") #>

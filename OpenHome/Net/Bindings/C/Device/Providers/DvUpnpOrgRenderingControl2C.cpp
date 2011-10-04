@@ -20,6 +20,7 @@ public:
     DvProviderUpnpOrgRenderingControl2C(DvDeviceC aDevice);
     TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
+    void EnablePropertyLastChange();
     void EnableActionListPresets(CallbackRenderingControl2ListPresets aCallback, void* aPtr);
     void EnableActionSelectPreset(CallbackRenderingControl2SelectPreset aCallback, void* aPtr);
     void EnableActionGetBrightness(CallbackRenderingControl2GetBrightness aCallback, void* aPtr);
@@ -176,19 +177,25 @@ private:
 DvProviderUpnpOrgRenderingControl2C::DvProviderUpnpOrgRenderingControl2C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "RenderingControl", 2)
 {
-    
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
-    iService->AddProperty(iPropertyLastChange); // passes ownership
+    iPropertyLastChange = NULL;
 }
 
 TBool DvProviderUpnpOrgRenderingControl2C::SetPropertyLastChange(const Brx& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::GetPropertyLastChange(Brhz& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     aValue.Set(iPropertyLastChange->Value());
+}
+
+void DvProviderUpnpOrgRenderingControl2C::EnablePropertyLastChange()
+{
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionListPresets(CallbackRenderingControl2ListPresets aCallback, void* aPtr)
@@ -1703,5 +1710,10 @@ void STDCALL DvProviderUpnpOrgRenderingControl2GetPropertyLastChange(THandle aPr
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->GetPropertyLastChange(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderUpnpOrgRenderingControl2EnablePropertyLastChange(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnablePropertyLastChange();
 }
 

@@ -285,6 +285,11 @@ DllExport THandle STDCALL DvProviderUpnpOrgScheduledRecording2Create(DvDeviceC a
 DllExport void STDCALL DvProviderUpnpOrgScheduledRecording2Destroy(THandle aProvider);
 
 /**
+ * Enable the LastChange property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording2EnablePropertyLastChange(THandle aProvider);
+
+/**
  * Register a callback for the action GetSortCapabilities
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -486,6 +491,8 @@ DllExport void STDCALL DvProviderUpnpOrgScheduledRecording2EnableActionGetRecord
 /**
  * Set the value of the LastChange property
  *
+ * Can only be called if DvProviderUpnpOrgScheduledRecording2EnablePropertyLastChange has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgScheduledRecording2Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -496,6 +503,8 @@ DllExport void STDCALL DvProviderUpnpOrgScheduledRecording2EnableActionGetRecord
 DllExport int32_t STDCALL DvProviderUpnpOrgScheduledRecording2SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the LastChange property
+ *
+ * Can only be called if DvProviderUpnpOrgScheduledRecording2EnablePropertyLastChange has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgScheduledRecording2Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

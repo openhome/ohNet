@@ -10,54 +10,64 @@ using namespace OpenHome::Net;
 
 bool DvProviderOpenhomeOrgTestBasic1Cpp::SetPropertyVarUint(uint32_t aValue)
 {
+    ASSERT(iPropertyVarUint != NULL);
     return SetPropertyUint(*iPropertyVarUint, aValue);
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::GetPropertyVarUint(uint32_t& aValue)
 {
+    ASSERT(iPropertyVarUint != NULL);
     aValue = iPropertyVarUint->Value();
 }
 
 bool DvProviderOpenhomeOrgTestBasic1Cpp::SetPropertyVarInt(int32_t aValue)
 {
+    ASSERT(iPropertyVarInt != NULL);
     return SetPropertyInt(*iPropertyVarInt, aValue);
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::GetPropertyVarInt(int32_t& aValue)
 {
+    ASSERT(iPropertyVarInt != NULL);
     aValue = iPropertyVarInt->Value();
 }
 
 bool DvProviderOpenhomeOrgTestBasic1Cpp::SetPropertyVarBool(bool aValue)
 {
+    ASSERT(iPropertyVarBool != NULL);
     return SetPropertyBool(*iPropertyVarBool, aValue);
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::GetPropertyVarBool(bool& aValue)
 {
+    ASSERT(iPropertyVarBool != NULL);
     aValue = iPropertyVarBool->Value();
 }
 
 bool DvProviderOpenhomeOrgTestBasic1Cpp::SetPropertyVarStr(const std::string& aValue)
 {
+    ASSERT(iPropertyVarStr != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyVarStr, buf);
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::GetPropertyVarStr(std::string& aValue)
 {
+    ASSERT(iPropertyVarStr != NULL);
     const Brx& val = iPropertyVarStr->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderOpenhomeOrgTestBasic1Cpp::SetPropertyVarBin(const std::string& aValue)
 {
+    ASSERT(iPropertyVarBin != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyBinary(*iPropertyVarBin, buf);
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::GetPropertyVarBin(std::string& aValue)
 {
+    ASSERT(iPropertyVarBin != NULL);
     const Brx& val = iPropertyVarBin->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -65,15 +75,39 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::GetPropertyVarBin(std::string& aValue)
 DvProviderOpenhomeOrgTestBasic1Cpp::DvProviderOpenhomeOrgTestBasic1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "openhome.org", "TestBasic", 1)
 {
-    
+    iPropertyVarUint = NULL;
+    iPropertyVarInt = NULL;
+    iPropertyVarBool = NULL;
+    iPropertyVarStr = NULL;
+    iPropertyVarBin = NULL;
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarUint()
+{
     iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
     iService->AddProperty(iPropertyVarUint); // passes ownership
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarInt()
+{
     iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
     iService->AddProperty(iPropertyVarInt); // passes ownership
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarBool()
+{
     iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
     iService->AddProperty(iPropertyVarBool); // passes ownership
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarStr()
+{
     iPropertyVarStr = new PropertyString(new ParameterString("VarStr"));
     iService->AddProperty(iPropertyVarStr); // passes ownership
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarBin()
+{
     iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
     iService->AddProperty(iPropertyVarBin); // passes ownership
 }

@@ -30,6 +30,12 @@ public:
     void GetPropertyPlaylistsMax(TUint& aValue);
     TBool SetPropertyTracksMax(TUint aValue);
     void GetPropertyTracksMax(TUint& aValue);
+    void EnablePropertyMetadata();
+    void EnablePropertyImagesXml();
+    void EnablePropertyIdArray();
+    void EnablePropertyTokenArray();
+    void EnablePropertyPlaylistsMax();
+    void EnablePropertyTracksMax();
     void EnableActionMetadata(CallbackPlaylistManager1Metadata aCallback, void* aPtr);
     void EnableActionImagesXml(CallbackPlaylistManager1ImagesXml aCallback, void* aPtr);
     void EnableActionPlaylistReadArray(CallbackPlaylistManager1PlaylistReadArray aCallback, void* aPtr);
@@ -123,79 +129,120 @@ private:
 DvProviderAvOpenhomeOrgPlaylistManager1C::DvProviderAvOpenhomeOrgPlaylistManager1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "av.openhome.org", "PlaylistManager", 1)
 {
-    
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
-    iService->AddProperty(iPropertyMetadata); // passes ownership
-    iPropertyImagesXml = new PropertyString(new ParameterString("ImagesXml"));
-    iService->AddProperty(iPropertyImagesXml); // passes ownership
-    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
-    iService->AddProperty(iPropertyIdArray); // passes ownership
-    iPropertyTokenArray = new PropertyBinary(new ParameterBinary("TokenArray"));
-    iService->AddProperty(iPropertyTokenArray); // passes ownership
-    iPropertyPlaylistsMax = new PropertyUint(new ParameterUint("PlaylistsMax"));
-    iService->AddProperty(iPropertyPlaylistsMax); // passes ownership
-    iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
-    iService->AddProperty(iPropertyTracksMax); // passes ownership
+    iPropertyMetadata = NULL;
+    iPropertyImagesXml = NULL;
+    iPropertyIdArray = NULL;
+    iPropertyTokenArray = NULL;
+    iPropertyPlaylistsMax = NULL;
+    iPropertyTracksMax = NULL;
 }
 
 TBool DvProviderAvOpenhomeOrgPlaylistManager1C::SetPropertyMetadata(const Brx& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     return SetPropertyString(*iPropertyMetadata, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::GetPropertyMetadata(Brhz& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     aValue.Set(iPropertyMetadata->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgPlaylistManager1C::SetPropertyImagesXml(const Brx& aValue)
 {
+    ASSERT(iPropertyImagesXml != NULL);
     return SetPropertyString(*iPropertyImagesXml, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::GetPropertyImagesXml(Brhz& aValue)
 {
+    ASSERT(iPropertyImagesXml != NULL);
     aValue.Set(iPropertyImagesXml->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgPlaylistManager1C::SetPropertyIdArray(const Brx& aValue)
 {
+    ASSERT(iPropertyIdArray != NULL);
     return SetPropertyBinary(*iPropertyIdArray, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::GetPropertyIdArray(Brh& aValue)
 {
+    ASSERT(iPropertyIdArray != NULL);
     aValue.Set(iPropertyIdArray->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgPlaylistManager1C::SetPropertyTokenArray(const Brx& aValue)
 {
+    ASSERT(iPropertyTokenArray != NULL);
     return SetPropertyBinary(*iPropertyTokenArray, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::GetPropertyTokenArray(Brh& aValue)
 {
+    ASSERT(iPropertyTokenArray != NULL);
     aValue.Set(iPropertyTokenArray->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgPlaylistManager1C::SetPropertyPlaylistsMax(TUint aValue)
 {
+    ASSERT(iPropertyPlaylistsMax != NULL);
     return SetPropertyUint(*iPropertyPlaylistsMax, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::GetPropertyPlaylistsMax(TUint& aValue)
 {
+    ASSERT(iPropertyPlaylistsMax != NULL);
     aValue = iPropertyPlaylistsMax->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgPlaylistManager1C::SetPropertyTracksMax(TUint aValue)
 {
+    ASSERT(iPropertyTracksMax != NULL);
     return SetPropertyUint(*iPropertyTracksMax, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::GetPropertyTracksMax(TUint& aValue)
 {
+    ASSERT(iPropertyTracksMax != NULL);
     aValue = iPropertyTracksMax->Value();
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyMetadata()
+{
+    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
+    iService->AddProperty(iPropertyMetadata); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyImagesXml()
+{
+    iPropertyImagesXml = new PropertyString(new ParameterString("ImagesXml"));
+    iService->AddProperty(iPropertyImagesXml); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyIdArray()
+{
+    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
+    iService->AddProperty(iPropertyIdArray); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyTokenArray()
+{
+    iPropertyTokenArray = new PropertyBinary(new ParameterBinary("TokenArray"));
+    iService->AddProperty(iPropertyTokenArray); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyPlaylistsMax()
+{
+    iPropertyPlaylistsMax = new PropertyUint(new ParameterUint("PlaylistsMax"));
+    iService->AddProperty(iPropertyPlaylistsMax); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyTracksMax()
+{
+    iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
+    iService->AddProperty(iPropertyTracksMax); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionMetadata(CallbackPlaylistManager1Metadata aCallback, void* aPtr)
@@ -1109,5 +1156,35 @@ void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1GetPropertyTracksMax(THandle
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->GetPropertyTracksMax(val);
     *aValue = val;
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyMetadata(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnablePropertyMetadata();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyImagesXml(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnablePropertyImagesXml();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyIdArray(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnablePropertyIdArray();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyTokenArray(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnablePropertyTokenArray();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyPlaylistsMax(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnablePropertyPlaylistsMax();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyTracksMax(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnablePropertyTracksMax();
 }
 

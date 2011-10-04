@@ -9,42 +9,62 @@ using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgContentDirectory2::SetPropertySystemUpdateID(TUint aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     return SetPropertyUint(*iPropertySystemUpdateID, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory2::GetPropertySystemUpdateID(TUint& aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     aValue = iPropertySystemUpdateID->Value();
 }
 
 TBool DvProviderUpnpOrgContentDirectory2::SetPropertyContainerUpdateIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     return SetPropertyString(*iPropertyContainerUpdateIDs, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory2::GetPropertyContainerUpdateIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     aValue.Set(iPropertyContainerUpdateIDs->Value());
 }
 
 TBool DvProviderUpnpOrgContentDirectory2::SetPropertyTransferIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     return SetPropertyString(*iPropertyTransferIDs, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory2::GetPropertyTransferIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     aValue.Set(iPropertyTransferIDs->Value());
 }
 
 DvProviderUpnpOrgContentDirectory2::DvProviderUpnpOrgContentDirectory2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ContentDirectory", 2)
 {
-    
+    iPropertySystemUpdateID = NULL;
+    iPropertyContainerUpdateIDs = NULL;
+    iPropertyTransferIDs = NULL;
+}
+
+void DvProviderUpnpOrgContentDirectory2::EnablePropertySystemUpdateID()
+{
     iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
     iService->AddProperty(iPropertySystemUpdateID); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory2::EnablePropertyContainerUpdateIDs()
+{
     iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
     iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory2::EnablePropertyTransferIDs()
+{
     iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
     iService->AddProperty(iPropertyTransferIDs); // passes ownership
 }

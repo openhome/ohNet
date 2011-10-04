@@ -24,6 +24,9 @@ public:
     void GetPropertySinkProtocolInfo(Brhz& aValue);
     TBool SetPropertyCurrentConnectionIDs(const Brx& aValue);
     void GetPropertyCurrentConnectionIDs(Brhz& aValue);
+    void EnablePropertySourceProtocolInfo();
+    void EnablePropertySinkProtocolInfo();
+    void EnablePropertyCurrentConnectionIDs();
     void EnableActionGetProtocolInfo(CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr);
     void EnableActionPrepareForConnection(CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr);
     void EnableActionConnectionComplete(CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr);
@@ -54,43 +57,63 @@ private:
 DvProviderUpnpOrgConnectionManager2C::DvProviderUpnpOrgConnectionManager2C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "ConnectionManager", 2)
 {
-    
-    iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"));
-    iService->AddProperty(iPropertySourceProtocolInfo); // passes ownership
-    iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"));
-    iService->AddProperty(iPropertySinkProtocolInfo); // passes ownership
-    iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"));
-    iService->AddProperty(iPropertyCurrentConnectionIDs); // passes ownership
+    iPropertySourceProtocolInfo = NULL;
+    iPropertySinkProtocolInfo = NULL;
+    iPropertyCurrentConnectionIDs = NULL;
 }
 
 TBool DvProviderUpnpOrgConnectionManager2C::SetPropertySourceProtocolInfo(const Brx& aValue)
 {
+    ASSERT(iPropertySourceProtocolInfo != NULL);
     return SetPropertyString(*iPropertySourceProtocolInfo, aValue);
 }
 
 void DvProviderUpnpOrgConnectionManager2C::GetPropertySourceProtocolInfo(Brhz& aValue)
 {
+    ASSERT(iPropertySourceProtocolInfo != NULL);
     aValue.Set(iPropertySourceProtocolInfo->Value());
 }
 
 TBool DvProviderUpnpOrgConnectionManager2C::SetPropertySinkProtocolInfo(const Brx& aValue)
 {
+    ASSERT(iPropertySinkProtocolInfo != NULL);
     return SetPropertyString(*iPropertySinkProtocolInfo, aValue);
 }
 
 void DvProviderUpnpOrgConnectionManager2C::GetPropertySinkProtocolInfo(Brhz& aValue)
 {
+    ASSERT(iPropertySinkProtocolInfo != NULL);
     aValue.Set(iPropertySinkProtocolInfo->Value());
 }
 
 TBool DvProviderUpnpOrgConnectionManager2C::SetPropertyCurrentConnectionIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyCurrentConnectionIDs != NULL);
     return SetPropertyString(*iPropertyCurrentConnectionIDs, aValue);
 }
 
 void DvProviderUpnpOrgConnectionManager2C::GetPropertyCurrentConnectionIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyCurrentConnectionIDs != NULL);
     aValue.Set(iPropertyCurrentConnectionIDs->Value());
+}
+
+void DvProviderUpnpOrgConnectionManager2C::EnablePropertySourceProtocolInfo()
+{
+    iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"));
+    iService->AddProperty(iPropertySourceProtocolInfo); // passes ownership
+}
+
+void DvProviderUpnpOrgConnectionManager2C::EnablePropertySinkProtocolInfo()
+{
+    iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"));
+    iService->AddProperty(iPropertySinkProtocolInfo); // passes ownership
+}
+
+void DvProviderUpnpOrgConnectionManager2C::EnablePropertyCurrentConnectionIDs()
+{
+    iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"));
+    iService->AddProperty(iPropertyCurrentConnectionIDs); // passes ownership
 }
 
 void DvProviderUpnpOrgConnectionManager2C::EnableActionGetProtocolInfo(CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr)
@@ -415,5 +438,20 @@ void STDCALL DvProviderUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aProvider)->GetPropertyCurrentConnectionIDs(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderUpnpOrgConnectionManager2EnablePropertySourceProtocolInfo(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aProvider)->EnablePropertySourceProtocolInfo();
+}
+
+void STDCALL DvProviderUpnpOrgConnectionManager2EnablePropertySinkProtocolInfo(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aProvider)->EnablePropertySinkProtocolInfo();
+}
+
+void STDCALL DvProviderUpnpOrgConnectionManager2EnablePropertyCurrentConnectionIDs(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aProvider)->EnablePropertyCurrentConnectionIDs();
 }
 

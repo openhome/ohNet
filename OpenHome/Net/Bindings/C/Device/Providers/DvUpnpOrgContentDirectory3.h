@@ -315,6 +315,23 @@ DllExport THandle STDCALL DvProviderUpnpOrgContentDirectory3Create(DvDeviceC aDe
 DllExport void STDCALL DvProviderUpnpOrgContentDirectory3Destroy(THandle aProvider);
 
 /**
+ * Enable the SystemUpdateID property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnablePropertySystemUpdateID(THandle aProvider);
+/**
+ * Enable the ContainerUpdateIDs property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnablePropertyContainerUpdateIDs(THandle aProvider);
+/**
+ * Enable the LastChange property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnablePropertyLastChange(THandle aProvider);
+/**
+ * Enable the TransferIDs property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnablePropertyTransferIDs(THandle aProvider);
+
+/**
  * Register a callback for the action GetSearchCapabilities
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -538,6 +555,8 @@ DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetFreeForm
 /**
  * Set the value of the SystemUpdateID property
  *
+ * Can only be called if DvProviderUpnpOrgContentDirectory3EnablePropertySystemUpdateID has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[in]  aValue     New value for the property
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -549,12 +568,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgContentDirectory3SetPropertySystemUpd
 /**
  * Get a copy of the value of the SystemUpdateID property
  *
+ * Can only be called if DvProviderUpnpOrgContentDirectory3EnablePropertySystemUpdateID has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertySystemUpdateID(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the ContainerUpdateIDs property
+ *
+ * Can only be called if DvProviderUpnpOrgContentDirectory3EnablePropertyContainerUpdateIDs has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -567,12 +590,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgContentDirectory3SetPropertyContainer
 /**
  * Get a copy of the value of the ContainerUpdateIDs property
  *
+ * Can only be called if DvProviderUpnpOrgContentDirectory3EnablePropertyContainerUpdateIDs has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(THandle aProvider, char** aValue);
 /**
  * Set the value of the LastChange property
+ *
+ * Can only be called if DvProviderUpnpOrgContentDirectory3EnablePropertyLastChange has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -585,12 +612,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgContentDirectory3SetPropertyLastChang
 /**
  * Get a copy of the value of the LastChange property
  *
+ * Can only be called if DvProviderUpnpOrgContentDirectory3EnablePropertyLastChange has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertyLastChange(THandle aProvider, char** aValue);
 /**
  * Set the value of the TransferIDs property
+ *
+ * Can only be called if DvProviderUpnpOrgContentDirectory3EnablePropertyTransferIDs has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -602,6 +633,8 @@ DllExport void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertyLastChange(T
 DllExport int32_t STDCALL DvProviderUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the TransferIDs property
+ *
+ * Can only be called if DvProviderUpnpOrgContentDirectory3EnablePropertyTransferIDs has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

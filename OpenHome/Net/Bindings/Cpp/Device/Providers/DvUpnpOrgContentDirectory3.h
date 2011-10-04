@@ -30,41 +30,57 @@ public:
     /**
      * Set the value of the SystemUpdateID property
      *
+     * Can only be called if EnablePropertySystemUpdateID has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertySystemUpdateID(uint32_t aValue);
     /**
      * Get a copy of the value of the SystemUpdateID property
+     *
+     * Can only be called if EnablePropertySystemUpdateID has previously been called.
      */
     void GetPropertySystemUpdateID(uint32_t& aValue);
     /**
      * Set the value of the ContainerUpdateIDs property
+     *
+     * Can only be called if EnablePropertyContainerUpdateIDs has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyContainerUpdateIDs(const std::string& aValue);
     /**
      * Get a copy of the value of the ContainerUpdateIDs property
+     *
+     * Can only be called if EnablePropertyContainerUpdateIDs has previously been called.
      */
     void GetPropertyContainerUpdateIDs(std::string& aValue);
     /**
      * Set the value of the LastChange property
+     *
+     * Can only be called if EnablePropertyLastChange has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyLastChange(const std::string& aValue);
     /**
      * Get a copy of the value of the LastChange property
+     *
+     * Can only be called if EnablePropertyLastChange has previously been called.
      */
     void GetPropertyLastChange(std::string& aValue);
     /**
      * Set the value of the TransferIDs property
+     *
+     * Can only be called if EnablePropertyTransferIDs has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyTransferIDs(const std::string& aValue);
     /**
      * Get a copy of the value of the TransferIDs property
+     *
+     * Can only be called if EnablePropertyTransferIDs has previously been called.
      */
     void GetPropertyTransferIDs(std::string& aValue);
 protected:
@@ -74,6 +90,22 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgContentDirectory3Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the SystemUpdateID property.
+     */
+    void EnablePropertySystemUpdateID();
+    /**
+     * Enable the ContainerUpdateIDs property.
+     */
+    void EnablePropertyContainerUpdateIDs();
+    /**
+     * Enable the LastChange property.
+     */
+    void EnablePropertyLastChange();
+    /**
+     * Enable the TransferIDs property.
+     */
+    void EnablePropertyTransferIDs();
     /**
      * Signal that the action GetSearchCapabilities is supported.
      * The action's availability will be published in the device's service.xml.

@@ -147,6 +147,13 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "av.openhome.org", "Playlist", 1)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the TransportState property.
+        /// </summary>
+        public void EnablePropertyTransportState()
+        {
             List<String> allowedValues = new List<String>();
             allowedValues.Add("Playing");
             allowedValues.Add("Paused");
@@ -155,16 +162,59 @@ namespace OpenHome.Net.Device.Providers
             iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues));
             AddProperty(iPropertyTransportState);
             allowedValues.Clear();
+        }
+
+        /// <summary>
+        /// Enable the Repeat property.
+        /// </summary>
+        public void EnablePropertyRepeat()
+        {
             iPropertyRepeat = new PropertyBool(new ParameterBool("Repeat"));
             AddProperty(iPropertyRepeat);
+        }
+
+        /// <summary>
+        /// Enable the Shuffle property.
+        /// </summary>
+        public void EnablePropertyShuffle()
+        {
             iPropertyShuffle = new PropertyBool(new ParameterBool("Shuffle"));
             AddProperty(iPropertyShuffle);
+        }
+
+        /// <summary>
+        /// Enable the Id property.
+        /// </summary>
+        public void EnablePropertyId()
+        {
             iPropertyId = new PropertyUint(new ParameterUint("Id"));
             AddProperty(iPropertyId);
+        }
+
+        /// <summary>
+        /// Enable the IdArray property.
+        /// </summary>
+        public void EnablePropertyIdArray()
+        {
             iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
             AddProperty(iPropertyIdArray);
+        }
+
+        /// <summary>
+        /// Enable the TracksMax property.
+        /// </summary>
+        public void EnablePropertyTracksMax()
+        {
             iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
             AddProperty(iPropertyTracksMax);
+        }
+
+        /// <summary>
+        /// Enable the ProtocolInfo property.
+        /// </summary>
+        public void EnablePropertyProtocolInfo()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo", allowedValues));
             AddProperty(iPropertyProtocolInfo);
         }
@@ -172,133 +222,175 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the TransportState property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTransportState has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyTransportState(string aValue)
         {
+            if (iPropertyTransportState == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyTransportState, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TransportState property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTransportState has previously been called.</remarks>
         /// <returns>Value of the TransportState property.</returns>
         public string PropertyTransportState()
         {
+            if (iPropertyTransportState == null)
+                throw new PropertyDisabledError();
             return iPropertyTransportState.Value();
         }
 
         /// <summary>
         /// Set the value of the Repeat property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyRepeat has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyRepeat(bool aValue)
         {
+            if (iPropertyRepeat == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyRepeat, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Repeat property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyRepeat has previously been called.</remarks>
         /// <returns>Value of the Repeat property.</returns>
         public bool PropertyRepeat()
         {
+            if (iPropertyRepeat == null)
+                throw new PropertyDisabledError();
             return iPropertyRepeat.Value();
         }
 
         /// <summary>
         /// Set the value of the Shuffle property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyShuffle has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyShuffle(bool aValue)
         {
+            if (iPropertyShuffle == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyShuffle, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Shuffle property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyShuffle has previously been called.</remarks>
         /// <returns>Value of the Shuffle property.</returns>
         public bool PropertyShuffle()
         {
+            if (iPropertyShuffle == null)
+                throw new PropertyDisabledError();
             return iPropertyShuffle.Value();
         }
 
         /// <summary>
         /// Set the value of the Id property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyId has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyId(uint aValue)
         {
+            if (iPropertyId == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyId, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Id property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyId has previously been called.</remarks>
         /// <returns>Value of the Id property.</returns>
         public uint PropertyId()
         {
+            if (iPropertyId == null)
+                throw new PropertyDisabledError();
             return iPropertyId.Value();
         }
 
         /// <summary>
         /// Set the value of the IdArray property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyIdArray has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyIdArray(byte[] aValue)
         {
+            if (iPropertyIdArray == null)
+                throw new PropertyDisabledError();
             return SetPropertyBinary(iPropertyIdArray, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the IdArray property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyIdArray has previously been called.</remarks>
         /// <returns>Value of the IdArray property.</returns>
         public byte[] PropertyIdArray()
         {
+            if (iPropertyIdArray == null)
+                throw new PropertyDisabledError();
             return iPropertyIdArray.Value();
         }
 
         /// <summary>
         /// Set the value of the TracksMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTracksMax has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyTracksMax(uint aValue)
         {
+            if (iPropertyTracksMax == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyTracksMax, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TracksMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTracksMax has previously been called.</remarks>
         /// <returns>Value of the TracksMax property.</returns>
         public uint PropertyTracksMax()
         {
+            if (iPropertyTracksMax == null)
+                throw new PropertyDisabledError();
             return iPropertyTracksMax.Value();
         }
 
         /// <summary>
         /// Set the value of the ProtocolInfo property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyProtocolInfo has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyProtocolInfo(string aValue)
         {
+            if (iPropertyProtocolInfo == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyProtocolInfo, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the ProtocolInfo property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyProtocolInfo has previously been called.</remarks>
         /// <returns>Value of the ProtocolInfo property.</returns>
         public string PropertyProtocolInfo()
         {
+            if (iPropertyProtocolInfo == null)
+                throw new PropertyDisabledError();
             return iPropertyProtocolInfo.Value();
         }
 

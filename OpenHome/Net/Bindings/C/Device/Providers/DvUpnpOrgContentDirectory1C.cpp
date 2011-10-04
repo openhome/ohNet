@@ -24,6 +24,9 @@ public:
     void GetPropertySystemUpdateID(TUint& aValue);
     TBool SetPropertyContainerUpdateIDs(const Brx& aValue);
     void GetPropertyContainerUpdateIDs(Brhz& aValue);
+    void EnablePropertyTransferIDs();
+    void EnablePropertySystemUpdateID();
+    void EnablePropertyContainerUpdateIDs();
     void EnableActionGetSearchCapabilities(CallbackContentDirectory1GetSearchCapabilities aCallback, void* aPtr);
     void EnableActionGetSortCapabilities(CallbackContentDirectory1GetSortCapabilities aCallback, void* aPtr);
     void EnableActionGetSystemUpdateID(CallbackContentDirectory1GetSystemUpdateID aCallback, void* aPtr);
@@ -90,43 +93,63 @@ private:
 DvProviderUpnpOrgContentDirectory1C::DvProviderUpnpOrgContentDirectory1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "ContentDirectory", 1)
 {
-    
-    iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
-    iService->AddProperty(iPropertyTransferIDs); // passes ownership
-    iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
-    iService->AddProperty(iPropertySystemUpdateID); // passes ownership
-    iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
-    iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
+    iPropertyTransferIDs = NULL;
+    iPropertySystemUpdateID = NULL;
+    iPropertyContainerUpdateIDs = NULL;
 }
 
 TBool DvProviderUpnpOrgContentDirectory1C::SetPropertyTransferIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     return SetPropertyString(*iPropertyTransferIDs, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory1C::GetPropertyTransferIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     aValue.Set(iPropertyTransferIDs->Value());
 }
 
 TBool DvProviderUpnpOrgContentDirectory1C::SetPropertySystemUpdateID(TUint aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     return SetPropertyUint(*iPropertySystemUpdateID, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory1C::GetPropertySystemUpdateID(TUint& aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     aValue = iPropertySystemUpdateID->Value();
 }
 
 TBool DvProviderUpnpOrgContentDirectory1C::SetPropertyContainerUpdateIDs(const Brx& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     return SetPropertyString(*iPropertyContainerUpdateIDs, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory1C::GetPropertyContainerUpdateIDs(Brhz& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     aValue.Set(iPropertyContainerUpdateIDs->Value());
+}
+
+void DvProviderUpnpOrgContentDirectory1C::EnablePropertyTransferIDs()
+{
+    iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
+    iService->AddProperty(iPropertyTransferIDs); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory1C::EnablePropertySystemUpdateID()
+{
+    iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
+    iService->AddProperty(iPropertySystemUpdateID); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory1C::EnablePropertyContainerUpdateIDs()
+{
+    iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
+    iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
 }
 
 void DvProviderUpnpOrgContentDirectory1C::EnableActionGetSearchCapabilities(CallbackContentDirectory1GetSearchCapabilities aCallback, void* aPtr)
@@ -825,5 +848,20 @@ void STDCALL DvProviderUpnpOrgContentDirectory1GetPropertyContainerUpdateIDs(THa
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aProvider)->GetPropertyContainerUpdateIDs(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderUpnpOrgContentDirectory1EnablePropertyTransferIDs(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aProvider)->EnablePropertyTransferIDs();
+}
+
+void STDCALL DvProviderUpnpOrgContentDirectory1EnablePropertySystemUpdateID(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aProvider)->EnablePropertySystemUpdateID();
+}
+
+void STDCALL DvProviderUpnpOrgContentDirectory1EnablePropertyContainerUpdateIDs(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aProvider)->EnablePropertyContainerUpdateIDs();
 }
 

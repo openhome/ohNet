@@ -207,6 +207,79 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgProduct1Create(DvDeviceC aDevic
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1Destroy(THandle aProvider);
 
 /**
+ * Enable the ManufacturerName property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerName(THandle aProvider);
+/**
+ * Enable the ManufacturerInfo property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerInfo(THandle aProvider);
+/**
+ * Enable the ManufacturerUrl property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerUrl(THandle aProvider);
+/**
+ * Enable the ManufacturerImageUri property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerImageUri(THandle aProvider);
+/**
+ * Enable the ModelName property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyModelName(THandle aProvider);
+/**
+ * Enable the ModelInfo property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyModelInfo(THandle aProvider);
+/**
+ * Enable the ModelUrl property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyModelUrl(THandle aProvider);
+/**
+ * Enable the ModelImageUri property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyModelImageUri(THandle aProvider);
+/**
+ * Enable the ProductRoom property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyProductRoom(THandle aProvider);
+/**
+ * Enable the ProductName property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyProductName(THandle aProvider);
+/**
+ * Enable the ProductInfo property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyProductInfo(THandle aProvider);
+/**
+ * Enable the ProductUrl property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyProductUrl(THandle aProvider);
+/**
+ * Enable the ProductImageUri property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyProductImageUri(THandle aProvider);
+/**
+ * Enable the Standby property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyStandby(THandle aProvider);
+/**
+ * Enable the SourceIndex property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertySourceIndex(THandle aProvider);
+/**
+ * Enable the SourceCount property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertySourceCount(THandle aProvider);
+/**
+ * Enable the SourceXml property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertySourceXml(THandle aProvider);
+/**
+ * Enable the Attributes property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnablePropertyAttributes(THandle aProvider);
+
+/**
  * Register a callback for the action Manufacturer
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -353,6 +426,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceXmlChang
 /**
  * Set the value of the ManufacturerName property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerName has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -364,12 +439,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturer
 /**
  * Get a copy of the value of the ManufacturerName property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerName has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerName(THandle aProvider, char** aValue);
 /**
  * Set the value of the ManufacturerInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -382,12 +461,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturer
 /**
  * Get a copy of the value of the ManufacturerInfo property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerInfo has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the ManufacturerUrl property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerUrl has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -400,12 +483,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturer
 /**
  * Get a copy of the value of the ManufacturerUrl property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerUrl has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerUrl(THandle aProvider, char** aValue);
 /**
  * Set the value of the ManufacturerImageUri property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerImageUri has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -418,12 +505,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturer
 /**
  * Get a copy of the value of the ManufacturerImageUri property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyManufacturerImageUri has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerImageUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the ModelName property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyModelName has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -436,12 +527,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelName(TH
 /**
  * Get a copy of the value of the ModelName property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyModelName has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelName(THandle aProvider, char** aValue);
 /**
  * Set the value of the ModelInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyModelInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -454,12 +549,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelInfo(TH
 /**
  * Get a copy of the value of the ModelInfo property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyModelInfo has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the ModelUrl property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyModelUrl has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -472,12 +571,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelUrl(THa
 /**
  * Get a copy of the value of the ModelUrl property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyModelUrl has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelUrl(THandle aProvider, char** aValue);
 /**
  * Set the value of the ModelImageUri property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyModelImageUri has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -490,12 +593,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelImageUr
 /**
  * Get a copy of the value of the ModelImageUri property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyModelImageUri has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelImageUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductRoom property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductRoom has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -508,12 +615,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductRoom(
 /**
  * Get a copy of the value of the ProductRoom property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductRoom has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductRoom(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductName property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductName has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -526,12 +637,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductName(
 /**
  * Get a copy of the value of the ProductName property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductName has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductName(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -544,12 +659,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductInfo(
 /**
  * Get a copy of the value of the ProductInfo property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductInfo has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductUrl property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductUrl has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -562,12 +681,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductUrl(T
 /**
  * Get a copy of the value of the ProductUrl property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductUrl has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductUrl(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductImageUri property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductImageUri has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -580,12 +703,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductImage
 /**
  * Get a copy of the value of the ProductImageUri property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyProductImageUri has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductImageUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the Standby property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyStandby has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property
@@ -598,12 +725,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyStandby(THan
 /**
  * Get a copy of the value of the Standby property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyStandby has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyStandby(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the SourceIndex property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertySourceIndex has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property
@@ -616,12 +747,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceIndex(
 /**
  * Get a copy of the value of the SourceIndex property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertySourceIndex has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceIndex(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the SourceCount property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertySourceCount has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property
@@ -634,12 +769,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceCount(
 /**
  * Get a copy of the value of the SourceCount property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertySourceCount has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceCount(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the SourceXml property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertySourceXml has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -652,12 +791,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceXml(TH
 /**
  * Get a copy of the value of the SourceXml property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertySourceXml has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceXml(THandle aProvider, char** aValue);
 /**
  * Set the value of the Attributes property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyAttributes has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -669,6 +812,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceXml(THand
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Attributes property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgProduct1EnablePropertyAttributes has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

@@ -157,6 +157,11 @@ DeviceBasicC::DeviceBasicC(EProtocol aProtocol)
     }
     iTestBasic = DvProviderOpenhomeOrgTestBasic1Create(iDevice);
 
+    DvProviderOpenhomeOrgTestBasic1EnablePropertyVarUint(iTestBasic);
+    DvProviderOpenhomeOrgTestBasic1EnablePropertyVarInt(iTestBasic);
+    DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBool(iTestBasic);
+    DvProviderOpenhomeOrgTestBasic1EnablePropertyVarStr(iTestBasic);
+    DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBin(iTestBasic);
     uint32_t ignore;
     (void)DvProviderOpenhomeOrgTestBasic1SetPropertyVarUint(iTestBasic, 0, &ignore);
     (void)DvProviderOpenhomeOrgTestBasic1SetPropertyVarInt(iTestBasic, 0, &ignore);

@@ -27,121 +27,169 @@ public:
     /**
      * Set the value of the TrackCount property
      *
+     * Can only be called if EnablePropertyTrackCount has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyTrackCount(TUint aValue);
     /**
      * Get a copy of the value of the TrackCount property
+     *
+     * Can only be called if EnablePropertyTrackCount has previously been called.
      */
     void GetPropertyTrackCount(TUint& aValue);
     /**
      * Set the value of the DetailsCount property
+     *
+     * Can only be called if EnablePropertyDetailsCount has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyDetailsCount(TUint aValue);
     /**
      * Get a copy of the value of the DetailsCount property
+     *
+     * Can only be called if EnablePropertyDetailsCount has previously been called.
      */
     void GetPropertyDetailsCount(TUint& aValue);
     /**
      * Set the value of the MetatextCount property
+     *
+     * Can only be called if EnablePropertyMetatextCount has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyMetatextCount(TUint aValue);
     /**
      * Get a copy of the value of the MetatextCount property
+     *
+     * Can only be called if EnablePropertyMetatextCount has previously been called.
      */
     void GetPropertyMetatextCount(TUint& aValue);
     /**
      * Set the value of the Uri property
+     *
+     * Can only be called if EnablePropertyUri has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyUri(const Brx& aValue);
     /**
      * Get a copy of the value of the Uri property
+     *
+     * Can only be called if EnablePropertyUri has previously been called.
      */
     void GetPropertyUri(Brhz& aValue);
     /**
      * Set the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyMetadata(const Brx& aValue);
     /**
      * Get a copy of the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      */
     void GetPropertyMetadata(Brhz& aValue);
     /**
      * Set the value of the Duration property
+     *
+     * Can only be called if EnablePropertyDuration has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyDuration(TUint aValue);
     /**
      * Get a copy of the value of the Duration property
+     *
+     * Can only be called if EnablePropertyDuration has previously been called.
      */
     void GetPropertyDuration(TUint& aValue);
     /**
      * Set the value of the BitRate property
+     *
+     * Can only be called if EnablePropertyBitRate has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyBitRate(TUint aValue);
     /**
      * Get a copy of the value of the BitRate property
+     *
+     * Can only be called if EnablePropertyBitRate has previously been called.
      */
     void GetPropertyBitRate(TUint& aValue);
     /**
      * Set the value of the BitDepth property
+     *
+     * Can only be called if EnablePropertyBitDepth has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyBitDepth(TUint aValue);
     /**
      * Get a copy of the value of the BitDepth property
+     *
+     * Can only be called if EnablePropertyBitDepth has previously been called.
      */
     void GetPropertyBitDepth(TUint& aValue);
     /**
      * Set the value of the SampleRate property
+     *
+     * Can only be called if EnablePropertySampleRate has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertySampleRate(TUint aValue);
     /**
      * Get a copy of the value of the SampleRate property
+     *
+     * Can only be called if EnablePropertySampleRate has previously been called.
      */
     void GetPropertySampleRate(TUint& aValue);
     /**
      * Set the value of the Lossless property
+     *
+     * Can only be called if EnablePropertyLossless has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyLossless(TBool aValue);
     /**
      * Get a copy of the value of the Lossless property
+     *
+     * Can only be called if EnablePropertyLossless has previously been called.
      */
     void GetPropertyLossless(TBool& aValue);
     /**
      * Set the value of the CodecName property
+     *
+     * Can only be called if EnablePropertyCodecName has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyCodecName(const Brx& aValue);
     /**
      * Get a copy of the value of the CodecName property
+     *
+     * Can only be called if EnablePropertyCodecName has previously been called.
      */
     void GetPropertyCodecName(Brhz& aValue);
     /**
      * Set the value of the Metatext property
+     *
+     * Can only be called if EnablePropertyMetatext has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyMetatext(const Brx& aValue);
     /**
      * Get a copy of the value of the Metatext property
+     *
+     * Can only be called if EnablePropertyMetatext has previously been called.
      */
     void GetPropertyMetatext(Brhz& aValue);
 protected:
@@ -151,6 +199,54 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgInfo1(DvDevice& aDevice);
+    /**
+     * Enable the TrackCount property.
+     */
+    void EnablePropertyTrackCount();
+    /**
+     * Enable the DetailsCount property.
+     */
+    void EnablePropertyDetailsCount();
+    /**
+     * Enable the MetatextCount property.
+     */
+    void EnablePropertyMetatextCount();
+    /**
+     * Enable the Uri property.
+     */
+    void EnablePropertyUri();
+    /**
+     * Enable the Metadata property.
+     */
+    void EnablePropertyMetadata();
+    /**
+     * Enable the Duration property.
+     */
+    void EnablePropertyDuration();
+    /**
+     * Enable the BitRate property.
+     */
+    void EnablePropertyBitRate();
+    /**
+     * Enable the BitDepth property.
+     */
+    void EnablePropertyBitDepth();
+    /**
+     * Enable the SampleRate property.
+     */
+    void EnablePropertySampleRate();
+    /**
+     * Enable the Lossless property.
+     */
+    void EnablePropertyLossless();
+    /**
+     * Enable the CodecName property.
+     */
+    void EnablePropertyCodecName();
+    /**
+     * Enable the Metatext property.
+     */
+    void EnablePropertyMetatext();
     /**
      * Signal that the action Counters is supported.
      * The action's availability will be published in the device's service.xml.

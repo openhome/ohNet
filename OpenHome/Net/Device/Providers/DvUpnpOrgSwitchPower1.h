@@ -27,11 +27,15 @@ public:
     /**
      * Set the value of the Status property
      *
+     * Can only be called if EnablePropertyStatus has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyStatus(TBool aValue);
     /**
      * Get a copy of the value of the Status property
+     *
+     * Can only be called if EnablePropertyStatus has previously been called.
      */
     void GetPropertyStatus(TBool& aValue);
 protected:
@@ -41,6 +45,10 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgSwitchPower1(DvDevice& aDevice);
+    /**
+     * Enable the Status property.
+     */
+    void EnablePropertyStatus();
     /**
      * Signal that the action SetTarget is supported.
      * The action's availability will be published in the device's service.xml.

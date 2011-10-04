@@ -27,51 +27,71 @@ public:
     /**
      * Set the value of the VarUint property
      *
+     * Can only be called if EnablePropertyVarUint has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVarUint(TUint aValue);
     /**
      * Get a copy of the value of the VarUint property
+     *
+     * Can only be called if EnablePropertyVarUint has previously been called.
      */
     void GetPropertyVarUint(TUint& aValue);
     /**
      * Set the value of the VarInt property
+     *
+     * Can only be called if EnablePropertyVarInt has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVarInt(TInt aValue);
     /**
      * Get a copy of the value of the VarInt property
+     *
+     * Can only be called if EnablePropertyVarInt has previously been called.
      */
     void GetPropertyVarInt(TInt& aValue);
     /**
      * Set the value of the VarBool property
+     *
+     * Can only be called if EnablePropertyVarBool has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVarBool(TBool aValue);
     /**
      * Get a copy of the value of the VarBool property
+     *
+     * Can only be called if EnablePropertyVarBool has previously been called.
      */
     void GetPropertyVarBool(TBool& aValue);
     /**
      * Set the value of the VarStr property
+     *
+     * Can only be called if EnablePropertyVarStr has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVarStr(const Brx& aValue);
     /**
      * Get a copy of the value of the VarStr property
+     *
+     * Can only be called if EnablePropertyVarStr has previously been called.
      */
     void GetPropertyVarStr(Brhz& aValue);
     /**
      * Set the value of the VarBin property
+     *
+     * Can only be called if EnablePropertyVarBin has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyVarBin(const Brx& aValue);
     /**
      * Get a copy of the value of the VarBin property
+     *
+     * Can only be called if EnablePropertyVarBin has previously been called.
      */
     void GetPropertyVarBin(Brh& aValue);
 protected:
@@ -81,6 +101,26 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderOpenhomeOrgTestBasic1(DvDevice& aDevice);
+    /**
+     * Enable the VarUint property.
+     */
+    void EnablePropertyVarUint();
+    /**
+     * Enable the VarInt property.
+     */
+    void EnablePropertyVarInt();
+    /**
+     * Enable the VarBool property.
+     */
+    void EnablePropertyVarBool();
+    /**
+     * Enable the VarStr property.
+     */
+    void EnablePropertyVarStr();
+    /**
+     * Enable the VarBin property.
+     */
+    void EnablePropertyVarBin();
     /**
      * Signal that the action Increment is supported.
      * The action's availability will be published in the device's service.xml.

@@ -30,51 +30,71 @@ public:
     /**
      * Set the value of the VarUint property
      *
+     * Can only be called if EnablePropertyVarUint has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVarUint(uint32_t aValue);
     /**
      * Get a copy of the value of the VarUint property
+     *
+     * Can only be called if EnablePropertyVarUint has previously been called.
      */
     void GetPropertyVarUint(uint32_t& aValue);
     /**
      * Set the value of the VarInt property
+     *
+     * Can only be called if EnablePropertyVarInt has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVarInt(int32_t aValue);
     /**
      * Get a copy of the value of the VarInt property
+     *
+     * Can only be called if EnablePropertyVarInt has previously been called.
      */
     void GetPropertyVarInt(int32_t& aValue);
     /**
      * Set the value of the VarBool property
+     *
+     * Can only be called if EnablePropertyVarBool has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVarBool(bool aValue);
     /**
      * Get a copy of the value of the VarBool property
+     *
+     * Can only be called if EnablePropertyVarBool has previously been called.
      */
     void GetPropertyVarBool(bool& aValue);
     /**
      * Set the value of the VarStr property
+     *
+     * Can only be called if EnablePropertyVarStr has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVarStr(const std::string& aValue);
     /**
      * Get a copy of the value of the VarStr property
+     *
+     * Can only be called if EnablePropertyVarStr has previously been called.
      */
     void GetPropertyVarStr(std::string& aValue);
     /**
      * Set the value of the VarBin property
+     *
+     * Can only be called if EnablePropertyVarBin has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVarBin(const std::string& aValue);
     /**
      * Get a copy of the value of the VarBin property
+     *
+     * Can only be called if EnablePropertyVarBin has previously been called.
      */
     void GetPropertyVarBin(std::string& aValue);
 protected:
@@ -84,6 +104,26 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderOpenhomeOrgTestBasic1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the VarUint property.
+     */
+    void EnablePropertyVarUint();
+    /**
+     * Enable the VarInt property.
+     */
+    void EnablePropertyVarInt();
+    /**
+     * Enable the VarBool property.
+     */
+    void EnablePropertyVarBool();
+    /**
+     * Enable the VarStr property.
+     */
+    void EnablePropertyVarStr();
+    /**
+     * Enable the VarBin property.
+     */
+    void EnablePropertyVarBin();
     /**
      * Signal that the action Increment is supported.
      * The action's availability will be published in the device's service.xml.

@@ -93,6 +93,55 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgInfo1Create(DvDeviceC aDevice);
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1Destroy(THandle aProvider);
 
 /**
+ * Enable the TrackCount property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyTrackCount(THandle aProvider);
+/**
+ * Enable the DetailsCount property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyDetailsCount(THandle aProvider);
+/**
+ * Enable the MetatextCount property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyMetatextCount(THandle aProvider);
+/**
+ * Enable the Uri property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyUri(THandle aProvider);
+/**
+ * Enable the Metadata property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyMetadata(THandle aProvider);
+/**
+ * Enable the Duration property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyDuration(THandle aProvider);
+/**
+ * Enable the BitRate property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyBitRate(THandle aProvider);
+/**
+ * Enable the BitDepth property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyBitDepth(THandle aProvider);
+/**
+ * Enable the SampleRate property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertySampleRate(THandle aProvider);
+/**
+ * Enable the Lossless property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyLossless(THandle aProvider);
+/**
+ * Enable the CodecName property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyCodecName(THandle aProvider);
+/**
+ * Enable the Metatext property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnablePropertyMetatext(THandle aProvider);
+
+/**
  * Register a callback for the action Counters
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -140,6 +189,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1EnableActionMetatext(THandle 
 /**
  * Set the value of the TrackCount property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyTrackCount has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -151,12 +202,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyTrackCount(THan
 /**
  * Get a copy of the value of the TrackCount property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyTrackCount has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyTrackCount(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the DetailsCount property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyDetailsCount has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property
@@ -169,12 +224,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyDetailsCount(TH
 /**
  * Get a copy of the value of the DetailsCount property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyDetailsCount has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyDetailsCount(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the MetatextCount property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyMetatextCount has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property
@@ -187,12 +246,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyMetatextCount(T
 /**
  * Get a copy of the value of the MetatextCount property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyMetatextCount has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyMetatextCount(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Uri property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyUri has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -205,12 +268,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyUri(THandle aPr
 /**
  * Get a copy of the value of the Uri property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyUri has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the Metadata property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyMetadata has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -223,12 +290,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyMetadata(THandl
 /**
  * Get a copy of the value of the Metadata property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyMetadata has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyMetadata(THandle aProvider, char** aValue);
 /**
  * Set the value of the Duration property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyDuration has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property
@@ -241,12 +312,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyDuration(THandl
 /**
  * Get a copy of the value of the Duration property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyDuration has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyDuration(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the BitRate property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyBitRate has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property
@@ -259,12 +334,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyBitRate(THandle
 /**
  * Get a copy of the value of the BitRate property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyBitRate has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyBitRate(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the BitDepth property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyBitDepth has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property
@@ -277,12 +356,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyBitDepth(THandl
 /**
  * Get a copy of the value of the BitDepth property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyBitDepth has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyBitDepth(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the SampleRate property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertySampleRate has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property
@@ -295,12 +378,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertySampleRate(THan
 /**
  * Get a copy of the value of the SampleRate property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertySampleRate has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertySampleRate(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Lossless property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyLossless has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property
@@ -313,12 +400,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyLossless(THandl
 /**
  * Get a copy of the value of the Lossless property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyLossless has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyLossless(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the CodecName property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyCodecName has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -331,12 +422,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyCodecName(THand
 /**
  * Get a copy of the value of the CodecName property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyCodecName has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyCodecName(THandle aProvider, char** aValue);
 /**
  * Set the value of the Metatext property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyMetatext has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -348,6 +443,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyCodecName(THandle 
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyMetatext(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Metatext property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgInfo1EnablePropertyMetatext has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgInfo1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

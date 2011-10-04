@@ -234,6 +234,35 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgRadio1Create(DvDeviceC aDevice)
 DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1Destroy(THandle aProvider);
 
 /**
+ * Enable the Uri property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyUri(THandle aProvider);
+/**
+ * Enable the Metadata property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyMetadata(THandle aProvider);
+/**
+ * Enable the TransportState property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyTransportState(THandle aProvider);
+/**
+ * Enable the Id property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyId(THandle aProvider);
+/**
+ * Enable the IdArray property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyIdArray(THandle aProvider);
+/**
+ * Enable the ChannelsMax property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyChannelsMax(THandle aProvider);
+/**
+ * Enable the ProtocolInfo property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyProtocolInfo(THandle aProvider);
+
+/**
  * Register a callback for the action Play
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -413,6 +442,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionProtocolInfo(THa
 /**
  * Set the value of the Uri property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyUri has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -424,12 +455,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyUri(THandle aP
 /**
  * Get a copy of the value of the Uri property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyUri has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the Metadata property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyMetadata has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -442,12 +477,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyMetadata(THand
 /**
  * Get a copy of the value of the Metadata property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyMetadata has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyMetadata(THandle aProvider, char** aValue);
 /**
  * Set the value of the TransportState property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyTransportState has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -460,12 +499,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyTransportState
 /**
  * Get a copy of the value of the TransportState property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyTransportState has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyTransportState(THandle aProvider, char** aValue);
 /**
  * Set the value of the Id property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyId has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[in]  aValue     New value for the property
@@ -478,12 +521,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyId(THandle aPr
 /**
  * Get a copy of the value of the Id property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyId has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyId(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the IdArray property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyIdArray has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -497,6 +544,8 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyIdArray(THandl
 /**
  * Get a copy of the value of the IdArray property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyIdArray has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  * @param[out] aValueLen  Size in bytes pointed to by aValue
@@ -504,6 +553,8 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyIdArray(THandl
 DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen);
 /**
  * Set the value of the ChannelsMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyChannelsMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[in]  aValue     New value for the property
@@ -516,12 +567,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyChannelsMax(TH
 /**
  * Get a copy of the value of the ChannelsMax property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyChannelsMax has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyChannelsMax(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the ProtocolInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyProtocolInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -533,6 +588,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyChannelsMax(THand
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProtocolInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgRadio1EnablePropertyProtocolInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

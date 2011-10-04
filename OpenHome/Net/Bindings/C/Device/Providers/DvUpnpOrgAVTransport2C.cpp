@@ -22,6 +22,8 @@ public:
     void GetPropertyLastChange(Brhz& aValue);
     TBool SetPropertyDRMState(const Brx& aValue);
     void GetPropertyDRMState(Brhz& aValue);
+    void EnablePropertyLastChange();
+    void EnablePropertyDRMState();
     void EnableActionSetAVTransportURI(CallbackAVTransport2SetAVTransportURI aCallback, void* aPtr);
     void EnableActionSetNextAVTransportURI(CallbackAVTransport2SetNextAVTransportURI aCallback, void* aPtr);
     void EnableActionGetMediaInfo(CallbackAVTransport2GetMediaInfo aCallback, void* aPtr);
@@ -115,37 +117,49 @@ private:
 DvProviderUpnpOrgAVTransport2C::DvProviderUpnpOrgAVTransport2C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "AVTransport", 2)
 {
-    
-    TChar** allowedValues;
-    TUint index;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
-    iService->AddProperty(iPropertyLastChange); // passes ownership
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"OK";
-    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1));
-    delete[] allowedValues;
-    iService->AddProperty(iPropertyDRMState); // passes ownership
+    iPropertyLastChange = NULL;
+    iPropertyDRMState = NULL;
 }
 
 TBool DvProviderUpnpOrgAVTransport2C::SetPropertyLastChange(const Brx& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvProviderUpnpOrgAVTransport2C::GetPropertyLastChange(Brhz& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     aValue.Set(iPropertyLastChange->Value());
 }
 
 TBool DvProviderUpnpOrgAVTransport2C::SetPropertyDRMState(const Brx& aValue)
 {
+    ASSERT(iPropertyDRMState != NULL);
     return SetPropertyString(*iPropertyDRMState, aValue);
 }
 
 void DvProviderUpnpOrgAVTransport2C::GetPropertyDRMState(Brhz& aValue)
 {
+    ASSERT(iPropertyDRMState != NULL);
     aValue.Set(iPropertyDRMState->Value());
+}
+
+void DvProviderUpnpOrgAVTransport2C::EnablePropertyLastChange()
+{
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iService->AddProperty(iPropertyLastChange); // passes ownership
+}
+
+void DvProviderUpnpOrgAVTransport2C::EnablePropertyDRMState()
+{
+    TChar** allowedValues;
+    TUint index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"OK";
+    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1));
+    delete[] allowedValues;
+    iService->AddProperty(iPropertyDRMState); // passes ownership
 }
 
 void DvProviderUpnpOrgAVTransport2C::EnableActionSetAVTransportURI(CallbackAVTransport2SetAVTransportURI aCallback, void* aPtr)
@@ -1248,5 +1262,15 @@ void STDCALL DvProviderUpnpOrgAVTransport2GetPropertyDRMState(THandle aProvider,
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgAVTransport2C*>(aProvider)->GetPropertyDRMState(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderUpnpOrgAVTransport2EnablePropertyLastChange(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgAVTransport2C*>(aProvider)->EnablePropertyLastChange();
+}
+
+void STDCALL DvProviderUpnpOrgAVTransport2EnablePropertyDRMState(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgAVTransport2C*>(aProvider)->EnablePropertyDRMState();
 }
 

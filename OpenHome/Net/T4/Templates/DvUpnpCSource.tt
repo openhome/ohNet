@@ -67,6 +67,10 @@ public:
     TBool SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue);
     void GetProperty<#=s.name#>(<#=outArgTypeProperty[s.type]#> aValue);
 <#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    void EnableProperty<#=s.name#>();
+<#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     void EnableAction<#=a.name#>(<#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
@@ -91,12 +95,42 @@ private:
 <#=className#>C::<#=className#>C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
-    <#=DeclareAllowedValuesForProperties(u)#>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
+    iProperty<#=s.name#> = NULL;
+<#  } #>
+}
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+TBool <#=className#>C::SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue)
+{
+    ASSERT(iProperty<#=s.name#> != NULL);
+    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
+}
+
+void <#=className#>C::GetProperty<#=s.name#>(<#=outArgTypeProperty[s.type]#> aValue)
+{
+    ASSERT(iProperty<#=s.name#> != NULL);
+<#      if (s.type == "string" || s.type == "bin.base64" || s.type == "uri") #>
+<#      { #>
+    aValue.Set(iProperty<#=s.name#>->Value());
+<#      } #>
+<#      else #>
+<#      { #>
+    aValue = iProperty<#=s.name#>->Value();
+<#      } #>
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>C::EnableProperty<#=s.name#>()
+{
 <#      if (s.values.Count > 0) #>
 <#      { #>
-    index = 0;
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[<#=s.values.Count#>];
 <#          foreach (string val in s.values) #>
 <#          { #>
@@ -109,26 +143,6 @@ private:
     delete[] allowedValues;
 <#      } #>
     iService->AddProperty(iProperty<#=s.name#>); // passes ownership
-<#  } #>
-}
-<#  foreach (Variable s in u.evented) #>
-<#  { #>
-
-TBool <#=className#>C::SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue)
-{
-    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
-}
-
-void <#=className#>C::GetProperty<#=s.name#>(<#=outArgTypeProperty[s.type]#> aValue)
-{
-<#      if (s.type == "string" || s.type == "bin.base64" || s.type == "uri") #>
-<#      { #>
-    aValue.Set(iProperty<#=s.name#>->Value());
-<#      } #>
-<#      else #>
-<#      { #>
-    aValue = iProperty<#=s.name#>->Value();
-<#      } #>
 }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
@@ -354,6 +368,14 @@ void STDCALL <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=Property
     reinterpret_cast<<#=className#>C*>(aProvider)->GetProperty<#=s.name#>(val);
     *aValue = val;
 <#      } #>
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void STDCALL <#=className#>EnableProperty<#=s.name#>(THandle aProvider)
+{
+    reinterpret_cast<<#=className#>C*>(aProvider)->EnableProperty<#=s.name#>();
 }
 <#  } #>
 
@@ -589,18 +611,6 @@ string PropertyOutArgs(Variable s)
 string DeclareAllowedValues()
 {
     return "\n    TChar** allowedValues;\n    TUint index;";
-}
-
-string DeclareAllowedValuesForProperties(Document u)
-{
-    foreach (Variable s in u.evented)
-    {
-        if (s.values.Count > 0)
-        {
-            return DeclareAllowedValues();
-        }
-    }
-    return "";
 }
 
 string DeclareAllowedValuesForMethod(Method a)

@@ -53,7 +53,6 @@ private:
 DvProviderOpenhomeOrgTestLights1C::DvProviderOpenhomeOrgTestLights1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "openhome.org", "TestLights", 1)
 {
-    
 }
 
 void DvProviderOpenhomeOrgTestLights1C::EnableActionGetCount(CallbackTestLights1GetCount aCallback, void* aPtr)

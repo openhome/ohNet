@@ -97,6 +97,27 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgSender1Create(DvDeviceC aDevice
 DllExport void STDCALL DvProviderAvOpenhomeOrgSender1Destroy(THandle aProvider);
 
 /**
+ * Enable the PresentationUrl property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnablePropertyPresentationUrl(THandle aProvider);
+/**
+ * Enable the Metadata property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnablePropertyMetadata(THandle aProvider);
+/**
+ * Enable the Audio property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnablePropertyAudio(THandle aProvider);
+/**
+ * Enable the Status property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnablePropertyStatus(THandle aProvider);
+/**
+ * Enable the Attributes property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnablePropertyAttributes(THandle aProvider);
+
+/**
  * Register a callback for the action PresentationUrl
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -155,6 +176,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionAttributes(THan
 /**
  * Set the value of the PresentationUrl property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyPresentationUrl has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -166,12 +189,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyPresentationU
 /**
  * Get a copy of the value of the PresentationUrl property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyPresentationUrl has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyPresentationUrl(THandle aProvider, char** aValue);
 /**
  * Set the value of the Metadata property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyMetadata has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -184,12 +211,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyMetadata(THan
 /**
  * Get a copy of the value of the Metadata property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyMetadata has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyMetadata(THandle aProvider, char** aValue);
 /**
  * Set the value of the Audio property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyAudio has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[in]  aValue     New value for the property
@@ -202,12 +233,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyAudio(THandle
 /**
  * Get a copy of the value of the Audio property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyAudio has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyAudio(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Status property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyStatus has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -220,12 +255,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyStatus(THandl
 /**
  * Get a copy of the value of the Status property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyStatus has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyStatus(THandle aProvider, char** aValue);
 /**
  * Set the value of the Attributes property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyAttributes has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -237,6 +276,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyStatus(THandle a
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Attributes property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgSender1EnablePropertyAttributes has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

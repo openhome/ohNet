@@ -10,24 +10,28 @@ using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgAVTransport2Cpp::SetPropertyLastChange(const std::string& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyLastChange, buf);
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::GetPropertyLastChange(std::string& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     const Brx& val = iPropertyLastChange->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderUpnpOrgAVTransport2Cpp::SetPropertyDRMState(const std::string& aValue)
 {
+    ASSERT(iPropertyDRMState != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyDRMState, buf);
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::GetPropertyDRMState(std::string& aValue)
 {
+    ASSERT(iPropertyDRMState != NULL);
     const Brx& val = iPropertyDRMState->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -35,12 +39,20 @@ void DvProviderUpnpOrgAVTransport2Cpp::GetPropertyDRMState(std::string& aValue)
 DvProviderUpnpOrgAVTransport2Cpp::DvProviderUpnpOrgAVTransport2Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "AVTransport", 2)
 {
-    
-    TChar** allowedValues;
-    TUint index;
+    iPropertyLastChange = NULL;
+    iPropertyDRMState = NULL;
+}
+
+void DvProviderUpnpOrgAVTransport2Cpp::EnablePropertyLastChange()
+{
     iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
-    index = 0;
+}
+
+void DvProviderUpnpOrgAVTransport2Cpp::EnablePropertyDRMState()
+{
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"OK";
     iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1));

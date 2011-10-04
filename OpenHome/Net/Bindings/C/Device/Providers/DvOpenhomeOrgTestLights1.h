@@ -131,6 +131,7 @@ DllExport THandle STDCALL DvProviderOpenhomeOrgTestLights1Create(DvDeviceC aDevi
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestLights1Destroy(THandle aProvider);
 
+
 /**
  * Register a callback for the action GetCount
  *

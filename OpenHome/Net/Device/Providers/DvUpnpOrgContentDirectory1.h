@@ -27,31 +27,43 @@ public:
     /**
      * Set the value of the TransferIDs property
      *
+     * Can only be called if EnablePropertyTransferIDs has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyTransferIDs(const Brx& aValue);
     /**
      * Get a copy of the value of the TransferIDs property
+     *
+     * Can only be called if EnablePropertyTransferIDs has previously been called.
      */
     void GetPropertyTransferIDs(Brhz& aValue);
     /**
      * Set the value of the SystemUpdateID property
+     *
+     * Can only be called if EnablePropertySystemUpdateID has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertySystemUpdateID(TUint aValue);
     /**
      * Get a copy of the value of the SystemUpdateID property
+     *
+     * Can only be called if EnablePropertySystemUpdateID has previously been called.
      */
     void GetPropertySystemUpdateID(TUint& aValue);
     /**
      * Set the value of the ContainerUpdateIDs property
+     *
+     * Can only be called if EnablePropertyContainerUpdateIDs has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyContainerUpdateIDs(const Brx& aValue);
     /**
      * Get a copy of the value of the ContainerUpdateIDs property
+     *
+     * Can only be called if EnablePropertyContainerUpdateIDs has previously been called.
      */
     void GetPropertyContainerUpdateIDs(Brhz& aValue);
 protected:
@@ -61,6 +73,18 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgContentDirectory1(DvDevice& aDevice);
+    /**
+     * Enable the TransferIDs property.
+     */
+    void EnablePropertyTransferIDs();
+    /**
+     * Enable the SystemUpdateID property.
+     */
+    void EnablePropertySystemUpdateID();
+    /**
+     * Enable the ContainerUpdateIDs property.
+     */
+    void EnablePropertyContainerUpdateIDs();
     /**
      * Signal that the action GetSearchCapabilities is supported.
      * The action's availability will be published in the device's service.xml.

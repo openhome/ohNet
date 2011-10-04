@@ -30,61 +30,85 @@ public:
     /**
      * Set the value of the Metadata property
      *
+     * Can only be called if EnablePropertyMetadata has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyMetadata(const std::string& aValue);
     /**
      * Get a copy of the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      */
     void GetPropertyMetadata(std::string& aValue);
     /**
      * Set the value of the ImagesXml property
+     *
+     * Can only be called if EnablePropertyImagesXml has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyImagesXml(const std::string& aValue);
     /**
      * Get a copy of the value of the ImagesXml property
+     *
+     * Can only be called if EnablePropertyImagesXml has previously been called.
      */
     void GetPropertyImagesXml(std::string& aValue);
     /**
      * Set the value of the IdArray property
+     *
+     * Can only be called if EnablePropertyIdArray has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyIdArray(const std::string& aValue);
     /**
      * Get a copy of the value of the IdArray property
+     *
+     * Can only be called if EnablePropertyIdArray has previously been called.
      */
     void GetPropertyIdArray(std::string& aValue);
     /**
      * Set the value of the TokenArray property
+     *
+     * Can only be called if EnablePropertyTokenArray has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyTokenArray(const std::string& aValue);
     /**
      * Get a copy of the value of the TokenArray property
+     *
+     * Can only be called if EnablePropertyTokenArray has previously been called.
      */
     void GetPropertyTokenArray(std::string& aValue);
     /**
      * Set the value of the PlaylistsMax property
+     *
+     * Can only be called if EnablePropertyPlaylistsMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyPlaylistsMax(uint32_t aValue);
     /**
      * Get a copy of the value of the PlaylistsMax property
+     *
+     * Can only be called if EnablePropertyPlaylistsMax has previously been called.
      */
     void GetPropertyPlaylistsMax(uint32_t& aValue);
     /**
      * Set the value of the TracksMax property
+     *
+     * Can only be called if EnablePropertyTracksMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyTracksMax(uint32_t aValue);
     /**
      * Get a copy of the value of the TracksMax property
+     *
+     * Can only be called if EnablePropertyTracksMax has previously been called.
      */
     void GetPropertyTracksMax(uint32_t& aValue);
 protected:
@@ -94,6 +118,30 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgPlaylistManager1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the Metadata property.
+     */
+    void EnablePropertyMetadata();
+    /**
+     * Enable the ImagesXml property.
+     */
+    void EnablePropertyImagesXml();
+    /**
+     * Enable the IdArray property.
+     */
+    void EnablePropertyIdArray();
+    /**
+     * Enable the TokenArray property.
+     */
+    void EnablePropertyTokenArray();
+    /**
+     * Enable the PlaylistsMax property.
+     */
+    void EnablePropertyPlaylistsMax();
+    /**
+     * Enable the TracksMax property.
+     */
+    void EnablePropertyTracksMax();
     /**
      * Signal that the action Metadata is supported.
      * The action's availability will be published in the device's service.xml.

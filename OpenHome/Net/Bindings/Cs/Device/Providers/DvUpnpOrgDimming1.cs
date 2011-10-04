@@ -116,14 +116,49 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "upnp.org", "Dimming", 1)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the LoadLevelStatus property.
+        /// </summary>
+        public void EnablePropertyLoadLevelStatus()
+        {
             iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));
             AddProperty(iPropertyLoadLevelStatus);
+        }
+
+        /// <summary>
+        /// Enable the StepDelta property.
+        /// </summary>
+        public void EnablePropertyStepDelta()
+        {
             iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100));
             AddProperty(iPropertyStepDelta);
+        }
+
+        /// <summary>
+        /// Enable the RampRate property.
+        /// </summary>
+        public void EnablePropertyRampRate()
+        {
             iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100));
             AddProperty(iPropertyRampRate);
+        }
+
+        /// <summary>
+        /// Enable the IsRamping property.
+        /// </summary>
+        public void EnablePropertyIsRamping()
+        {
             iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"));
             AddProperty(iPropertyIsRamping);
+        }
+
+        /// <summary>
+        /// Enable the RampPaused property.
+        /// </summary>
+        public void EnablePropertyRampPaused()
+        {
             iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"));
             AddProperty(iPropertyRampPaused);
         }
@@ -131,95 +166,125 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the LoadLevelStatus property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyLoadLevelStatus has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyLoadLevelStatus(uint aValue)
         {
+            if (iPropertyLoadLevelStatus == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyLoadLevelStatus, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the LoadLevelStatus property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyLoadLevelStatus has previously been called.</remarks>
         /// <returns>Value of the LoadLevelStatus property.</returns>
         public uint PropertyLoadLevelStatus()
         {
+            if (iPropertyLoadLevelStatus == null)
+                throw new PropertyDisabledError();
             return iPropertyLoadLevelStatus.Value();
         }
 
         /// <summary>
         /// Set the value of the StepDelta property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyStepDelta has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyStepDelta(uint aValue)
         {
+            if (iPropertyStepDelta == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyStepDelta, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the StepDelta property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyStepDelta has previously been called.</remarks>
         /// <returns>Value of the StepDelta property.</returns>
         public uint PropertyStepDelta()
         {
+            if (iPropertyStepDelta == null)
+                throw new PropertyDisabledError();
             return iPropertyStepDelta.Value();
         }
 
         /// <summary>
         /// Set the value of the RampRate property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyRampRate has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyRampRate(uint aValue)
         {
+            if (iPropertyRampRate == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyRampRate, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the RampRate property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyRampRate has previously been called.</remarks>
         /// <returns>Value of the RampRate property.</returns>
         public uint PropertyRampRate()
         {
+            if (iPropertyRampRate == null)
+                throw new PropertyDisabledError();
             return iPropertyRampRate.Value();
         }
 
         /// <summary>
         /// Set the value of the IsRamping property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyIsRamping has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyIsRamping(bool aValue)
         {
+            if (iPropertyIsRamping == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyIsRamping, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the IsRamping property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyIsRamping has previously been called.</remarks>
         /// <returns>Value of the IsRamping property.</returns>
         public bool PropertyIsRamping()
         {
+            if (iPropertyIsRamping == null)
+                throw new PropertyDisabledError();
             return iPropertyIsRamping.Value();
         }
 
         /// <summary>
         /// Set the value of the RampPaused property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyRampPaused has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyRampPaused(bool aValue)
         {
+            if (iPropertyRampPaused == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyRampPaused, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the RampPaused property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyRampPaused has previously been called.</remarks>
         /// <returns>Value of the RampPaused property.</returns>
         public bool PropertyRampPaused()
         {
+            if (iPropertyRampPaused == null)
+                throw new PropertyDisabledError();
             return iPropertyRampPaused.Value();
         }
 

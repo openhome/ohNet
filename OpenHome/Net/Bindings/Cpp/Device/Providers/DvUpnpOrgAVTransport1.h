@@ -30,11 +30,15 @@ public:
     /**
      * Set the value of the LastChange property
      *
+     * Can only be called if EnablePropertyLastChange has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyLastChange(const std::string& aValue);
     /**
      * Get a copy of the value of the LastChange property
+     *
+     * Can only be called if EnablePropertyLastChange has previously been called.
      */
     void GetPropertyLastChange(std::string& aValue);
 protected:
@@ -44,6 +48,10 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgAVTransport1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the LastChange property.
+     */
+    void EnablePropertyLastChange();
     /**
      * Signal that the action SetAVTransportURI is supported.
      * The action's availability will be published in the device's service.xml.

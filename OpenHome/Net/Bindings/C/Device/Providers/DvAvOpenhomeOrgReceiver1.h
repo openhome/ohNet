@@ -109,6 +109,23 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgReceiver1Create(DvDeviceC aDevi
 DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1Destroy(THandle aProvider);
 
 /**
+ * Enable the Uri property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1EnablePropertyUri(THandle aProvider);
+/**
+ * Enable the Metadata property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1EnablePropertyMetadata(THandle aProvider);
+/**
+ * Enable the TransportState property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1EnablePropertyTransportState(THandle aProvider);
+/**
+ * Enable the ProtocolInfo property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1EnablePropertyProtocolInfo(THandle aProvider);
+
+/**
  * Register a callback for the action Play
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -178,6 +195,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1EnableActionTransportStat
 /**
  * Set the value of the Uri property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgReceiver1EnablePropertyUri has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgReceiver1Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -189,12 +208,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgReceiver1SetPropertyUri(THandle
 /**
  * Get a copy of the value of the Uri property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgReceiver1EnablePropertyUri has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgReceiver1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the Metadata property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgReceiver1EnablePropertyMetadata has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgReceiver1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -207,12 +230,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgReceiver1SetPropertyMetadata(TH
 /**
  * Get a copy of the value of the Metadata property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgReceiver1EnablePropertyMetadata has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgReceiver1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyMetadata(THandle aProvider, char** aValue);
 /**
  * Set the value of the TransportState property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgReceiver1EnablePropertyTransportState has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgReceiver1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -225,12 +252,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgReceiver1SetPropertyTransportSt
 /**
  * Get a copy of the value of the TransportState property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgReceiver1EnablePropertyTransportState has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgReceiver1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyTransportState(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProtocolInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgReceiver1EnablePropertyProtocolInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgReceiver1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -242,6 +273,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyTransportState
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgReceiver1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProtocolInfo property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgReceiver1EnablePropertyProtocolInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgReceiver1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

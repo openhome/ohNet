@@ -28,6 +28,11 @@ public:
     void GetPropertyIsRamping(TBool& aValue);
     TBool SetPropertyRampPaused(TBool aValue);
     void GetPropertyRampPaused(TBool& aValue);
+    void EnablePropertyLoadLevelStatus();
+    void EnablePropertyStepDelta();
+    void EnablePropertyRampRate();
+    void EnablePropertyIsRamping();
+    void EnablePropertyRampPaused();
     void EnableActionSetLoadLevelTarget(CallbackDimming1SetLoadLevelTarget aCallback, void* aPtr);
     void EnableActionGetLoadLevelTarget(CallbackDimming1GetLoadLevelTarget aCallback, void* aPtr);
     void EnableActionGetLoadLevelStatus(CallbackDimming1GetLoadLevelStatus aCallback, void* aPtr);
@@ -124,67 +129,101 @@ private:
 DvProviderUpnpOrgDimming1C::DvProviderUpnpOrgDimming1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "Dimming", 1)
 {
-    
-    iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));
-    iService->AddProperty(iPropertyLoadLevelStatus); // passes ownership
-    iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100));
-    iService->AddProperty(iPropertyStepDelta); // passes ownership
-    iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100));
-    iService->AddProperty(iPropertyRampRate); // passes ownership
-    iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"));
-    iService->AddProperty(iPropertyIsRamping); // passes ownership
-    iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"));
-    iService->AddProperty(iPropertyRampPaused); // passes ownership
+    iPropertyLoadLevelStatus = NULL;
+    iPropertyStepDelta = NULL;
+    iPropertyRampRate = NULL;
+    iPropertyIsRamping = NULL;
+    iPropertyRampPaused = NULL;
 }
 
 TBool DvProviderUpnpOrgDimming1C::SetPropertyLoadLevelStatus(TUint aValue)
 {
+    ASSERT(iPropertyLoadLevelStatus != NULL);
     return SetPropertyUint(*iPropertyLoadLevelStatus, aValue);
 }
 
 void DvProviderUpnpOrgDimming1C::GetPropertyLoadLevelStatus(TUint& aValue)
 {
+    ASSERT(iPropertyLoadLevelStatus != NULL);
     aValue = iPropertyLoadLevelStatus->Value();
 }
 
 TBool DvProviderUpnpOrgDimming1C::SetPropertyStepDelta(TUint aValue)
 {
+    ASSERT(iPropertyStepDelta != NULL);
     return SetPropertyUint(*iPropertyStepDelta, aValue);
 }
 
 void DvProviderUpnpOrgDimming1C::GetPropertyStepDelta(TUint& aValue)
 {
+    ASSERT(iPropertyStepDelta != NULL);
     aValue = iPropertyStepDelta->Value();
 }
 
 TBool DvProviderUpnpOrgDimming1C::SetPropertyRampRate(TUint aValue)
 {
+    ASSERT(iPropertyRampRate != NULL);
     return SetPropertyUint(*iPropertyRampRate, aValue);
 }
 
 void DvProviderUpnpOrgDimming1C::GetPropertyRampRate(TUint& aValue)
 {
+    ASSERT(iPropertyRampRate != NULL);
     aValue = iPropertyRampRate->Value();
 }
 
 TBool DvProviderUpnpOrgDimming1C::SetPropertyIsRamping(TBool aValue)
 {
+    ASSERT(iPropertyIsRamping != NULL);
     return SetPropertyBool(*iPropertyIsRamping, aValue);
 }
 
 void DvProviderUpnpOrgDimming1C::GetPropertyIsRamping(TBool& aValue)
 {
+    ASSERT(iPropertyIsRamping != NULL);
     aValue = iPropertyIsRamping->Value();
 }
 
 TBool DvProviderUpnpOrgDimming1C::SetPropertyRampPaused(TBool aValue)
 {
+    ASSERT(iPropertyRampPaused != NULL);
     return SetPropertyBool(*iPropertyRampPaused, aValue);
 }
 
 void DvProviderUpnpOrgDimming1C::GetPropertyRampPaused(TBool& aValue)
 {
+    ASSERT(iPropertyRampPaused != NULL);
     aValue = iPropertyRampPaused->Value();
+}
+
+void DvProviderUpnpOrgDimming1C::EnablePropertyLoadLevelStatus()
+{
+    iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));
+    iService->AddProperty(iPropertyLoadLevelStatus); // passes ownership
+}
+
+void DvProviderUpnpOrgDimming1C::EnablePropertyStepDelta()
+{
+    iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100));
+    iService->AddProperty(iPropertyStepDelta); // passes ownership
+}
+
+void DvProviderUpnpOrgDimming1C::EnablePropertyRampRate()
+{
+    iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100));
+    iService->AddProperty(iPropertyRampRate); // passes ownership
+}
+
+void DvProviderUpnpOrgDimming1C::EnablePropertyIsRamping()
+{
+    iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"));
+    iService->AddProperty(iPropertyIsRamping); // passes ownership
+}
+
+void DvProviderUpnpOrgDimming1C::EnablePropertyRampPaused()
+{
+    iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"));
+    iService->AddProperty(iPropertyRampPaused); // passes ownership
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionSetLoadLevelTarget(CallbackDimming1SetLoadLevelTarget aCallback, void* aPtr)
@@ -1004,5 +1043,30 @@ void STDCALL DvProviderUpnpOrgDimming1GetPropertyRampPaused(THandle aProvider, u
     TBool val;
     reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->GetPropertyRampPaused(val);
     *aValue = (val? 1 : 0);
+}
+
+void STDCALL DvProviderUpnpOrgDimming1EnablePropertyLoadLevelStatus(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnablePropertyLoadLevelStatus();
+}
+
+void STDCALL DvProviderUpnpOrgDimming1EnablePropertyStepDelta(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnablePropertyStepDelta();
+}
+
+void STDCALL DvProviderUpnpOrgDimming1EnablePropertyRampRate(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnablePropertyRampRate();
+}
+
+void STDCALL DvProviderUpnpOrgDimming1EnablePropertyIsRamping(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnablePropertyIsRamping();
+}
+
+void STDCALL DvProviderUpnpOrgDimming1EnablePropertyRampPaused(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnablePropertyRampPaused();
 }
 

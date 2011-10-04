@@ -129,17 +129,60 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "av.openhome.org", "PlaylistManager", 1)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the Metadata property.
+        /// </summary>
+        public void EnablePropertyMetadata()
+        {
             List<String> allowedValues = new List<String>();
             iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
             AddProperty(iPropertyMetadata);
+        }
+
+        /// <summary>
+        /// Enable the ImagesXml property.
+        /// </summary>
+        public void EnablePropertyImagesXml()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyImagesXml = new PropertyString(new ParameterString("ImagesXml", allowedValues));
             AddProperty(iPropertyImagesXml);
+        }
+
+        /// <summary>
+        /// Enable the IdArray property.
+        /// </summary>
+        public void EnablePropertyIdArray()
+        {
             iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
             AddProperty(iPropertyIdArray);
+        }
+
+        /// <summary>
+        /// Enable the TokenArray property.
+        /// </summary>
+        public void EnablePropertyTokenArray()
+        {
             iPropertyTokenArray = new PropertyBinary(new ParameterBinary("TokenArray"));
             AddProperty(iPropertyTokenArray);
+        }
+
+        /// <summary>
+        /// Enable the PlaylistsMax property.
+        /// </summary>
+        public void EnablePropertyPlaylistsMax()
+        {
             iPropertyPlaylistsMax = new PropertyUint(new ParameterUint("PlaylistsMax"));
             AddProperty(iPropertyPlaylistsMax);
+        }
+
+        /// <summary>
+        /// Enable the TracksMax property.
+        /// </summary>
+        public void EnablePropertyTracksMax()
+        {
             iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
             AddProperty(iPropertyTracksMax);
         }
@@ -147,114 +190,150 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the Metadata property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetadata has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyMetadata(string aValue)
         {
+            if (iPropertyMetadata == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyMetadata, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyMetadata has previously been called.</remarks>
         /// <returns>Value of the Metadata property.</returns>
         public string PropertyMetadata()
         {
+            if (iPropertyMetadata == null)
+                throw new PropertyDisabledError();
             return iPropertyMetadata.Value();
         }
 
         /// <summary>
         /// Set the value of the ImagesXml property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyImagesXml has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyImagesXml(string aValue)
         {
+            if (iPropertyImagesXml == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyImagesXml, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the ImagesXml property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyImagesXml has previously been called.</remarks>
         /// <returns>Value of the ImagesXml property.</returns>
         public string PropertyImagesXml()
         {
+            if (iPropertyImagesXml == null)
+                throw new PropertyDisabledError();
             return iPropertyImagesXml.Value();
         }
 
         /// <summary>
         /// Set the value of the IdArray property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyIdArray has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyIdArray(byte[] aValue)
         {
+            if (iPropertyIdArray == null)
+                throw new PropertyDisabledError();
             return SetPropertyBinary(iPropertyIdArray, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the IdArray property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyIdArray has previously been called.</remarks>
         /// <returns>Value of the IdArray property.</returns>
         public byte[] PropertyIdArray()
         {
+            if (iPropertyIdArray == null)
+                throw new PropertyDisabledError();
             return iPropertyIdArray.Value();
         }
 
         /// <summary>
         /// Set the value of the TokenArray property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTokenArray has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyTokenArray(byte[] aValue)
         {
+            if (iPropertyTokenArray == null)
+                throw new PropertyDisabledError();
             return SetPropertyBinary(iPropertyTokenArray, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TokenArray property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTokenArray has previously been called.</remarks>
         /// <returns>Value of the TokenArray property.</returns>
         public byte[] PropertyTokenArray()
         {
+            if (iPropertyTokenArray == null)
+                throw new PropertyDisabledError();
             return iPropertyTokenArray.Value();
         }
 
         /// <summary>
         /// Set the value of the PlaylistsMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyPlaylistsMax has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyPlaylistsMax(uint aValue)
         {
+            if (iPropertyPlaylistsMax == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyPlaylistsMax, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the PlaylistsMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyPlaylistsMax has previously been called.</remarks>
         /// <returns>Value of the PlaylistsMax property.</returns>
         public uint PropertyPlaylistsMax()
         {
+            if (iPropertyPlaylistsMax == null)
+                throw new PropertyDisabledError();
             return iPropertyPlaylistsMax.Value();
         }
 
         /// <summary>
         /// Set the value of the TracksMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTracksMax has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyTracksMax(uint aValue)
         {
+            if (iPropertyTracksMax == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyTracksMax, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TracksMax property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTracksMax has previously been called.</remarks>
         /// <returns>Value of the TracksMax property.</returns>
         public uint PropertyTracksMax()
         {
+            if (iPropertyTracksMax == null)
+                throw new PropertyDisabledError();
             return iPropertyTracksMax.Value();
         }
 

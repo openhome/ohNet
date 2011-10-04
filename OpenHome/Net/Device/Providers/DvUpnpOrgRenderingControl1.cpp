@@ -9,18 +9,24 @@ using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgRenderingControl1::SetPropertyLastChange(const Brx& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvProviderUpnpOrgRenderingControl1::GetPropertyLastChange(Brhz& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     aValue.Set(iPropertyLastChange->Value());
 }
 
 DvProviderUpnpOrgRenderingControl1::DvProviderUpnpOrgRenderingControl1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "RenderingControl", 1)
 {
-    
+    iPropertyLastChange = NULL;
+}
+
+void DvProviderUpnpOrgRenderingControl1::EnablePropertyLastChange()
+{
     iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }

@@ -68,10 +68,31 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "av.openhome.org", "Time", 1)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the TrackCount property.
+        /// </summary>
+        public void EnablePropertyTrackCount()
+        {
             iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
             AddProperty(iPropertyTrackCount);
+        }
+
+        /// <summary>
+        /// Enable the Duration property.
+        /// </summary>
+        public void EnablePropertyDuration()
+        {
             iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
             AddProperty(iPropertyDuration);
+        }
+
+        /// <summary>
+        /// Enable the Seconds property.
+        /// </summary>
+        public void EnablePropertySeconds()
+        {
             iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
             AddProperty(iPropertySeconds);
         }
@@ -79,57 +100,75 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the TrackCount property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTrackCount has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyTrackCount(uint aValue)
         {
+            if (iPropertyTrackCount == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyTrackCount, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackCount property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTrackCount has previously been called.</remarks>
         /// <returns>Value of the TrackCount property.</returns>
         public uint PropertyTrackCount()
         {
+            if (iPropertyTrackCount == null)
+                throw new PropertyDisabledError();
             return iPropertyTrackCount.Value();
         }
 
         /// <summary>
         /// Set the value of the Duration property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyDuration has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyDuration(uint aValue)
         {
+            if (iPropertyDuration == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyDuration, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Duration property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyDuration has previously been called.</remarks>
         /// <returns>Value of the Duration property.</returns>
         public uint PropertyDuration()
         {
+            if (iPropertyDuration == null)
+                throw new PropertyDisabledError();
             return iPropertyDuration.Value();
         }
 
         /// <summary>
         /// Set the value of the Seconds property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySeconds has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertySeconds(uint aValue)
         {
+            if (iPropertySeconds == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertySeconds, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Seconds property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySeconds has previously been called.</remarks>
         /// <returns>Value of the Seconds property.</returns>
         public uint PropertySeconds()
         {
+            if (iPropertySeconds == null)
+                throw new PropertyDisabledError();
             return iPropertySeconds.Value();
         }
 

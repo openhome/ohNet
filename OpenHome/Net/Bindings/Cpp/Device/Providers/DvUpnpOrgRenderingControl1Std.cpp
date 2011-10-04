@@ -10,12 +10,14 @@ using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgRenderingControl1Cpp::SetPropertyLastChange(const std::string& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyLastChange, buf);
 }
 
 void DvProviderUpnpOrgRenderingControl1Cpp::GetPropertyLastChange(std::string& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     const Brx& val = iPropertyLastChange->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -23,7 +25,11 @@ void DvProviderUpnpOrgRenderingControl1Cpp::GetPropertyLastChange(std::string& a
 DvProviderUpnpOrgRenderingControl1Cpp::DvProviderUpnpOrgRenderingControl1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "RenderingControl", 1)
 {
-    
+    iPropertyLastChange = NULL;
+}
+
+void DvProviderUpnpOrgRenderingControl1Cpp::EnablePropertyLastChange()
+{
     iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }

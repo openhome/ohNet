@@ -111,6 +111,19 @@ DllExport THandle STDCALL DvProviderUpnpOrgConnectionManager2Create(DvDeviceC aD
 DllExport void STDCALL DvProviderUpnpOrgConnectionManager2Destroy(THandle aProvider);
 
 /**
+ * Enable the SourceProtocolInfo property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager2EnablePropertySourceProtocolInfo(THandle aProvider);
+/**
+ * Enable the SinkProtocolInfo property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager2EnablePropertySinkProtocolInfo(THandle aProvider);
+/**
+ * Enable the CurrentConnectionIDs property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager2EnablePropertyCurrentConnectionIDs(THandle aProvider);
+
+/**
  * Register a callback for the action GetProtocolInfo
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -169,6 +182,8 @@ DllExport void STDCALL DvProviderUpnpOrgConnectionManager2EnableActionGetCurrent
 /**
  * Set the value of the SourceProtocolInfo property
  *
+ * Can only be called if DvProviderUpnpOrgConnectionManager2EnablePropertySourceProtocolInfo has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager2Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -180,12 +195,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgConnectionManager2SetPropertySourcePr
 /**
  * Get a copy of the value of the SourceProtocolInfo property
  *
+ * Can only be called if DvProviderUpnpOrgConnectionManager2EnablePropertySourceProtocolInfo has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager2Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the SinkProtocolInfo property
+ *
+ * Can only be called if DvProviderUpnpOrgConnectionManager2EnablePropertySinkProtocolInfo has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager2Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -198,12 +217,16 @@ DllExport int32_t STDCALL DvProviderUpnpOrgConnectionManager2SetPropertySinkProt
 /**
  * Get a copy of the value of the SinkProtocolInfo property
  *
+ * Can only be called if DvProviderUpnpOrgConnectionManager2EnablePropertySinkProtocolInfo has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager2Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the CurrentConnectionIDs property
+ *
+ * Can only be called if DvProviderUpnpOrgConnectionManager2EnablePropertyCurrentConnectionIDs has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager2Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -215,6 +238,8 @@ DllExport void STDCALL DvProviderUpnpOrgConnectionManager2GetPropertySinkProtoco
 DllExport int32_t STDCALL DvProviderUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the CurrentConnectionIDs property
+ *
+ * Can only be called if DvProviderUpnpOrgConnectionManager2EnablePropertyCurrentConnectionIDs has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager2Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

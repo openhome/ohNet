@@ -306,6 +306,31 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgPlaylistManager1Create(DvDevice
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1Destroy(THandle aProvider);
 
 /**
+ * Enable the Metadata property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyMetadata(THandle aProvider);
+/**
+ * Enable the ImagesXml property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyImagesXml(THandle aProvider);
+/**
+ * Enable the IdArray property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyIdArray(THandle aProvider);
+/**
+ * Enable the TokenArray property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyTokenArray(THandle aProvider);
+/**
+ * Enable the PlaylistsMax property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyPlaylistsMax(THandle aProvider);
+/**
+ * Enable the TracksMax property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyTracksMax(THandle aProvider);
+
+/**
  * Register a callback for the action Metadata
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -529,6 +554,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionDelete
 /**
  * Set the value of the Metadata property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyMetadata has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -540,12 +567,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylistManager1SetPropertyMeta
 /**
  * Get a copy of the value of the Metadata property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyMetadata has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1GetPropertyMetadata(THandle aProvider, char** aValue);
 /**
  * Set the value of the ImagesXml property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyImagesXml has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -558,12 +589,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylistManager1SetPropertyImag
 /**
  * Get a copy of the value of the ImagesXml property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyImagesXml has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1GetPropertyImagesXml(THandle aProvider, char** aValue);
 /**
  * Set the value of the IdArray property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyIdArray has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -577,6 +612,8 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylistManager1SetPropertyIdAr
 /**
  * Get a copy of the value of the IdArray property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyIdArray has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  * @param[out] aValueLen  Size in bytes pointed to by aValue
@@ -584,6 +621,8 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylistManager1SetPropertyIdAr
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen);
 /**
  * Set the value of the TokenArray property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyTokenArray has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -597,6 +636,8 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylistManager1SetPropertyToke
 /**
  * Get a copy of the value of the TokenArray property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyTokenArray has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  * @param[out] aValueLen  Size in bytes pointed to by aValue
@@ -604,6 +645,8 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylistManager1SetPropertyToke
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1GetPropertyTokenArray(THandle aProvider, char** aValue, uint32_t* aValueLen);
 /**
  * Set the value of the PlaylistsMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyPlaylistsMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aValue     New value for the property
@@ -616,12 +659,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylistManager1SetPropertyPlay
 /**
  * Get a copy of the value of the PlaylistsMax property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyPlaylistsMax has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1GetPropertyPlaylistsMax(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the TracksMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyTracksMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aValue     New value for the property
@@ -633,6 +680,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1GetPropertyPlaylis
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylistManager1SetPropertyTracksMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the TracksMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgPlaylistManager1EnablePropertyTracksMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aValue     Value for the property

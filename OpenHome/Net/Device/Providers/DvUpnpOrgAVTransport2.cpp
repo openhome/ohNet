@@ -9,33 +9,45 @@ using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgAVTransport2::SetPropertyLastChange(const Brx& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvProviderUpnpOrgAVTransport2::GetPropertyLastChange(Brhz& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     aValue.Set(iPropertyLastChange->Value());
 }
 
 TBool DvProviderUpnpOrgAVTransport2::SetPropertyDRMState(const Brx& aValue)
 {
+    ASSERT(iPropertyDRMState != NULL);
     return SetPropertyString(*iPropertyDRMState, aValue);
 }
 
 void DvProviderUpnpOrgAVTransport2::GetPropertyDRMState(Brhz& aValue)
 {
+    ASSERT(iPropertyDRMState != NULL);
     aValue.Set(iPropertyDRMState->Value());
 }
 
 DvProviderUpnpOrgAVTransport2::DvProviderUpnpOrgAVTransport2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "AVTransport", 2)
 {
-    
-    TChar** allowedValues;
-    TUint index;
+    iPropertyLastChange = NULL;
+    iPropertyDRMState = NULL;
+}
+
+void DvProviderUpnpOrgAVTransport2::EnablePropertyLastChange()
+{
     iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
-    index = 0;
+}
+
+void DvProviderUpnpOrgAVTransport2::EnablePropertyDRMState()
+{
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"OK";
     iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1));

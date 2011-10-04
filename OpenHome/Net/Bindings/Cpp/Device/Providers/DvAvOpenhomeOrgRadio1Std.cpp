@@ -10,80 +10,94 @@ using namespace OpenHome::Net;
 
 bool DvProviderAvOpenhomeOrgRadio1Cpp::SetPropertyUri(const std::string& aValue)
 {
+    ASSERT(iPropertyUri != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyUri, buf);
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::GetPropertyUri(std::string& aValue)
 {
+    ASSERT(iPropertyUri != NULL);
     const Brx& val = iPropertyUri->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgRadio1Cpp::SetPropertyMetadata(const std::string& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyMetadata, buf);
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::GetPropertyMetadata(std::string& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     const Brx& val = iPropertyMetadata->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgRadio1Cpp::SetPropertyTransportState(const std::string& aValue)
 {
+    ASSERT(iPropertyTransportState != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyTransportState, buf);
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::GetPropertyTransportState(std::string& aValue)
 {
+    ASSERT(iPropertyTransportState != NULL);
     const Brx& val = iPropertyTransportState->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgRadio1Cpp::SetPropertyId(uint32_t aValue)
 {
+    ASSERT(iPropertyId != NULL);
     return SetPropertyUint(*iPropertyId, aValue);
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::GetPropertyId(uint32_t& aValue)
 {
+    ASSERT(iPropertyId != NULL);
     aValue = iPropertyId->Value();
 }
 
 bool DvProviderAvOpenhomeOrgRadio1Cpp::SetPropertyIdArray(const std::string& aValue)
 {
+    ASSERT(iPropertyIdArray != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyBinary(*iPropertyIdArray, buf);
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::GetPropertyIdArray(std::string& aValue)
 {
+    ASSERT(iPropertyIdArray != NULL);
     const Brx& val = iPropertyIdArray->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgRadio1Cpp::SetPropertyChannelsMax(uint32_t aValue)
 {
+    ASSERT(iPropertyChannelsMax != NULL);
     return SetPropertyUint(*iPropertyChannelsMax, aValue);
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::GetPropertyChannelsMax(uint32_t& aValue)
 {
+    ASSERT(iPropertyChannelsMax != NULL);
     aValue = iPropertyChannelsMax->Value();
 }
 
 bool DvProviderAvOpenhomeOrgRadio1Cpp::SetPropertyProtocolInfo(const std::string& aValue)
 {
+    ASSERT(iPropertyProtocolInfo != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyProtocolInfo, buf);
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::GetPropertyProtocolInfo(std::string& aValue)
 {
+    ASSERT(iPropertyProtocolInfo != NULL);
     const Brx& val = iPropertyProtocolInfo->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -91,14 +105,31 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::GetPropertyProtocolInfo(std::string& aVal
 DvProviderAvOpenhomeOrgRadio1Cpp::DvProviderAvOpenhomeOrgRadio1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Radio", 1)
 {
-    
-    TChar** allowedValues;
-    TUint index;
+    iPropertyUri = NULL;
+    iPropertyMetadata = NULL;
+    iPropertyTransportState = NULL;
+    iPropertyId = NULL;
+    iPropertyIdArray = NULL;
+    iPropertyChannelsMax = NULL;
+    iPropertyProtocolInfo = NULL;
+}
+
+void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyUri()
+{
     iPropertyUri = new PropertyString(new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyMetadata()
+{
     iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
-    index = 0;
+}
+
+void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyTransportState()
+{
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[4];
     allowedValues[index++] = (TChar*)"Stopped";
     allowedValues[index++] = (TChar*)"Playing";
@@ -107,12 +138,28 @@ DvProviderAvOpenhomeOrgRadio1Cpp::DvProviderAvOpenhomeOrgRadio1Cpp(DvDeviceStd& 
     iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyId()
+{
     iPropertyId = new PropertyUint(new ParameterUint("Id"));
     iService->AddProperty(iPropertyId); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyIdArray()
+{
     iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyChannelsMax()
+{
     iPropertyChannelsMax = new PropertyUint(new ParameterUint("ChannelsMax"));
     iService->AddProperty(iPropertyChannelsMax); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyProtocolInfo()
+{
     iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo"));
     iService->AddProperty(iPropertyProtocolInfo); // passes ownership
 }

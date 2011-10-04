@@ -9,67 +9,96 @@ using namespace OpenHome::Net;
 
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyPresentationUrl(const Brx& aValue)
 {
+    ASSERT(iPropertyPresentationUrl != NULL);
     return SetPropertyString(*iPropertyPresentationUrl, aValue);
 }
 
 void DvProviderAvOpenhomeOrgSender1::GetPropertyPresentationUrl(Brhz& aValue)
 {
+    ASSERT(iPropertyPresentationUrl != NULL);
     aValue.Set(iPropertyPresentationUrl->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyMetadata(const Brx& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     return SetPropertyString(*iPropertyMetadata, aValue);
 }
 
 void DvProviderAvOpenhomeOrgSender1::GetPropertyMetadata(Brhz& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     aValue.Set(iPropertyMetadata->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyAudio(TBool aValue)
 {
+    ASSERT(iPropertyAudio != NULL);
     return SetPropertyBool(*iPropertyAudio, aValue);
 }
 
 void DvProviderAvOpenhomeOrgSender1::GetPropertyAudio(TBool& aValue)
 {
+    ASSERT(iPropertyAudio != NULL);
     aValue = iPropertyAudio->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyStatus(const Brx& aValue)
 {
+    ASSERT(iPropertyStatus != NULL);
     return SetPropertyString(*iPropertyStatus, aValue);
 }
 
 void DvProviderAvOpenhomeOrgSender1::GetPropertyStatus(Brhz& aValue)
 {
+    ASSERT(iPropertyStatus != NULL);
     aValue.Set(iPropertyStatus->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyAttributes(const Brx& aValue)
 {
+    ASSERT(iPropertyAttributes != NULL);
     return SetPropertyString(*iPropertyAttributes, aValue);
 }
 
 void DvProviderAvOpenhomeOrgSender1::GetPropertyAttributes(Brhz& aValue)
 {
+    ASSERT(iPropertyAttributes != NULL);
     aValue.Set(iPropertyAttributes->Value());
 }
 
 DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Sender", 1)
 {
-    
-    TChar** allowedValues;
-    TUint index;
+    iPropertyPresentationUrl = NULL;
+    iPropertyMetadata = NULL;
+    iPropertyAudio = NULL;
+    iPropertyStatus = NULL;
+    iPropertyAttributes = NULL;
+}
+
+void DvProviderAvOpenhomeOrgSender1::EnablePropertyPresentationUrl()
+{
     iPropertyPresentationUrl = new PropertyString(new ParameterString("PresentationUrl"));
     iService->AddProperty(iPropertyPresentationUrl); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgSender1::EnablePropertyMetadata()
+{
     iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgSender1::EnablePropertyAudio()
+{
     iPropertyAudio = new PropertyBool(new ParameterBool("Audio"));
     iService->AddProperty(iPropertyAudio); // passes ownership
-    index = 0;
+}
+
+void DvProviderAvOpenhomeOrgSender1::EnablePropertyStatus()
+{
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[3];
     allowedValues[index++] = (TChar*)"Enabled";
     allowedValues[index++] = (TChar*)"Disabled";
@@ -77,6 +106,10 @@ DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice
     iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues, 3));
     delete[] allowedValues;
     iService->AddProperty(iPropertyStatus); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgSender1::EnablePropertyAttributes()
+{
     iPropertyAttributes = new PropertyString(new ParameterString("Attributes"));
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }

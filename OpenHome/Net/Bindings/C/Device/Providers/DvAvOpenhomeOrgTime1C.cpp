@@ -24,6 +24,9 @@ public:
     void GetPropertyDuration(TUint& aValue);
     TBool SetPropertySeconds(TUint aValue);
     void GetPropertySeconds(TUint& aValue);
+    void EnablePropertyTrackCount();
+    void EnablePropertyDuration();
+    void EnablePropertySeconds();
     void EnableActionTime(CallbackTime1Time aCallback, void* aPtr);
 private:
     void DoTime(IDviInvocation& aInvocation);
@@ -38,43 +41,63 @@ private:
 DvProviderAvOpenhomeOrgTime1C::DvProviderAvOpenhomeOrgTime1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "av.openhome.org", "Time", 1)
 {
-    
-    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
-    iService->AddProperty(iPropertyTrackCount); // passes ownership
-    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
-    iService->AddProperty(iPropertyDuration); // passes ownership
-    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
-    iService->AddProperty(iPropertySeconds); // passes ownership
+    iPropertyTrackCount = NULL;
+    iPropertyDuration = NULL;
+    iPropertySeconds = NULL;
 }
 
 TBool DvProviderAvOpenhomeOrgTime1C::SetPropertyTrackCount(TUint aValue)
 {
+    ASSERT(iPropertyTrackCount != NULL);
     return SetPropertyUint(*iPropertyTrackCount, aValue);
 }
 
 void DvProviderAvOpenhomeOrgTime1C::GetPropertyTrackCount(TUint& aValue)
 {
+    ASSERT(iPropertyTrackCount != NULL);
     aValue = iPropertyTrackCount->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgTime1C::SetPropertyDuration(TUint aValue)
 {
+    ASSERT(iPropertyDuration != NULL);
     return SetPropertyUint(*iPropertyDuration, aValue);
 }
 
 void DvProviderAvOpenhomeOrgTime1C::GetPropertyDuration(TUint& aValue)
 {
+    ASSERT(iPropertyDuration != NULL);
     aValue = iPropertyDuration->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgTime1C::SetPropertySeconds(TUint aValue)
 {
+    ASSERT(iPropertySeconds != NULL);
     return SetPropertyUint(*iPropertySeconds, aValue);
 }
 
 void DvProviderAvOpenhomeOrgTime1C::GetPropertySeconds(TUint& aValue)
 {
+    ASSERT(iPropertySeconds != NULL);
     aValue = iPropertySeconds->Value();
+}
+
+void DvProviderAvOpenhomeOrgTime1C::EnablePropertyTrackCount()
+{
+    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
+    iService->AddProperty(iPropertyTrackCount); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgTime1C::EnablePropertyDuration()
+{
+    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
+    iService->AddProperty(iPropertyDuration); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgTime1C::EnablePropertySeconds()
+{
+    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
+    iService->AddProperty(iPropertySeconds); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgTime1C::EnableActionTime(CallbackTime1Time aCallback, void* aPtr)
@@ -170,5 +193,20 @@ void STDCALL DvProviderAvOpenhomeOrgTime1GetPropertySeconds(THandle aProvider, u
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->GetPropertySeconds(val);
     *aValue = val;
+}
+
+void STDCALL DvProviderAvOpenhomeOrgTime1EnablePropertyTrackCount(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->EnablePropertyTrackCount();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgTime1EnablePropertyDuration(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->EnablePropertyDuration();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgTime1EnablePropertySeconds(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->EnablePropertySeconds();
 }
 

@@ -114,15 +114,50 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "openhome.org", "TestBasic", 1)
         {
             iGch = GCHandle.Alloc(this);
-            List<String> allowedValues = new List<String>();
+        }
+
+        /// <summary>
+        /// Enable the VarUint property.
+        /// </summary>
+        public void EnablePropertyVarUint()
+        {
             iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
             AddProperty(iPropertyVarUint);
+        }
+
+        /// <summary>
+        /// Enable the VarInt property.
+        /// </summary>
+        public void EnablePropertyVarInt()
+        {
             iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
             AddProperty(iPropertyVarInt);
+        }
+
+        /// <summary>
+        /// Enable the VarBool property.
+        /// </summary>
+        public void EnablePropertyVarBool()
+        {
             iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
             AddProperty(iPropertyVarBool);
+        }
+
+        /// <summary>
+        /// Enable the VarStr property.
+        /// </summary>
+        public void EnablePropertyVarStr()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyVarStr = new PropertyString(new ParameterString("VarStr", allowedValues));
             AddProperty(iPropertyVarStr);
+        }
+
+        /// <summary>
+        /// Enable the VarBin property.
+        /// </summary>
+        public void EnablePropertyVarBin()
+        {
             iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
             AddProperty(iPropertyVarBin);
         }
@@ -130,95 +165,125 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the VarUint property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarUint has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVarUint(uint aValue)
         {
+            if (iPropertyVarUint == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertyVarUint, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarUint property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarUint has previously been called.</remarks>
         /// <returns>Value of the VarUint property.</returns>
         public uint PropertyVarUint()
         {
+            if (iPropertyVarUint == null)
+                throw new PropertyDisabledError();
             return iPropertyVarUint.Value();
         }
 
         /// <summary>
         /// Set the value of the VarInt property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarInt has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVarInt(int aValue)
         {
+            if (iPropertyVarInt == null)
+                throw new PropertyDisabledError();
             return SetPropertyInt(iPropertyVarInt, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarInt property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarInt has previously been called.</remarks>
         /// <returns>Value of the VarInt property.</returns>
         public int PropertyVarInt()
         {
+            if (iPropertyVarInt == null)
+                throw new PropertyDisabledError();
             return iPropertyVarInt.Value();
         }
 
         /// <summary>
         /// Set the value of the VarBool property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarBool has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVarBool(bool aValue)
         {
+            if (iPropertyVarBool == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyVarBool, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarBool property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarBool has previously been called.</remarks>
         /// <returns>Value of the VarBool property.</returns>
         public bool PropertyVarBool()
         {
+            if (iPropertyVarBool == null)
+                throw new PropertyDisabledError();
             return iPropertyVarBool.Value();
         }
 
         /// <summary>
         /// Set the value of the VarStr property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarStr has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVarStr(string aValue)
         {
+            if (iPropertyVarStr == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyVarStr, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarStr property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarStr has previously been called.</remarks>
         /// <returns>Value of the VarStr property.</returns>
         public string PropertyVarStr()
         {
+            if (iPropertyVarStr == null)
+                throw new PropertyDisabledError();
             return iPropertyVarStr.Value();
         }
 
         /// <summary>
         /// Set the value of the VarBin property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarBin has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyVarBin(byte[] aValue)
         {
+            if (iPropertyVarBin == null)
+                throw new PropertyDisabledError();
             return SetPropertyBinary(iPropertyVarBin, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarBin property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyVarBin has previously been called.</remarks>
         /// <returns>Value of the VarBin property.</returns>
         public byte[] PropertyVarBin()
         {
+            if (iPropertyVarBin == null)
+                throw new PropertyDisabledError();
             return iPropertyVarBin.Value();
         }
 

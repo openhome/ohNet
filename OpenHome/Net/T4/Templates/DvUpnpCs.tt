@@ -90,9 +90,20 @@ namespace OpenHome.Net.Device.Providers
         protected <#=className#>(DvDevice aDevice)
             : base(aDevice, "<#=domain#>", "<#=type#>", <#=version#>)
         {
-            iGch = GCHandle.Alloc(this);<#=DeclareAllowedValuesForProperties(u)#>
+            iGch = GCHandle.Alloc(this);
+        }
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
+
+        /// <summary>
+        /// Enable the <#=s.name#> property.
+        /// </summary>
+        public void EnableProperty<#=s.name#>()
+        {
+<#      if (s.type == "string") #>
+<#      { #>
+            List<String> allowedValues = new List<String>();
+<#      } #>
 <#      if (s.values.Count > 0) #>
 <#      { #>
 <#          foreach (string val in s.values) #>
@@ -106,27 +117,33 @@ namespace OpenHome.Net.Device.Providers
 <#      { #>
             allowedValues.Clear();
 <#      } #>
-<#  } #>
         }
+<#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
         /// <summary>
         /// Set the value of the <#=s.name#> property
         /// </summary>
+        /// <remarks>Can only be called if EnableProperty<#=s.name#> has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
         {
+            if (iProperty<#=s.name#> == null)
+                throw new PropertyDisabledError();
             return <#=propertySetter[s.type]#>(iProperty<#=s.name#>, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the <#=s.name#> property
         /// </summary>
+        /// <remarks>Can only be called if EnableProperty<#=s.name#> has previously been called.</remarks>
         /// <returns>Value of the <#=s.name#> property.</returns>
         public <#=argtype[s.type]#> Property<#=s.name#>()
         {
+            if (iProperty<#=s.name#> == null)
+                throw new PropertyDisabledError();
             return iProperty<#=s.name#>.Value();
         }
 <#  } #>
@@ -389,18 +406,6 @@ void Initialise()
 string DeclareAllowedValues()
 {
     return "\n            List<String> allowedValues = new List<String>();";
-}
-
-string DeclareAllowedValuesForProperties(Document u)
-{
-    foreach (Variable s in u.evented)
-    {
-        if (s.type == "string" || s.type == "uri")
-        {
-            return DeclareAllowedValues();
-        }
-    }
-    return "";
 }
 
 string DeclareAllowedValuesForMethod(Method a)

@@ -33,4 +33,11 @@ namespace OpenHome.Net.Device
     public class PropertyUpdateError : Exception
     {
     }
+
+    /// <summary>
+    /// Thrown when an attempt is made to get/set a property that has not been enabled.
+    /// </summary>
+    public class PropertyDisabledError : Exception
+    {
+    }
 }

@@ -49,6 +49,11 @@ private:
 ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     : DvProviderOpenhomeOrgTestBasic1(aDevice)
 {
+    EnablePropertyVarUint();
+    EnablePropertyVarInt();
+    EnablePropertyVarBool();
+    EnablePropertyVarStr();
+    EnablePropertyVarBin();
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
     SetPropertyVarBool(false);

@@ -72,11 +72,34 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "upnp.org", "ConnectionManager", 1)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the SourceProtocolInfo property.
+        /// </summary>
+        public void EnablePropertySourceProtocolInfo()
+        {
             List<String> allowedValues = new List<String>();
             iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo", allowedValues));
             AddProperty(iPropertySourceProtocolInfo);
+        }
+
+        /// <summary>
+        /// Enable the SinkProtocolInfo property.
+        /// </summary>
+        public void EnablePropertySinkProtocolInfo()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo", allowedValues));
             AddProperty(iPropertySinkProtocolInfo);
+        }
+
+        /// <summary>
+        /// Enable the CurrentConnectionIDs property.
+        /// </summary>
+        public void EnablePropertyCurrentConnectionIDs()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs", allowedValues));
             AddProperty(iPropertyCurrentConnectionIDs);
         }
@@ -84,57 +107,75 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the SourceProtocolInfo property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySourceProtocolInfo has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertySourceProtocolInfo(string aValue)
         {
+            if (iPropertySourceProtocolInfo == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertySourceProtocolInfo, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the SourceProtocolInfo property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySourceProtocolInfo has previously been called.</remarks>
         /// <returns>Value of the SourceProtocolInfo property.</returns>
         public string PropertySourceProtocolInfo()
         {
+            if (iPropertySourceProtocolInfo == null)
+                throw new PropertyDisabledError();
             return iPropertySourceProtocolInfo.Value();
         }
 
         /// <summary>
         /// Set the value of the SinkProtocolInfo property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySinkProtocolInfo has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertySinkProtocolInfo(string aValue)
         {
+            if (iPropertySinkProtocolInfo == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertySinkProtocolInfo, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the SinkProtocolInfo property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySinkProtocolInfo has previously been called.</remarks>
         /// <returns>Value of the SinkProtocolInfo property.</returns>
         public string PropertySinkProtocolInfo()
         {
+            if (iPropertySinkProtocolInfo == null)
+                throw new PropertyDisabledError();
             return iPropertySinkProtocolInfo.Value();
         }
 
         /// <summary>
         /// Set the value of the CurrentConnectionIDs property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyCurrentConnectionIDs has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyCurrentConnectionIDs(string aValue)
         {
+            if (iPropertyCurrentConnectionIDs == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyCurrentConnectionIDs, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the CurrentConnectionIDs property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyCurrentConnectionIDs has previously been called.</remarks>
         /// <returns>Value of the CurrentConnectionIDs property.</returns>
         public string PropertyCurrentConnectionIDs()
         {
+            if (iPropertyCurrentConnectionIDs == null)
+                throw new PropertyDisabledError();
             return iPropertyCurrentConnectionIDs.Value();
         }
 

@@ -228,6 +228,51 @@ DllExport THandle STDCALL DvProviderAvOpenhomeOrgVolume1Create(DvDeviceC aDevice
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1Destroy(THandle aProvider);
 
 /**
+ * Enable the Volume property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolume(THandle aProvider);
+/**
+ * Enable the Mute property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyMute(THandle aProvider);
+/**
+ * Enable the Balance property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyBalance(THandle aProvider);
+/**
+ * Enable the Fade property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyFade(THandle aProvider);
+/**
+ * Enable the VolumeLimit property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeLimit(THandle aProvider);
+/**
+ * Enable the VolumeMax property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeMax(THandle aProvider);
+/**
+ * Enable the VolumeUnity property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeUnity(THandle aProvider);
+/**
+ * Enable the VolumeSteps property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeSteps(THandle aProvider);
+/**
+ * Enable the VolumeMilliDbPerStep property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeMilliDbPerStep(THandle aProvider);
+/**
+ * Enable the BalanceMax property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyBalanceMax(THandle aProvider);
+/**
+ * Enable the FadeMax property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyFadeMax(THandle aProvider);
+
+/**
  * Register a callback for the action Characteristics
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -407,6 +452,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionVolumeLimit(THa
 /**
  * Set the value of the Volume property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolume has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -418,12 +465,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolume(THandl
 /**
  * Get a copy of the value of the Volume property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolume has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolume(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Mute property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyMute has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -436,12 +487,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyMute(THandle 
 /**
  * Get a copy of the value of the Mute property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyMute has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyMute(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Balance property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyBalance has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -454,12 +509,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyBalance(THand
 /**
  * Get a copy of the value of the Balance property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyBalance has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyBalance(THandle aProvider, int32_t* aValue);
 /**
  * Set the value of the Fade property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyFade has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -472,12 +531,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyFade(THandle 
 /**
  * Get a copy of the value of the Fade property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyFade has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyFade(THandle aProvider, int32_t* aValue);
 /**
  * Set the value of the VolumeLimit property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeLimit has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -490,12 +553,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeLimit(T
 /**
  * Get a copy of the value of the VolumeLimit property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeLimit has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeLimit(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the VolumeMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -508,12 +575,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeMax(THa
 /**
  * Get a copy of the value of the VolumeMax property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeMax has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeMax(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the VolumeUnity property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeUnity has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -526,12 +597,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeUnity(T
 /**
  * Get a copy of the value of the VolumeUnity property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeUnity has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeUnity(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the VolumeSteps property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeSteps has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -544,12 +619,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeSteps(T
 /**
  * Get a copy of the value of the VolumeSteps property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeSteps has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeSteps(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the VolumeMilliDbPerStep property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeMilliDbPerStep has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -562,12 +641,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeMilliDb
 /**
  * Get a copy of the value of the VolumeMilliDbPerStep property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeMilliDbPerStep has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeMilliDbPerStep(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the BalanceMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyBalanceMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -580,12 +663,16 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyBalanceMax(TH
 /**
  * Get a copy of the value of the BalanceMax property
  *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyBalanceMax has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyBalanceMax(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the FadeMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyFadeMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[in]  aValue     New value for the property
@@ -597,6 +684,8 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyBalanceMax(THand
 DllExport int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyFadeMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the FadeMax property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgVolume1EnablePropertyFadeMax has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgVolume1Create
  * @param[out] aValue     Value for the property

@@ -32,6 +32,13 @@ public:
     void GetPropertyChannelsMax(TUint& aValue);
     TBool SetPropertyProtocolInfo(const Brx& aValue);
     void GetPropertyProtocolInfo(Brhz& aValue);
+    void EnablePropertyUri();
+    void EnablePropertyMetadata();
+    void EnablePropertyTransportState();
+    void EnablePropertyId();
+    void EnablePropertyIdArray();
+    void EnablePropertyChannelsMax();
+    void EnablePropertyProtocolInfo();
     void EnableActionPlay(CallbackRadio1Play aCallback, void* aPtr);
     void EnableActionPause(CallbackRadio1Pause aCallback, void* aPtr);
     void EnableActionStop(CallbackRadio1Stop aCallback, void* aPtr);
@@ -110,14 +117,115 @@ private:
 DvProviderAvOpenhomeOrgRadio1C::DvProviderAvOpenhomeOrgRadio1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "av.openhome.org", "Radio", 1)
 {
-    
-    TChar** allowedValues;
-    TUint index;
+    iPropertyUri = NULL;
+    iPropertyMetadata = NULL;
+    iPropertyTransportState = NULL;
+    iPropertyId = NULL;
+    iPropertyIdArray = NULL;
+    iPropertyChannelsMax = NULL;
+    iPropertyProtocolInfo = NULL;
+}
+
+TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyUri(const Brx& aValue)
+{
+    ASSERT(iPropertyUri != NULL);
+    return SetPropertyString(*iPropertyUri, aValue);
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::GetPropertyUri(Brhz& aValue)
+{
+    ASSERT(iPropertyUri != NULL);
+    aValue.Set(iPropertyUri->Value());
+}
+
+TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyMetadata(const Brx& aValue)
+{
+    ASSERT(iPropertyMetadata != NULL);
+    return SetPropertyString(*iPropertyMetadata, aValue);
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::GetPropertyMetadata(Brhz& aValue)
+{
+    ASSERT(iPropertyMetadata != NULL);
+    aValue.Set(iPropertyMetadata->Value());
+}
+
+TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyTransportState(const Brx& aValue)
+{
+    ASSERT(iPropertyTransportState != NULL);
+    return SetPropertyString(*iPropertyTransportState, aValue);
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::GetPropertyTransportState(Brhz& aValue)
+{
+    ASSERT(iPropertyTransportState != NULL);
+    aValue.Set(iPropertyTransportState->Value());
+}
+
+TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyId(TUint aValue)
+{
+    ASSERT(iPropertyId != NULL);
+    return SetPropertyUint(*iPropertyId, aValue);
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::GetPropertyId(TUint& aValue)
+{
+    ASSERT(iPropertyId != NULL);
+    aValue = iPropertyId->Value();
+}
+
+TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyIdArray(const Brx& aValue)
+{
+    ASSERT(iPropertyIdArray != NULL);
+    return SetPropertyBinary(*iPropertyIdArray, aValue);
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::GetPropertyIdArray(Brh& aValue)
+{
+    ASSERT(iPropertyIdArray != NULL);
+    aValue.Set(iPropertyIdArray->Value());
+}
+
+TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyChannelsMax(TUint aValue)
+{
+    ASSERT(iPropertyChannelsMax != NULL);
+    return SetPropertyUint(*iPropertyChannelsMax, aValue);
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::GetPropertyChannelsMax(TUint& aValue)
+{
+    ASSERT(iPropertyChannelsMax != NULL);
+    aValue = iPropertyChannelsMax->Value();
+}
+
+TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyProtocolInfo(const Brx& aValue)
+{
+    ASSERT(iPropertyProtocolInfo != NULL);
+    return SetPropertyString(*iPropertyProtocolInfo, aValue);
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::GetPropertyProtocolInfo(Brhz& aValue)
+{
+    ASSERT(iPropertyProtocolInfo != NULL);
+    aValue.Set(iPropertyProtocolInfo->Value());
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::EnablePropertyUri()
+{
     iPropertyUri = new PropertyString(new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::EnablePropertyMetadata()
+{
     iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
-    index = 0;
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::EnablePropertyTransportState()
+{
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[4];
     allowedValues[index++] = (TChar*)"Stopped";
     allowedValues[index++] = (TChar*)"Playing";
@@ -126,84 +234,30 @@ DvProviderAvOpenhomeOrgRadio1C::DvProviderAvOpenhomeOrgRadio1C(DvDeviceC aDevice
     iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::EnablePropertyId()
+{
     iPropertyId = new PropertyUint(new ParameterUint("Id"));
     iService->AddProperty(iPropertyId); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::EnablePropertyIdArray()
+{
     iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::EnablePropertyChannelsMax()
+{
     iPropertyChannelsMax = new PropertyUint(new ParameterUint("ChannelsMax"));
     iService->AddProperty(iPropertyChannelsMax); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgRadio1C::EnablePropertyProtocolInfo()
+{
     iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo"));
     iService->AddProperty(iPropertyProtocolInfo); // passes ownership
-}
-
-TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyUri(const Brx& aValue)
-{
-    return SetPropertyString(*iPropertyUri, aValue);
-}
-
-void DvProviderAvOpenhomeOrgRadio1C::GetPropertyUri(Brhz& aValue)
-{
-    aValue.Set(iPropertyUri->Value());
-}
-
-TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyMetadata(const Brx& aValue)
-{
-    return SetPropertyString(*iPropertyMetadata, aValue);
-}
-
-void DvProviderAvOpenhomeOrgRadio1C::GetPropertyMetadata(Brhz& aValue)
-{
-    aValue.Set(iPropertyMetadata->Value());
-}
-
-TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyTransportState(const Brx& aValue)
-{
-    return SetPropertyString(*iPropertyTransportState, aValue);
-}
-
-void DvProviderAvOpenhomeOrgRadio1C::GetPropertyTransportState(Brhz& aValue)
-{
-    aValue.Set(iPropertyTransportState->Value());
-}
-
-TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyId(TUint aValue)
-{
-    return SetPropertyUint(*iPropertyId, aValue);
-}
-
-void DvProviderAvOpenhomeOrgRadio1C::GetPropertyId(TUint& aValue)
-{
-    aValue = iPropertyId->Value();
-}
-
-TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyIdArray(const Brx& aValue)
-{
-    return SetPropertyBinary(*iPropertyIdArray, aValue);
-}
-
-void DvProviderAvOpenhomeOrgRadio1C::GetPropertyIdArray(Brh& aValue)
-{
-    aValue.Set(iPropertyIdArray->Value());
-}
-
-TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyChannelsMax(TUint aValue)
-{
-    return SetPropertyUint(*iPropertyChannelsMax, aValue);
-}
-
-void DvProviderAvOpenhomeOrgRadio1C::GetPropertyChannelsMax(TUint& aValue)
-{
-    aValue = iPropertyChannelsMax->Value();
-}
-
-TBool DvProviderAvOpenhomeOrgRadio1C::SetPropertyProtocolInfo(const Brx& aValue)
-{
-    return SetPropertyString(*iPropertyProtocolInfo, aValue);
-}
-
-void DvProviderAvOpenhomeOrgRadio1C::GetPropertyProtocolInfo(Brhz& aValue)
-{
-    aValue.Set(iPropertyProtocolInfo->Value());
 }
 
 void DvProviderAvOpenhomeOrgRadio1C::EnableActionPlay(CallbackRadio1Play aCallback, void* aPtr)
@@ -915,5 +969,40 @@ void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyProtocolInfo(THandle aProvi
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->GetPropertyProtocolInfo(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyUri(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnablePropertyUri();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyMetadata(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnablePropertyMetadata();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyTransportState(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnablePropertyTransportState();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyId(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnablePropertyId();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyIdArray(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnablePropertyIdArray();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyChannelsMax(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnablePropertyChannelsMax();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnablePropertyProtocolInfo(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnablePropertyProtocolInfo();
 }
 

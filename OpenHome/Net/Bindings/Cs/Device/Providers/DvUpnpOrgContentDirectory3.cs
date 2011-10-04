@@ -101,13 +101,43 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "upnp.org", "ContentDirectory", 3)
         {
             iGch = GCHandle.Alloc(this);
-            List<String> allowedValues = new List<String>();
+        }
+
+        /// <summary>
+        /// Enable the SystemUpdateID property.
+        /// </summary>
+        public void EnablePropertySystemUpdateID()
+        {
             iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
             AddProperty(iPropertySystemUpdateID);
+        }
+
+        /// <summary>
+        /// Enable the ContainerUpdateIDs property.
+        /// </summary>
+        public void EnablePropertyContainerUpdateIDs()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs", allowedValues));
             AddProperty(iPropertyContainerUpdateIDs);
+        }
+
+        /// <summary>
+        /// Enable the LastChange property.
+        /// </summary>
+        public void EnablePropertyLastChange()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyLastChange = new PropertyString(new ParameterString("LastChange", allowedValues));
             AddProperty(iPropertyLastChange);
+        }
+
+        /// <summary>
+        /// Enable the TransferIDs property.
+        /// </summary>
+        public void EnablePropertyTransferIDs()
+        {
+            List<String> allowedValues = new List<String>();
             iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs", allowedValues));
             AddProperty(iPropertyTransferIDs);
         }
@@ -115,76 +145,100 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the SystemUpdateID property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySystemUpdateID has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertySystemUpdateID(uint aValue)
         {
+            if (iPropertySystemUpdateID == null)
+                throw new PropertyDisabledError();
             return SetPropertyUint(iPropertySystemUpdateID, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the SystemUpdateID property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertySystemUpdateID has previously been called.</remarks>
         /// <returns>Value of the SystemUpdateID property.</returns>
         public uint PropertySystemUpdateID()
         {
+            if (iPropertySystemUpdateID == null)
+                throw new PropertyDisabledError();
             return iPropertySystemUpdateID.Value();
         }
 
         /// <summary>
         /// Set the value of the ContainerUpdateIDs property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyContainerUpdateIDs has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyContainerUpdateIDs(string aValue)
         {
+            if (iPropertyContainerUpdateIDs == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyContainerUpdateIDs, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the ContainerUpdateIDs property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyContainerUpdateIDs has previously been called.</remarks>
         /// <returns>Value of the ContainerUpdateIDs property.</returns>
         public string PropertyContainerUpdateIDs()
         {
+            if (iPropertyContainerUpdateIDs == null)
+                throw new PropertyDisabledError();
             return iPropertyContainerUpdateIDs.Value();
         }
 
         /// <summary>
         /// Set the value of the LastChange property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyLastChange has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyLastChange(string aValue)
         {
+            if (iPropertyLastChange == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyLastChange, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the LastChange property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyLastChange has previously been called.</remarks>
         /// <returns>Value of the LastChange property.</returns>
         public string PropertyLastChange()
         {
+            if (iPropertyLastChange == null)
+                throw new PropertyDisabledError();
             return iPropertyLastChange.Value();
         }
 
         /// <summary>
         /// Set the value of the TransferIDs property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTransferIDs has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyTransferIDs(string aValue)
         {
+            if (iPropertyTransferIDs == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyTransferIDs, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TransferIDs property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyTransferIDs has previously been called.</remarks>
         /// <returns>Value of the TransferIDs property.</returns>
         public string PropertyTransferIDs()
         {
+            if (iPropertyTransferIDs == null)
+                throw new PropertyDisabledError();
             return iPropertyTransferIDs.Value();
         }
 

@@ -30,111 +30,155 @@ public:
     /**
      * Set the value of the Volume property
      *
+     * Can only be called if EnablePropertyVolume has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVolume(uint32_t aValue);
     /**
      * Get a copy of the value of the Volume property
+     *
+     * Can only be called if EnablePropertyVolume has previously been called.
      */
     void GetPropertyVolume(uint32_t& aValue);
     /**
      * Set the value of the Mute property
+     *
+     * Can only be called if EnablePropertyMute has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyMute(bool aValue);
     /**
      * Get a copy of the value of the Mute property
+     *
+     * Can only be called if EnablePropertyMute has previously been called.
      */
     void GetPropertyMute(bool& aValue);
     /**
      * Set the value of the Balance property
+     *
+     * Can only be called if EnablePropertyBalance has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyBalance(int32_t aValue);
     /**
      * Get a copy of the value of the Balance property
+     *
+     * Can only be called if EnablePropertyBalance has previously been called.
      */
     void GetPropertyBalance(int32_t& aValue);
     /**
      * Set the value of the Fade property
+     *
+     * Can only be called if EnablePropertyFade has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyFade(int32_t aValue);
     /**
      * Get a copy of the value of the Fade property
+     *
+     * Can only be called if EnablePropertyFade has previously been called.
      */
     void GetPropertyFade(int32_t& aValue);
     /**
      * Set the value of the VolumeLimit property
+     *
+     * Can only be called if EnablePropertyVolumeLimit has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVolumeLimit(uint32_t aValue);
     /**
      * Get a copy of the value of the VolumeLimit property
+     *
+     * Can only be called if EnablePropertyVolumeLimit has previously been called.
      */
     void GetPropertyVolumeLimit(uint32_t& aValue);
     /**
      * Set the value of the VolumeMax property
+     *
+     * Can only be called if EnablePropertyVolumeMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVolumeMax(uint32_t aValue);
     /**
      * Get a copy of the value of the VolumeMax property
+     *
+     * Can only be called if EnablePropertyVolumeMax has previously been called.
      */
     void GetPropertyVolumeMax(uint32_t& aValue);
     /**
      * Set the value of the VolumeUnity property
+     *
+     * Can only be called if EnablePropertyVolumeUnity has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVolumeUnity(uint32_t aValue);
     /**
      * Get a copy of the value of the VolumeUnity property
+     *
+     * Can only be called if EnablePropertyVolumeUnity has previously been called.
      */
     void GetPropertyVolumeUnity(uint32_t& aValue);
     /**
      * Set the value of the VolumeSteps property
+     *
+     * Can only be called if EnablePropertyVolumeSteps has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVolumeSteps(uint32_t aValue);
     /**
      * Get a copy of the value of the VolumeSteps property
+     *
+     * Can only be called if EnablePropertyVolumeSteps has previously been called.
      */
     void GetPropertyVolumeSteps(uint32_t& aValue);
     /**
      * Set the value of the VolumeMilliDbPerStep property
+     *
+     * Can only be called if EnablePropertyVolumeMilliDbPerStep has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyVolumeMilliDbPerStep(uint32_t aValue);
     /**
      * Get a copy of the value of the VolumeMilliDbPerStep property
+     *
+     * Can only be called if EnablePropertyVolumeMilliDbPerStep has previously been called.
      */
     void GetPropertyVolumeMilliDbPerStep(uint32_t& aValue);
     /**
      * Set the value of the BalanceMax property
+     *
+     * Can only be called if EnablePropertyBalanceMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyBalanceMax(uint32_t aValue);
     /**
      * Get a copy of the value of the BalanceMax property
+     *
+     * Can only be called if EnablePropertyBalanceMax has previously been called.
      */
     void GetPropertyBalanceMax(uint32_t& aValue);
     /**
      * Set the value of the FadeMax property
+     *
+     * Can only be called if EnablePropertyFadeMax has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyFadeMax(uint32_t aValue);
     /**
      * Get a copy of the value of the FadeMax property
+     *
+     * Can only be called if EnablePropertyFadeMax has previously been called.
      */
     void GetPropertyFadeMax(uint32_t& aValue);
 protected:
@@ -144,6 +188,50 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgVolume1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the Volume property.
+     */
+    void EnablePropertyVolume();
+    /**
+     * Enable the Mute property.
+     */
+    void EnablePropertyMute();
+    /**
+     * Enable the Balance property.
+     */
+    void EnablePropertyBalance();
+    /**
+     * Enable the Fade property.
+     */
+    void EnablePropertyFade();
+    /**
+     * Enable the VolumeLimit property.
+     */
+    void EnablePropertyVolumeLimit();
+    /**
+     * Enable the VolumeMax property.
+     */
+    void EnablePropertyVolumeMax();
+    /**
+     * Enable the VolumeUnity property.
+     */
+    void EnablePropertyVolumeUnity();
+    /**
+     * Enable the VolumeSteps property.
+     */
+    void EnablePropertyVolumeSteps();
+    /**
+     * Enable the VolumeMilliDbPerStep property.
+     */
+    void EnablePropertyVolumeMilliDbPerStep();
+    /**
+     * Enable the BalanceMax property.
+     */
+    void EnablePropertyBalanceMax();
+    /**
+     * Enable the FadeMax property.
+     */
+    void EnablePropertyFadeMax();
     /**
      * Signal that the action Characteristics is supported.
      * The action's availability will be published in the device's service.xml.

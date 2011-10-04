@@ -76,6 +76,13 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "upnp.org", "RenderingControl", 2)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the LastChange property.
+        /// </summary>
+        public void EnablePropertyLastChange()
+        {
             List<String> allowedValues = new List<String>();
             iPropertyLastChange = new PropertyString(new ParameterString("LastChange", allowedValues));
             AddProperty(iPropertyLastChange);
@@ -84,19 +91,25 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the LastChange property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyLastChange has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyLastChange(string aValue)
         {
+            if (iPropertyLastChange == null)
+                throw new PropertyDisabledError();
             return SetPropertyString(iPropertyLastChange, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the LastChange property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyLastChange has previously been called.</remarks>
         /// <returns>Value of the LastChange property.</returns>
         public string PropertyLastChange()
         {
+            if (iPropertyLastChange == null)
+                throw new PropertyDisabledError();
             return iPropertyLastChange.Value();
         }
 

@@ -73,6 +73,11 @@ DllExport THandle STDCALL DvProviderUpnpOrgSwitchPower1Create(DvDeviceC aDevice)
 DllExport void STDCALL DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider);
 
 /**
+ * Enable the Status property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgSwitchPower1EnablePropertyStatus(THandle aProvider);
+
+/**
  * Register a callback for the action SetTarget
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -109,6 +114,8 @@ DllExport void STDCALL DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandl
 /**
  * Set the value of the Status property
  *
+ * Can only be called if DvProviderUpnpOrgSwitchPower1EnablePropertyStatus has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgSwitchPower1Create
  * @param[in]  aValue     New value for the property
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -119,6 +126,8 @@ DllExport void STDCALL DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandl
 DllExport int32_t STDCALL DvProviderUpnpOrgSwitchPower1SetPropertyStatus(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Status property
+ *
+ * Can only be called if DvProviderUpnpOrgSwitchPower1EnablePropertyStatus has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgSwitchPower1Create
  * @param[out] aValue     Value for the property

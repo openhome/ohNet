@@ -30,51 +30,71 @@ public:
     /**
      * Set the value of the LoadLevelStatus property
      *
+     * Can only be called if EnablePropertyLoadLevelStatus has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyLoadLevelStatus(uint32_t aValue);
     /**
      * Get a copy of the value of the LoadLevelStatus property
+     *
+     * Can only be called if EnablePropertyLoadLevelStatus has previously been called.
      */
     void GetPropertyLoadLevelStatus(uint32_t& aValue);
     /**
      * Set the value of the StepDelta property
+     *
+     * Can only be called if EnablePropertyStepDelta has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyStepDelta(uint32_t aValue);
     /**
      * Get a copy of the value of the StepDelta property
+     *
+     * Can only be called if EnablePropertyStepDelta has previously been called.
      */
     void GetPropertyStepDelta(uint32_t& aValue);
     /**
      * Set the value of the RampRate property
+     *
+     * Can only be called if EnablePropertyRampRate has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyRampRate(uint32_t aValue);
     /**
      * Get a copy of the value of the RampRate property
+     *
+     * Can only be called if EnablePropertyRampRate has previously been called.
      */
     void GetPropertyRampRate(uint32_t& aValue);
     /**
      * Set the value of the IsRamping property
+     *
+     * Can only be called if EnablePropertyIsRamping has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyIsRamping(bool aValue);
     /**
      * Get a copy of the value of the IsRamping property
+     *
+     * Can only be called if EnablePropertyIsRamping has previously been called.
      */
     void GetPropertyIsRamping(bool& aValue);
     /**
      * Set the value of the RampPaused property
+     *
+     * Can only be called if EnablePropertyRampPaused has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyRampPaused(bool aValue);
     /**
      * Get a copy of the value of the RampPaused property
+     *
+     * Can only be called if EnablePropertyRampPaused has previously been called.
      */
     void GetPropertyRampPaused(bool& aValue);
 protected:
@@ -84,6 +104,26 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgDimming1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the LoadLevelStatus property.
+     */
+    void EnablePropertyLoadLevelStatus();
+    /**
+     * Enable the StepDelta property.
+     */
+    void EnablePropertyStepDelta();
+    /**
+     * Enable the RampRate property.
+     */
+    void EnablePropertyRampRate();
+    /**
+     * Enable the IsRamping property.
+     */
+    void EnablePropertyIsRamping();
+    /**
+     * Enable the RampPaused property.
+     */
+    void EnablePropertyRampPaused();
     /**
      * Signal that the action SetLoadLevelTarget is supported.
      * The action's availability will be published in the device's service.xml.

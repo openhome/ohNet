@@ -30,121 +30,169 @@ public:
     /**
      * Set the value of the TrackCount property
      *
+     * Can only be called if EnablePropertyTrackCount has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyTrackCount(uint32_t aValue);
     /**
      * Get a copy of the value of the TrackCount property
+     *
+     * Can only be called if EnablePropertyTrackCount has previously been called.
      */
     void GetPropertyTrackCount(uint32_t& aValue);
     /**
      * Set the value of the DetailsCount property
+     *
+     * Can only be called if EnablePropertyDetailsCount has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyDetailsCount(uint32_t aValue);
     /**
      * Get a copy of the value of the DetailsCount property
+     *
+     * Can only be called if EnablePropertyDetailsCount has previously been called.
      */
     void GetPropertyDetailsCount(uint32_t& aValue);
     /**
      * Set the value of the MetatextCount property
+     *
+     * Can only be called if EnablePropertyMetatextCount has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyMetatextCount(uint32_t aValue);
     /**
      * Get a copy of the value of the MetatextCount property
+     *
+     * Can only be called if EnablePropertyMetatextCount has previously been called.
      */
     void GetPropertyMetatextCount(uint32_t& aValue);
     /**
      * Set the value of the Uri property
+     *
+     * Can only be called if EnablePropertyUri has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyUri(const std::string& aValue);
     /**
      * Get a copy of the value of the Uri property
+     *
+     * Can only be called if EnablePropertyUri has previously been called.
      */
     void GetPropertyUri(std::string& aValue);
     /**
      * Set the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyMetadata(const std::string& aValue);
     /**
      * Get a copy of the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      */
     void GetPropertyMetadata(std::string& aValue);
     /**
      * Set the value of the Duration property
+     *
+     * Can only be called if EnablePropertyDuration has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyDuration(uint32_t aValue);
     /**
      * Get a copy of the value of the Duration property
+     *
+     * Can only be called if EnablePropertyDuration has previously been called.
      */
     void GetPropertyDuration(uint32_t& aValue);
     /**
      * Set the value of the BitRate property
+     *
+     * Can only be called if EnablePropertyBitRate has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyBitRate(uint32_t aValue);
     /**
      * Get a copy of the value of the BitRate property
+     *
+     * Can only be called if EnablePropertyBitRate has previously been called.
      */
     void GetPropertyBitRate(uint32_t& aValue);
     /**
      * Set the value of the BitDepth property
+     *
+     * Can only be called if EnablePropertyBitDepth has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyBitDepth(uint32_t aValue);
     /**
      * Get a copy of the value of the BitDepth property
+     *
+     * Can only be called if EnablePropertyBitDepth has previously been called.
      */
     void GetPropertyBitDepth(uint32_t& aValue);
     /**
      * Set the value of the SampleRate property
+     *
+     * Can only be called if EnablePropertySampleRate has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertySampleRate(uint32_t aValue);
     /**
      * Get a copy of the value of the SampleRate property
+     *
+     * Can only be called if EnablePropertySampleRate has previously been called.
      */
     void GetPropertySampleRate(uint32_t& aValue);
     /**
      * Set the value of the Lossless property
+     *
+     * Can only be called if EnablePropertyLossless has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyLossless(bool aValue);
     /**
      * Get a copy of the value of the Lossless property
+     *
+     * Can only be called if EnablePropertyLossless has previously been called.
      */
     void GetPropertyLossless(bool& aValue);
     /**
      * Set the value of the CodecName property
+     *
+     * Can only be called if EnablePropertyCodecName has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyCodecName(const std::string& aValue);
     /**
      * Get a copy of the value of the CodecName property
+     *
+     * Can only be called if EnablePropertyCodecName has previously been called.
      */
     void GetPropertyCodecName(std::string& aValue);
     /**
      * Set the value of the Metatext property
+     *
+     * Can only be called if EnablePropertyMetatext has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyMetatext(const std::string& aValue);
     /**
      * Get a copy of the value of the Metatext property
+     *
+     * Can only be called if EnablePropertyMetatext has previously been called.
      */
     void GetPropertyMetatext(std::string& aValue);
 protected:
@@ -154,6 +202,54 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgInfo1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the TrackCount property.
+     */
+    void EnablePropertyTrackCount();
+    /**
+     * Enable the DetailsCount property.
+     */
+    void EnablePropertyDetailsCount();
+    /**
+     * Enable the MetatextCount property.
+     */
+    void EnablePropertyMetatextCount();
+    /**
+     * Enable the Uri property.
+     */
+    void EnablePropertyUri();
+    /**
+     * Enable the Metadata property.
+     */
+    void EnablePropertyMetadata();
+    /**
+     * Enable the Duration property.
+     */
+    void EnablePropertyDuration();
+    /**
+     * Enable the BitRate property.
+     */
+    void EnablePropertyBitRate();
+    /**
+     * Enable the BitDepth property.
+     */
+    void EnablePropertyBitDepth();
+    /**
+     * Enable the SampleRate property.
+     */
+    void EnablePropertySampleRate();
+    /**
+     * Enable the Lossless property.
+     */
+    void EnablePropertyLossless();
+    /**
+     * Enable the CodecName property.
+     */
+    void EnablePropertyCodecName();
+    /**
+     * Enable the Metatext property.
+     */
+    void EnablePropertyMetatext();
     /**
      * Signal that the action Counters is supported.
      * The action's availability will be published in the device's service.xml.

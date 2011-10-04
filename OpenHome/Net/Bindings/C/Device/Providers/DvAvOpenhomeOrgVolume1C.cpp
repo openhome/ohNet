@@ -40,6 +40,17 @@ public:
     void GetPropertyBalanceMax(TUint& aValue);
     TBool SetPropertyFadeMax(TUint aValue);
     void GetPropertyFadeMax(TUint& aValue);
+    void EnablePropertyVolume();
+    void EnablePropertyMute();
+    void EnablePropertyBalance();
+    void EnablePropertyFade();
+    void EnablePropertyVolumeLimit();
+    void EnablePropertyVolumeMax();
+    void EnablePropertyVolumeUnity();
+    void EnablePropertyVolumeSteps();
+    void EnablePropertyVolumeMilliDbPerStep();
+    void EnablePropertyBalanceMax();
+    void EnablePropertyFadeMax();
     void EnableActionCharacteristics(CallbackVolume1Characteristics aCallback, void* aPtr);
     void EnableActionSetVolume(CallbackVolume1SetVolume aCallback, void* aPtr);
     void EnableActionVolumeInc(CallbackVolume1VolumeInc aCallback, void* aPtr);
@@ -122,139 +133,215 @@ private:
 DvProviderAvOpenhomeOrgVolume1C::DvProviderAvOpenhomeOrgVolume1C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "av.openhome.org", "Volume", 1)
 {
-    
-    iPropertyVolume = new PropertyUint(new ParameterUint("Volume"));
-    iService->AddProperty(iPropertyVolume); // passes ownership
-    iPropertyMute = new PropertyBool(new ParameterBool("Mute"));
-    iService->AddProperty(iPropertyMute); // passes ownership
-    iPropertyBalance = new PropertyInt(new ParameterInt("Balance"));
-    iService->AddProperty(iPropertyBalance); // passes ownership
-    iPropertyFade = new PropertyInt(new ParameterInt("Fade"));
-    iService->AddProperty(iPropertyFade); // passes ownership
-    iPropertyVolumeLimit = new PropertyUint(new ParameterUint("VolumeLimit"));
-    iService->AddProperty(iPropertyVolumeLimit); // passes ownership
-    iPropertyVolumeMax = new PropertyUint(new ParameterUint("VolumeMax"));
-    iService->AddProperty(iPropertyVolumeMax); // passes ownership
-    iPropertyVolumeUnity = new PropertyUint(new ParameterUint("VolumeUnity"));
-    iService->AddProperty(iPropertyVolumeUnity); // passes ownership
-    iPropertyVolumeSteps = new PropertyUint(new ParameterUint("VolumeSteps"));
-    iService->AddProperty(iPropertyVolumeSteps); // passes ownership
-    iPropertyVolumeMilliDbPerStep = new PropertyUint(new ParameterUint("VolumeMilliDbPerStep"));
-    iService->AddProperty(iPropertyVolumeMilliDbPerStep); // passes ownership
-    iPropertyBalanceMax = new PropertyUint(new ParameterUint("BalanceMax"));
-    iService->AddProperty(iPropertyBalanceMax); // passes ownership
-    iPropertyFadeMax = new PropertyUint(new ParameterUint("FadeMax"));
-    iService->AddProperty(iPropertyFadeMax); // passes ownership
+    iPropertyVolume = NULL;
+    iPropertyMute = NULL;
+    iPropertyBalance = NULL;
+    iPropertyFade = NULL;
+    iPropertyVolumeLimit = NULL;
+    iPropertyVolumeMax = NULL;
+    iPropertyVolumeUnity = NULL;
+    iPropertyVolumeSteps = NULL;
+    iPropertyVolumeMilliDbPerStep = NULL;
+    iPropertyBalanceMax = NULL;
+    iPropertyFadeMax = NULL;
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyVolume(TUint aValue)
 {
+    ASSERT(iPropertyVolume != NULL);
     return SetPropertyUint(*iPropertyVolume, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyVolume(TUint& aValue)
 {
+    ASSERT(iPropertyVolume != NULL);
     aValue = iPropertyVolume->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyMute(TBool aValue)
 {
+    ASSERT(iPropertyMute != NULL);
     return SetPropertyBool(*iPropertyMute, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyMute(TBool& aValue)
 {
+    ASSERT(iPropertyMute != NULL);
     aValue = iPropertyMute->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyBalance(TInt aValue)
 {
+    ASSERT(iPropertyBalance != NULL);
     return SetPropertyInt(*iPropertyBalance, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyBalance(TInt& aValue)
 {
+    ASSERT(iPropertyBalance != NULL);
     aValue = iPropertyBalance->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyFade(TInt aValue)
 {
+    ASSERT(iPropertyFade != NULL);
     return SetPropertyInt(*iPropertyFade, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyFade(TInt& aValue)
 {
+    ASSERT(iPropertyFade != NULL);
     aValue = iPropertyFade->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyVolumeLimit(TUint aValue)
 {
+    ASSERT(iPropertyVolumeLimit != NULL);
     return SetPropertyUint(*iPropertyVolumeLimit, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyVolumeLimit(TUint& aValue)
 {
+    ASSERT(iPropertyVolumeLimit != NULL);
     aValue = iPropertyVolumeLimit->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyVolumeMax(TUint aValue)
 {
+    ASSERT(iPropertyVolumeMax != NULL);
     return SetPropertyUint(*iPropertyVolumeMax, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyVolumeMax(TUint& aValue)
 {
+    ASSERT(iPropertyVolumeMax != NULL);
     aValue = iPropertyVolumeMax->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyVolumeUnity(TUint aValue)
 {
+    ASSERT(iPropertyVolumeUnity != NULL);
     return SetPropertyUint(*iPropertyVolumeUnity, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyVolumeUnity(TUint& aValue)
 {
+    ASSERT(iPropertyVolumeUnity != NULL);
     aValue = iPropertyVolumeUnity->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyVolumeSteps(TUint aValue)
 {
+    ASSERT(iPropertyVolumeSteps != NULL);
     return SetPropertyUint(*iPropertyVolumeSteps, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyVolumeSteps(TUint& aValue)
 {
+    ASSERT(iPropertyVolumeSteps != NULL);
     aValue = iPropertyVolumeSteps->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyVolumeMilliDbPerStep(TUint aValue)
 {
+    ASSERT(iPropertyVolumeMilliDbPerStep != NULL);
     return SetPropertyUint(*iPropertyVolumeMilliDbPerStep, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyVolumeMilliDbPerStep(TUint& aValue)
 {
+    ASSERT(iPropertyVolumeMilliDbPerStep != NULL);
     aValue = iPropertyVolumeMilliDbPerStep->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyBalanceMax(TUint aValue)
 {
+    ASSERT(iPropertyBalanceMax != NULL);
     return SetPropertyUint(*iPropertyBalanceMax, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyBalanceMax(TUint& aValue)
 {
+    ASSERT(iPropertyBalanceMax != NULL);
     aValue = iPropertyBalanceMax->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgVolume1C::SetPropertyFadeMax(TUint aValue)
 {
+    ASSERT(iPropertyFadeMax != NULL);
     return SetPropertyUint(*iPropertyFadeMax, aValue);
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::GetPropertyFadeMax(TUint& aValue)
 {
+    ASSERT(iPropertyFadeMax != NULL);
     aValue = iPropertyFadeMax->Value();
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyVolume()
+{
+    iPropertyVolume = new PropertyUint(new ParameterUint("Volume"));
+    iService->AddProperty(iPropertyVolume); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyMute()
+{
+    iPropertyMute = new PropertyBool(new ParameterBool("Mute"));
+    iService->AddProperty(iPropertyMute); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyBalance()
+{
+    iPropertyBalance = new PropertyInt(new ParameterInt("Balance"));
+    iService->AddProperty(iPropertyBalance); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyFade()
+{
+    iPropertyFade = new PropertyInt(new ParameterInt("Fade"));
+    iService->AddProperty(iPropertyFade); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyVolumeLimit()
+{
+    iPropertyVolumeLimit = new PropertyUint(new ParameterUint("VolumeLimit"));
+    iService->AddProperty(iPropertyVolumeLimit); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyVolumeMax()
+{
+    iPropertyVolumeMax = new PropertyUint(new ParameterUint("VolumeMax"));
+    iService->AddProperty(iPropertyVolumeMax); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyVolumeUnity()
+{
+    iPropertyVolumeUnity = new PropertyUint(new ParameterUint("VolumeUnity"));
+    iService->AddProperty(iPropertyVolumeUnity); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyVolumeSteps()
+{
+    iPropertyVolumeSteps = new PropertyUint(new ParameterUint("VolumeSteps"));
+    iService->AddProperty(iPropertyVolumeSteps); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyVolumeMilliDbPerStep()
+{
+    iPropertyVolumeMilliDbPerStep = new PropertyUint(new ParameterUint("VolumeMilliDbPerStep"));
+    iService->AddProperty(iPropertyVolumeMilliDbPerStep); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyBalanceMax()
+{
+    iPropertyBalanceMax = new PropertyUint(new ParameterUint("BalanceMax"));
+    iService->AddProperty(iPropertyBalanceMax); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgVolume1C::EnablePropertyFadeMax()
+{
+    iPropertyFadeMax = new PropertyUint(new ParameterUint("FadeMax"));
+    iService->AddProperty(iPropertyFadeMax); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::EnableActionCharacteristics(CallbackVolume1Characteristics aCallback, void* aPtr)
@@ -974,5 +1061,60 @@ void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyFadeMax(THandle aProvider,
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyFadeMax(val);
     *aValue = val;
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolume(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyVolume();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyMute(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyMute();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyBalance(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyBalance();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyFade(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyFade();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeLimit(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyVolumeLimit();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeMax(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyVolumeMax();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeUnity(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyVolumeUnity();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeSteps(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyVolumeSteps();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyVolumeMilliDbPerStep(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyVolumeMilliDbPerStep();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyBalanceMax(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyBalanceMax();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnablePropertyFadeMax(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnablePropertyFadeMax();
 }
 

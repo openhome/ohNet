@@ -10,76 +10,90 @@ using namespace OpenHome::Net;
 
 bool DvProviderAvOpenhomeOrgPlaylist1Cpp::SetPropertyTransportState(const std::string& aValue)
 {
+    ASSERT(iPropertyTransportState != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyTransportState, buf);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1Cpp::GetPropertyTransportState(std::string& aValue)
 {
+    ASSERT(iPropertyTransportState != NULL);
     const Brx& val = iPropertyTransportState->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgPlaylist1Cpp::SetPropertyRepeat(bool aValue)
 {
+    ASSERT(iPropertyRepeat != NULL);
     return SetPropertyBool(*iPropertyRepeat, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1Cpp::GetPropertyRepeat(bool& aValue)
 {
+    ASSERT(iPropertyRepeat != NULL);
     aValue = iPropertyRepeat->Value();
 }
 
 bool DvProviderAvOpenhomeOrgPlaylist1Cpp::SetPropertyShuffle(bool aValue)
 {
+    ASSERT(iPropertyShuffle != NULL);
     return SetPropertyBool(*iPropertyShuffle, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1Cpp::GetPropertyShuffle(bool& aValue)
 {
+    ASSERT(iPropertyShuffle != NULL);
     aValue = iPropertyShuffle->Value();
 }
 
 bool DvProviderAvOpenhomeOrgPlaylist1Cpp::SetPropertyId(uint32_t aValue)
 {
+    ASSERT(iPropertyId != NULL);
     return SetPropertyUint(*iPropertyId, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1Cpp::GetPropertyId(uint32_t& aValue)
 {
+    ASSERT(iPropertyId != NULL);
     aValue = iPropertyId->Value();
 }
 
 bool DvProviderAvOpenhomeOrgPlaylist1Cpp::SetPropertyIdArray(const std::string& aValue)
 {
+    ASSERT(iPropertyIdArray != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyBinary(*iPropertyIdArray, buf);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1Cpp::GetPropertyIdArray(std::string& aValue)
 {
+    ASSERT(iPropertyIdArray != NULL);
     const Brx& val = iPropertyIdArray->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderAvOpenhomeOrgPlaylist1Cpp::SetPropertyTracksMax(uint32_t aValue)
 {
+    ASSERT(iPropertyTracksMax != NULL);
     return SetPropertyUint(*iPropertyTracksMax, aValue);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1Cpp::GetPropertyTracksMax(uint32_t& aValue)
 {
+    ASSERT(iPropertyTracksMax != NULL);
     aValue = iPropertyTracksMax->Value();
 }
 
 bool DvProviderAvOpenhomeOrgPlaylist1Cpp::SetPropertyProtocolInfo(const std::string& aValue)
 {
+    ASSERT(iPropertyProtocolInfo != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyProtocolInfo, buf);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1Cpp::GetPropertyProtocolInfo(std::string& aValue)
 {
+    ASSERT(iPropertyProtocolInfo != NULL);
     const Brx& val = iPropertyProtocolInfo->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -87,10 +101,19 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::GetPropertyProtocolInfo(std::string& a
 DvProviderAvOpenhomeOrgPlaylist1Cpp::DvProviderAvOpenhomeOrgPlaylist1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Playlist", 1)
 {
-    
+    iPropertyTransportState = NULL;
+    iPropertyRepeat = NULL;
+    iPropertyShuffle = NULL;
+    iPropertyId = NULL;
+    iPropertyIdArray = NULL;
+    iPropertyTracksMax = NULL;
+    iPropertyProtocolInfo = NULL;
+}
+
+void DvProviderAvOpenhomeOrgPlaylist1Cpp::EnablePropertyTransportState()
+{
     TChar** allowedValues;
-    TUint index;
-    index = 0;
+    TUint index = 0;
     allowedValues = new TChar*[4];
     allowedValues[index++] = (TChar*)"Playing";
     allowedValues[index++] = (TChar*)"Paused";
@@ -99,16 +122,40 @@ DvProviderAvOpenhomeOrgPlaylist1Cpp::DvProviderAvOpenhomeOrgPlaylist1Cpp(DvDevic
     iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylist1Cpp::EnablePropertyRepeat()
+{
     iPropertyRepeat = new PropertyBool(new ParameterBool("Repeat"));
     iService->AddProperty(iPropertyRepeat); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylist1Cpp::EnablePropertyShuffle()
+{
     iPropertyShuffle = new PropertyBool(new ParameterBool("Shuffle"));
     iService->AddProperty(iPropertyShuffle); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylist1Cpp::EnablePropertyId()
+{
     iPropertyId = new PropertyUint(new ParameterUint("Id"));
     iService->AddProperty(iPropertyId); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylist1Cpp::EnablePropertyIdArray()
+{
     iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylist1Cpp::EnablePropertyTracksMax()
+{
     iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
     iService->AddProperty(iPropertyTracksMax); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgPlaylist1Cpp::EnablePropertyProtocolInfo()
+{
     iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo"));
     iService->AddProperty(iPropertyProtocolInfo); // passes ownership
 }

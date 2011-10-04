@@ -533,6 +533,11 @@ DllExport THandle STDCALL DvProviderUpnpOrgRenderingControl2Create(DvDeviceC aDe
 DllExport void STDCALL DvProviderUpnpOrgRenderingControl2Destroy(THandle aProvider);
 
 /**
+ * Enable the LastChange property.
+ */
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl2EnablePropertyLastChange(THandle aProvider);
+
+/**
  * Register a callback for the action ListPresets
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -943,6 +948,8 @@ DllExport void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetStateVar
 /**
  * Set the value of the LastChange property
  *
+ * Can only be called if DvProviderUpnpOrgRenderingControl2EnablePropertyLastChange has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgRenderingControl2Create
  * @param[in]  aValue     New value for the property (will be copied)
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -953,6 +960,8 @@ DllExport void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetStateVar
 DllExport int32_t STDCALL DvProviderUpnpOrgRenderingControl2SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the LastChange property
+ *
+ * Can only be called if DvProviderUpnpOrgRenderingControl2EnablePropertyLastChange has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgRenderingControl2Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

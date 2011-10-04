@@ -275,6 +275,27 @@ DllExport THandle STDCALL DvProviderOpenhomeOrgTestBasic1Create(DvDeviceC aDevic
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1Destroy(THandle aProvider);
 
 /**
+ * Enable the VarUint property.
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarUint(THandle aProvider);
+/**
+ * Enable the VarInt property.
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarInt(THandle aProvider);
+/**
+ * Enable the VarBool property.
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBool(THandle aProvider);
+/**
+ * Enable the VarStr property.
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarStr(THandle aProvider);
+/**
+ * Enable the VarBin property.
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBin(THandle aProvider);
+
+/**
  * Register a callback for the action Increment
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -487,6 +508,8 @@ DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionShutdown(THand
 /**
  * Set the value of the VarUint property
  *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarUint has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[in]  aValue     New value for the property
  * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
@@ -498,12 +521,16 @@ DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarUint(THan
 /**
  * Get a copy of the value of the VarUint property
  *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarUint has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarUint(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the VarInt property
+ *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarInt has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[in]  aValue     New value for the property
@@ -516,12 +543,16 @@ DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarInt(THand
 /**
  * Get a copy of the value of the VarInt property
  *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarInt has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarInt(THandle aProvider, int32_t* aValue);
 /**
  * Set the value of the VarBool property
+ *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBool has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[in]  aValue     New value for the property
@@ -534,12 +565,16 @@ DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarBool(THan
 /**
  * Get a copy of the value of the VarBool property
  *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBool has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarBool(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the VarStr property
+ *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarStr has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -552,12 +587,16 @@ DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarStr(THand
 /**
  * Get a copy of the value of the VarStr property
  *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarStr has previously been called.
+ *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarStr(THandle aProvider, char** aValue);
 /**
  * Set the value of the VarBin property
+ *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBin has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[in]  aValue     New value for the property (will be copied)
@@ -570,6 +609,8 @@ DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarStr(THandle 
 DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarBin(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
 /**
  * Get a copy of the value of the VarBin property
+ *
+ * Can only be called if DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBin has previously been called.
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.

@@ -42,6 +42,13 @@ namespace OpenHome.Net.Device.Providers
             : base(aDevice, "upnp.org", "SwitchPower", 1)
         {
             iGch = GCHandle.Alloc(this);
+        }
+
+        /// <summary>
+        /// Enable the Status property.
+        /// </summary>
+        public void EnablePropertyStatus()
+        {
             iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
             AddProperty(iPropertyStatus);
         }
@@ -49,19 +56,25 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Set the value of the Status property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyStatus has previously been called.</remarks>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public bool SetPropertyStatus(bool aValue)
         {
+            if (iPropertyStatus == null)
+                throw new PropertyDisabledError();
             return SetPropertyBool(iPropertyStatus, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Status property
         /// </summary>
+        /// <remarks>Can only be called if EnablePropertyStatus has previously been called.</remarks>
         /// <returns>Value of the Status property.</returns>
         public bool PropertyStatus()
         {
+            if (iPropertyStatus == null)
+                throw new PropertyDisabledError();
             return iPropertyStatus.Value();
         }
 

@@ -9,42 +9,62 @@ using namespace OpenHome::Net;
 
 TBool DvProviderAvOpenhomeOrgTime1::SetPropertyTrackCount(TUint aValue)
 {
+    ASSERT(iPropertyTrackCount != NULL);
     return SetPropertyUint(*iPropertyTrackCount, aValue);
 }
 
 void DvProviderAvOpenhomeOrgTime1::GetPropertyTrackCount(TUint& aValue)
 {
+    ASSERT(iPropertyTrackCount != NULL);
     aValue = iPropertyTrackCount->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgTime1::SetPropertyDuration(TUint aValue)
 {
+    ASSERT(iPropertyDuration != NULL);
     return SetPropertyUint(*iPropertyDuration, aValue);
 }
 
 void DvProviderAvOpenhomeOrgTime1::GetPropertyDuration(TUint& aValue)
 {
+    ASSERT(iPropertyDuration != NULL);
     aValue = iPropertyDuration->Value();
 }
 
 TBool DvProviderAvOpenhomeOrgTime1::SetPropertySeconds(TUint aValue)
 {
+    ASSERT(iPropertySeconds != NULL);
     return SetPropertyUint(*iPropertySeconds, aValue);
 }
 
 void DvProviderAvOpenhomeOrgTime1::GetPropertySeconds(TUint& aValue)
 {
+    ASSERT(iPropertySeconds != NULL);
     aValue = iPropertySeconds->Value();
 }
 
 DvProviderAvOpenhomeOrgTime1::DvProviderAvOpenhomeOrgTime1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Time", 1)
 {
-    
+    iPropertyTrackCount = NULL;
+    iPropertyDuration = NULL;
+    iPropertySeconds = NULL;
+}
+
+void DvProviderAvOpenhomeOrgTime1::EnablePropertyTrackCount()
+{
     iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgTime1::EnablePropertyDuration()
+{
     iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgTime1::EnablePropertySeconds()
+{
     iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
     iService->AddProperty(iPropertySeconds); // passes ownership
 }

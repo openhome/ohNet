@@ -27,11 +27,15 @@ public:
     /**
      * Set the value of the LastChange property
      *
+     * Can only be called if EnablePropertyLastChange has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     TBool SetPropertyLastChange(const Brx& aValue);
     /**
      * Get a copy of the value of the LastChange property
+     *
+     * Can only be called if EnablePropertyLastChange has previously been called.
      */
     void GetPropertyLastChange(Brhz& aValue);
 protected:
@@ -41,6 +45,10 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgScheduledRecording1(DvDevice& aDevice);
+    /**
+     * Enable the LastChange property.
+     */
+    void EnablePropertyLastChange();
     /**
      * Signal that the action GetSortCapabilities is supported.
      * The action's availability will be published in the device's service.xml.

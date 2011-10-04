@@ -20,6 +20,7 @@ public:
     DvProviderUpnpOrgScheduledRecording2C(DvDeviceC aDevice);
     TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
+    void EnablePropertyLastChange();
     void EnableActionGetSortCapabilities(CallbackScheduledRecording2GetSortCapabilities aCallback, void* aPtr);
     void EnableActionGetPropertyList(CallbackScheduledRecording2GetPropertyList aCallback, void* aPtr);
     void EnableActionGetAllowedValues(CallbackScheduledRecording2GetAllowedValues aCallback, void* aPtr);
@@ -100,19 +101,25 @@ private:
 DvProviderUpnpOrgScheduledRecording2C::DvProviderUpnpOrgScheduledRecording2C(DvDeviceC aDevice)
     : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "ScheduledRecording", 2)
 {
-    
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
-    iService->AddProperty(iPropertyLastChange); // passes ownership
+    iPropertyLastChange = NULL;
 }
 
 TBool DvProviderUpnpOrgScheduledRecording2C::SetPropertyLastChange(const Brx& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvProviderUpnpOrgScheduledRecording2C::GetPropertyLastChange(Brhz& aValue)
 {
+    ASSERT(iPropertyLastChange != NULL);
     aValue.Set(iPropertyLastChange->Value());
+}
+
+void DvProviderUpnpOrgScheduledRecording2C::EnablePropertyLastChange()
+{
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 
 void DvProviderUpnpOrgScheduledRecording2C::EnableActionGetSortCapabilities(CallbackScheduledRecording2GetSortCapabilities aCallback, void* aPtr)
@@ -934,5 +941,10 @@ void STDCALL DvProviderUpnpOrgScheduledRecording2GetPropertyLastChange(THandle a
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgScheduledRecording2C*>(aProvider)->GetPropertyLastChange(buf);
     *aValue = (char*)buf.Transfer();
+}
+
+void STDCALL DvProviderUpnpOrgScheduledRecording2EnablePropertyLastChange(THandle aProvider)
+{
+    reinterpret_cast<DvProviderUpnpOrgScheduledRecording2C*>(aProvider)->EnablePropertyLastChange();
 }
 

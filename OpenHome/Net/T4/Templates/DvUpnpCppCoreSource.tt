@@ -54,11 +54,13 @@ using namespace OpenHome::Net;
 
 TBool <#=className#>::SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue)
 {
+    ASSERT(iProperty<#=s.name#> != NULL);
     return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
 }
 
 void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
 {
+    ASSERT(iProperty<#=s.name#> != NULL);
 <#      if (s.type == "string" || s.type == "bin.base64" || s.type == "uri") #>
 <#      { #>
     aValue.Set(iProperty<#=s.name#>->Value());
@@ -73,12 +75,20 @@ void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
 <#=className#>::<#=className#>(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
-    <#=DeclareAllowedValuesForProperties(u)#>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
+    iProperty<#=s.name#> = NULL;
+<#  } #>
+}
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>::EnableProperty<#=s.name#>()
+{
 <#      if (s.values.Count > 0) #>
 <#      { #>
-    index = 0;
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[<#=s.values.Count#>];
 <#          foreach (string val in s.values) #>
 <#          { #>
@@ -91,8 +101,8 @@ void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
     delete[] allowedValues;
 <#      } #>
     iService->AddProperty(iProperty<#=s.name#>); // passes ownership
-<#  } #>
 }
+<#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
@@ -347,18 +357,6 @@ string ActionArgTypesAndNames(Method a)
 string DeclareAllowedValues()
 {
     return "\n    TChar** allowedValues;\n    TUint index;";
-}
-
-string DeclareAllowedValuesForProperties(Document u)
-{
-    foreach (Variable s in u.evented)
-    {
-        if (s.values.Count > 0)
-        {
-            return DeclareAllowedValues();
-        }
-    }
-    return "";
 }
 
 string DeclareAllowedValuesForMethod(Method a)

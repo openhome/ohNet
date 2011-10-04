@@ -10,34 +10,40 @@ using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgContentDirectory1Cpp::SetPropertyTransferIDs(const std::string& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyTransferIDs, buf);
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::GetPropertyTransferIDs(std::string& aValue)
 {
+    ASSERT(iPropertyTransferIDs != NULL);
     const Brx& val = iPropertyTransferIDs->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 bool DvProviderUpnpOrgContentDirectory1Cpp::SetPropertySystemUpdateID(uint32_t aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     return SetPropertyUint(*iPropertySystemUpdateID, aValue);
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::GetPropertySystemUpdateID(uint32_t& aValue)
 {
+    ASSERT(iPropertySystemUpdateID != NULL);
     aValue = iPropertySystemUpdateID->Value();
 }
 
 bool DvProviderUpnpOrgContentDirectory1Cpp::SetPropertyContainerUpdateIDs(const std::string& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyContainerUpdateIDs, buf);
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::GetPropertyContainerUpdateIDs(std::string& aValue)
 {
+    ASSERT(iPropertyContainerUpdateIDs != NULL);
     const Brx& val = iPropertyContainerUpdateIDs->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -45,11 +51,25 @@ void DvProviderUpnpOrgContentDirectory1Cpp::GetPropertyContainerUpdateIDs(std::s
 DvProviderUpnpOrgContentDirectory1Cpp::DvProviderUpnpOrgContentDirectory1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ContentDirectory", 1)
 {
-    
+    iPropertyTransferIDs = NULL;
+    iPropertySystemUpdateID = NULL;
+    iPropertyContainerUpdateIDs = NULL;
+}
+
+void DvProviderUpnpOrgContentDirectory1Cpp::EnablePropertyTransferIDs()
+{
     iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
     iService->AddProperty(iPropertyTransferIDs); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory1Cpp::EnablePropertySystemUpdateID()
+{
     iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
     iService->AddProperty(iPropertySystemUpdateID); // passes ownership
+}
+
+void DvProviderUpnpOrgContentDirectory1Cpp::EnablePropertyContainerUpdateIDs()
+{
     iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
     iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
 }

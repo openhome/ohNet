@@ -30,51 +30,71 @@ public:
     /**
      * Set the value of the PresentationUrl property
      *
+     * Can only be called if EnablePropertyPresentationUrl has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyPresentationUrl(const std::string& aValue);
     /**
      * Get a copy of the value of the PresentationUrl property
+     *
+     * Can only be called if EnablePropertyPresentationUrl has previously been called.
      */
     void GetPropertyPresentationUrl(std::string& aValue);
     /**
      * Set the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyMetadata(const std::string& aValue);
     /**
      * Get a copy of the value of the Metadata property
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
      */
     void GetPropertyMetadata(std::string& aValue);
     /**
      * Set the value of the Audio property
+     *
+     * Can only be called if EnablePropertyAudio has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyAudio(bool aValue);
     /**
      * Get a copy of the value of the Audio property
+     *
+     * Can only be called if EnablePropertyAudio has previously been called.
      */
     void GetPropertyAudio(bool& aValue);
     /**
      * Set the value of the Status property
+     *
+     * Can only be called if EnablePropertyStatus has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyStatus(const std::string& aValue);
     /**
      * Get a copy of the value of the Status property
+     *
+     * Can only be called if EnablePropertyStatus has previously been called.
      */
     void GetPropertyStatus(std::string& aValue);
     /**
      * Set the value of the Attributes property
+     *
+     * Can only be called if EnablePropertyAttributes has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyAttributes(const std::string& aValue);
     /**
      * Get a copy of the value of the Attributes property
+     *
+     * Can only be called if EnablePropertyAttributes has previously been called.
      */
     void GetPropertyAttributes(std::string& aValue);
 protected:
@@ -84,6 +104,26 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgSender1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the PresentationUrl property.
+     */
+    void EnablePropertyPresentationUrl();
+    /**
+     * Enable the Metadata property.
+     */
+    void EnablePropertyMetadata();
+    /**
+     * Enable the Audio property.
+     */
+    void EnablePropertyAudio();
+    /**
+     * Enable the Status property.
+     */
+    void EnablePropertyStatus();
+    /**
+     * Enable the Attributes property.
+     */
+    void EnablePropertyAttributes();
     /**
      * Signal that the action PresentationUrl is supported.
      * The action's availability will be published in the device's service.xml.

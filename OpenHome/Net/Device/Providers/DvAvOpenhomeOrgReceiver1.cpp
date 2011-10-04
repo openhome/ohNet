@@ -9,55 +9,77 @@ using namespace OpenHome::Net;
 
 TBool DvProviderAvOpenhomeOrgReceiver1::SetPropertyUri(const Brx& aValue)
 {
+    ASSERT(iPropertyUri != NULL);
     return SetPropertyString(*iPropertyUri, aValue);
 }
 
 void DvProviderAvOpenhomeOrgReceiver1::GetPropertyUri(Brhz& aValue)
 {
+    ASSERT(iPropertyUri != NULL);
     aValue.Set(iPropertyUri->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgReceiver1::SetPropertyMetadata(const Brx& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     return SetPropertyString(*iPropertyMetadata, aValue);
 }
 
 void DvProviderAvOpenhomeOrgReceiver1::GetPropertyMetadata(Brhz& aValue)
 {
+    ASSERT(iPropertyMetadata != NULL);
     aValue.Set(iPropertyMetadata->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgReceiver1::SetPropertyTransportState(const Brx& aValue)
 {
+    ASSERT(iPropertyTransportState != NULL);
     return SetPropertyString(*iPropertyTransportState, aValue);
 }
 
 void DvProviderAvOpenhomeOrgReceiver1::GetPropertyTransportState(Brhz& aValue)
 {
+    ASSERT(iPropertyTransportState != NULL);
     aValue.Set(iPropertyTransportState->Value());
 }
 
 TBool DvProviderAvOpenhomeOrgReceiver1::SetPropertyProtocolInfo(const Brx& aValue)
 {
+    ASSERT(iPropertyProtocolInfo != NULL);
     return SetPropertyString(*iPropertyProtocolInfo, aValue);
 }
 
 void DvProviderAvOpenhomeOrgReceiver1::GetPropertyProtocolInfo(Brhz& aValue)
 {
+    ASSERT(iPropertyProtocolInfo != NULL);
     aValue.Set(iPropertyProtocolInfo->Value());
 }
 
 DvProviderAvOpenhomeOrgReceiver1::DvProviderAvOpenhomeOrgReceiver1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Receiver", 1)
 {
-    
-    TChar** allowedValues;
-    TUint index;
+    iPropertyUri = NULL;
+    iPropertyMetadata = NULL;
+    iPropertyTransportState = NULL;
+    iPropertyProtocolInfo = NULL;
+}
+
+void DvProviderAvOpenhomeOrgReceiver1::EnablePropertyUri()
+{
     iPropertyUri = new PropertyString(new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgReceiver1::EnablePropertyMetadata()
+{
     iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
-    index = 0;
+}
+
+void DvProviderAvOpenhomeOrgReceiver1::EnablePropertyTransportState()
+{
+    TChar** allowedValues;
+    TUint index = 0;
     allowedValues = new TChar*[4];
     allowedValues[index++] = (TChar*)"Stopped";
     allowedValues[index++] = (TChar*)"Playing";
@@ -66,6 +88,10 @@ DvProviderAvOpenhomeOrgReceiver1::DvProviderAvOpenhomeOrgReceiver1(DvDevice& aDe
     iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgReceiver1::EnablePropertyProtocolInfo()
+{
     iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo"));
     iService->AddProperty(iPropertyProtocolInfo); // passes ownership
 }
