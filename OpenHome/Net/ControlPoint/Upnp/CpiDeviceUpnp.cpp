@@ -503,11 +503,10 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 void CpiDeviceListUpnp::RemoveAll()
 {
     iRefreshTimer->Cancel();
-    while (iMap.size() > 0) {
-        Brn udn = iMap.begin()->first;
-        iLock.Signal();
-        Remove(udn);
-        iLock.Wait();
+    Map::iterator it = iMap.begin();
+    while (it != iMap.end()) {
+        Remove(it->first);
+        it++;
     }
 }
 
