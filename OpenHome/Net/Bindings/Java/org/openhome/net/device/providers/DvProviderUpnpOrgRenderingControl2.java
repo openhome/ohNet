@@ -103,6 +103,13 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
     protected DvProviderUpnpOrgRenderingControl2(DvDevice aDevice)
     {
 	    super(aDevice, "upnp.org", "RenderingControl", 2);
+    }
+
+    /**
+     * Enable the LastChange property.
+     */
+    public void enablePropertyLastChange()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyLastChange = new PropertyString(new ParameterString("LastChange", allowedValues));
         addProperty(iPropertyLastChange);

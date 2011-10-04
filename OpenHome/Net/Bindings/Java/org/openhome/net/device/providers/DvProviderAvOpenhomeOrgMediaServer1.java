@@ -363,31 +363,134 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     protected DvProviderAvOpenhomeOrgMediaServer1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "MediaServer", 1);
+    }
+
+    /**
+     * Enable the ManufacturerName property.
+     */
+    public void enablePropertyManufacturerName()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyManufacturerName = new PropertyString(new ParameterString("ManufacturerName", allowedValues));
         addProperty(iPropertyManufacturerName);
+    }
+
+    /**
+     * Enable the ManufacturerInfo property.
+     */
+    public void enablePropertyManufacturerInfo()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyManufacturerInfo = new PropertyString(new ParameterString("ManufacturerInfo", allowedValues));
         addProperty(iPropertyManufacturerInfo);
+    }
+
+    /**
+     * Enable the ManufacturerUrl property.
+     */
+    public void enablePropertyManufacturerUrl()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyManufacturerUrl = new PropertyString(new ParameterString("ManufacturerUrl", allowedValues));
         addProperty(iPropertyManufacturerUrl);
+    }
+
+    /**
+     * Enable the ManufacturerImageUri property.
+     */
+    public void enablePropertyManufacturerImageUri()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyManufacturerImageUri = new PropertyString(new ParameterString("ManufacturerImageUri", allowedValues));
         addProperty(iPropertyManufacturerImageUri);
+    }
+
+    /**
+     * Enable the ModelName property.
+     */
+    public void enablePropertyModelName()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyModelName = new PropertyString(new ParameterString("ModelName", allowedValues));
         addProperty(iPropertyModelName);
+    }
+
+    /**
+     * Enable the ModelInfo property.
+     */
+    public void enablePropertyModelInfo()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyModelInfo = new PropertyString(new ParameterString("ModelInfo", allowedValues));
         addProperty(iPropertyModelInfo);
+    }
+
+    /**
+     * Enable the ModelUrl property.
+     */
+    public void enablePropertyModelUrl()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyModelUrl = new PropertyString(new ParameterString("ModelUrl", allowedValues));
         addProperty(iPropertyModelUrl);
+    }
+
+    /**
+     * Enable the ModelImageUri property.
+     */
+    public void enablePropertyModelImageUri()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyModelImageUri = new PropertyString(new ParameterString("ModelImageUri", allowedValues));
         addProperty(iPropertyModelImageUri);
+    }
+
+    /**
+     * Enable the ProductName property.
+     */
+    public void enablePropertyProductName()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyProductName = new PropertyString(new ParameterString("ProductName", allowedValues));
         addProperty(iPropertyProductName);
+    }
+
+    /**
+     * Enable the ProductInfo property.
+     */
+    public void enablePropertyProductInfo()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyProductInfo = new PropertyString(new ParameterString("ProductInfo", allowedValues));
         addProperty(iPropertyProductInfo);
+    }
+
+    /**
+     * Enable the ProductUrl property.
+     */
+    public void enablePropertyProductUrl()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyProductUrl = new PropertyString(new ParameterString("ProductUrl", allowedValues));
         addProperty(iPropertyProductUrl);
+    }
+
+    /**
+     * Enable the ProductImageUri property.
+     */
+    public void enablePropertyProductImageUri()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyProductImageUri = new PropertyString(new ParameterString("ProductImageUri", allowedValues));
         addProperty(iPropertyProductImageUri);
+    }
+
+    /**
+     * Enable the Attributes property.
+     */
+    public void enablePropertyAttributes()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyAttributes = new PropertyString(new ParameterString("Attributes", allowedValues));
         addProperty(iPropertyAttributes);
     }

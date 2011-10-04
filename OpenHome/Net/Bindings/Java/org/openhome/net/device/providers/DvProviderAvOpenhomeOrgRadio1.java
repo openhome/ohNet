@@ -207,11 +207,34 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     protected DvProviderAvOpenhomeOrgRadio1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "Radio", 1);
+    }
+
+    /**
+     * Enable the Uri property.
+     */
+    public void enablePropertyUri()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyUri = new PropertyString(new ParameterString("Uri", allowedValues));
         addProperty(iPropertyUri);
+    }
+
+    /**
+     * Enable the Metadata property.
+     */
+    public void enablePropertyMetadata()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
         addProperty(iPropertyMetadata);
+    }
+
+    /**
+     * Enable the TransportState property.
+     */
+    public void enablePropertyTransportState()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         allowedValues.add("Stopped");
         allowedValues.add("Playing");
         allowedValues.add("Paused");
@@ -219,12 +242,41 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues));
         addProperty(iPropertyTransportState);
             allowedValues.clear();
+    }
+
+    /**
+     * Enable the Id property.
+     */
+    public void enablePropertyId()
+    {
         iPropertyId = new PropertyUint(new ParameterUint("Id"));
         addProperty(iPropertyId);
+    }
+
+    /**
+     * Enable the IdArray property.
+     */
+    public void enablePropertyIdArray()
+    {
         iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
         addProperty(iPropertyIdArray);
+    }
+
+    /**
+     * Enable the ChannelsMax property.
+     */
+    public void enablePropertyChannelsMax()
+    {
         iPropertyChannelsMax = new PropertyUint(new ParameterUint("ChannelsMax"));
         addProperty(iPropertyChannelsMax);
+    }
+
+    /**
+     * Enable the ProtocolInfo property.
+     */
+    public void enablePropertyProtocolInfo()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo", allowedValues));
         addProperty(iPropertyProtocolInfo);
     }

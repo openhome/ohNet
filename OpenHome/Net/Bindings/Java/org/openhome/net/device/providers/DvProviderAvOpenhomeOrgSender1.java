@@ -116,19 +116,57 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     protected DvProviderAvOpenhomeOrgSender1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "Sender", 1);
+    }
+
+    /**
+     * Enable the PresentationUrl property.
+     */
+    public void enablePropertyPresentationUrl()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyPresentationUrl = new PropertyString(new ParameterString("PresentationUrl", allowedValues));
         addProperty(iPropertyPresentationUrl);
+    }
+
+    /**
+     * Enable the Metadata property.
+     */
+    public void enablePropertyMetadata()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
         addProperty(iPropertyMetadata);
+    }
+
+    /**
+     * Enable the Audio property.
+     */
+    public void enablePropertyAudio()
+    {
         iPropertyAudio = new PropertyBool(new ParameterBool("Audio"));
         addProperty(iPropertyAudio);
+    }
+
+    /**
+     * Enable the Status property.
+     */
+    public void enablePropertyStatus()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         allowedValues.add("Enabled");
         allowedValues.add("Disabled");
         allowedValues.add("Blocked");
         iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues));
         addProperty(iPropertyStatus);
             allowedValues.clear();
+    }
+
+    /**
+     * Enable the Attributes property.
+     */
+    public void enablePropertyAttributes()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyAttributes = new PropertyString(new ParameterString("Attributes", allowedValues));
         addProperty(iPropertyAttributes);
     }

@@ -130,15 +130,50 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
     protected DvProviderOpenhomeOrgTestBasic1(DvDevice aDevice)
     {
 	    super(aDevice, "openhome.org", "TestBasic", 1);
-        List<String> allowedValues = new LinkedList<String>();
+    }
+
+    /**
+     * Enable the VarUint property.
+     */
+    public void enablePropertyVarUint()
+    {
         iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
         addProperty(iPropertyVarUint);
+    }
+
+    /**
+     * Enable the VarInt property.
+     */
+    public void enablePropertyVarInt()
+    {
         iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
         addProperty(iPropertyVarInt);
+    }
+
+    /**
+     * Enable the VarBool property.
+     */
+    public void enablePropertyVarBool()
+    {
         iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
         addProperty(iPropertyVarBool);
+    }
+
+    /**
+     * Enable the VarStr property.
+     */
+    public void enablePropertyVarStr()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyVarStr = new PropertyString(new ParameterString("VarStr", allowedValues));
         addProperty(iPropertyVarStr);
+    }
+
+    /**
+     * Enable the VarBin property.
+     */
+    public void enablePropertyVarBin()
+    {
         iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
         addProperty(iPropertyVarBin);
     }

@@ -155,15 +155,49 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     protected DvProviderUpnpOrgDimming1(DvDevice aDevice)
     {
 	    super(aDevice, "upnp.org", "Dimming", 1);
+    }
 
+    /**
+     * Enable the LoadLevelStatus property.
+     */
+    public void enablePropertyLoadLevelStatus()
+    {
         iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));
         addProperty(iPropertyLoadLevelStatus);
+    }
+
+    /**
+     * Enable the StepDelta property.
+     */
+    public void enablePropertyStepDelta()
+    {
         iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100));
         addProperty(iPropertyStepDelta);
+    }
+
+    /**
+     * Enable the RampRate property.
+     */
+    public void enablePropertyRampRate()
+    {
         iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100));
         addProperty(iPropertyRampRate);
+    }
+
+    /**
+     * Enable the IsRamping property.
+     */
+    public void enablePropertyIsRamping()
+    {
         iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"));
         addProperty(iPropertyIsRamping);
+    }
+
+    /**
+     * Enable the RampPaused property.
+     */
+    public void enablePropertyRampPaused()
+    {
         iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"));
         addProperty(iPropertyRampPaused);
     }

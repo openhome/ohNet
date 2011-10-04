@@ -380,9 +380,24 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     protected DvProviderUpnpOrgAVTransport2(DvDevice aDevice)
     {
 	    super(aDevice, "upnp.org", "AVTransport", 2);
+    }
+
+    /**
+     * Enable the LastChange property.
+     */
+    public void enablePropertyLastChange()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyLastChange = new PropertyString(new ParameterString("LastChange", allowedValues));
         addProperty(iPropertyLastChange);
+    }
+
+    /**
+     * Enable the DRMState property.
+     */
+    public void enablePropertyDRMState()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         allowedValues.add("OK");
         iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues));
         addProperty(iPropertyDRMState);

@@ -123,11 +123,34 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     protected DvProviderAvOpenhomeOrgReceiver1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "Receiver", 1);
+    }
+
+    /**
+     * Enable the Uri property.
+     */
+    public void enablePropertyUri()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyUri = new PropertyString(new ParameterString("Uri", allowedValues));
         addProperty(iPropertyUri);
+    }
+
+    /**
+     * Enable the Metadata property.
+     */
+    public void enablePropertyMetadata()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
         addProperty(iPropertyMetadata);
+    }
+
+    /**
+     * Enable the TransportState property.
+     */
+    public void enablePropertyTransportState()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         allowedValues.add("Stopped");
         allowedValues.add("Playing");
         allowedValues.add("Waiting");
@@ -135,6 +158,14 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
         iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues));
         addProperty(iPropertyTransportState);
             allowedValues.clear();
+    }
+
+    /**
+     * Enable the ProtocolInfo property.
+     */
+    public void enablePropertyProtocolInfo()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo", allowedValues));
         addProperty(iPropertyProtocolInfo);
     }

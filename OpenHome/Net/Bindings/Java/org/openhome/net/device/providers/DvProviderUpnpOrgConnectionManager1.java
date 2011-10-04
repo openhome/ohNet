@@ -193,11 +193,34 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
     protected DvProviderUpnpOrgConnectionManager1(DvDevice aDevice)
     {
 	    super(aDevice, "upnp.org", "ConnectionManager", 1);
+    }
+
+    /**
+     * Enable the SourceProtocolInfo property.
+     */
+    public void enablePropertySourceProtocolInfo()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo", allowedValues));
         addProperty(iPropertySourceProtocolInfo);
+    }
+
+    /**
+     * Enable the SinkProtocolInfo property.
+     */
+    public void enablePropertySinkProtocolInfo()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo", allowedValues));
         addProperty(iPropertySinkProtocolInfo);
+    }
+
+    /**
+     * Enable the CurrentConnectionIDs property.
+     */
+    public void enablePropertyCurrentConnectionIDs()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs", allowedValues));
         addProperty(iPropertyCurrentConnectionIDs);
     }

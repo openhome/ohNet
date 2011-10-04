@@ -100,7 +100,6 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
     protected DvProviderOpenhomeOrgTestLights1(DvDevice aDevice)
     {
 	    super(aDevice, "openhome.org", "TestLights", 1);
-
     }
 
     /**

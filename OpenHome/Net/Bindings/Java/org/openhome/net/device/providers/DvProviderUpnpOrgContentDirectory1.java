@@ -218,11 +218,33 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
     protected DvProviderUpnpOrgContentDirectory1(DvDevice aDevice)
     {
 	    super(aDevice, "upnp.org", "ContentDirectory", 1);
+    }
+
+    /**
+     * Enable the TransferIDs property.
+     */
+    public void enablePropertyTransferIDs()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs", allowedValues));
         addProperty(iPropertyTransferIDs);
+    }
+
+    /**
+     * Enable the SystemUpdateID property.
+     */
+    public void enablePropertySystemUpdateID()
+    {
         iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
         addProperty(iPropertySystemUpdateID);
+    }
+
+    /**
+     * Enable the ContainerUpdateIDs property.
+     */
+    public void enablePropertyContainerUpdateIDs()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs", allowedValues));
         addProperty(iPropertyContainerUpdateIDs);
     }

@@ -215,6 +215,13 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
     protected DvProviderAvOpenhomeOrgPlaylist1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "Playlist", 1);
+    }
+
+    /**
+     * Enable the TransportState property.
+     */
+    public void enablePropertyTransportState()
+    {
         List<String> allowedValues = new LinkedList<String>();
         allowedValues.add("Playing");
         allowedValues.add("Paused");
@@ -223,16 +230,59 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
         iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues));
         addProperty(iPropertyTransportState);
             allowedValues.clear();
+    }
+
+    /**
+     * Enable the Repeat property.
+     */
+    public void enablePropertyRepeat()
+    {
         iPropertyRepeat = new PropertyBool(new ParameterBool("Repeat"));
         addProperty(iPropertyRepeat);
+    }
+
+    /**
+     * Enable the Shuffle property.
+     */
+    public void enablePropertyShuffle()
+    {
         iPropertyShuffle = new PropertyBool(new ParameterBool("Shuffle"));
         addProperty(iPropertyShuffle);
+    }
+
+    /**
+     * Enable the Id property.
+     */
+    public void enablePropertyId()
+    {
         iPropertyId = new PropertyUint(new ParameterUint("Id"));
         addProperty(iPropertyId);
+    }
+
+    /**
+     * Enable the IdArray property.
+     */
+    public void enablePropertyIdArray()
+    {
         iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
         addProperty(iPropertyIdArray);
+    }
+
+    /**
+     * Enable the TracksMax property.
+     */
+    public void enablePropertyTracksMax()
+    {
         iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
         addProperty(iPropertyTracksMax);
+    }
+
+    /**
+     * Enable the ProtocolInfo property.
+     */
+    public void enablePropertyProtocolInfo()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo", allowedValues));
         addProperty(iPropertyProtocolInfo);
     }

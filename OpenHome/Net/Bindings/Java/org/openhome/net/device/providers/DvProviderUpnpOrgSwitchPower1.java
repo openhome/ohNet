@@ -46,7 +46,13 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
     protected DvProviderUpnpOrgSwitchPower1(DvDevice aDevice)
     {
 	    super(aDevice, "upnp.org", "SwitchPower", 1);
+    }
 
+    /**
+     * Enable the Status property.
+     */
+    public void enablePropertyStatus()
+    {
         iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
         addProperty(iPropertyStatus);
     }

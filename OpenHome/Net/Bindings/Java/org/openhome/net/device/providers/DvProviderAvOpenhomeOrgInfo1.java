@@ -338,29 +338,116 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     protected DvProviderAvOpenhomeOrgInfo1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "Info", 1);
-        List<String> allowedValues = new LinkedList<String>();
+    }
+
+    /**
+     * Enable the TrackCount property.
+     */
+    public void enablePropertyTrackCount()
+    {
         iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
         addProperty(iPropertyTrackCount);
+    }
+
+    /**
+     * Enable the DetailsCount property.
+     */
+    public void enablePropertyDetailsCount()
+    {
         iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"));
         addProperty(iPropertyDetailsCount);
+    }
+
+    /**
+     * Enable the MetatextCount property.
+     */
+    public void enablePropertyMetatextCount()
+    {
         iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"));
         addProperty(iPropertyMetatextCount);
+    }
+
+    /**
+     * Enable the Uri property.
+     */
+    public void enablePropertyUri()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyUri = new PropertyString(new ParameterString("Uri", allowedValues));
         addProperty(iPropertyUri);
+    }
+
+    /**
+     * Enable the Metadata property.
+     */
+    public void enablePropertyMetadata()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
         addProperty(iPropertyMetadata);
+    }
+
+    /**
+     * Enable the Duration property.
+     */
+    public void enablePropertyDuration()
+    {
         iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
         addProperty(iPropertyDuration);
+    }
+
+    /**
+     * Enable the BitRate property.
+     */
+    public void enablePropertyBitRate()
+    {
         iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"));
         addProperty(iPropertyBitRate);
+    }
+
+    /**
+     * Enable the BitDepth property.
+     */
+    public void enablePropertyBitDepth()
+    {
         iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"));
         addProperty(iPropertyBitDepth);
+    }
+
+    /**
+     * Enable the SampleRate property.
+     */
+    public void enablePropertySampleRate()
+    {
         iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"));
         addProperty(iPropertySampleRate);
+    }
+
+    /**
+     * Enable the Lossless property.
+     */
+    public void enablePropertyLossless()
+    {
         iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"));
         addProperty(iPropertyLossless);
+    }
+
+    /**
+     * Enable the CodecName property.
+     */
+    public void enablePropertyCodecName()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyCodecName = new PropertyString(new ParameterString("CodecName", allowedValues));
         addProperty(iPropertyCodecName);
+    }
+
+    /**
+     * Enable the Metatext property.
+     */
+    public void enablePropertyMetatext()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyMetatext = new PropertyString(new ParameterString("Metatext", allowedValues));
         addProperty(iPropertyMetatext);
     }

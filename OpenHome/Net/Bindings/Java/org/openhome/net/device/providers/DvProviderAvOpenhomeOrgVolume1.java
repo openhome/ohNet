@@ -280,27 +280,103 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     protected DvProviderAvOpenhomeOrgVolume1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "Volume", 1);
+    }
 
+    /**
+     * Enable the Volume property.
+     */
+    public void enablePropertyVolume()
+    {
         iPropertyVolume = new PropertyUint(new ParameterUint("Volume"));
         addProperty(iPropertyVolume);
+    }
+
+    /**
+     * Enable the Mute property.
+     */
+    public void enablePropertyMute()
+    {
         iPropertyMute = new PropertyBool(new ParameterBool("Mute"));
         addProperty(iPropertyMute);
+    }
+
+    /**
+     * Enable the Balance property.
+     */
+    public void enablePropertyBalance()
+    {
         iPropertyBalance = new PropertyInt(new ParameterInt("Balance"));
         addProperty(iPropertyBalance);
+    }
+
+    /**
+     * Enable the Fade property.
+     */
+    public void enablePropertyFade()
+    {
         iPropertyFade = new PropertyInt(new ParameterInt("Fade"));
         addProperty(iPropertyFade);
+    }
+
+    /**
+     * Enable the VolumeLimit property.
+     */
+    public void enablePropertyVolumeLimit()
+    {
         iPropertyVolumeLimit = new PropertyUint(new ParameterUint("VolumeLimit"));
         addProperty(iPropertyVolumeLimit);
+    }
+
+    /**
+     * Enable the VolumeMax property.
+     */
+    public void enablePropertyVolumeMax()
+    {
         iPropertyVolumeMax = new PropertyUint(new ParameterUint("VolumeMax"));
         addProperty(iPropertyVolumeMax);
+    }
+
+    /**
+     * Enable the VolumeUnity property.
+     */
+    public void enablePropertyVolumeUnity()
+    {
         iPropertyVolumeUnity = new PropertyUint(new ParameterUint("VolumeUnity"));
         addProperty(iPropertyVolumeUnity);
+    }
+
+    /**
+     * Enable the VolumeSteps property.
+     */
+    public void enablePropertyVolumeSteps()
+    {
         iPropertyVolumeSteps = new PropertyUint(new ParameterUint("VolumeSteps"));
         addProperty(iPropertyVolumeSteps);
+    }
+
+    /**
+     * Enable the VolumeMilliDbPerStep property.
+     */
+    public void enablePropertyVolumeMilliDbPerStep()
+    {
         iPropertyVolumeMilliDbPerStep = new PropertyUint(new ParameterUint("VolumeMilliDbPerStep"));
         addProperty(iPropertyVolumeMilliDbPerStep);
+    }
+
+    /**
+     * Enable the BalanceMax property.
+     */
+    public void enablePropertyBalanceMax()
+    {
         iPropertyBalanceMax = new PropertyUint(new ParameterUint("BalanceMax"));
         addProperty(iPropertyBalanceMax);
+    }
+
+    /**
+     * Enable the FadeMax property.
+     */
+    public void enablePropertyFadeMax()
+    {
         iPropertyFadeMax = new PropertyUint(new ParameterUint("FadeMax"));
         addProperty(iPropertyFadeMax);
     }

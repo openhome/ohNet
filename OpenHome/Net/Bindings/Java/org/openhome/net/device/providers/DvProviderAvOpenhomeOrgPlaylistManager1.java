@@ -231,17 +231,60 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     protected DvProviderAvOpenhomeOrgPlaylistManager1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "PlaylistManager", 1);
+    }
+
+    /**
+     * Enable the Metadata property.
+     */
+    public void enablePropertyMetadata()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
         addProperty(iPropertyMetadata);
+    }
+
+    /**
+     * Enable the ImagesXml property.
+     */
+    public void enablePropertyImagesXml()
+    {
+        List<String> allowedValues = new LinkedList<String>();
         iPropertyImagesXml = new PropertyString(new ParameterString("ImagesXml", allowedValues));
         addProperty(iPropertyImagesXml);
+    }
+
+    /**
+     * Enable the IdArray property.
+     */
+    public void enablePropertyIdArray()
+    {
         iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
         addProperty(iPropertyIdArray);
+    }
+
+    /**
+     * Enable the TokenArray property.
+     */
+    public void enablePropertyTokenArray()
+    {
         iPropertyTokenArray = new PropertyBinary(new ParameterBinary("TokenArray"));
         addProperty(iPropertyTokenArray);
+    }
+
+    /**
+     * Enable the PlaylistsMax property.
+     */
+    public void enablePropertyPlaylistsMax()
+    {
         iPropertyPlaylistsMax = new PropertyUint(new ParameterUint("PlaylistsMax"));
         addProperty(iPropertyPlaylistsMax);
+    }
+
+    /**
+     * Enable the TracksMax property.
+     */
+    public void enablePropertyTracksMax()
+    {
         iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
         addProperty(iPropertyTracksMax);
     }

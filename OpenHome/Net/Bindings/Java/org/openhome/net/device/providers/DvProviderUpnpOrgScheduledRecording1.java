@@ -280,6 +280,13 @@ public class DvProviderUpnpOrgScheduledRecording1 extends DvProvider implements 
     protected DvProviderUpnpOrgScheduledRecording1(DvDevice aDevice)
     {
 	    super(aDevice, "upnp.org", "ScheduledRecording", 1);
+    }
+
+    /**
+     * Enable the LastChange property.
+     */
+    public void enablePropertyLastChange()
+    {
         List<String> allowedValues = new LinkedList<String>();
         iPropertyLastChange = new PropertyString(new ParameterString("LastChange", allowedValues));
         addProperty(iPropertyLastChange);

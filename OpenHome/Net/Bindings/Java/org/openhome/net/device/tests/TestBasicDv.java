@@ -9,6 +9,11 @@ public class TestBasicDv extends DvProviderOpenhomeOrgTestBasic1
 	public TestBasicDv(DvDevice aDevice) {
 		super(aDevice);
 
+        enablePropertyVarUint();
+        enablePropertyVarInt();
+        enablePropertyVarBool();
+        enablePropertyVarStr();
+        enablePropertyVarBin();
 		setPropertyVarUint(0);
 		setPropertyVarInt(0);
 		setPropertyVarBool(false);

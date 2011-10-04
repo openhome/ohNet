@@ -108,11 +108,31 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
     protected DvProviderAvOpenhomeOrgTime1(DvDevice aDevice)
     {
 	    super(aDevice, "av.openhome.org", "Time", 1);
+    }
 
+    /**
+     * Enable the TrackCount property.
+     */
+    public void enablePropertyTrackCount()
+    {
         iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
         addProperty(iPropertyTrackCount);
+    }
+
+    /**
+     * Enable the Duration property.
+     */
+    public void enablePropertyDuration()
+    {
         iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
         addProperty(iPropertyDuration);
+    }
+
+    /**
+     * Enable the Seconds property.
+     */
+    public void enablePropertySeconds()
+    {
         iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
         addProperty(iPropertySeconds);
     }
