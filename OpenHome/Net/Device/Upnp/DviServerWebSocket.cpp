@@ -509,7 +509,10 @@ void WsProtocol80::Close(TUint16 aCode)
 {
     TUint16 reason = Arch::BigEndian2(aCode);
     Brn data((const TByte*)&reason, 2);
-    Write(eClose, data);
+    try {
+        Write(eClose, data);
+    }
+    catch (WriterError&) {}
 }
 
 

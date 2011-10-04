@@ -135,20 +135,24 @@ def getArguments(module,nightly,arch,valgrind,os):
     elif arch == 'x64':
         args += ' --native'
     if os == 'Windows' and arch == 'x86':
-        args += ' --js'
+        args += ' --js --java'
     if os == 'Windows' or nightly == '1':
         args += ' --release'
+    if os == 'Linux' and arch == 'x86':
+	args += ' --java'
     if nightly == '1':
         args += ' --full'
         if os == 'Linux' and arch == 'x86':
             args += ' --valgrind'
-
+	
     return {'args':args}
     
             
 
 def Build(tool, cmd, args):
-	
+
+    print "Build args are "	+args
+
     ret = subprocess.check_call(tool + '&&' + cmd + args, shell=True)
     if ret != 0:
         print ret        
