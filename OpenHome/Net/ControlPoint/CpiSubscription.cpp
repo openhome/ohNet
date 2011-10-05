@@ -456,7 +456,6 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
             Log::Print("WARNING: Subscription manager failed to shutdown cleanly\n");
         }
     }
-    //ASSERT(iMap.size() == 0);
 
     iLock.Wait();
     Kill();
