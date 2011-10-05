@@ -28,12 +28,10 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
 {
 	iDevice.AddRef();
 	Stack::AddObject(this);
-    CpiStack::ActiveDevices().AddService(*this);
 }
 
 CpiService::~CpiService()
 {
-    CpiStack::ActiveDevices().RemoveService(*this);
     iInterrupt = true;
     try {
         InvocationManager::Interrupt(*this);

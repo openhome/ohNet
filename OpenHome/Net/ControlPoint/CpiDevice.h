@@ -327,32 +327,6 @@ private:
     std::list<UpdateBase*> iList;
 };
 
-class CpiService;
-class CpiActiveDevices
-{
-public:
-    CpiActiveDevices();
-    ~CpiActiveDevices();
-    void AddDevice(CpiDevice& aDevice);
-    void RemoveDevice(const Brx& aUdn);
-    void AddService(CpiService& aService);
-    void RemoveService(CpiService& aService);
-private:
-    class ActiveDevice : private INonCopyable
-    {
-    public:
-        ActiveDevice(CpiDevice& aDevice);
-        ~ActiveDevice();
-    public:
-        CpiDevice& iDevice;
-        std::vector<CpiService*> iServices;
-    };
-private:
-    Mutex iLock;
-    typedef std::map<Brn,ActiveDevice*,BufferCmp> Map;
-    Map iMap;
-};
-
 } // namespace Net
 } // namespace OpenHome
 

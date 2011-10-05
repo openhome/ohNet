@@ -480,7 +480,6 @@ CpiDeviceListUpdater::UpdateAdded::~UpdateAdded()
 
 void CpiDeviceListUpdater::UpdateAdded::Update()
 {
-    CpiStack::ActiveDevices().AddDevice(iDevice);
     iUpdater.NotifyAdded(iDevice);
 }
 
@@ -495,7 +494,6 @@ CpiDeviceListUpdater::UpdateRemoved::UpdateRemoved(IDeviceListUpdater& aUpdater,
 
 void CpiDeviceListUpdater::UpdateRemoved::Update()
 {
-    CpiStack::ActiveDevices().RemoveDevice(iUdn);
     iUpdater.NotifyRemoved(iUdn);
 }
 
@@ -510,101 +508,4 @@ CpiDeviceListUpdater::UpdateRefresh::UpdateRefresh(IDeviceListUpdater& aUpdater)
 void CpiDeviceListUpdater::UpdateRefresh::Update()
 {
     iUpdater.NotifyRefreshed();
-}
-
-
-// class CpiActiveDevices
-
-CpiActiveDevices::CpiActiveDevices()
-    : iLock("CMAD")
-{
-}
-
-CpiActiveDevices::~CpiActiveDevices()
-{
-    if (iMap.size() != 0) {
-        Map::iterator it = iMap.begin();
-        while (it != iMap.end()) {
-            ActiveDevice* ad = it->second;
-            if ((TUint)ad->iServices.size() > 0) {
-                Log::Print("ERROR: failed to delete all proxies for device ");
-                Log::Print(ad->iDevice.Udn());
-                Log::Print("...\n");
-                for (TUint i=0; i<(TUint)ad->iServices.size(); i++) {
-                    Log::Print("\t%p ", this);
-                    Log::Print(ad->iServices[i]->ServiceType().FullName());
-                    Log::Print("\n");
-                }
-            }
-            delete ad;
-            it++;
-        }
-    }
-}
-
-void CpiActiveDevices::AddDevice(CpiDevice& aDevice)
-{
-    iLock.Wait();
-    Brn udn(aDevice.Udn());
-    Map::iterator it = iMap.find(udn);
-    if (it == iMap.end()) {
-        ActiveDevice* ad = new ActiveDevice(aDevice);
-        iMap.insert(std::pair<Brn,ActiveDevice*>(udn, ad));
-    }
-    iLock.Signal();
-}
-
-void CpiActiveDevices::RemoveDevice(const Brx& aUdn)
-{
-    iLock.Wait();
-    Brn udn(aUdn);
-    Map::iterator it = iMap.find(udn);
-    if (it != iMap.end()) {
-        ActiveDevice* ad = it->second;
-        for (TUint i=0; i<(TUint)ad->iServices.size(); i++) {
-            ad->iServices[i]->Unsubscribe();
-        }
-        delete ad;
-        iMap.erase(it);
-    }
-    iLock.Signal();
-}
-
-void CpiActiveDevices::AddService(CpiService& aService)
-{
-    iLock.Wait();
-    Brn udn(aService.Device().Udn());
-    Map::iterator it = iMap.find(udn);
-    if (it != iMap.end()) {
-        ActiveDevice* ad = it->second;
-        ad->iServices.push_back(&aService);
-    }
-    iLock.Signal();
-}
-
-void CpiActiveDevices::RemoveService(CpiService& aService)
-{
-    iLock.Wait();
-    Brn udn(aService.Device().Udn());
-    Map::iterator it = iMap.find(udn);
-    if (it != iMap.end()) {
-        ActiveDevice* ad = it->second;
-        for (TUint i=0; i<(TUint)ad->iServices.size(); i++) {
-            if ((void*)ad->iServices[i] == (void*)&aService) {
-                ad->iServices.erase(ad->iServices.begin() + i);
-            }
-        }
-    }
-    iLock.Signal();
-}
-
-CpiActiveDevices::ActiveDevice::ActiveDevice(CpiDevice& aDevice)
-    : iDevice(aDevice)
-{
-    iDevice.AddRef();
-}
-
-CpiActiveDevices::ActiveDevice::~ActiveDevice()
-{
-    iDevice.RemoveRef();
 }

@@ -447,9 +447,16 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
     iShutdownSem.Clear();
     iLock.Signal();
     if (wait) {
-        iShutdownSem.Wait();
+        // wait 1 minute then proceed
+        // we'll have leaked some subscriptions but this'll be logged later during shutdown
+        try {
+            iShutdownSem.Wait(60*1000);
+        }
+        catch(Timeout&) {
+            Log::Print("WARNING: Subscription manager failed to shutdown cleanly\n");
+        }
     }
-    ASSERT(iMap.size() == 0);
+    //ASSERT(iMap.size() == 0);
 
     iLock.Wait();
     Kill();

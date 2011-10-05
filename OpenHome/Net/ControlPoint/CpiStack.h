@@ -26,7 +26,6 @@ public:
     static OpenHome::Net::InvocationManager& InvocationManager();
     static OpenHome::Net::XmlFetchManager& XmlFetchManager();
     static CpiSubscriptionManager& SubscriptionManager();
-    static CpiActiveDevices& ActiveDevices();
     static CpiDeviceListUpdater& DeviceListUpdater();
 private:
     ~CpiStack();
@@ -35,7 +34,6 @@ private:
     OpenHome::Net::InvocationManager* iInvocationManager;
     OpenHome::Net::XmlFetchManager* iXmlFetchManager;
     CpiSubscriptionManager* iSubscriptionManager;
-    CpiActiveDevices* iActiveDevices;
     CpiDeviceListUpdater* iDeviceListUpdater;
 };
 
