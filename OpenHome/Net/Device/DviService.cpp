@@ -156,6 +156,7 @@ void DviService::RemoveSubscription(const Brx& aSid)
             DviSubscriptionManager::RemoveSubscription(*subscription);
             iSubscriptions.erase(iSubscriptions.begin() + i);
             iLock.Signal();
+            subscription->Stop();
             subscription->RemoveRef();
             return;
         }
