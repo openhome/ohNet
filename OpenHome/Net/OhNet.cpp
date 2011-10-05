@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Network.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -16,12 +17,12 @@ NetworkAdapter::NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const c
     , iNetMask(aNetMask)
     , iName(aName)
 {
-    Stack::AddObject(this, "NetworkAdapter");
+    Stack::AddObject(this);
 }
 
 NetworkAdapter::~NetworkAdapter()
 {
-    Stack::RemoveObject(this, "NetworkAdapter");
+    Stack::RemoveObject(this);
 }
 
 void NetworkAdapter::AddRef()
@@ -80,6 +81,18 @@ char* NetworkAdapter::FullName() const
     Brhz buf2;
     buf.TransferTo(buf2);
     return (char*)buf2.Transfer();
+}
+
+void NetworkAdapter::ListObjectDetails() const
+{
+    Endpoint ep(0, iAddress);
+    Endpoint::AddressBuf buf;
+    ep.AppendAddress(buf);
+    Log::Print("  NetworkAdapter: addr=%p, ip=%s", this, buf.Ptr());
+    ep.SetAddress(iNetMask);
+    buf.SetBytes(0);
+    ep.AppendAddress(buf);
+    Log::Print(", netmask=%s, name=%s\n", buf.Ptr(), iName.Ptr());
 }
 
 

@@ -21,7 +21,7 @@ CpiDevice::CpiDevice(const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserve
     , iExpired(false)
     , iRemoved(false)
 {
-    Stack::AddObject(this, "CpiDevice");
+    Stack::AddObject(this);
 }
 
 const Brx& CpiDevice::Udn() const
@@ -128,13 +128,20 @@ TBool CpiDevice::IsRemoved() const
     return iRemoved;
 }
 
+void CpiDevice::ListObjectDetails() const
+{
+    Log::Print("  CpiDevice: addr=%p, udn=");
+    Log::Print(iUdn);
+    Log::Print(", refCount=%u\n", iRefCount);
+}
+
 CpiDevice::~CpiDevice()
 {
     LOG(kDevice, "~CpiDevice for device ");
     LOG(kDevice, iUdn);
     LOG(kDevice, "\n");
     ASSERT(iRefCount == 0);
-    Stack::RemoveObject(this, "CpiDevice");
+    Stack::RemoveObject(this);
 }
 
 
@@ -173,7 +180,7 @@ CpiDeviceList::CpiDeviceList(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
 {
     ASSERT(iAdded);
     ASSERT(iRemoved);
-    Stack::AddObject(this, "CpiDeviceList");
+    Stack::AddObject(this);
 }
 
 CpiDeviceList::~CpiDeviceList()
@@ -190,7 +197,7 @@ CpiDeviceList::~CpiDeviceList()
     }
     ClearMap(iMap);
     ClearMap(iRefreshMap);
-    Stack::RemoveObject(this, "CpiDeviceList");
+    Stack::RemoveObject(this);
 }
 
 void CpiDeviceList::Add(CpiDevice* aDevice)
@@ -375,6 +382,11 @@ void CpiDeviceList::NotifyRefreshed()
     }
     ClearMap(iRefreshMap);
     iLock.Signal();
+}
+
+void CpiDeviceList::ListObjectDetails() const
+{
+    Log::Print("  CpiDeviceList: addr=%p\n", this);
 }
 
 

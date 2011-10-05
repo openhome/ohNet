@@ -6,13 +6,14 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/FunctorNetworkAdapter.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <vector>
 #include <map>
 
 namespace OpenHome {
 
-class NetworkAdapterList
+class NetworkAdapterList : private IStackObject
 {
 public:
     static const TUint kListenerIdNull = 0;
@@ -49,6 +50,8 @@ private:
     void RunCallbacks(Map& aMap);
     void RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdapter& aAdapter);
     static TBool CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ);
+private: // from IStackObject
+    void ListObjectDetails() const;
 private:
     mutable Mutex iListLock;
     Mutex iListenerLock;

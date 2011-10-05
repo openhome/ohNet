@@ -27,7 +27,7 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
     , iSubscription(NULL)
 {
 	iDevice.AddRef();
-	Stack::AddObject(this, "CpiService");
+	Stack::AddObject(this);
     CpiStack::ActiveDevices().AddService(*this);
 }
 
@@ -49,7 +49,7 @@ CpiService::~CpiService()
         iShutdownSignal.Wait();
     }
 	iDevice.RemoveRef();
-	Stack::RemoveObject(this, "CpiService");
+	Stack::RemoveObject(this);
 }
 
 Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor)
@@ -100,6 +100,18 @@ TBool CpiService::Interrupt() const
 CpiDevice& CpiService::Device()
 {
     return iDevice;
+}
+
+void CpiService::ListObjectDetails() const
+{
+    Log::Print("  CpiService: addr=%p, serviceType=", this);
+    Log::Print(ServiceType().FullName());
+    Log::Print(", device=");
+    Log::Print(iDevice.Udn());
+    if (iSubscription != NULL) {
+        Log::Print(", subscribed");
+    }
+    Log::Print("\n");
 }
 
 

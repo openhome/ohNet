@@ -11,6 +11,7 @@
 #include <OpenHome/Net/Private/DviSubscription.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <vector>
 
@@ -68,7 +69,7 @@ private:
 };
 
 class DviDevice;
-class DviService : public Service
+class DviService : public Service, private IStackObject
 {
 public:
     DviService(const TChar* aDomain, const TChar* aName, TUint aVersion);
@@ -91,6 +92,8 @@ public:
     void RemoveSubscription(const Brx& aSid);
 private:
     ~DviService();
+private: // from IStackObject
+    void ListObjectDetails() const;
 private:
     Mutex iLock;
     TUint iRefCount;

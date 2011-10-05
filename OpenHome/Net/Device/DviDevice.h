@@ -7,6 +7,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/DvDevice.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <vector>
 #include <map>
@@ -26,7 +27,7 @@ public:
 };
 
 class DviSubscription;
-class DviDevice : public IResourceManager
+class DviDevice : public IResourceManager, private IStackObject
 {
 public:
     static const Brn kResourceDir;
@@ -71,6 +72,8 @@ private:
     TBool ChildHasService(const OpenHome::Net::ServiceType& aServiceType) const;
     void ConfigChanged();
     TUint SubscriptionId();
+private: // from IStackObject
+    void ListObjectDetails() const;
 private:
     enum EEnableState
     {

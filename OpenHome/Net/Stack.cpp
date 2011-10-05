@@ -185,17 +185,17 @@ InitialisationParams& Stack::InitParams()
     return *(gStack->iInitParams);
 }
 
-void Stack::AddObject(void* aPtr, const char* aClassName)
+void Stack::AddObject(IStackObject* aObject)
 {
     if (gStack != NULL)  {
-        gStack->DoAddObject(aPtr, aClassName);
+        gStack->DoAddObject(aObject);
     }
 }
 
-void Stack::RemoveObject(void* aPtr, const char* aClassName)
+void Stack::RemoveObject(IStackObject* aObject)
 {
     if (gStack != NULL)  {
-        gStack->DoRemoveObject(aPtr, aClassName);
+        gStack->DoRemoveObject(aObject);
     }
 }
 
@@ -206,41 +206,21 @@ void Stack::ListObjects()
     }
 }
 
-void Stack::DoAddObject(void* aPtr, const char* aClassName)
+void Stack::DoAddObject(IStackObject* aObject)
 {
     iPrivateLock.Wait();
-    Brn key(aClassName);
-    ObjectType* map = NULL;
-    ObjectTypeMap::iterator it = iObjectMap.find(key);
-    if (it != iObjectMap.end()) {
-        map = it->second;
-        key.Set(map->Name());
-    }
-    else {
-        ObjectType* o = new ObjectType(aClassName);
-        map = o;
-        key.Set(o->Name());
-        iObjectMap.insert(std::pair<Brn,ObjectType*>(key, o));
-    }
-    map->Map().insert(std::pair<void*,void*>(aPtr, aPtr));
+    ObjectMap::iterator it = iObjectMap.find(aObject);
+    ASSERT(it == iObjectMap.end());
+    iObjectMap.insert(std::pair<IStackObject*,IStackObject*>(aObject, aObject));
     iPrivateLock.Signal();
 }
 
-void Stack::DoRemoveObject(void* aPtr, const char* aClassName)
+void Stack::DoRemoveObject(IStackObject* aObject)
 {
     iPrivateLock.Wait();
-    Brn key(aClassName);
-    ObjectTypeMap::iterator it = iObjectMap.find(key);
+    ObjectMap::iterator it = iObjectMap.find(aObject);
     if (it != iObjectMap.end()) {
-        ObjectMap& map = it->second->Map();
-        ObjectMap::iterator it2 = map.find(aPtr);
-        if (it2 != map.end()) {
-            map.erase(it2);
-            if (map.size() == 0) {
-                delete it->second;
-                iObjectMap.erase(it);
-            }
-        }
+        iObjectMap.erase(it);
     }
     iPrivateLock.Signal();
 }
@@ -248,18 +228,9 @@ void Stack::DoRemoveObject(void* aPtr, const char* aClassName)
 void Stack::DoListObjects()
 {
     iPrivateLock.Wait();
-    ObjectTypeMap::iterator it = iObjectMap.begin();
+    ObjectMap::iterator it = iObjectMap.begin();
     while (it != iObjectMap.end()) {
-        Log::Print("  ");
-        ObjectType* o = it->second;
-        Log::Print(o->Name());
-        Log::Print("\n");
-        ObjectMap& objects = o->Map();
-        ObjectMap::iterator it2 = objects.begin();
-        while (it2 != objects.end()) {
-            Log::Print("    %8x\n", it2->second);
-            it2++;
-        }
+        it->second->ListObjectDetails();
         it++;
     }
     iPrivateLock.Signal();
@@ -313,17 +284,4 @@ TBool Stack::MListener::RemoveRef()
 {
     iRefCount--;
     return (iRefCount == 0);
-}
-
-
-// Stack::ObjectType
-
-Stack::ObjectType::ObjectType(const TChar* aName)
-    : iClassName(aName)
-{
-}
-
-Stack::ObjectType::~ObjectType()
-{
-    ASSERT(iMap.size() == 0);
 }

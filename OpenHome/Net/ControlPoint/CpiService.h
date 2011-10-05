@@ -20,6 +20,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <vector>
 #include <map>
@@ -39,7 +40,7 @@ class IEventProcessor;
  * of the service will also own a device reference and will ensure that the service
  * is destroyed before the device reference is released.
  */
-class DllExportClass CpiService : public OpenHome::Net::Service
+class DllExportClass CpiService : public OpenHome::Net::Service, private IStackObject
 {
 public:
     DllExport CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice);
@@ -107,6 +108,8 @@ public:
     CpiDevice& Device();
 private:
     void Renew();
+private: // from IStackObject
+    void ListObjectDetails() const;
 private:
     CpiDevice& iDevice;
     OpenHome::Mutex iLock;

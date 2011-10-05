@@ -14,7 +14,7 @@ NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
     , iCurrent(NULL)
     , iNextListenerId(1)
 {
-    Net::Stack::AddObject(this, "NetworkAdapterList");
+    Net::Stack::AddObject(this);
     iDefaultSubnet = aDefaultSubnet;
     iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter());
     iSubnets = CreateSubnetList();
@@ -25,7 +25,7 @@ NetworkAdapterList::~NetworkAdapterList()
 {
     DestroySubnetList(iNetworkAdapters);
     DestroySubnetList(iSubnets);
-    Net::Stack::RemoveObject(this, "NetworkAdapterList");
+    Net::Stack::RemoveObject(this);
 }
 
 NetworkAdapter* NetworkAdapterList::CurrentAdapter() const
@@ -350,4 +350,9 @@ void NetworkAdapterList::RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdap
         it++;
     }
     iListenerLock.Signal();
+}
+
+void NetworkAdapterList::ListObjectDetails() const
+{
+    Log::Print("  NetworkAdapterList: addr=%p\n", this);
 }

@@ -143,7 +143,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     iTimer = new Timer(MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
     Schedule(eSubscribe);
-    Stack::AddObject(this, "CpiSubscription");
+    Stack::AddObject(this);
 }
 
 CpiSubscription::~CpiSubscription()
@@ -152,7 +152,7 @@ CpiSubscription::~CpiSubscription()
     ASSERT(iSid.Bytes() == 0);
     iDevice.RemoveRef();
     delete iTimer;
-    Stack::RemoveObject(this, "CpiSubscription");
+    Stack::RemoveObject(this);
 }
 
 void CpiSubscription::Schedule(EOperation aOperation)
@@ -316,6 +316,15 @@ void CpiSubscription::EventUpdateEnd()
 		iEventProcessor->EventUpdateEnd();
 	}
 	iLock.Signal();
+}
+
+void CpiSubscription::ListObjectDetails() const
+{
+    Log::Print("  CpiSubscription: addr=%p, device=", this);
+    Log::Print(iDevice.Udn());
+    Log::Print(", refCount=%u, sid=", iRefCount);
+    Log::Print(iSid);
+    Log::Print("\n");
 }
 
 

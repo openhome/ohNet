@@ -45,7 +45,7 @@ DviService::DviService(const TChar* aDomain, const TChar* aName, TUint aVersion)
     , iRefCount(1)
     , iPropertiesLock("SPRM")
 {
-    Stack::AddObject(this, "DviService");
+    Stack::AddObject(this);
 }
 
 DviService::~DviService()
@@ -65,7 +65,7 @@ DviService::~DviService()
         delete iProperties[i];
     }
     iLock.Signal();
-    Stack::RemoveObject(this, "DviService");
+    Stack::RemoveObject(this);
 }
 
 void DviService::AddRef()
@@ -161,6 +161,13 @@ void DviService::RemoveSubscription(const Brx& aSid)
         }
     }
     iLock.Signal();
+}
+
+void DviService::ListObjectDetails() const
+{
+    Log::Print("  DviService: addr=%p, serviceType=", this);
+    Log::Print(ServiceType().FullName());
+    Log::Print(", refCount=%u, subscriptions=%u\n", iRefCount, iSubscriptions.size());
 }
 
 

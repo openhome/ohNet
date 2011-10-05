@@ -48,8 +48,8 @@ public:
     static void MulticastListenerRelease(TIpAddress aInterface);
     static TUint SequenceNumber();
     static InitialisationParams& InitParams();
-    static void AddObject(void* aPtr, const char* aClassName);
-    static void RemoveObject(void* aPtr, const char* aClassName);
+    static void AddObject(IStackObject* aObject);
+    static void RemoveObject(IStackObject* aObject);
     static void ListObjects();
 private:
     ~Stack();
@@ -57,8 +57,8 @@ private:
     static void SetDviStack(IStack* aStack);
     static IStack* CpiStack();
     static IStack* DviStack();
-    void DoAddObject(void* aPtr, const char* aClassName);
-    void DoRemoveObject(void* aPtr, const char* aClassName);
+    void DoAddObject(IStackObject* aObject);
+    void DoRemoveObject(IStackObject* aObject);
     void DoListObjects();
 private:
     class MListener
@@ -73,19 +73,6 @@ private:
         SsdpListenerMulticast iListener;
         TInt iRefCount;
     };
-
-    typedef std::map<void*,void*> ObjectMap;
-    class ObjectType
-    {
-    public:
-        ObjectType(const TChar* aName);
-        ~ObjectType();
-        const Brx& Name() { return iClassName; }
-        ObjectMap& Map() { return iMap; }
-    private:
-        Brh iClassName;
-        ObjectMap iMap;
-    };
 private:
     InitialisationParams* iInitParams;
     OpenHome::TimerManager* iTimerManager;
@@ -96,8 +83,8 @@ private:
     TUint iSequenceNumber;
     IStack* iCpStack;
     IStack* iDvStack;
-    typedef std::map<Brn,ObjectType*,BufferCmp> ObjectTypeMap;
-    ObjectTypeMap iObjectMap;
+    typedef std::map<IStackObject*,IStackObject*> ObjectMap;
+    ObjectMap iObjectMap;
     OpenHome::Mutex iPrivateLock;
 };
 

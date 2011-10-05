@@ -15,6 +15,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/FunctorCpiDevice.h>
 #include <OpenHome/Net/Private/Service.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <vector>
 #include <map>
@@ -60,7 +61,7 @@ public:
  * Instance of this class are reference counted and are automatically deleted
  * when the reference count falls to zero
  */
-class CpiDevice : public ICpiProtocol
+class CpiDevice : public ICpiProtocol, private IStackObject
 {
 public:
     /**
@@ -135,6 +136,8 @@ public:
      * The object may persist for some time after this as its references are released.
      */
     TBool IsRemoved() const;
+private: // from IStackObject
+    void ListObjectDetails() const;
 private:
     /**
      * Not intended for client use.  The call to RemoveRef() which reduces the
@@ -182,7 +185,7 @@ public:
  *
  * This class is not intended for use outside this module.
  */
-class CpiDeviceList : public IDeviceRemover, private IDeviceListUpdater
+class CpiDeviceList : public IDeviceRemover, private IDeviceListUpdater, private IStackObject
 {
 public:
     virtual ~CpiDeviceList();
@@ -256,6 +259,8 @@ private:
     void NotifyRemoved(const Brx& aUdn);
     void DoRemove(const Brx& aUdn);
     void NotifyRefreshed();
+private: // from IStackObject
+    void ListObjectDetails() const;
 protected:
     TBool iActive; // true if Start() has been called
     TBool iRefreshing;

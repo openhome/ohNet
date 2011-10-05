@@ -17,10 +17,19 @@
 namespace OpenHome {
 
 /**
+ * For internal use only.
+ */
+class IStackObject
+{
+public:
+    virtual void ListObjectDetails() const = 0;
+};
+
+/**
  * Represents a single network interface
  * @ingroup Core
  */
-class NetworkAdapter
+class NetworkAdapter : private IStackObject
 {
 public:
     /**
@@ -88,6 +97,8 @@ public:
     char* FullName() const;
 private:
     ~NetworkAdapter();
+private: // from IStackObject
+    void ListObjectDetails() const;
 private:
     TUint iRefCount;
     TIpAddress iAddress;

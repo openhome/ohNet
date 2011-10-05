@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Private/EventUpnp.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/CpProxy.h> // for IEventProcessor
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <list>
 #include <map>
@@ -26,7 +27,7 @@ namespace Net {
  * Unsubscribe().  The class will then effectively delete itself when it releases
  * its operation reference after completing the unsubscription.
  */
-class CpiSubscription : public IEventProcessor
+class CpiSubscription : public IEventProcessor, private IStackObject
 {
 public:
     static const TUint kDefaultDurationSecs = 30 * 60; // 30 minutes
@@ -125,6 +126,8 @@ private: // IEventProcessor
     void EventUpdateStart();
     void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
     void EventUpdateEnd();
+private: // from IStackObject
+    void ListObjectDetails() const;
 private:
     OpenHome::Mutex iLock;
     OpenHome::Mutex iSubscriberLock;

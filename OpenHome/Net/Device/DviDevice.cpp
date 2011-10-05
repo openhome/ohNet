@@ -34,7 +34,7 @@ DviDevice::DviDevice(const Brx& aUdn, IResourceManager& aResourceManager)
 
 void DviDevice::Construct(const Brx& aUdn)
 {
-    Stack::AddObject(this, "DviDevice");
+    Stack::AddObject(this);
     iRefCount = 1;
     iUdn.Set(aUdn);
     iEnabled = eDisabled;
@@ -54,7 +54,7 @@ void DviDevice::AddProtocol(IDvProtocol* aProtocol)
 
 DviDevice::~DviDevice()
 {
-    Stack::RemoveObject(this, "DviDevice");
+    Stack::RemoveObject(this);
 }
 
 void DviDevice::Destroy()
@@ -415,6 +415,13 @@ TUint DviDevice::SubscriptionId()
     return id;
 }
 
+void DviDevice::ListObjectDetails() const
+{
+    Log::Print("  DviDevice: addr=%p, udn=", this);
+    Log::Print(iUdn);
+    Log::Print(", refCount=%u\n", iRefCount);
+}
+
 
 // AttributeMap
 
@@ -514,16 +521,6 @@ DviDeviceMap::DviDeviceMap()
 
 DviDeviceMap::~DviDeviceMap()
 {
-    /*if (iMap.size() != 0) {
-        Map::iterator it = iMap.begin();
-        while (it != iMap.end()) {
-            Log::Print("Orphaned device: ");
-            Log::Print(it->second->Udn());
-            Log::Print("\n");
-            it++;
-        }
-    }*/
-    ASSERT(iMap.size() == 0);
 }
 
 void DviDeviceMap::Add(DviDevice& aDevice)
