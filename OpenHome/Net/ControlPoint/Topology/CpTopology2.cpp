@@ -58,6 +58,10 @@ CpTopology2Group::CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& 
 CpTopology2Group::~CpTopology2Group()
 {
 	iDevice.RemoveRef();
+	for (size_t i=0; i<iSourceList.size(); i++) {
+        delete iSourceList[i];
+    }
+    iSourceList.clear();
 }
 
 void CpTopology2Group::AddSource(const Brx& aName, const Brx& aType, TBool aVisible)
