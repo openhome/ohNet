@@ -271,10 +271,12 @@ void InvocationBodyWriter::ProcessBinary(const Brx& aVal)
 EventUpnp::EventUpnp(CpiSubscription& aSubscription)
     : iSubscription(aSubscription)
 {
+    iInterruptTimer = new Timer(MakeFunctor(*this, &EventUpnp::InterruptTimerCallback));
 }
 
 EventUpnp::~EventUpnp()
 {
+    delete iInterruptTimer;
     iSubscription.SetInterruptHandler(NULL);
     iSocket.Close();
 }
@@ -364,7 +366,9 @@ void EventUpnp::SubscribeReadResponse(Brh& aSid, TUint& aDurationSecs)
 
     readerResponse.AddHeader(headerSid);
     readerResponse.AddHeader(headerTimeout);
+    iInterruptTimer->FireIn(kSubscribeTimeoutMs);
     readerResponse.Read();
+    iInterruptTimer->Cancel();
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
         LOG2(kEvent, kError, "EventUpnp::SubscribeReadResponse, http error %u ", status.Code());
@@ -421,7 +425,9 @@ void EventUpnp::UnsubscribeReadResponse()
 {
     Srs<1024> readBuffer(iSocket);
     ReaderHttpResponse readerResponse(readBuffer);
+    iInterruptTimer->FireIn(kUnsubscribeTimeoutMs);
     readerResponse.Read();
+    iInterruptTimer->Cancel();
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
         LOG2(kEvent, kError, "EventUpnp::Unsubscribe, http error %u ", status.Code());
@@ -429,6 +435,11 @@ void EventUpnp::UnsubscribeReadResponse()
         LOG2(kEvent, kError, "\n");
         // don't throw an exception here - clients will ignore any later events with unrecognised SIDs
     }
+}
+
+void EventUpnp::InterruptTimerCallback()
+{
+    iSocket.Interrupt(true);
 }
 
 void EventUpnp::WriteHeaderSid(WriterHttpRequest& aWriterRequest, const Brx& aSid)

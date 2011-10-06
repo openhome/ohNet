@@ -81,11 +81,16 @@ private:
     void RenewSubscriptionWriteRequest(const Uri& aPublisher, TUint aDurationSecs);
     void UnsubscribeWriteRequest(const Uri& aPublisher, const Brx& aSid);
     void UnsubscribeReadResponse();
+    void InterruptTimerCallback();
     static void WriteHeaderSid(WriterHttpRequest& aWriterRequest, const Brx& aSid);
     static void WriteHeaderTimeout(WriterHttpRequest& aWriterRequest, TUint aSeconds);
 private:
+    static const TUint kSubscribeTimeoutMs   = 60 * 1000;
+    static const TUint kUnsubscribeTimeoutMs =  5 * 1000;
+private:
     CpiSubscription& iSubscription;
     OpenHome::SocketTcpClient iSocket;
+    Timer* iInterruptTimer;
 };
 
 class OutputProcessorUpnp : public IOutputProcessor
