@@ -8,7 +8,6 @@ FifoBase::FifoBase(TUint aSlots)
     : iSlots(aSlots)
     , iSlotsUsed(0)
     , iMutex("FIFM")
-    , iMutexSema("FIF2")
     , iSemaRead("FISR", 0)
     , iSemaWrite("FISW", aSlots)
     , iReadIndex(0)
@@ -37,9 +36,7 @@ void FifoBase::ReadInterrupt(TBool aInterrupt)
 {
     iInterrupted = aInterrupt;
     if (aInterrupt) {
-        iMutexSema.Wait();
         iSemaRead.Signal();
-        iMutexSema.Signal();
     }
 }
 
@@ -58,9 +55,7 @@ void FifoBase::WriteClose()
 {
     iSlotsUsed++;
     iMutex.Signal();
-    iMutexSema.Wait();
     iSemaRead.Signal();
-    iMutexSema.Signal();
 }
 
 TUint FifoBase::ReadOpen(TUint aTimeoutMs)
@@ -80,9 +75,7 @@ TUint FifoBase::ReadOpen(TUint aTimeoutMs)
 void FifoBase::ReadClose()
 {
     iSlotsUsed--; // not threadsafe but then again, no use of iSlotsUsed is particularly safe (or important)
-    iMutexSema.Wait();
     iSemaWrite.Signal();
-    iMutexSema.Signal();
 }
 
 TUint FifoBase::DoPeek()
