@@ -4,9 +4,15 @@ using namespace OpenHome;
 
 // FifoBase
 
-FifoBase::FifoBase(TUint aSlots) : iSlots(aSlots), iSlotsUsed(0),
-    iMutex("FIFM"), iSemaRead("FISR", 0), iSemaWrite("FISW", aSlots), 
-    iReadIndex(0), iWriteIndex(0), iInterrupted(false)
+FifoBase::FifoBase(TUint aSlots)
+    : iSlots(aSlots)
+    , iSlotsUsed(0)
+    , iMutex("FIFM")
+    , iSemaRead("FISR", 0)
+    , iSemaWrite("FISW", aSlots)
+    , iReadIndex(0)
+    , iWriteIndex(0)
+    , iInterrupted(false)
 {
     ASSERT(iSlots > 0);
 }
