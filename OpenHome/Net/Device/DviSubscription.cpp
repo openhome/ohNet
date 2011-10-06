@@ -365,14 +365,12 @@ DviSubscriptionManager::~DviSubscriptionManager()
     Kill();
     Join();
     iLock.Signal();
-    ASSERT(iMap.size() == 0); // => device(s) still to be destroyed
 
 	const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
     for (TUint i=0; i<numPublisherThreads; i++) {
         delete iPublishers[i];
     }
     free(iPublishers);
-    ASSERT(iList.size() == 0);
     LOG(kDvEvent, "< ~DviSubscriptionManager\n");
 }
 
