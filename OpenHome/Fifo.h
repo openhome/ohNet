@@ -32,6 +32,7 @@ protected:
     TUint iSlots;
     TUint iSlotsUsed;
     Mutex iMutex;
+    Mutex iMutexSema;
     Semaphore iSemaRead;
     Semaphore iSemaWrite;
     TUint iReadIndex;
