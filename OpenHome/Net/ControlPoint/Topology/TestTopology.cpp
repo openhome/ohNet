@@ -13,6 +13,13 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
+
+class TestCpDevice : public CpDevice
+{
+public:
+	TestCpDevice();
+};
+
 class TestDevice : public ICpTopology2GroupHandler
 {
 public:
@@ -463,6 +470,13 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 	handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room2);
     handler3.CheckRoomRemoved(*room1);
+
+    delete group1;
+    delete group2;
+
+    delete room1;
+    delete room2;
+    delete room1and2;
 
     delete topology3;
 

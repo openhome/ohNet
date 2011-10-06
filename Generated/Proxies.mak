@@ -174,6 +174,7 @@ proxy_java_classes_with_path = \
         $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestBasic1.class \
         $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestLights1.class \
 
+
 proxies : ohNetCore $(objects_proxies)
 	$(ar)$(libprefix)ohNetProxies.$(libext) $(objects_proxies)
 $(objdir)CpUpnpOrgAVTransport1.$(objext) : $(proxyCppCore)CpUpnpOrgAVTransport1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgAVTransport1.h
