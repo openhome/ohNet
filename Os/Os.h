@@ -434,7 +434,7 @@ THandle OsNetworkAccept(THandle aHandle);
 /**
  * Convert a string into a IpV4 address
  *
- * This is equivalent to the BSD accept() function
+ * This is equivalent to the BSD gethostbyname() function
  *
  * @param[in] aAddress     Address as a string (e.g. www.abcd.org)
  * @param[out] aHost       IpV4 equivalent of 'aAddress'.  Must not be NULL.
