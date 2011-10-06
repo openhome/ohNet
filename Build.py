@@ -4,8 +4,6 @@ import subprocess
 import threading
 import shutil
 
-#
-
 def rssh(username,host,cmd):
 
     import paramiko
