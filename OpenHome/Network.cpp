@@ -471,6 +471,17 @@ void SocketTcp::ReadInterrupt()
     Interrupt(true);
 }
 
+static void TryNetworkTcpSetNoDelay(THandle aHandle)
+{
+    try
+    {
+        OpenHome::Os::NetworkTcpSetNoDelay(aHandle);
+    }
+    catch ( NetworkError )
+    {
+        LOGF(kNetwork, "Warning -> could not set TCP NODELAY on %d\n", aHandle);
+    }
+}
 
 // Tcp client
 
@@ -478,7 +489,7 @@ void SocketTcpClient::Open()
 {
     LOGF(kNetwork, "SocketTcpClient::Open\n");
     iHandle = SocketCreate(eSocketTypeStream);
-    OpenHome::Os::NetworkTcpSetNoDelay(iHandle);
+    TryNetworkTcpSetNoDelay(iHandle);
 }
 
 void SocketTcpClient::Connect(const Endpoint& aEndpoint, TUint aTimeout)
@@ -499,8 +510,8 @@ SocketTcpServer::SocketTcpServer(const TChar* aName, TUint aPort, TIpAddress aIn
     LOGF(kNetwork, "SocketTcpServer::SocketTcpServer\n");
     iHandle = SocketCreate(eSocketTypeStream);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
-    OpenHome::Os::NetworkTcpSetNoDelay(iHandle);
-	iInterface = aInterface;
+    TryNetworkTcpSetNoDelay(iHandle);
+    iInterface = aInterface;
     Bind(Endpoint(aPort, aInterface));
     GetPort(iPort);
     Listen(aSlots);
@@ -612,7 +623,7 @@ void SocketTcpSession::Open(THandle aHandle)
     LOGF(kNetwork, "SocketTcpSession::Open %d\n", aHandle);
     iMutex.Wait();
     iHandle = aHandle;
-    OpenHome::Os::NetworkTcpSetNoDelay(iHandle);
+    TryNetworkTcpSetNoDelay(iHandle);
 
     iOpen = true;
     if (iServer->Terminating()) {       // catches the case where the server is destroyed between
