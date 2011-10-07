@@ -218,6 +218,7 @@ ParameterRelated::ParameterRelated(const TChar* aName, const Property& aRelated)
     : Parameter(aName, OpenHome::Net::Parameter::eTypeRelated)
     , iRelated(aRelated)
 {
+    ASSERT(&iRelated != NULL);
 }
 
 ParameterRelated::~ParameterRelated()
