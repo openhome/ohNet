@@ -241,7 +241,7 @@ class ReaderHttpRequest : public ReaderHttpHeader
     static const TUint kMaxUriBytes = 200;
 public:    
     ReaderHttpRequest(IReader& aReader);
-    void Read(TUint aTimeoutMs);
+    void Read(TUint aTimeoutMs = 0);
     void Flush();
     void Interrupt();
     void AddMethod(const Brx& aMethod);
@@ -268,7 +268,7 @@ public:
     static const TUint kMaxUriBytes = 200;
 public:
     ReaderHttpResponse(IReader& aReader);
-    void Read(TUint aTimeoutMs);
+    void Read(TUint aTimeoutMs = 0);
     void Flush();
     void Interrupt();
     Http::EVersion Version() const;
