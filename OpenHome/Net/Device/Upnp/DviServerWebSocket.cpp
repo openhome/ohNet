@@ -568,7 +568,7 @@ void DviSessionWebSocket::Run()
     iExit = false;
     try {
         try {
-            iReaderRequest->Read();
+            iReaderRequest->Read(kReadTimeoutMs);
         }
         catch (HttpError&) {
             Error(HttpStatus::kBadRequest);

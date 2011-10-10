@@ -158,7 +158,7 @@ void XmlFetch::Read(SocketTcpClient& aSocket)
 
     readerResponse.AddHeader(headerContentLength);
     readerResponse.AddHeader(headerTransferEncoding);
-    readerResponse.Read();
+    readerResponse.Read(kResponseTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
         LOG2(kXmlFetch, kError, "XmlFetch::Read, http error %u ", status.Code());

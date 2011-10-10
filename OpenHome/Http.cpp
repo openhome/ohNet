@@ -2,6 +2,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Timer.h>
 
 using namespace OpenHome;
 
@@ -302,7 +303,7 @@ ReaderHttpRequest::ReaderHttpRequest(IReader& aReader)
 {
 }
 
-void ReaderHttpRequest::Read()
+void ReaderHttpRequest::Read(TUint aTimeoutMs)
 {
     TUint count = 0;
     iMethod = 0;
@@ -310,7 +311,14 @@ void ReaderHttpRequest::Read()
 
     for (;;) {
         Brn line;
-        line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
+        {
+            Timer timer(MakeFunctor(*this, &ReaderHttpRequest::ReadTimeout));
+            if (aTimeoutMs > 0) {
+                timer.FireIn(aTimeoutMs);
+            }
+            line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
+            timer.Cancel();
+        }
 //        LOG(kHttp, "HTTP Read Request   ");
 //        LOG(kHttp, line);
 //        LOG(kHttp, "\n");
@@ -344,6 +352,11 @@ void ReaderHttpRequest::Read()
         }
         count++;
     }
+}
+
+void ReaderHttpRequest::ReadTimeout()
+{
+    iReader.ReadInterrupt();
 }
 
 void ReaderHttpRequest::AddMethod(const Brx& aMethod)
@@ -422,14 +435,21 @@ const HttpStatus& ReaderHttpResponse::Status() const
     return iStatus;
 }
 
-void ReaderHttpResponse::Read()
+void ReaderHttpResponse::Read(TUint aTimeoutMs)
 {   
     iReader.ReadFlush();
     ResetHeaders();
     TUint count = 0;
     for (;;) {
         Brn line;
-        line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
+        {
+            Timer timer(MakeFunctor(*this, &ReaderHttpResponse::ReadTimeout));
+            if (aTimeoutMs > 0) {
+                timer.FireIn(aTimeoutMs);
+            }
+            line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
+            timer.Cancel();
+        }
         LOG(kHttp, "HTTP Read Response  ");
         LOG(kHttp, line);
         LOG(kHttp, "\n");
@@ -462,6 +482,11 @@ void ReaderHttpResponse::Read()
         }
         count++;
     }
+}
+
+void ReaderHttpResponse::ReadTimeout()
+{
+    iReader.ReadInterrupt();
 }
 
 void ReaderHttpResponse::ProcessStatus(const Brx& aVersion, const Brx& aCode, const Brx& aDescription)

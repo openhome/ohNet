@@ -69,7 +69,7 @@ void EventSessionUpnp::Run()
     iErrorStatus = &HttpStatus::kOk;
     try {
         iReaderRequest->Flush();
-        iReaderRequest->Read();
+        iReaderRequest->Read(kReadTimeoutMs);
         // check headers
         if (iReaderRequest->MethodNotAllowed()) {
             Error(HttpStatus::kBadRequest);

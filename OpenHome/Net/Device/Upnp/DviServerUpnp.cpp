@@ -358,7 +358,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 
     Srs<kMaxResponseBytes> readBuffer(iSocket);
     ReaderHttpResponse readerResponse(readBuffer);
-    readerResponse.Read();
+    readerResponse.Read(kReadTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
         LOG2(kDvEvent, kError, "PropertyWriter, http error %u ", status.Code());
@@ -422,7 +422,7 @@ void DviSessionUpnp::Run()
     // check headers
     try {
         try {
-            iReaderRequest->Read();
+            iReaderRequest->Read(kReadTimeoutMs);
         }
         catch (HttpError&) {
             Error(HttpStatus::kBadRequest);

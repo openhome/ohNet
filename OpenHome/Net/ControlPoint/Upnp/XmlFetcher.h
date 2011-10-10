@@ -42,6 +42,7 @@ private:
     virtual TUint Type() const;
 private:
     static const TUint kRwBufferLength = 16*1024;
+    static const TUint kResponseTimeoutMs = 60 * 1000;
     OpenHome::Uri* iUri;
     FunctorAsync iFunctor;
     TUint iSequenceNumber;

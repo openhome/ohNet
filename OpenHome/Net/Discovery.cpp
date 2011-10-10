@@ -83,7 +83,7 @@ void SsdpListenerMulticast::Run()
 
         try {
             LOG(kSsdpMulticast, "SSDP Multicast      Listen\n");
-            iReaderRequest.Read();
+            iReaderRequest.Read(0);
             if (iReaderRequest.Version() == Http::eHttp11) {
                 if (iReaderRequest.Uri() == Ssdp::kMethodUri) {
                     const Brx& method = iReaderRequest.Method();
@@ -436,7 +436,7 @@ void SsdpListenerUnicast::Run()
         iReaderResponse.Flush();
 
         try {
-            iReaderResponse.Read();
+            iReaderResponse.Read(0);
 
             if (iReaderResponse.Version() == Http::eHttp11) {
                 if (iReaderResponse.Status() == HttpStatus::kOk) {

@@ -266,6 +266,7 @@ public:
     static const TUint kMaxRequestBytes = 4*1024;
     static const TUint kMaxWriteBytes = 4*1024;
     static const TUint kMaxPropertyUpdates = 20;
+    static const TUint kReadTimeoutMs = 5 * 1000;
 private:
     Endpoint iEndpoint;
     Srs<kMaxRequestBytes>* iReadBuffer;

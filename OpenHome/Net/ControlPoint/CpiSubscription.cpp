@@ -454,6 +454,7 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
         }
         catch(Timeout&) {
             Log::Print("WARNING: Subscription manager failed to shutdown cleanly\n");
+            Stack::ListObjects();
         }
     }
 

@@ -241,7 +241,7 @@ class ReaderHttpRequest : public ReaderHttpHeader
     static const TUint kMaxUriBytes = 200;
 public:    
     ReaderHttpRequest(IReader& aReader);
-    void Read();
+    void Read(TUint aTimeoutMs);
     void Flush();
     void Interrupt();
     void AddMethod(const Brx& aMethod);
@@ -251,6 +251,8 @@ public:
     TBool MethodNotAllowed() const;
 protected:
     void ProcessMethod(const Brx& aMethod, const Brx& aUri, const Brx& aVersion);
+private:
+    void ReadTimeout();
 protected:
     IReader& iReader;
     std::vector<const Brx*> iMethods;
@@ -266,13 +268,15 @@ public:
     static const TUint kMaxUriBytes = 200;
 public:
     ReaderHttpResponse(IReader& aReader);
-    void Read();
+    void Read(TUint aTimeoutMs);
     void Flush();
     void Interrupt();
     Http::EVersion Version() const;
     const HttpStatus& Status() const;
 protected:
     virtual void ProcessStatus(const Brx& aVersion, const Brx& aCode, const Brx& aDescription);
+private:
+    void ReadTimeout();
 protected:
     class StatusWritable : public HttpStatus
     {

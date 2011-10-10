@@ -107,6 +107,7 @@ private: // IPropertyWriter
 private:
     static const TUint kMaxRequestBytes = 12*1024;
     static const TUint kMaxResponseBytes = 128;
+    static const TUint kReadTimeoutMs = 5 * 1000;
     SocketTcpClient iSocket;
     Sws<kMaxRequestBytes>* iWriteBuffer;
     WriterHttpRequest* iWriterEvent;
@@ -164,6 +165,7 @@ private: // IPropertyWriterFactory
 private:
     static const TUint kMaxRequestBytes = 4*1024;
     static const TUint kMaxResponseBytes = 4*1024;
+    static const TUint kReadTimeoutMs = 5 * 1000;
 private:
     TIpAddress iInterface;
     TUint iPort;

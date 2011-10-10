@@ -34,6 +34,7 @@ private:
     void Interrupt();
 private:
     static const TUint kMaxReadBytes = 4096;
+    static const TUint kResponseTimeoutMs = 60 * 1000;
     Invocation& iInvocation;
     OpenHome::SocketTcpClient iSocket;
     Srs<kMaxReadBytes> iReadBuffer;
@@ -81,7 +82,6 @@ private:
     void RenewSubscriptionWriteRequest(const Uri& aPublisher, TUint aDurationSecs);
     void UnsubscribeWriteRequest(const Uri& aPublisher, const Brx& aSid);
     void UnsubscribeReadResponse();
-    void InterruptTimerCallback();
     static void WriteHeaderSid(WriterHttpRequest& aWriterRequest, const Brx& aSid);
     static void WriteHeaderTimeout(WriterHttpRequest& aWriterRequest, TUint aSeconds);
 private:
@@ -90,7 +90,6 @@ private:
 private:
     CpiSubscription& iSubscription;
     OpenHome::SocketTcpClient iSocket;
-    Timer* iInterruptTimer;
 };
 
 class OutputProcessorUpnp : public IOutputProcessor
