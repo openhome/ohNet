@@ -52,12 +52,17 @@ CpTopology2Group::CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& 
     , iUserData(0)
     , iRefCount(1)
 {
-	iDevice.AddRef();
+	if (&iDevice != 0) {  // device with zero address used by test code
+		iDevice.AddRef();
+	}
 }
 
 CpTopology2Group::~CpTopology2Group()
 {
-	iDevice.RemoveRef();
+	if (&iDevice != 0) { // device with zero address used by test code
+		iDevice.RemoveRef();
+	}
+
 	for (size_t i=0; i<iSourceList.size(); i++) {
         delete iSourceList[i];
     }
