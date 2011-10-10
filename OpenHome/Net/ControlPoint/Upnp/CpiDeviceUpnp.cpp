@@ -392,7 +392,9 @@ void CpiDeviceListUpnp::Start()
 {
     iActive = true;
     if (!iStarted) {
-        iUnicastListener->Start();
+        if (iUnicastListener != NULL) {
+            iUnicastListener->Start();
+        }
         iStarted = true;
     }
     else {
@@ -583,7 +585,9 @@ void CpiDeviceListUpnpAll::Start()
     if (!iRefreshing) {
         CpiDeviceListUpnp::Start();
     }
-    iUnicastListener->MsearchAll();
+    if (iUnicastListener != NULL) {
+        iUnicastListener->MsearchAll();
+    }
     iLock.Signal();
 }
 
@@ -612,7 +616,9 @@ void CpiDeviceListUpnpRoot::Start()
     if (!iRefreshing) {
         CpiDeviceListUpnp::Start();
     }
-    iUnicastListener->MsearchRoot();
+    if (iUnicastListener != NULL) {
+        iUnicastListener->MsearchRoot();
+    }
     iLock.Signal();
 }
 
@@ -642,7 +648,9 @@ void CpiDeviceListUpnpUuid::Start()
     if (!iRefreshing) {
         CpiDeviceListUpnp::Start();
     }
-    iUnicastListener->MsearchUuid(iUuid);
+    if (iUnicastListener != NULL) {
+        iUnicastListener->MsearchUuid(iUuid);
+    }
     iLock.Signal();
 }
 
@@ -678,7 +686,9 @@ void CpiDeviceListUpnpDeviceType::Start()
     if (!iRefreshing) {
         CpiDeviceListUpnp::Start();
     }
-    iUnicastListener->MsearchDeviceType(iDomainName, iDeviceType, iVersion);
+    if (iUnicastListener != NULL) {
+        iUnicastListener->MsearchDeviceType(iDomainName, iDeviceType, iVersion);
+    }
     iLock.Signal();
 }
 
@@ -715,7 +725,9 @@ void CpiDeviceListUpnpServiceType::Start()
     if (!iRefreshing) {
         CpiDeviceListUpnp::Start();
     }
-    iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
+    if (iUnicastListener != NULL) {
+        iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
+    }
     iLock.Signal();
 }
 
