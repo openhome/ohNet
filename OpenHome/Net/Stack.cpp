@@ -93,9 +93,6 @@ Stack::~Stack()
     gStackInitCount = 0;
     iPublicLock.Wait();
     iPublicLock.Signal();
-    if (iTimerManager != NULL) {
-        iTimerManager->Stop();
-    }
     delete iCpStack;
     delete iDvStack;
     delete iNetworkAdapterList;
@@ -105,6 +102,7 @@ Stack::~Stack()
         DoListObjects();
         ASSERTS();
     }
+    delete iTimerManager;
     delete iInitParams;
     gStack = NULL;
 }
