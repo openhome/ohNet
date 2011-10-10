@@ -348,12 +348,12 @@ static OsNetworkHandle* CreateHandle(SOCKET aSocket)
     return handle;
 }
 
-static void SetSocketNonBlocking(SOCKET aSocket)
+static void SetSocketBlocking(SOCKET aSocket)
 {
     u_long nonBlocking = 0;
     WSAEventSelect(aSocket, NULL, 0);
     if (-1 == ioctlsocket(aSocket, FIONBIO, &nonBlocking)) {
-        fprintf(stdout, "SetSocketNonBlocking failed for socket %u\n", aSocket);
+        fprintf(stdout, "SetSocketBlocking failed for socket %u\n", aSocket);
     }
 }
 
@@ -430,7 +430,7 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
         err = 0;
     }
 
-    SetSocketNonBlocking(handle->iSocket);
+    SetSocketBlocking(handle->iSocket);
     WSACloseEvent(event);
     return err;
 }
@@ -502,7 +502,7 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
         }
     }
 
-    SetSocketNonBlocking(handle->iSocket);
+    SetSocketBlocking(handle->iSocket);
     WSACloseEvent(event);
     return received;
 }
@@ -542,7 +542,7 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
         }
     }
 
-    SetSocketNonBlocking(handle->iSocket);
+    SetSocketBlocking(handle->iSocket);
     WSACloseEvent(event);
     *aAddress = addr.sin_addr.s_addr;
     *aPort = SwapEndian16(addr.sin_port);
@@ -617,7 +617,7 @@ THandle OsNetworkAccept(THandle aHandle)
             h = accept(handle->iSocket, NULL, NULL);
         }
     }
-    SetSocketNonBlocking(handle->iSocket);
+    SetSocketBlocking(handle->iSocket);
     WSACloseEvent(event);
     if (INVALID_SOCKET == h) {
         return kHandleNull;
