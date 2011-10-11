@@ -70,7 +70,6 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     iListLock.Signal();
     if (aSubnet != oldSubnet) {
         RunCallbacks(iListenersCurrent);
-        RunCallbacks(iListenersSubnet);
     }
 }
 
