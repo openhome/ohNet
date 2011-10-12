@@ -7,7 +7,8 @@ using namespace OpenHome;
 FifoBase::FifoBase(TUint aSlots)
     : iSlots(aSlots)
     , iSlotsUsed(0)
-    , iMutex("FIFM")
+    , iMutexWrite("FIMW")
+    , iMutexRead("FIMR")
     , iSemaRead("FISR", 0)
     , iSemaWrite("FISW", aSlots)
     , iReadIndex(0)
@@ -43,7 +44,7 @@ void FifoBase::ReadInterrupt(TBool aInterrupt)
 TUint FifoBase::WriteOpen(TUint aTimeoutMs)
 {
     iSemaWrite.Wait(aTimeoutMs);
-    iMutex.Wait();
+    iMutexWrite.Wait();
     TUint index = iWriteIndex++;
     if(iWriteIndex == Slots()) {
         iWriteIndex = 0;
@@ -54,7 +55,7 @@ TUint FifoBase::WriteOpen(TUint aTimeoutMs)
 void FifoBase::WriteClose()
 {
     iSlotsUsed++;
-    iMutex.Signal();
+    iMutexWrite.Signal();
     iSemaRead.Signal();
 }
 
@@ -65,10 +66,12 @@ TUint FifoBase::ReadOpen(TUint aTimeoutMs)
     	iInterrupted = false;
         THROW(FifoReadError);
     }
+    iMutexRead.Wait();
     TUint index = iReadIndex++;
     if(iReadIndex == Slots()) {
         iReadIndex = 0;
     }
+    iMutexRead.Signal();
     return (index);
 }
 
