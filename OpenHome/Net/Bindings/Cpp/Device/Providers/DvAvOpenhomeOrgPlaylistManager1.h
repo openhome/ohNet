@@ -390,7 +390,7 @@ private:
      * Read action for the owning device.
      * Must be implemented iff EnableActionRead was called.
      */
-    virtual void Read(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aTrackId, std::string& aUdn, std::string& aMetadata);
+    virtual void Read(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aTrackId, std::string& aMetadata);
     /**
      * ReadList action.
      *
@@ -406,7 +406,7 @@ private:
      * Insert action for the owning device.
      * Must be implemented iff EnableActionInsert was called.
      */
-    virtual void Insert(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aAfterTrackId, const std::string& aUdn, const std::string& aMetadata, uint32_t& aNewTrackId);
+    virtual void Insert(IDvInvocationStd& aInvocation, uint32_t aId, uint32_t aAfterTrackId, const std::string& aMetadata, uint32_t& aNewTrackId);
     /**
      * DeleteId action.
      *
