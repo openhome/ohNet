@@ -30,131 +30,183 @@ public:
     /**
      * Set the value of the ManufacturerName property
      *
+     * Can only be called if EnablePropertyManufacturerName has previously been called.
+     *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyManufacturerName(const std::string& aValue);
     /**
      * Get a copy of the value of the ManufacturerName property
+     *
+     * Can only be called if EnablePropertyManufacturerName has previously been called.
      */
     void GetPropertyManufacturerName(std::string& aValue);
     /**
      * Set the value of the ManufacturerInfo property
+     *
+     * Can only be called if EnablePropertyManufacturerInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyManufacturerInfo(const std::string& aValue);
     /**
      * Get a copy of the value of the ManufacturerInfo property
+     *
+     * Can only be called if EnablePropertyManufacturerInfo has previously been called.
      */
     void GetPropertyManufacturerInfo(std::string& aValue);
     /**
      * Set the value of the ManufacturerUrl property
+     *
+     * Can only be called if EnablePropertyManufacturerUrl has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyManufacturerUrl(const std::string& aValue);
     /**
      * Get a copy of the value of the ManufacturerUrl property
+     *
+     * Can only be called if EnablePropertyManufacturerUrl has previously been called.
      */
     void GetPropertyManufacturerUrl(std::string& aValue);
     /**
      * Set the value of the ManufacturerImageUri property
+     *
+     * Can only be called if EnablePropertyManufacturerImageUri has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyManufacturerImageUri(const std::string& aValue);
     /**
      * Get a copy of the value of the ManufacturerImageUri property
+     *
+     * Can only be called if EnablePropertyManufacturerImageUri has previously been called.
      */
     void GetPropertyManufacturerImageUri(std::string& aValue);
     /**
      * Set the value of the ModelName property
+     *
+     * Can only be called if EnablePropertyModelName has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyModelName(const std::string& aValue);
     /**
      * Get a copy of the value of the ModelName property
+     *
+     * Can only be called if EnablePropertyModelName has previously been called.
      */
     void GetPropertyModelName(std::string& aValue);
     /**
      * Set the value of the ModelInfo property
+     *
+     * Can only be called if EnablePropertyModelInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyModelInfo(const std::string& aValue);
     /**
      * Get a copy of the value of the ModelInfo property
+     *
+     * Can only be called if EnablePropertyModelInfo has previously been called.
      */
     void GetPropertyModelInfo(std::string& aValue);
     /**
      * Set the value of the ModelUrl property
+     *
+     * Can only be called if EnablePropertyModelUrl has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyModelUrl(const std::string& aValue);
     /**
      * Get a copy of the value of the ModelUrl property
+     *
+     * Can only be called if EnablePropertyModelUrl has previously been called.
      */
     void GetPropertyModelUrl(std::string& aValue);
     /**
      * Set the value of the ModelImageUri property
+     *
+     * Can only be called if EnablePropertyModelImageUri has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyModelImageUri(const std::string& aValue);
     /**
      * Get a copy of the value of the ModelImageUri property
+     *
+     * Can only be called if EnablePropertyModelImageUri has previously been called.
      */
     void GetPropertyModelImageUri(std::string& aValue);
     /**
      * Set the value of the ProductName property
+     *
+     * Can only be called if EnablePropertyProductName has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyProductName(const std::string& aValue);
     /**
      * Get a copy of the value of the ProductName property
+     *
+     * Can only be called if EnablePropertyProductName has previously been called.
      */
     void GetPropertyProductName(std::string& aValue);
     /**
      * Set the value of the ProductInfo property
+     *
+     * Can only be called if EnablePropertyProductInfo has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyProductInfo(const std::string& aValue);
     /**
      * Get a copy of the value of the ProductInfo property
+     *
+     * Can only be called if EnablePropertyProductInfo has previously been called.
      */
     void GetPropertyProductInfo(std::string& aValue);
     /**
      * Set the value of the ProductUrl property
+     *
+     * Can only be called if EnablePropertyProductUrl has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyProductUrl(const std::string& aValue);
     /**
      * Get a copy of the value of the ProductUrl property
+     *
+     * Can only be called if EnablePropertyProductUrl has previously been called.
      */
     void GetPropertyProductUrl(std::string& aValue);
     /**
      * Set the value of the ProductImageUri property
+     *
+     * Can only be called if EnablePropertyProductImageUri has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyProductImageUri(const std::string& aValue);
     /**
      * Get a copy of the value of the ProductImageUri property
+     *
+     * Can only be called if EnablePropertyProductImageUri has previously been called.
      */
     void GetPropertyProductImageUri(std::string& aValue);
     /**
      * Set the value of the Attributes property
+     *
+     * Can only be called if EnablePropertyAttributes has previously been called.
      *
      * @return  true if the value has been updated; false if aValue was the same as the previous value
      */
     bool SetPropertyAttributes(const std::string& aValue);
     /**
      * Get a copy of the value of the Attributes property
+     *
+     * Can only be called if EnablePropertyAttributes has previously been called.
      */
     void GetPropertyAttributes(std::string& aValue);
 protected:
@@ -164,6 +216,58 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgMediaServer1Cpp(DvDeviceStd& aDevice);
+    /**
+     * Enable the ManufacturerName property.
+     */
+    void EnablePropertyManufacturerName();
+    /**
+     * Enable the ManufacturerInfo property.
+     */
+    void EnablePropertyManufacturerInfo();
+    /**
+     * Enable the ManufacturerUrl property.
+     */
+    void EnablePropertyManufacturerUrl();
+    /**
+     * Enable the ManufacturerImageUri property.
+     */
+    void EnablePropertyManufacturerImageUri();
+    /**
+     * Enable the ModelName property.
+     */
+    void EnablePropertyModelName();
+    /**
+     * Enable the ModelInfo property.
+     */
+    void EnablePropertyModelInfo();
+    /**
+     * Enable the ModelUrl property.
+     */
+    void EnablePropertyModelUrl();
+    /**
+     * Enable the ModelImageUri property.
+     */
+    void EnablePropertyModelImageUri();
+    /**
+     * Enable the ProductName property.
+     */
+    void EnablePropertyProductName();
+    /**
+     * Enable the ProductInfo property.
+     */
+    void EnablePropertyProductInfo();
+    /**
+     * Enable the ProductUrl property.
+     */
+    void EnablePropertyProductUrl();
+    /**
+     * Enable the ProductImageUri property.
+     */
+    void EnablePropertyProductImageUri();
+    /**
+     * Enable the Attributes property.
+     */
+    void EnablePropertyAttributes();
     /**
      * Signal that the action Manufacturer is supported.
      * The action's availability will be published in the device's service.xml.
