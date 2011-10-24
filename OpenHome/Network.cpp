@@ -444,6 +444,23 @@ void SocketTcp::Read(Bwx& aBuffer)
     LOGF(kNetwork, "<SocketTcp::Read\n");
 }
 
+void SocketTcp::Read(Bwx& aBuffer, TUint aBytes)
+{
+    LOGF(kNetwork, ">SocketTcp::Read\n");
+    try {
+        Socket::Receive(aBuffer, aBytes);
+    }
+    catch(NetworkError&) {
+        THROW(ReaderError);
+    }
+
+    if (aBuffer.Bytes() == 0) {
+        THROW(ReaderError);
+    }
+    
+    LOGF(kNetwork, "<SocketTcp::Read\n");
+}
+
 void SocketTcp::ReadFlush()
 {
     // no buffering at this level so nothing to flush
