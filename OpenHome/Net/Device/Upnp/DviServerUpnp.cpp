@@ -477,7 +477,7 @@ void DviSessionUpnp::Run()
     catch (Exception& e)
     {
         Log::Print("Unexpected exception in file %s at line %d:\n%s\n", e.File(), e.Line(), e.Message());
-        ASSERT(0);
+        ASSERTS();
     }
     iShutdownSem.Signal();
 }
