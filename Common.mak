@@ -305,13 +305,13 @@ $(objdir)Fifo.$(objext) : OpenHome/Fifo.cpp $(headers)
 $(objdir)Http.$(objext) : OpenHome/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cflags) $(includes) OpenHome/Http.cpp
 $(objdir)DNSCommon.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c $(headers)
-	$(compiler)DNSCommon.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c
+	$(compiler)DNSCommon.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c
 $(objdir)DNSDigest.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c $(headers)
-	$(compiler)DNSDigest.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c
+	$(compiler)DNSDigest.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c
 $(objdir)mDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c $(headers)
-	$(compiler)mDNS.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c
+	$(compiler)mDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c
 $(objdir)uDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c $(headers)
-	$(compiler)uDNS.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c
+	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c
 $(objdir)MdnsPlatform.$(objext) : OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp $(headers)
 	$(compiler)MdnsPlatform.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
 $(objdir)MdnsProvider.$(objext) : OpenHome/Net/Device/Bonjour/MdnsProvider.cpp $(headers)
