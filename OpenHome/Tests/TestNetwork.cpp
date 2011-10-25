@@ -279,14 +279,14 @@ void SuiteSocketServer::Test()
     client1.Connect(endpoint, 1000);
     Log::Print("Client 1 connected\n");
     
-    Bws<1000> largetx;
-    Bws<1000> largerx;
+    Bwh largetx(800);
+    Bwh largerx(800);
     
     largetx.SetBytes(largetx.MaxBytes());
     largetx.Fill('X');
     
     client1.Write(largetx);
-    client1.Read(largerx);
+    client1.Read(largerx, largetx.Bytes());
     TEST(largerx == largetx);
 
     // Send/receive multiple times
@@ -723,7 +723,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
         return;
     }
 
-    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
+    Net::UpnpLibrary::Initialise(aInitParams);
 
     std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(true);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
