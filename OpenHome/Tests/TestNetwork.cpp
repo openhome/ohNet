@@ -279,8 +279,8 @@ void SuiteSocketServer::Test()
     client1.Connect(endpoint, 1000);
     Log::Print("Client 1 connected\n");
     
-    Bwh largetx(800);
-    Bwh largerx(800);
+    Bwh largetx(1000);
+    Bwh largerx(1000);
     
     largetx.SetBytes(largetx.MaxBytes());
     largetx.Fill('X');
