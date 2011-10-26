@@ -14,6 +14,7 @@ class SyncTimeAvOpenhomeOrgTime1 : public SyncProxyAction
 public:
     SyncTimeAvOpenhomeOrgTime1(CpProxyAvOpenhomeOrgTime1& aProxy, TUint& aTrackCount, TUint& aDuration, TUint& aSeconds);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTimeAvOpenhomeOrgTime1() {}
 private:
     CpProxyAvOpenhomeOrgTime1& iService;
     TUint& iTrackCount;

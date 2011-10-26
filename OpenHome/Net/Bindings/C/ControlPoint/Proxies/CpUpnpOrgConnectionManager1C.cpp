@@ -74,6 +74,7 @@ class SyncGetProtocolInfoUpnpOrgConnectionManager1C : public SyncProxyAction
 public:
     SyncGetProtocolInfoUpnpOrgConnectionManager1C(CpProxyUpnpOrgConnectionManager1C& aProxy, Brh& aSource, Brh& aSink);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetProtocolInfoUpnpOrgConnectionManager1C() {};
 private:
     CpProxyUpnpOrgConnectionManager1C& iService;
     Brh& iSource;
@@ -98,6 +99,7 @@ class SyncPrepareForConnectionUpnpOrgConnectionManager1C : public SyncProxyActio
 public:
     SyncPrepareForConnectionUpnpOrgConnectionManager1C(CpProxyUpnpOrgConnectionManager1C& aProxy, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPrepareForConnectionUpnpOrgConnectionManager1C() {};
 private:
     CpProxyUpnpOrgConnectionManager1C& iService;
     TInt& iConnectionID;
@@ -124,6 +126,7 @@ class SyncConnectionCompleteUpnpOrgConnectionManager1C : public SyncProxyAction
 public:
     SyncConnectionCompleteUpnpOrgConnectionManager1C(CpProxyUpnpOrgConnectionManager1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncConnectionCompleteUpnpOrgConnectionManager1C() {};
 private:
     CpProxyUpnpOrgConnectionManager1C& iService;
 };
@@ -144,6 +147,7 @@ class SyncGetCurrentConnectionIDsUpnpOrgConnectionManager1C : public SyncProxyAc
 public:
     SyncGetCurrentConnectionIDsUpnpOrgConnectionManager1C(CpProxyUpnpOrgConnectionManager1C& aProxy, Brh& aConnectionIDs);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetCurrentConnectionIDsUpnpOrgConnectionManager1C() {};
 private:
     CpProxyUpnpOrgConnectionManager1C& iService;
     Brh& iConnectionIDs;
@@ -166,6 +170,7 @@ class SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1C : public SyncProxyA
 public:
     SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1C(CpProxyUpnpOrgConnectionManager1C& aProxy, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1C() {};
 private:
     CpProxyUpnpOrgConnectionManager1C& iService;
     TInt& iRcsID;

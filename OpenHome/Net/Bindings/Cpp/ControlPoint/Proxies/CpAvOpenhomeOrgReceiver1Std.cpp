@@ -17,6 +17,7 @@ class SyncPlayAvOpenhomeOrgReceiver1Cpp : public SyncProxyAction
 public:
     SyncPlayAvOpenhomeOrgReceiver1Cpp(CpProxyAvOpenhomeOrgReceiver1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlayAvOpenhomeOrgReceiver1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1Cpp& iService;
 };
@@ -37,6 +38,7 @@ class SyncStopAvOpenhomeOrgReceiver1Cpp : public SyncProxyAction
 public:
     SyncStopAvOpenhomeOrgReceiver1Cpp(CpProxyAvOpenhomeOrgReceiver1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopAvOpenhomeOrgReceiver1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1Cpp& iService;
 };
@@ -57,6 +59,7 @@ class SyncSetSenderAvOpenhomeOrgReceiver1Cpp : public SyncProxyAction
 public:
     SyncSetSenderAvOpenhomeOrgReceiver1Cpp(CpProxyAvOpenhomeOrgReceiver1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetSenderAvOpenhomeOrgReceiver1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1Cpp& iService;
 };
@@ -77,6 +80,7 @@ class SyncSenderAvOpenhomeOrgReceiver1Cpp : public SyncProxyAction
 public:
     SyncSenderAvOpenhomeOrgReceiver1Cpp(CpProxyAvOpenhomeOrgReceiver1Cpp& aProxy, std::string& aUri, std::string& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSenderAvOpenhomeOrgReceiver1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1Cpp& iService;
     std::string& iUri;
@@ -101,6 +105,7 @@ class SyncProtocolInfoAvOpenhomeOrgReceiver1Cpp : public SyncProxyAction
 public:
     SyncProtocolInfoAvOpenhomeOrgReceiver1Cpp(CpProxyAvOpenhomeOrgReceiver1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProtocolInfoAvOpenhomeOrgReceiver1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1Cpp& iService;
     std::string& iValue;
@@ -123,6 +128,7 @@ class SyncTransportStateAvOpenhomeOrgReceiver1Cpp : public SyncProxyAction
 public:
     SyncTransportStateAvOpenhomeOrgReceiver1Cpp(CpProxyAvOpenhomeOrgReceiver1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTransportStateAvOpenhomeOrgReceiver1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1Cpp& iService;
     std::string& iValue;

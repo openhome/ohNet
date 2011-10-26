@@ -17,6 +17,7 @@ class SyncManufacturerAvOpenhomeOrgMediaServer1Cpp : public SyncProxyAction
 public:
     SyncManufacturerAvOpenhomeOrgMediaServer1Cpp(CpProxyAvOpenhomeOrgMediaServer1Cpp& aProxy, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncManufacturerAvOpenhomeOrgMediaServer1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1Cpp& iService;
     std::string& iName;
@@ -45,6 +46,7 @@ class SyncModelAvOpenhomeOrgMediaServer1Cpp : public SyncProxyAction
 public:
     SyncModelAvOpenhomeOrgMediaServer1Cpp(CpProxyAvOpenhomeOrgMediaServer1Cpp& aProxy, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncModelAvOpenhomeOrgMediaServer1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1Cpp& iService;
     std::string& iName;
@@ -73,6 +75,7 @@ class SyncProductAvOpenhomeOrgMediaServer1Cpp : public SyncProxyAction
 public:
     SyncProductAvOpenhomeOrgMediaServer1Cpp(CpProxyAvOpenhomeOrgMediaServer1Cpp& aProxy, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProductAvOpenhomeOrgMediaServer1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1Cpp& iService;
     std::string& iName;
@@ -101,6 +104,7 @@ class SyncAttributesAvOpenhomeOrgMediaServer1Cpp : public SyncProxyAction
 public:
     SyncAttributesAvOpenhomeOrgMediaServer1Cpp(CpProxyAvOpenhomeOrgMediaServer1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncAttributesAvOpenhomeOrgMediaServer1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1Cpp& iService;
     std::string& iValue;
@@ -123,6 +127,7 @@ class SyncQueryAvOpenhomeOrgMediaServer1Cpp : public SyncProxyAction
 public:
     SyncQueryAvOpenhomeOrgMediaServer1Cpp(CpProxyAvOpenhomeOrgMediaServer1Cpp& aProxy, std::string& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncQueryAvOpenhomeOrgMediaServer1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgMediaServer1Cpp& iService;
     std::string& iResult;

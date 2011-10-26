@@ -7,44 +7,44 @@ using namespace OpenHome::TestFramework;
 
 const TUint32 kSleepMs = 50; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
 
-class TestPipe
+class TestStack
 {
 public:
-    TestPipe();
-    void Write(TChar aChar);
-    TBool Read(TChar aChar);
+    TestStack();
+    void Push(TChar aChar);
+    TBool Pop(TChar aChar);
     TBool IsEmpty() const;
 private:
-    static const TUint kMaxPipeEntries = 2;
-    TChar iPipe[kMaxPipeEntries];
+    static const TUint kMaxStackEntries = 2;
+    TChar iStack[kMaxStackEntries];
     TUint iCount;
     Mutex iLock;
 };
 
-TestPipe::TestPipe()
+TestStack::TestStack()
 : iCount(0), iLock("")
 {}
 
-void TestPipe::Write(TChar aChar)
+void TestStack::Push(TChar aChar)
 {
     iLock.Wait();
-    ASSERT(iCount < kMaxPipeEntries);
-    iPipe[iCount++] = aChar;
+    ASSERT(iCount < kMaxStackEntries);
+    iStack[iCount++] = aChar;
     iLock.Signal();
 }
 
-TBool TestPipe::Read(TChar aChar)
+TBool TestStack::Pop(TChar aChar)
 {
     TBool matches;
     iLock.Wait();
     ASSERT(iCount != 0);
     iCount--;
-    matches = (aChar==iPipe[iCount]);
+    matches = (aChar==iStack[iCount]);
     iLock.Signal();
     return matches;
 }
 
-TBool TestPipe::IsEmpty() const
+TBool TestStack::IsEmpty() const
 {
     TBool empty;
     const_cast<Mutex&>(iLock).Wait();
@@ -54,7 +54,7 @@ TBool TestPipe::IsEmpty() const
 }
 
 
-TestPipe gPipe;
+static TestStack gStack;
 
 class TestThread : public Thread
 {
@@ -75,7 +75,7 @@ void TestThread::Run()
 {
     while(1) {
         Wait();
-        gPipe.Write(iChar);
+        gStack.Push(iChar);
     }
 }
 
@@ -99,21 +99,21 @@ void SuiteStartStop::Test()
 
     TUint i=0;
     for(; i< 100; i++) {
-        TEST(gPipe.IsEmpty());
+        TEST(gStack.IsEmpty());
         threadA->Signal();
         // use sleeps to avoid dependency on thread priorities being supported
         Thread::Sleep(kSleepMs);
-        TEST(gPipe.Read('A'));
+        TEST(gStack.Pop('A'));
 
         threadB->Signal();
         Thread::Sleep(kSleepMs);
-        TEST(gPipe.Read('B'));
+        TEST(gStack.Pop('B'));
 
         threadA->Signal();
         Thread::Sleep(kSleepMs);
-        TEST(gPipe.Read('A'));
+        TEST(gStack.Pop('A'));
     }
-    TEST(gPipe.IsEmpty());
+    TEST(gStack.IsEmpty());
 
     delete threadA;
     delete threadB;
@@ -130,30 +130,33 @@ void SuitePriority::Test()
 {
     Thread* threadA = new TestThread("THDA", 'A', kPriorityLow);
     Thread* threadB = new TestThread("THDB", 'B', kPriorityLow + kPriorityLess);
-    TEST(gPipe.IsEmpty());
+    TEST(gStack.IsEmpty());
+
+    threadA->Start();
+    threadB->Start();
+    TEST(gStack.IsEmpty());    
+    threadA->Signal();
+    threadB->Signal();
+    TEST(gStack.IsEmpty());
+    Thread::Sleep(kSleepMs);
+    TEST(gStack.Pop('B')); //thread B ran second
+    TEST(gStack.Pop('A')); //thread A ran first
+    TEST(gStack.IsEmpty());
+    delete threadA;
+    delete threadB;
+
+    threadA = new TestThread("THDA", 'a', kPriorityLowest);
+    threadB = new TestThread("THDB", 'b', kPriorityLowest+1);
+    TEST(gStack.IsEmpty());
 
     threadA->Start();
     threadB->Start();
     threadA->Signal();
     threadB->Signal();
-    TEST(gPipe.IsEmpty());
     Thread::Sleep(kSleepMs);
-    TEST(gPipe.Read('A')); //thread A ran first
-    TEST(gPipe.Read('B')); //thread B ran second
-    TEST(gPipe.IsEmpty());
-    delete threadA;
-    delete threadB;
-
-    threadA = new TestThread("THDA", 'A', kPriorityLowest);
-    threadB = new TestThread("THDB", 'B', kPriorityLowest+1);
-    TEST(gPipe.IsEmpty());
-
-    threadA->Signal();
-    threadB->Signal();
-    Thread::Sleep(kSleepMs);
-    TEST(gPipe.Read('B')); //thread B ran first
-    TEST(gPipe.Read('A')); //thread A ran second
-    TEST(gPipe.IsEmpty());
+    TEST(gStack.Pop('a')); //thread A ran second
+    TEST(gStack.Pop('b')); //thread B ran first
+    TEST(gStack.IsEmpty());
     delete threadA;
     delete threadB;
 }
@@ -332,12 +335,6 @@ void TimesliceTestThread::Run()
     // Starting Normal Timeslicing Conditions ...
     ThreadMonitor *tm1 = new ThreadMonitor( (kSuitePriority-1), kThreadMonitorPeriodMs, false, *Thread::Current() );
     tm1->Start();
-    Thread::Current()->Wait();
-
-    // Start Heavy Preempt Conidtions ...
-    Print( "\nTesting for the reset of quantum on thread preemption - see TRAC #257\n" );
-    ThreadMonitor *tm2 = new ThreadMonitor( (kSuitePriority-1), kThreadMonitorPeriodMs, true, *Thread::Current() );
-    tm2->Start();
     Thread::Current()->Wait();
     iSem.Signal();
 }
@@ -545,12 +542,6 @@ void SuiteMutex::Test()
     Thread::Current()->Sleep(kSleepMs);
     TEST(count == 2);
     delete mutexTh;
-
-    // check we can't nest locks within a thread
-    Mutex* mutex3 = new Mutex("MUT3");
-    mutex3->Wait();
-    TEST_THROWS(mutex3->Wait(), AssertionFailed);
-    delete mutex3;
 }
 
 class SuitePerformance : public Suite

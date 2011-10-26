@@ -17,6 +17,7 @@ class SyncPlayAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncPlayAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlayAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
 };
@@ -37,6 +38,7 @@ class SyncPauseAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncPauseAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPauseAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
 };
@@ -57,6 +59,7 @@ class SyncStopAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncStopAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
 };
@@ -77,6 +80,7 @@ class SyncSeekSecondAbsoluteAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncSeekSecondAbsoluteAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSeekSecondAbsoluteAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
 };
@@ -97,6 +101,7 @@ class SyncSeekSecondRelativeAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncSeekSecondRelativeAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSeekSecondRelativeAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
 };
@@ -117,6 +122,7 @@ class SyncChannelAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncChannelAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, std::string& aUri, std::string& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncChannelAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     std::string& iUri;
@@ -141,6 +147,7 @@ class SyncSetChannelAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncSetChannelAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetChannelAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
 };
@@ -161,6 +168,7 @@ class SyncTransportStateAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncTransportStateAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTransportStateAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     std::string& iValue;
@@ -183,6 +191,7 @@ class SyncIdAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncIdAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncIdAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     uint32_t& iValue;
@@ -205,6 +214,7 @@ class SyncSetIdAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncSetIdAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetIdAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
 };
@@ -225,6 +235,7 @@ class SyncReadAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncReadAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, std::string& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncReadAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     std::string& iMetadata;
@@ -247,6 +258,7 @@ class SyncReadListAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncReadListAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, std::string& aChannelList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncReadListAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     std::string& iChannelList;
@@ -269,6 +281,7 @@ class SyncIdArrayAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncIdArrayAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, uint32_t& aToken, std::string& aArray);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncIdArrayAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     uint32_t& iToken;
@@ -293,6 +306,7 @@ class SyncIdArrayChangedAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncIdArrayChangedAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, bool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncIdArrayChangedAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     bool& iValue;
@@ -315,6 +329,7 @@ class SyncChannelsMaxAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncChannelsMaxAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, uint32_t& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncChannelsMaxAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     uint32_t& iValue;
@@ -337,6 +352,7 @@ class SyncProtocolInfoAvOpenhomeOrgRadio1Cpp : public SyncProxyAction
 public:
     SyncProtocolInfoAvOpenhomeOrgRadio1Cpp(CpProxyAvOpenhomeOrgRadio1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProtocolInfoAvOpenhomeOrgRadio1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgRadio1Cpp& iService;
     std::string& iValue;

@@ -134,6 +134,7 @@ class SyncGetSearchCapabilitiesUpnpOrgContentDirectory2C : public SyncProxyActio
 public:
     SyncGetSearchCapabilitiesUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aSearchCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSearchCapabilitiesUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iSearchCaps;
@@ -156,6 +157,7 @@ class SyncGetSortCapabilitiesUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncGetSortCapabilitiesUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aSortCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSortCapabilitiesUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iSortCaps;
@@ -178,6 +180,7 @@ class SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2C : public SyncPro
 public:
     SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aSortExtensionCaps);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iSortExtensionCaps;
@@ -200,6 +203,7 @@ class SyncGetFeatureListUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncGetFeatureListUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aFeatureList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetFeatureListUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iFeatureList;
@@ -222,6 +226,7 @@ class SyncGetSystemUpdateIDUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncGetSystemUpdateIDUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, TUint& aId);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSystemUpdateIDUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     TUint& iId;
@@ -244,6 +249,7 @@ class SyncBrowseUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncBrowseUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBrowseUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iResult;
@@ -272,6 +278,7 @@ class SyncSearchUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncSearchUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSearchUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iResult;
@@ -300,6 +307,7 @@ class SyncCreateObjectUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncCreateObjectUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aObjectID, Brh& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCreateObjectUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iObjectID;
@@ -324,6 +332,7 @@ class SyncDestroyObjectUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncDestroyObjectUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDestroyObjectUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
 };
@@ -344,6 +353,7 @@ class SyncUpdateObjectUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncUpdateObjectUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncUpdateObjectUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
 };
@@ -364,6 +374,7 @@ class SyncMoveObjectUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncMoveObjectUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aNewObjectID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncMoveObjectUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iNewObjectID;
@@ -386,6 +397,7 @@ class SyncImportResourceUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncImportResourceUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, TUint& aTransferID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncImportResourceUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     TUint& iTransferID;
@@ -408,6 +420,7 @@ class SyncExportResourceUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncExportResourceUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, TUint& aTransferID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncExportResourceUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     TUint& iTransferID;
@@ -430,6 +443,7 @@ class SyncDeleteResourceUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncDeleteResourceUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteResourceUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
 };
@@ -450,6 +464,7 @@ class SyncStopTransferResourceUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncStopTransferResourceUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopTransferResourceUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
 };
@@ -470,6 +485,7 @@ class SyncGetTransferProgressUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncGetTransferProgressUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aTransferStatus, Brh& aTransferLength, Brh& aTransferTotal);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetTransferProgressUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iTransferStatus;
@@ -496,6 +512,7 @@ class SyncCreateReferenceUpnpOrgContentDirectory2C : public SyncProxyAction
 public:
     SyncCreateReferenceUpnpOrgContentDirectory2C(CpProxyUpnpOrgContentDirectory2C& aProxy, Brh& aNewID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCreateReferenceUpnpOrgContentDirectory2C() {};
 private:
     CpProxyUpnpOrgContentDirectory2C& iService;
     Brh& iNewID;

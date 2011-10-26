@@ -118,6 +118,7 @@ class Sync<#=a.name#><#=syncClassSuffix#> : public SyncProxyAction
 public:
     Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>C& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~Sync<#=a.name#><#=syncClassSuffix#>() {};
 private:
     <#=className#>C& iService;
 <#      foreach (Argument o in a.outargs) #>

@@ -17,6 +17,7 @@ class SyncCountersAvOpenhomeOrgInfo1Cpp : public SyncProxyAction
 public:
     SyncCountersAvOpenhomeOrgInfo1Cpp(CpProxyAvOpenhomeOrgInfo1Cpp& aProxy, uint32_t& aTrackCount, uint32_t& aDetailsCount, uint32_t& aMetatextCount);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCountersAvOpenhomeOrgInfo1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgInfo1Cpp& iService;
     uint32_t& iTrackCount;
@@ -43,6 +44,7 @@ class SyncTrackAvOpenhomeOrgInfo1Cpp : public SyncProxyAction
 public:
     SyncTrackAvOpenhomeOrgInfo1Cpp(CpProxyAvOpenhomeOrgInfo1Cpp& aProxy, std::string& aUri, std::string& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTrackAvOpenhomeOrgInfo1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgInfo1Cpp& iService;
     std::string& iUri;
@@ -67,6 +69,7 @@ class SyncDetailsAvOpenhomeOrgInfo1Cpp : public SyncProxyAction
 public:
     SyncDetailsAvOpenhomeOrgInfo1Cpp(CpProxyAvOpenhomeOrgInfo1Cpp& aProxy, uint32_t& aDuration, uint32_t& aBitRate, uint32_t& aBitDepth, uint32_t& aSampleRate, bool& aLossless, std::string& aCodecName);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDetailsAvOpenhomeOrgInfo1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgInfo1Cpp& iService;
     uint32_t& iDuration;
@@ -99,6 +102,7 @@ class SyncMetatextAvOpenhomeOrgInfo1Cpp : public SyncProxyAction
 public:
     SyncMetatextAvOpenhomeOrgInfo1Cpp(CpProxyAvOpenhomeOrgInfo1Cpp& aProxy, std::string& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncMetatextAvOpenhomeOrgInfo1Cpp() {}
 private:
     CpProxyAvOpenhomeOrgInfo1Cpp& iService;
     std::string& iValue;

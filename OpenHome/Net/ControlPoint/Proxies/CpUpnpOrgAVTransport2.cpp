@@ -14,6 +14,7 @@ class SyncSetAVTransportURIUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncSetAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetAVTransportURIUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -34,6 +35,7 @@ class SyncSetNextAVTransportURIUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncSetNextAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetNextAVTransportURIUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -54,6 +56,7 @@ class SyncGetMediaInfoUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetMediaInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetMediaInfoUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     TUint& iNrTracks;
@@ -92,6 +95,7 @@ class SyncGetMediaInfo_ExtUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetMediaInfo_ExtUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentType, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetMediaInfo_ExtUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iCurrentType;
@@ -132,6 +136,7 @@ class SyncGetTransportInfoUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetTransportInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentTransportState, Brh& aCurrentTransportStatus, Brh& aCurrentSpeed);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetTransportInfoUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iCurrentTransportState;
@@ -158,6 +163,7 @@ class SyncGetPositionInfoUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetPositionInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, TUint& aTrack, Brh& aTrackDuration, Brh& aTrackMetaData, Brh& aTrackURI, Brh& aRelTime, Brh& aAbsTime, TInt& aRelCount, TInt& aAbsCount);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetPositionInfoUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     TUint& iTrack;
@@ -194,6 +200,7 @@ class SyncGetDeviceCapabilitiesUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetDeviceCapabilitiesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aPlayMedia, Brh& aRecMedia, Brh& aRecQualityModes);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetDeviceCapabilitiesUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iPlayMedia;
@@ -220,6 +227,7 @@ class SyncGetTransportSettingsUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetTransportSettingsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aPlayMode, Brh& aRecQualityMode);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetTransportSettingsUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iPlayMode;
@@ -244,6 +252,7 @@ class SyncStopUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncStopUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -264,6 +273,7 @@ class SyncPlayUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncPlayUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlayUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -284,6 +294,7 @@ class SyncPauseUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncPauseUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPauseUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -304,6 +315,7 @@ class SyncRecordUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncRecordUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncRecordUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -324,6 +336,7 @@ class SyncSeekUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncSeekUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSeekUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -344,6 +357,7 @@ class SyncNextUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncNextUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncNextUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -364,6 +378,7 @@ class SyncPreviousUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncPreviousUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPreviousUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -384,6 +399,7 @@ class SyncSetPlayModeUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncSetPlayModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetPlayModeUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -404,6 +420,7 @@ class SyncSetRecordQualityModeUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncSetRecordQualityModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetRecordQualityModeUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
@@ -424,6 +441,7 @@ class SyncGetCurrentTransportActionsUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetCurrentTransportActionsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aActions);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetCurrentTransportActionsUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iActions;
@@ -446,6 +464,7 @@ class SyncGetDRMStateUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetDRMStateUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentDRMState);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetDRMStateUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iCurrentDRMState;
@@ -468,6 +487,7 @@ class SyncGetStateVariablesUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncGetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aStateVariableValuePairs);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetStateVariablesUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iStateVariableValuePairs;
@@ -490,6 +510,7 @@ class SyncSetStateVariablesUpnpOrgAVTransport2 : public SyncProxyAction
 public:
     SyncSetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aStateVariableList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetStateVariablesUpnpOrgAVTransport2() {}
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iStateVariableList;

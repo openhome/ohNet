@@ -17,6 +17,7 @@ class SyncSetTargetUpnpOrgSwitchPower1Cpp : public SyncProxyAction
 public:
     SyncSetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetTargetUpnpOrgSwitchPower1Cpp() {}
 private:
     CpProxyUpnpOrgSwitchPower1Cpp& iService;
 };
@@ -37,6 +38,7 @@ class SyncGetTargetUpnpOrgSwitchPower1Cpp : public SyncProxyAction
 public:
     SyncGetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy, bool& aRetTargetValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetTargetUpnpOrgSwitchPower1Cpp() {}
 private:
     CpProxyUpnpOrgSwitchPower1Cpp& iService;
     bool& iRetTargetValue;
@@ -59,6 +61,7 @@ class SyncGetStatusUpnpOrgSwitchPower1Cpp : public SyncProxyAction
 public:
     SyncGetStatusUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy, bool& aResultStatus);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetStatusUpnpOrgSwitchPower1Cpp() {}
 private:
     CpProxyUpnpOrgSwitchPower1Cpp& iService;
     bool& iResultStatus;

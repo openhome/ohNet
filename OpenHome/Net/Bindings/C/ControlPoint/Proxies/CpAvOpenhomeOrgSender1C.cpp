@@ -84,6 +84,7 @@ class SyncPresentationUrlAvOpenhomeOrgSender1C : public SyncProxyAction
 public:
     SyncPresentationUrlAvOpenhomeOrgSender1C(CpProxyAvOpenhomeOrgSender1C& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPresentationUrlAvOpenhomeOrgSender1C() {};
 private:
     CpProxyAvOpenhomeOrgSender1C& iService;
     Brh& iValue;
@@ -106,6 +107,7 @@ class SyncMetadataAvOpenhomeOrgSender1C : public SyncProxyAction
 public:
     SyncMetadataAvOpenhomeOrgSender1C(CpProxyAvOpenhomeOrgSender1C& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncMetadataAvOpenhomeOrgSender1C() {};
 private:
     CpProxyAvOpenhomeOrgSender1C& iService;
     Brh& iValue;
@@ -128,6 +130,7 @@ class SyncAudioAvOpenhomeOrgSender1C : public SyncProxyAction
 public:
     SyncAudioAvOpenhomeOrgSender1C(CpProxyAvOpenhomeOrgSender1C& aProxy, TBool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncAudioAvOpenhomeOrgSender1C() {};
 private:
     CpProxyAvOpenhomeOrgSender1C& iService;
     TBool& iValue;
@@ -150,6 +153,7 @@ class SyncStatusAvOpenhomeOrgSender1C : public SyncProxyAction
 public:
     SyncStatusAvOpenhomeOrgSender1C(CpProxyAvOpenhomeOrgSender1C& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStatusAvOpenhomeOrgSender1C() {};
 private:
     CpProxyAvOpenhomeOrgSender1C& iService;
     Brh& iValue;
@@ -172,6 +176,7 @@ class SyncAttributesAvOpenhomeOrgSender1C : public SyncProxyAction
 public:
     SyncAttributesAvOpenhomeOrgSender1C(CpProxyAvOpenhomeOrgSender1C& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncAttributesAvOpenhomeOrgSender1C() {};
 private:
     CpProxyAvOpenhomeOrgSender1C& iService;
     Brh& iValue;

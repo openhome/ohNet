@@ -12,12 +12,14 @@ class IAsyncOutput
 {
 public:
     virtual void Output(const TChar* aKey, const TChar* aValue) = 0;
+    virtual ~IAsyncOutput() {}
 };
 
 class IAsync
 {
 public:
     virtual void Output(IAsyncOutput& aConsole) = 0;
+    virtual ~IAsync() {}
 };
 
 typedef void (STDCALL *OhNetFunctorAsync)(void* aPtr, IAsync* aAsync);

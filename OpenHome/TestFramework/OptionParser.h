@@ -18,7 +18,7 @@ class Option
 {
 public:
     Option(const TChar* aShortName, const TChar* aLongName, const TChar* aHelpDesc);
-    ~Option();
+    virtual ~Option();
     TBool Match(const TChar* aName) const;
     virtual void Process(TInt aArgc, TChar* aArgv[]) = 0;
     virtual void Reset() = 0;
@@ -39,6 +39,7 @@ public:
     TInt ExpectedArgCount() const;
     const Brx& Value() const;
     const TChar* CString() const;
+    virtual ~OptionString() {}
 private:
     Brhz iValue;
     Brhz iDefault;
@@ -52,6 +53,7 @@ public:
     void Reset();
     TInt ExpectedArgCount() const;
     TInt Value() const;
+    virtual ~OptionInt() {}
 private:
     TInt iValue;
     TInt iDefault;
@@ -65,6 +67,7 @@ public:
     void Reset();
     TInt ExpectedArgCount() const;
     TUint Value() const;
+    virtual ~OptionUint() {}
 private:
     TUint iValue;
     TUint iDefault;
@@ -78,6 +81,7 @@ public:
     void Reset();
     TInt ExpectedArgCount() const;
     TBool Value() const;
+    virtual ~OptionBool() {}
 private:
     TBool iValue;
 };
