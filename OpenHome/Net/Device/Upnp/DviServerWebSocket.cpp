@@ -562,7 +562,6 @@ void DviSessionWebSocket::QueuePropertyUpdate(Brh* aUpdate)
 
 void DviSessionWebSocket::Run()
 {
-    LogVerbose(true);
     iShutdownSem.Wait();
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
