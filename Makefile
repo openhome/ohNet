@@ -24,7 +24,7 @@ ar = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar rc $(objdir)
 
 else
 platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
-platform_linkflags = -arch x86_64
+platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
 objdir = Build/Obj/Mac/$(build_dir)/
 compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
 link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
