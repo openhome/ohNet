@@ -1130,7 +1130,7 @@ SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
     TChar thName[5];
 	const TUint numWsThreads = Stack::InitParams().DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {
-        (void)sprintf(&thName[0], "DS%2u", i);
+        (void)sprintf(&thName[0], "DS%2lu", i);
         server->Add(&thName[0], new DviSessionUpnp(aNif.Address(), server->Port(), *this));
     }
     return server;

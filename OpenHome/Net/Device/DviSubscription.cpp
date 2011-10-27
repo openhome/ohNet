@@ -349,7 +349,7 @@ DviSubscriptionManager::DviSubscriptionManager()
     TChar thName[5];
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
     for (TUint i=0; i<numPublisherThreads; i++) {
-        (void)sprintf(&thName[0], "DP%2u", i);
+        (void)sprintf(&thName[0], "DP%2lu", i);
         iPublishers[i] = new Publisher(&thName[0], iFree);
         iFree.Write(iPublishers[i]);
         iPublishers[i]->Start();
