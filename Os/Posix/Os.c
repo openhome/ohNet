@@ -27,6 +27,10 @@
 #include <ifaddrs.h>
 #include <signal.h>
 
+#ifdef PLATFORM_MACOSX_GNU
+#include <SystemConfiguration/SystemConfiguration.h>
+#endif
+
 #include <OpenHome/Os.h>
 
 #define kMinStackBytes (1024 * 512)
@@ -43,6 +47,24 @@ __result; }))
 #else
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
+
+
+
+#ifdef PLATFORM_MACOSX_GNU
+
+typedef struct InterfaceChangedObserver
+{
+    InterfaceListChanged iCallback;
+    void* iArg;
+    SCDynamicStoreRef iStore;
+    CFRunLoopSourceRef iRunLoopSource;
+
+} InterfaceChangedObserver;
+
+static InterfaceChangedObserver* gInterfaceChangedObserver = NULL;
+
+#endif /* PLATFOTM_MACOSX_GNU */
+
 
 
 static struct timeval gStartTime;
@@ -71,6 +93,18 @@ void OsDestroy()
     pthread_key_delete(gThreadArgKey);
     OsMutexDestroy(gMutex);
     gMutex = kHandleNull;
+
+#ifdef PLATFORM_MACOSX_GNU
+    if (NULL != gInterfaceChangedObserver)
+    {
+        CFRunLoopRef runLoop = CFRunLoopGetMain();
+        CFRunLoopRemoveSource(runLoop, gInterfaceChangedObserver->iRunLoopSource, kCFRunLoopCommonModes);
+        CFRelease(gInterfaceChangedObserver->iStore);
+        CFRelease(gInterfaceChangedObserver->iRunLoopSource);
+        free(gInterfaceChangedObserver);
+        gInterfaceChangedObserver = NULL;
+    }
+#endif /* PLATFOTM_MACOSX_GNU */
 }
 
 void OsQuit()
@@ -884,7 +918,103 @@ void OsNetworkFreeInterfaces(OsNetworkAdapter* aAdapters)
     }
 }
 
+
+#ifdef PLATFORM_MACOSX_GNU
+
+static void InterfaceChangedDynamicStoreCallback(SCDynamicStoreRef aStore, CFArrayRef aChangedKeys, void* aInfo)
+{
+    if (aInfo != NULL)
+    {
+        InterfaceChangedObserver* obs = (InterfaceChangedObserver*)aInfo;
+        obs->iCallback(obs->iArg);
+    }
+}
+
+#endif /* PLATFOTM_MACOSX_GNU */
+
+
 void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)
 {
-    // not supported yet
+    // not supported yet on anything other than Mac OS X
+
+#ifdef PLATFORM_MACOSX_GNU
+
+    SCDynamicStoreContext context = {0, NULL, NULL, NULL, NULL};
+    CFStringRef pattern = NULL;
+    CFArrayRef patternList = NULL;
+    CFRunLoopRef runLoop = NULL;
+
+    if (NULL != gInterfaceChangedObserver) {
+        return;
+    }
+
+    gInterfaceChangedObserver = (InterfaceChangedObserver*)malloc(sizeof(*gInterfaceChangedObserver));
+    if (NULL == gInterfaceChangedObserver) {
+        goto Error;
+    }
+
+    gInterfaceChangedObserver->iCallback = aCallback;
+    gInterfaceChangedObserver->iArg = aArg;
+    gInterfaceChangedObserver->iStore = NULL;
+    gInterfaceChangedObserver->iRunLoopSource = NULL;
+
+    context.info = gInterfaceChangedObserver;
+
+    gInterfaceChangedObserver->iStore = SCDynamicStoreCreate(NULL, CFSTR("AddIPAddressListChangeCallbackSCF"), &InterfaceChangedDynamicStoreCallback, &context);
+    if (NULL == gInterfaceChangedObserver->iStore) {
+        goto Error;
+    }
+
+    pattern = SCDynamicStoreKeyCreateNetworkServiceEntity(NULL, kSCDynamicStoreDomainState, kSCCompAnyRegex, kSCEntNetIPv4);
+    if (NULL == pattern) {
+        goto Error;
+    }
+
+    patternList = CFArrayCreate(NULL, (const void **)&pattern, 1, &kCFTypeArrayCallBacks);
+    if (NULL == patternList) {
+        goto Error;
+    }
+
+    if (false == SCDynamicStoreSetNotificationKeys(gInterfaceChangedObserver->iStore, NULL, patternList)) {
+        goto Error;
+    }
+
+    gInterfaceChangedObserver->iRunLoopSource = SCDynamicStoreCreateRunLoopSource(NULL, gInterfaceChangedObserver->iStore, 0);
+    if (NULL == gInterfaceChangedObserver->iRunLoopSource) {
+        goto Error;
+    }
+
+    runLoop = CFRunLoopGetMain();
+    if (NULL == runLoop) {
+        goto Error;
+    }
+
+    CFRunLoopAddSource(runLoop, gInterfaceChangedObserver->iRunLoopSource, kCFRunLoopCommonModes);
+    CFRelease(pattern);
+    CFRelease(patternList);
+    return;
+
+Error:
+    if (NULL != pattern) {
+        CFRelease(pattern);
+    }
+    if (NULL != patternList) {
+        CFRelease(patternList);
+    }
+    if (NULL != gInterfaceChangedObserver)
+    {
+        if (gInterfaceChangedObserver->iStore != NULL) {
+            CFRelease(gInterfaceChangedObserver->iStore);
+        }
+        if (gInterfaceChangedObserver->iRunLoopSource != NULL) {
+            CFRelease(gInterfaceChangedObserver->iRunLoopSource);
+        }
+        free(gInterfaceChangedObserver);
+        gInterfaceChangedObserver = NULL;
+    }
+
+#endif /* PLATFOTM_MACOSX_GNU */
 }
+
+
+
