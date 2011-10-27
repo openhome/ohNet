@@ -741,6 +741,5 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     th->Wait();
     delete th;
 
-    delete aInitParams;
     Net::UpnpLibrary::Close();
 }
