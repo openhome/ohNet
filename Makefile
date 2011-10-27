@@ -32,22 +32,39 @@ ar = ${CROSS_COMPILE}ar rc $(objdir)
 
 endif
 else
-platform_cflags = -Wno-psabi
-platform_linkflags =
-objdir = Build/Obj/Posix/$(build_dir)/
-compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
+
+platform ?= Kirkwood
+
+ifeq ($(platform), Core)
+freertoslwipdir ?= ${FREERTOSLWIP}
+platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403 -g
+platform_linkflags = -B$(freertoslwipdir)/lib/ -specs bsp_specs -mcpu=403
+osdir = Volkano2
+endian = BIG
+endif
+
+ifeq ($(platform), Kirkwood)
+platform_cflags = -Wno-psabi -fPIC
+platform_linkflags = -lpthread
+osdir = Posix
+endian = LITTLE
+endif
+
+objdir = Build/Obj/$(osdir)/$(build_dir)/
+compiler = ${CROSS_COMPILE}gcc -o $(objdir)
+link = ${CROSS_COMPILE}g++ $(platform_linkflags)
 ar = ${CROSS_COMPILE}ar rc $(objdir)
 
 endif
 
 # Macros used by Common.mak
-cflags_third_party = -fexceptions -Wall -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
+endian ?= LITTLE
+cflags_third_party = -fexceptions -Wall -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 cflags = $(cflags_third_party) -Werror
 inc_build = Build/Include
 includes = -IBuild/Include/
 bundle_build = Build/Bundles
-osdir = Posix
+osdir ?= Posix
 objext = o
 libprefix = lib
 libext = a

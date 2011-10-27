@@ -41,7 +41,7 @@ static void CallFatalErrorHandler(const char* aMsg)
 void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
 {
     char buf[1024];
-    (void)snprintf(buf, sizeof(buf), "Assertion failed.  %s:%d\n", aFile, aLine);
+    (void)snprintf(buf, sizeof(buf), "Assertion failed.  %s:%lu\n", aFile, aLine);
     CallFatalErrorHandler(buf);
     Os::Quit();
 }
@@ -64,7 +64,7 @@ void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const T
     GetThreadName(thName);
     char buf[1024];
     Log::Print("boo\n");
-    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%d in thread %s\n", aExceptionMessage, aFile, aLine, thName.Ptr());
+    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%lu in thread %s\n", aExceptionMessage, aFile, aLine, thName.Ptr());
     CallFatalErrorHandler(buf);
 }
 
@@ -74,7 +74,7 @@ void OpenHome::UnhandledExceptionHandler(Exception& aException)
     GetThreadName(thName);
     char buf[1024];
     Log::Print("woo\n");
-    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%d in thread %s\n",
+    (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%lu in thread %s\n",
                    aException.Message(), aException.File(), aException.Line(), thName.Ptr());
     CallFatalErrorHandler(buf);
 }

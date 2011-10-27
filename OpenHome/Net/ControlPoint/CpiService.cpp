@@ -498,7 +498,7 @@ void OpenHome::Net::Invocation::OutputArgument(IAsyncOutput& aConsole, const TCh
 	}
     const Brx& paramName = aArgument.Parameter().Name();
     if (paramType == OpenHome::Net::Parameter::eTypeBinary) {
-        (void)sprintf(str, "%s (binary - size %u)", paramName.Ptr(), ((const ArgumentBinary&)aArgument).Value().Bytes());
+        (void)sprintf(str, "%s (binary - size %lu)", paramName.Ptr(), ((const ArgumentBinary&)aArgument).Value().Bytes());
     }
     else if (paramType == OpenHome::Net::Parameter::eTypeString) {
         char fmt[] = "%s (%s)";
@@ -519,10 +519,10 @@ void OpenHome::Net::Invocation::OutputArgument(IAsyncOutput& aConsole, const TCh
             (void)sprintf(str, "%s (%d)", paramName.Ptr(), ((const ArgumentBool&)aArgument).Value());
             break;
         case OpenHome::Net::Parameter::eTypeInt:
-            (void)sprintf(str, "%s (%d)", paramName.Ptr(), ((const ArgumentInt&)aArgument).Value());
+            (void)sprintf(str, "%s (%lu)", paramName.Ptr(), ((const ArgumentInt&)aArgument).Value());
             break;
         case OpenHome::Net::Parameter::eTypeUint:
-            (void)sprintf(str, "%s (%u)", paramName.Ptr(), ((const ArgumentUint&)aArgument).Value());
+            (void)sprintf(str, "%s (%lu)", paramName.Ptr(), ((const ArgumentUint&)aArgument).Value());
             break;
         default:
             ASSERTS();
