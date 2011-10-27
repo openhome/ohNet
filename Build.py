@@ -77,6 +77,11 @@ def getEnvironment():
         tool = 'env'
         ostype = 'Linux'
         arch = 'x86'
+		
+	elif Labek == 'macos':
+		tool = 'env'
+		ostype = 'MacOS'
+		arch = 'x86'
 
     elif Label == 'windows-x86':
         tool = 'call vcvarsall.bat && (set LOCALAPPDATA=C:\Documents and Settings\Administrator\Local Settings\Application Data)'
