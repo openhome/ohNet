@@ -479,7 +479,7 @@ static void TryNetworkTcpSetNoDelay(THandle aHandle)
     }
     catch ( NetworkError )
     {
-        LOGF(kNetwork, "Warning -> could not set TCP NODELAY on %d\n", aHandle);
+        LOG2F(kNetwork, kError, "Warning -> could not set TCP NODELAY on %d\n", aHandle);
     }
 }
 

@@ -81,7 +81,12 @@ void Timer::DoCancel()
 Timer::~Timer()
 {
     TimerManager& mgr = Net::Stack::TimerManager();
-    TBool lock = (Thread::Current() != mgr.Thread());
+    Thread* current = NULL;
+    try {
+        current = Thread::Current();
+    }
+    catch (ThreadUnknown&) {}
+    TBool lock = (current != mgr.Thread());
     if (lock) {
         mgr.CallbackLock();
     }

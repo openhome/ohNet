@@ -50,12 +50,15 @@ static void GetThreadName(Bws<20>& aThName)
 {
     aThName.SetBytes(0);
     aThName.Append("(unknown)");
-    Thread* th = Thread::Current();
-    if (th != NULL) {
-        aThName.SetBytes(0);
-        aThName.Append(th->Name());
-        aThName.PtrZ();
+    try {
+        Thread* th = Thread::Current();
+        if (th != NULL) {
+            aThName.SetBytes(0);
+            aThName.Append(th->Name());
+        }
     }
+    catch (ThreadUnknown& ) {}
+    aThName.PtrZ();
 }
 
 void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine)

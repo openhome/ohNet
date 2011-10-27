@@ -82,11 +82,14 @@ void Mutex::Wait()
         }    
         Brhz thBuf;
         const char* thName = "unknown";
-        Thread* th = Thread::Current();
-        if (th != NULL) {
-            thBuf.Set(th->Name());
-            thName = (const char*)thBuf.Ptr();
-        }    
+        try {
+            Thread* th = Thread::Current();
+            if (th != NULL) {
+                thBuf.Set(th->Name());
+                thName = (const char*)thBuf.Ptr();
+            }    
+        }
+        catch (ThreadUnknown&) {}
         Log::Print("ERROR: %s %s from thread %s\n", msg, iName, thName);
         ASSERT(err == 0);
     }

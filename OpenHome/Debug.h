@@ -37,13 +37,6 @@ private:
             OpenHome::Log::Print(__VA_ARGS__); \
          } \
         }
-    #define LOG2T(x,y,...) \
-        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x|OpenHome::Debug::y)) \
-         { \
-            OpenHome::Log::Print("Thread: %p: ",(OpenHome::Thread*)(OpenHome::Thread::Current())); \
-            OpenHome::Log::Print(__VA_ARGS__); \
-         } \
-        }
     #define LOGF(x,...) \
         {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x)) \
          { \
@@ -80,7 +73,6 @@ private:
     #define LOGT(x,...)
     #define LOG2(x,y,...)
     #define LOG2F(x,y,...)
-    #define LOG2T(x,y,...)
     #define LOG_HEX(x,aBrx)
     #define LOGF_HEX(x,aBrx)
     #define LOGFUNC(x)
