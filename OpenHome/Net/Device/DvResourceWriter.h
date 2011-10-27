@@ -38,6 +38,8 @@ public:
      * values in the WriteResource callbacks does not match aTotalBytes.
      */
     virtual void WriteResourceEnd() = 0;
+
+    virtual ~IResourceWriter() {}
 };
 
 } // namespace Net

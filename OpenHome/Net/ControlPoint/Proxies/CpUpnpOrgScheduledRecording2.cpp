@@ -14,6 +14,7 @@ class SyncGetSortCapabilitiesUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncGetSortCapabilitiesUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aSortCaps, TUint& aSortLevelCap);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetSortCapabilitiesUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iSortCaps;
@@ -38,6 +39,7 @@ class SyncGetPropertyListUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncGetPropertyListUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aPropertyList);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetPropertyListUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iPropertyList;
@@ -60,6 +62,7 @@ class SyncGetAllowedValuesUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncGetAllowedValuesUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aPropertyInfo);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetAllowedValuesUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iPropertyInfo;
@@ -82,6 +85,7 @@ class SyncGetStateUpdateIDUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncGetStateUpdateIDUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, TUint& aId);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetStateUpdateIDUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     TUint& iId;
@@ -104,6 +108,7 @@ class SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2 : public SyncProxyActi
 public:
     SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iResult;
@@ -132,6 +137,7 @@ class SyncBrowseRecordTasksUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncBrowseRecordTasksUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBrowseRecordTasksUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iResult;
@@ -160,6 +166,7 @@ class SyncCreateRecordScheduleUpnpOrgScheduledRecording2 : public SyncProxyActio
 public:
     SyncCreateRecordScheduleUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aRecordScheduleID, Brh& aResult, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCreateRecordScheduleUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iRecordScheduleID;
@@ -186,6 +193,7 @@ class SyncDeleteRecordScheduleUpnpOrgScheduledRecording2 : public SyncProxyActio
 public:
     SyncDeleteRecordScheduleUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteRecordScheduleUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
 };
@@ -206,6 +214,7 @@ class SyncGetRecordScheduleUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncGetRecordScheduleUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aResult, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRecordScheduleUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iResult;
@@ -230,6 +239,7 @@ class SyncEnableRecordScheduleUpnpOrgScheduledRecording2 : public SyncProxyActio
 public:
     SyncEnableRecordScheduleUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncEnableRecordScheduleUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
 };
@@ -250,6 +260,7 @@ class SyncDisableRecordScheduleUpnpOrgScheduledRecording2 : public SyncProxyActi
 public:
     SyncDisableRecordScheduleUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDisableRecordScheduleUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
 };
@@ -270,6 +281,7 @@ class SyncDeleteRecordTaskUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncDeleteRecordTaskUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDeleteRecordTaskUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
 };
@@ -290,6 +302,7 @@ class SyncGetRecordTaskUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncGetRecordTaskUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aResult, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRecordTaskUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iResult;
@@ -314,6 +327,7 @@ class SyncEnableRecordTaskUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncEnableRecordTaskUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncEnableRecordTaskUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
 };
@@ -334,6 +348,7 @@ class SyncDisableRecordTaskUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncDisableRecordTaskUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDisableRecordTaskUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
 };
@@ -354,6 +369,7 @@ class SyncResetRecordTaskUpnpOrgScheduledRecording2 : public SyncProxyAction
 public:
     SyncResetRecordTaskUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncResetRecordTaskUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
 };
@@ -374,6 +390,7 @@ class SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2 : public SyncProx
 public:
     SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aRecordScheduleConflictIDList, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iRecordScheduleConflictIDList;
@@ -398,6 +415,7 @@ class SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2 : public SyncProxyAct
 public:
     SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2(CpProxyUpnpOrgScheduledRecording2& aProxy, Brh& aRecordTaskConflictIDList, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2() {}
 private:
     CpProxyUpnpOrgScheduledRecording2& iService;
     Brh& iRecordTaskConflictIDList;

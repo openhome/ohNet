@@ -91,7 +91,6 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
 
 //    Debug::SetLevel(Debug::kDevice);
     DeviceListLogger logger;
-    TBool block = true;
     CpDeviceList* deviceList = NULL;
     FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);
@@ -119,12 +118,10 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         }
         else {
             parser.DisplayHelp();
-            block = false;
         }
     }
     else {
         parser.DisplayHelp();
-        block = false;
     }
 
     Blocker* blocker = new Blocker;

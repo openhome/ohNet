@@ -17,6 +17,7 @@ class SyncGetCountOpenhomeOrgTestLights1Cpp : public SyncProxyAction
 public:
     SyncGetCountOpenhomeOrgTestLights1Cpp(CpProxyOpenhomeOrgTestLights1Cpp& aProxy, uint32_t& aCount);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetCountOpenhomeOrgTestLights1Cpp() {}
 private:
     CpProxyOpenhomeOrgTestLights1Cpp& iService;
     uint32_t& iCount;
@@ -39,6 +40,7 @@ class SyncGetRoomOpenhomeOrgTestLights1Cpp : public SyncProxyAction
 public:
     SyncGetRoomOpenhomeOrgTestLights1Cpp(CpProxyOpenhomeOrgTestLights1Cpp& aProxy, std::string& aRoomName);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRoomOpenhomeOrgTestLights1Cpp() {}
 private:
     CpProxyOpenhomeOrgTestLights1Cpp& iService;
     std::string& iRoomName;
@@ -61,6 +63,7 @@ class SyncGetNameOpenhomeOrgTestLights1Cpp : public SyncProxyAction
 public:
     SyncGetNameOpenhomeOrgTestLights1Cpp(CpProxyOpenhomeOrgTestLights1Cpp& aProxy, std::string& aFriendlyName);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetNameOpenhomeOrgTestLights1Cpp() {}
 private:
     CpProxyOpenhomeOrgTestLights1Cpp& iService;
     std::string& iFriendlyName;
@@ -83,6 +86,7 @@ class SyncGetPositionOpenhomeOrgTestLights1Cpp : public SyncProxyAction
 public:
     SyncGetPositionOpenhomeOrgTestLights1Cpp(CpProxyOpenhomeOrgTestLights1Cpp& aProxy, uint32_t& aX, uint32_t& aY, uint32_t& aZ);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetPositionOpenhomeOrgTestLights1Cpp() {}
 private:
     CpProxyOpenhomeOrgTestLights1Cpp& iService;
     uint32_t& iX;
@@ -109,6 +113,7 @@ class SyncSetColorOpenhomeOrgTestLights1Cpp : public SyncProxyAction
 public:
     SyncSetColorOpenhomeOrgTestLights1Cpp(CpProxyOpenhomeOrgTestLights1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetColorOpenhomeOrgTestLights1Cpp() {}
 private:
     CpProxyOpenhomeOrgTestLights1Cpp& iService;
 };
@@ -129,6 +134,7 @@ class SyncGetColorOpenhomeOrgTestLights1Cpp : public SyncProxyAction
 public:
     SyncGetColorOpenhomeOrgTestLights1Cpp(CpProxyOpenhomeOrgTestLights1Cpp& aProxy, uint32_t& aColor);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetColorOpenhomeOrgTestLights1Cpp() {}
 private:
     CpProxyOpenhomeOrgTestLights1Cpp& iService;
     uint32_t& iColor;
@@ -151,6 +157,7 @@ class SyncGetColorComponentsOpenhomeOrgTestLights1Cpp : public SyncProxyAction
 public:
     SyncGetColorComponentsOpenhomeOrgTestLights1Cpp(CpProxyOpenhomeOrgTestLights1Cpp& aProxy, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetColorComponentsOpenhomeOrgTestLights1Cpp() {}
 private:
     CpProxyOpenhomeOrgTestLights1Cpp& iService;
     uint32_t& iBrightness;

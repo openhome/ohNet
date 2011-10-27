@@ -90,6 +90,8 @@ public:
 
     static TUint AppendDec(Bwx& aBuffer, TUint8 aValue);
     static TUint AppendDec(Bwx& aBuffer, TInt8 aValue);
+    static TUint AppendDec(Bwx& aBuffer, TUint16 aValue);
+    static TUint AppendDec(Bwx& aBuffer, TInt16 aValue);
     static TUint AppendDec(Bwx& aBuffer, TInt aValue);
     static TUint AppendDec(Bwx& aBuffer, TUint aValue);
     static TUint AppendDec(Bwx& aBuffer, TInt64 aValue);

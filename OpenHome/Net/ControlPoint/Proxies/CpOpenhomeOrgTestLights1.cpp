@@ -14,6 +14,7 @@ class SyncGetCountOpenhomeOrgTestLights1 : public SyncProxyAction
 public:
     SyncGetCountOpenhomeOrgTestLights1(CpProxyOpenhomeOrgTestLights1& aProxy, TUint& aCount);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetCountOpenhomeOrgTestLights1() {}
 private:
     CpProxyOpenhomeOrgTestLights1& iService;
     TUint& iCount;
@@ -36,6 +37,7 @@ class SyncGetRoomOpenhomeOrgTestLights1 : public SyncProxyAction
 public:
     SyncGetRoomOpenhomeOrgTestLights1(CpProxyOpenhomeOrgTestLights1& aProxy, Brh& aRoomName);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRoomOpenhomeOrgTestLights1() {}
 private:
     CpProxyOpenhomeOrgTestLights1& iService;
     Brh& iRoomName;
@@ -58,6 +60,7 @@ class SyncGetNameOpenhomeOrgTestLights1 : public SyncProxyAction
 public:
     SyncGetNameOpenhomeOrgTestLights1(CpProxyOpenhomeOrgTestLights1& aProxy, Brh& aFriendlyName);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetNameOpenhomeOrgTestLights1() {}
 private:
     CpProxyOpenhomeOrgTestLights1& iService;
     Brh& iFriendlyName;
@@ -80,6 +83,7 @@ class SyncGetPositionOpenhomeOrgTestLights1 : public SyncProxyAction
 public:
     SyncGetPositionOpenhomeOrgTestLights1(CpProxyOpenhomeOrgTestLights1& aProxy, TUint& aX, TUint& aY, TUint& aZ);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetPositionOpenhomeOrgTestLights1() {}
 private:
     CpProxyOpenhomeOrgTestLights1& iService;
     TUint& iX;
@@ -106,6 +110,7 @@ class SyncSetColorOpenhomeOrgTestLights1 : public SyncProxyAction
 public:
     SyncSetColorOpenhomeOrgTestLights1(CpProxyOpenhomeOrgTestLights1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetColorOpenhomeOrgTestLights1() {}
 private:
     CpProxyOpenhomeOrgTestLights1& iService;
 };
@@ -126,6 +131,7 @@ class SyncGetColorOpenhomeOrgTestLights1 : public SyncProxyAction
 public:
     SyncGetColorOpenhomeOrgTestLights1(CpProxyOpenhomeOrgTestLights1& aProxy, TUint& aColor);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetColorOpenhomeOrgTestLights1() {}
 private:
     CpProxyOpenhomeOrgTestLights1& iService;
     TUint& iColor;
@@ -148,6 +154,7 @@ class SyncGetColorComponentsOpenhomeOrgTestLights1 : public SyncProxyAction
 public:
     SyncGetColorComponentsOpenhomeOrgTestLights1(CpProxyOpenhomeOrgTestLights1& aProxy, TUint& aBrightness, TUint& aRed, TUint& aGreen, TUint& aBlue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetColorComponentsOpenhomeOrgTestLights1() {}
 private:
     CpProxyOpenhomeOrgTestLights1& iService;
     TUint& iBrightness;

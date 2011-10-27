@@ -169,7 +169,8 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     , iPriority(aPriority)
 {
     ASSERT(aName != NULL);
-	iName.Fill(0);
+    iName.SetBytes(iName.MaxBytes());
+    iName.Fill(0);
     TUint bytes = (TUint)strlen(aName);
     if (bytes > kNameBytes) {
         bytes = kNameBytes;
@@ -241,7 +242,12 @@ void Thread::Sleep(TUint aMilliSecs)
 
 Thread* Thread::Current()
 { // static
-    return (Thread*)OpenHome::Os::ThreadTls();
+    void* ptr = OpenHome::Os::ThreadTls();
+
+    if ( ptr == NULL )
+        THROW(ThreadUnknown);
+
+    return (Thread*) ptr;
 }
 
 TBool Thread::SupportsPriorities()

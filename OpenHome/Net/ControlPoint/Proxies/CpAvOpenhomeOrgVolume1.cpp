@@ -14,6 +14,7 @@ class SyncCharacteristicsAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncCharacteristicsAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy, TUint& aVolumeMax, TUint& aVolumeUnity, TUint& aVolumeSteps, TUint& aVolumeMilliDbPerStep, TUint& aBalanceMax, TUint& aFadeMax);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncCharacteristicsAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
     TUint& iVolumeMax;
@@ -46,6 +47,7 @@ class SyncSetVolumeAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncSetVolumeAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetVolumeAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -66,6 +68,7 @@ class SyncVolumeIncAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncVolumeIncAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncVolumeIncAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -86,6 +89,7 @@ class SyncVolumeDecAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncVolumeDecAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncVolumeDecAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -106,6 +110,7 @@ class SyncVolumeAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncVolumeAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy, TUint& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncVolumeAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
     TUint& iValue;
@@ -128,6 +133,7 @@ class SyncSetBalanceAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncSetBalanceAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetBalanceAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -148,6 +154,7 @@ class SyncBalanceIncAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncBalanceIncAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBalanceIncAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -168,6 +175,7 @@ class SyncBalanceDecAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncBalanceDecAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBalanceDecAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -188,6 +196,7 @@ class SyncBalanceAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncBalanceAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy, TInt& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBalanceAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
     TInt& iValue;
@@ -210,6 +219,7 @@ class SyncSetFadeAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncSetFadeAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetFadeAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -230,6 +240,7 @@ class SyncFadeIncAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncFadeIncAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncFadeIncAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -250,6 +261,7 @@ class SyncFadeDecAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncFadeDecAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncFadeDecAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -270,6 +282,7 @@ class SyncFadeAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncFadeAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy, TInt& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncFadeAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
     TInt& iValue;
@@ -292,6 +305,7 @@ class SyncSetMuteAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncSetMuteAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetMuteAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
 };
@@ -312,6 +326,7 @@ class SyncMuteAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncMuteAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy, TBool& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncMuteAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
     TBool& iValue;
@@ -334,6 +349,7 @@ class SyncVolumeLimitAvOpenhomeOrgVolume1 : public SyncProxyAction
 public:
     SyncVolumeLimitAvOpenhomeOrgVolume1(CpProxyAvOpenhomeOrgVolume1& aProxy, TUint& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncVolumeLimitAvOpenhomeOrgVolume1() {}
 private:
     CpProxyAvOpenhomeOrgVolume1& iService;
     TUint& iValue;

@@ -14,6 +14,7 @@ class SyncPlayAvOpenhomeOrgReceiver1 : public SyncProxyAction
 public:
     SyncPlayAvOpenhomeOrgReceiver1(CpProxyAvOpenhomeOrgReceiver1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPlayAvOpenhomeOrgReceiver1() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1& iService;
 };
@@ -34,6 +35,7 @@ class SyncStopAvOpenhomeOrgReceiver1 : public SyncProxyAction
 public:
     SyncStopAvOpenhomeOrgReceiver1(CpProxyAvOpenhomeOrgReceiver1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopAvOpenhomeOrgReceiver1() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1& iService;
 };
@@ -54,6 +56,7 @@ class SyncSetSenderAvOpenhomeOrgReceiver1 : public SyncProxyAction
 public:
     SyncSetSenderAvOpenhomeOrgReceiver1(CpProxyAvOpenhomeOrgReceiver1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetSenderAvOpenhomeOrgReceiver1() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1& iService;
 };
@@ -74,6 +77,7 @@ class SyncSenderAvOpenhomeOrgReceiver1 : public SyncProxyAction
 public:
     SyncSenderAvOpenhomeOrgReceiver1(CpProxyAvOpenhomeOrgReceiver1& aProxy, Brh& aUri, Brh& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSenderAvOpenhomeOrgReceiver1() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1& iService;
     Brh& iUri;
@@ -98,6 +102,7 @@ class SyncProtocolInfoAvOpenhomeOrgReceiver1 : public SyncProxyAction
 public:
     SyncProtocolInfoAvOpenhomeOrgReceiver1(CpProxyAvOpenhomeOrgReceiver1& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncProtocolInfoAvOpenhomeOrgReceiver1() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1& iService;
     Brh& iValue;
@@ -120,6 +125,7 @@ class SyncTransportStateAvOpenhomeOrgReceiver1 : public SyncProxyAction
 public:
     SyncTransportStateAvOpenhomeOrgReceiver1(CpProxyAvOpenhomeOrgReceiver1& aProxy, Brh& aValue);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncTransportStateAvOpenhomeOrgReceiver1() {}
 private:
     CpProxyAvOpenhomeOrgReceiver1& iService;
     Brh& iValue;

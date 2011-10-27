@@ -76,7 +76,6 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     UpnpLibrary::StartCp(subnet);
 
 //    Debug::SetLevel(Debug::kDevice);
-    TBool block = true;
     HandleCpDeviceList deviceList = kHandleNull;
     Mutex* mutex = new Mutex("TDLM");
     if (all.Value()) {
@@ -110,12 +109,10 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         }
         else {
             parser.DisplayHelp();
-            block = false;
         }
     }
     else {
         parser.DisplayHelp();
-        block = false;
     }
 
     Blocker* blocker = new Blocker;

@@ -154,6 +154,7 @@ class SyncIncrementOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncIncrementOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, TUint& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncIncrementOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     TUint& iResult;
@@ -176,6 +177,7 @@ class SyncDecrementOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncDecrementOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, TInt& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncDecrementOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     TInt& iResult;
@@ -198,6 +200,7 @@ class SyncToggleOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncToggleOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, TBool& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncToggleOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     TBool& iResult;
@@ -220,6 +223,7 @@ class SyncEchoStringOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncEchoStringOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, Brh& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncEchoStringOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     Brh& iResult;
@@ -242,6 +246,7 @@ class SyncEchoBinaryOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncEchoBinaryOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, Brh& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncEchoBinaryOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     Brh& iResult;
@@ -264,6 +269,7 @@ class SyncSetUintOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncSetUintOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetUintOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };
@@ -284,6 +290,7 @@ class SyncGetUintOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncGetUintOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, TUint& aValueUint);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetUintOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     TUint& iValueUint;
@@ -306,6 +313,7 @@ class SyncSetIntOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncSetIntOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetIntOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };
@@ -326,6 +334,7 @@ class SyncGetIntOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncGetIntOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, TInt& aValueInt);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetIntOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     TInt& iValueInt;
@@ -348,6 +357,7 @@ class SyncSetBoolOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncSetBoolOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetBoolOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };
@@ -368,6 +378,7 @@ class SyncGetBoolOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncGetBoolOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, TBool& aValueBool);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetBoolOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     TBool& iValueBool;
@@ -390,6 +401,7 @@ class SyncSetMultipleOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncSetMultipleOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetMultipleOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };
@@ -410,6 +422,7 @@ class SyncSetStringOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncSetStringOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetStringOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };
@@ -430,6 +443,7 @@ class SyncGetStringOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncGetStringOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, Brh& aValueStr);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetStringOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     Brh& iValueStr;
@@ -452,6 +466,7 @@ class SyncSetBinaryOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncSetBinaryOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetBinaryOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };
@@ -472,6 +487,7 @@ class SyncGetBinaryOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncGetBinaryOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy, Brh& aValueBin);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetBinaryOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
     Brh& iValueBin;
@@ -494,6 +510,7 @@ class SyncToggleBoolOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncToggleBoolOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncToggleBoolOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };
@@ -514,6 +531,7 @@ class SyncWriteFileOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncWriteFileOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncWriteFileOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };
@@ -534,6 +552,7 @@ class SyncShutdownOpenhomeOrgTestBasic1C : public SyncProxyAction
 public:
     SyncShutdownOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncShutdownOpenhomeOrgTestBasic1C() {};
 private:
     CpProxyOpenhomeOrgTestBasic1C& iService;
 };

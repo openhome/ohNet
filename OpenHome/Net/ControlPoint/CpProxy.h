@@ -29,6 +29,7 @@ public:
     virtual void EventUpdateStart() = 0;
     virtual void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor) = 0;
     virtual void EventUpdateEnd() = 0;
+    virtual ~IEventProcessor() {}
 };
 
 /**

@@ -164,6 +164,7 @@ class SyncSetLoadLevelTargetUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncSetLoadLevelTargetUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetLoadLevelTargetUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -184,6 +185,7 @@ class SyncGetLoadLevelTargetUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncGetLoadLevelTargetUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy, TUint& aGetLoadlevelTarget);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetLoadLevelTargetUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
     TUint& iGetLoadlevelTarget;
@@ -206,6 +208,7 @@ class SyncGetLoadLevelStatusUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncGetLoadLevelStatusUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy, TUint& aretLoadlevelStatus);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetLoadLevelStatusUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
     TUint& iretLoadlevelStatus;
@@ -228,6 +231,7 @@ class SyncSetOnEffectLevelUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncSetOnEffectLevelUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetOnEffectLevelUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -248,6 +252,7 @@ class SyncSetOnEffectUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncSetOnEffectUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetOnEffectUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -268,6 +273,7 @@ class SyncGetOnEffectParametersUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncGetOnEffectParametersUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy, Brh& aretOnEffect, TUint& aretOnEffectLevel);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetOnEffectParametersUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
     Brh& iretOnEffect;
@@ -292,6 +298,7 @@ class SyncStepUpUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncStepUpUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStepUpUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -312,6 +319,7 @@ class SyncStepDownUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncStepDownUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStepDownUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -332,6 +340,7 @@ class SyncStartRampUpUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncStartRampUpUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStartRampUpUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -352,6 +361,7 @@ class SyncStartRampDownUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncStartRampDownUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStartRampDownUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -372,6 +382,7 @@ class SyncStopRampUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncStopRampUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStopRampUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -392,6 +403,7 @@ class SyncStartRampToLevelUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncStartRampToLevelUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncStartRampToLevelUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -412,6 +424,7 @@ class SyncSetStepDeltaUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncSetStepDeltaUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetStepDeltaUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -432,6 +445,7 @@ class SyncGetStepDeltaUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncGetStepDeltaUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy, TUint& aretStepDelta);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetStepDeltaUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
     TUint& iretStepDelta;
@@ -454,6 +468,7 @@ class SyncSetRampRateUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncSetRampRateUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncSetRampRateUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -474,6 +489,7 @@ class SyncGetRampRateUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncGetRampRateUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy, TUint& aretRampRate);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRampRateUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
     TUint& iretRampRate;
@@ -496,6 +512,7 @@ class SyncPauseRampUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncPauseRampUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPauseRampUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -516,6 +533,7 @@ class SyncResumeRampUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncResumeRampUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncResumeRampUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
 };
@@ -536,6 +554,7 @@ class SyncGetIsRampingUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncGetIsRampingUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy, TBool& aretIsRamping);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetIsRampingUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
     TBool& iretIsRamping;
@@ -558,6 +577,7 @@ class SyncGetRampPausedUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncGetRampPausedUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy, TBool& aretRampPaused);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRampPausedUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
     TBool& iretRampPaused;
@@ -580,6 +600,7 @@ class SyncGetRampTimeUpnpOrgDimming1C : public SyncProxyAction
 public:
     SyncGetRampTimeUpnpOrgDimming1C(CpProxyUpnpOrgDimming1C& aProxy, TUint& aretRampTime);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetRampTimeUpnpOrgDimming1C() {};
 private:
     CpProxyUpnpOrgDimming1C& iService;
     TUint& iretRampTime;

@@ -130,6 +130,7 @@ public:
      * On return, aBuffer.Bytes() == 0 means remote socket closed
      */
     void Read(Bwx& aBuffer);
+    void Read(Bwx& aBuffer, TUint aBytes);
     void ReadFlush();
     void ReadInterrupt();
 protected:

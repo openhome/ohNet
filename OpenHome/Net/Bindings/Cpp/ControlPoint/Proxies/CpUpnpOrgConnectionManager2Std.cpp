@@ -17,6 +17,7 @@ class SyncGetProtocolInfoUpnpOrgConnectionManager2Cpp : public SyncProxyAction
 public:
     SyncGetProtocolInfoUpnpOrgConnectionManager2Cpp(CpProxyUpnpOrgConnectionManager2Cpp& aProxy, std::string& aSource, std::string& aSink);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetProtocolInfoUpnpOrgConnectionManager2Cpp() {}
 private:
     CpProxyUpnpOrgConnectionManager2Cpp& iService;
     std::string& iSource;
@@ -41,6 +42,7 @@ class SyncPrepareForConnectionUpnpOrgConnectionManager2Cpp : public SyncProxyAct
 public:
     SyncPrepareForConnectionUpnpOrgConnectionManager2Cpp(CpProxyUpnpOrgConnectionManager2Cpp& aProxy, int32_t& aConnectionID, int32_t& aAVTransportID, int32_t& aRcsID);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncPrepareForConnectionUpnpOrgConnectionManager2Cpp() {}
 private:
     CpProxyUpnpOrgConnectionManager2Cpp& iService;
     int32_t& iConnectionID;
@@ -67,6 +69,7 @@ class SyncConnectionCompleteUpnpOrgConnectionManager2Cpp : public SyncProxyActio
 public:
     SyncConnectionCompleteUpnpOrgConnectionManager2Cpp(CpProxyUpnpOrgConnectionManager2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncConnectionCompleteUpnpOrgConnectionManager2Cpp() {}
 private:
     CpProxyUpnpOrgConnectionManager2Cpp& iService;
 };
@@ -87,6 +90,7 @@ class SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2Cpp : public SyncProxy
 public:
     SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2Cpp(CpProxyUpnpOrgConnectionManager2Cpp& aProxy, std::string& aConnectionIDs);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2Cpp() {}
 private:
     CpProxyUpnpOrgConnectionManager2Cpp& iService;
     std::string& iConnectionIDs;
@@ -109,6 +113,7 @@ class SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2Cpp : public SyncProx
 public:
     SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2Cpp(CpProxyUpnpOrgConnectionManager2Cpp& aProxy, int32_t& aRcsID, int32_t& aAVTransportID, std::string& aProtocolInfo, std::string& aPeerConnectionManager, int32_t& aPeerConnectionID, std::string& aDirection, std::string& aStatus);
     virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2Cpp() {}
 private:
     CpProxyUpnpOrgConnectionManager2Cpp& iService;
     int32_t& iRcsID;

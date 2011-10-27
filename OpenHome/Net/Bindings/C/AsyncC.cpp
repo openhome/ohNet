@@ -11,6 +11,7 @@ class AsyncOutput : public IAsyncOutput
 public:
     AsyncOutput(OhNetCallbackAsyncOutput aOutput);
     void Output(const TChar* aKey, const TChar* aValue);
+    virtual ~AsyncOutput() {}
 private:
     OhNetCallbackAsyncOutput iOutput;
 };

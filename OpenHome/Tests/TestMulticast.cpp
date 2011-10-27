@@ -19,13 +19,13 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
     parser.AddOption(&adapter);
 
-    OptionBool receive("-r", "--receive", "Receive");
-    parser.AddOption(&receive);
+    OptionBool send("-s", "--send", "Send");
+    parser.AddOption(&send);
 
     OptionString endpoint("-a", "--address", Brn("239.255.255.250"), "Multicast address");
     parser.AddOption(&endpoint);
 
-    OptionUint port("-p", "--port", 0, "Multicast port");
+    OptionUint port("-p", "--port", 1968, "Multicast port");
     parser.AddOption(&port);
 
     if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
@@ -48,7 +48,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     
     Endpoint multicast(port.Value(), endpoint.Value());
     
-    if (receive.Value()) {
+    if (send.Value() == false) {
         SocketUdpMulticast socket(addr, multicast);
 
         Endpoint actual(socket.Port(), multicast.Address());
@@ -56,7 +56,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
         actual.AppendEndpoint(buf2);
         Print("Receiving from multicast endpoint %s\n", buf2.Ptr());
     
-        Bws<10000> message;
+        Bwh message(10000);
         Endpoint sender = socket.Receive(message);
         Bws<100> buf3;
         sender.AppendEndpoint(buf3);
