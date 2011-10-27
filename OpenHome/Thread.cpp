@@ -169,7 +169,8 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     , iPriority(aPriority)
 {
     ASSERT(aName != NULL);
-	iName.Fill(0);
+    iName.SetBytes(iName.MaxBytes());
+    iName.Fill(0);
     TUint bytes = (TUint)strlen(aName);
     if (bytes > kNameBytes) {
         bytes = kNameBytes;
