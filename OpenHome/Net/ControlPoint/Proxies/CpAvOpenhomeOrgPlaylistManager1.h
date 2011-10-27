@@ -472,10 +472,9 @@ public:
      *
      * @param[in]  aId
      * @param[in]  aTrackId
-     * @param[out] aUdn
      * @param[out] aMetadata
      */
-    void SyncRead(TUint aId, TUint aTrackId, Brh& aUdn, Brh& aMetadata);
+    void SyncRead(TUint aId, TUint aTrackId, Brh& aMetadata);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
@@ -493,10 +492,9 @@ public:
      * This may only be called from the callback set in the above Begin function.
      *
      * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
-     * @param[out] aUdn
      * @param[out] aMetadata
      */
-    void EndRead(IAsync& aAsync, Brh& aUdn, Brh& aMetadata);
+    void EndRead(IAsync& aAsync, Brh& aMetadata);
 
     /**
      * Invoke the action synchronously.  Blocks until the action has been processed
@@ -534,11 +532,10 @@ public:
      *
      * @param[in]  aId
      * @param[in]  aAfterTrackId
-     * @param[in]  aUdn
      * @param[in]  aMetadata
      * @param[out] aNewTrackId
      */
-    void SyncInsert(TUint aId, TUint aAfterTrackId, const Brx& aUdn, const Brx& aMetadata, TUint& aNewTrackId);
+    void SyncInsert(TUint aId, TUint aAfterTrackId, const Brx& aMetadata, TUint& aNewTrackId);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
@@ -547,12 +544,11 @@ public:
      *
      * @param[in] aId
      * @param[in] aAfterTrackId
-     * @param[in] aUdn
      * @param[in] aMetadata
      * @param[in] aFunctor   Callback to run when the action completes.
      *                       This is guaranteed to be run but may indicate an error
      */
-    void BeginInsert(TUint aId, TUint aAfterTrackId, const Brx& aUdn, const Brx& aMetadata, FunctorAsync& aFunctor);
+    void BeginInsert(TUint aId, TUint aAfterTrackId, const Brx& aMetadata, FunctorAsync& aFunctor);
     /**
      * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the above Begin function.

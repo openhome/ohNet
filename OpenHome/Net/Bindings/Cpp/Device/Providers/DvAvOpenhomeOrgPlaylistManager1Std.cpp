@@ -276,7 +276,6 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnableActionRead()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
-    action->AddOutputParameter(new ParameterString("Udn"));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoRead);
     iService->AddAction(action, functor);
@@ -297,7 +296,6 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnableActionInsert()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Insert");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("AfterTrackId"));
-    action->AddInputParameter(new ParameterString("Udn"));
     action->AddInputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     action->AddOutputParameter(new ParameterUint("NewTrackId"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoInsert);
@@ -562,15 +560,10 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoRead(IDviInvocation& aInvocat
     uint32_t Id = aInvocation.InvocationReadUint("Id");
     uint32_t TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
-    std::string respUdn;
     std::string respMetadata;
     DvInvocationStd invocation(aInvocation);
-    Read(invocation, Id, TrackId, respUdn, respMetadata);
+    Read(invocation, Id, TrackId, respMetadata);
 	aInvocation.InvocationWriteStart();
-    DviInvocationResponseString respWriterUdn(aInvocation, "Udn");
-    Brn buf_Udn((const TByte*)respUdn.c_str(), (TUint)respUdn.length());
-    respWriterUdn.Write(buf_Udn);
-    aInvocation.InvocationWriteStringEnd("Udn");
     DviInvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
@@ -602,16 +595,13 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoInsert(IDviInvocation& aInvoc
     aInvocation.InvocationReadStart();
     uint32_t Id = aInvocation.InvocationReadUint("Id");
     uint32_t AfterTrackId = aInvocation.InvocationReadUint("AfterTrackId");
-    Brhz buf_Udn;
-    aInvocation.InvocationReadString("Udn", buf_Udn);
-    std::string Udn((const char*)buf_Udn.Ptr(), buf_Udn.Bytes());
     Brhz buf_Metadata;
     aInvocation.InvocationReadString("Metadata", buf_Metadata);
     std::string Metadata((const char*)buf_Metadata.Ptr(), buf_Metadata.Bytes());
     aInvocation.InvocationReadEnd();
     uint32_t respNewTrackId;
     DvInvocationStd invocation(aInvocation);
-    Insert(invocation, Id, AfterTrackId, Udn, Metadata, respNewTrackId);
+    Insert(invocation, Id, AfterTrackId, Metadata, respNewTrackId);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterNewTrackId(aInvocation, "NewTrackId");
     respWriterNewTrackId.Write(respNewTrackId);
@@ -716,7 +706,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::PlaylistArraysChanged(IDvInvoca
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::Read(IDvInvocationStd& /*aInvocation*/, uint32_t /*aId*/, uint32_t /*aTrackId*/, std::string& /*aUdn*/, std::string& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::Read(IDvInvocationStd& /*aInvocation*/, uint32_t /*aId*/, uint32_t /*aTrackId*/, std::string& /*aMetadata*/)
 {
     ASSERTS();
 }
@@ -726,7 +716,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::ReadList(IDvInvocationStd& /*aI
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::Insert(IDvInvocationStd& /*aInvocation*/, uint32_t /*aId*/, uint32_t /*aAfterTrackId*/, const std::string& /*aUdn*/, const std::string& /*aMetadata*/, uint32_t& /*aNewTrackId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::Insert(IDvInvocationStd& /*aInvocation*/, uint32_t /*aId*/, uint32_t /*aAfterTrackId*/, const std::string& /*aMetadata*/, uint32_t& /*aNewTrackId*/)
 {
     ASSERTS();
 }

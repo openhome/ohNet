@@ -752,7 +752,7 @@ WsProtocol* DviSessionWebSocket::Handshake80()
         LOG2(kDvWebSocket, kError, "WS: Handshake missing expected header - \"Sec-WebSocket-Version:\"\n");
         Error(HttpStatus::kBadRequest);
     }
-    if (iHeaderVersion.Version() != 8) {
+    if (iHeaderVersion.Version() != 13) {
         LOG2(kDvWebSocket, kError, "WS: unexpected content of Sec-WebSocket-Version header - %u\n", iHeaderVersion.Version());
         Error(HttpStatus::kBadRequest);
     }

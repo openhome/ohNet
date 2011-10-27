@@ -561,10 +561,8 @@ namespace OpenHome.Net.Device.Providers
         protected void EnableActionRead()
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Read");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterUint("TrackId"));
-            action.AddOutputParameter(new ParameterString("Udn", allowedValues));
             action.AddOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
             iDelegateRead = new ActionDelegate(DoRead);
             EnableAction(action, iDelegateRead, GCHandle.ToIntPtr(iGch));
@@ -594,10 +592,8 @@ namespace OpenHome.Net.Device.Providers
         protected void EnableActionInsert()
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Insert");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterUint("AfterTrackId"));
-            action.AddInputParameter(new ParameterString("Udn", allowedValues));
             action.AddInputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
             action.AddOutputParameter(new ParameterUint("NewTrackId"));
             iDelegateInsert = new ActionDelegate(DoInsert);
@@ -867,9 +863,8 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aTrackId"></param>
-        /// <param name="aUdn"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void Read(IDvInvocation aInvocation, uint aId, uint aTrackId, out string aUdn, out string aMetadata)
+        protected virtual void Read(IDvInvocation aInvocation, uint aId, uint aTrackId, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -900,10 +895,9 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aId"></param>
         /// <param name="aAfterTrackId"></param>
-        /// <param name="aUdn"></param>
         /// <param name="aMetadata"></param>
         /// <param name="aNewTrackId"></param>
-        protected virtual void Insert(IDvInvocation aInvocation, uint aId, uint aAfterTrackId, string aUdn, string aMetadata, out uint aNewTrackId)
+        protected virtual void Insert(IDvInvocation aInvocation, uint aId, uint aAfterTrackId, string aMetadata, out uint aNewTrackId)
         {
             throw (new ActionDisabledError());
         }
@@ -1681,7 +1675,6 @@ namespace OpenHome.Net.Device.Providers
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint id;
             uint trackId;
-            string udn;
             string metadata;
             try
             {
@@ -1689,7 +1682,7 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 trackId = invocation.ReadUint("TrackId");
                 invocation.ReadEnd();
-                self.Read(invocation, id, trackId, out udn, out metadata);
+                self.Read(invocation, id, trackId, out metadata);
             }
             catch (ActionError e)
             {
@@ -1710,7 +1703,6 @@ namespace OpenHome.Net.Device.Providers
             try
             {
                 invocation.WriteStart();
-                invocation.WriteString("Udn", udn);
                 invocation.WriteString("Metadata", metadata);
                 invocation.WriteEnd();
             }
@@ -1785,7 +1777,6 @@ namespace OpenHome.Net.Device.Providers
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint id;
             uint afterTrackId;
-            string udn;
             string metadata;
             uint newTrackId;
             try
@@ -1793,10 +1784,9 @@ namespace OpenHome.Net.Device.Providers
                 invocation.ReadStart();
                 id = invocation.ReadUint("Id");
                 afterTrackId = invocation.ReadUint("AfterTrackId");
-                udn = invocation.ReadString("Udn");
                 metadata = invocation.ReadString("Metadata");
                 invocation.ReadEnd();
-                self.Insert(invocation, id, afterTrackId, udn, metadata, out newTrackId);
+                self.Insert(invocation, id, afterTrackId, metadata, out newTrackId);
             }
             catch (ActionError e)
             {

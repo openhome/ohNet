@@ -513,17 +513,15 @@ CpProxyAvOpenhomeOrgPlaylistManager1.prototype.ReadList = function(Id, TrackIdLi
 * @method Insert
 * @param {Int} Id An action parameter
 * @param {Int} AfterTrackId An action parameter
-* @param {String} Udn An action parameter
-* @param {String} MetadataId An action parameter
+* @param {String} Metadata An action parameter
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylistManager1.prototype.Insert = function(Id, AfterTrackId, Udn, MetadataId, successFunction, errorFunction){	
+CpProxyAvOpenhomeOrgPlaylistManager1.prototype.Insert = function(Id, AfterTrackId, Metadata, successFunction, errorFunction){	
 	var request = new OhNet.SoapRequest("Insert", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Id", Id);
     request.writeIntParameter("AfterTrackId", AfterTrackId);
-    request.writeStringParameter("Udn", Udn);
-    request.writeStringParameter("MetadataId", MetadataId);
+    request.writeStringParameter("Metadata", Metadata);
     request.send(function(result){
 		result["NewTrackId"] = OhNet.SoapRequest.readIntParameter(result["NewTrackId"]);	
 	

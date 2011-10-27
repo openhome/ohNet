@@ -227,12 +227,11 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistArraysChanged)(void* a
  * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aTrackId
- * @param[out] aUdn
  * @param[out] aMetadata
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1Read)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aTrackId, char** aUdn, char** aMetadata);
+typedef int32_t (STDCALL *CallbackPlaylistManager1Read)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aTrackId, char** aMetadata);
 /**
  * Callback which runs when the ReadList action is invoked
  *
@@ -256,13 +255,12 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1ReadList)(void* aPtr, IDvInvoc
  * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
  * @param[in]  aId
  * @param[in]  aAfterTrackId
- * @param[in]  aUdn
  * @param[in]  aMetadata
  * @param[out] aNewTrackId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1Insert)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aAfterTrackId, const char* aUdn, const char* aMetadata, uint32_t* aNewTrackId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1Insert)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aId, uint32_t aAfterTrackId, const char* aMetadata, uint32_t* aNewTrackId);
 /**
  * Callback which runs when the DeleteId action is invoked
  *

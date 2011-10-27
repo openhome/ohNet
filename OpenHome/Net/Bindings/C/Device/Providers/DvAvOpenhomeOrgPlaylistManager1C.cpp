@@ -418,7 +418,6 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionRead(CallbackPlaylist
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
-    action->AddOutputParameter(new ParameterString("Udn"));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead);
     iService->AddAction(action, functor);
@@ -443,7 +442,6 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionInsert(CallbackPlayli
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Insert");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("AfterTrackId"));
-    action->AddInputParameter(new ParameterString("Udn"));
     action->AddInputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     action->AddOutputParameter(new ParameterUint("NewTrackId"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert);
@@ -846,20 +844,14 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocatio
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
-    char* Udn;
     char* Metadata;
     ASSERT(iCallbackRead != NULL);
-    if (0 != iCallbackRead(iPtrRead, invocationC, invocationCPtr, Id, TrackId, &Udn, &Metadata)) {
+    if (0 != iCallbackRead(iPtrRead, invocationC, invocationCPtr, Id, TrackId, &Metadata)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
-    DviInvocationResponseString respUdn(aInvocation, "Udn");
     DviInvocationResponseString respMetadata(aInvocation, "Metadata");
     invocation.StartResponse();
-    Brhz bufUdn((const TChar*)Udn);
-    OhNetFreeExternal(Udn);
-    respUdn.Write(bufUdn);
-    respUdn.WriteFlush();
     Brhz bufMetadata((const TChar*)Metadata);
     OhNetFreeExternal(Metadata);
     respMetadata.Write(bufMetadata);
@@ -903,15 +895,13 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocat
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     TUint AfterTrackId = aInvocation.InvocationReadUint("AfterTrackId");
-    Brhz Udn;
-    aInvocation.InvocationReadString("Udn", Udn);
     Brhz Metadata;
     aInvocation.InvocationReadString("Metadata", Metadata);
     aInvocation.InvocationReadEnd();
     DviInvocation invocation(aInvocation);
     uint32_t NewTrackId;
     ASSERT(iCallbackInsert != NULL);
-    if (0 != iCallbackInsert(iPtrInsert, invocationC, invocationCPtr, Id, AfterTrackId, (const char*)Udn.Ptr(), (const char*)Metadata.Ptr(), &NewTrackId)) {
+    if (0 != iCallbackInsert(iPtrInsert, invocationC, invocationCPtr, Id, AfterTrackId, (const char*)Metadata.Ptr(), &NewTrackId)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
