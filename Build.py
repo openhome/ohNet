@@ -137,10 +137,10 @@ def getArguments(module,nightly,arch,valgrind,os):
     args = ' --silent'
     if arch == 'arm':
         args += ' --buildonly'
-    elif arch == 'macos':
-        args += ' --buildonly'
     elif arch == 'x64':
         args += ' --native'
+    if os == 'MacOS':
+	args += ' --buildonly'
     if os == 'Windows' and arch == 'x86':
         args += ' --js --java'
     if os == 'Windows' or nightly == '1':
