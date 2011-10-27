@@ -241,7 +241,12 @@ void Thread::Sleep(TUint aMilliSecs)
 
 Thread* Thread::Current()
 { // static
-    return (Thread*)OpenHome::Os::ThreadTls();
+    void* ptr = OpenHome::Os::ThreadTls();
+
+    if ( ptr == NULL )
+        THROW(ThreadUnknown);
+
+    return (Thread*) ptr;
 }
 
 TBool Thread::SupportsPriorities()
