@@ -96,7 +96,7 @@ def getEnvironment():
 
     # Check whether we can run valgrind
 
-    if ostype == "Windows" or (ostype == "Linux" and arch != "x86"):
+    if ostype == "Windows" or (ostype == "Linux" and arch != "x86") or ostype == "MacOS":
         valgrind = "0"
     else:
         valgrind = ''
