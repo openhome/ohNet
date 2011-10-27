@@ -837,7 +837,7 @@ int32_t OsNetworkListAdapters(OsNetworkAdapter** aAdapters, uint32_t aUseLoopbac
     OsNetworkAdapter* head = NULL;
     OsNetworkAdapter* tail = NULL;
     while (iter != NULL) {
-        if (iteriter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
+        if (iter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
             (includeLoopback == 0 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ||
             (aUseLoopback == 1 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr)) {
             iter = iter->ifa_next;
