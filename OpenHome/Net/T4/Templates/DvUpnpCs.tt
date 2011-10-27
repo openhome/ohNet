@@ -100,7 +100,7 @@ namespace OpenHome.Net.Device.Providers
         /// </summary>
         public void EnableProperty<#=s.name#>()
         {
-<#      if (s.type == "string") #>
+<#      if (s.type == "string" || s.type == "uri") #>
 <#      { #>
             List<String> allowedValues = new List<String>();
 <#      } #>

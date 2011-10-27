@@ -77,6 +77,11 @@ def getEnvironment():
         tool = 'env'
         ostype = 'Linux'
         arch = 'x86'
+		
+    elif Label == 'macos':
+        tool = 'env'
+        ostype = 'MacOS'
+        arch = 'x86'
 
     elif Label == 'windows-x86':
         tool = 'call vcvarsall.bat && (set LOCALAPPDATA=C:\Documents and Settings\Administrator\Local Settings\Application Data)'
@@ -91,7 +96,7 @@ def getEnvironment():
 
     # Check whether we can run valgrind
 
-    if ostype == "Windows" or (ostype == "Linux" and arch != "x86"):
+    if ostype == "Windows" or (ostype == "Linux" and arch != "x86") or ostype == "MacOS":
         valgrind = "0"
     else:
         valgrind = ''
@@ -134,6 +139,8 @@ def getArguments(module,nightly,arch,valgrind,os):
         args += ' --buildonly'
     elif arch == 'x64':
         args += ' --native'
+    if os == 'MacOS':
+	args += ' --buildonly'
     if os == 'Windows' and arch == 'x86':
         args += ' --js --java'
     if os == 'Windows' or nightly == '1':
