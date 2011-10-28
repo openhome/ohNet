@@ -1,7 +1,7 @@
-Zapp library
+ohNet library
 ------------
  
-Zapp is a library for the discovery, monitoring, manipulation and implementation
+ohNet is a library for the discovery, monitoring, manipulation and implementation
 of UPnP devices, generalized to be extensible to other similar protocols.
 
 Prerequisites
@@ -11,29 +11,20 @@ On Windows:
 	Microsoft Visual Studio
 	(Express versions are okay. Not sure what is the minimum version.)
 	Microsoft .NET 3.5 SDK (optional, required for changes to service descriptions)
+    Java (optional, required for building Java bindings)
 
 On Linux:
 	Mono (optional, required for changes to service descriptions)
+    Java (optional, required for building Java bindings)
 
 Building
 --------
 
-On windows, in the UPnP directory, run:
+    make
+
+If you have a .NET runtime available and want to regenerate makefiles, proxies or providers, run
 	make generate-makefiles uset4=yes
 	make uset4=yes
-The first step is only required if the service XML or the associated templates have
-been altered. If you have a clean distribution or you have never touched these files,
-there's no need to run it, but it should not hurt.
-
-On Linux, in the UPnP directory, run:
-	make uset4=yes
-
-Any time make builds the T4 template compiler it will conservatively consider all the
-template-generated files to be out of date and rebuild them. This can be very time-
-consuming and is generally unnecessary. To avoid rebuilding these files, just run:
-	make
-
-Without the "uset4=yes" setting, it will skip out the template generation.
 
 Installing
 ----------
@@ -53,39 +44,33 @@ Build/Obj/Posix/
 Build/Tools/
 	Binaries that are required by the build process are built to here.
 
-Build/Include/
+Build/Include/OpenHome
 	Header files needed by users of the library are copied here during the build.
 
-Generated/
-	Files that come with the distribution but which are generated from
-	templates and can be rebuilt if they are deleted.
+Build/Include/OpenHome/Net/C
+	Header files for C language bindings.
 
-Scripts/
-	Scripts that are needed by the build process.
+Build/Include/OpenHome/Net/Cpp
+	Header files for C language bindings.
 
-T4/
-	Files related to template-based generation of source and makefiles.
+Build/Include/OpenHome/Net/Core
+Build/Include/OpenHome/Net/Private
+	Not intended for external use.
 
-T4/Templates/
-	Templates for source and makefiles.
+OpenHome
+    Base source code.
 
-Api/
-Arch/
-Buffer/
-ControlPoint/
-Device/
-Exception/
-Network/
-Os/
-Public/
-Service/
-Ssdp/
-TestFramework/
-Thread/
-Timer/
-Utils/
-	Source code. (TODO: Describe this better. I've not actually looked through
-	the source enough to really understand what goes where. --andreww)
+OpenHome/Net
+    Source code shared by Control Point and Device stacks.
+
+OpenHome/Net/ControlPoint
+    Control Point stack.
+
+OpenHome/Net/Device
+    Device stack.
+
+OpenHome/Net/Bindings
+    Language bindings (for C++, C#, Java, JavaScript & C).
 
 
 Make targets
@@ -93,6 +78,12 @@ Make targets
 
 all
 	This is the default target. It (should) build everything.
+
+ohNet.net.dll
+    ohNet as a dll / sharded object plus C# bindings
+
+ohNetJavaAll
+    ohNet as a dll / sharded object plus Java bindings
 
 generate-makefiles
 	This regenerates the makefiles in Generated/ that are derived from the
@@ -116,6 +107,3 @@ mostlyclean
 maintainer-clean
 	Also removes Build/Tools/
 	(Should - but doesn't yet - remove auto-generated source files too.)
-
-
-
