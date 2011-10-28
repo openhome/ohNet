@@ -78,7 +78,7 @@ def getEnvironment():
         ostype = 'Linux'
         arch = 'x86'
 		
-    elif Label == 'macos':
+    elif Label == 'macos-x64':
         tool = 'env'
         ostype = 'MacOS'
         arch = 'x86'
