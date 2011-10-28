@@ -611,7 +611,7 @@ void CpiSubscriptionManager::SubnetListChanged()
     HandleInterfaceChange(true);
 }
 
-void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
+void CpiSubscriptionManager::HandleInterfaceChange(TBool /*aNewSubnet*/)
 {
     iLock.Wait();
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
@@ -632,6 +632,10 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
         currentInterface->RemoveRef();
     }
 
+    // don't worry about updating existing/pending subscriptions
+    // instead rely on device list updates prompting proxies to be deleted
+    //...which in turn will unsubscribe/delete the existing/pending subscriptions
+#if 0
     // take a note of all active and pending subscriptions
     Map activeSubscriptions;
     Map::iterator it = iMap.begin();
@@ -644,9 +648,11 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
         pendingSubscriptions.push_back(iPendingSubscriptions[i]);
     }
+#endif
 
     iLock.Signal();
 
+#if 0
     if (!aNewSubnet) {
         // resubscribe any pending subscriptions
         for (TUint i=0; i<pendingSubscriptions.size(); i++) {
@@ -672,6 +678,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
             it++;
         }
     }
+#endif
 }
 
 void CpiSubscriptionManager::Run()
