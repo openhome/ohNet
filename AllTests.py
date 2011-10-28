@@ -40,7 +40,7 @@ def runBuilds():
             cleanCmd = 'make clean'
         os.system(cleanCmd)
     build('all')
-    if (gRunJavaTests == 1):
+    if (os.environ.has_key('JAVA_HOME')):
         build('ohNetJavaAll')
     print '\nBuilds complete'
 
