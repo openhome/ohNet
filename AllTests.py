@@ -41,6 +41,8 @@ def runBuilds():
         os.system(cleanCmd)
     build('all')
     if (os.environ.has_key('JAVA_HOME')):
+        build('ohNetJni')
+    if (gRunJavaTests == 1):
         build('ohNetJavaAll')
     print '\nBuilds complete'
 
