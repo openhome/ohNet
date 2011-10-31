@@ -17,7 +17,7 @@ ifeq ($(mac-arm),1)
 	sdkroot=$(devroot)/SDKs/iPhoneOS4.3.sdk
 	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
 	# It seems a bit weird that iOS uses a sub-dir of Build/Obj/Mac, is that deliberate? --AW
-	osdir = Mac/arm
+	osbuilddir = Mac/arm
 	objdir = Build/Obj/Mac/arm/$(build_dir)/
 	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv6  -L$(sdkroot)/usr/lib/system
 	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv6 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -o $(objdir)
@@ -29,7 +29,7 @@ else
 	# Darwin, not ARM -> Intel Mac
 	platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
 	platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
-	osdir = Mac
+	osbuilddir = Mac
 	objdir = Build/Obj/Mac/$(build_dir)/
 	compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
 	link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
@@ -46,6 +46,7 @@ ifeq ($(platform), Core)
 	freertoslwipdir ?= ${FREERTOSLWIP}
 	platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403 -g
 	platform_linkflags = -B$(freertoslwipdir)/lib/ -specs bsp_specs -mcpu=403
+	osbuilddir = Volkano2
 	osdir = Volkano2
 	endian = BIG
 endif
@@ -54,6 +55,7 @@ ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
 	platform_cflags = -Wno-psabi -fPIC
 	platform_linkflags = -lpthread
+	osbuilddir = Posix
 	osdir = Posix
 	endian = LITTLE
 endif
@@ -268,7 +270,7 @@ bundle: tt
 ifeq ($(targetplatform),)
 	echo Usage: make bundle targetplatform=Linux-x86
 else
-	python bundle_binaries.py $(osdir) $(targetplatform)
+	python bundle_binaries.py $(osbuilddir) $(targetplatform)
 endif
 
 bundle-dev: tt
@@ -276,5 +278,5 @@ bundle-dev: tt
 ifeq ($(targetplatform),)
 	echo Usage: make bundle-dev targetplatform=Linux-x86
 else
-	python bundle_binaries.py --dev $(osdir) $(targetplatform)
+	python bundle_binaries.py --dev $(osbuilddir) $(targetplatform)
 endif
