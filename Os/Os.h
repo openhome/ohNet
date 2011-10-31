@@ -187,7 +187,6 @@ void OsMutexDestroy(THandle aMutex);
  * Lock a mutex.
  *
  * Will block indefinitely if another thread has the mutex locked.
- * Recursive locking must be supported
  *
  * @param[in] aMutex  Mutex handle returned from MutexCreate()
  *

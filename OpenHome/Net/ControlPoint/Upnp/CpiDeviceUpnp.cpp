@@ -496,9 +496,11 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 
     iInterface = current->Address();
     current->RemoveRef();
-    if (aNewSubnet) {
-        RemoveAll();
-    }
+
+    // we used to only remove devices for subnet changes
+    // its not clear why this is correct - any interface change will result in control/event urls changing
+    RemoveAll();
+    
     iUnicastListener = new SsdpListenerUnicast(*this, iInterface);
     iUnicastListener->Start();
     iMulticastListener = &Stack::MulticastListenerClaim(iInterface);
