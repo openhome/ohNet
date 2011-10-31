@@ -198,23 +198,32 @@ private:
 
 // general udp socket;
 
-class SocketUdp : public Socket
+class SocketUdpBase : public Socket
+{
+public:
+    void SetTtl(TUint aTtl);
+    void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
+    Endpoint Receive(Bwx& aBuffer);
+    TUint Port() const;
+    ~SocketUdpBase();
+protected:
+    SocketUdpBase();
+protected:
+    TUint iPort;
+};
+
+class SocketUdp : public SocketUdpBase
 {
 public:
     SocketUdp(); // lets the os select a port
     SocketUdp(TUint aPort); // stipulate a port
     SocketUdp(TUint aPort, TIpAddress aInterface); // stipulate a port and an interface
-    void SetTtl(TUint aTtl);
-    void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
-    Endpoint Receive(Bwx& aBuffer);
-    TUint Port() const;
-    ~SocketUdp();
-protected:
-    TUint iPort;
+private:
+    void Bind(TUint aPort, TIpAddress aInterface);
 };
 
 // multicast receiver
-class SocketUdpMulticast : public SocketUdp
+class SocketUdpMulticast : public SocketUdpBase
 {
 public:
     SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint);
@@ -232,13 +241,13 @@ private:
 class UdpReader : public IReaderSource, public INonCopyable
 {
 public:
-    UdpReader(SocketUdp& aSocket);
+    UdpReader(SocketUdpBase& aSocket);
     Endpoint Sender() const; // sender of last completed Read()
     virtual void Read(Bwx& aBuffer);
     virtual void ReadFlush();
     virtual void ReadInterrupt();
 protected:
-    SocketUdp& iSocket;
+    SocketUdpBase& iSocket;
 private:
     Endpoint iSender;
     TBool iOpen;
@@ -251,12 +260,12 @@ private:
 class UdpWriter : public IWriter, public INonCopyable
 {
 public:
-    UdpWriter(SocketUdp& aSocket, const Endpoint& aEndpoint);
+    UdpWriter(SocketUdpBase& aSocket, const Endpoint& aEndpoint);
     virtual void Write(TByte aValue);
     virtual void Write(const Brx& aBuffer);
     virtual void WriteFlush();
 private:
-    SocketUdp& iSocket;
+    SocketUdpBase& iSocket;
     Endpoint iEndpoint;
     TBool iOpen;
 };

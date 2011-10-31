@@ -383,6 +383,12 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
     return err;
 }
 
+int32_t OsNetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, TIpAddress aMulticast, uint32_t aPort)
+{
+    aMulticast = aMulticast; // suppress warning C2055
+    return OsNetworkBind(aHandle, aAdapter, aPort);
+}
+
 int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort)
 {
     int32_t err;
