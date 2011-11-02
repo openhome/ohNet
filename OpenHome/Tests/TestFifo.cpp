@@ -170,16 +170,16 @@ void Writer1::Run()
     iCaller.Signal();
 }
 
-void MultipleWriteTest(TUint aRPriority, TUint aW0Priority, TUint aW1Priority)
+void MultipleWriteTest(Thread& aCurrentThread, TUint aRPriority, TUint aW0Priority, TUint aW1Priority)
 {
     const TUint writer0Iters = 300;
     const TUint writer1Iters = 500;
     FifoTest q(32);
-    Writer0 writer0(q, *Thread::Current(),  writer0Iters);
+    Writer0 writer0(q, aCurrentThread,  writer0Iters);
     Functor fWriter0 = MakeFunctor(writer0, &Writer0::Run);
-    Writer1 writer1(q, *Thread::Current(), writer1Iters);
+    Writer1 writer1(q, aCurrentThread, writer1Iters);
     Functor fWriter1 = MakeFunctor(writer1, &Writer1::Run);
-    Reader reader(q, *Thread::Current(), writer0Iters + writer1Iters);
+    Reader reader(q, aCurrentThread, writer0Iters + writer1Iters);
     Functor fReader = MakeFunctor(reader, &Reader::Run);
 
     ThreadFunctor* tReader0 = new ThreadFunctor("TSTA", fReader, aRPriority);
@@ -189,11 +189,9 @@ void MultipleWriteTest(TUint aRPriority, TUint aW0Priority, TUint aW1Priority)
     tWriter0->Start();
     tWriter1->Start();
 
-    Thread* th = Thread::Current();
-    ASSERT(th != NULL);
-    th->Wait();
-    th->Wait();
-    th->Wait();
+    aCurrentThread.Wait();
+    aCurrentThread.Wait();
+    aCurrentThread.Wait();
 
     // The worker threads should be ready to remove.
     delete tReader0;
@@ -220,23 +218,23 @@ private:
 void ThreadSafetyTests::Run()
 {
     Print("\n\nTestA\n\n");
-    MultipleWriteTest(kPriorityNormal, kPriorityNormal, kPriorityNormal);
+    MultipleWriteTest(*this, kPriorityNormal, kPriorityNormal, kPriorityNormal);
     Print("\n\nTestB\n\n");
-    MultipleWriteTest(kPriorityNormal, kPriorityLow, kPriorityHigh);
+    MultipleWriteTest(*this, kPriorityNormal, kPriorityLow, kPriorityHigh);
     Print("\n\nTestC\n\n");
-    MultipleWriteTest(kPriorityNormal, kPriorityHigh, kPriorityLow);
+    MultipleWriteTest(*this, kPriorityNormal, kPriorityHigh, kPriorityLow);
     Print("\n\nTestD\n\n");
-    MultipleWriteTest(kPriorityLow, kPriorityNormal, kPriorityNormal);
+    MultipleWriteTest(*this, kPriorityLow, kPriorityNormal, kPriorityNormal);
     Print("\n\nTestE\n\n");
-    MultipleWriteTest(kPriorityLow, kPriorityNormal, kPriorityHigh);
+    MultipleWriteTest(*this, kPriorityLow, kPriorityNormal, kPriorityHigh);
     Print("\n\nTestF\n\n");
-    MultipleWriteTest(kPriorityLow, kPriorityHigh, kPriorityNormal);
+    MultipleWriteTest(*this, kPriorityLow, kPriorityHigh, kPriorityNormal);
     Print("\n\nTestG\n\n");
-    MultipleWriteTest(kPriorityHigh, kPriorityNormal, kPriorityNormal);
+    MultipleWriteTest(*this, kPriorityHigh, kPriorityNormal, kPriorityNormal);
     Print("\n\nTestH\n\n");
-    MultipleWriteTest(kPriorityHigh, kPriorityLow, kPriorityNormal);
+    MultipleWriteTest(*this, kPriorityHigh, kPriorityLow, kPriorityNormal);
     Print("\n\nTestI\n\n");
-    MultipleWriteTest(kPriorityHigh, kPriorityNormal, kPriorityLow);
+    MultipleWriteTest(*this, kPriorityHigh, kPriorityNormal, kPriorityLow);
 
     iSem.Signal();
 }
