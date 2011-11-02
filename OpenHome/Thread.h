@@ -122,7 +122,7 @@ public:
     static const Brx& CurrentThreadName();
 
     /**
-     * Return a reference to the current thread.
+     * Return a pointer to the current thread, or NULL if running in a non-OpenHome thread.
      */
     static Thread* Current();
 

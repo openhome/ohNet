@@ -107,6 +107,7 @@ TimerManager::TimerManager()
     , iStop(false)
     , iStopped("MTS2", 0)
     , iCallbackMutex("TMCB")
+    , iThreadHandle(NULL)
 {
     LOG(kTimer, ">TimerManager::TimerManager()\n");
     iThread = new ThreadFunctor("TIMM", MakeFunctor(*this, &TimerManager::Run), kPriorityHigh);
@@ -231,7 +232,7 @@ void TimerManager::Fire()
 
 OpenHome::Thread* TimerManager::Thread() const
 {
-    return iThread;
+    return iThreadHandle;
 }
 
 TInt TimerManager::Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2)
@@ -241,6 +242,7 @@ TInt TimerManager::Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2)
 
 void TimerManager::Run()
 {
+    iThreadHandle = Thread::Current();
     iSemaphore.Wait();
     iMutex.Wait();
     while (!iStop) {

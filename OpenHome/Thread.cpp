@@ -85,7 +85,7 @@ void Mutex::Wait()
         Brhz thBuf;
         Bws<5> thName(Thread::CurrentThreadName());
         thName.PtrZ();
-        Log::Print("ERROR: %s %s from thread %s\n", msg, iName, thName);
+        Log::Print("ERROR: %s %s from thread %s\n", msg, iName, thName.Ptr());
         ASSERT(err == 0);
     }
 }
@@ -240,21 +240,20 @@ void Thread::Sleep(TUint aMilliSecs)
 
 const Brx& Thread::CurrentThreadName()
 { // static
-    void* th = OpenHome::Os::ThreadTls();
+    Thread* th = Current();
     if (th == NULL) {
         return kThreadNameUnknown;
     }
-    return ((Thread*)th)->iName;
+    return th->iName;
 }
 
 Thread* Thread::Current()
 { // static
-    void* ptr = OpenHome::Os::ThreadTls();
-
-    if ( ptr == NULL )
-        THROW(ThreadUnknown);
-
-    return (Thread*) ptr;
+    void* th = OpenHome::Os::ThreadTls();
+    if (th == NULL) {
+        return NULL;
+    }
+    return (Thread*)th;
 }
 
 TBool Thread::SupportsPriorities()

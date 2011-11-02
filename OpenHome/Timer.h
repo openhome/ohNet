@@ -68,6 +68,7 @@ private:
     TBool iStop;
     Semaphore iStopped;
     Mutex iCallbackMutex;
+    OpenHome::Thread* iThreadHandle;
 };
 
 } // namespace OpenHome
