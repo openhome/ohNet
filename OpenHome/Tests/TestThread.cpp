@@ -536,10 +536,10 @@ void SuiteMutex::Test()
     mutex.Wait();
     MutexThread* mutexTh = new MutexThread(mutex, count);
     mutexTh->Start();
-    Thread::Current()->Sleep(kSleepMs);
+    Thread::Sleep(kSleepMs);
     TEST(count == 1);
     mutex.Signal();
-    Thread::Current()->Sleep(kSleepMs);
+    Thread::Sleep(kSleepMs);
     TEST(count == 2);
     delete mutexTh;
 }
