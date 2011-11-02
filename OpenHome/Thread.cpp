@@ -6,6 +6,8 @@
 
 using namespace OpenHome;
 
+static const Brn kThreadNameUnknown("____");
+
 //
 // Semaphore
 //
@@ -81,15 +83,8 @@ void Mutex::Wait()
             msg = "Lock attempted on uninitialised mutex";
         }    
         Brhz thBuf;
-        const char* thName = "unknown";
-        try {
-            Thread* th = Thread::Current();
-            if (th != NULL) {
-                thBuf.Set(th->Name());
-                thName = (const char*)thBuf.Ptr();
-            }    
-        }
-        catch (ThreadUnknown&) {}
+        Bws<5> thName(Thread::CurrentThreadName());
+        thName.PtrZ();
         Log::Print("ERROR: %s %s from thread %s\n", msg, iName, thName);
         ASSERT(err == 0);
     }
@@ -241,6 +236,15 @@ void Thread::Sleep(TUint aMilliSecs)
         sem.Wait(aMilliSecs);
     }
     catch(Timeout&) {}
+}
+
+const Brx& Thread::CurrentThreadName()
+{ // static
+    void* th = OpenHome::Os::ThreadTls();
+    if (th == NULL) {
+        return kThreadNameUnknown;
+    }
+    return ((Thread*)th)->iName;
 }
 
 Thread* Thread::Current()
