@@ -333,9 +333,9 @@ private:
 void TimesliceTestThread::Run()
 {
     // Starting Normal Timeslicing Conditions ...
-    ThreadMonitor *tm1 = new ThreadMonitor( (kSuitePriority-1), kThreadMonitorPeriodMs, false, *Thread::Current() );
+    ThreadMonitor *tm1 = new ThreadMonitor((kSuitePriority-1), kThreadMonitorPeriodMs, false, *this);
     tm1->Start();
-    Thread::Current()->Wait();
+    Wait();
     iSem.Signal();
 }
 
@@ -696,14 +696,13 @@ void MainTestThread::Run()
     }
     runner.Run();
 
-    Thread::Current()->Signal();
+    Signal();
 }
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
-    // many tests rely on Thread::Current() so run all tests in a thread we create
     Thread* th = new MainTestThread();
     th->Start();
     th->Wait();
