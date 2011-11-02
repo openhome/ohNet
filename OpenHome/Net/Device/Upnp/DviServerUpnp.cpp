@@ -414,71 +414,64 @@ DviSessionUpnp::~DviSessionUpnp()
 void DviSessionUpnp::Run()
 {
     iShutdownSem.Wait();
+    iErrorStatus = &HttpStatus::kOk;
+    iReaderRequest->Flush();
+    iWriterChunked->SetChunked(false);
+    iInvocationService = NULL;
+        iResourceWriterHeadersOnly = false;
+    // check headers
     try {
-        iErrorStatus = &HttpStatus::kOk;
-        iReaderRequest->Flush();
-        iWriterChunked->SetChunked(false);
-        iInvocationService = NULL;
-            iResourceWriterHeadersOnly = false;
-        // check headers
         try {
-            try {
-                iReaderRequest->Read(kReadTimeoutMs);
-            }
-            catch (HttpError&) {
-                Error(HttpStatus::kBadRequest);
-            }
-            if (iReaderRequest->MethodNotAllowed()) {
-                Error(HttpStatus::kMethodNotAllowed);
-            }
-            const Brx& method = iReaderRequest->Method();
-            iResponseStarted = false;
-            iResponseEnded = false;
-            if (method == Http::kMethodGet) {
-                Get();
-            }
-                    else if (method == Http::kMethodHead) {
-                            iResourceWriterHeadersOnly = true;
-                            Get();
-                    }
-            else if (method == Http::kMethodPost) {
-                Post();
-            }
-            else if (method == kUpnpMethodSubscribe) {
-                Subscribe();
-            }
-            else if (method == kUpnpMethodUnsubscribe) {
-                Unsubscribe();
-            }
+            iReaderRequest->Read(kReadTimeoutMs);
         }
         catch (HttpError&) {
-            iErrorStatus = &HttpStatus::kMethodNotAllowed;
+            Error(HttpStatus::kBadRequest);
         }
-        catch (ReaderError&) {
-            iErrorStatus = &HttpStatus::kBadRequest;
+        if (iReaderRequest->MethodNotAllowed()) {
+            Error(HttpStatus::kMethodNotAllowed);
         }
-        catch (WriterError&) {
+        const Brx& method = iReaderRequest->Method();
+        iResponseStarted = false;
+        iResponseEnded = false;
+        if (method == Http::kMethodGet) {
+            Get();
         }
-        try {
-            if (!iResponseStarted) {
-                if (iErrorStatus == &HttpStatus::kOk) {
-                    iErrorStatus = &HttpStatus::kNotFound;
+                else if (method == Http::kMethodHead) {
+                        iResourceWriterHeadersOnly = true;
+                        Get();
                 }
-                iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-                Http::WriteHeaderConnectionClose(*iWriterResponse);
-                iWriterResponse->WriteFlush();
-            }
-            else if (!iResponseEnded) {
-                iWriterResponse->WriteFlush();
-            }
+        else if (method == Http::kMethodPost) {
+            Post();
         }
-        catch (WriterError&) {}
+        else if (method == kUpnpMethodSubscribe) {
+            Subscribe();
+        }
+        else if (method == kUpnpMethodUnsubscribe) {
+            Unsubscribe();
+        }
     }
-    catch (Exception& e)
-    {
-        Log::Print("Unexpected exception in file %s at line %d:\n%s\n", e.File(), e.Line(), e.Message());
-        ASSERTS();
+    catch (HttpError&) {
+        iErrorStatus = &HttpStatus::kMethodNotAllowed;
     }
+    catch (ReaderError&) {
+        iErrorStatus = &HttpStatus::kBadRequest;
+    }
+    catch (WriterError&) {
+    }
+    try {
+        if (!iResponseStarted) {
+            if (iErrorStatus == &HttpStatus::kOk) {
+                iErrorStatus = &HttpStatus::kNotFound;
+            }
+            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
+            Http::WriteHeaderConnectionClose(*iWriterResponse);
+            iWriterResponse->WriteFlush();
+        }
+        else if (!iResponseEnded) {
+            iWriterResponse->WriteFlush();
+        }
+    }
+    catch (WriterError&) {}
     iShutdownSem.Signal();
 }
 
