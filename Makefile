@@ -20,48 +20,59 @@ endif
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
 ifeq ($(mac-arm),1)
-devroot=/Developer/Platforms/iPhoneOS.platform/Developer
-sdkroot=$(devroot)/SDKs/iPhoneOS4.3.sdk
-platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
-objdir = Build/Obj/Mac/arm/$(build_dir)/
-platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv6  -L$(sdkroot)/usr/lib/system
-compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv6 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -o $(objdir)
-# No support for linking Shared Objects for ARM MAC
-# link = $(devroot)/usr/bin/llvm-gcc-4.2  -lpthread -Wl $(platform_linkflags)
-ar = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar rc $(objdir)
+	# Darwin, ARM -> iOS
+	devroot=/Developer/Platforms/iPhoneOS.platform/Developer
+	sdkroot=$(devroot)/SDKs/iPhoneOS4.3.sdk
+	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
+	# It seems a bit weird that iOS uses a sub-dir of Build/Obj/Mac, is that deliberate? --AW
+	osbuilddir = Mac/arm
+	objdir = Build/Obj/Mac/arm/$(build_dir)/
+	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv6  -L$(sdkroot)/usr/lib/system
+	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv6 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -o $(objdir)
+	# No support for linking Shared Objects for ARM MAC
+	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -lpthread -Wl $(platform_linkflags)
+	ar = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar rc $(objdir)
 
 else
-platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
-platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
-objdir = Build/Obj/Mac/$(build_dir)/
-compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
-ar = ${CROSS_COMPILE}ar rc $(objdir)
+	# Darwin, not ARM -> Intel Mac
+	platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
+	platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
+	osbuilddir = Mac
+	objdir = Build/Obj/Mac/$(build_dir)/
+	compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
+	link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
+	ar = ${CROSS_COMPILE}ar rc $(objdir)
 
 endif
 else
-
-platform ?= Kirkwood
+	# Not Darwin
+	platform ?= Vanilla
+	# At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
 
 ifeq ($(platform), Core)
-freertoslwipdir ?= ${FREERTOSLWIP}
-platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403 -g
-platform_linkflags = -B$(freertoslwipdir)/lib/ -specs bsp_specs -mcpu=403
-osdir = Volkano2
-endian = BIG
+	# platform == Core
+	freertoslwipdir ?= ${FREERTOSLWIP}
+	platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403 -g
+	platform_linkflags = -B$(freertoslwipdir)/lib/ -specs bsp_specs -mcpu=403
+	osbuilddir = Volkano2
+	osdir = Volkano2
+	endian = BIG
 endif
 
-ifeq ($(platform), Kirkwood)
-platform_cflags = -Wno-psabi -fPIC
-platform_linkflags = -lpthread
-osdir = Posix
-endian = LITTLE
+ifeq ($(platform), Vanilla)
+	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
+	platform_cflags = -Wno-psabi -fPIC
+	platform_linkflags = -lpthread
+	osbuilddir = Posix
+	osdir = Posix
+	endian = LITTLE
 endif
 
-objdir = Build/Obj/$(osdir)/$(build_dir)/
-compiler = ${CROSS_COMPILE}gcc -o $(objdir)
-link = ${CROSS_COMPILE}g++ $(platform_linkflags)
-ar = ${CROSS_COMPILE}ar rc $(objdir)
+	# Continuing with the non-Darwin settings...
+	objdir = Build/Obj/$(osdir)/$(build_dir)/
+	compiler = ${CROSS_COMPILE}gcc -o $(objdir)
+	link = ${CROSS_COMPILE}g++ $(platform_linkflags)
+	ar = ${CROSS_COMPILE}ar rc $(objdir)
 
 endif
 
@@ -267,7 +278,7 @@ bundle: tt
 ifeq ($(targetplatform),)
 	echo Usage: make bundle targetplatform=Linux-x86
 else
-	python bundle_binaries.py Posix $(targetplatform)
+	python bundle_binaries.py $(osbuilddir) $(targetplatform)
 endif
 
 bundle-dev: tt
@@ -275,5 +286,5 @@ bundle-dev: tt
 ifeq ($(targetplatform),)
 	echo Usage: make bundle-dev targetplatform=Linux-x86
 else
-	python bundle_binaries.py --dev Posix $(targetplatform)
+	python bundle_binaries.py --dev $(osbuilddir) $(targetplatform)
 endif

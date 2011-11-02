@@ -496,6 +496,11 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
     return err;
 }
 
+int32_t OsNetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, TIpAddress aMulticast, uint32_t aPort)
+{
+    return OsNetworkBind(aHandle, aMulticast, aPort);
+}
+
 int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort)
 {
     int32_t err;

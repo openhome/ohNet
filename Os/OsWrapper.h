@@ -41,6 +41,7 @@ public:
     inline static TBool ThreadSupportsPriorities();
     static THandle NetworkCreate(ESocketType aSocketType);
     static TInt NetworkBind(THandle aHandle, const Endpoint& aEndpoint);
+    static TInt NetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, const Endpoint& aMulticast);
     static TInt NetworkPort(THandle aHandle, TUint& aPort);
     static void NetworkConnect(THandle aHandle, const Endpoint& aEndpoint, TUint aTimeoutMs);
     inline static TInt NetworkSend(THandle aHandle, const Brx& aBuffer);

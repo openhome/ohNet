@@ -299,6 +299,18 @@ THandle OsNetworkCreate(OsNetworkSocketType aSocketType);
 int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort);
 
 /**
+ * Assign a name to a multicast socket.
+ *
+ * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
+ * @param[in] aAddress     IpV4 address (in network byte order)
+ * @param[in] aMulticast   IpV4 address (in network byte order)
+ * @param[in] aPort        Port [0..65535].  If 0 is passed, this will be set to the port the OS selects
+ *
+ * @return  0 on success; -2 if the name is already in use; -1 on any other failure
+ */
+int32_t OsNetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, TIpAddress aMulticast, uint32_t aPort);
+
+/**
  * Get the socket port.
  *
  * This is equivalent to the BSD bind() function

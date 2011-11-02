@@ -662,78 +662,89 @@ SocketTcpSession::~SocketTcpSession()
     LOGF(kNetwork, "<SocketTcpSession::~SocketTcpSession\n");
 }
 
-// SocketUdp
 
-SocketUdp::SocketUdp()
+// SocketUdpBase
+
+SocketUdpBase::SocketUdpBase()
 {
-    LOGF(kNetwork, "> SocketUdp::SocketUdp\n");
+    LOGF(kNetwork, "> SocketUdpBase::SocketUdpBase\n");
     iHandle = SocketCreate(eSocketTypeDatagram);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
-    Bind(Endpoint(0, 0));
-    GetPort(iPort);
-    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+    LOGF(kNetwork, "< SocketUdpBase::SocketUdpBase H = %d\n", iHandle);
 }
 
-SocketUdp::SocketUdp(TUint aPort)
-{
-    LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
-    iHandle = SocketCreate(eSocketTypeDatagram);
-    OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
-    Bind(Endpoint(aPort, 0));
-    GetPort(iPort);
-    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
-}
-
-SocketUdp::SocketUdp(TUint aPort, TIpAddress aInterface)
-{
-    LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
-    iHandle = SocketCreate(eSocketTypeDatagram);
-    OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
-    Bind(Endpoint(aPort, aInterface));
-    GetPort(iPort);
-    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
-}
-
-void SocketUdp::SetTtl(TUint aTtl)
+void SocketUdpBase::SetTtl(TUint aTtl)
 {
     LOGF(kNetwork, "> SocketUdp::SetTtl T = %d\n", aTtl);
     OpenHome::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     LOGF(kNetwork, "< SocketUdp::SetTtl\n");
 }
 
-SocketUdp::~SocketUdp()
+SocketUdpBase::~SocketUdpBase()
 {
     Close();
 }
 
-TUint SocketUdp::Port() const
+TUint SocketUdpBase::Port() const
 {
     return iPort;;
 }
 
-void SocketUdp::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
+void SocketUdpBase::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    LOGF(kNetwork, "> SocketUdp::Send\n");
+    LOGF(kNetwork, "> SocketUdpBase::Send\n");
     SendTo(aBuffer, aEndpoint);
 }
 
-Endpoint SocketUdp::Receive(Bwx& aBuffer)
+Endpoint SocketUdpBase::Receive(Bwx& aBuffer)
 {
-    LOGF(kNetwork, "> SocketUdp::Receive\n");
+    LOGF(kNetwork, "> SocketUdpBase::Receive\n");
     Endpoint endpoint;
     ReceiveFrom(aBuffer, endpoint);
-    LOGF(kNetwork, "< SocketUdp::Receive\n");
+    LOGF(kNetwork, "< SocketUdpBase::Receive\n");
     return endpoint;
 }
+
+
+// SocketUdp
+
+SocketUdp::SocketUdp()
+{
+    LOGF(kNetwork, "> SocketUdp::SocketUdp\n");
+    Bind(0, 0);
+    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+}
+
+SocketUdp::SocketUdp(TUint aPort)
+{
+    LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
+    Bind(aPort, 0);
+    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+}
+
+SocketUdp::SocketUdp(TUint aPort, TIpAddress aInterface)
+{
+    LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
+    Bind(aPort, aInterface);
+    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+}
+
+void SocketUdp::Bind(TUint aPort, TIpAddress aInterface)
+{
+    Socket::Bind(Endpoint(aPort, aInterface));
+    GetPort(iPort);
+}
+
 
 // SocketUdpMulticast
 
 SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint)
-    : SocketUdp(aEndpoint.Port())
-    , iInterface(aInterface)
+    : iInterface(aInterface)
     , iAddress(aEndpoint.Address())
 {
     LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, E = %x:%d\n", iInterface, iAddress, iPort);
+    OpenHome::Os::NetworkBindMulticast(iHandle, aInterface, aEndpoint);
+    GetPort(iPort);
     OpenHome::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
     LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
 }
@@ -752,7 +763,7 @@ SocketUdpMulticast::~SocketUdpMulticast()
 
 // UdpReader
 
-UdpReader::UdpReader(SocketUdp& aSocket)
+UdpReader::UdpReader(SocketUdpBase& aSocket)
     : iSocket(aSocket)
     , iOpen(true)
 {
@@ -791,7 +802,7 @@ void UdpReader::ReadInterrupt()
 
 // UdpWriter
 
-UdpWriter::UdpWriter(SocketUdp& aSocket, const Endpoint& aEndpoint)
+UdpWriter::UdpWriter(SocketUdpBase& aSocket, const Endpoint& aEndpoint)
     : iSocket(aSocket)
     , iEndpoint(aEndpoint)
     , iOpen(true)

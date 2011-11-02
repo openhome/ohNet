@@ -225,15 +225,36 @@ void SuiteTimerThrash::Test()
     }
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
+class TimerTestThread : public Thread
 {
-    Net::UpnpLibrary::Initialise(aInitParams);
+public:
+    TimerTestThread();
+    void Run();
+};
 
+TimerTestThread::TimerTestThread()
+    : Thread("MAIN", kPriorityNormal)
+{
+}
+
+void TimerTestThread::Run()
+{
     //Debug::SetLevel(Debug::kTimer);
     Runner runner("Timer testing\n");
     runner.Add(new SuiteTimerBasic());
     runner.Add(new SuiteTimerThrash());
     runner.Run();
+    Signal();
+}
+
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
+{
+    Net::UpnpLibrary::Initialise(aInitParams);
+
+    Thread* th = new TimerTestThread();
+    th->Start();
+    th->Wait();
+    delete th;
 
     Net::UpnpLibrary::Close();
 }

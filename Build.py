@@ -309,6 +309,9 @@ def ArmTests(module, arch, nightly):
 
 def publish_release(ostype, arch, release_name, tool):
     target_name = "%s-%s" % (ostype, "ARM" if arch=="arm" else arch)
+    if ostype == "MacOS":
+        print "No ability to publish releases for MacOS. Skip."
+        return
     if ostype == "Windows":
         artifacts = '\\\\ohnet.linn.co.uk\\artifacts\\'
     else:

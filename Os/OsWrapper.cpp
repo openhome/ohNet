@@ -30,6 +30,12 @@ TInt Os::NetworkBind(THandle aHandle, const Endpoint& aEndpoint)
 	return ret;
 }
 
+TInt Os::NetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, const Endpoint& aMulticast)
+{
+	TInt ret = OsNetworkBindMulticast(aHandle, aAdapter, aMulticast.Address(), aMulticast.Port());
+	return ret;
+}
+
 TInt Os::NetworkPort(THandle aHandle, TUint& aPort)
 {
     TUint port;
