@@ -7,6 +7,12 @@ inline void Os::Destroy()
 { OsDestroy(); }
 inline void Os::Quit()
 { OsQuit(); }
+inline TUint Os::StackTraceNumEntries(THandle aStackTrace)
+{ return OsStackTraceNumEntries(aStackTrace); }
+inline const char* Os::StackTraceEntry(THandle aStackTrace, TUint aIndex)
+{ return OsStackTraceEntry(aStackTrace, aIndex); }
+inline void Os::StackTraceFinalise(THandle aStackTrace)
+{ OsStackTraceFinalise(aStackTrace); }
 inline TUint64 Os::TimeInUs()
 { return OsTimeInUs(); }
 inline TUint Os::TimeInMs()

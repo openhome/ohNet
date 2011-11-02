@@ -20,6 +20,11 @@ public:
     inline static TInt Create();
     inline static void Destroy();
     inline static void Quit();
+    static THandle StackTraceInitialise();
+    static THandle StackTraceCopy(THandle aStackTrace);
+    inline static TUint StackTraceNumEntries(THandle aStackTrace);
+    inline static const char* StackTraceEntry(THandle aStackTrace, TUint aIndex);
+    inline static void StackTraceFinalise(THandle aStackTrace);
     inline static TUint TimeInMs();
     inline static TUint64 TimeInUs();
     inline static void ConsoleWrite(const TChar* aStr);

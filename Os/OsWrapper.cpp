@@ -7,6 +7,19 @@
 
 using namespace OpenHome;
 
+THandle Os::StackTraceInitialise()
+{
+    /* this function and StackTraceCopy below could be inlined but Exception strips out
+       the functions above THROW and that'd be harder to do reliably with inline functions
+       (which may or may not be actually inlined depending on compiler optimisations) */
+    return OsStackTraceInitialise();
+}
+
+THandle Os::StackTraceCopy(THandle aStackTrace)
+{
+    return OsStackTraceCopy(aStackTrace);
+}
+
 Brn Os::GetPlatformNameAndVersion(TUint& aMajor, TUint& aMinor)
 {
 	char* name;

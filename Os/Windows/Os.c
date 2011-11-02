@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include <Ws2tcpip.h>
 #include <Iphlpapi.h>
+#include <Dbghelp.h>
 
 static const uint32_t kMinStackBytes = 1024 * 16;
 static const uint32_t kStackPaddingBytes = 1024 * 16;
@@ -32,6 +33,7 @@ static DWORD gTlsIndex;
 static THandle gMutex = kHandleNull;
 static InterfaceChangeObserver* gInterfaceChangeObserver = NULL;
 static int32_t gTestInterfaceIndex = -1;
+static HANDLE gDebugSymbolHandle;
 
 int32_t OsCreate()
 {
@@ -63,12 +65,15 @@ int32_t OsCreate()
         TlsFree(gTlsIndex);
         return -1;
     }
+    gDebugSymbolHandle = GetCurrentProcess();
+    (void)SymInitialize(gDebugSymbolHandle, NULL, TRUE);
 
     return 0;
 }
 
 void OsDestroy()
 {
+    (void)SymCleanup(gDebugSymbolHandle);
     if (NULL != gInterfaceChangeObserver) {
         gInterfaceChangeObserver->iShutdown = 1;
         (void)WSASetEvent(gInterfaceChangeObserver->iShutdownEvent);
@@ -93,6 +98,73 @@ void OsQuit()
 
 void OsBreakpoint()
 {
+}
+
+#define STACK_TRACE_MAX_DEPTH 32
+typedef struct OsStackTrace
+{
+    void* iStack[STACK_TRACE_MAX_DEPTH];
+    USHORT iCount;
+    SYMBOL_INFO* iSymbol;
+} OsStackTrace;
+
+THandle OsStackTraceInitialise()
+{
+    OsStackTrace* stackTrace = (OsStackTrace*)calloc(sizeof(OsStackTrace), 1);
+    if (stackTrace == NULL) {
+        return kHandleNull;
+    }
+    stackTrace->iCount = CaptureStackBackTrace(0, 100, stackTrace->iStack, NULL);
+    return stackTrace;
+}
+
+THandle OsStackTraceCopy(THandle aStackTrace)
+{
+    OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    OsStackTrace* copy;
+    if (stackTrace == NULL) {
+        return kHandleNull;
+    }
+    copy = (OsStackTrace*)calloc(sizeof(OsStackTrace), 1);
+    if (copy == NULL) {
+        return kHandleNull;
+    }
+    (void)memcpy(copy, stackTrace, sizeof(OsStackTrace));
+    copy->iSymbol = NULL;
+    return copy;
+}
+
+uint32_t OsStackTraceNumEntries(THandle aStackTrace)
+{
+    OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    if (stackTrace == kHandleNull) {
+        return 0;
+    }
+    return stackTrace->iCount;
+}
+
+const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
+{
+    OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    if (stackTrace->iSymbol == NULL) {
+        stackTrace->iSymbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256, 1);
+        if (stackTrace->iSymbol == NULL) {
+            return NULL;
+        }
+        stackTrace->iSymbol->MaxNameLen = 255;
+        stackTrace->iSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+    }
+    SymFromAddr(gDebugSymbolHandle, (DWORD64)(stackTrace->iStack[aIndex]), 0, stackTrace->iSymbol);
+    return stackTrace->iSymbol->Name;
+}
+
+void OsStackTraceFinalise(THandle aStackTrace)
+{
+    OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    if (stackTrace != kHandleNull) {
+        free(stackTrace->iSymbol);
+        free(stackTrace);
+    }
 }
 
 uint64_t OsTimeInUs()

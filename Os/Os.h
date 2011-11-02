@@ -63,6 +63,16 @@ void OsQuit();
  */
 void OsBreakpoint();
 
+
+/**
+ *
+ */
+THandle OsStackTraceInitialise();
+THandle OsStackTraceCopy(THandle aStackTrace);
+uint32_t OsStackTraceNumEntries(THandle aStackTrace);
+const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex);
+void OsStackTraceFinalise(THandle aStackTrace);
+
 /**
  * Return the current time in microseconds.
  *

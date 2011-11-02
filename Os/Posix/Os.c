@@ -117,6 +117,35 @@ void OsBreakpoint()
     raise(SIGTRAP);
 }
 
+THandle OsStackTraceInitialise()
+{
+    return kHandleNull;
+}
+
+THandle OsStackTraceCopy(THandle aStackTrace)
+{
+    aStackTrace = aStackTrace;
+    return kHandleNull;
+}
+
+uint32_t OsStackTraceNumEntries(THandle aStackTrace)
+{
+    aStackTrace = aStackTrace;
+    return 0;
+}
+
+const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
+{
+    aStackTrace = aStackTrace;
+    aIndex = aIndex;
+    return NULL;
+}
+
+void OsStackTraceFinalise(THandle aStackTrace)
+{
+    aStackTrace = aStackTrace;
+}
+
 uint64_t OsTimeInUs()
 {
     struct timeval now, diff;
