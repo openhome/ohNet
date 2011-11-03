@@ -66,6 +66,8 @@ void OsBreakpoint();
 /**
  * Initialise a stack trace for the current call stack.
  *
+ * Non-trivial implementation of this, and every other OsStackTrace function is entirely optional.
+ *
  * This will be called for every exception thrown inside ohNet so it is preferable if
  * it can do minimal work, deferring symbol lookup until OsStackTraceEntry is called.
  *
