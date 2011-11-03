@@ -971,7 +971,7 @@ void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* 
 {
     // not supported yet on anything other than Mac OS X
 
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
 
     SCDynamicStoreContext context = {0, NULL, NULL, NULL, NULL};
     CFStringRef pattern = NULL;
@@ -1047,7 +1047,7 @@ Error:
         gInterfaceChangedObserver = NULL;
     }
 
-#endif /* PLATFOTM_MACOSX_GNU */
+#endif /* PLATFOTM_MACOSX_GNU && ! PLATFORM_IOS */
 }
 
 
