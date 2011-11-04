@@ -145,7 +145,7 @@ void CpiDeviceUpnp::InvokeAction(Invocation& aInvocation)
 
 TUint CpiDeviceUpnp::Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber)
 {
-    TUint durationSecs = CpiSubscription::kDefaultDurationSecs;
+    TUint durationSecs = Stack::InitParams().SubscriptionDurationSecs();
     Uri uri;
     GetServiceUri(uri, "eventSubURL", aSubscription.ServiceType());
     EventUpnp eventUpnp(aSubscription);
@@ -155,7 +155,7 @@ TUint CpiDeviceUpnp::Subscribe(CpiSubscription& aSubscription, const Uri& aSubsc
 
 TUint CpiDeviceUpnp::Renew(CpiSubscription& aSubscription)
 {
-    TUint durationSecs = 30 * 60; // 30 minutes
+    TUint durationSecs = /*30 * */60; // 30 minutes
     Uri uri;
     GetServiceUri(uri, "eventSubURL", aSubscription.ServiceType());
     EventUpnp eventUpnp(aSubscription);

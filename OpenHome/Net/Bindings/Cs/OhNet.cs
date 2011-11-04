@@ -205,6 +205,11 @@ namespace OpenHome.Net.Core
         public uint NumSubscriberThreads { get; set; }
 
         /// <summary>
+        /// Set the duration control point subscriptions will request.
+        /// </summary>
+        public uint SubscriptionDurationSecs { get; set; }
+
+        /// <summary>
         /// Set the maximim time in milliseconds to wait before rejecting an event update from
         /// an unknown source
         /// </summary>
@@ -304,6 +309,8 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetNumSubscriberThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetSubscriptionDuration(IntPtr aParams, uint aDurationSecs);
+        [DllImport("ohNet")]
         static extern void OhNetInitParamsSetPendingSubscriptionTimeout(IntPtr aParams, uint aTimeoutMs);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetDvMaxUpdateTime(IntPtr aParams, uint aSecs);
@@ -335,6 +342,8 @@ namespace OpenHome.Net.Core
         static extern uint OhNetInitParamsNumInvocations(IntPtr aParams);
         [DllImport("ohNet")]
         static extern uint OhNetInitParamsNumSubscriberThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsSubscriptionDurationSecs(IntPtr aParams);
         [DllImport("ohNet")]
         static extern uint OhNetInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
         [DllImport("ohNet")]
@@ -384,7 +393,8 @@ namespace OpenHome.Net.Core
             NumXmlFetcherThreads = OhNetInitParamsNumXmlFetcherThreads(defaultParams); 
             NumActionInvokerThreads = OhNetInitParamsNumActionInvokerThreads(defaultParams); 
             NumInvocations = OhNetInitParamsNumInvocations(defaultParams); 
-            NumSubscriberThreads = OhNetInitParamsNumSubscriberThreads(defaultParams); 
+            NumSubscriberThreads = OhNetInitParamsNumSubscriberThreads(defaultParams);
+            SubscriptionDurationSecs = OhNetInitParamsSubscriptionDurationSecs(defaultParams);
             PendingSubscriptionTimeoutMs = OhNetInitParamsPendingSubscriptionTimeoutMs(defaultParams); 
             DvMaxUpdateTimeSecs = OhNetInitParamsDvMaxUpdateTimeSecs(defaultParams); 
             DvNumServerThreads = OhNetInitParamsDvNumServerThreads(defaultParams); 
@@ -444,6 +454,7 @@ namespace OpenHome.Net.Core
             OhNetInitParamsSetNumActionInvokerThreads(nativeParams, NumActionInvokerThreads);
             OhNetInitParamsSetNumInvocations(nativeParams, NumInvocations);
             OhNetInitParamsSetNumSubscriberThreads(nativeParams, NumSubscriberThreads);
+            OhNetInitParamsSetSubscriptionDuration(nativeParams, SubscriptionDurationSecs);
             OhNetInitParamsSetPendingSubscriptionTimeout(nativeParams, PendingSubscriptionTimeoutMs);
             OhNetInitParamsSetDvMaxUpdateTime(nativeParams, DvMaxUpdateTimeSecs);
             OhNetInitParamsSetDvNumServerThreads(nativeParams, DvNumServerThreads);

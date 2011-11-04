@@ -194,6 +194,10 @@ public:
      */
     void SetNumSubscriberThreads(uint32_t aNumThreads);
     /**
+     * Set the duration control point subscriptions will request.
+     */
+    void SetSubscriptionDuration(uint32_t aDurationSecs);
+    /**
      * It is possible for initial information on state variables to arrive before
      * a subscription is noted as complete.
      * Set the maximim time to wait before rejecting an event update from an unknown source.
@@ -267,6 +271,7 @@ public:
     uint32_t NumActionInvokerThreads() const;
     uint32_t NumInvocations() const;
     uint32_t NumSubscriberThreads() const;
+    uint32_t SubscriptionDurationSecs() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
 	OhNetCallbackFreeExternal FreeExternal() const;
     bool UseLoopbackNetworkAdapter() const;
@@ -299,6 +304,7 @@ private:
     uint32_t iNumActionInvokerThreads;
     uint32_t iNumInvocations;
     uint32_t iNumSubscriberThreads;
+    uint32_t iSubscriptionDurationSecs;
     uint32_t iPendingSubscriptionTimeoutMs;
 	OhNetCallbackFreeExternal iFreeExternal;
     bool iUseLoopbackNetworkAdapter;

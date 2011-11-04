@@ -30,8 +30,6 @@ namespace Net {
 class CpiSubscription : public IEventProcessor, private IStackObject
 {
 public:
-    static const TUint kDefaultDurationSecs = 30 * 60; // 30 minutes
-public:
     /**
      * Return the unique subscription identifier
      */

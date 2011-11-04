@@ -171,6 +171,12 @@ void STDCALL OhNetInitParamsSetNumSubscriberThreads(OhNetHandleInitParams aParam
     ip->SetNumSubscriberThreads(aNumThreads);
 }
 
+void STDCALL OhNetInitParamsSetSubscriptionDuration(OhNetHandleInitParams aParams, uint32_t aDurationSecs)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    ip->SetSubscriptionDuration(aDurationSecs);
+}
+
 void STDCALL OhNetInitParamsSetPendingSubscriptionTimeout(OhNetHandleInitParams aParams, uint32_t aTimeoutMs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
@@ -271,6 +277,12 @@ uint32_t STDCALL OhNetInitParamsNumSubscriberThreads(OhNetHandleInitParams aPara
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->NumSubscriberThreads();
+}
+
+uint32_t STDCALL OhNetInitParamsSubscriptionDurationSecs(OhNetHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    return ip->SubscriptionDurationSecs();
 }
 
 uint32_t STDCALL OhNetInitParamsPendingSubscriptionTimeoutMs(OhNetHandleInitParams aParams)
