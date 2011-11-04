@@ -226,10 +226,7 @@ void CpiSubscription::DoSubscribe()
     LOG(kEvent, iSid);
     LOG(kEvent, "\n    Renew in %u secs\n", renewSecs);
 
-    if (renewSecs > 0) {
-        TUint renewMs = (renewSecs*1000)/2;
-        iTimer->FireIn(renewMs);
-    }
+    SetRenewTimer(renewSecs);
 }
 
 void CpiSubscription::Renew()
@@ -247,23 +244,24 @@ void CpiSubscription::DoRenew()
     try {
         renewSecs = iDevice.Renew(*this);
     }
-    catch (HttpError&) {
-        Schedule(eResubscribe);
-        THROW(HttpError);
+    catch (NetworkTimeout& e) {
+        HandleRenewError(e);
     }
-    catch (WriterError&) {
-        Schedule(eResubscribe);
-        THROW(WriterError);
+    catch (NetworkError& e) {
+        HandleRenewError(e);
+    }
+    catch (HttpError& e) {
+        HandleRenewError(e);
+    }
+    catch (WriterError& e) {
+        HandleRenewError(e);
     }
 
     LOG(kEvent, "Renewed ");
     LOG(kEvent, iSid);
     LOG(kEvent, ".  Renew again in %u secs\n", renewSecs);
 
-    if (renewSecs > 0) {
-        TUint renewMs = (renewSecs*1000)/2;
-        iTimer->FireIn(renewMs);
-    }
+    SetRenewTimer(renewSecs);
 }
 
 void CpiSubscription::DoUnsubscribe()
@@ -293,6 +291,24 @@ void CpiSubscription::NotifyAddAborted()
 {
     CpiSubscriptionManager::NotifyAddAborted(*this);
     iSubscribeCompleted.Signal();
+}
+
+void CpiSubscription::HandleRenewError(Exception& aException)
+{
+    Schedule(eResubscribe);
+    throw(aException);
+}
+
+void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
+{
+    if (aMaxSeconds == 0) {
+        LOG2(kEvent, kError, "ERROR: subscription sid ");
+        LOG2(kEvent, kError, iSid);
+        LOG2(kEvent, kError, " has 0s renew time\n");
+        return;
+    }
+    TUint renewMs = Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
+    iTimer->FireIn(renewMs);
 }
 
 void CpiSubscription::EventUpdateStart()
