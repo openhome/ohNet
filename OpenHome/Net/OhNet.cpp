@@ -427,7 +427,7 @@ bool InitialisationParams::DvIsBonjourEnabled() const
 }
 
 InitialisationParams::InitialisationParams()
-    : iTcpConnectTimeoutMs(500)
+    : iTcpConnectTimeoutMs(3000)
     , iMsearchTimeSecs(3)
     , iMsearchTtl(2)
     , iNumEventSessionThreads(4)
