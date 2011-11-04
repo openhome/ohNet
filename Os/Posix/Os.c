@@ -1032,7 +1032,7 @@ void OsNetworkFreeInterfaces(OsNetworkAdapter* aAdapters)
 }
 
 
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
 
 static void InterfaceChangedDynamicStoreCallback(SCDynamicStoreRef aStore, CFArrayRef aChangedKeys, void* aInfo)
 {
@@ -1043,7 +1043,7 @@ static void InterfaceChangedDynamicStoreCallback(SCDynamicStoreRef aStore, CFArr
     }
 }
 
-#endif /* PLATFOTM_MACOSX_GNU */
+#endif /* PLATFOTM_MACOSX_GNU && ! PLATFORM_IOS */
 
 
 void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)

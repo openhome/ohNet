@@ -8,13 +8,13 @@ Prerequisites
 -------------
 
 On Windows:
-	Microsoft Visual Studio
-	(Express versions are okay. Not sure what is the minimum version.)
-	Microsoft .NET 3.5 SDK (optional, required for changes to service descriptions)
+    Microsoft Visual Studio
+    (Express versions are okay. Not sure what is the minimum version.)
+    Microsoft .NET 3.5 SDK (optional, required for changes to service descriptions)
     Java (optional, required for building Java bindings)
 
 On Linux:
-	Mono (optional, required for changes to service descriptions)
+    Mono (optional, required for changes to service descriptions)
     Java (optional, required for building Java bindings)
 
 Building
@@ -23,8 +23,8 @@ Building
     make
 
 If you have a .NET runtime available and want to regenerate makefiles, proxies or providers, run
-	make generate-makefiles uset4=yes
-	make uset4=yes
+    make generate-makefiles uset4=yes
+    make uset4=yes
 
 Installing
 ----------
@@ -35,27 +35,27 @@ Directories
 -----------
 
 Build/
-	Generated during the build process. Build artefacts go here.
+    Generated during the build process. Build artefacts go here.
 
 Build/Obj/Windows/
 Build/Obj/Posix/
-	Binaries and shared libraries are built to here during a build.
+    Binaries and shared libraries are built to here during a build.
 
 Build/Tools/
-	Binaries that are required by the build process are built to here.
+    Binaries that are required by the build process are built to here.
 
 Build/Include/OpenHome
-	Header files needed by users of the library are copied here during the build.
+    Header files needed by users of the library are copied here during the build.
 
 Build/Include/OpenHome/Net/C
-	Header files for C language bindings.
+    Header files for C language bindings.
 
 Build/Include/OpenHome/Net/Cpp
-	Header files for C language bindings.
+    Header files for C language bindings.
 
 Build/Include/OpenHome/Net/Core
 Build/Include/OpenHome/Net/Private
-	Not intended for external use.
+    Not intended for external use.
 
 OpenHome
     Base source code.
@@ -77,7 +77,7 @@ Make targets
 ------------
 
 all
-	This is the default target. It (should) build everything.
+    This is the default target. It (should) build everything.
 
 ohNet.net.dll
     ohNet as a dll / sharded object plus C# bindings
@@ -86,24 +86,24 @@ ohNetJavaAll
     ohNet as a dll / sharded object plus Java bindings
 
 generate-makefiles
-	This regenerates the makefiles in Generated/ that are derived from the
-	service descriptions. GNU make will detect these changes automatically,
-	but Microsoft's nmake doesn't handle this, so Windows users will need
-	to use this target when the service descriptions or T4 templates for
-	the makefiles have been changed.
+    This regenerates the makefiles in Generated/ that are derived from the
+    service descriptions. GNU make will detect these changes automatically,
+    but Microsoft's nmake doesn't handle this, so Windows users will need
+    to use this target when the service descriptions or T4 templates for
+    the makefiles have been changed.
 
 install
-	See "INSTALL.txt".
+    See "INSTALL.txt".
 
 uninstall
-	See "INSTALL.txt".
+    See "INSTALL.txt".
 
 clean
-	Removes files from Build/Obj/$platform/ and Build/Include/
+    Removes files from Build/Obj/$platform/ and Build/Include/
 
 mostlyclean
-	Also removes the auto-generated makefiles from Generated/
+    Also removes the auto-generated makefiles from Generated/
 
 maintainer-clean
-	Also removes Build/Tools/
-	(Should - but doesn't yet - remove auto-generated source files too.)
+    Also removes Build/Tools/
+    (Should - but doesn't yet - remove auto-generated source files too.)
