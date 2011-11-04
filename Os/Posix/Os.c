@@ -29,6 +29,7 @@
 
 #ifdef PLATFORM_MACOSX_GNU
 #include <SystemConfiguration/SystemConfiguration.h>
+#include <execinfo.h>
 #endif
 
 #include <OpenHome/Os.h>
@@ -117,33 +118,111 @@ void OsBreakpoint()
     raise(SIGTRAP);
 }
 
+
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
+#define STACK_TRACE_MAX_DEPTH 64
+typedef struct OsStackTrace
+{
+    void* iStack[STACK_TRACE_MAX_DEPTH];
+    int iCount;
+    char** iSymbols;
+    
+} OsStackTrace;
+#endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
+
+
 THandle OsStackTraceInitialise()
 {
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
+    OsStackTrace* stackTrace = (OsStackTrace*)malloc(sizeof(OsStackTrace));
+    if (stackTrace == NULL) {
+        return kHandleNull;
+    }
+
+    stackTrace->iCount = backtrace(stackTrace->iStack, STACK_TRACE_MAX_DEPTH);
+    stackTrace->iSymbols = NULL;
+    return stackTrace;
+#else
     return kHandleNull;
+#endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
 
 THandle OsStackTraceCopy(THandle aStackTrace)
 {
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
+    OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    OsStackTrace* copy = NULL;
+    if (stackTrace == NULL) {
+        return kHandleNull;
+    }
+
+    copy = (OsStackTrace*)malloc(sizeof(OsStackTrace));
+    if (copy == NULL) {
+        return kHandleNull;
+    }
+
+    memcpy(copy, stackTrace, sizeof(OsStackTrace));
+    copy->iSymbols = NULL;
+    return copy;
+#else
     aStackTrace = aStackTrace;
     return kHandleNull;
+#endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
 
 uint32_t OsStackTraceNumEntries(THandle aStackTrace)
 {
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
+    OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    if (stackTrace == kHandleNull) {
+        return 0;
+    }
+
+    return stackTrace->iCount;
+#else
     aStackTrace = aStackTrace;
     return 0;
+#endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
 
 const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
 {
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
+    OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    if (stackTrace == kHandleNull) {
+        return NULL;
+    }
+
+    if (stackTrace->iSymbols == NULL) {
+        stackTrace->iSymbols = backtrace_symbols(stackTrace->iStack, stackTrace->iCount);
+    }
+
+    if (stackTrace->iSymbols != NULL && aIndex < stackTrace->iCount) {
+        return stackTrace->iSymbols[aIndex];
+    }
+    else {
+        return NULL;
+    }
+#else
     aStackTrace = aStackTrace;
     aIndex = aIndex;
     return NULL;
+#endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
 
 void OsStackTraceFinalise(THandle aStackTrace)
 {
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
+    OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    if (stackTrace != kHandleNull) {
+        if (stackTrace->iSymbols != NULL) {
+            free(stackTrace->iSymbols);
+        }
+        free(stackTrace);
+    }
+#else
     aStackTrace = aStackTrace;
+#endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
 
 uint64_t OsTimeInUs()
