@@ -79,7 +79,7 @@ void OpenHome::UnhandledExceptionHandler(Exception& aException)
 
         THandle stackTrace = aException.StackTrace();
         TUint count = Os::StackTraceNumEntries(stackTrace);
-        for (TUint i=4; i<count; i++) {
+        for (TUint i=0; i<count; i++) {
             const char* entry = Os::StackTraceEntry(stackTrace, i);
             (void)strncat(msg, entry, len);
             len -= (TInt)strlen(entry) + 2;

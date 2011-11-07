@@ -284,8 +284,10 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     }
     iList->XmlFetchCompleted(*this, err);
     iList = NULL;
-    iDevice->RemoveRef();
     iSemReady.Signal();
+    iDevice->RemoveRef();
+    // Don't add code after the RemoveRef(), we might have
+    // just deleted this object!
 }
 
 
