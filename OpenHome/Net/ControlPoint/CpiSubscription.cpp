@@ -243,25 +243,32 @@ void CpiSubscription::DoRenew()
     TUint renewSecs = 0;
     try {
         renewSecs = iDevice.Renew(*this);
-    }
-    catch (NetworkTimeout& e) {
-        HandleRenewError(e);
-    }
-    catch (NetworkError& e) {
-        HandleRenewError(e);
-    }
-    catch (HttpError& e) {
-        HandleRenewError(e);
-    }
-    catch (WriterError& e) {
-        HandleRenewError(e);
-    }
 
-    LOG(kEvent, "Renewed ");
-    LOG(kEvent, iSid);
-    LOG(kEvent, ".  Renew again in %u secs\n", renewSecs);
+        LOG(kEvent, "Renewed ");
+        LOG(kEvent, iSid);
+        LOG(kEvent, ".  Renew again in %u secs\n", renewSecs);
 
-    SetRenewTimer(renewSecs);
+        SetRenewTimer(renewSecs);
+    }
+    catch (NetworkTimeout&) {
+        Schedule(eResubscribe);
+    }
+    catch (NetworkError&) {
+        Schedule(eResubscribe);
+    }
+    catch (HttpError&) {
+        Schedule(eResubscribe);
+    }
+    catch (WriterError&) {
+        Schedule(eResubscribe);
+    }
+    catch (ReaderError&) {
+        Schedule(eResubscribe);
+    }
+    catch (Exception& e) {
+        Log::Print("ERROR - unexpected exception renewing subscription: %s from %s:%u\n", e.Message(), e.File(), e.Line());
+        ASSERTS();
+    }
 }
 
 void CpiSubscription::DoUnsubscribe()
@@ -293,12 +300,6 @@ void CpiSubscription::NotifyAddAborted()
     iSubscribeCompleted.Signal();
 }
 
-void CpiSubscription::HandleRenewError(Exception& aException)
-{
-    Schedule(eResubscribe);
-    throw(aException);
-}
-
 void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 {
     if (aMaxSeconds == 0) {
@@ -307,7 +308,8 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
         LOG2(kEvent, kError, " has 0s renew time\n");
         return;
     }
-    TUint renewMs = Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
+    TUint renewMs = (aMaxSeconds*1000)/2;
+    //TUint renewMs = Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
     iTimer->FireIn(renewMs);
 }
 

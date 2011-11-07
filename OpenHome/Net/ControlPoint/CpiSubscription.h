@@ -120,7 +120,6 @@ private:
     void DoRenew();
     void DoUnsubscribe();
     void NotifyAddAborted();
-    void HandleRenewError(Exception& aException);
     void SetRenewTimer(TUint aMaxSeconds);
 private: // IEventProcessor
     void EventUpdateStart();
