@@ -64,6 +64,64 @@ void OsQuit();
 void OsBreakpoint();
 
 /**
+ * Initialise a stack trace for the current call stack.
+ *
+ * Non-trivial implementation of this, and every other OsStackTrace function is entirely optional.
+ *
+ * This will be called for every exception thrown inside ohNet so it is preferable if
+ * it can do minimal work, deferring symbol lookup until OsStackTraceEntry is called.
+ *
+ * @return  A valid handle on success; kHandleNull if creation failed.
+ */
+THandle OsStackTraceInitialise();
+
+/**
+ * Create a deep copy of an existing stack trace.
+ *
+ * Both the original and copy will have OsStackTraceFinalise called.
+ *
+ * @param[in] aStackTrace  Handle earlier returned from either OsStackTraceInitialise
+ *                         or OsStackTraceCopy.  May be kHandleNull.
+ *
+ * @return  A valid handle on success; kHandleNull if creation failed.
+ */
+THandle OsStackTraceCopy(THandle aStackTrace);
+
+/**
+ * Return the number of entries in a call stack.
+ *
+ * @param[in] aStackTrace  Handle earlier returned from either OsStackTraceInitialise
+ *                         or OsStackTraceCopy.  May be kHandleNull.
+ *
+ * @return  Number of entries in the call stack.
+ */
+uint32_t OsStackTraceNumEntries(THandle aStackTrace);
+
+/**
+ * Return the name of a function at a given point in a call stack.
+ *
+ * @param[in] aStackTrace  Handle earlier returned from either OsStackTraceInitialise
+ *                         or OsStackTraceCopy.  May be kHandleNull.
+ * @param[in] aIndex       Index of the item to lookup the name for.
+ *                         Index is zero-based with 0 being the current function.
+ *
+ * @return  Symbol name.  Will not be freed by the caller.  The name pointer must remain
+ *                        valid until the next call to either OsStackTraceEntry or
+ *                        OsStackTraceFinalise for this handle.
+ *                        Note that implementors are free to include as much or little information
+ *                        as they want.  e.g. symbol address can be included or excluded.
+ */
+const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex);
+
+/**
+ * Finalise a stack trace, freeing all resources associated with it.
+ *
+ * @param[in] aStackTrace  Handle earlier returned from either OsStackTraceInitialise
+ *                         or OsStackTraceCopy.  May be kHandleNull.
+ */
+void OsStackTraceFinalise(THandle aStackTrace);
+
+/**
  * Return the current time in microseconds.
  *
  * This is only used to determine relative time rather than absolute time, so the returned time
@@ -76,7 +134,7 @@ uint64_t OsTimeInUs();
  *
  * Used by unit tests only
  *
- * @param aStr            Nul terminated string to be written
+ * @param[in] aStr        Nul terminated string to be written
  */
 void OsConsoleWrite(const char* aStr);
 

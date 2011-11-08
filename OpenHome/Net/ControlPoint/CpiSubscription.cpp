@@ -226,10 +226,7 @@ void CpiSubscription::DoSubscribe()
     LOG(kEvent, iSid);
     LOG(kEvent, "\n    Renew in %u secs\n", renewSecs);
 
-    if (renewSecs > 0) {
-        TUint renewMs = (renewSecs*1000)/2;
-        iTimer->FireIn(renewMs);
-    }
+    SetRenewTimer(renewSecs);
 }
 
 void CpiSubscription::Renew()
@@ -246,23 +243,31 @@ void CpiSubscription::DoRenew()
     TUint renewSecs = 0;
     try {
         renewSecs = iDevice.Renew(*this);
+
+        LOG(kEvent, "Renewed ");
+        LOG(kEvent, iSid);
+        LOG(kEvent, ".  Renew again in %u secs\n", renewSecs);
+
+        SetRenewTimer(renewSecs);
+    }
+    catch (NetworkTimeout&) {
+        Schedule(eResubscribe);
+    }
+    catch (NetworkError&) {
+        Schedule(eResubscribe);
     }
     catch (HttpError&) {
         Schedule(eResubscribe);
-        THROW(HttpError);
     }
     catch (WriterError&) {
         Schedule(eResubscribe);
-        THROW(WriterError);
     }
-
-    LOG(kEvent, "Renewed ");
-    LOG(kEvent, iSid);
-    LOG(kEvent, ".  Renew again in %u secs\n", renewSecs);
-
-    if (renewSecs > 0) {
-        TUint renewMs = (renewSecs*1000)/2;
-        iTimer->FireIn(renewMs);
+    catch (ReaderError&) {
+        Schedule(eResubscribe);
+    }
+    catch (Exception& e) {
+        Log::Print("ERROR - unexpected exception renewing subscription: %s from %s:%u\n", e.Message(), e.File(), e.Line());
+        ASSERTS();
     }
 }
 
@@ -293,6 +298,19 @@ void CpiSubscription::NotifyAddAborted()
 {
     CpiSubscriptionManager::NotifyAddAborted(*this);
     iSubscribeCompleted.Signal();
+}
+
+void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
+{
+    if (aMaxSeconds == 0) {
+        LOG2(kEvent, kError, "ERROR: subscription sid ");
+        LOG2(kEvent, kError, iSid);
+        LOG2(kEvent, kError, " has 0s renew time\n");
+        return;
+    }
+    TUint renewMs = (aMaxSeconds*1000)/2;
+    //TUint renewMs = Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
+    iTimer->FireIn(renewMs);
 }
 
 void CpiSubscription::EventUpdateStart()

@@ -448,8 +448,11 @@ void DviProtocolUpnp::SendAliveNotifications()
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
-        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyAlive(*this, *this, iAdapters[i]->Interface(),
-                                                                 uri, iDevice.ConfigId()));
+        try {
+            iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyAlive(*this, *this, iAdapters[i]->Interface(),
+                                                                     uri, iDevice.ConfigId()));
+        }
+        catch (NetworkError&) {}
     }
     TUint maxUpdateTimeMs = Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
     TUint updateTimeMs = Random((2*maxUpdateTimeMs)/3, maxUpdateTimeMs/3);
@@ -1165,7 +1168,13 @@ DviMsgScheduler* DviMsgScheduler::NewNotifyAlive(IUpnpAnnouncementData& aAnnounc
                                                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
 {
     DviMsgScheduler* self = new DviMsgScheduler(aListener);
-    self->iMsg = DviMsgNotify::NewAlive(aAnnouncementData, aAdapter, aUri, aConfigId);
+    try {
+        self->iMsg = DviMsgNotify::NewAlive(aAnnouncementData, aAdapter, aUri, aConfigId);
+    }
+    catch (NetworkError&) {
+        delete self;
+        throw;
+    }
     TUint msgCount = self->iMsg->TotalMsgCount();
     self->SetDuration(msgCount * kMsgIntervalMsAlive);
     self->ScheduleNextTimer(msgCount);
@@ -1176,7 +1185,13 @@ DviMsgScheduler* DviMsgScheduler::NewNotifyByeBye(IUpnpAnnouncementData& aAnnoun
                                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted)
 {
     DviMsgScheduler* self = new DviMsgScheduler(aListener);
-    self->iMsg = DviMsgNotify::NewByeBye(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+    try {
+        self->iMsg = DviMsgNotify::NewByeBye(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+    }
+    catch (NetworkError&) {
+        delete self;
+        throw;
+    }
     TUint msgCount = self->iMsg->TotalMsgCount();
     self->SetDuration(msgCount * kMsgIntervalMsByeBye);
     self->ScheduleNextTimer(msgCount);
@@ -1187,7 +1202,13 @@ DviMsgScheduler* DviMsgScheduler::NewNotifyUpdate(IUpnpAnnouncementData& aAnnoun
                                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted)
 {
     DviMsgScheduler* self = new DviMsgScheduler(aListener);
-    self->iMsg = DviMsgNotify::NewUpdate(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+    try {
+        self->iMsg = DviMsgNotify::NewUpdate(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+    }
+    catch (NetworkError&) {
+        delete self;
+        throw;
+    }
     TUint msgCount = self->iMsg->TotalMsgCount();
     self->SetDuration(msgCount * kMsgIntervalMsUpdate);
     self->ScheduleNextTimer(msgCount);
@@ -1236,8 +1257,14 @@ void DviMsgScheduler::SetDuration(TUint aDuration)
 
 void DviMsgScheduler::NextMsg()
 {
-	TUint remaining;
-    if (iStop || (remaining = iMsg->NextMsg()) == 0) {
+	TUint remaining = 0;
+    TBool stop = true;
+    try {
+        stop = (iStop || (remaining = iMsg->NextMsg()) == 0);
+    }
+    catch (WriterError&) {}
+    catch (NetworkError&) {}
+    if (stop) {
         iListener.NotifyMsgSchedulerComplete(this);
         return;
     }

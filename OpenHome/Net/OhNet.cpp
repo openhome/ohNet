@@ -236,6 +236,12 @@ void InitialisationParams::SetNumSubscriberThreads(uint32_t aNumThreads)
     iNumSubscriberThreads = aNumThreads;
 }
 
+void InitialisationParams::SetSubscriptionDuration(uint32_t aDurationSecs)
+{
+    ASSERT(aDurationSecs > 0);
+    iSubscriptionDurationSecs = aDurationSecs;
+}
+
 void InitialisationParams::SetPendingSubscriptionTimeout(uint32_t aTimeoutMs)
 {
     ASSERT(aTimeoutMs > 0);
@@ -370,6 +376,11 @@ uint32_t InitialisationParams::NumSubscriberThreads() const
     return iNumSubscriberThreads;
 }
 
+uint32_t InitialisationParams::SubscriptionDurationSecs() const
+{
+    return iSubscriptionDurationSecs;
+}
+
 uint32_t InitialisationParams::PendingSubscriptionTimeoutMs() const
 {
     return iPendingSubscriptionTimeoutMs;
@@ -416,7 +427,7 @@ bool InitialisationParams::DvIsBonjourEnabled() const
 }
 
 InitialisationParams::InitialisationParams()
-    : iTcpConnectTimeoutMs(500)
+    : iTcpConnectTimeoutMs(3000)
     , iMsearchTimeSecs(3)
     , iMsearchTtl(2)
     , iNumEventSessionThreads(4)
@@ -424,6 +435,7 @@ InitialisationParams::InitialisationParams()
     , iNumActionInvokerThreads(4)
     , iNumInvocations(20)
     , iNumSubscriberThreads(4)
+    , iSubscriptionDurationSecs(30 * 60)
     , iPendingSubscriptionTimeoutMs(2000)
     , iFreeExternal(NULL)
     , iUseLoopbackNetworkAdapter(false)

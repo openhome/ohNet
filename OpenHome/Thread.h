@@ -116,7 +116,13 @@ public:
     static void Sleep(TUint aMilliSecs);
     
     /**
-     * Return a reference to the current thread.
+     * Return the name of the current thread.
+     * Or "____" for threads non-OpenHome threads.
+     */
+    static const Brx& CurrentThreadName();
+
+    /**
+     * Return a pointer to the current thread, or NULL if running in a non-OpenHome thread.
      */
     static Thread* Current();
 

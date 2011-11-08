@@ -84,14 +84,14 @@ void SuiteTimerBasic::Test()
     TUint i=0;
     for( ; i < 1000; i++ ) {
         a.FireIn(300);
-        Thread::Current()->Sleep(Random(30, 10));
+        Thread::Sleep(Random(30, 10));
         Print(".");
     }
 
     a.Wait();
     TUint count0 = a.Count();
 
-    Thread::Current()->Sleep(3000);
+    Thread::Sleep(3000);
 
     TUint count1 = a.Count();
 
@@ -108,7 +108,7 @@ void SuiteTimerBasic::Test()
 
     a.Wait();
 
-    Thread::Current()->Sleep(3000);
+    Thread::Sleep(3000);
 
     MyTimer b;
     

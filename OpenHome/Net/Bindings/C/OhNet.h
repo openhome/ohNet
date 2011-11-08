@@ -323,6 +323,14 @@ DllExport void STDCALL OhNetInitParamsSetNumInvocations(OhNetHandleInitParams aP
 DllExport void STDCALL OhNetInitParamsSetNumSubscriberThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads);
 
 /**
+ * Set the duration control point subscriptions will request.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aDurationSecs    Duration in seconds.  Must be greater than zero.
+ */
+DllExport void STDCALL OhNetInitParamsSetSubscriptionDuration(OhNetHandleInitParams aParams, uint32_t aDurationSecs);
+
+/**
  * It is possible for initial information on state variables to arrive before
  * a subscription is noted as complete.
  * Set the maximim time to wait before rejecting an event update from an unknown source.
@@ -477,6 +485,15 @@ DllExport uint32_t STDCALL OhNetInitParamsNumInvocations(OhNetHandleInitParams a
  * @return  number of threads
  */
 DllExport uint32_t STDCALL OhNetInitParamsNumSubscriberThreads(OhNetHandleInitParams aParams);
+
+/**
+ * Query the duration control points will request for subscriptions.
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  requested subscription duration (in seconds)
+ */
+DllExport uint32_t STDCALL OhNetInitParamsSubscriptionDurationSecs(OhNetHandleInitParams aParams);
 
 /**
  * Query the maximum delay allowed between initial values of state variables

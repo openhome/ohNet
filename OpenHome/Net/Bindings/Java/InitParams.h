@@ -89,6 +89,14 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsNumS
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSubscriptionDurationSecs
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSubscriptionDurationSecs
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsPendingSubscriptionTimeoutMs
  * Signature: (J)I
  */
@@ -205,6 +213,14 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetN
  * Signature: (JI)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNumSubscriberThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetSubscriptionDuration
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubscriptionDuration
   (JNIEnv *, jclass, jlong, jint);
 
 /*

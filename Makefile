@@ -23,7 +23,7 @@ ifeq ($(mac-arm),1)
 	# Darwin, ARM -> iOS
 	devroot=/Developer/Platforms/iPhoneOS.platform/Developer
 	sdkroot=$(devroot)/SDKs/iPhoneOS4.3.sdk
-	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
+	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
 	# It seems a bit weird that iOS uses a sub-dir of Build/Obj/Mac, is that deliberate? --AW
 	osbuilddir = Mac/arm
 	objdir = Build/Obj/Mac/arm/$(build_dir)/

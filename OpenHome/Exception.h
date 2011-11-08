@@ -56,14 +56,18 @@ class DllExportClass Exception
 public:
     DllExport Exception(const TChar* aMsg, const TChar* aFile, TUint aLine);
     DllExport Exception(const TChar* aMsg);
+    DllExport Exception(const Exception& aException);
     DllExport ~Exception();
     DllExport const TChar* File();
     DllExport TUint Line();
     DllExport const TChar* Message();
+    DllExport THandle StackTrace();
 private:
     Exception();
+    void operator=(const Exception&);
 private:
     const TChar* iMsg;
+    THandle iStackTrace;
     const TChar* iFile;
     TUint iLine;
 };

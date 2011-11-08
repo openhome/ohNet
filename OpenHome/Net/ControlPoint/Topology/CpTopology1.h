@@ -51,7 +51,7 @@ private:
 	void Run();
 	
 private:
-	CpDeviceListUpnpServiceType* iDeviceListProduct;
+	CpDeviceList* iDeviceListProduct;
 	Fifo<CpTopology1Job*> iFree;
 	Fifo<CpTopology1Job*> iReady;
 	ThreadFunctor* iThread;

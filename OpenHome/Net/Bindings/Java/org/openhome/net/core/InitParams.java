@@ -30,6 +30,7 @@ public class InitParams
 	private static native int OhNetInitParamsNumActionInvokerThreads(long aParams);
 	private static native int OhNetInitParamsNumInvocations(long aParams);
 	private static native int OhNetInitParamsNumSubscriberThreads(long aParams);
+	private static native int OhNetInitParamsSubscriptionDurationSecs(long aParams);
 	private static native int OhNetInitParamsPendingSubscriptionTimeoutMs(long aParams);
 	private static native int OhNetInitParamsDvMaxUpdateTimeSecs(long aParams);
 	private static native int OhNetInitParamsDvNumServerThreads(long aParams);
@@ -47,6 +48,7 @@ public class InitParams
 	private static native void OhNetInitParamsSetNumActionInvokerThreads(long aParams, int aNumThreads);
 	private static native void OhNetInitParamsSetNumInvocations(long aParams, int aNumInvocations);
 	private static native void OhNetInitParamsSetNumSubscriberThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetSubscriptionDuration(long aParams, int aDurationSecs);
 	private static native void OhNetInitParamsSetPendingSubscriptionTimeout(long aParams, int aTimeoutMs);
 	private static native void OhNetInitParamsSetUseLoopbackNetworkAdapter(long aParams);
 	private static native void OhNetInitParamsSetDvMaxUpdateTime(long aParams, int aSecs);
@@ -175,6 +177,16 @@ public class InitParams
 	public int getNumSubscriberThreads()
 	{
 		return OhNetInitParamsNumSubscriberThreads(iHandle);
+	}
+	
+	/**
+	 * Get the duration (in seconds) control points will request for subscriptions.
+	 * 
+	 * @return	requested subscription duration in seconds.
+	 */
+	public int getSubscriptionDurationSecs()
+	{
+		return OhNetInitParamsSubscriptionDurationSecs(iHandle);
 	}
 	
 	/**
@@ -384,6 +396,16 @@ public class InitParams
 	public void setNumSubscriberThreads(int aNumThreads)
 	{
 		OhNetInitParamsSetNumSubscriberThreads(iHandle, aNumThreads);
+	}
+	
+	/**
+	 * Set the duration control point subscriptions will request.
+	 * 
+	 * @param aTimeoutMs	maximum time before rejecting an event update.
+	 */
+	public void setSubscriptionDuration(int aDurationSecs)
+	{
+		OhNetInitParamsSetSubscriptionDuration(iHandle, aDurationSecs);
 	}
 	
 	/**
