@@ -156,7 +156,7 @@ void SemaphoreActive::ConsumeAll()
 // Thread
 //
 
-const TUint OpenHome::Thread::kDefaultStackBytes = 16 * 1024;
+const TUint OpenHome::Thread::kDefaultStackBytes = 32 * 1024;
 
 Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     : iHandle(kHandleNull)
