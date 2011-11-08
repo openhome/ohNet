@@ -12,6 +12,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/Private/Maths.h>
 
 #include <list>
 #include <map>
@@ -308,8 +309,7 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
         LOG2(kEvent, kError, " has 0s renew time\n");
         return;
     }
-    TUint renewMs = (aMaxSeconds*1000)/2;
-    //TUint renewMs = Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
+    TUint renewMs = Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
     iTimer->FireIn(renewMs);
 }
 
