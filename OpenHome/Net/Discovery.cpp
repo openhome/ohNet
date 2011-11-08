@@ -60,7 +60,12 @@ SsdpListenerMulticast::SsdpListenerMulticast(TIpAddress aInterface)
     , iBuffer(iSocket)
     , iReaderRequest(iBuffer)
 {
-    iSocket.SetRecvBufBytes(kRecvBufBytes);
+    try
+    {
+        iSocket.SetRecvBufBytes(kRecvBufBytes);
+    }
+    catch ( NetworkError ) {}
+    
     iReaderRequest.AddHeader(iHeaderHost);
     iReaderRequest.AddHeader(iHeaderCacheControl);
     iReaderRequest.AddHeader(iHeaderLocation);
@@ -412,7 +417,12 @@ SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIp
     , iReaderResponse(iReadBuffer)
 {
     iSocket.SetTtl(Stack::InitParams().MsearchTtl());
-    iSocket.SetRecvBufBytes(kRecvBufBytes);
+    try
+    {
+        iSocket.SetRecvBufBytes(kRecvBufBytes);
+    }
+    catch ( NetworkError ) {}
+    
     iReaderResponse.AddHeader(iHeaderCacheControl);
     iReaderResponse.AddHeader(iHeaderExt);
     iReaderResponse.AddHeader(iHeaderLocation);
