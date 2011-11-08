@@ -16,7 +16,7 @@ inline void Os::StackTraceFinalise(THandle aStackTrace)
 inline TUint64 Os::TimeInUs()
 { return OsTimeInUs(); }
 inline TUint Os::TimeInMs()
-{ return (TUint)TimeInUs()/1000; }
+{ return (TUint)(TimeInUs()/1000); }
 inline void Os::ConsoleWrite(const TChar* aStr)
 { OsConsoleWrite(aStr); }
 inline THandle Os::SemaphoreCreate(const TChar* aName, TUint aCount)
