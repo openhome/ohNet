@@ -1,43 +1,10 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
-
-// Time
-
-TUint Time::Now()
-{
-    return Os::TimeInMs();
-};
-
-TBool Time::IsBeforeOrAt(TUint aQuestionableTime, TUint aTime)
-{
-    TInt diff = aTime - aQuestionableTime;
-    return (diff >= 0);
-}
-
-TBool Time::IsAfter(TUint aQuestionableTime, TUint aTime)
-{
-    TInt diff = aTime - aQuestionableTime;
-    return (diff < 0);
-}
-
-TBool Time::IsInPastOrNow(TUint aTime)
-{
-    return (IsBeforeOrAt(aTime, Now()));
-}
-
-TBool Time::IsInFuture(TUint aTime)
-{
-    return (IsAfter(aTime, Now()));
-}
-
-TInt Time::TimeToWaitFor(TUint aTime)
-{
-    return (aTime - Os::TimeInMs());
-}
 
 // Timer
 
@@ -49,7 +16,7 @@ Timer::Timer(Functor aFunctor)
 void Timer::FireIn(TUint aTime)
 {
     LOG(kTimer, ">Timer::FireIn(%d)\n", aTime);
-    FireAt(Time::Now() + aTime);
+    FireAt(Os::TimeInMs() + aTime);
     LOG(kTimer, "<Timer::FireIn(%d)\n", aTime);
 }
 
@@ -246,7 +213,7 @@ void TimerManager::Run()
     iSemaphore.Wait();
     iMutex.Wait();
     while (!iStop) {
-        TInt delay = Time::TimeToWaitFor(iNextTimer);
+        TInt delay = iNextTimer - Os::TimeInMs();
         iMutex.Signal();
         if (delay <= 0) { // in the past or now
             Fire();
