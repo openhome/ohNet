@@ -9,6 +9,17 @@
 
 namespace OpenHome {
 
+class Time
+{
+public:
+    static TUint Now();
+    static TBool IsBeforeOrAt(TUint aQuestionableTime, TUint aTime);
+    static TBool IsAfter(TUint aQuestionableTime, TUint aTime);
+    static TBool IsInPastOrNow(TUint aTime);
+    static TBool IsInFuture(TUint aTime);
+    static TInt TimeToWaitFor(TUint aTime);
+};
+
 class QueueSortedEntryTimer : public QueueSortedEntry
 {
     friend class TimerManager;
