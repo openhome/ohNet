@@ -320,7 +320,7 @@ def publish_release(ostype, arch, release_name, tool):
     release_source_bundle = 'Build/Bundles/ohNet-%s-dev.tar.gz' % target_name
     release_target_bundle = '%sReleases/ohNet-%s-%s.tar.gz' % (artifacts, release_name, target_name)
     shutil.copyfile(release_source_bundle, release_target_bundle)
-    subprocess.check_call(['scp', '-r', release_source_bundle, 'releases@www.openhome.org:~/www/artefacts/ohNet'])
+    subprocess.check_call(['scp', '-r', release_source_bundle, 'releases@www.openhome.org:~/www/artefacts/ohNet/ohNet-%s-%s.tar.gz' %( release_name, target_name)])
 
 def writerev(ostype, arch):
 
