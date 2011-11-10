@@ -383,7 +383,7 @@ $(objdir)Os.$(objext) : Os/$(osdir)/Os.c $(headers)
 
 
 ohNetDll: ohNetCore
-	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohNet.$(dllext) $(objects_core)
+	$(link_dll) $(linkopts_ohNet) $(linkoutput)$(objdir)$(dllprefix)ohNet.$(dllext) $(objects_core)
 
 
 

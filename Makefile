@@ -19,6 +19,7 @@ endif
 
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
+    linkopts_ohNet =
 ifeq ($(mac-arm),1)
 	# Darwin, ARM -> iOS
 	devroot=/Developer/Platforms/iPhoneOS.platform/Developer
@@ -54,6 +55,7 @@ ifeq ($(platform), Core)
 	freertoslwipdir ?= ${FREERTOSLWIP}
 	platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403 -g
 	platform_linkflags = -B$(freertoslwipdir)/lib/ -specs bsp_specs -mcpu=403
+    linkopts_ohNet =
 	osbuilddir = Volkano2
 	osdir = Volkano2
 	endian = BIG
@@ -63,6 +65,7 @@ ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
 	platform_cflags = -Wno-psabi -fPIC
 	platform_linkflags = -lpthread
+    linkopts_ohNet = -Wl,-soname,libohNet.so
 	osbuilddir = Posix
 	osdir = Posix
 	endian = LITTLE

@@ -38,6 +38,7 @@ link = link /nologo $(link_flag_debug) /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpa
 linkoutput = /out:
 dllprefix =
 dllext = dll
+linkopts_ohNet =
 link_dll = link /nologo $(link_flag_debug) /map Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
 link_dll_service = link /nologo $(link_flag_debug)  /map $(objdir)ohNet.lib Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
 csharp = csc /nologo /platform:$(csplatform)
