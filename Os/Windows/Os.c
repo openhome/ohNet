@@ -979,6 +979,7 @@ void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* 
     }
 
     gInterfaceChangeObserver->iSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    SetSocketBlocking(gInterfaceChangeObserver->iSocket);
     gInterfaceChangeObserver->iEvent = WSACreateEvent();
     gInterfaceChangeObserver->iShutdownEvent = WSACreateEvent();
     gInterfaceChangeObserver->iCallback = aCallback;
