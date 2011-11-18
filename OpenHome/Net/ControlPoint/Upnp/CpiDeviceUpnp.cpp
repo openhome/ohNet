@@ -590,7 +590,12 @@ void CpiDeviceListUpnpAll::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchAll();
+        try {
+            iUnicastListener->MsearchAll();
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpAll\n");
+        }
     }
     iLock.Signal();
 }
@@ -621,7 +626,12 @@ void CpiDeviceListUpnpRoot::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchRoot();
+        try {
+            iUnicastListener->MsearchRoot();
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpRoot\n");
+        }
     }
     iLock.Signal();
 }
@@ -653,7 +663,12 @@ void CpiDeviceListUpnpUuid::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchUuid(iUuid);
+        try {
+            iUnicastListener->MsearchUuid(iUuid);
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpUuid\n");
+        }
     }
     iLock.Signal();
 }
@@ -691,7 +706,12 @@ void CpiDeviceListUpnpDeviceType::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchDeviceType(iDomainName, iDeviceType, iVersion);
+        try {
+            iUnicastListener->MsearchDeviceType(iDomainName, iDeviceType, iVersion);
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
+        }
     }
     iLock.Signal();
 }
@@ -730,7 +750,12 @@ void CpiDeviceListUpnpServiceType::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
+        try {
+            iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
+        }
     }
     iLock.Signal();
 }
