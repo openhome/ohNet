@@ -57,8 +57,11 @@ Brn XmlParserBasic::Find(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
                 if (tagType == eTagOpen) {
                     ++ignoreClose;
                 }
-                else if (tagType == eTagClose && namesp == ns) {
+                else if (tagType == eTagClose) {
                     if (ignoreClose == 0) {
+                        if (namesp != ns) {
+                            THROW(XmlError);
+                        }
                         aRemaining.Set(remaining);
                         const TUint retBytes = (TUint)(doc.Ptr() - retStart.Ptr()) + index;
                         Brn ret(retStart.Ptr(), retBytes);
