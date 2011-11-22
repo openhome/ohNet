@@ -620,6 +620,9 @@ void CpiDeviceListUpnpAll::Start()
         catch (NetworkError&) {
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpAll\n");
         }
+        catch (WriterError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpAll\n");
+        }
     }
     iLock.Signal();
 }
@@ -654,6 +657,9 @@ void CpiDeviceListUpnpRoot::Start()
             iUnicastListener->MsearchRoot();
         }
         catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpRoot\n");
+        }
+        catch (WriterError&) {
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpRoot\n");
         }
     }
@@ -691,6 +697,9 @@ void CpiDeviceListUpnpUuid::Start()
             iUnicastListener->MsearchUuid(iUuid);
         }
         catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpUuid\n");
+        }
+        catch (WriterError&) {
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpUuid\n");
         }
     }
@@ -736,6 +745,9 @@ void CpiDeviceListUpnpDeviceType::Start()
         catch (NetworkError&) {
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
         }
+        catch (WriterError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
+        }
     }
     iLock.Signal();
 }
@@ -778,6 +790,9 @@ void CpiDeviceListUpnpServiceType::Start()
             iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
         }
         catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
+        }
+        catch (WriterError&) {
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
         }
     }
