@@ -249,6 +249,7 @@ private:
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData,
                                   const Brx& aSid, TUint aSequenceNumber);
+    void NotifySubscriptionDeleted(const Brx& aSid);
 private:
     class SubscriptionWrapper
     {

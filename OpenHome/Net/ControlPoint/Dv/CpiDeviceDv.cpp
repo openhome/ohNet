@@ -120,6 +120,10 @@ IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUs
     return new PropertyWriterDv(*iSubscriptionCp);
 }
 
+void CpiDeviceDv::NotifySubscriptionDeleted(const Brx& /*aSid*/)
+{
+}
+
 
 // InvocationDv
 

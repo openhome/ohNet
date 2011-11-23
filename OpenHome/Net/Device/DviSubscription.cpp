@@ -197,6 +197,7 @@ TBool DviSubscription::HasExpired() const
 
 DviSubscription::~DviSubscription()
 {
+    iWriterFactory.NotifySubscriptionDeleted(iSid);
     iDevice.RemoveWeakRef();
     delete iTimer;
     if (iUserData != NULL) {

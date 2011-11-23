@@ -14,6 +14,7 @@
 #include <OpenHome/Net/Private/DviSubscription.h>
 
 #include <vector>
+#include <map>
 
 namespace OpenHome {
 namespace Net {
@@ -162,6 +163,7 @@ private: // IDviInvocation
     void InvocationWriteEnd();
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
+    void NotifySubscriptionDeleted(const Brx& aSid);
 private:
     static const TUint kMaxRequestBytes = 4*1024;
     static const TUint kMaxResponseBytes = 4*1024;
@@ -194,6 +196,9 @@ private:
     mutable Bws<128> iResourceUriPrefix;
 	TBool iResourceWriterHeadersOnly;
     Semaphore iShutdownSem;
+    typedef std::map<Brn,DviSubscription*,BufferCmp> SubscriptionMap;
+    SubscriptionMap iSubscriptionMap;
+    Mutex iSubscriptionMapLock;
 };
 
 class DviServerUpnp : public DviServer, private IRedirector
