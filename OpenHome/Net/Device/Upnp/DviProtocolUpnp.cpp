@@ -180,8 +180,8 @@ void DviProtocolUpnp::SubnetListChanged()
                 AddInterface(*current);
                 update = true;
             }
-            current->RemoveRef();
         }
+        current->RemoveRef();
     }
     else {
         std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();

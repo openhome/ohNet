@@ -375,6 +375,7 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& 
     , iPort(aPort)
     , iRedirector(aRedirector)
     , iShutdownSem("DSUS", 1)
+    , iSubscriptionMapLock("DMSL")
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -403,6 +404,13 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& 
 DviSessionUpnp::~DviSessionUpnp()
 {
     Interrupt(true);
+    iSubscriptionMapLock.Wait();
+    SubscriptionMap::iterator it = iSubscriptionMap.begin();
+    if (it != iSubscriptionMap.end()) {
+        it->second->Stop();
+        it++;
+    }
+    iSubscriptionMapLock.Signal();
     iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
@@ -581,6 +589,11 @@ void DviSessionUpnp::Subscribe()
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri());
     DviSubscription* subscription = new DviSubscription(*device, *this, data, sid, duration);
     DviSubscriptionManager::AddSubscription(*subscription);
+
+    iSubscriptionMapLock.Wait();
+    Brn sidBuf(subscription->Sid());
+    iSubscriptionMap.insert(std::pair<Brn,DviSubscription*>(sidBuf, subscription));
+    iSubscriptionMapLock.Signal();
 
     if (iHeaderExpect.Continue()) {
         iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
@@ -1105,6 +1118,16 @@ IPropertyWriter* DviSessionUpnp::CreateWriter(const IDviSubscriptionUserData* aU
     return new PropertyWriterUpnp(publisher, data->Subscriber(), data->SubscriberPath(), aSid, aSequenceNumber);
 }
 
+void DviSessionUpnp::NotifySubscriptionDeleted(const Brx& aSid)
+{
+    iSubscriptionMapLock.Wait();
+    Brn sid(aSid);
+    SubscriptionMap::iterator it = iSubscriptionMap.find(sid);
+    if (it != iSubscriptionMap.end()) {
+        iSubscriptionMap.erase(it);
+    }
+    iSubscriptionMapLock.Signal();
+}
 
 
 // DviServerUpnp

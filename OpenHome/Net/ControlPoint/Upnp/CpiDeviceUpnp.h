@@ -128,6 +128,7 @@ protected:
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
     void RefreshTimerComplete();
+    void NextRefreshDue();
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
@@ -135,6 +136,7 @@ private:
 protected:
     SsdpListenerUnicast* iUnicastListener;
 private:
+    static const TUint kMaxMsearchRetryForNewAdapterSecs = 60;
     TIpAddress iInterface;
     SsdpListenerMulticast* iMulticastListener;
     TInt iNotifyHandlerId;
@@ -142,6 +144,8 @@ private:
     TUint iSubnetListChangeListenerId;
     TBool iStarted;
     Timer* iRefreshTimer;
+    Timer* iNextRefreshTimer;
+    TUint iPendingRefreshCount;
     Semaphore iXmlFetchSem;
     Mutex iXmlFetchLock;
 };

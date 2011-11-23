@@ -113,7 +113,7 @@ private:
      * later in a Subscriber thread.  Claims a reference to the subscription, ensuring
      * the class doesn't get deleted before (or, worse, during) that later operation.
      */
-    void Schedule(EOperation aOperation);
+    void Schedule(EOperation aOperation, TBool aRejectFutureOperations = false);
     void RunInSubscriber(EOperation aOperation);
     void DoSubscribe();
     void Renew();
@@ -140,6 +140,7 @@ private:
     TUint iRefCount;
     IInterruptHandler* iInterruptHandler;
     Semaphore iSubscribeCompleted;
+    TBool iRejectFutureOperations;
 
     friend class CpiSubscriptionManager;
 };

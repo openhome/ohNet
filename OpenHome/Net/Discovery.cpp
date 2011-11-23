@@ -293,12 +293,12 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
 SsdpListenerMulticast::~SsdpListenerMulticast()
 {
     LOG(kSsdpMulticast, "SSDP Multicast      Destructor\n");
+    iReaderRequest.Interrupt();
+    Join();
     EraseDisabled(iNotifyHandlers);
     ASSERT(iNotifyHandlers.size() == 0);
     EraseDisabled(iMsearchHandlers);
     ASSERT(iMsearchHandlers.size() == 0);
-    iReaderRequest.Interrupt();
-    Join();
 }
 
 TInt SsdpListenerMulticast::AddNotifyHandler(ISsdpNotifyHandler* aNotifyHandler)

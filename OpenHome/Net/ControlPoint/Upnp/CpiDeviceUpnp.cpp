@@ -323,6 +323,8 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
     NetworkAdapter* current = ifList.CurrentAdapter();
     iRefreshTimer = new Timer(MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
+    iNextRefreshTimer = new Timer(MakeFunctor(*this, &CpiDeviceListUpnp::NextRefreshDue));
+    iPendingRefreshCount = 0;
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged));
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));
     if (current == NULL) {
@@ -376,11 +378,16 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     // Ensure it gets to exit before we complete the dtor and delete iXmlFetchLock which it holds
     iXmlFetchLock.Signal();
     delete iRefreshTimer;
+    delete iNextRefreshTimer;
 }
 
 TBool CpiDeviceListUpnp::Update(const Brx& aUdn, TUint aMaxAge)
 {
     AutoMutex a(iLock);
+    if (iRefreshing && iPendingRefreshCount > 1) {
+        // we need at most one final msearch once a network card starts working following an adapter change
+        iPendingRefreshCount = 1;
+    }
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData())->UpdateMaxAge(aMaxAge);
@@ -459,6 +466,17 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 void CpiDeviceListUpnp::RefreshTimerComplete()
 {
     RefreshComplete();
+    iLock.Wait();
+    if (iPendingRefreshCount > 0) {
+        iNextRefreshTimer->FireIn(Stack::InitParams().MsearchTimeSecs() * 1000);
+        iPendingRefreshCount--;
+    }
+    iLock.Signal();
+}
+
+void CpiDeviceListUpnp::NextRefreshDue()
+{
+    Refresh();
 }
 
 void CpiDeviceListUpnp::CurrentNetworkAdapterChanged()
@@ -480,6 +498,8 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
         return;
     }
     iLock.Wait();
+    iNextRefreshTimer->Cancel();
+    iPendingRefreshCount = 0;
     delete iUnicastListener;
     iUnicastListener = NULL;
     if (iMulticastListener != NULL) {
@@ -500,13 +520,15 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     current->RemoveRef();
 
     // we used to only remove devices for subnet changes
-    // its not clear why this is correct - any interface change will result in control/event urls changing
+    // its not clear why this was correct - any interface change will result in control/event urls changing
     RemoveAll();
     
     iUnicastListener = new SsdpListenerUnicast(*this, iInterface);
     iUnicastListener->Start();
     iMulticastListener = &Stack::MulticastListenerClaim(iInterface);
     iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
+    TUint msearchTime = Stack::InitParams().MsearchTimeSecs();
+    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
     iLock.Signal();
     Refresh();
 }
@@ -514,6 +536,8 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 void CpiDeviceListUpnp::RemoveAll()
 {
     iRefreshTimer->Cancel();
+    iNextRefreshTimer->Cancel();
+    iPendingRefreshCount = 0;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
         Remove(it->first);
@@ -590,7 +614,15 @@ void CpiDeviceListUpnpAll::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchAll();
+        try {
+            iUnicastListener->MsearchAll();
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpAll\n");
+        }
+        catch (WriterError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpAll\n");
+        }
     }
     iLock.Signal();
 }
@@ -621,7 +653,15 @@ void CpiDeviceListUpnpRoot::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchRoot();
+        try {
+            iUnicastListener->MsearchRoot();
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpRoot\n");
+        }
+        catch (WriterError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpRoot\n");
+        }
     }
     iLock.Signal();
 }
@@ -653,7 +693,15 @@ void CpiDeviceListUpnpUuid::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchUuid(iUuid);
+        try {
+            iUnicastListener->MsearchUuid(iUuid);
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpUuid\n");
+        }
+        catch (WriterError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpUuid\n");
+        }
     }
     iLock.Signal();
 }
@@ -691,7 +739,15 @@ void CpiDeviceListUpnpDeviceType::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchDeviceType(iDomainName, iDeviceType, iVersion);
+        try {
+            iUnicastListener->MsearchDeviceType(iDomainName, iDeviceType, iVersion);
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
+        }
+        catch (WriterError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
+        }
     }
     iLock.Signal();
 }
@@ -730,7 +786,15 @@ void CpiDeviceListUpnpServiceType::Start()
         CpiDeviceListUpnp::Start();
     }
     if (iUnicastListener != NULL) {
-        iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
+        try {
+            iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
+        }
+        catch (NetworkError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
+        }
+        catch (WriterError&) {
+            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
+        }
     }
     iLock.Signal();
 }

@@ -74,7 +74,7 @@ void CpiSubscription::Unsubscribe()
         iInterruptHandler->Interrupt();
     }
     iLock.Signal();
-    Schedule(eUnsubscribe);
+    Schedule(eUnsubscribe, true);
     RemoveRef();
 }
 
@@ -143,6 +143,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
 {
     iTimer = new Timer(MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
+    iRejectFutureOperations = false;
     Schedule(eSubscribe);
     Stack::AddObject(this);
 }
@@ -156,15 +157,20 @@ CpiSubscription::~CpiSubscription()
     Stack::RemoveObject(this);
 }
 
-void CpiSubscription::Schedule(EOperation aOperation)
+void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperations)
 {
-    Stack::Mutex().Wait();
+    AutoMutex a(Stack::Mutex());
+    if (iRejectFutureOperations) {
+        return;
+    }
+    if (aRejectFutureOperations) {
+        iRejectFutureOperations = true;
+    }
     iRefCount++;
     if (iPendingOperation == eSubscribe) {
         iSubscribeCompleted.Signal();
     }
     iPendingOperation = aOperation;
-    Stack::Mutex().Signal();
     CpiSubscriptionManager::Schedule(*this);
 }
 

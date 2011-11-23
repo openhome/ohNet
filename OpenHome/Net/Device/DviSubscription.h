@@ -28,6 +28,7 @@ class IPropertyWriterFactory
 public:
     virtual IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, 
                                           const Brx& aSid, TUint aSequenceNumber) = 0;
+    virtual void NotifySubscriptionDeleted(const Brx& aSid) = 0;
 };
 
 class DviDevice;

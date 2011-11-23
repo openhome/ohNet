@@ -34,6 +34,7 @@ private: // ICpiDeviceObserver
     void Release();
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
+    void NotifySubscriptionDeleted(const Brx& aSid);
 private:
     CpiDevice* iDeviceCp;
     DviDevice& iDeviceDv;
