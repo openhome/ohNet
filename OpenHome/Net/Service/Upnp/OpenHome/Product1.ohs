@@ -28,4 +28,4 @@
 	<property name="Attributes" type="String" access="ROC" />
 	<property name="Standby" type="Boolean" access="RW" />
 	<property name="SourceIndex" type="Unsigned" access="RW" />
-<ohs>
+</ohs>

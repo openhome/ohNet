@@ -73,6 +73,9 @@ objects_devices = \
                   $(objdir)DvAvOpenhomeOrgMediaServer1.$(objext) \
                   $(objdir)DvAvOpenhomeOrgMediaServer1Std.$(objext) \
                   $(objdir)DvAvOpenhomeOrgMediaServer1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgNetworkMonitor1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgNetworkMonitor1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgNetworkMonitor1C.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1C.$(objext) \
@@ -111,6 +114,7 @@ device_dotnet_assemblies = \
         DvAvOpenhomeOrgSender1.net.dll \
         DvAvOpenhomeOrgPlaylistManager1.net.dll \
         DvAvOpenhomeOrgMediaServer1.net.dll \
+        DvAvOpenhomeOrgNetworkMonitor1.net.dll \
         DvOpenhomeOrgTestBasic1.net.dll \
         DvOpenhomeOrgTestLights1.net.dll \
 
@@ -138,6 +142,7 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvAvOpenhomeOrgSender1.net.dll \
         $(objdir)DvAvOpenhomeOrgPlaylistManager1.net.dll \
         $(objdir)DvAvOpenhomeOrgMediaServer1.net.dll \
+        $(objdir)DvAvOpenhomeOrgNetworkMonitor1.net.dll \
         $(objdir)DvOpenhomeOrgTestBasic1.net.dll \
         $(objdir)DvOpenhomeOrgTestLights1.net.dll \
 
@@ -165,6 +170,7 @@ device_java_classes_with_path = \
         $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgSender1.class \
         $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgPlaylistManager1.class \
         $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgMediaServer1.class \
+        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgNetworkMonitor1.class \
         $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestBasic1.class \
         $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestLights1.class \
 
@@ -308,6 +314,12 @@ $(objdir)DvAvOpenhomeOrgMediaServer1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeO
 	$(compiler)DvAvOpenhomeOrgMediaServer1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgMediaServer1Std.cpp
 $(objdir)DvAvOpenhomeOrgMediaServer1C.$(objext) : $(deviceC)DvAvOpenhomeOrgMediaServer1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgMediaServer1.h
 	$(compiler)DvAvOpenhomeOrgMediaServer1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgMediaServer1C.cpp
+$(objdir)DvAvOpenhomeOrgNetworkMonitor1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgNetworkMonitor1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgNetworkMonitor1.h
+	$(compiler)DvAvOpenhomeOrgNetworkMonitor1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgNetworkMonitor1.cpp
+$(objdir)DvAvOpenhomeOrgNetworkMonitor1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgNetworkMonitor1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgNetworkMonitor1.h
+	$(compiler)DvAvOpenhomeOrgNetworkMonitor1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgNetworkMonitor1Std.cpp
+$(objdir)DvAvOpenhomeOrgNetworkMonitor1C.$(objext) : $(deviceC)DvAvOpenhomeOrgNetworkMonitor1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgNetworkMonitor1.h
+	$(compiler)DvAvOpenhomeOrgNetworkMonitor1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgNetworkMonitor1C.cpp
 $(objdir)DvOpenhomeOrgTestBasic1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvOpenhomeOrgTestBasic1.h
 	$(compiler)DvOpenhomeOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp
 $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestBasic1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvOpenhomeOrgTestBasic1.h
@@ -345,6 +357,7 @@ device_dlls = \
              DvAvOpenhomeOrgSender1Dll \
              DvAvOpenhomeOrgPlaylistManager1Dll \
              DvAvOpenhomeOrgMediaServer1Dll \
+             DvAvOpenhomeOrgNetworkMonitor1Dll \
              DvOpenhomeOrgTestBasic1Dll \
              DvOpenhomeOrgTestLights1Dll \
 
@@ -418,6 +431,9 @@ $(objdir)$(dllprefix)DvAvOpenhomeOrgPlaylistManager1.$(dllext) : ZappUpnpDll $(o
 DvAvOpenhomeOrgMediaServer1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgMediaServer1.$(dllext) 
 $(objdir)$(dllprefix)DvAvOpenhomeOrgMediaServer1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgMediaServer1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgMediaServer1.$(dllext) $(objdir)DvAvOpenhomeOrgMediaServer1.$(objext)
+DvAvOpenhomeOrgNetworkMonitor1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgNetworkMonitor1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgNetworkMonitor1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgNetworkMonitor1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgNetworkMonitor1.$(dllext) $(objdir)DvAvOpenhomeOrgNetworkMonitor1.$(objext)
 DvOpenhomeOrgTestBasic1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) 
 $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext)
@@ -545,6 +561,11 @@ $(objdir)DvAvOpenhomeOrgMediaServer1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)
 		/out:$(objdir)DvAvOpenhomeOrgMediaServer1.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgMediaServer1.cs
+$(objdir)DvAvOpenhomeOrgNetworkMonitor1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgNetworkMonitor1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvAvOpenhomeOrgNetworkMonitor1.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
+		$(deviceCs)DvAvOpenhomeOrgNetworkMonitor1.cs
 $(objdir)DvOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -606,6 +627,8 @@ $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgPlaylistManage
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgPlaylistManager1.java
 $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgMediaServer1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgMediaServer1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgMediaServer1.java
+$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgNetworkMonitor1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgNetworkMonitor1.java
+	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgNetworkMonitor1.java
 $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
 $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestLights1.java

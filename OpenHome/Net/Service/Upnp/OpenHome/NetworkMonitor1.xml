@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+   <actionList>
+      <action>
+         <name>Name</name>
+         <argumentList>
+            <argument>
+                <name>Name</name>
+                <direction>out</direction>
+                <relatedStateVariable>Name</relatedStateVariable>
+            </argument>
+         </argumentList>
+      </action>
+     <action>
+       <name>Ports</name>
+       <argumentList>
+         <argument>
+           <name>Sender</name>
+           <direction>out</direction>
+           <relatedStateVariable>Sender</relatedStateVariable>
+         </argument>
+         <argument>
+           <name>Receiver</name>
+           <direction>out</direction>
+           <relatedStateVariable>Receiver</relatedStateVariable>
+         </argument>
+         <argument>
+           <name>Results</name>
+           <direction>out</direction>
+           <relatedStateVariable>Results</relatedStateVariable>
+         </argument>
+       </argumentList>
+     </action>
+   </actionList>
+   <serviceStateTable>
+     <stateVariable sendEvents="yes">
+       <name>Name</name>
+       <dataType>string</dataType>
+     </stateVariable>
+     <stateVariable sendEvents="yes">
+         <name>Sender</name>
+         <dataType>ui4</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Receiver</name>
+         <dataType>ui4</dataType>
+      </stateVariable>
+     <stateVariable sendEvents="yes">
+         <name>Results</name>
+         <dataType>ui4</dataType>
+     </stateVariable>
+   </serviceStateTable>
+</scpd>
+
