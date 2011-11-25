@@ -159,8 +159,9 @@ CpiSubscription::~CpiSubscription()
 
 void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperations)
 {
-    AutoMutex a(Stack::Mutex());
+    Stack::Mutex().Wait();
     if (iRejectFutureOperations) {
+        Stack::Mutex().Signal();
         return;
     }
     if (aRejectFutureOperations) {
@@ -171,6 +172,7 @@ void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperati
         iSubscribeCompleted.Signal();
     }
     iPendingOperation = aOperation;
+    Stack::Mutex().Signal();
     CpiSubscriptionManager::Schedule(*this);
 }
 
