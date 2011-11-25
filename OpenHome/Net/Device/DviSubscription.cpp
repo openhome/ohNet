@@ -179,11 +179,13 @@ TBool DviSubscription::PropertiesInitialised() const
 {
     TBool initialised = true;
     iLock.Wait();
-    const DviService::VectorProperties& properties = iService->Properties();
-	for (TUint i=0; i<properties.size(); i++) {
-		if (properties[i] == 0) {
-            initialised = false;
-            break;
+    if (iService != NULL) {
+        const DviService::VectorProperties& properties = iService->Properties();
+	    for (TUint i=0; i<properties.size(); i++) {
+		    if (properties[i] == 0) {
+                initialised = false;
+                break;
+            }
         }
     }
     iLock.Signal();
