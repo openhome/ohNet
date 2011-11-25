@@ -249,7 +249,12 @@ Swp::~Swp()
 
 ReaderBuffer::ReaderBuffer()
 {
-    ReadFlush();
+	Set(Brx::Empty());
+}
+
+ReaderBuffer::ReaderBuffer(const Brx& aBuffer)
+{
+	Set(aBuffer);
 }
 
 void ReaderBuffer::Set(const Brx& aBuffer)

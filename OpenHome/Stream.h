@@ -140,6 +140,7 @@ class ReaderBuffer : public IReader
 {
 public:
     ReaderBuffer();
+    ReaderBuffer(const Brx& aBuffer);
     void Set(const Brx& aBuffer);
     TUint Bytes() const;
     Brn ReadRemaining();
