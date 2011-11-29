@@ -407,7 +407,11 @@ DviSessionUpnp::~DviSessionUpnp()
     iSubscriptionMapLock.Wait();
     SubscriptionMap::iterator it = iSubscriptionMap.begin();
     if (it != iSubscriptionMap.end()) {
-        it->second->Stop();
+        DviSubscription* subscription = it->second;
+        DviService* service = subscription->Service();
+        if (service != NULL) {
+            service->RemoveSubscription(subscription->Sid());
+        }
         it++;
     }
     iSubscriptionMapLock.Signal();

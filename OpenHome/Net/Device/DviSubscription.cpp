@@ -72,6 +72,7 @@ void DviSubscription::Start(DviService& aService)
 void DviSubscription::Stop()
 {
     iLock.Wait();
+    iTimer->Cancel();
     iService = NULL;
     iLock.Signal();
 }
@@ -195,6 +196,15 @@ TBool DviSubscription::PropertiesInitialised() const
 TBool DviSubscription::HasExpired() const
 {
     return iExpired;
+}
+
+DviService* DviSubscription::Service()
+{
+    DviService* service;
+    iLock.Wait();
+    service = iService;
+    iLock.Signal();
+    return service;
 }
 
 DviSubscription::~DviSubscription()

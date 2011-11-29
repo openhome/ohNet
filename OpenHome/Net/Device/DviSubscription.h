@@ -39,7 +39,7 @@ public:
     DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
                     IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs);
     void Start(DviService& aService);
-    void Stop();
+    void Stop(); // should only be called by DviService
     void AddRef();
     void RemoveRef();
     void Renew(TUint& aSeconds);
@@ -47,6 +47,7 @@ public:
     const Brx& Sid() const;
     TBool PropertiesInitialised() const;
     TBool HasExpired() const;
+    DviService* Service();
 private:
     ~DviSubscription();
     IPropertyWriter* CreateWriter();
