@@ -49,6 +49,7 @@ public:
     void AppendAddress(Bwx& aAddress) const;
     void AppendEndpoint(Bwx& aEndpoint) const;
     void GetAddressOctets(TByte (&aOctets)[4]) const;
+	static void AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress);
 private:
     TIpAddress iAddress;
     TUint16 iPort;

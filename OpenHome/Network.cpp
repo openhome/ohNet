@@ -87,35 +87,40 @@ TUint16 Endpoint::Port() const
     return iPort;
 }
 
-void Endpoint::AppendAddress(Bwx& aAddress) const
+void Endpoint::AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress)
 {
-    ASSERT(aAddress.MaxBytes() - aAddress.Bytes() >= kMaxAddressBytes);
+    ASSERT(aAddressBuffer.MaxBytes() - aAddressBuffer.Bytes() >= kMaxAddressBytes);
 #ifdef DEFINE_LITTLE_ENDIAN
-    (void)Ascii::AppendDec(aAddress, iAddress&0xff);
-    aAddress.Append('.');
-    (void)Ascii::AppendDec(aAddress, (iAddress>>8)&0xff);
-    aAddress.Append('.');
-    (void)Ascii::AppendDec(aAddress, (iAddress>>16)&0xff);
-    aAddress.Append('.');
-    (void)Ascii::AppendDec(aAddress, (iAddress>>24)&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, aAddress&0xff);
+    aAddressBuffer.Append('.');
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>8)&0xff);
+    aAddressBuffer.Append('.');
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>16)&0xff);
+    aAddressBuffer.Append('.');
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>24)&0xff);
 #elif defined DEFINE_BIG_ENDIAN
-    (void)Ascii::AppendDec(aAddress, (iAddress>>24)&0xff);
-    aAddress.Append('.');
-    (void)Ascii::AppendDec(aAddress, (iAddress>>16)&0xff);
-    aAddress.Append('.');
-    (void)Ascii::AppendDec(aAddress, (iAddress>>8)&0xff);
-    aAddress.Append('.');
-    (void)Ascii::AppendDec(aAddress, iAddress&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>24)&0xff);
+    aAddressBuffer.Append('.');
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>16)&0xff);
+    aAddressBuffer.Append('.');
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>8)&0xff);
+    aAddressBuffer.Append('.');
+    (void)Ascii::AppendDec(aAddressBuffer, aAddress&0xff);
 #else
 # error No endianess defined
 #endif
-    aAddress.PtrZ();
+    aAddressBuffer.PtrZ();
+}
+
+void Endpoint::AppendAddress(Bwx& aAddress) const
+{
+	AppendAddress(aAddress, iAddress);
 }
 
 void Endpoint::AppendEndpoint(Bwx& aEndpoint) const
 {
     ASSERT(aEndpoint.MaxBytes() - aEndpoint.Bytes() >= kMaxEndpointBytes);
-    AppendAddress(aEndpoint);
+    AppendAddress(aEndpoint, iAddress);
     aEndpoint.Append(':');
     (void)Ascii::AppendDec(aEndpoint, iPort);
     aEndpoint.PtrZ();
