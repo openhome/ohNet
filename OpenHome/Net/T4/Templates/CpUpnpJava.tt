@@ -375,12 +375,7 @@ public class <#=className#> extends CpProxy implements I<#=className#>
 	    Sync<#=a.name#><#=fileName#> sync = new Sync<#=a.name#><#=fileName#>(this);
 	    begin<#=a.name#>(<#=InArgsNames(a, true)#>sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 <#      if (a.outargs.Count == 1) #>
 <#      { #>
 <#          foreach (Argument o in a.outargs) #>

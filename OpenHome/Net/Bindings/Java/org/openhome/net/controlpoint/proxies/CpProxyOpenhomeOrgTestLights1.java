@@ -360,12 +360,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	    SyncGetCountOpenhomeOrgTestLights1 sync = new SyncGetCountOpenhomeOrgTestLights1(this);
 	    beginGetCount(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCount();
 	}
@@ -419,12 +414,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	    SyncGetRoomOpenhomeOrgTestLights1 sync = new SyncGetRoomOpenhomeOrgTestLights1(this);
 	    beginGetRoom(aIndex, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getRoomName();
 	}
@@ -481,12 +471,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	    SyncGetNameOpenhomeOrgTestLights1 sync = new SyncGetNameOpenhomeOrgTestLights1(this);
 	    beginGetName(aIndex, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getFriendlyName();
 	}
@@ -543,12 +528,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	    SyncGetPositionOpenhomeOrgTestLights1 sync = new SyncGetPositionOpenhomeOrgTestLights1(this);
 	    beginGetPosition(aIndex, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetPosition(
             sync.getX(),
@@ -615,12 +595,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	    SyncSetColorOpenhomeOrgTestLights1 sync = new SyncSetColorOpenhomeOrgTestLights1(this);
 	    beginSetColor(aIndex, aColor, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -671,12 +646,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	    SyncGetColorOpenhomeOrgTestLights1 sync = new SyncGetColorOpenhomeOrgTestLights1(this);
 	    beginGetColor(aIndex, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getColor();
 	}
@@ -733,12 +703,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	    SyncGetColorComponentsOpenhomeOrgTestLights1 sync = new SyncGetColorComponentsOpenhomeOrgTestLights1(this);
 	    beginGetColorComponents(aColor, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetColorComponents(
             sync.getBrightness(),

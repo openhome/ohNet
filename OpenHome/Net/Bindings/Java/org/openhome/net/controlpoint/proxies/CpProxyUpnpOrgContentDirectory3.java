@@ -925,12 +925,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncGetSearchCapabilitiesUpnpOrgContentDirectory3 sync = new SyncGetSearchCapabilitiesUpnpOrgContentDirectory3(this);
 	    beginGetSearchCapabilities(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getSearchCaps();
 	}
@@ -984,12 +979,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncGetSortCapabilitiesUpnpOrgContentDirectory3 sync = new SyncGetSortCapabilitiesUpnpOrgContentDirectory3(this);
 	    beginGetSortCapabilities(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getSortCaps();
 	}
@@ -1043,12 +1033,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory3 sync = new SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory3(this);
 	    beginGetSortExtensionCapabilities(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getSortExtensionCaps();
 	}
@@ -1102,12 +1087,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncGetFeatureListUpnpOrgContentDirectory3 sync = new SyncGetFeatureListUpnpOrgContentDirectory3(this);
 	    beginGetFeatureList(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getFeatureList();
 	}
@@ -1161,12 +1141,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncGetSystemUpdateIDUpnpOrgContentDirectory3 sync = new SyncGetSystemUpdateIDUpnpOrgContentDirectory3(this);
 	    beginGetSystemUpdateID(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getId();
 	}
@@ -1220,12 +1195,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncGetServiceResetTokenUpnpOrgContentDirectory3 sync = new SyncGetServiceResetTokenUpnpOrgContentDirectory3(this);
 	    beginGetServiceResetToken(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getResetToken();
 	}
@@ -1279,12 +1249,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncBrowseUpnpOrgContentDirectory3 sync = new SyncBrowseUpnpOrgContentDirectory3(this);
 	    beginBrowse(aObjectID, aBrowseFlag, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Browse(
             sync.getResult(),
@@ -1367,12 +1332,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncSearchUpnpOrgContentDirectory3 sync = new SyncSearchUpnpOrgContentDirectory3(this);
 	    beginSearch(aContainerID, aSearchCriteria, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Search(
             sync.getResult(),
@@ -1455,12 +1415,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncCreateObjectUpnpOrgContentDirectory3 sync = new SyncCreateObjectUpnpOrgContentDirectory3(this);
 	    beginCreateObject(aContainerID, aElements, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new CreateObject(
             sync.getObjectID(),
@@ -1525,12 +1480,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncDestroyObjectUpnpOrgContentDirectory3 sync = new SyncDestroyObjectUpnpOrgContentDirectory3(this);
 	    beginDestroyObject(aObjectID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1577,12 +1527,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncUpdateObjectUpnpOrgContentDirectory3 sync = new SyncUpdateObjectUpnpOrgContentDirectory3(this);
 	    beginUpdateObject(aObjectID, aCurrentTagValue, aNewTagValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1635,12 +1580,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncMoveObjectUpnpOrgContentDirectory3 sync = new SyncMoveObjectUpnpOrgContentDirectory3(this);
 	    beginMoveObject(aObjectID, aNewParentID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getNewObjectID();
 	}
@@ -1699,12 +1639,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncImportResourceUpnpOrgContentDirectory3 sync = new SyncImportResourceUpnpOrgContentDirectory3(this);
 	    beginImportResource(aSourceURI, aDestinationURI, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getTransferID();
 	}
@@ -1763,12 +1698,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncExportResourceUpnpOrgContentDirectory3 sync = new SyncExportResourceUpnpOrgContentDirectory3(this);
 	    beginExportResource(aSourceURI, aDestinationURI, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getTransferID();
 	}
@@ -1825,12 +1755,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncDeleteResourceUpnpOrgContentDirectory3 sync = new SyncDeleteResourceUpnpOrgContentDirectory3(this);
 	    beginDeleteResource(aResourceURI, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1877,12 +1802,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncStopTransferResourceUpnpOrgContentDirectory3 sync = new SyncStopTransferResourceUpnpOrgContentDirectory3(this);
 	    beginStopTransferResource(aTransferID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1931,12 +1851,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncGetTransferProgressUpnpOrgContentDirectory3 sync = new SyncGetTransferProgressUpnpOrgContentDirectory3(this);
 	    beginGetTransferProgress(aTransferID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetTransferProgress(
             sync.getTransferStatus(),
@@ -2005,12 +1920,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncCreateReferenceUpnpOrgContentDirectory3 sync = new SyncCreateReferenceUpnpOrgContentDirectory3(this);
 	    beginCreateReference(aContainerID, aObjectID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getNewID();
 	}
@@ -2069,12 +1979,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncFreeFormQueryUpnpOrgContentDirectory3 sync = new SyncFreeFormQueryUpnpOrgContentDirectory3(this);
 	    beginFreeFormQuery(aContainerID, aCDSView, aQueryRequest, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new FreeFormQuery(
             sync.getQueryResult(),
@@ -2143,12 +2048,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	    SyncGetFreeFormQueryCapabilitiesUpnpOrgContentDirectory3 sync = new SyncGetFreeFormQueryCapabilitiesUpnpOrgContentDirectory3(this);
 	    beginGetFreeFormQueryCapabilities(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getFFQCapabilities();
 	}

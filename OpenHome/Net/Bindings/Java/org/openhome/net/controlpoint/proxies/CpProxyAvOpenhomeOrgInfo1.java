@@ -415,12 +415,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	    SyncCountersAvOpenhomeOrgInfo1 sync = new SyncCountersAvOpenhomeOrgInfo1(this);
 	    beginCounters(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Counters(
             sync.getTrackCount(),
@@ -486,12 +481,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	    SyncTrackAvOpenhomeOrgInfo1 sync = new SyncTrackAvOpenhomeOrgInfo1(this);
 	    beginTrack(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Track(
             sync.getUri(),
@@ -553,12 +543,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	    SyncDetailsAvOpenhomeOrgInfo1 sync = new SyncDetailsAvOpenhomeOrgInfo1(this);
 	    beginDetails(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Details(
             sync.getDuration(),
@@ -636,12 +621,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	    SyncMetatextAvOpenhomeOrgInfo1 sync = new SyncMetatextAvOpenhomeOrgInfo1(this);
 	    beginMetatext(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}

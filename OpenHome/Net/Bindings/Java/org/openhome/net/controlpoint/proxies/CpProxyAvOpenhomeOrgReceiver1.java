@@ -263,12 +263,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	    SyncPlayAvOpenhomeOrgReceiver1 sync = new SyncPlayAvOpenhomeOrgReceiver1(this);
 	    beginPlay(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -312,12 +307,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	    SyncStopAvOpenhomeOrgReceiver1 sync = new SyncStopAvOpenhomeOrgReceiver1(this);
 	    beginStop(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -361,12 +351,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	    SyncSetSenderAvOpenhomeOrgReceiver1 sync = new SyncSetSenderAvOpenhomeOrgReceiver1(this);
 	    beginSetSender(aUri, aMetadata, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -417,12 +402,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	    SyncSenderAvOpenhomeOrgReceiver1 sync = new SyncSenderAvOpenhomeOrgReceiver1(this);
 	    beginSender(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Sender(
             sync.getUri(),
@@ -484,12 +464,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	    SyncProtocolInfoAvOpenhomeOrgReceiver1 sync = new SyncProtocolInfoAvOpenhomeOrgReceiver1(this);
 	    beginProtocolInfo(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -543,12 +518,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	    SyncTransportStateAvOpenhomeOrgReceiver1 sync = new SyncTransportStateAvOpenhomeOrgReceiver1(this);
 	    beginTransportState(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
