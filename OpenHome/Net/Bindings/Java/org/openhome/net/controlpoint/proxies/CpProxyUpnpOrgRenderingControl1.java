@@ -1106,12 +1106,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncListPresetsUpnpOrgRenderingControl1 sync = new SyncListPresetsUpnpOrgRenderingControl1(this);
 	    beginListPresets(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentPresetNameList();
 	}
@@ -1166,12 +1161,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSelectPresetUpnpOrgRenderingControl1 sync = new SyncSelectPresetUpnpOrgRenderingControl1(this);
 	    beginSelectPreset(aInstanceID, aPresetName, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1222,12 +1212,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetBrightnessUpnpOrgRenderingControl1 sync = new SyncGetBrightnessUpnpOrgRenderingControl1(this);
 	    beginGetBrightness(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentBrightness();
 	}
@@ -1282,12 +1267,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetBrightnessUpnpOrgRenderingControl1 sync = new SyncSetBrightnessUpnpOrgRenderingControl1(this);
 	    beginSetBrightness(aInstanceID, aDesiredBrightness, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1338,12 +1318,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetContrastUpnpOrgRenderingControl1 sync = new SyncGetContrastUpnpOrgRenderingControl1(this);
 	    beginGetContrast(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentContrast();
 	}
@@ -1398,12 +1373,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetContrastUpnpOrgRenderingControl1 sync = new SyncSetContrastUpnpOrgRenderingControl1(this);
 	    beginSetContrast(aInstanceID, aDesiredContrast, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1454,12 +1424,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetSharpnessUpnpOrgRenderingControl1 sync = new SyncGetSharpnessUpnpOrgRenderingControl1(this);
 	    beginGetSharpness(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentSharpness();
 	}
@@ -1514,12 +1479,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetSharpnessUpnpOrgRenderingControl1 sync = new SyncSetSharpnessUpnpOrgRenderingControl1(this);
 	    beginSetSharpness(aInstanceID, aDesiredSharpness, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1570,12 +1530,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetRedVideoGainUpnpOrgRenderingControl1 sync = new SyncGetRedVideoGainUpnpOrgRenderingControl1(this);
 	    beginGetRedVideoGain(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentRedVideoGain();
 	}
@@ -1630,12 +1585,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetRedVideoGainUpnpOrgRenderingControl1 sync = new SyncSetRedVideoGainUpnpOrgRenderingControl1(this);
 	    beginSetRedVideoGain(aInstanceID, aDesiredRedVideoGain, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1686,12 +1636,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetGreenVideoGainUpnpOrgRenderingControl1 sync = new SyncGetGreenVideoGainUpnpOrgRenderingControl1(this);
 	    beginGetGreenVideoGain(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentGreenVideoGain();
 	}
@@ -1746,12 +1691,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetGreenVideoGainUpnpOrgRenderingControl1 sync = new SyncSetGreenVideoGainUpnpOrgRenderingControl1(this);
 	    beginSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1802,12 +1742,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetBlueVideoGainUpnpOrgRenderingControl1 sync = new SyncGetBlueVideoGainUpnpOrgRenderingControl1(this);
 	    beginGetBlueVideoGain(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentBlueVideoGain();
 	}
@@ -1862,12 +1797,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetBlueVideoGainUpnpOrgRenderingControl1 sync = new SyncSetBlueVideoGainUpnpOrgRenderingControl1(this);
 	    beginSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1918,12 +1848,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1 sync = new SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1(this);
 	    beginGetRedVideoBlackLevel(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentRedVideoBlackLevel();
 	}
@@ -1978,12 +1903,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1 sync = new SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1(this);
 	    beginSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2034,12 +1954,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1 sync = new SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1(this);
 	    beginGetGreenVideoBlackLevel(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentGreenVideoBlackLevel();
 	}
@@ -2094,12 +2009,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1 sync = new SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1(this);
 	    beginSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2150,12 +2060,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1 sync = new SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1(this);
 	    beginGetBlueVideoBlackLevel(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentBlueVideoBlackLevel();
 	}
@@ -2210,12 +2115,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1 sync = new SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1(this);
 	    beginSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2266,12 +2166,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetColorTemperatureUpnpOrgRenderingControl1 sync = new SyncGetColorTemperatureUpnpOrgRenderingControl1(this);
 	    beginGetColorTemperature(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentColorTemperature();
 	}
@@ -2326,12 +2221,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetColorTemperatureUpnpOrgRenderingControl1 sync = new SyncSetColorTemperatureUpnpOrgRenderingControl1(this);
 	    beginSetColorTemperature(aInstanceID, aDesiredColorTemperature, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2382,12 +2272,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetHorizontalKeystoneUpnpOrgRenderingControl1 sync = new SyncGetHorizontalKeystoneUpnpOrgRenderingControl1(this);
 	    beginGetHorizontalKeystone(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentHorizontalKeystone();
 	}
@@ -2442,12 +2327,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetHorizontalKeystoneUpnpOrgRenderingControl1 sync = new SyncSetHorizontalKeystoneUpnpOrgRenderingControl1(this);
 	    beginSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2498,12 +2378,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetVerticalKeystoneUpnpOrgRenderingControl1 sync = new SyncGetVerticalKeystoneUpnpOrgRenderingControl1(this);
 	    beginGetVerticalKeystone(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentVerticalKeystone();
 	}
@@ -2558,12 +2433,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetVerticalKeystoneUpnpOrgRenderingControl1 sync = new SyncSetVerticalKeystoneUpnpOrgRenderingControl1(this);
 	    beginSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2614,12 +2484,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetMuteUpnpOrgRenderingControl1 sync = new SyncGetMuteUpnpOrgRenderingControl1(this);
 	    beginGetMute(aInstanceID, aChannel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentMute();
 	}
@@ -2676,12 +2541,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetMuteUpnpOrgRenderingControl1 sync = new SyncSetMuteUpnpOrgRenderingControl1(this);
 	    beginSetMute(aInstanceID, aChannel, aDesiredMute, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2734,12 +2594,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetVolumeUpnpOrgRenderingControl1 sync = new SyncGetVolumeUpnpOrgRenderingControl1(this);
 	    beginGetVolume(aInstanceID, aChannel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentVolume();
 	}
@@ -2796,12 +2651,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetVolumeUpnpOrgRenderingControl1 sync = new SyncSetVolumeUpnpOrgRenderingControl1(this);
 	    beginSetVolume(aInstanceID, aChannel, aDesiredVolume, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2854,12 +2704,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetVolumeDBUpnpOrgRenderingControl1 sync = new SyncGetVolumeDBUpnpOrgRenderingControl1(this);
 	    beginGetVolumeDB(aInstanceID, aChannel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentVolume();
 	}
@@ -2916,12 +2761,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetVolumeDBUpnpOrgRenderingControl1 sync = new SyncSetVolumeDBUpnpOrgRenderingControl1(this);
 	    beginSetVolumeDB(aInstanceID, aChannel, aDesiredVolume, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2974,12 +2814,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetVolumeDBRangeUpnpOrgRenderingControl1 sync = new SyncGetVolumeDBRangeUpnpOrgRenderingControl1(this);
 	    beginGetVolumeDBRange(aInstanceID, aChannel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetVolumeDBRange(
             sync.getMinValue(),
@@ -3046,12 +2881,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncGetLoudnessUpnpOrgRenderingControl1 sync = new SyncGetLoudnessUpnpOrgRenderingControl1(this);
 	    beginGetLoudness(aInstanceID, aChannel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentLoudness();
 	}
@@ -3108,12 +2938,7 @@ public class CpProxyUpnpOrgRenderingControl1 extends CpProxy implements ICpProxy
 	    SyncSetLoudnessUpnpOrgRenderingControl1 sync = new SyncSetLoudnessUpnpOrgRenderingControl1(this);
 	    beginSetLoudness(aInstanceID, aChannel, aDesiredLoudness, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**

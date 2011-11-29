@@ -179,12 +179,7 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
 	    SyncNameAvOpenhomeOrgNetworkMonitor1 sync = new SyncNameAvOpenhomeOrgNetworkMonitor1(this);
 	    beginName(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getName();
 	}
@@ -238,12 +233,7 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
 	    SyncPortsAvOpenhomeOrgNetworkMonitor1 sync = new SyncPortsAvOpenhomeOrgNetworkMonitor1(this);
 	    beginPorts(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Ports(
             sync.getSender(),

@@ -793,12 +793,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncManufacturerAvOpenhomeOrgProduct1 sync = new SyncManufacturerAvOpenhomeOrgProduct1(this);
 	    beginManufacturer(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Manufacturer(
             sync.getName(),
@@ -868,12 +863,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncModelAvOpenhomeOrgProduct1 sync = new SyncModelAvOpenhomeOrgProduct1(this);
 	    beginModel(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Model(
             sync.getName(),
@@ -943,12 +933,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncProductAvOpenhomeOrgProduct1 sync = new SyncProductAvOpenhomeOrgProduct1(this);
 	    beginProduct(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Product(
             sync.getRoom(),
@@ -1022,12 +1007,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncStandbyAvOpenhomeOrgProduct1 sync = new SyncStandbyAvOpenhomeOrgProduct1(this);
 	    beginStandby(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1079,12 +1059,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncSetStandbyAvOpenhomeOrgProduct1 sync = new SyncSetStandbyAvOpenhomeOrgProduct1(this);
 	    beginSetStandby(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1133,12 +1108,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncSourceCountAvOpenhomeOrgProduct1 sync = new SyncSourceCountAvOpenhomeOrgProduct1(this);
 	    beginSourceCount(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1192,12 +1162,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncSourceXmlAvOpenhomeOrgProduct1 sync = new SyncSourceXmlAvOpenhomeOrgProduct1(this);
 	    beginSourceXml(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1251,12 +1216,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncSourceIndexAvOpenhomeOrgProduct1 sync = new SyncSourceIndexAvOpenhomeOrgProduct1(this);
 	    beginSourceIndex(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1308,12 +1268,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncSetSourceIndexAvOpenhomeOrgProduct1 sync = new SyncSetSourceIndexAvOpenhomeOrgProduct1(this);
 	    beginSetSourceIndex(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1360,12 +1315,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncSetSourceIndexByNameAvOpenhomeOrgProduct1 sync = new SyncSetSourceIndexByNameAvOpenhomeOrgProduct1(this);
 	    beginSetSourceIndexByName(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1414,12 +1364,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncSourceAvOpenhomeOrgProduct1 sync = new SyncSourceAvOpenhomeOrgProduct1(this);
 	    beginSource(aIndex, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Source(
             sync.getSystemName(),
@@ -1492,12 +1437,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncAttributesAvOpenhomeOrgProduct1 sync = new SyncAttributesAvOpenhomeOrgProduct1(this);
 	    beginAttributes(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1551,12 +1491,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	    SyncSourceXmlChangeCountAvOpenhomeOrgProduct1 sync = new SyncSourceXmlChangeCountAvOpenhomeOrgProduct1(this);
 	    beginSourceXmlChangeCount(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}

@@ -133,12 +133,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 	    SyncSetTargetUpnpOrgSwitchPower1 sync = new SyncSetTargetUpnpOrgSwitchPower1(this);
 	    beginSetTarget(aNewTargetValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -187,12 +182,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetTargetUpnpOrgSwitchPower1 sync = new SyncGetTargetUpnpOrgSwitchPower1(this);
 	    beginGetTarget(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getRetTargetValue();
 	}
@@ -246,12 +236,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetStatusUpnpOrgSwitchPower1 sync = new SyncGetStatusUpnpOrgSwitchPower1(this);
 	    beginGetStatus(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getResultStatus();
 	}

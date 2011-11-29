@@ -1203,12 +1203,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncSetAVTransportURIUpnpOrgAVTransport2 sync = new SyncSetAVTransportURIUpnpOrgAVTransport2(this);
 	    beginSetAVTransportURI(aInstanceID, aCurrentURI, aCurrentURIMetaData, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1259,12 +1254,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncSetNextAVTransportURIUpnpOrgAVTransport2 sync = new SyncSetNextAVTransportURIUpnpOrgAVTransport2(this);
 	    beginSetNextAVTransportURI(aInstanceID, aNextURI, aNextURIMetaData, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1317,12 +1307,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetMediaInfoUpnpOrgAVTransport2 sync = new SyncGetMediaInfoUpnpOrgAVTransport2(this);
 	    beginGetMediaInfo(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetMediaInfo(
             sync.getNrTracks(),
@@ -1415,12 +1400,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetMediaInfo_ExtUpnpOrgAVTransport2 sync = new SyncGetMediaInfo_ExtUpnpOrgAVTransport2(this);
 	    beginGetMediaInfo_Ext(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetMediaInfo_Ext(
             sync.getCurrentType(),
@@ -1517,12 +1497,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetTransportInfoUpnpOrgAVTransport2 sync = new SyncGetTransportInfoUpnpOrgAVTransport2(this);
 	    beginGetTransportInfo(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetTransportInfo(
             sync.getCurrentTransportState(),
@@ -1591,12 +1566,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetPositionInfoUpnpOrgAVTransport2 sync = new SyncGetPositionInfoUpnpOrgAVTransport2(this);
 	    beginGetPositionInfo(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetPositionInfo(
             sync.getTrack(),
@@ -1685,12 +1655,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetDeviceCapabilitiesUpnpOrgAVTransport2 sync = new SyncGetDeviceCapabilitiesUpnpOrgAVTransport2(this);
 	    beginGetDeviceCapabilities(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetDeviceCapabilities(
             sync.getPlayMedia(),
@@ -1759,12 +1724,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetTransportSettingsUpnpOrgAVTransport2 sync = new SyncGetTransportSettingsUpnpOrgAVTransport2(this);
 	    beginGetTransportSettings(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetTransportSettings(
             sync.getPlayMode(),
@@ -1827,12 +1787,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncStopUpnpOrgAVTransport2 sync = new SyncStopUpnpOrgAVTransport2(this);
 	    beginStop(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1879,12 +1834,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncPlayUpnpOrgAVTransport2 sync = new SyncPlayUpnpOrgAVTransport2(this);
 	    beginPlay(aInstanceID, aSpeed, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1933,12 +1883,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncPauseUpnpOrgAVTransport2 sync = new SyncPauseUpnpOrgAVTransport2(this);
 	    beginPause(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1985,12 +1930,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncRecordUpnpOrgAVTransport2 sync = new SyncRecordUpnpOrgAVTransport2(this);
 	    beginRecord(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2037,12 +1977,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncSeekUpnpOrgAVTransport2 sync = new SyncSeekUpnpOrgAVTransport2(this);
 	    beginSeek(aInstanceID, aUnit, aTarget, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2093,12 +2028,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncNextUpnpOrgAVTransport2 sync = new SyncNextUpnpOrgAVTransport2(this);
 	    beginNext(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2145,12 +2075,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncPreviousUpnpOrgAVTransport2 sync = new SyncPreviousUpnpOrgAVTransport2(this);
 	    beginPrevious(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2197,12 +2122,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncSetPlayModeUpnpOrgAVTransport2 sync = new SyncSetPlayModeUpnpOrgAVTransport2(this);
 	    beginSetPlayMode(aInstanceID, aNewPlayMode, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2251,12 +2171,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncSetRecordQualityModeUpnpOrgAVTransport2 sync = new SyncSetRecordQualityModeUpnpOrgAVTransport2(this);
 	    beginSetRecordQualityMode(aInstanceID, aNewRecordQualityMode, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -2307,12 +2222,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetCurrentTransportActionsUpnpOrgAVTransport2 sync = new SyncGetCurrentTransportActionsUpnpOrgAVTransport2(this);
 	    beginGetCurrentTransportActions(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getActions();
 	}
@@ -2369,12 +2279,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetDRMStateUpnpOrgAVTransport2 sync = new SyncGetDRMStateUpnpOrgAVTransport2(this);
 	    beginGetDRMState(aInstanceID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getCurrentDRMState();
 	}
@@ -2431,12 +2336,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncGetStateVariablesUpnpOrgAVTransport2 sync = new SyncGetStateVariablesUpnpOrgAVTransport2(this);
 	    beginGetStateVariables(aInstanceID, aStateVariableList, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getStateVariableValuePairs();
 	}
@@ -2495,12 +2395,7 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	    SyncSetStateVariablesUpnpOrgAVTransport2 sync = new SyncSetStateVariablesUpnpOrgAVTransport2(this);
 	    beginSetStateVariables(aInstanceID, aAVTransportUDN, aServiceType, aServiceId, aStateVariableValuePairs, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getStateVariableList();
 	}

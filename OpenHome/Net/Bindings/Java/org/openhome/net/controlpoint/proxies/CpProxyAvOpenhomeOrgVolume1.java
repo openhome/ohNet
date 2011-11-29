@@ -607,12 +607,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncCharacteristicsAvOpenhomeOrgVolume1 sync = new SyncCharacteristicsAvOpenhomeOrgVolume1(this);
 	    beginCharacteristics(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Characteristics(
             sync.getVolumeMax(),
@@ -688,12 +683,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncSetVolumeAvOpenhomeOrgVolume1 sync = new SyncSetVolumeAvOpenhomeOrgVolume1(this);
 	    beginSetVolume(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -740,12 +730,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncVolumeIncAvOpenhomeOrgVolume1 sync = new SyncVolumeIncAvOpenhomeOrgVolume1(this);
 	    beginVolumeInc(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -789,12 +774,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncVolumeDecAvOpenhomeOrgVolume1 sync = new SyncVolumeDecAvOpenhomeOrgVolume1(this);
 	    beginVolumeDec(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -840,12 +820,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncVolumeAvOpenhomeOrgVolume1 sync = new SyncVolumeAvOpenhomeOrgVolume1(this);
 	    beginVolume(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -897,12 +872,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncSetBalanceAvOpenhomeOrgVolume1 sync = new SyncSetBalanceAvOpenhomeOrgVolume1(this);
 	    beginSetBalance(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -949,12 +919,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncBalanceIncAvOpenhomeOrgVolume1 sync = new SyncBalanceIncAvOpenhomeOrgVolume1(this);
 	    beginBalanceInc(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -998,12 +963,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncBalanceDecAvOpenhomeOrgVolume1 sync = new SyncBalanceDecAvOpenhomeOrgVolume1(this);
 	    beginBalanceDec(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1049,12 +1009,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncBalanceAvOpenhomeOrgVolume1 sync = new SyncBalanceAvOpenhomeOrgVolume1(this);
 	    beginBalance(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1106,12 +1061,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncSetFadeAvOpenhomeOrgVolume1 sync = new SyncSetFadeAvOpenhomeOrgVolume1(this);
 	    beginSetFade(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1158,12 +1108,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncFadeIncAvOpenhomeOrgVolume1 sync = new SyncFadeIncAvOpenhomeOrgVolume1(this);
 	    beginFadeInc(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1207,12 +1152,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncFadeDecAvOpenhomeOrgVolume1 sync = new SyncFadeDecAvOpenhomeOrgVolume1(this);
 	    beginFadeDec(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1258,12 +1198,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncFadeAvOpenhomeOrgVolume1 sync = new SyncFadeAvOpenhomeOrgVolume1(this);
 	    beginFade(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1315,12 +1250,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncSetMuteAvOpenhomeOrgVolume1 sync = new SyncSetMuteAvOpenhomeOrgVolume1(this);
 	    beginSetMute(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1369,12 +1299,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncMuteAvOpenhomeOrgVolume1 sync = new SyncMuteAvOpenhomeOrgVolume1(this);
 	    beginMute(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1428,12 +1353,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	    SyncVolumeLimitAvOpenhomeOrgVolume1 sync = new SyncVolumeLimitAvOpenhomeOrgVolume1(this);
 	    beginVolumeLimit(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}

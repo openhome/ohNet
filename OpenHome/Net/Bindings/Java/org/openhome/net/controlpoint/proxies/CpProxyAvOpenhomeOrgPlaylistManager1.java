@@ -759,12 +759,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncMetadataAvOpenhomeOrgPlaylistManager1 sync = new SyncMetadataAvOpenhomeOrgPlaylistManager1(this);
 	    beginMetadata(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getMetadata();
 	}
@@ -818,12 +813,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncImagesXmlAvOpenhomeOrgPlaylistManager1 sync = new SyncImagesXmlAvOpenhomeOrgPlaylistManager1(this);
 	    beginImagesXml(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getImagesXml();
 	}
@@ -877,12 +867,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistReadArrayAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistReadArrayAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistReadArray(aId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getArray();
 	}
@@ -939,12 +924,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistReadList(aIdList, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getPlaylistList();
 	}
@@ -1001,12 +981,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistReadAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistReadAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistRead(aId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new PlaylistRead(
             sync.getName(),
@@ -1073,12 +1048,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistSetName(aId, aName, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1127,12 +1097,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistSetDescription(aId, aDescription, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1181,12 +1146,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistSetImageId(aId, aImageId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1237,12 +1197,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistInsertAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistInsertAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistInsert(aAfterId, aName, aDescription, aImageId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getNewId();
 	}
@@ -1303,12 +1258,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistDeleteIdAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistDeleteIdAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistDeleteId(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1355,12 +1305,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistMove(aId, aAfterId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1411,12 +1356,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistsMaxAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistsMaxAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistsMax(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1470,12 +1410,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncTracksMaxAvOpenhomeOrgPlaylistManager1 sync = new SyncTracksMaxAvOpenhomeOrgPlaylistManager1(this);
 	    beginTracksMax(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1529,12 +1464,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistArraysAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistArraysAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistArrays(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new PlaylistArrays(
             sync.getToken(),
@@ -1600,12 +1530,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncPlaylistArraysChangedAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistArraysChangedAvOpenhomeOrgPlaylistManager1(this);
 	    beginPlaylistArraysChanged(aToken, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1662,12 +1587,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncReadAvOpenhomeOrgPlaylistManager1 sync = new SyncReadAvOpenhomeOrgPlaylistManager1(this);
 	    beginRead(aId, aTrackId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getMetadata();
 	}
@@ -1726,12 +1646,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncReadListAvOpenhomeOrgPlaylistManager1 sync = new SyncReadListAvOpenhomeOrgPlaylistManager1(this);
 	    beginReadList(aId, aTrackIdList, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getTrackList();
 	}
@@ -1790,12 +1705,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncInsertAvOpenhomeOrgPlaylistManager1 sync = new SyncInsertAvOpenhomeOrgPlaylistManager1(this);
 	    beginInsert(aId, aAfterTrackId, aMetadata, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getNewTrackId();
 	}
@@ -1854,12 +1764,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncDeleteIdAvOpenhomeOrgPlaylistManager1 sync = new SyncDeleteIdAvOpenhomeOrgPlaylistManager1(this);
 	    beginDeleteId(aId, aTrackId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1908,12 +1813,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	    SyncDeleteAllAvOpenhomeOrgPlaylistManager1 sync = new SyncDeleteAllAvOpenhomeOrgPlaylistManager1(this);
 	    beginDeleteAll(aId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**

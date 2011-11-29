@@ -412,12 +412,7 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
 	    SyncGetProtocolInfoUpnpOrgConnectionManager2 sync = new SyncGetProtocolInfoUpnpOrgConnectionManager2(this);
 	    beginGetProtocolInfo(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetProtocolInfo(
             sync.getSource(),
@@ -479,12 +474,7 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
 	    SyncPrepareForConnectionUpnpOrgConnectionManager2 sync = new SyncPrepareForConnectionUpnpOrgConnectionManager2(this);
 	    beginPrepareForConnection(aRemoteProtocolInfo, aPeerConnectionManager, aPeerConnectionID, aDirection, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new PrepareForConnection(
             sync.getConnectionID(),
@@ -557,12 +547,7 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
 	    SyncConnectionCompleteUpnpOrgConnectionManager2 sync = new SyncConnectionCompleteUpnpOrgConnectionManager2(this);
 	    beginConnectionComplete(aConnectionID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -611,12 +596,7 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
 	    SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2 sync = new SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(this);
 	    beginGetCurrentConnectionIDs(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getConnectionIDs();
 	}
@@ -670,12 +650,7 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
 	    SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2 sync = new SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(this);
 	    beginGetCurrentConnectionInfo(aConnectionID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetCurrentConnectionInfo(
             sync.getRcsID(),

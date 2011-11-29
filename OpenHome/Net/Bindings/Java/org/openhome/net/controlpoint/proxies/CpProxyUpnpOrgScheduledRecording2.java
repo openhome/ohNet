@@ -903,12 +903,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncGetSortCapabilitiesUpnpOrgScheduledRecording2 sync = new SyncGetSortCapabilitiesUpnpOrgScheduledRecording2(this);
 	    beginGetSortCapabilities(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetSortCapabilities(
             sync.getSortCaps(),
@@ -970,12 +965,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncGetPropertyListUpnpOrgScheduledRecording2 sync = new SyncGetPropertyListUpnpOrgScheduledRecording2(this);
 	    beginGetPropertyList(aDataTypeID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getPropertyList();
 	}
@@ -1032,12 +1022,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncGetAllowedValuesUpnpOrgScheduledRecording2 sync = new SyncGetAllowedValuesUpnpOrgScheduledRecording2(this);
 	    beginGetAllowedValues(aDataTypeID, aFilter, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getPropertyInfo();
 	}
@@ -1096,12 +1081,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncGetStateUpdateIDUpnpOrgScheduledRecording2 sync = new SyncGetStateUpdateIDUpnpOrgScheduledRecording2(this);
 	    beginGetStateUpdateID(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getId();
 	}
@@ -1155,12 +1135,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2 sync = new SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2(this);
 	    beginBrowseRecordSchedules(aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new BrowseRecordSchedules(
             sync.getResult(),
@@ -1239,12 +1214,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncBrowseRecordTasksUpnpOrgScheduledRecording2 sync = new SyncBrowseRecordTasksUpnpOrgScheduledRecording2(this);
 	    beginBrowseRecordTasks(aRecordScheduleID, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new BrowseRecordTasks(
             sync.getResult(),
@@ -1325,12 +1295,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncCreateRecordScheduleUpnpOrgScheduledRecording2 sync = new SyncCreateRecordScheduleUpnpOrgScheduledRecording2(this);
 	    beginCreateRecordSchedule(aElements, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new CreateRecordSchedule(
             sync.getRecordScheduleID(),
@@ -1397,12 +1362,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncDeleteRecordScheduleUpnpOrgScheduledRecording2 sync = new SyncDeleteRecordScheduleUpnpOrgScheduledRecording2(this);
 	    beginDeleteRecordSchedule(aRecordScheduleID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1451,12 +1411,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncGetRecordScheduleUpnpOrgScheduledRecording2 sync = new SyncGetRecordScheduleUpnpOrgScheduledRecording2(this);
 	    beginGetRecordSchedule(aRecordScheduleID, aFilter, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetRecordSchedule(
             sync.getResult(),
@@ -1521,12 +1476,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncEnableRecordScheduleUpnpOrgScheduledRecording2 sync = new SyncEnableRecordScheduleUpnpOrgScheduledRecording2(this);
 	    beginEnableRecordSchedule(aRecordScheduleID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1573,12 +1523,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncDisableRecordScheduleUpnpOrgScheduledRecording2 sync = new SyncDisableRecordScheduleUpnpOrgScheduledRecording2(this);
 	    beginDisableRecordSchedule(aRecordScheduleID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1625,12 +1570,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncDeleteRecordTaskUpnpOrgScheduledRecording2 sync = new SyncDeleteRecordTaskUpnpOrgScheduledRecording2(this);
 	    beginDeleteRecordTask(aRecordTaskID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1679,12 +1619,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncGetRecordTaskUpnpOrgScheduledRecording2 sync = new SyncGetRecordTaskUpnpOrgScheduledRecording2(this);
 	    beginGetRecordTask(aRecordTaskID, aFilter, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetRecordTask(
             sync.getResult(),
@@ -1749,12 +1684,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncEnableRecordTaskUpnpOrgScheduledRecording2 sync = new SyncEnableRecordTaskUpnpOrgScheduledRecording2(this);
 	    beginEnableRecordTask(aRecordTaskID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1801,12 +1731,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncDisableRecordTaskUpnpOrgScheduledRecording2 sync = new SyncDisableRecordTaskUpnpOrgScheduledRecording2(this);
 	    beginDisableRecordTask(aRecordTaskID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1853,12 +1778,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncResetRecordTaskUpnpOrgScheduledRecording2 sync = new SyncResetRecordTaskUpnpOrgScheduledRecording2(this);
 	    beginResetRecordTask(aRecordTaskID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1907,12 +1827,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2 sync = new SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2(this);
 	    beginGetRecordScheduleConflicts(aRecordScheduleID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetRecordScheduleConflicts(
             sync.getRecordScheduleConflictIDList(),
@@ -1977,12 +1892,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	    SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2 sync = new SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2(this);
 	    beginGetRecordTaskConflicts(aRecordTaskID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetRecordTaskConflicts(
             sync.getRecordTaskConflictIDList(),

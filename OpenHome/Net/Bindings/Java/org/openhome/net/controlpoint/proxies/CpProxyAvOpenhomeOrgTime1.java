@@ -143,12 +143,7 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
 	    SyncTimeAvOpenhomeOrgTime1 sync = new SyncTimeAvOpenhomeOrgTime1(this);
 	    beginTime(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Time(
             sync.getTrackCount(),

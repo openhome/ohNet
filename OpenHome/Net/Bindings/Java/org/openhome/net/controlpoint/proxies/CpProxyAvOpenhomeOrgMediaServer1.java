@@ -468,12 +468,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
 	    SyncManufacturerAvOpenhomeOrgMediaServer1 sync = new SyncManufacturerAvOpenhomeOrgMediaServer1(this);
 	    beginManufacturer(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Manufacturer(
             sync.getName(),
@@ -543,12 +538,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
 	    SyncModelAvOpenhomeOrgMediaServer1 sync = new SyncModelAvOpenhomeOrgMediaServer1(this);
 	    beginModel(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Model(
             sync.getName(),
@@ -618,12 +608,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
 	    SyncProductAvOpenhomeOrgMediaServer1 sync = new SyncProductAvOpenhomeOrgMediaServer1(this);
 	    beginProduct(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Product(
             sync.getName(),
@@ -693,12 +678,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
 	    SyncAttributesAvOpenhomeOrgMediaServer1 sync = new SyncAttributesAvOpenhomeOrgMediaServer1(this);
 	    beginAttributes(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -752,12 +732,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
 	    SyncQueryAvOpenhomeOrgMediaServer1 sync = new SyncQueryAvOpenhomeOrgMediaServer1(this);
 	    beginQuery(aRequest, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getResult();
 	}

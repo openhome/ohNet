@@ -794,12 +794,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncGetSearchCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSearchCapabilitiesUpnpOrgContentDirectory2(this);
 	    beginGetSearchCapabilities(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getSearchCaps();
 	}
@@ -853,12 +848,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncGetSortCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSortCapabilitiesUpnpOrgContentDirectory2(this);
 	    beginGetSortCapabilities(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getSortCaps();
 	}
@@ -912,12 +902,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2(this);
 	    beginGetSortExtensionCapabilities(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getSortExtensionCaps();
 	}
@@ -971,12 +956,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncGetFeatureListUpnpOrgContentDirectory2 sync = new SyncGetFeatureListUpnpOrgContentDirectory2(this);
 	    beginGetFeatureList(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getFeatureList();
 	}
@@ -1030,12 +1010,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncGetSystemUpdateIDUpnpOrgContentDirectory2 sync = new SyncGetSystemUpdateIDUpnpOrgContentDirectory2(this);
 	    beginGetSystemUpdateID(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getId();
 	}
@@ -1089,12 +1064,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncBrowseUpnpOrgContentDirectory2 sync = new SyncBrowseUpnpOrgContentDirectory2(this);
 	    beginBrowse(aObjectID, aBrowseFlag, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Browse(
             sync.getResult(),
@@ -1177,12 +1147,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncSearchUpnpOrgContentDirectory2 sync = new SyncSearchUpnpOrgContentDirectory2(this);
 	    beginSearch(aContainerID, aSearchCriteria, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Search(
             sync.getResult(),
@@ -1265,12 +1230,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncCreateObjectUpnpOrgContentDirectory2 sync = new SyncCreateObjectUpnpOrgContentDirectory2(this);
 	    beginCreateObject(aContainerID, aElements, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new CreateObject(
             sync.getObjectID(),
@@ -1335,12 +1295,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncDestroyObjectUpnpOrgContentDirectory2 sync = new SyncDestroyObjectUpnpOrgContentDirectory2(this);
 	    beginDestroyObject(aObjectID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1387,12 +1342,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncUpdateObjectUpnpOrgContentDirectory2 sync = new SyncUpdateObjectUpnpOrgContentDirectory2(this);
 	    beginUpdateObject(aObjectID, aCurrentTagValue, aNewTagValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1445,12 +1395,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncMoveObjectUpnpOrgContentDirectory2 sync = new SyncMoveObjectUpnpOrgContentDirectory2(this);
 	    beginMoveObject(aObjectID, aNewParentID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getNewObjectID();
 	}
@@ -1509,12 +1454,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncImportResourceUpnpOrgContentDirectory2 sync = new SyncImportResourceUpnpOrgContentDirectory2(this);
 	    beginImportResource(aSourceURI, aDestinationURI, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getTransferID();
 	}
@@ -1573,12 +1513,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncExportResourceUpnpOrgContentDirectory2 sync = new SyncExportResourceUpnpOrgContentDirectory2(this);
 	    beginExportResource(aSourceURI, aDestinationURI, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getTransferID();
 	}
@@ -1635,12 +1570,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncDeleteResourceUpnpOrgContentDirectory2 sync = new SyncDeleteResourceUpnpOrgContentDirectory2(this);
 	    beginDeleteResource(aResourceURI, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1687,12 +1617,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncStopTransferResourceUpnpOrgContentDirectory2 sync = new SyncStopTransferResourceUpnpOrgContentDirectory2(this);
 	    beginStopTransferResource(aTransferID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1741,12 +1666,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncGetTransferProgressUpnpOrgContentDirectory2 sync = new SyncGetTransferProgressUpnpOrgContentDirectory2(this);
 	    beginGetTransferProgress(aTransferID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetTransferProgress(
             sync.getTransferStatus(),
@@ -1815,12 +1735,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 	    SyncCreateReferenceUpnpOrgContentDirectory2 sync = new SyncCreateReferenceUpnpOrgContentDirectory2(this);
 	    beginCreateReference(aContainerID, aObjectID, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getNewID();
 	}

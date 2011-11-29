@@ -638,12 +638,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncSetLoadLevelTargetUpnpOrgDimming1 sync = new SyncSetLoadLevelTargetUpnpOrgDimming1(this);
 	    beginSetLoadLevelTarget(aNewLoadlevelTarget, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -692,12 +687,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncGetLoadLevelTargetUpnpOrgDimming1 sync = new SyncGetLoadLevelTargetUpnpOrgDimming1(this);
 	    beginGetLoadLevelTarget(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getGetLoadlevelTarget();
 	}
@@ -751,12 +741,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncGetLoadLevelStatusUpnpOrgDimming1 sync = new SyncGetLoadLevelStatusUpnpOrgDimming1(this);
 	    beginGetLoadLevelStatus(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getRetLoadlevelStatus();
 	}
@@ -808,12 +793,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncSetOnEffectLevelUpnpOrgDimming1 sync = new SyncSetOnEffectLevelUpnpOrgDimming1(this);
 	    beginSetOnEffectLevel(aNewOnEffectLevel, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -860,12 +840,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncSetOnEffectUpnpOrgDimming1 sync = new SyncSetOnEffectUpnpOrgDimming1(this);
 	    beginSetOnEffect(aNewOnEffect, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -914,12 +889,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncGetOnEffectParametersUpnpOrgDimming1 sync = new SyncGetOnEffectParametersUpnpOrgDimming1(this);
 	    beginGetOnEffectParameters(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new GetOnEffectParameters(
             sync.getRetOnEffect(),
@@ -979,12 +949,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncStepUpUpnpOrgDimming1 sync = new SyncStepUpUpnpOrgDimming1(this);
 	    beginStepUp(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1028,12 +993,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncStepDownUpnpOrgDimming1 sync = new SyncStepDownUpnpOrgDimming1(this);
 	    beginStepDown(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1077,12 +1037,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncStartRampUpUpnpOrgDimming1 sync = new SyncStartRampUpUpnpOrgDimming1(this);
 	    beginStartRampUp(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1126,12 +1081,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncStartRampDownUpnpOrgDimming1 sync = new SyncStartRampDownUpnpOrgDimming1(this);
 	    beginStartRampDown(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1175,12 +1125,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncStopRampUpnpOrgDimming1 sync = new SyncStopRampUpnpOrgDimming1(this);
 	    beginStopRamp(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1224,12 +1169,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncStartRampToLevelUpnpOrgDimming1 sync = new SyncStartRampToLevelUpnpOrgDimming1(this);
 	    beginStartRampToLevel(aNewLoadLevelTarget, aNewRampTime, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1278,12 +1218,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncSetStepDeltaUpnpOrgDimming1 sync = new SyncSetStepDeltaUpnpOrgDimming1(this);
 	    beginSetStepDelta(aNewStepDelta, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1332,12 +1267,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncGetStepDeltaUpnpOrgDimming1 sync = new SyncGetStepDeltaUpnpOrgDimming1(this);
 	    beginGetStepDelta(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getRetStepDelta();
 	}
@@ -1389,12 +1319,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncSetRampRateUpnpOrgDimming1 sync = new SyncSetRampRateUpnpOrgDimming1(this);
 	    beginSetRampRate(aNewRampRate, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1443,12 +1368,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncGetRampRateUpnpOrgDimming1 sync = new SyncGetRampRateUpnpOrgDimming1(this);
 	    beginGetRampRate(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getRetRampRate();
 	}
@@ -1500,12 +1420,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncPauseRampUpnpOrgDimming1 sync = new SyncPauseRampUpnpOrgDimming1(this);
 	    beginPauseRamp(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1549,12 +1464,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncResumeRampUpnpOrgDimming1 sync = new SyncResumeRampUpnpOrgDimming1(this);
 	    beginResumeRamp(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1600,12 +1510,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncGetIsRampingUpnpOrgDimming1 sync = new SyncGetIsRampingUpnpOrgDimming1(this);
 	    beginGetIsRamping(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getRetIsRamping();
 	}
@@ -1659,12 +1564,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncGetRampPausedUpnpOrgDimming1 sync = new SyncGetRampPausedUpnpOrgDimming1(this);
 	    beginGetRampPaused(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getRetRampPaused();
 	}
@@ -1718,12 +1618,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	    SyncGetRampTimeUpnpOrgDimming1 sync = new SyncGetRampTimeUpnpOrgDimming1(this);
 	    beginGetRampTime(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getRetRampTime();
 	}

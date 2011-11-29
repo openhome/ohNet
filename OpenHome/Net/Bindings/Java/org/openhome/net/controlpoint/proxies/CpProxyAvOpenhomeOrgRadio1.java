@@ -587,12 +587,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncPlayAvOpenhomeOrgRadio1 sync = new SyncPlayAvOpenhomeOrgRadio1(this);
 	    beginPlay(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -636,12 +631,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncPauseAvOpenhomeOrgRadio1 sync = new SyncPauseAvOpenhomeOrgRadio1(this);
 	    beginPause(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -685,12 +675,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncStopAvOpenhomeOrgRadio1 sync = new SyncStopAvOpenhomeOrgRadio1(this);
 	    beginStop(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -734,12 +719,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncSeekSecondAbsoluteAvOpenhomeOrgRadio1 sync = new SyncSeekSecondAbsoluteAvOpenhomeOrgRadio1(this);
 	    beginSeekSecondAbsolute(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -786,12 +766,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncSeekSecondRelativeAvOpenhomeOrgRadio1 sync = new SyncSeekSecondRelativeAvOpenhomeOrgRadio1(this);
 	    beginSeekSecondRelative(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -840,12 +815,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncChannelAvOpenhomeOrgRadio1 sync = new SyncChannelAvOpenhomeOrgRadio1(this);
 	    beginChannel(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new Channel(
             sync.getUri(),
@@ -905,12 +875,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncSetChannelAvOpenhomeOrgRadio1 sync = new SyncSetChannelAvOpenhomeOrgRadio1(this);
 	    beginSetChannel(aUri, aMetadata, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -961,12 +926,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncTransportStateAvOpenhomeOrgRadio1 sync = new SyncTransportStateAvOpenhomeOrgRadio1(this);
 	    beginTransportState(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1020,12 +980,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncIdAvOpenhomeOrgRadio1 sync = new SyncIdAvOpenhomeOrgRadio1(this);
 	    beginId(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1077,12 +1032,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncSetIdAvOpenhomeOrgRadio1 sync = new SyncSetIdAvOpenhomeOrgRadio1(this);
 	    beginSetId(aValue, aUri, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1133,12 +1083,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncReadAvOpenhomeOrgRadio1 sync = new SyncReadAvOpenhomeOrgRadio1(this);
 	    beginRead(aId, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getMetadata();
 	}
@@ -1195,12 +1140,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncReadListAvOpenhomeOrgRadio1 sync = new SyncReadListAvOpenhomeOrgRadio1(this);
 	    beginReadList(aIdList, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getChannelList();
 	}
@@ -1257,12 +1197,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncIdArrayAvOpenhomeOrgRadio1 sync = new SyncIdArrayAvOpenhomeOrgRadio1(this);
 	    beginIdArray(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return new IdArray(
             sync.getToken(),
@@ -1324,12 +1259,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncIdArrayChangedAvOpenhomeOrgRadio1 sync = new SyncIdArrayChangedAvOpenhomeOrgRadio1(this);
 	    beginIdArrayChanged(aToken, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1386,12 +1316,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncChannelsMaxAvOpenhomeOrgRadio1 sync = new SyncChannelsMaxAvOpenhomeOrgRadio1(this);
 	    beginChannelsMax(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -1445,12 +1370,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	    SyncProtocolInfoAvOpenhomeOrgRadio1 sync = new SyncProtocolInfoAvOpenhomeOrgRadio1(this);
 	    beginProtocolInfo(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}

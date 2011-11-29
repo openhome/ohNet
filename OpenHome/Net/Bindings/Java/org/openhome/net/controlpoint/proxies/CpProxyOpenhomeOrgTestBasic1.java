@@ -591,12 +591,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncIncrementOpenhomeOrgTestBasic1 sync = new SyncIncrementOpenhomeOrgTestBasic1(this);
 	    beginIncrement(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getResult();
 	}
@@ -653,12 +648,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncDecrementOpenhomeOrgTestBasic1 sync = new SyncDecrementOpenhomeOrgTestBasic1(this);
 	    beginDecrement(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getResult();
 	}
@@ -715,12 +705,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncToggleOpenhomeOrgTestBasic1 sync = new SyncToggleOpenhomeOrgTestBasic1(this);
 	    beginToggle(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getResult();
 	}
@@ -777,12 +762,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncEchoStringOpenhomeOrgTestBasic1 sync = new SyncEchoStringOpenhomeOrgTestBasic1(this);
 	    beginEchoString(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getResult();
 	}
@@ -839,12 +819,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncEchoBinaryOpenhomeOrgTestBasic1 sync = new SyncEchoBinaryOpenhomeOrgTestBasic1(this);
 	    beginEchoBinary(aValue, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getResult();
 	}
@@ -899,12 +874,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncSetUintOpenhomeOrgTestBasic1 sync = new SyncSetUintOpenhomeOrgTestBasic1(this);
 	    beginSetUint(aValueUint, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -953,12 +923,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncGetUintOpenhomeOrgTestBasic1 sync = new SyncGetUintOpenhomeOrgTestBasic1(this);
 	    beginGetUint(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValueUint();
 	}
@@ -1010,12 +975,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncSetIntOpenhomeOrgTestBasic1 sync = new SyncSetIntOpenhomeOrgTestBasic1(this);
 	    beginSetInt(aValueInt, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1064,12 +1024,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncGetIntOpenhomeOrgTestBasic1 sync = new SyncGetIntOpenhomeOrgTestBasic1(this);
 	    beginGetInt(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValueInt();
 	}
@@ -1121,12 +1076,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncSetBoolOpenhomeOrgTestBasic1 sync = new SyncSetBoolOpenhomeOrgTestBasic1(this);
 	    beginSetBool(aValueBool, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1175,12 +1125,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncGetBoolOpenhomeOrgTestBasic1 sync = new SyncGetBoolOpenhomeOrgTestBasic1(this);
 	    beginGetBool(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValueBool();
 	}
@@ -1232,12 +1177,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncSetMultipleOpenhomeOrgTestBasic1 sync = new SyncSetMultipleOpenhomeOrgTestBasic1(this);
 	    beginSetMultiple(aValueUint, aValueInt, aValueBool, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1288,12 +1228,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncSetStringOpenhomeOrgTestBasic1 sync = new SyncSetStringOpenhomeOrgTestBasic1(this);
 	    beginSetString(aValueStr, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1342,12 +1277,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncGetStringOpenhomeOrgTestBasic1 sync = new SyncGetStringOpenhomeOrgTestBasic1(this);
 	    beginGetString(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValueStr();
 	}
@@ -1399,12 +1329,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncSetBinaryOpenhomeOrgTestBasic1 sync = new SyncSetBinaryOpenhomeOrgTestBasic1(this);
 	    beginSetBinary(aValueBin, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1453,12 +1378,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncGetBinaryOpenhomeOrgTestBasic1 sync = new SyncGetBinaryOpenhomeOrgTestBasic1(this);
 	    beginGetBinary(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValueBin();
 	}
@@ -1510,12 +1430,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncToggleBoolOpenhomeOrgTestBasic1 sync = new SyncToggleBoolOpenhomeOrgTestBasic1(this);
 	    beginToggleBool(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1559,12 +1474,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncWriteFileOpenhomeOrgTestBasic1 sync = new SyncWriteFileOpenhomeOrgTestBasic1(this);
 	    beginWriteFile(aData, aFileFullName, sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**
@@ -1613,12 +1523,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	    SyncShutdownOpenhomeOrgTestBasic1 sync = new SyncShutdownOpenhomeOrgTestBasic1(this);
 	    beginShutdown(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 	}
 	
 	/**

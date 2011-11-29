@@ -231,12 +231,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	    SyncPresentationUrlAvOpenhomeOrgSender1 sync = new SyncPresentationUrlAvOpenhomeOrgSender1(this);
 	    beginPresentationUrl(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -290,12 +285,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	    SyncMetadataAvOpenhomeOrgSender1 sync = new SyncMetadataAvOpenhomeOrgSender1(this);
 	    beginMetadata(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -349,12 +339,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	    SyncAudioAvOpenhomeOrgSender1 sync = new SyncAudioAvOpenhomeOrgSender1(this);
 	    beginAudio(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -408,12 +393,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	    SyncStatusAvOpenhomeOrgSender1 sync = new SyncStatusAvOpenhomeOrgSender1(this);
 	    beginStatus(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
@@ -467,12 +447,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	    SyncAttributesAvOpenhomeOrgSender1 sync = new SyncAttributesAvOpenhomeOrgSender1(this);
 	    beginAttributes(sync.getListener());
 	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
+        sync.reportError();
 
         return sync.getValue();
 	}
