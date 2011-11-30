@@ -66,35 +66,32 @@ void Timer::FireAt(TUint aTime)
 
 void Timer::Cancel()
 {
+    LOG(kTimer, ">Timer::Cancel()\n");
     TimerManager& mgr = Net::Stack::TimerManager();
-    mgr.CallbackLock();
-    DoCancel();
-    mgr.CallbackUnlock();
-}
-
-void Timer::DoCancel()
-{
-    LOG(kTimer, ">Timer::DoCancel()\n");
+    TBool lock = !IsInManagerThread();
+    if (lock) {
+        mgr.CallbackLock();
+    }
     OpenHome::Net::Stack::TimerManager().Remove(*this);
-    LOG(kTimer, "<Timer::DoCancel()\n");
+    if (lock) {
+        mgr.CallbackUnlock();
+    }
+    LOG(kTimer, "<Timer::Cancel()\n");
 }
 
-Timer::~Timer()
+TBool Timer::IsInManagerThread()
 {
-    TimerManager& mgr = Net::Stack::TimerManager();
     Thread* current = NULL;
     try {
         current = Thread::Current();
     }
     catch (ThreadUnknown&) {}
-    TBool lock = (current != mgr.Thread());
-    if (lock) {
-        mgr.CallbackLock();
-    }
-    DoCancel();
-    if (lock) {
-        mgr.CallbackUnlock();
-    }
+    return (current == Net::Stack::TimerManager().Thread());
+}
+
+Timer::~Timer()
+{
+    Cancel();
 }
 
 // TimerManager

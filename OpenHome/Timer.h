@@ -37,7 +37,7 @@ public:
     void Cancel();
     ~Timer();
 private:
-    void DoCancel();
+    static TBool IsInManagerThread();
 private:
     Functor iFunctor;
 };
