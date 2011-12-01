@@ -45,6 +45,7 @@ do __result = (long int) (expression); \
 while (__result == -1L && errno == EINTR); \
 __result; }))
 # define MAX_FILE_DESCRIPTOR FD_SETSIZE
+# define MSG_NOSIGNAL 0
 #else
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
@@ -565,6 +566,10 @@ static void sockaddrFromEndpoint(struct sockaddr_in* aAddr, TIpAddress aAddress,
 static OsNetworkHandle* CreateHandle(int32_t aSocket)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)malloc(sizeof(OsNetworkHandle));
+#ifdef PLATFORM_MACOSX_GNU
+    int set = 1;
+    setsockopt(aSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&set, sizeof(int));
+#endif /* PLATFORM_MACOSX_GNU */
     if (handle == NULL) {
         return kHandleNull;
     }
@@ -673,11 +678,11 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
     int32_t sent = 0;
     int32_t bytes = 0;
     do {
-        bytes = TEMP_FAILURE_RETRY(send(handle->iSocket, &aBuffer[sent], aBytes-sent, 0));
+        bytes = TEMP_FAILURE_RETRY(send(handle->iSocket, &aBuffer[sent], aBytes-sent, MSG_NOSIGNAL));
         if (bytes != -1) {
             sent += bytes;
         }
-    } while(bytes != -1 && sent < aBytes);    
+    } while(bytes != -1 && sent < aBytes);
     return sent;
 }
 
@@ -692,7 +697,7 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     int32_t sent = 0;
     int32_t bytes = 0;
     do {
-        bytes = TEMP_FAILURE_RETRY(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, 0, (struct sockaddr*)&addr, sizeof(addr)));
+        bytes = TEMP_FAILURE_RETRY(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, MSG_NOSIGNAL, (struct sockaddr*)&addr, sizeof(addr)));
         if (bytes != -1) {
             sent += bytes;
         }
@@ -716,11 +721,11 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
     FD_ZERO(&error);
     FD_SET(handle->iSocket, &error);
 
-    int32_t received = TEMP_FAILURE_RETRY(recv(handle->iSocket, aBuffer, aBytes, 0));
+    int32_t received = TEMP_FAILURE_RETRY(recv(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL));
     if (received==-1 && errno==EWOULDBLOCK) {
         int32_t selectErr = TEMP_FAILURE_RETRY(select(nfds(handle), &read, NULL, &error, NULL));
         if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
-            received = TEMP_FAILURE_RETRY(recv(handle->iSocket, aBuffer, aBytes, 0));
+            received = TEMP_FAILURE_RETRY(recv(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL));
         }
     }
 
@@ -748,11 +753,11 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     FD_ZERO(&error);
     FD_SET(handle->iSocket, &error);
 
-    int32_t received = TEMP_FAILURE_RETRY(recvfrom(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, &addrLen));
+    int32_t received = TEMP_FAILURE_RETRY(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen));
     if (received==-1 && errno==EWOULDBLOCK) {
         int32_t selectErr = TEMP_FAILURE_RETRY(select(nfds(handle), &read, NULL, &error, NULL));
         if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
-            received = TEMP_FAILURE_RETRY(recvfrom(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, &addrLen));
+            received = TEMP_FAILURE_RETRY(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen));
         }
     }
     SetFdBlocking(handle->iSocket);
