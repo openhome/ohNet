@@ -237,11 +237,11 @@ install-pkgconf : tt
 
 install-libs :
 	mkdir -p $(installlibdir)
-	$(cp) $(installlibdir) $(objdir)*
+	$(cp) $(objdir)* $(installlibdir) 
 
 install-includes :
 	mkdir -p $(installincludedir)
-	$(cp) -r $(installincludedir) $(inc_build)/*
+	$(cp) -r $(inc_build)/* $(installincludedir) 
 
 uninstall-pkgconf :
 	@echo "ERROR: no support for (un)install-pckconf yet"

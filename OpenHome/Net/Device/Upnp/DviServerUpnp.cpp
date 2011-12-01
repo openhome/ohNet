@@ -405,16 +405,26 @@ DviSessionUpnp::~DviSessionUpnp()
 {
     Interrupt(true);
     iSubscriptionMapLock.Wait();
+    SubscriptionMap map;
     SubscriptionMap::iterator it = iSubscriptionMap.begin();
     if (it != iSubscriptionMap.end()) {
+        DviSubscription* subscription = it->second;
+        Brn sid(subscription->Sid());
+        subscription->AddRef();
+        map.insert(std::pair<Brn,DviSubscription*>(sid, subscription));
+        it++;
+    }
+    iSubscriptionMapLock.Signal();
+    it = map.begin();
+    if (it != map.end()) {
         DviSubscription* subscription = it->second;
         DviService* service = subscription->Service();
         if (service != NULL) {
             service->RemoveSubscription(subscription->Sid());
         }
+        subscription->RemoveRef();
         it++;
     }
-    iSubscriptionMapLock.Signal();
     iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
