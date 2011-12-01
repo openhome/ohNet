@@ -45,6 +45,7 @@ do __result = (long int) (expression); \
 while (__result == -1L && errno == EINTR); \
 __result; }))
 # define MAX_FILE_DESCRIPTOR FD_SETSIZE
+# define MSG_NOSIGNAL 0
 #else
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
@@ -565,6 +566,10 @@ static void sockaddrFromEndpoint(struct sockaddr_in* aAddr, TIpAddress aAddress,
 static OsNetworkHandle* CreateHandle(int32_t aSocket)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)malloc(sizeof(OsNetworkHandle));
+#ifdef PLATFORM_MACOSX_GNU
+    int set = 1;
+    setsockopt(aSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&set, sizeof(int));
+#endif /* PLATFORM_MACOSX_GNU */
     if (handle == NULL) {
         return kHandleNull;
     }
