@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Stack.h>
 #include <algorithm>
+#include <OpenHome/Exception.h>
 
 using namespace OpenHome;
 
@@ -179,7 +180,19 @@ void NetworkAdapterList::RemoveSubnetListener(TUint aId, MapNetworkAdapter& aMap
 
 void NetworkAdapterList::InterfaceListChanged(void* aPtr)
 {
-    reinterpret_cast<NetworkAdapterList*>(aPtr)->HandleInterfaceListChanged();
+    try
+    {
+        reinterpret_cast<NetworkAdapterList*>(aPtr)->HandleInterfaceListChanged();
+    }
+    catch(Exception& e) {
+        UnhandledExceptionHandler(e);
+    }
+    catch(std::exception& e) {
+        UnhandledExceptionHandler(e);
+    }
+    catch(...) {
+        UnhandledExceptionHandler( "Unknown Exception", "Unknown File", 0 );
+    }
 }
 
 TInt NetworkAdapterList::FindSubnet(TIpAddress aSubnet, const std::vector<NetworkAdapter*>& aList)
