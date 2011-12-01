@@ -114,12 +114,10 @@ private:
      * the class doesn't get deleted before (or, worse, during) that later operation.
      */
     void Schedule(EOperation aOperation, TBool aRejectFutureOperations = false);
-    void RunInSubscriber(EOperation aOperation);
     void DoSubscribe();
     void Renew();
     void DoRenew();
     void DoUnsubscribe();
-    void NotifyAddAborted();
     void SetRenewTimer(TUint aMaxSeconds);
 private: // IEventProcessor
     void EventUpdateStart();
@@ -139,7 +137,6 @@ private:
     EOperation iPendingOperation;
     TUint iRefCount;
     IInterruptHandler* iInterruptHandler;
-    Semaphore iSubscribeCompleted;
     TBool iRejectFutureOperations;
 
     friend class CpiSubscriptionManager;

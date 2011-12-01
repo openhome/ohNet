@@ -99,18 +99,12 @@ const OpenHome::Net::ServiceType& CpiSubscription::ServiceType() const
 
 void CpiSubscription::RunInSubscriber()
 {
+    AutoMutex a(iSubscriberLock);
     Stack::Mutex().Wait();
     EOperation op = iPendingOperation;
     iPendingOperation = eNone;
     Stack::Mutex().Signal();
-    RunInSubscriber(op);
-    RemoveRef();
-}
-
-void CpiSubscription::RunInSubscriber(EOperation aOperation)
-{
-    AutoMutex a(iSubscriberLock);
-    switch (aOperation)
+    switch (op)
     {
     case eNone:
         break;
@@ -139,7 +133,6 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     , iPendingOperation(eNone)
     , iRefCount(1)
     , iInterruptHandler(NULL)
-    , iSubscribeCompleted("SUBS", 0)
 {
     iTimer = new Timer(MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
@@ -168,9 +161,6 @@ void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperati
         iRejectFutureOperations = true;
     }
     iRefCount++;
-    if (iPendingOperation == eSubscribe) {
-        iSubscribeCompleted.Signal();
-    }
     iPendingOperation = aOperation;
     Stack::Mutex().Signal();
     CpiSubscriptionManager::Schedule(*this);
@@ -202,32 +192,30 @@ void CpiSubscription::DoSubscribe()
     CpiSubscriptionManager::NotifyAddPending(*this);
     TUint renewSecs;
     try {
-        (void)iSubscribeCompleted.Clear();
         renewSecs = iDevice.Subscribe(*this, subscriber);
     }
     catch (HttpError&) {
-        NotifyAddAborted();
+        CpiSubscriptionManager::NotifyAddAborted(*this);
         THROW(HttpError);
     }
     catch (NetworkError&) {
-        NotifyAddAborted();
+        CpiSubscriptionManager::NotifyAddAborted(*this);
         THROW(NetworkError);
     }
     catch (NetworkTimeout&) {
-        NotifyAddAborted();
+        CpiSubscriptionManager::NotifyAddAborted(*this);
         THROW(NetworkTimeout);
     }
     catch (WriterError&) {
-        NotifyAddAborted();
+        CpiSubscriptionManager::NotifyAddAborted(*this);
         THROW(WriterError);
     }
     catch (ReaderError&) {
-        NotifyAddAborted();
+        CpiSubscriptionManager::NotifyAddAborted(*this);
         THROW(ReaderError);
     }
 
     CpiSubscriptionManager::Add(*this);
-    iSubscribeCompleted.Signal();
 
     LOG(kEvent, "Subscription for ");
     LOG(kEvent, iServiceType.FullName());
@@ -286,7 +274,6 @@ void CpiSubscription::DoUnsubscribe()
     LOG(kEvent, iSid);
     LOG(kEvent, "\n");
 
-    iSubscribeCompleted.Wait();
     iTimer->Cancel();
     if (iSid.Bytes() == 0) {
         LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
@@ -301,12 +288,6 @@ void CpiSubscription::DoUnsubscribe()
     LOG(kEvent, "Unsubscribed sid ");
     LOG(kEvent, sid);
     LOG(kEvent, "\n");
-}
-
-void CpiSubscription::NotifyAddAborted()
-{
-    CpiSubscriptionManager::NotifyAddAborted(*this);
-    iSubscribeCompleted.Signal();
 }
 
 void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
@@ -389,7 +370,6 @@ void Subscriber::Error(const TChar* /*aErr*/)
     }
     LOG2(kEvent, kError, "\n");
     // don't try to resubscribe as we may get stuck in an endless cycle of errors
-    iSubscription->RemoveRef();
 }
 
 void Subscriber::Run()
@@ -414,7 +394,7 @@ void Subscriber::Run()
         catch (ReaderError&) {
             Error("Reader");
         }
-
+        iSubscription->RemoveRef();
         iFree.Write(this);
     }
 }
@@ -700,7 +680,6 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool /*aNewSubnet*/)
         it = activeSubscriptions.begin();
         while (it != activeSubscriptions.end()) {
             it->second->Unsubscribe();
-            it->second->iSubscribeCompleted.Signal();
             it++;
         }
     }
