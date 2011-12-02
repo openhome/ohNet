@@ -215,6 +215,7 @@ void DeviceList::GetProtocolInfoComplete(OhNetHandleAsync aAsync)
     if (0 != CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(iConnMgr, aAsync, &source, &sink)) {
         return;
     }
+    iLock.Wait();
     gActionCount++;
     if (sink == NULL) {
         ASSERT(iExpectedSink == NULL);
@@ -230,6 +231,7 @@ void DeviceList::GetProtocolInfoComplete(OhNetHandleAsync aAsync)
             }
         }
     }
+    iLock.Signal();
     free(source);
     free(sink);
 }

@@ -609,8 +609,12 @@ DllExport char* STDCALL OhNetNetworkAdapterFullName(OhNetHandleNetworkAdapter aN
  * unless the client claims a reference to it.
  *
  * @param[in]  aNif       NetworkAdapter originally returned to a subnet added callback.
+ * @param[in] aCookie     String identifying the caller.  Needn't be unique although a
+ *                        recognisable string will help in debugging the cause of any
+ *                        leaked NetworkAdapter references.  The later matching call
+ *                        to OhNetNetworkAdapterRemoveRef must use the same cookie.
  */
-DllExport void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif);
+DllExport void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif, const char* aCookie);
 
 /**
  * Release a reference to a network adapter.
@@ -620,8 +624,10 @@ DllExport void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif)
  * OhNetNetworkAdapterRemoveRef().
  *
  * @param[in]  aNif       Network adapter to release the reference for.
+ * @param[in] aCookie     String identifying the caller.  Must match an earlier cookie
+ *                        used in either OhNetCurrentSubnetAdapter or OhNetNetworkAdapterAddRef.
  */
-DllExport void STDCALL OhNetNetworkAdapterRemoveRef(OhNetHandleNetworkAdapter aNif);
+DllExport void STDCALL OhNetNetworkAdapterRemoveRef(OhNetHandleNetworkAdapter aNif, const char* aCookie);
 
 /**
  * Create a list of all available subnets
@@ -669,10 +675,15 @@ DllExport void STDCALL OhNetSetCurrentSubnet(OhNetHandleNetworkAdapter aSubnet);
 /**
  * Query which network adapter is currently selected.
  *
+ * @param[in] aCookie   String identifying the caller.  Needn't be unique although a
+ *                      recognisable string will help in debugging the cause of any
+ *                      leaked NetworkAdapter references.  The later matching call
+ *                      to RemoveRef must use the same cookie.
+ *
  * @return  A pointer to the currently selected adapter with a reference claimed.
  *          Or NULL if there is no currently selected adapter.
  */
-DllExport OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter();
+DllExport OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter(const char* aCookie);
 
 /* @} */
 

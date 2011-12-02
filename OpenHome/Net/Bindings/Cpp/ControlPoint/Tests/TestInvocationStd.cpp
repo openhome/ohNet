@@ -139,6 +139,7 @@ void DeviceList::GetProtocolInfoComplete(IAsync& aAsync)
     std::string source;
     std::string sink;
     iConnMgr->EndGetProtocolInfo(aAsync, source, sink); // throws if invocation failed
+    iLock.Wait();
     gActionCount++;
     if (sink.length() == 0) {
         ASSERT(iExpectedSink.length() == 0);
@@ -151,6 +152,7 @@ void DeviceList::GetProtocolInfoComplete(IAsync& aAsync)
             ASSERT(sink.compare(iExpectedSink) == 0);
         }
     }
+    iLock.Signal();
 }
 
 void DeviceList::Added(CpDeviceCpp& aDevice)

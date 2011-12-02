@@ -17,7 +17,7 @@ NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
 {
     Net::Stack::AddObject(this);
     iDefaultSubnet = aDefaultSubnet;
-    iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter());
+    iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
 }
@@ -29,13 +29,13 @@ NetworkAdapterList::~NetworkAdapterList()
     Net::Stack::RemoveObject(this);
 }
 
-NetworkAdapter* NetworkAdapterList::CurrentAdapter() const
+NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
 {
     AutoMutex a(iListLock);
     if (iCurrent == NULL) {
         return NULL;
     }
-    iCurrent->AddRef();
+    iCurrent->AddRef(aCookie);
     return iCurrent;
 }
 
@@ -56,7 +56,7 @@ void NetworkAdapterList::DestroySubnetList(std::vector<NetworkAdapter*>* aList)
 {
     if (aList != NULL) {
         for (TUint i=0; i<aList->size(); i++) {
-            (*aList)[i]->RemoveRef();
+            (*aList)[i]->RemoveRef("NetworkAdapterList");
         }
         delete aList;
     }
@@ -131,7 +131,7 @@ std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetListLocked() const
         NetworkAdapter* nif = (*iNetworkAdapters)[i];
         TIpAddress subnet = nif->Subnet();
         if (-1 == NetworkAdapterList::FindSubnet(subnet, *list)) {
-            nif->AddRef();
+            nif->AddRef("NetworkAdapterList");
             list->push_back(nif);
         }
     }
@@ -227,7 +227,7 @@ TBool NetworkAdapterList::CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ)
 void NetworkAdapterList::HandleInterfaceListChanged()
 {
     iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter());
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter(), "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;

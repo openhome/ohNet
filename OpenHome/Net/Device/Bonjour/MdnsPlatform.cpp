@@ -25,12 +25,12 @@ MdnsPlatform::Nif::Nif(NetworkAdapter& aNif, NetworkInterfaceInfo* aMdnsInfo)
     : iNif(aNif)
     , iMdnsInfo(aMdnsInfo)
 {
-    iNif.AddRef();
+    iNif.AddRef("MdnsPlatform::Nif");
 }
 
 MdnsPlatform::Nif::~Nif()
 {
-    iNif.RemoveRef();
+    iNif.RemoveRef("MdnsPlatform::Nif");
     free(iMdnsInfo);
 }
 

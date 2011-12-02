@@ -119,7 +119,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetCurrentSubnetAda
 	aEnv = aEnv;
 	aClass = aClass;
 
-	return (jlong) (size_t)OhNetCurrentSubnetAdapter();
+	return (jlong) (size_t)OhNetCurrentSubnetAdapter("Java client");
 }
 
 #ifdef __cplusplus

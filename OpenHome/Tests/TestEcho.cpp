@@ -54,12 +54,15 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     Net::UpnpLibrary::Initialise(aInitParams);
 //    Debug::SetLevel(Debug::kNetwork);
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false);
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false, "TestEcho");
     ASSERT(ifs->size() > 0);
     TIpAddress addr = (*ifs)[0]->Address();
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
     endpt.AppendAddress(buf);
+    for (TUint i=0; i<ifs->size(); i++) {
+        (*ifs)[i]->RemoveRef("TestEcho");
+    }
     Print("Using network interface %s\n\n", buf.Ptr());
     Semaphore sem("", 0);
     SocketTcpServer* server = new SocketTcpServer("ECHO", 1025, addr);

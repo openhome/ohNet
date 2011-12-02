@@ -218,9 +218,9 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("TestCpDeviceDv");
     TUint max = nif->Address();
-    nif->RemoveRef();
+    nif->RemoveRef("TestCpDeviceDv");
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();

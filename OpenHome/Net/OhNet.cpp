@@ -6,18 +6,21 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Network.h>
 
+#include <string.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // NetworkAdapter
 
-NetworkAdapter::NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const char* aName)
+NetworkAdapter::NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie)
     : iRefCount(1)
     , iAddress(aAddress)
     , iNetMask(aNetMask)
     , iName(aName)
 {
     Stack::AddObject(this);
+    iCookies.push_back(aCookie);
 }
 
 NetworkAdapter::~NetworkAdapter()
@@ -25,17 +28,27 @@ NetworkAdapter::~NetworkAdapter()
     Stack::RemoveObject(this);
 }
 
-void NetworkAdapter::AddRef()
+void NetworkAdapter::AddRef(const char* aCookie)
 {
     Stack::Mutex().Wait();
     iRefCount++;
+    iCookies.push_back(aCookie);
     Stack::Mutex().Signal();
 }
 
-void NetworkAdapter::RemoveRef()
+void NetworkAdapter::RemoveRef(const char* aCookie)
 {
     Stack::Mutex().Wait();
     TBool dead = (--iRefCount == 0);
+    TBool foundCookie = false;
+    for (TUint i=0; i<(TUint)iCookies.size(); i++) {
+        if (strcmp(iCookies[i], aCookie) == 0) {
+            iCookies.erase(iCookies.begin() + i);
+            foundCookie = true;
+            break;
+        }
+    }
+    ASSERT(foundCookie);
     Stack::Mutex().Signal();
     if (dead) {
         delete this;
@@ -92,7 +105,12 @@ void NetworkAdapter::ListObjectDetails() const
     ep.SetAddress(iNetMask);
     buf.SetBytes(0);
     ep.AppendAddress(buf);
-    Log::Print(", netmask=%s, name=%s\n", buf.Ptr(), iName.Ptr());
+    Log::Print(", netmask=%s, name=%s, cookies={", buf.Ptr(), iName.Ptr());
+    for (TUint i=0; (TUint)i<iCookies.size(); i++) {
+        const char* cookie = ((iCookies[i] == NULL || strlen(iCookies[i]) == 0) ? "[none]" : iCookies[i]);
+        Log::Print(" %s", cookie);
+    }
+    Log::Print(" }\n");
 }
 
 
@@ -497,13 +515,7 @@ std::vector<NetworkAdapter*>* UpnpLibrary::CreateSubnetList()
 
 void UpnpLibrary::DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList)
 {
-    if (aSubnetList == NULL) {
-        return;
-    }
-    for (size_t i=0; i<aSubnetList->size(); i++) {
-        (*aSubnetList)[i]->RemoveRef();
-    }
-    delete aSubnetList;
+    NetworkAdapterList::DestroySubnetList(aSubnetList);
 }
 
 void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
@@ -511,7 +523,7 @@ void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
     Stack::NetworkAdapterList().SetCurrentSubnet(aSubnet);
 }
 
-NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter()
+NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter(const char* aCookie)
 {
-    return Stack::NetworkAdapterList().CurrentAdapter();
+    return Stack::NetworkAdapterList().CurrentAdapter(aCookie);
 }

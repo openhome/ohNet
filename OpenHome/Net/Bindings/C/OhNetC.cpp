@@ -355,18 +355,18 @@ char* STDCALL OhNetNetworkAdapterFullName(OhNetHandleNetworkAdapter aNif)
     return nif->FullName();
 }
 
-void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif)
+void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif, const char* aCookie)
 {
     NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
     ASSERT(nif != NULL);
-    return nif->AddRef();
+    return nif->AddRef(aCookie);
 }
 
-void STDCALL OhNetNetworkAdapterRemoveRef(OhNetHandleNetworkAdapter aNif)
+void STDCALL OhNetNetworkAdapterRemoveRef(OhNetHandleNetworkAdapter aNif, const char* aCookie)
 {
     NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
     ASSERT(nif != NULL);
-    return nif->RemoveRef();
+    return nif->RemoveRef(aCookie);
 }
 
 OhNetHandleNetworkAdapterList STDCALL OhNetSubnetListCreate()
@@ -400,9 +400,9 @@ void STDCALL OhNetSetCurrentSubnet(OhNetHandleNetworkAdapter aSubnet)
     UpnpLibrary::SetCurrentSubnet(nif->Subnet());
 }
 
-OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter()
+OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter(const char* aCookie)
 {
-    return (OhNetHandleNetworkAdapter)UpnpLibrary::CurrentSubnetAdapter();
+    return (OhNetHandleNetworkAdapter)UpnpLibrary::CurrentSubnetAdapter(aCookie);
 }
 
 void STDCALL OhNetFreeExternal(void* aPtr)

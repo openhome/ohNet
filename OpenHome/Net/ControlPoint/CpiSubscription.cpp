@@ -170,12 +170,12 @@ void CpiSubscription::DoSubscribe()
 {
     Bws<Uri::kMaxUriBytes> uri;
     uri.Append(Http::kUriPrefix);
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe");
     if (nif == NULL) {
         THROW(NetworkError);
     }
     Endpoint endpt(CpiSubscriptionManager::EventServer()->Port(), nif->Address());
-    nif->RemoveRef();
+    nif->RemoveRef("CpiSubscription::DoSubscribe");
     Endpoint::EndpointBuf buf;
     endpt.AppendEndpoint(buf);
     uri.Append(buf);
@@ -411,7 +411,7 @@ CpiSubscriptionManager::CpiSubscriptionManager()
     , iShutdownSem("SBMS", 0)
 {
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
-    NetworkAdapter* currentInterface = ifList.CurrentAdapter();
+    NetworkAdapter* currentInterface = ifList.CurrentAdapter("CpiSubscriptionManager ctor");
     Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::CurrentNetworkAdapterChanged);
     iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
     functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetListChanged);
@@ -423,7 +423,7 @@ CpiSubscriptionManager::CpiSubscriptionManager()
         iLock.Wait();
         iEventServer = new EventServerUpnp(currentInterface->Address());
         iLock.Signal();
-        currentInterface->RemoveRef();
+        currentInterface->RemoveRef("CpiSubscriptionManager ctor");
     }
 
     TChar thName[5] = "SBS ";
@@ -621,7 +621,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool /*aNewSubnet*/)
 {
     iLock.Wait();
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
-    NetworkAdapter* currentInterface = ifList.CurrentAdapter();
+    NetworkAdapter* currentInterface = ifList.CurrentAdapter("CpiSubscriptionManager::HandleInterfaceChange");
 
     // trigger CpiSubscriptionManager::WaitForPendingAdds
     if (iPendingSubscriptions.size() > 0) {
@@ -635,7 +635,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool /*aNewSubnet*/)
     }
     else {
         iEventServer = new EventServerUpnp(currentInterface->Address());
-        currentInterface->RemoveRef();
+        currentInterface->RemoveRef("CpiSubscriptionManager::HandleInterfaceChange");
     }
 
     // don't worry about updating existing/pending subscriptions

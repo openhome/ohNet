@@ -66,7 +66,7 @@ public:
     static void NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTtl);
     static void NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddrsss);
     static void NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress);
-    static std::vector<NetworkAdapter*>* NetworkListAdapters(TBool aUseLoopback);
+    static std::vector<NetworkAdapter*>* NetworkListAdapters(TBool aUseLoopback, const TChar* aCookie);
     inline static void NetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg);
 };
 

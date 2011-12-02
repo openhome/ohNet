@@ -321,7 +321,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
     , iXmlFetchLock("DRLM")
 {
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
-    NetworkAdapter* current = ifList.CurrentAdapter();
+    NetworkAdapter* current = ifList.CurrentAdapter("CpiDeviceListUpnp ctor");
     iRefreshTimer = new Timer(MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
     iNextRefreshTimer = new Timer(MakeFunctor(*this, &CpiDeviceListUpnp::NextRefreshDue));
     iPendingRefreshCount = 0;
@@ -338,7 +338,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
         iUnicastListener = new SsdpListenerUnicast(*this, iInterface);
         iMulticastListener = &Stack::MulticastListenerClaim(iInterface);
         iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
-        current->RemoveRef();
+        current->RemoveRef("CpiDeviceListUpnp ctor");
     }
 }
 
@@ -452,12 +452,12 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     Uri uri(aLocation);
     iLock.Wait();
     Endpoint endpt(0, uri.Host());
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
     if (nif != NULL) {
         if (nif->Address() == iInterface && nif->ContainsAddress(endpt.Address())) {
             reachable = true;
         }
-        nif->RemoveRef();
+        nif->RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
     }
     iLock.Signal();
     return reachable;
@@ -491,10 +491,10 @@ void CpiDeviceListUpnp::SubnetListChanged()
 
 void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 {
-    NetworkAdapter* current = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* current = Stack::NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange");
     if (aNewSubnet && current != NULL && current->Address() == iInterface) {
         // list of subnets has changed but our interface is still available so there's nothing for us to do here
-        current->RemoveRef();
+        current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
         return;
     }
     iLock.Wait();
@@ -517,7 +517,7 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     }
 
     iInterface = current->Address();
-    current->RemoveRef();
+    current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
     // we used to only remove devices for subnet changes
     // its not clear why this was correct - any interface change will result in control/event urls changing

@@ -40,9 +40,9 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern IntPtr OhNetNetworkAdapterFullName(IntPtr aNif);
         [DllImport("ohNet")]
-        static extern void OhNetNetworkAdapterAddRef(IntPtr aNif);
+        static extern void OhNetNetworkAdapterAddRef(IntPtr aNif, IntPtr aCookie);
         [DllImport("ohNet")]
-        static extern void OhNetNetworkAdapterRemoveRef(IntPtr aNif);
+        static extern void OhNetNetworkAdapterRemoveRef(IntPtr aNif, IntPtr aCookie);
 
         private IntPtr iHandle;
 
@@ -108,18 +108,22 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <remarks>Can only be called from code that can guarantee another reference is already held.
         /// Each call to AddRef() must later have exactly one matching call to RemoveRef().</remarks>
-        public void AddRef()
+        public void AddRef(string aCookie)
         {
-            OhNetNetworkAdapterAddRef(iHandle);
+            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            OhNetNetworkAdapterAddRef(iHandle, cookie);
+            Marshal.FreeHGlobal(cookie);
         }
 
         /// <summary>
         /// Remove a reference to the network adapter.
         /// </summary>
         /// <remarks>Removing the final reference causes the network adapter to be deleted.</remarks>
-        public void RemoveRef()
+        public void RemoveRef(string aCookie)
         {
-            OhNetNetworkAdapterRemoveRef(iHandle);
+            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            OhNetNetworkAdapterRemoveRef(iHandle, cookie);
+            Marshal.FreeHGlobal(cookie);
         }
     }
 

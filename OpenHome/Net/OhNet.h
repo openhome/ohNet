@@ -41,20 +41,32 @@ public:
      * @param[in] aNetMask  IPv4 net mask for the interface (in network byte order)
      * @param[in] aName     Name for the interface.  Will be copied inside this function
      *                      so can safely be deleted by the caller when this returns
+     * @param[in] aCookie   String identifying the caller.  Needn't be unique although a
+     *                      recognisable string will help in debugging the cause of any
+     *                      leaked NetworkAdapter references.  The later matching call
+     *                      to RemoveRef must use the same cookie.
      */
-    NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const char* aName);
+    NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie);
     /**
      * Add a reference.  This NetworkAdapter instance won't be deleted until the last reference is removed.
      *
      * Callers must (eventually) call RemoveRef() exactly once for each call to AddRef().
+     *
+     * @param[in] aCookie   String identifying the caller.  Needn't be unique although a
+     *                      recognisable string will help in debugging the cause of any
+     *                      leaked NetworkAdapter references.  The later matching call
+     *                      to RemoveRef must use the same cookie.
      */
-    void AddRef();
+    void AddRef(const char* aCookie);
     /**
      * Remove a reference previously claimed by the c'tor or by AddRef().
      *
      * This object will be deleted when the reference count reaches zero.
+     *
+     * @param[in] aCookie   String identifying the caller.
+     *                      Must match an earlier cookie used in either the ctor or AddRef().
      */
-    void RemoveRef();
+    void RemoveRef(const char* aCookie);
     /**
      * Query the IP address of the interface
      *
@@ -104,6 +116,7 @@ private:
     TIpAddress iAddress;
     TIpAddress iNetMask;
     Brhz iName;
+    std::vector<const char*> iCookies;
 };
 
 namespace Net {
@@ -403,10 +416,15 @@ public:
     /**
      * Query which network adapter is currently selected.
      *
+     * @param[in] aCookie   String identifying the caller.  Needn't be unique although a
+     *                      recognisable string will help in debugging the cause of any
+     *                      leaked NetworkAdapter references.  The later matching call
+     *                      to RemoveRef must use the same cookie.
+     *
      * @return  A pointer to the currently selected adapter with a reference claimed.
      *          Or NULL if there is no currently selected adapter.
      */
-    static NetworkAdapter* CurrentSubnetAdapter();
+    static NetworkAdapter* CurrentSubnetAdapter(const char* aCookie);
 };
 
 } // namespace Net

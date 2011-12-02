@@ -126,11 +126,11 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     }
 
     UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false);
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false, "TestTopology3");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress subnet = (*ifs)[adapter.Value()]->Subnet();
     for (TUint i=0; i<ifs->size(); i++) {
-        (*ifs)[i]->RemoveRef();
+        (*ifs)[i]->RemoveRef("TestTopology3");
     }
     delete ifs;
     UpnpLibrary::StartCp(subnet);

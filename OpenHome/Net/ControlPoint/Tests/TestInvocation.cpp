@@ -145,6 +145,7 @@ void DeviceList::GetProtocolInfoComplete(IAsync& aAsync)
     Brh source;
     Brh sink;
     iConnMgr->EndGetProtocolInfo(aAsync, source, sink); // throws if invocation failed
+    iLock.Wait();
     gActionCount++;
     if (sink.Bytes() == 0) {
         ASSERT(iExpectedSink.Bytes() == 0);
@@ -157,6 +158,7 @@ void DeviceList::GetProtocolInfoComplete(IAsync& aAsync)
             ASSERT(sink == iExpectedSink);
         }
     }
+    iLock.Signal();
 }
 
 void DeviceList::Added(CpDevice& aDevice)

@@ -15,6 +15,8 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
+static const TChar* kAdapterCookie = "TestDviDiscovery";
+
 class CpListenerBasic : public ISsdpNotifyHandler
 {
 public:
@@ -218,9 +220,9 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TUint max = nif->Address();
-    nif->RemoveRef();
+    nif->RemoveRef(kAdapterCookie);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();
@@ -243,9 +245,9 @@ void SuiteAlive::Test()
 {
     Blocker* blocker = new Blocker;
     CpListenerBasic* listener = new CpListenerBasic;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(nif->Address());
-    nif->RemoveRef();
+    nif->RemoveRef(kAdapterCookie);
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
     listenerMulticast->Start();
 
@@ -344,9 +346,9 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
 {
     Uri uri(aLocation);
     Endpoint endpt(0, uri.Host());
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
-    nif->RemoveRef();
+    nif->RemoveRef(kAdapterCookie);
     if (!correctSubnet) {
 #if 0
         Print("Discarding advertisement from ");
@@ -473,9 +475,9 @@ SuiteMsearch::SuiteMsearch()
     RandomiseUdn(gNameDevice2Embedded1);
     iBlocker = new Blocker;
     iListener = new CpListenerMsearch;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     iListenerUnicast = new SsdpListenerUnicast(*iListener, nif->Address());
-    nif->RemoveRef();
+    nif->RemoveRef(kAdapterCookie);
     iListenerUnicast->Start();
 }
 
