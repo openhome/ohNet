@@ -168,17 +168,6 @@ DllExport void STDCALL DvDeviceGetAttribute(DvDeviceC aDevice, const char* aKey,
 DllExport void STDCALL DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const char* aValue);
 
 /**
- * Add a block of xml which will be returned as part of the device description
- *
- * Use is limited to UPnP for now.  Xml is returned with device xml inside the 'device'
- * tag (at the same level as most attributes)
- *
- * @param[in] aDevice  Handle returned by DvDeviceCreate[NoResources]
- * @param[in] aXml     One or more tag+value blocks
- */
-DllExport void STDCALL DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml);
-
-/**
  * Constructor.  Creates a device capable of operating on any of the protocols the device
  * stack supports as standard but with no services or attributes as yet.
  *

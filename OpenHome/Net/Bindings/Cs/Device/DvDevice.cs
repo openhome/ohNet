@@ -185,8 +185,6 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern unsafe void DvDeviceSetAttribute(IntPtr aDevice, char* aKey, char* aValue);
         [DllImport("ohNet")]
-        static extern unsafe void DvDeviceSetXmlExtension(IntPtr aDevice, char* aXml);
-        [DllImport("ohNet")]
         static extern unsafe void OhNetFree(void* aPtr);
 
         protected IntPtr iHandle;
@@ -301,19 +299,6 @@ namespace OpenHome.Net.Device
             DvDeviceSetAttribute(iHandle, key, value);
             Marshal.FreeHGlobal((IntPtr)key);
             Marshal.FreeHGlobal((IntPtr)value);
-        }
-
-        /// <summary>
-        /// Add a block of xml which will be returned as part of the device description
-        /// </summary>
-        /// <remarks>Use is limited to UPnP for now.  Xml is returned with device xml inside the 'device'
-        /// tag (at the same level as most attributes)</remarks>
-        /// <param name="aXml">One or more tag+value blocks</param>
-        public unsafe void SetXmlExtension(string aXml)
-        {
-            char* xml = (char*)Marshal.StringToHGlobalAnsi(aXml).ToPointer();
-            DvDeviceSetXmlExtension(iHandle, xml);
-            Marshal.FreeHGlobal((IntPtr)xml);
         }
 
         /// <summary>

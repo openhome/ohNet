@@ -187,22 +187,6 @@ JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceSetAttribut
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aValue, value);
 }
 
-/*
- * Class:     org_openhome_net_device_DvDevice
- * Method:    DvDeviceSetXmlExtension
- * Signature: (JLjava/lang/String;)V
- */
-JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceSetXmlExtension
-  (JNIEnv *aEnv, jclass aClass, jlong aDevice, jstring aXml)
-{
-	DvDeviceC device = (DvDeviceC) (size_t)aDevice;
-	const char* xml = (*aEnv)->GetStringUTFChars(aEnv, aXml, NULL);
-	aClass = aClass;
-	
-	DvDeviceSetXmlExtension(device, xml);
-	(*aEnv)->ReleaseStringUTFChars(aEnv, aXml, xml);
-}
-
 #ifdef __cplusplus
 }
 #endif

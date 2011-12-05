@@ -10,7 +10,6 @@ public class DvDevice
 	private static native void DvDeviceSetDisabled(long aDevice, IDvDeviceListener aCompleted);
 	private static native String DvDeviceGetAttribute(long aDevice, String aKey);
 	private static native void DvDeviceSetAttribute(long aDevice, String aKey, String aValue);
-	private static native void DvDeviceSetXmlExtension(long aDevice, String aXml);
 //	private static native void OhNetFree(long aPtr);
 	
 	static
@@ -138,19 +137,6 @@ public class DvDevice
 	public void setAttribute(String aKey, String aValue)
     {
         DvDeviceSetAttribute(iHandle, aKey, aValue);
-    }
-	
-	/**
-	 * Add a block of XML which will be returned as part of the device description.
-	 * 
-	 * <p>Use is limited to UPnP for now.  XML is returned with device XML inside the
-	 * 'device' tag (at the same level as most attributes).
-	 * 
-	 * @param aXml	one or more tag+value blocks.
-	 */
-	public void setXmlExtension(String aXml)
-    {
-        DvDeviceSetXmlExtension(iHandle, aXml);
     }
 	
 }

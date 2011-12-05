@@ -42,8 +42,6 @@ public:
     void SetDisabled(Functor aCompleted);
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
-    void SetXmlExtension(const TChar* aXml);
-    const Brx& XmlExtension() const;
     TUint ServiceCount() const;
     DviService& Service(TUint aIndex) const;
     DviService* ServiceReference(const ServiceType& aServiceType);
@@ -98,7 +96,6 @@ private:
     Functor iDisableComplete;
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
-    Brh iXmlExtension;
 };
 
 class DviDeviceStandard : public DviDevice

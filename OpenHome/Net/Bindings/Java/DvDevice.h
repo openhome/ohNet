@@ -71,14 +71,6 @@ JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceGetAttri
 JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceSetAttribute
   (JNIEnv *, jclass, jlong, jstring, jstring);
 
-/*
- * Class:     org_openhome_net_device_DvDevice
- * Method:    DvDeviceSetXmlExtension
- * Signature: (JLjava/lang/String;)V
- */
-JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceSetXmlExtension
-  (JNIEnv *, jclass, jlong, jstring);
-
 #ifdef __cplusplus
 }
 #endif

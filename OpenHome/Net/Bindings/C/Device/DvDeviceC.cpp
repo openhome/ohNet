@@ -122,11 +122,6 @@ void STDCALL DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const cha
 	DviDeviceC::DeviceFromHandle(aDevice)->SetAttribute(aKey, aValue);
 }
 
-void STDCALL DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml)
-{
-	DviDeviceC::DeviceFromHandle(aDevice)->SetXmlExtension(aXml);
-}
-
 DvDeviceC STDCALL DvDeviceStandardCreateNoResources(const char* aUdn)
 {
 	DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn);

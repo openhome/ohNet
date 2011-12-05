@@ -101,15 +101,6 @@ public:
      * @param[in] aValue  attribute will be set to a copy of this string
      */
     void SetAttribute(const char* aKey, const char* aValue);
-    /**
-     * Add a block of xml which will be returned as part of the device description
-     *
-     * Use is limited to UPnP for now.  Xml is returned with device xml inside the 'device'
-     * tag (at the same level as most attributes)
-     *
-     * @param[in] aXml  One or more tag+value blocks
-     */
-    void SetXmlExtension(const char* aXml);
 protected:
     DvDeviceStd();
     void SetUdn(const std::string& aUdn);
