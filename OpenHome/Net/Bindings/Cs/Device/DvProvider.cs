@@ -574,7 +574,7 @@ namespace OpenHome.Net.Device
         public void ReportActionError(Exception aException, string aActionName)
         {
             String msg = aException.Message;
-            uint errNum = 1;
+            uint errNum = 501;
             int index = msg.IndexOf(':');
             if (index != -1)
             {
@@ -586,7 +586,10 @@ namespace OpenHome.Net.Device
                 catch (FormatException) {}
                 catch (OverflowException) {}
             }
-            errNum += 500;
+            if (errNum != 501)
+            {
+                errNum += 800;
+            }
             if (msg.Length == 0)
             {
                 msg = String.Format("Action {0} failed", aActionName);
