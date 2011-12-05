@@ -1,12 +1,10 @@
 ohNet library
 ------------
- 
 ohNet is a library for the discovery, monitoring, manipulation and implementation
 of UPnP devices, generalized to be extensible to other similar protocols.
 
 Prerequisites
 -------------
-
 On Windows:
     Microsoft Visual Studio
     (Express versions are okay. Versions earlier than 2010 will have to edit OhNetTypes.h to
@@ -20,7 +18,6 @@ On Linux:
 
 Building
 --------
-
     make
 
 If you have a .NET runtime available and want to regenerate makefiles, proxies or providers, run
@@ -29,12 +26,10 @@ If you have a .NET runtime available and want to regenerate makefiles, proxies o
 
 Installing
 ----------
-
 See "INSTALL.txt".
 
 Directories
 -----------
-
 Build/
     Generated during the build process. Build artefacts go here.
 
@@ -76,15 +71,14 @@ OpenHome/Net/Bindings
 
 Make targets
 ------------
-
 all
     This is the default target. It (should) build everything.
 
 ohNet.net.dll
-    ohNet as a dll / sharded object plus C# bindings
+    ohNet as a dll/shared object plus C# bindings
 
 ohNetJavaAll
-    ohNet as a dll / sharded object plus Java bindings
+    ohNet as a dll/shared object plus Java bindings
 
 generate-makefiles
     This regenerates the makefiles in Generated/ that are derived from the
