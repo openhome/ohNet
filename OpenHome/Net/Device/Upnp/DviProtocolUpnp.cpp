@@ -760,8 +760,9 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
     (void)Ascii::AppendDec(verBuf, iDeviceUpnp.Version());
     iWriter.Write(verBuf);
     iWriter.Write(Brn("</deviceType>"));
-    const Brx& xmlExtension = iDeviceUpnp.iDevice.XmlExtension();
-    if (xmlExtension.Bytes() != 0) {
+    const TChar* xmlExtension;
+    iDeviceUpnp.GetAttribute("DeviceXmlExtension", &xmlExtension);
+    if (xmlExtension != NULL) {
         iWriter.Write(xmlExtension);
     }
 
@@ -799,6 +800,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
     iWriter.Write("</UDN>");
 
     WriteTag("UPC", "Upc", eTagOptional);
+    WriteTag("iconList", "IconList", eTagOptional);
 
     const TUint serviceCount = iDeviceUpnp.iDevice.ServiceCount();
     if (serviceCount > 0) {
