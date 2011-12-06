@@ -109,7 +109,7 @@ protected:
      * that this is a new device which should be added to the list.
      * false will always be returned while a list is being refreshed.
      */
-    TBool Update(const Brx& aUdn, TUint aMaxAge);
+    TBool Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge);
     // CpiDeviceList
     void Start();
     void Refresh();

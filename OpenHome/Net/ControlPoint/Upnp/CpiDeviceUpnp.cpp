@@ -381,7 +381,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     delete iNextRefreshTimer;
 }
 
-TBool CpiDeviceListUpnp::Update(const Brx& aUdn, TUint aMaxAge)
+TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge)
 {
     AutoMutex a(iLock);
     if (iRefreshing && iPendingRefreshCount > 1) {
@@ -390,7 +390,14 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, TUint aMaxAge)
     }
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
-        reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData())->UpdateMaxAge(aMaxAge);
+        CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
+        if (deviceUpnp->Location() != aLocation) {
+            // device appears to have moved to a new location.
+            // Remove the old record, leaving the caller to add the new one.
+            Remove(aUdn);
+            return false;
+        }
+        deviceUpnp->UpdateMaxAge(aMaxAge);
         device->RemoveRef();
         return !iRefreshing;
     }
@@ -557,26 +564,26 @@ void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
     iXmlFetchSem.Signal();
 }
 
-void CpiDeviceListUpnp::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& /*aLocation*/, TUint aMaxAge)
+void CpiDeviceListUpnp::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
-    (void)Update(aUuid, aMaxAge);
+    (void)Update(aUuid, aLocation, aMaxAge);
 }
 
-void CpiDeviceListUpnp::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& /*aLocation*/, TUint aMaxAge)
+void CpiDeviceListUpnp::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
-    (void)Update(aUuid, aMaxAge);
+    (void)Update(aUuid, aLocation, aMaxAge);
 }
 
 void CpiDeviceListUpnp::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& /*aDomain*/, const Brx& /*aType*/,
-                                                 TUint /*aVersion*/, const Brx& /*aLocation*/, TUint aMaxAge)
+                                                 TUint /*aVersion*/, const Brx& aLocation, TUint aMaxAge)
 {
-    (void)Update(aUuid, aMaxAge);
+    (void)Update(aUuid, aLocation, aMaxAge);
 }
 
 void CpiDeviceListUpnp::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& /*aDomain*/, const Brx& /*aType*/,
-                                                  TUint /*aVersion*/, const Brx& /*aLocation*/, TUint aMaxAge)
+                                                  TUint /*aVersion*/, const Brx& aLocation, TUint aMaxAge)
 {
-    (void)Update(aUuid, aMaxAge);
+    (void)Update(aUuid, aLocation, aMaxAge);
 }
 
 void CpiDeviceListUpnp::SsdpNotifyRootByeBye(const Brx& aUuid)
@@ -629,7 +636,7 @@ void CpiDeviceListUpnpAll::Start()
 
 void CpiDeviceListUpnpAll::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
-    if (Update(aUuid, aMaxAge)) {
+    if (Update(aUuid, aLocation, aMaxAge)) {
         return;
     }
     if (IsLocationReachable(aLocation)) {
@@ -668,7 +675,7 @@ void CpiDeviceListUpnpRoot::Start()
 
 void CpiDeviceListUpnpRoot::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
-    if (Update(aUuid, aMaxAge)) {
+    if (Update(aUuid, aLocation, aMaxAge)) {
         return;
     }
     if (IsLocationReachable(aLocation)) {
@@ -711,7 +718,7 @@ void CpiDeviceListUpnpUuid::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLo
     if (aUuid != iUuid) {
         return;
     }
-    if (Update(aUuid, aMaxAge)) {
+    if (Update(aUuid, aLocation, aMaxAge)) {
         return;
     }
     if (IsLocationReachable(aLocation)) {
@@ -758,7 +765,7 @@ void CpiDeviceListUpnpDeviceType::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, co
     if (aVersion<iVersion || aDomain!=iDomainName || aType!=iDeviceType) {
         return;
     }
-    if (Update(aUuid, aMaxAge)) {
+    if (Update(aUuid, aLocation, aMaxAge)) {
         return;
     }
     if (IsLocationReachable(aLocation)) {
@@ -805,7 +812,7 @@ void CpiDeviceListUpnpServiceType::SsdpNotifyServiceTypeAlive(const Brx& aUuid, 
     if (aVersion<iVersion || aDomain!=iDomainName || aType!=iServiceType) {
         return;
     }
-    if (Update(aUuid, aMaxAge)) {
+    if (Update(aUuid, aLocation, aMaxAge)) {
         return;
     }
     if (IsLocationReachable(aLocation)) {
