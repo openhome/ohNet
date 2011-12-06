@@ -498,7 +498,6 @@ void CpiDeviceListUpnp::SubnetListChanged()
 
 void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 {
-    Log::Print("CpiDeviceListUpnp::HandleInterfaceChange\n");
     NetworkAdapter* current = Stack::NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange");
     if (aNewSubnet && current != NULL && current->Address() == iInterface) {
         // list of subnets has changed but our interface is still available so there's nothing for us to do here
@@ -797,7 +796,6 @@ void CpiDeviceListUpnpServiceType::Start()
     if (iUnicastListener != NULL) {
         try {
             iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
-            Log::Print("CpiDeviceListUpnpServiceType::Start\n");
         }
         catch (NetworkError&) {
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
