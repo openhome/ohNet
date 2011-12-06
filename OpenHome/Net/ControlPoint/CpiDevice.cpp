@@ -264,6 +264,12 @@ void CpiDeviceList::RefreshComplete()
     CpiDeviceListUpdater::QueueRefreshed(*this);
 }
 
+void CpiDeviceList::CancelRefresh()
+{
+    iRefreshing = false;
+    ClearMap(iRefreshMap);
+}
+
 void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
 {
     aDevice.SetReady();

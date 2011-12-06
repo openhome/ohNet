@@ -244,6 +244,7 @@ protected:
     CpiDevice* RefDeviceLocked(const Brx& aUdn);
     TBool StartRefresh();
     void RefreshComplete();
+    void CancelRefresh();
 
     /**
      * Must be called with the list unlocked and a reference held on aDevice
