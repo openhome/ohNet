@@ -368,6 +368,106 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 }
 
 
+// PropertyWriterFactory
+
+PropertyWriterFactory::PropertyWriterFactory(TIpAddress aAdapter, TUint aPort)
+    : iRefCount(1)
+    , iEnabled(true)
+    , iAdapter(aAdapter)
+    , iPort(aPort)
+    , iSubscriptionMapLock("DMSL")
+{
+}
+
+void PropertyWriterFactory::SubscriptionAdded(DviSubscription& aSubscription)
+{
+    iSubscriptionMapLock.Wait();
+    Brn sidBuf(aSubscription.Sid());
+    iSubscriptionMap.insert(std::pair<Brn,DviSubscription*>(sidBuf, &aSubscription));
+    iSubscriptionMapLock.Signal();
+    AddRef();
+}
+
+void PropertyWriterFactory::Disable()
+{
+    Stack::Mutex().Wait();
+    iEnabled = false;
+    Stack::Mutex().Signal();
+    iSubscriptionMapLock.Wait();
+    SubscriptionMap map;
+    SubscriptionMap::iterator it = iSubscriptionMap.begin();
+    if (it != iSubscriptionMap.end()) {
+        DviSubscription* subscription = it->second;
+        Brn sid(subscription->Sid());
+        if (subscription->TryAddRef()) {
+            map.insert(std::pair<Brn,DviSubscription*>(sid, subscription));
+        }
+        it++;
+    }
+    iSubscriptionMapLock.Signal();
+    it = map.begin();
+    if (it != map.end()) {
+        DviSubscription* subscription = it->second;
+        DviService* service = subscription->Service();
+        if (service != NULL) {
+            service->RemoveSubscription(subscription->Sid());
+        }
+        subscription->RemoveRef();
+        it++;
+    }
+    RemoveRef();
+}
+
+IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber)
+{
+    Stack::Mutex().Wait();
+    TBool enabled = iEnabled;
+    Stack::Mutex().Signal();
+    if (!enabled) {
+        return NULL;
+    }
+    Endpoint publisher(iPort, iAdapter);
+    const SubscriptionDataUpnp* data = reinterpret_cast<const SubscriptionDataUpnp*>(aUserData->Data());
+    return new PropertyWriterUpnp(publisher, data->Subscriber(), data->SubscriberPath(), aSid, aSequenceNumber);
+}
+
+void PropertyWriterFactory::NotifySubscriptionDeleted(const Brx& aSid)
+{
+    AddRef();
+    iSubscriptionMapLock.Wait();
+    Brn sid(aSid);
+    SubscriptionMap::iterator it = iSubscriptionMap.find(sid);
+    if (it != iSubscriptionMap.end()) {
+        iSubscriptionMap.erase(it);
+        RemoveRef();
+    }
+    iSubscriptionMapLock.Signal();
+    RemoveRef();
+}
+
+PropertyWriterFactory::~PropertyWriterFactory()
+{
+}
+
+void PropertyWriterFactory::AddRef()
+{
+    Stack::Mutex().Wait();
+    iRefCount++;
+    Stack::Mutex().Signal();
+}
+
+void PropertyWriterFactory::RemoveRef()
+{
+    Stack::Mutex().Wait();
+    iRefCount--;
+    TBool dead = (iRefCount == 0);
+    Stack::Mutex().Signal();
+    if (dead) {
+        delete this;
+    }
+}
+
+
 // DviSessionUpnp
 
 DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& aRedirector)
@@ -375,7 +475,6 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& 
     , iPort(aPort)
     , iRedirector(aRedirector)
     , iShutdownSem("DSUS", 1)
-    , iSubscriptionMapLock("DMSL")
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -399,32 +498,14 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& 
     iReaderRequest->AddHeader(iHeaderNt);
     iReaderRequest->AddHeader(iHeaderCallback);
     iReaderRequest->AddHeader(iHeaderAcceptLanguage);
+
+    iPropertyWriterFactory = new PropertyWriterFactory(aInterface, aPort);
 }
 
 DviSessionUpnp::~DviSessionUpnp()
 {
     Interrupt(true);
-    iSubscriptionMapLock.Wait();
-    SubscriptionMap map;
-    SubscriptionMap::iterator it = iSubscriptionMap.begin();
-    if (it != iSubscriptionMap.end()) {
-        DviSubscription* subscription = it->second;
-        Brn sid(subscription->Sid());
-        subscription->AddRef();
-        map.insert(std::pair<Brn,DviSubscription*>(sid, subscription));
-        it++;
-    }
-    iSubscriptionMapLock.Signal();
-    it = map.begin();
-    if (it != map.end()) {
-        DviSubscription* subscription = it->second;
-        DviService* service = subscription->Service();
-        if (service != NULL) {
-            service->RemoveSubscription(subscription->Sid());
-        }
-        subscription->RemoveRef();
-        it++;
-    }
+    iPropertyWriterFactory->Disable();
     iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
@@ -601,13 +682,8 @@ void DviSessionUpnp::Subscribe()
     Brh sid;
     device->CreateSid(sid);
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri());
-    DviSubscription* subscription = new DviSubscription(*device, *this, data, sid, duration);
+    DviSubscription* subscription = new DviSubscription(*device, *iPropertyWriterFactory, data, sid, duration);
     DviSubscriptionManager::AddSubscription(*subscription);
-
-    iSubscriptionMapLock.Wait();
-    Brn sidBuf(subscription->Sid());
-    iSubscriptionMap.insert(std::pair<Brn,DviSubscription*>(sidBuf, subscription));
-    iSubscriptionMapLock.Signal();
 
     if (iHeaderExpect.Continue()) {
         iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
@@ -1122,25 +1198,6 @@ void DviSessionUpnp::InvocationWriteEnd()
     LOG(kDvInvocation, "Completed action: ");
     LOG(kDvInvocation, iHeaderSoapAction.Action());
     LOG(kDvInvocation, "\n");
-}
-
-IPropertyWriter* DviSessionUpnp::CreateWriter(const IDviSubscriptionUserData* aUserData,
-                                              const Brx& aSid, TUint aSequenceNumber)
-{
-    Endpoint publisher(iPort, iInterface);
-    const SubscriptionDataUpnp* data = reinterpret_cast<const SubscriptionDataUpnp*>(aUserData->Data());
-    return new PropertyWriterUpnp(publisher, data->Subscriber(), data->SubscriberPath(), aSid, aSequenceNumber);
-}
-
-void DviSessionUpnp::NotifySubscriptionDeleted(const Brx& aSid)
-{
-    iSubscriptionMapLock.Wait();
-    Brn sid(aSid);
-    SubscriptionMap::iterator it = iSubscriptionMap.find(sid);
-    if (it != iSubscriptionMap.end()) {
-        iSubscriptionMap.erase(it);
-    }
-    iSubscriptionMapLock.Signal();
 }
 
 

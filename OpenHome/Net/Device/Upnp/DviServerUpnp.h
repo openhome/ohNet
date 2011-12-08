@@ -115,7 +115,31 @@ private:
     WriterHttpChunked* iWriterChunked;
 };
 
-class DviSessionUpnp : public SocketTcpSession, private IResourceWriter, private IDviInvocation, private IPropertyWriterFactory
+class PropertyWriterFactory : public IPropertyWriterFactory
+{
+public:
+    PropertyWriterFactory(TIpAddress aAdapter, TUint aPort);
+    void SubscriptionAdded(DviSubscription& aSubscription);
+    void Disable();
+private: // IPropertyWriterFactory
+    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
+    void NotifySubscriptionDeleted(const Brx& aSid);
+private:
+    ~PropertyWriterFactory();
+    void AddRef();
+    void RemoveRef();
+private:
+    TUint iRefCount;
+    TBool iEnabled;
+    TIpAddress iAdapter;
+    TUint iPort;
+    typedef std::map<Brn,DviSubscription*,BufferCmp> SubscriptionMap;
+    SubscriptionMap iSubscriptionMap;
+    Mutex iSubscriptionMapLock;
+};
+
+
+class DviSessionUpnp : public SocketTcpSession, private IResourceWriter, private IDviInvocation
 {
 public:
     DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& aRedirector);
@@ -161,9 +185,6 @@ private: // IDviInvocation
     void InvocationWriteString(const Brx& aValue);
     void InvocationWriteStringEnd(const TChar* aName);
     void InvocationWriteEnd();
-private: // IPropertyWriterFactory
-    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
-    void NotifySubscriptionDeleted(const Brx& aSid);
 private:
     static const TUint kMaxRequestBytes = 4*1024;
     static const TUint kMaxResponseBytes = 4*1024;
@@ -195,10 +216,8 @@ private:
     DviService* iInvocationService;
     mutable Bws<128> iResourceUriPrefix;
 	TBool iResourceWriterHeadersOnly;
+    PropertyWriterFactory* iPropertyWriterFactory;
     Semaphore iShutdownSem;
-    typedef std::map<Brn,DviSubscription*,BufferCmp> SubscriptionMap;
-    SubscriptionMap iSubscriptionMap;
-    Mutex iSubscriptionMapLock;
 };
 
 class DviServerUpnp : public DviServer, private IRedirector

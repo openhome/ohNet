@@ -41,6 +41,7 @@ public:
     void Start(DviService& aService);
     void Stop(); // should only be called by DviService
     void AddRef();
+    TBool TryAddRef();
     void RemoveRef();
     void Renew(TUint& aSeconds);
     void WriteChanges();

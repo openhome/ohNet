@@ -84,6 +84,18 @@ void DviSubscription::AddRef()
     Stack::Mutex().Signal();
 }
 
+TBool DviSubscription::TryAddRef()
+{
+    TBool added = false;
+    Stack::Mutex().Wait();
+    if (iRefCount != 0) {
+        iRefCount++;
+        added = true;
+    }
+    Stack::Mutex().Signal();
+    return added;
+}
+
 void DviSubscription::RemoveRef()
 {
     Stack::Mutex().Wait();
