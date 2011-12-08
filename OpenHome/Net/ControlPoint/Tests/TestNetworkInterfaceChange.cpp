@@ -103,11 +103,11 @@ void setTestNifIndex(TInt aIndex, Blocker& aBlocker)
                        not completely reliable but using the current/subnet change listeners
                        would cause problems too as we've have to hard-code knowledge of
                        when they would/wouldn't be run */
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("TestNetworkInterfaceChange");
     TIpAddress addr = 0;
     if (nif !=NULL) {
         addr = nif->Address();
-        nif->RemoveRef();
+        nif->RemoveRef("TestNetworkInterfaceChange");
     }
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
