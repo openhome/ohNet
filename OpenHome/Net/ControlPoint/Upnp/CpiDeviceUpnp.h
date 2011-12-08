@@ -135,6 +135,7 @@ private:
     void RemoveAll();
 protected:
     SsdpListenerUnicast* iUnicastListener;
+    Mutex iSsdpLock;
 private:
     static const TUint kMaxMsearchRetryForNewAdapterSecs = 60;
     TIpAddress iInterface;
