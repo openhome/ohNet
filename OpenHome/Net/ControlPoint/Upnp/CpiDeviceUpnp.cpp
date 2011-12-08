@@ -383,6 +383,9 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
 
 TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge)
 {
+    if (!IsLocationReachable(aLocation)) {
+        return false;
+    }
     AutoMutex a(iLock);
     if (iRefreshing && iPendingRefreshCount > 1) {
         // we need at most one final msearch once a network card starts working following an adapter change
