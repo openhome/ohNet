@@ -223,7 +223,9 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
     CpiDevice* tmp = RefDeviceLocked(aDevice->Udn());
     if (tmp != NULL) {
         // device is already in the list, ignore this call to Add()
-        LOG(kDevice, "< CpiDeviceList::Add, device already in list\n");
+        LOG2(kError, kDevice, "< CpiDeviceList::Add, device ");
+        LOG2(kError, kDevice, aDevice->Udn());
+        LOG2(kError, kDevice, " already in list\n");
         tmp->RemoveRef();
         aDevice->RemoveRef();
         iLock.Signal();
