@@ -353,13 +353,6 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iLock.Signal();
     Stack::NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
     Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
-    iSsdpLock.Wait();
-    if (iMulticastListener != NULL) {
-        iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
-        Stack::MulticastListenerRelease(iInterface);
-    }
-    delete iUnicastListener;
-    iSsdpLock.Signal();
     iXmlFetchLock.Wait();
     iLock.Wait();
     Map::iterator it = iMap.begin();
@@ -393,6 +386,20 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iXmlFetchLock.Signal();
     delete iRefreshTimer;
     delete iNextRefreshTimer;
+}
+
+void CpiDeviceListUpnp::StopListeners()
+{
+    iSsdpLock.Wait();
+    delete iUnicastListener;
+    iUnicastListener = NULL;
+    if (iMulticastListener != NULL) {
+        iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
+        iNotifyHandlerId = 0;
+        Stack::MulticastListenerRelease(iInterface);
+        iMulticastListener = NULL;
+    }
+    iSsdpLock.Signal();
 }
 
 TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge)
@@ -530,16 +537,7 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     iNextRefreshTimer->Cancel();
     iPendingRefreshCount = 0;
     iLock.Signal();
-    iSsdpLock.Wait();
-    delete iUnicastListener;
-    iUnicastListener = NULL;
-    if (iMulticastListener != NULL) {
-        iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
-        iNotifyHandlerId = 0;
-        Stack::MulticastListenerRelease(iInterface);
-        iMulticastListener = NULL;
-    }
-    iSsdpLock.Signal();
+    StopListeners();
 
     if (current == NULL) {
         iLock.Wait();
@@ -652,6 +650,11 @@ CpiDeviceListUpnpAll::CpiDeviceListUpnpAll(FunctorCpiDevice aAdded, FunctorCpiDe
 {
 }
 
+CpiDeviceListUpnpAll::~CpiDeviceListUpnpAll()
+{
+    StopListeners();
+}
+
 void CpiDeviceListUpnpAll::Start()
 {
     CpiDeviceListUpnp::Start();
@@ -687,6 +690,11 @@ void CpiDeviceListUpnpAll::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLoc
 CpiDeviceListUpnpRoot::CpiDeviceListUpnpRoot(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
     : CpiDeviceListUpnp(aAdded, aRemoved)
 {
+}
+
+CpiDeviceListUpnpRoot::~CpiDeviceListUpnpRoot()
+{
+    StopListeners();
 }
 
 void CpiDeviceListUpnpRoot::Start()
@@ -725,6 +733,11 @@ CpiDeviceListUpnpUuid::CpiDeviceListUpnpUuid(const Brx& aUuid, FunctorCpiDevice 
     : CpiDeviceListUpnp(aAdded, aRemoved)
     , iUuid(aUuid)
 {
+}
+
+CpiDeviceListUpnpUuid::~CpiDeviceListUpnpUuid()
+{
+    StopListeners();
 }
 
 void CpiDeviceListUpnpUuid::Start()
@@ -771,6 +784,11 @@ CpiDeviceListUpnpDeviceType::CpiDeviceListUpnpDeviceType(const Brx& aDomainName,
 {
 }
 
+CpiDeviceListUpnpDeviceType::~CpiDeviceListUpnpDeviceType()
+{
+    StopListeners();
+}
+
 void CpiDeviceListUpnpDeviceType::Start()
 {
     CpiDeviceListUpnp::Start();
@@ -814,6 +832,11 @@ CpiDeviceListUpnpServiceType::CpiDeviceListUpnpServiceType(const Brx& aDomainNam
     , iServiceType(aServiceType)
     , iVersion(aVersion)
 {
+}
+
+CpiDeviceListUpnpServiceType::~CpiDeviceListUpnpServiceType()
+{
+    StopListeners();
 }
 
 void CpiDeviceListUpnpServiceType::Start()
