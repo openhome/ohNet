@@ -413,6 +413,7 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
             // Remove the old record, leaving the caller to add the new one.
             iLock.Signal();
             Remove(aUdn);
+            device->RemoveRef();
             return false;
         }
         deviceUpnp->UpdateMaxAge(aMaxAge);
