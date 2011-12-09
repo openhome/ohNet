@@ -371,6 +371,15 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         }
         it++;
     }
+    it = iPendingRemoveMap.begin();
+    while (it != iPendingRemoveMap.end()) {
+        CpiDevice* device = reinterpret_cast<CpiDevice*>(it->second);
+        if (!device->IsReady()) {
+            reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData())->InterruptXmlFetch();
+            xmlWaitCount++;
+        }
+        it++;
+    }
     iXmlFetchSem.Clear();
     iLock.Signal();
     iXmlFetchLock.Signal();
@@ -391,7 +400,7 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
     if (!IsLocationReachable(aLocation)) {
         return false;
     }
-    AutoMutex a(iLock);
+    iLock.Wait();
     if (iRefreshing && iPendingRefreshCount > 1) {
         // we need at most one final msearch once a network card starts working following an adapter change
         iPendingRefreshCount = 1;
@@ -402,13 +411,16 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
         if (deviceUpnp->Location() != aLocation) {
             // device appears to have moved to a new location.
             // Remove the old record, leaving the caller to add the new one.
+            iLock.Signal();
             Remove(aUdn);
             return false;
         }
         deviceUpnp->UpdateMaxAge(aMaxAge);
         device->RemoveRef();
+        iLock.Signal();
         return !iRefreshing;
     }
+    iLock.Signal();
     return false;
 }
 
@@ -531,8 +543,8 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     if (current == NULL) {
         iLock.Wait();
         iInterface = 0;
-        RemoveAll();
         iLock.Signal();
+        RemoveAll();
         return;
     }
 
@@ -558,14 +570,22 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 
 void CpiDeviceListUpnp::RemoveAll()
 {
+    iLock.Wait();
     iRefreshTimer->Cancel();
     CancelRefresh();
     iNextRefreshTimer->Cancel();
     iPendingRefreshCount = 0;
+    std::vector<CpiDevice*> devices;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
-        Remove(it->first);
+        devices.push_back(it->second);
+        it->second->AddRef();
         it++;
+    }
+    iLock.Signal();
+    for (TUint i=0; i<(TUint)devices.size(); i++) {
+        Remove(devices[i]->Udn());
+        devices[i]->RemoveRef();
     }
 }
 

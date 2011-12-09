@@ -267,6 +267,7 @@ protected:
     TBool iRefreshing;
     Map iMap;
     Map iRefreshMap;
+    Map iPendingRemoveMap;
     mutable OpenHome::Mutex iLock;
 private:
     FunctorCpiDevice iAdded;
