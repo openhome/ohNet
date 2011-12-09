@@ -308,6 +308,9 @@ def ArmTests(module, arch, nightly):
 
 
 def publish_release(ostype, arch, release_name, tool):
+    release_type = "release" # release or debug
+			     # hard coded for now - builds are broken for debug due to pdb server on win
+
     target_name = "%s-%s" % (ostype, "ARM" if arch=="arm" else arch)
     if ostype == "MacOS":
         print "No ability to publish releases for MacOS. Skip."
@@ -318,9 +321,9 @@ def publish_release(ostype, arch, release_name, tool):
         artifacts = '/opt/artifacts/'
     subprocess.check_call(tool + ' && make bundle-dev targetplatform=%s' % target_name, shell=True)
     release_source_bundle = 'Build/Bundles/ohNet-%s-dev.tar.gz' % target_name
-    release_target_bundle = '%sReleases/ohNet-%s-%s.tar.gz' % (artifacts, release_name, target_name)
+    release_target_bundle = '%sReleases/ohNet-%s-%s-%s.tar.gz' % (artifacts, release_name, target_name, release_type)
     shutil.copyfile(release_source_bundle, release_target_bundle)
-    subprocess.check_call(['scp', '-r', release_source_bundle, 'releases@www.openhome.org:~/www/artifacts/ohNet/ohNet-%s-%s.tar.gz' %( release_name, target_name)])
+    subprocess.check_call(['scp', '-r', release_source_bundle, 'releases@www.openhome.org:~/www/artifacts/ohNet/ohNet-%s-%s.tar.gz' %( release_name, target_name, release_type)])
 
 def writerev(ostype, arch):
 
