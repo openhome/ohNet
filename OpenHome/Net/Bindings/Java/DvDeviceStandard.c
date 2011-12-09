@@ -16,19 +16,20 @@ void STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, TIpA
                              OhNetCallbackWriteResourceEnd aWriteEnd)
 {
 	JniObjRef* ref = (JniObjRef*) aUserData;
+	JavaVM *vm = ref->vm;
 	JNIEnv *env;
 	jclass cls;
 	jmethodID mid;
 	jint ret;
 	jint attached;
 
-	attached = (*(ref->vm))->GetEnv(ref->vm, (void **)&env, JNI_VERSION_1_4);
+	attached = (*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_4);
 	if (attached < 0)
 	{
 #ifdef __ANDROID__
-		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
 #else
-		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
 #endif
 		if (ret < 0)
 		{
@@ -57,7 +58,7 @@ void STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, TIpA
 	
 	if (attached < 0)
 	{
-		(*(ref->vm))->DetachCurrentThread(ref->vm);
+		(*vm)->DetachCurrentThread(vm);
 	}
 }
 

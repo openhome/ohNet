@@ -13,19 +13,20 @@ extern "C" {
 static void STDCALL CallbackDvInvocation(void* aPtr, DvInvocationC aInvocation)
 {
 	JniObjRef *ref = (JniObjRef*) aPtr;
+	JavaVM *vm = ref->vm;
 	jint ret;
 	JNIEnv *env;
 	jclass cls;
 	jmethodID mid;
     jint attached;
 	
-    attached = (*(ref->vm))->GetEnv(ref->vm, (void **)&env, JNI_VERSION_1_4);
+    attached = (*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_4);
     if (attached < 0)
     {
 #ifdef __ANDROID__
-		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
 #else
-		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
 #endif
         if (ret < 0)
         {
@@ -42,7 +43,7 @@ static void STDCALL CallbackDvInvocation(void* aPtr, DvInvocationC aInvocation)
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aInvocation);
 	if (attached < 0)
     {
-        (*(ref->vm))->DetachCurrentThread(ref->vm);
+        (*vm)->DetachCurrentThread(vm);
     }
 }
 
