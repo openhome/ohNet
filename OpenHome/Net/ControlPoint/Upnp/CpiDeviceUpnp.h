@@ -102,6 +102,8 @@ protected:
     CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnp();
 
+    void StopListeners();
+
     /**
      * Checks to see if a device is already in the list and updates its maxage
      * timeout if it is.
@@ -160,6 +162,7 @@ class CpiDeviceListUpnpAll : public CpiDeviceListUpnp
 {
 public:
     CpiDeviceListUpnpAll(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    ~CpiDeviceListUpnpAll();
     void Start();
     void SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
 };
@@ -173,6 +176,7 @@ class CpiDeviceListUpnpRoot : public CpiDeviceListUpnp
 {
 public:
     CpiDeviceListUpnpRoot(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    ~CpiDeviceListUpnpRoot();
     void Start();
     void SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
 };
@@ -186,6 +190,7 @@ class CpiDeviceListUpnpUuid : public CpiDeviceListUpnp
 {
 public:
     CpiDeviceListUpnpUuid(const Brx& aUuid, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    ~CpiDeviceListUpnpUuid();
     void Start();
     void SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
 private:
@@ -202,6 +207,7 @@ class CpiDeviceListUpnpDeviceType : public CpiDeviceListUpnp
 public:
     CpiDeviceListUpnpDeviceType(const Brx& aDomainName, const Brx& aDeviceType, TUint aVersion,
                                 FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    ~CpiDeviceListUpnpDeviceType();
     void Start();
     void SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion,
                                    const Brx& aLocation, TUint aMaxAge);
@@ -221,6 +227,7 @@ class CpiDeviceListUpnpServiceType : public CpiDeviceListUpnp
 public:
     CpiDeviceListUpnpServiceType(const Brx& aDomainName, const Brx& aServiceType, TUint aVersion,
                                  FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    ~CpiDeviceListUpnpServiceType();
     void Start();
     void SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion,
                                     const Brx& aLocation, TUint aMaxAge);

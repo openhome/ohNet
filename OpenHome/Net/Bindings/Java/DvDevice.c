@@ -42,11 +42,11 @@ void CallbackDeviceDisabled(void* aPtr)
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
+	(*env)->DeleteGlobalRef(env, ref->callbackObj);
 	if(attached < 0)
 	{
 		(*(ref->vm))->DetachCurrentThread(ref->vm);
 	}
-	(*env)->DeleteGlobalRef(env, ref->callbackObj);
 	free(ref);
 }
 
@@ -147,7 +147,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceSetDisabled
 	}
 	ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aCompleted);
 	
-	DvDeviceSetDisabled(device, callback, &ref);
+	DvDeviceSetDisabled(device, callback, ref);
 }
 
 /*

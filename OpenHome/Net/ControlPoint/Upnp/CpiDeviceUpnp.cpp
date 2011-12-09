@@ -353,17 +353,19 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iLock.Signal();
     Stack::NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
     Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
-    iSsdpLock.Wait();
-    if (iMulticastListener != NULL) {
-        iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
-        Stack::MulticastListenerRelease(iInterface);
-    }
-    delete iUnicastListener;
-    iSsdpLock.Signal();
     iXmlFetchLock.Wait();
     iLock.Wait();
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
+        CpiDevice* device = reinterpret_cast<CpiDevice*>(it->second);
+        if (!device->IsReady()) {
+            reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData())->InterruptXmlFetch();
+            xmlWaitCount++;
+        }
+        it++;
+    }
+    it = iPendingRemoveMap.begin();
+    while (it != iPendingRemoveMap.end()) {
         CpiDevice* device = reinterpret_cast<CpiDevice*>(it->second);
         if (!device->IsReady()) {
             reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData())->InterruptXmlFetch();
@@ -386,12 +388,26 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     delete iNextRefreshTimer;
 }
 
+void CpiDeviceListUpnp::StopListeners()
+{
+    iSsdpLock.Wait();
+    delete iUnicastListener;
+    iUnicastListener = NULL;
+    if (iMulticastListener != NULL) {
+        iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
+        iNotifyHandlerId = 0;
+        Stack::MulticastListenerRelease(iInterface);
+        iMulticastListener = NULL;
+    }
+    iSsdpLock.Signal();
+}
+
 TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge)
 {
     if (!IsLocationReachable(aLocation)) {
         return false;
     }
-    AutoMutex a(iLock);
+    iLock.Wait();
     if (iRefreshing && iPendingRefreshCount > 1) {
         // we need at most one final msearch once a network card starts working following an adapter change
         iPendingRefreshCount = 1;
@@ -402,13 +418,17 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
         if (deviceUpnp->Location() != aLocation) {
             // device appears to have moved to a new location.
             // Remove the old record, leaving the caller to add the new one.
+            iLock.Signal();
             Remove(aUdn);
+            device->RemoveRef();
             return false;
         }
         deviceUpnp->UpdateMaxAge(aMaxAge);
         device->RemoveRef();
+        iLock.Signal();
         return !iRefreshing;
     }
+    iLock.Signal();
     return false;
 }
 
@@ -517,22 +537,13 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     iNextRefreshTimer->Cancel();
     iPendingRefreshCount = 0;
     iLock.Signal();
-    iSsdpLock.Wait();
-    delete iUnicastListener;
-    iUnicastListener = NULL;
-    if (iMulticastListener != NULL) {
-        iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
-        iNotifyHandlerId = 0;
-        Stack::MulticastListenerRelease(iInterface);
-        iMulticastListener = NULL;
-    }
-    iSsdpLock.Signal();
+    StopListeners();
 
     if (current == NULL) {
         iLock.Wait();
         iInterface = 0;
-        RemoveAll();
         iLock.Signal();
+        RemoveAll();
         return;
     }
 
@@ -558,14 +569,22 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 
 void CpiDeviceListUpnp::RemoveAll()
 {
+    iLock.Wait();
     iRefreshTimer->Cancel();
     CancelRefresh();
     iNextRefreshTimer->Cancel();
     iPendingRefreshCount = 0;
+    std::vector<CpiDevice*> devices;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
-        Remove(it->first);
+        devices.push_back(it->second);
+        it->second->AddRef();
         it++;
+    }
+    iLock.Signal();
+    for (TUint i=0; i<(TUint)devices.size(); i++) {
+        Remove(devices[i]->Udn());
+        devices[i]->RemoveRef();
     }
 }
 
@@ -631,6 +650,11 @@ CpiDeviceListUpnpAll::CpiDeviceListUpnpAll(FunctorCpiDevice aAdded, FunctorCpiDe
 {
 }
 
+CpiDeviceListUpnpAll::~CpiDeviceListUpnpAll()
+{
+    StopListeners();
+}
+
 void CpiDeviceListUpnpAll::Start()
 {
     CpiDeviceListUpnp::Start();
@@ -666,6 +690,11 @@ void CpiDeviceListUpnpAll::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLoc
 CpiDeviceListUpnpRoot::CpiDeviceListUpnpRoot(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
     : CpiDeviceListUpnp(aAdded, aRemoved)
 {
+}
+
+CpiDeviceListUpnpRoot::~CpiDeviceListUpnpRoot()
+{
+    StopListeners();
 }
 
 void CpiDeviceListUpnpRoot::Start()
@@ -704,6 +733,11 @@ CpiDeviceListUpnpUuid::CpiDeviceListUpnpUuid(const Brx& aUuid, FunctorCpiDevice 
     : CpiDeviceListUpnp(aAdded, aRemoved)
     , iUuid(aUuid)
 {
+}
+
+CpiDeviceListUpnpUuid::~CpiDeviceListUpnpUuid()
+{
+    StopListeners();
 }
 
 void CpiDeviceListUpnpUuid::Start()
@@ -750,6 +784,11 @@ CpiDeviceListUpnpDeviceType::CpiDeviceListUpnpDeviceType(const Brx& aDomainName,
 {
 }
 
+CpiDeviceListUpnpDeviceType::~CpiDeviceListUpnpDeviceType()
+{
+    StopListeners();
+}
+
 void CpiDeviceListUpnpDeviceType::Start()
 {
     CpiDeviceListUpnp::Start();
@@ -793,6 +832,11 @@ CpiDeviceListUpnpServiceType::CpiDeviceListUpnpServiceType(const Brx& aDomainNam
     , iServiceType(aServiceType)
     , iVersion(aVersion)
 {
+}
+
+CpiDeviceListUpnpServiceType::~CpiDeviceListUpnpServiceType()
+{
+    StopListeners();
 }
 
 void CpiDeviceListUpnpServiceType::Start()

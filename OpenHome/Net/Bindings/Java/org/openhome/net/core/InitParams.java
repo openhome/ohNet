@@ -401,7 +401,7 @@ public class InitParams
 	/**
 	 * Set the duration control point subscriptions will request.
 	 * 
-	 * @param aTimeoutMs	maximum time before rejecting an event update.
+	 * @param aDurationSecs	 maximum time before rejecting an event update.
 	 */
 	public void setSubscriptionDuration(int aDurationSecs)
 	{
