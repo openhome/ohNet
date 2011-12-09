@@ -1,6 +1,10 @@
 import xml.etree.ElementTree as ET
 import os
 
+def StripChars(charname):
+	charname = charname.replace('&', '')
+	return charname
+
 class valgrindParser():
 	def get_files(self,dir):
 		dir_list = os.listdir(dir)
@@ -22,7 +26,7 @@ class valgrindParser():
 			out.write('<testsuite name="memcheck" tests="1" errors="0" failures="'+str(len(errors))+'" skip="0">\n')
 			out.write('    <testcase classname="ValgrindMemoryCheck " \n')
 			out.write('              name="'+file+'" time="0">\n')
-
+			
 			for error in errors:
 				kind = error.find('kind')
 				what = error.find('what')
@@ -69,5 +73,6 @@ def main():
 	val.get_files('vgout')
 	val.parse_file()
 
-if "__name__" == "__main__":
-	main()
+if __name__ == "__main__":
+        main()
+

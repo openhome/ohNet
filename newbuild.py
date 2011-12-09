@@ -33,9 +33,9 @@ class JenkinsBuild():
 		args=[]
 		
 		if os_platform == 'windows' and arch == 'x86':
-			args.append('call vcvarsall.bat')
+			args.append('vcvarsall.bat')
 		if os_platform == 'windows' and arch == 'x64':
-			args.append('call vcvarsall.bat amd64')
+			args.append('vcvarsall.bat amd64')
 			os.environ['CS_PLATFORM'] = 'x64'
 		if arch == 'arm':
 			os.environ['CROSS_COMPILE'] = 'arm-none-linux-gnueabi-'
@@ -72,7 +72,6 @@ class JenkinsBuild():
 
 	def do_build(self):
 		nightly = self.options.nightly
-		arch = self.platform['arch']
 		os_platform = self.platform['os']
 
 		build_args = self.build_args
@@ -87,10 +86,10 @@ class JenkinsBuild():
 
 		print "building with %s on platform %s" %(platform_args, os_platform)
 
-		#ret = subprocess.check_call(platform_args)
-		#if ret != 0:
-		#	print ret
-		#	sys.exit(10)
+		ret = subprocess.check_call(platform_args)
+		if ret != 0:
+			print ret
+			sys.exit(10)
 
 def main():
 	Build = JenkinsBuild()
