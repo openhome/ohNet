@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-void CallbackDeviceDisabled(void* aPtr)
+static void STDCALL CallbackDeviceDisabled(void* aPtr)
 {
 	JniObjRef *ref = (JniObjRef*) aPtr;
 	JavaVM *vm = ref->vm;
