@@ -1,6 +1,7 @@
+#!/usr/bin/env python
+import os, subprocess, Helpers.valgrind_parser
 from optparse import OptionParser
-import os, subprocess
-	
+
 class JenkinsBuild():
 	def get_options(self):
 		parser = OptionParser()
@@ -86,12 +87,10 @@ class JenkinsBuild():
 
 		print "building with %s on platform %s" %(platform_args, os_platform)
 
-		print platform_args
-
-		ret = subprocess.check_call(platform_args)
-		if ret != 0:
-			print ret
-			sys.exit(10)
+		#ret = subprocess.check_call(platform_args)
+		#if ret != 0:
+		#	print ret
+		#	sys.exit(10)
 
 def main():
 	Build = JenkinsBuild()
