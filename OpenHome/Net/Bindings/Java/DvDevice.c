@@ -147,7 +147,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceSetDisabled
 	}
 	ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aCompleted);
 	
-	DvDeviceSetDisabled(device, callback, &ref);
+	DvDeviceSetDisabled(device, callback, ref);
 }
 
 /*
