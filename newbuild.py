@@ -147,7 +147,7 @@ class JenkinsBuild():
 		arch = self.platform['arch']
 		postAction = PostActions()		
 
-		if nightly = '1':
+		if nightly == '1':
 			if os_platform == 'linux' and arch == 'x86':
 				postAction.valgrind_parse()
 
