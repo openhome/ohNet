@@ -1,10 +1,13 @@
 #!/usr/bin/env python
-import os, subprocess, Helpers.valgrind_parser
+import os, subprocess
 from optparse import OptionParser
+from Helpers.valgrind_parser import *
 
 class PostActions():
-	def test(self):
-		print 'test'
+	def valgrind_parse(self):
+		val = valgrindParser()
+		val.get_files('vgout')
+		val.parse_file()
 
 class JenkinsBuild():
 	def get_options(self):
@@ -141,9 +144,12 @@ class JenkinsBuild():
 		nightly = self.options.nightly
 		release = self.options.release
 		os_platform = self.platform['os']
-
+		arch = self.platform['arch']
 		postAction = PostActions()		
-		postAction.test()
+
+		if nightly = '1':
+			if os_platform == 'linux' and arch == 'x86':
+				postAction.valgrind_parse()
 
 def main():
 	Build = JenkinsBuild()
