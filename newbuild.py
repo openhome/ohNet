@@ -129,7 +129,8 @@ class JenkinsBuild():
 
 		for build_t in build_targets:
 			if build_t == 'release':
-				platform_args.append('--release --incremental')
+				platform_args.append('--release')
+				platform_args.append('--incremental')
 
 			ret = subprocess.check_call(platform_args)			
 			if ret != 0:
