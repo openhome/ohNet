@@ -115,11 +115,22 @@ class JenkinsBuild():
 			platform_args.extend(build_args)
 
 		print 'running build with %s' %(platform_args,)
-		
-		ret = subprocess.check_call(platform_args)
-		if ret != 0:
-			print ret
-			sys.exit(10)
+
+
+		build_targets = []
+		build_targets.append('debug')
+
+		if release == '1':
+			build_targets.append('release')
+
+		for build_t in build_targets:
+			if build_t == 'release':
+				platform_args.append('--release')
+
+			ret = subprocess.check_call(platform_args)			
+			if ret != 0:
+				print ret
+				sys.exit(10)
 
 def main():
 	Build = JenkinsBuild()
