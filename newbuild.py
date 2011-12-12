@@ -24,7 +24,11 @@ class JenkinsBuild():
 		'arm': { 'os': 'linux', 'arch': 'arm'},
 		 }
 
+		if self.options.platform == None:
+			self.options.platform = os.environ.get('PLATFORM')
+		
 		current_platform = self.options.platform
+
 		self.platform = platforms[current_platform]
 
 	def set_platform_args(self):
