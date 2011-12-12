@@ -39,7 +39,8 @@ class JenkinsBuild():
 		if os_platform == 'windows' and arch == 'x86':
 			args.append('vcvarsall.bat')
 		if os_platform == 'windows' and arch == 'x64':
-			args.append('vcvarsall.bat amd64')
+			args.append('vcvarsall.bat')
+			args.append('amd64')
 			os.environ['CS_PLATFORM'] = 'x64'
 		if arch == 'arm':
 			os.environ['CROSS_COMPILE'] = 'arm-none-linux-gnueabi-'
