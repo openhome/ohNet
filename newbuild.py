@@ -2,6 +2,10 @@
 import os, subprocess, Helpers.valgrind_parser
 from optparse import OptionParser
 
+class PostActions():
+	def test(self):
+		print 'test'
+
 class JenkinsBuild():
 	def get_options(self):
 		env_platform = os.environ.get('PLATFORM')
@@ -125,12 +129,20 @@ class JenkinsBuild():
 
 		for build_t in build_targets:
 			if build_t == 'release':
-				platform_args.append('--release')
+				platform_args.append('--release --incremental')
 
 			ret = subprocess.check_call(platform_args)			
 			if ret != 0:
 				print ret
 				sys.exit(10)
+
+	def do_postAction(self):
+		nightly = self.options.nightly
+		release = self.options.release
+		os_platform = self.platform['os']
+
+		postAction = PostActions()		
+		postAction.test()
 
 def main():
 	Build = JenkinsBuild()
@@ -139,6 +151,7 @@ def main():
 	Build.set_platform_args()
 	Build.get_build_args()
 	Build.do_build()
+	Build.do_postAction()
 
 if __name__ == "__main__":
 	main()
