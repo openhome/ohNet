@@ -32,8 +32,10 @@ class JenkinsBuild():
 			self.options.nightly = '0'
 
 		if env_release == 'true' or self.options.release == True:
+			print "enabling nightly build as release is enabled"
 			self.options.release = '1'
 			self.options.nightly = '1'
+
 		else:
 			self.options.release = '0'
 
