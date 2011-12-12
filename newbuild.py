@@ -26,16 +26,20 @@ class JenkinsBuild():
 		if env_platform != None:
 			self.options.platform = env_platform
 		
-		if env_nightly != None:
-			 self.options.nightly = env_nightly
+		if env_nightly == 'true' or self.options.nightly == True:
+			 self.options.nightly = '1'
+		else:
+			self.options.nightly = '0'
 
-		if env_release != None:
-			self.options.release = env_release
+		if env_release == 'true' or self.options.release == True:
+			self.options.release = '1'
+			self.options.nightly = '1'
+		else:
+			self.options.release = '0'
 
-		print env_platform
-		print env_nightly
-		print env_release
-		
+
+		print "options for build are nightly:%s and release:%s on platform %s" %(self.options.nightly,self.options.release,self.options.platform)
+
 	def get_platform(self):
 		
 		platforms = { 
@@ -87,7 +91,7 @@ class JenkinsBuild():
 			args.append('--java')
 		if os_platform == 'linux' and arch == 'x86':
 			args.append('--java')
-		if nightly == True:
+		if nightly == '1':
 			args.append('--full')
 			if os_platform == 'linux' and arch == 'x86':
 				args.append('--valgrind')	
@@ -108,6 +112,8 @@ class JenkinsBuild():
 			platform_args.append('&&')
 			platform_args.extend(build_args)
 
+		print 'running build with %s' %(platform_args,)
+		
 		ret = subprocess.check_call(platform_args)
 		if ret != 0:
 			print ret
