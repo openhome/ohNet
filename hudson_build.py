@@ -236,9 +236,7 @@ class JenkinsBuild():
 		release = self.options.release
 		os_platform = self.platform['os']
 		arch = self.platform['arch']
-		postAction = PostActions()	
-		platform = self.options.platform	
-		platform_args = self.platform_args
+		postAction = PostActions()
 
 		if nightly == '1':
 			if os_platform == 'linux' and arch == 'x86':
