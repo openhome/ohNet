@@ -1,4 +1,3 @@
-import paramiko
 import threading
 import subprocess
 
@@ -8,6 +7,8 @@ class remote():
                                 print line
 
                 def rssh(self,username,host,cmd):
+			import paramiko
+
                         ssh = paramiko.SSHClient()
                         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                         ssh.connect(host, username=username, look_for_keys='True')
