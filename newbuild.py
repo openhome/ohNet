@@ -2,6 +2,7 @@
 import os, subprocess
 from optparse import OptionParser
 from Helpers.valgrind_parser import *
+from Helpers.remote import *
 
 class PostActions():
 	def valgrind_parse(self):
@@ -9,6 +10,52 @@ class PostActions():
 		val.get_files('vgout')
 		val.parse_file()
 
+	def gen_docs(self):
+		rem = remote()
+		
+		ret = subprocess.check_call('make docs')
+
+		if ret != 0:
+			print ret
+			sys.exit(10)
+
+		rem.rsync('hudson-zapp','ohnet.linn.co.uk','Build/Docs/','~/doc')
+		if ret != 0:
+			print ret
+			sys.exit(10)
+
+		rem.rsync('hudson-rsync','openhome.org','Build/docs/','~/build/nightly/docs')
+		if ret != 0:
+			print ret
+			sys.exit(10)
+
+	def arm_tests(self,type):
+		rem = remote()
+		rem.rsync('root','sheeva010.linn.co.uk','Build','~/')
+
+		if ret != 0:
+			print ret
+			sys.exit(10)
+
+		rem.rsync('root','sheeva010.linn.co.uk','AllTests.py','~/')
+
+		if ret != 0:
+			print ret
+			sys.exit(10)
+
+		
+		if type == 'nightly':
+			ret = rem.rssh('root','sheeva010.linn.co.uk','python AllTests.py -f -t')			
+
+			if ret != 0:
+				print ret
+				sys.exit(10)
+		else:
+			ret = rem.rssh('root','sheeva010.linn.co.uk','python AllTests.py -t')
+			if ret != 0:
+				print ret
+				sys.exit(10)
+	
 class JenkinsBuild():
 	def get_options(self):
 		env_platform = os.environ.get('PLATFORM')
@@ -150,7 +197,15 @@ class JenkinsBuild():
 		if nightly == '1':
 			if os_platform == 'linux' and arch == 'x86':
 				postAction.valgrind_parse()
+				postAction.gen_docs()
 
+			if os_platform == 'linux' and arch == 'arm':
+				postAction.arm_tests('nightly')
+		else:
+			if os_platform == 'linux' and arch == 'arm':
+				postAction.arm_tests('commit')
+
+						
 def main():
 	Build = JenkinsBuild()
 	Build.get_options()
