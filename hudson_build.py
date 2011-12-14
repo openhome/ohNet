@@ -3,6 +3,7 @@ import os, subprocess
 from optparse import OptionParser
 from Helpers.valgrind_parser import *
 from Helpers.remote import *
+import sys
 
 class PostActions():
 	def valgrind_parse(self):
@@ -15,19 +16,6 @@ class PostActions():
 		release_targets = []
 		release_targets.append('release')
 		release_targets.append('debug')
-
-		for release in release_targets:
-				print 'doing release for platform %s and releasetype %s' %(platform, release,)
-				ret = subprocess.check_call('make bundle-dev targetplatform=%s releasetype=%s' %(platform, release,), shell=True)
-
-				if ret != 0:
-	                                print ret
-        	                        sys.exit(10)
-				
-				ret = rem.rsync('releases','www.openhome.org','Build/Bundles/' '~/www/artifacts/ohNet/')		
-				if ret != 0:
-					print ret
-					sys.exit(10)
 
 	def gen_docs(self):
 		rem = remote()
@@ -204,6 +192,45 @@ class JenkinsBuild():
 				print ret
 				sys.exit(10)
 
+	def do_release(self):
+		nightly = self.options.nightly
+		release = self.options.release
+		platform_args = self.platform_args
+		platform = self.options.platform
+		
+		rem = remote()
+
+		release_targets = []
+		release_targets.append('release')
+		release_targets.append('debug')
+		
+		for release in release_targets:
+			release_args = []
+			release_args.append('make')
+			release_args.append('bundle-dev')
+			release_args.append('targetplatform=%s' %(platform,))
+			release_args.append('releasetype=%s' %(release,))
+		
+			build = []
+	
+			if platform_args == []:
+				 build.extend(platform_args)
+				 build.append('make')
+				 build.append('bundle-dev')
+				 build.append('targetplatform=%s' %(platform,))
+				 build.append('releasetype=%s' %(release,))
+
+			else:
+				build.extend(platform_args)
+				build.append('&&')
+                                build.append('make')
+				build.append('bundle-dev')
+				build.append('targetplatform=%s' %(platform,))
+				build.append('releasetype=%s' %(release,))
+
+			ret = subprocess.check_call(build)
+			print build			
+
 	def do_postAction(self):
 		nightly = self.options.nightly
 		release = self.options.release
@@ -211,6 +238,7 @@ class JenkinsBuild():
 		arch = self.platform['arch']
 		postAction = PostActions()	
 		platform = self.options.platform	
+		platform_args = self.platform_args
 
 		if nightly == '1':
 			if os_platform == 'linux' and arch == 'x86':
@@ -221,10 +249,11 @@ class JenkinsBuild():
 				postAction.arm_tests('nightly')
 		else:
 			if os_platform == 'linux' and arch == 'arm':
-				postAction.arm_tests('commit')
+				postAction.arm_tests('commit')	
+
 
 		if os_platform != 'macos' and release == '1':
-			postAction.do_release(platform)				
+				self.do_release()
 def main():
 	Build = JenkinsBuild()
 	Build.get_options()
