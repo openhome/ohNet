@@ -28,6 +28,7 @@ def main():
     options, args = parser.parse_args()
     osname = args[0]      # E.g. "Windows", "Posix"
     targetname = args[1]  # E.g. "Windows-x86", "Linux-ARM", "Linux-x64"
+    release_type = args[2] # e.g. debug release
 
     builddir = "Build/Obj/" + osname
     includedir = "Build/Include"
@@ -41,6 +42,9 @@ def main():
     debug_exists = release_exists = 0
     debug_dll = os.path.join(builddir, 'Debug', 'ohNet.net.dll')
     release_dll = os.path.join(builddir, 'Release', 'ohNet.net.dll')
+    print debug_dll
+    print release_dll
+
     if os.path.exists(debug_dll):
         debug_exists = 1
     if os.path.exists(release_dll):
@@ -48,17 +52,13 @@ def main():
     if not (debug_exists or release_exists):
         print 'ERROR: ohNet.net.dll does not exist for either Debug or Release'
         sys.exit(1)
-    if debug_exists and release_exists:
-        if os.path.getmtime(debug_dll) > os.path.getmtime(release_dll):
-            release_exists = 0
-        else:
-            debug_exists = 0
-    if debug_exists:
+    
+    if release_type == 'debug':
         builddir = os.path.join(builddir, 'Debug')
-    else:
+    if release_type == 'release':
         builddir = os.path.join(builddir, 'Release')
 
-    bundle_fileprefix = "ohNet-%s%s" % (targetname, "-dev" if options.dev else "")
+    bundle_fileprefix = "ohNet-%s-%s%s" % (release_type, targetname, "-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
 

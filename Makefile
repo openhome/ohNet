@@ -281,7 +281,7 @@ bundle: tt
 ifeq ($(targetplatform),)
 	echo Usage: make bundle targetplatform=Linux-x86
 else
-	python bundle_binaries.py $(osbuilddir) $(targetplatform)
+	python bundle_binaries.py $(osbuilddir) $(targetplatform) ${releasetype}
 endif
 
 bundle-dev: tt
@@ -289,5 +289,5 @@ bundle-dev: tt
 ifeq ($(targetplatform),)
 	echo Usage: make bundle-dev targetplatform=Linux-x86
 else
-	python bundle_binaries.py --dev $(osbuilddir) $(targetplatform)
+	python bundle_binaries.py --dev $(osbuilddir) $(targetplatform) ${releasetype}
 endif
