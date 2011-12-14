@@ -23,8 +23,12 @@ class PostActions():
 				if ret != 0:
 	                                print ret
         	                        sys.exit(10)
-
 				
+				ret = rem.rsync('releases','www.openhome.org','Build/Bundles/' '~/www/artifacts/ohNet/')		
+				if ret != 0:
+					print ret
+					sys.exit(10)
+
 	def gen_docs(self):
 		rem = remote()
 		ret = subprocess.check_call('make docs', shell=True)
