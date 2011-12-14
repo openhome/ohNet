@@ -10,6 +10,21 @@ class PostActions():
 		val.get_files('vgout')
 		val.parse_file()
 
+	def do_release(self,platform):
+		rem = remote()
+		release_targets = []
+		release_targets.append('release')
+		release_targets.append('debug')
+
+		for release in release_targets:
+				print 'doing release for platform %s and releasetype %s' %(platform, release_type,)
+				ret = subprocess.check_call('make bundle-dev targetplatform=%s releasetype=%s' %(platform, release_type,), shell=True)
+
+				if ret != 0:
+	                                print ret
+        	                        sys.exit(10)
+
+				
 	def gen_docs(self):
 		rem = remote()
 		ret = subprocess.check_call('make docs', shell=True)
@@ -107,7 +122,6 @@ class JenkinsBuild():
 		 }
 		
 		current_platform = self.options.platform
-
 		self.platform = platforms[current_platform]
 
 	def set_platform_args(self):
@@ -191,7 +205,8 @@ class JenkinsBuild():
 		release = self.options.release
 		os_platform = self.platform['os']
 		arch = self.platform['arch']
-		postAction = PostActions()		
+		postAction = PostActions()	
+		platform = self.options.platform	
 
 		if nightly == '1':
 			if os_platform == 'linux' and arch == 'x86':
@@ -203,7 +218,9 @@ class JenkinsBuild():
 		else:
 			if os_platform == 'linux' and arch == 'arm':
 				postAction.arm_tests('commit')
-					
+
+		if os_platform != 'macos' and release == '1':
+			postAction.do_release(platform)				
 def main():
 	Build = JenkinsBuild()
 	Build.get_options()
