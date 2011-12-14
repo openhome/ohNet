@@ -31,13 +31,13 @@ class PostActions():
 
 	def arm_tests(self,type):
 		rem = remote()
-		rem.rsync('root','sheeva010.linn.co.uk','Build','~/')
+		ret = rem.rsync('root','sheeva010.linn.co.uk','Build','~/')
 
 		if ret != 0:
 			print ret
 			sys.exit(10)
 
-		rem.rsync('root','sheeva010.linn.co.uk','AllTests.py','~/')
+		ret = rem.rsync('root','sheeva010.linn.co.uk','AllTests.py','~/')
 
 		if ret != 0:
 			print ret
