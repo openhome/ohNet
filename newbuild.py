@@ -54,7 +54,7 @@ class PostActions():
 			ret = rem.rssh('root','sheeva010.linn.co.uk','python AllTests.py -t')
 			if ret != 0:
 				print ret
-				sys.exit(10)
+				sys.exit(10)		
 	
 class JenkinsBuild():
 	def get_options(self):
@@ -204,8 +204,7 @@ class JenkinsBuild():
 		else:
 			if os_platform == 'linux' and arch == 'arm':
 				postAction.arm_tests('commit')
-
-						
+					
 def main():
 	Build = JenkinsBuild()
 	Build.get_options()
