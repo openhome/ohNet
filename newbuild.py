@@ -12,11 +12,7 @@ class PostActions():
 
 	def gen_docs(self):
 		rem = remote()
-		cmd = []
-		cmd.append('make')
-		cmd.append('docs')
-
-		ret = subprocess.check_call(cmd)
+		ret = subprocess.check_call('make docs', shell=True)
 
 		if ret != 0:
 			print ret
