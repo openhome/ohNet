@@ -394,26 +394,23 @@ void PropertyWriterFactory::Disable()
     iEnabled = false;
     Stack::Mutex().Signal();
     iSubscriptionMapLock.Wait();
-    SubscriptionMap map;
+    std::vector<DviSubscription*> subscriptions;
     SubscriptionMap::iterator it = iSubscriptionMap.begin();
     if (it != iSubscriptionMap.end()) {
         DviSubscription* subscription = it->second;
-        Brn sid(subscription->Sid());
         if (subscription->TryAddRef()) {
-            map.insert(std::pair<Brn,DviSubscription*>(sid, subscription));
+            subscriptions.push_back(subscription);
         }
         it++;
     }
     iSubscriptionMapLock.Signal();
-    it = map.begin();
-    if (it != map.end()) {
-        DviSubscription* subscription = it->second;
+    for (TUint i=0; i<(TUint)subscriptions.size(); i++) {
+        DviSubscription* subscription = subscriptions[i];
         DviService* service = subscription->Service();
         if (service != NULL) {
             service->RemoveSubscription(subscription->Sid());
         }
         subscription->RemoveRef();
-        it++;
     }
     RemoveRef();
 }
@@ -683,6 +680,7 @@ void DviSessionUpnp::Subscribe()
     device->CreateSid(sid);
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri());
     DviSubscription* subscription = new DviSubscription(*device, *iPropertyWriterFactory, data, sid, duration);
+    iPropertyWriterFactory->SubscriptionAdded(*subscription);
     DviSubscriptionManager::AddSubscription(*subscription);
 
     if (iHeaderExpect.Continue()) {
