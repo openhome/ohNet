@@ -683,6 +683,7 @@ void DviSessionUpnp::Subscribe()
     device->CreateSid(sid);
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri());
     DviSubscription* subscription = new DviSubscription(*device, *iPropertyWriterFactory, data, sid, duration);
+    iPropertyWriterFactory->SubscriptionAdded(*subscription);
     DviSubscriptionManager::AddSubscription(*subscription);
 
     if (iHeaderExpect.Continue()) {
