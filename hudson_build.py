@@ -17,8 +17,8 @@ class PostActions():
 		release_targets.append('debug')
 
 		for release in release_targets:
-				print 'doing release for platform %s and releasetype %s' %(platform, release_type,)
-				ret = subprocess.check_call('make bundle-dev targetplatform=%s releasetype=%s' %(platform, release_type,), shell=True)
+				print 'doing release for platform %s and releasetype %s' %(platform, release,)
+				ret = subprocess.check_call('make bundle-dev targetplatform=%s releasetype=%s' %(platform, release,), shell=True)
 
 				if ret != 0:
 	                                print ret
