@@ -320,7 +320,6 @@ def publish_release(ostype, arch, release_name, tool, build_type):
     else:
         artifacts = '/opt/artifacts/'
     cmd = 'make bundle-dev targetplatform=%s releasetype=%s' %( target_name, build_type)
-    print cmd
     subprocess.check_call(tool + ' && ' + cmd, shell=True)
     release_source_bundle = 'Build/Bundles/ohNet-%s-%s-dev.tar.gz' %( target_name, build_type)
     release_target_bundle = '%sReleases/ohNet-%s-%s-%s.tar.gz' % (artifacts, release_name, target_name, release_type)
