@@ -319,7 +319,9 @@ def publish_release(ostype, arch, release_name, tool, buildType):
         artifacts = '\\\\ohnet.linn.co.uk\\artifacts\\'
     else:
         artifacts = '/opt/artifacts/'
-    subprocess.check_call(tool + ' && make bundle-dev targetplatform=%s %s' %( target_name, buildType), shell=True)
+    cmd = make bundle-dev targetplatform=%s %s' %( target_name, buildType)
+    print cmd
+    subprocess.check_call(tool + ' && ' + cmd, shell=True)
     release_source_bundle = 'Build/Bundles/ohNet-%s-dev.tar.gz' % target_name
     release_target_bundle = '%sReleases/ohNet-%s-%s-%s.tar.gz' % (artifacts, release_name, target_name, release_type)
     shutil.copyfile(release_source_bundle, release_target_bundle)
