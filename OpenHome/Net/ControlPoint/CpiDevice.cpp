@@ -254,9 +254,9 @@ void CpiDeviceList::Remove(const Brx& aUdn)
     CpiDevice* device = RefDeviceLocked(aUdn);
     iMap.erase(it);
     iPendingRemoveMap.insert(std::pair<Brn,CpiDevice*>(udn, device));
-    iLock.Signal();
     device->RemoveRef();
     CpiDeviceListUpdater::QueueRemoved(*this, aUdn);
+    iLock.Signal();
 }
 
 TBool CpiDeviceList::IsDeviceReady(CpiDevice& /*aDevice*/)
