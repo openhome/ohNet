@@ -345,34 +345,24 @@ void CpiDeviceList::DoRemove(const Brx& aUdn)
     iLock.Wait();
     TBool callObserver;
     Brn udn(aUdn);
-    Map* map;
-    Map::iterator it = iMap.find(udn);
-    if (it != iMap.end()) {
-        map = &iMap;
-    }
-    else {
-        it = iPendingRemoveMap.find(udn);
-        if (it != iPendingRemoveMap.end()) {
-            map = &iPendingRemoveMap;
-        }
-        else {
-            // device isn't in this list
-            LOG(kDevice, "< CpiDeviceList::DoRemove, device not in list\n");
-            iLock.Signal();
-            return;
-        }
+    Map::iterator it = iPendingRemoveMap.find(udn);
+    if (it == iPendingRemoveMap.end()) {
+        // device isn't in this list
+        LOG(kDevice, "< CpiDeviceList::DoRemove, device not in list\n");
+        iLock.Signal();
+        return;
     }
     CpiDevice* device = it->second;
     if (!device->IsReady()) {
         iLock.Signal();
         device->NotifyRemovedBeforeReady();
         iLock.Wait();
-        it = map->find(udn);
+        it = iPendingRemoveMap.find(udn);
     }
     // don't remove our ref to the device yet, re-use it for the observer
     callObserver = (iActive && device->IsReady());
     it->second = NULL;
-    map->erase(it);
+    iPendingRemoveMap.erase(it);
     iLock.Signal();
     if (callObserver) {
         iRemoved(*device);
