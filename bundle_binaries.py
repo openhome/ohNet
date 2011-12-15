@@ -37,22 +37,6 @@ def main():
     templateDir = "OpenHome/Net/T4/Templates"
     uisdkDir = "OpenHome/Net/Bindings/Js/ControlPoint"
 
-    # we have Debug and Release dirs.  Choose the one with the later version of ohNet.net.dll
-    # (the only useful file whose name doesn't change between Windows and Posix)
-    debug_exists = release_exists = 0
-    debug_dll = os.path.join(builddir, 'Debug', 'ohNet.net.dll')
-    release_dll = os.path.join(builddir, 'Release', 'ohNet.net.dll')
-    print debug_dll
-    print release_dll
-
-    if os.path.exists(debug_dll):
-        debug_exists = 1
-    if os.path.exists(release_dll):
-        release_exists = 1
-    if not (debug_exists or release_exists):
-        print 'ERROR: ohNet.net.dll does not exist for either Debug or Release'
-        sys.exit(1)
-    
     if release_type == 'debug':
         builddir = os.path.join(builddir, 'Debug')
     if release_type == 'release':
