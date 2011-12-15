@@ -307,7 +307,7 @@ def ArmTests(module, arch, nightly):
             	sys.exit(10)
 
 
-def publish_release(ostype, arch, release_name, tool):
+def publish_release(ostype, arch, release_name, tool, buildType):
     release_type = "release" # release or debug
 			     # hard coded for now - builds are broken for debug due to pdb server on win
 
@@ -319,7 +319,7 @@ def publish_release(ostype, arch, release_name, tool):
         artifacts = '\\\\ohnet.linn.co.uk\\artifacts\\'
     else:
         artifacts = '/opt/artifacts/'
-    subprocess.check_call(tool + ' && make bundle-dev targetplatform=%s' % target_name, shell=True)
+    subprocess.check_call(tool + ' && make bundle-dev targetplatform=%s %s' %( target_name, buildType), shell=True)
     release_source_bundle = 'Build/Bundles/ohNet-%s-dev.tar.gz' % target_name
     release_target_bundle = '%sReleases/ohNet-%s-%s-%s.tar.gz' % (artifacts, release_name, target_name, release_type)
     shutil.copyfile(release_source_bundle, release_target_bundle)
@@ -364,7 +364,10 @@ def main():
     release_version = Environment['release_version']
 
     if release_version is not None:
-        publish_release(Environment['ostype'], Environment['arch'], release_version, Environment['tool'])
+        buildType = 'debug'
+        if '--release' in Arguments['args']:
+            buildType = 'release'
+        publish_release(Environment['ostype'], Environment['arch'], release_version, Environment['tool'], buildType)
 
 if __name__=="__main__":
     main()
