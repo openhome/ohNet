@@ -307,7 +307,7 @@ def ArmTests(module, arch, nightly):
             	sys.exit(10)
 
 
-def publish_release(ostype, arch, release_name, tool, buildType):
+def publish_release(ostype, arch, release_name, tool, build_type):
     release_type = "release" # release or debug
 			     # hard coded for now - builds are broken for debug due to pdb server on win
 
@@ -319,10 +319,10 @@ def publish_release(ostype, arch, release_name, tool, buildType):
         artifacts = '\\\\ohnet.linn.co.uk\\artifacts\\'
     else:
         artifacts = '/opt/artifacts/'
-    cmd = 'make bundle-dev targetplatform=%s releasetype=%s' %( target_name, buildType)
+    cmd = 'make bundle-dev targetplatform=%s releasetype=%s' %( target_name, build_type)
     print cmd
     subprocess.check_call(tool + ' && ' + cmd, shell=True)
-    release_source_bundle = 'Build/Bundles/ohNet-%s-dev.tar.gz' % target_name
+    release_source_bundle = 'Build/Bundles/ohNet-%s-%s-dev.tar.gz' %( target_name, build_type)
     release_target_bundle = '%sReleases/ohNet-%s-%s-%s.tar.gz' % (artifacts, release_name, target_name, release_type)
     shutil.copyfile(release_source_bundle, release_target_bundle)
     subprocess.check_call(['scp', '-r', release_source_bundle, 'releases@www.openhome.org:~/www/artifacts/ohNet/ohNet-%s-%s-%s.tar.gz' %( release_name, target_name, release_type)])
@@ -366,10 +366,10 @@ def main():
     release_version = Environment['release_version']
 
     if release_version is not None:
-        buildType = 'debug'
+        build_type = 'debug'
         if '--release' in Arguments['args']:
-            buildType = 'release'
-        publish_release(Environment['ostype'], Environment['arch'], release_version, Environment['tool'], buildType)
+            build_type = 'release'
+        publish_release(Environment['ostype'], Environment['arch'], release_version, Environment['tool'], build_type)
 
 if __name__=="__main__":
     main()

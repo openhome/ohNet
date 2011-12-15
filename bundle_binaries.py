@@ -58,7 +58,7 @@ def main():
     if release_type == 'release':
         builddir = os.path.join(builddir, 'Release')
 
-    bundle_fileprefix = "ohNet-%s-%s%s" % (release_type, targetname, "-dev" if options.dev else "")
+    bundle_fileprefix = "ohNet-%s-%s%s" % (targetname, release_type, "-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
 
