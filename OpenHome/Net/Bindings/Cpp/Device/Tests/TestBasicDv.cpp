@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 #include <string>
 
@@ -166,6 +167,8 @@ static void RandomiseUdn(std::string& aUdn)
     Bws<Ascii::kMaxUintStringBytes> addr;
     std::vector<NetworkAdapter*>* subnetList = Stack::NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
+    TUint seed = DviStack::ServerUpnp().Port((*subnetList)[0]->Address());
+    SetRandomSeed(seed);
     Stack::NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(addr, Random(max));
     udn.Append(addr);

@@ -220,6 +220,8 @@ static void RandomiseUdn(Bwh& aUdn)
     Bws<Ascii::kMaxUintStringBytes> buf;
     std::vector<NetworkAdapter*>* subnetList = Stack::NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
+    TUint seed = DviStack::ServerUpnp().Port((*subnetList)[0]->Address());
+    SetRandomSeed(seed);
     Stack::NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);

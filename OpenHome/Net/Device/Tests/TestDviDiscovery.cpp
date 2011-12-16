@@ -7,6 +7,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Private/Maths.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 #include <stdlib.h>
 #include <vector>
@@ -222,6 +223,8 @@ static void RandomiseUdn(Bwh& aUdn)
     Bws<Ascii::kMaxUintStringBytes> buf;
     NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TUint max = nif->Address();
+    TUint seed = DviStack::ServerUpnp().Port(nif->Address());
+    SetRandomSeed(seed);
     nif->RemoveRef(kAdapterCookie);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
