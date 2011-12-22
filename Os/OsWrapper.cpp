@@ -79,7 +79,7 @@ void OpenHome::Os::NetworkConnect(THandle aHandle, const Endpoint& aEndpoint, TU
     int32_t err = OsNetworkConnect(aHandle, aEndpoint.Address(), aEndpoint.Port(), aTimeoutMs);
     if (err != 0) {
         LOG2F(kNetwork, kError, "Os::NetworkConnect H = %d, RETURN VALUE = %d\n", aHandle, err);
-        THROW(NetworkError);
+        THROW(NetworkTimeout);
     }
 }
 
