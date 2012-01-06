@@ -251,9 +251,6 @@ void CpiDeviceList::Remove(const Brx& aUdn)
         iLock.Signal();
         return;
     }
-    Log::Print("CpiDeviceList::Remove - ");
-    Log::Print(aUdn);
-    Log::Print("\n");
     CpiDevice* device = RefDeviceLocked(aUdn);
     iMap.erase(it);
     iPendingRemove.push_back(device);
