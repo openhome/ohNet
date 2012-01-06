@@ -130,7 +130,7 @@ TBool CpiDevice::IsRemoved() const
 
 void CpiDevice::ListObjectDetails() const
 {
-    Log::Print("  CpiDevice: addr=%p, udn=");
+    Log::Print("  CpiDevice: addr=%p, udn=", this);
     Log::Print(iUdn);
     Log::Print(", refCount=%u\n", iRefCount);
 }
