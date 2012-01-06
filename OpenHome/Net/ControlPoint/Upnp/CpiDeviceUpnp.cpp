@@ -412,7 +412,6 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
-#if 0 // see bug #74
         if (deviceUpnp->Location() != aLocation) {
             // device appears to have moved to a new location.
             // Remove the old record, leaving the caller to add the new one.
@@ -421,7 +420,6 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
             device->RemoveRef();
             return false;
         }
-#endif
         deviceUpnp->UpdateMaxAge(aMaxAge);
         device->RemoveRef();
         iLock.Signal();
