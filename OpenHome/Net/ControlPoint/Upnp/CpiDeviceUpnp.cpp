@@ -364,14 +364,11 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         }
         it++;
     }
-    it = iPendingRemoveMap.begin();
-    while (it != iPendingRemoveMap.end()) {
-        CpiDevice* device = reinterpret_cast<CpiDevice*>(it->second);
-        if (!device->IsReady()) {
-            reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData())->InterruptXmlFetch();
+    for (TUint i=0; i<(TUint)iPendingRemove.size(); i++) {
+        if (!iPendingRemove[i]->IsReady()) {
+            reinterpret_cast<CpiDeviceUpnp*>(iPendingRemove[i]->OwnerData())->InterruptXmlFetch();
             xmlWaitCount++;
         }
-        it++;
     }
     iXmlFetchSem.Clear();
     iLock.Signal();
@@ -415,8 +412,7 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
-#if 0
-        // see bug #74
+#if 0 // see bug #74
         if (deviceUpnp->Location() != aLocation) {
             // device appears to have moved to a new location.
             // Remove the old record, leaving the caller to add the new one.

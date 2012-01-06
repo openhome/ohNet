@@ -176,7 +176,7 @@ public:
     virtual void AddRef() = 0;
     virtual void RemoveRef() = 0;
     virtual void NotifyAdded(CpiDevice& aDevice) = 0;
-    virtual void NotifyRemoved(const Brx& aUdn) = 0;
+    virtual void NotifyRemoved(CpiDevice& aDevice) = 0;
     virtual void NotifyRefreshed() = 0;
 };
 
@@ -257,8 +257,8 @@ private:
     void AddRef();
     void RemoveRef();
     void NotifyAdded(CpiDevice& aDevice);
-    void NotifyRemoved(const Brx& aUdn);
-    void DoRemove(const Brx& aUdn);
+    void NotifyRemoved(CpiDevice& aDevice);
+    void DoRemove(CpiDevice& aDevice);
     void NotifyRefreshed();
 private: // from IStackObject
     void ListObjectDetails() const;
@@ -267,7 +267,7 @@ protected:
     TBool iRefreshing;
     Map iMap;
     Map iRefreshMap;
-    Map iPendingRemoveMap;
+    std::vector<CpiDevice*> iPendingRemove;
     mutable OpenHome::Mutex iLock;
 private:
     FunctorCpiDevice iAdded;
@@ -282,7 +282,7 @@ public:
     CpiDeviceListUpdater();
     ~CpiDeviceListUpdater();
     static void QueueAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
-    static void QueueRemoved(IDeviceListUpdater& aUpdater, const Brx& aUdn);
+    static void QueueRemoved(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
     static void QueueRefreshed(IDeviceListUpdater& aUpdater);
 private:
     class UpdateBase : private INonCopyable
@@ -308,11 +308,12 @@ private:
     class UpdateRemoved : public UpdateBase
     {
     public:
-        UpdateRemoved(IDeviceListUpdater& aUpdater, const Brx& aUdn);
+        UpdateRemoved(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
+        ~UpdateRemoved();
     private:
         void Update();
     private:
-        Brh iUdn;
+        CpiDevice& iDevice;
     };
     class UpdateRefresh : public UpdateBase
     {
