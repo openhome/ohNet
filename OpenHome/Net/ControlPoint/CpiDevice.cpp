@@ -328,6 +328,19 @@ void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
         iLock.Signal();
         return;
     }
+    CpiDevice* device = RefDeviceLocked(aDevice.Udn());
+    if (device == NULL) {
+        // aDevice must have been removed since we queued the Added event
+        iLock.Signal();
+        return;
+    }
+    TBool sameDevice = (device == &aDevice);
+    device->RemoveRef();
+    if (!sameDevice) {
+        // aDevice has been replaced, probably because its location changed
+        iLock.Signal();
+        return;
+    }
     iLock.Signal();
     iAdded(aDevice);
 }
