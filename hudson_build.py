@@ -165,17 +165,17 @@ class JenkinsBuild():
 		os_platform = self.platform['os']
 		build_args = self.build_args
 		platform_args = self.platform_args
+
+		build = []
 			
 		if platform_args == []:
-			platform_args.extend(build_args)
+			build.extend(build_args)
 
 		else:
-			platform_args.append('&&')
-			platform_args.extend(build_args)
-
-		print 'running build with %s' %(platform_args,)
-
-
+			build.extend(platform_args)
+			build.append('&&')
+			build.extend(build_args)
+			
 		build_targets = []
 		build_targets.append('debug')
 
@@ -184,10 +184,12 @@ class JenkinsBuild():
 
 		for build_t in build_targets:
 			if build_t == 'release':
-				platform_args.append('--release')
-				platform_args.append('--incremental')
+				build.append('--release')
+				build.append('--incremental')
 
-			ret = subprocess.check_call(platform_args)			
+			print 'running build with %s' %(build,)
+
+			ret = subprocess.check_call(build)			
 			if ret != 0:
 				print ret
 				sys.exit(10)
@@ -214,7 +216,6 @@ class JenkinsBuild():
 			build = []
 	
 			if platform_args == []:
-				 build.extend(platform_args)
 				 build.append('make')
 				 build.append('bundle-dev')
 				 build.append('targetplatform=%s' %(platform,))
