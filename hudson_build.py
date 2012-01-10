@@ -212,6 +212,8 @@ class JenkinsBuild():
 		release_targets.append('debug')
 		
 		for release in release_targets:
+			rem = remote()
+
 			release_args = []
 			release_args.append('make')
 			release_args.append('bundle-dev')
@@ -236,14 +238,18 @@ class JenkinsBuild():
 
 			print "doing release with bundle %s" %(build,)
 
-	#		ret = subprocess.check_call(build)
-        #                if ret != 0:
-	#			print ret
-	#			sys.exit(10)
+			ret = subprocess.check_call(build)
+                        if ret != 0:
+				print ret
+				sys.exit(10)
 
 			bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-dev.tar.gz" %(platform,release))		
 			os.rename(bundle_name,os.path.join('Build/Bundles',"ohNet-%s-%s-dev-%s.tar.gz" %(version,platform,release)))
 
+			ret = rem.rsync('releases','www.openhome.org','Build/Bundles/' '~/www/artifacts/ohNet/')
+                        if ret != 0:
+				print ret
+				sys.exit(10)
 	
 	def do_postAction(self):
 		nightly = self.options.nightly
@@ -255,7 +261,7 @@ class JenkinsBuild():
 		if nightly == '1':
 			if os_platform == 'linux' and arch == 'x86':
 				postAction.valgrind_parse()
-				#postAction.gen_docs()
+				postAction.gen_docs()
 
 			if os_platform == 'linux' and arch == 'arm':
 				postAction.arm_tests('nightly')
@@ -272,7 +278,7 @@ def main():
 	Build.get_platform()
 	Build.set_platform_args()
 	Build.get_build_args()
-#	Build.do_build()
+	Build.do_build()
 	Build.do_postAction()
 
 if __name__ == "__main__":
