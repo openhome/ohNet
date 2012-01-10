@@ -31,7 +31,7 @@ ifeq ($(mac-arm),1)
 	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv6  -L$(sdkroot)/usr/lib/system
 	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv6 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
-	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -lpthread -Wl $(platform_linkflags)
+	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
 	ar = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar rc $(objdir)
 
 else
@@ -41,7 +41,7 @@ else
 	osbuilddir = Mac
 	objdir = Build/Obj/Mac/$(build_dir)/
 	compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-	link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
+	link = ${CROSS_COMPILE}g++ -pthread $(platform_linkflags)
 	ar = ${CROSS_COMPILE}ar rc $(objdir)
 
 endif
@@ -64,7 +64,7 @@ endif
 ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
 	platform_cflags = -Wno-psabi -fPIC
-	platform_linkflags = -lpthread
+	platform_linkflags = -pthread
     linkopts_ohNet = -Wl,-soname,libohNet.so
 	osbuilddir = Posix
 	osdir = Posix
@@ -98,8 +98,8 @@ exeext = elf
 linkoutput = -o 
 dllprefix = lib
 dllext = so
-link_dll = ${CROSS_COMPILE}g++ -lpthread  $(platform_linkflags) -shared -shared-libgcc
-link_dll_service = ${CROSS_COMPILE}g++ -lpthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
+link_dll = ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
+link_dll_service = ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = dmcs /nologo
 publicjavadir = OpenHome/Net/Bindings/Java/
 includes_jni = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
