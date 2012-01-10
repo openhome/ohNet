@@ -239,7 +239,7 @@ uint64_t OsTimeInUs()
         diff.tv_usec = 1000000 - gStartTime.tv_usec + now.tv_usec;
     }
 
-    return (uint64_t)((diff.tv_sec * 1000000) + diff.tv_usec);
+    return (uint64_t)diff.tv_sec * 1000000 + diff.tv_usec;
 }
 
 void OsConsoleWrite(const char* aStr)
