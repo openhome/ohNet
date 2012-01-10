@@ -67,6 +67,7 @@ class JenkinsBuild():
 		env_platform = os.environ.get('PLATFORM')
 		env_nightly = os.environ.get('NIGHTLY')
 		env_release = os.environ.get('RELEASE')
+		env_version = os.environ.get('RELEASE_VERSION')
 
 		parser = OptionParser()
 		parser.add_option("-p", "--platform", dest="platform",
@@ -77,7 +78,8 @@ class JenkinsBuild():
 		parser.add_option("-r", "--release",
 		  action="store_true", dest="release", default=False,
 		  help="publish release")
-
+		parser.add_option("-v", "--version", dest="version",
+			help="version number for release")
 		(self.options, self.args) = parser.parse_args()
 		
 		# check if env variables are set
@@ -85,6 +87,9 @@ class JenkinsBuild():
 
 		if env_platform != None:
 			self.options.platform = env_platform
+
+                if env_version != None:
+                        self.options.version = env_version
 		
 		if env_nightly == 'true' or self.options.nightly == True:
 			 self.options.nightly = '1'
@@ -98,7 +103,6 @@ class JenkinsBuild():
 
 		else:
 			self.options.release = '0'
-
 
 		print "options for build are nightly:%s and release:%s on platform %s" %(self.options.nightly,self.options.release,self.options.platform)
 
@@ -199,6 +203,7 @@ class JenkinsBuild():
 		release = self.options.release
 		platform_args = self.platform_args
 		platform = self.options.platform
+		version = self.options.version
 		
 		rem = remote()
 
@@ -229,9 +234,17 @@ class JenkinsBuild():
 				build.append('targetplatform=%s' %(platform,))
 				build.append('releasetype=%s' %(release,))
 
-			ret = subprocess.check_call(build)
-			print build			
+			print "doing release with bundle %s" %(build,)
 
+	#		ret = subprocess.check_call(build)
+        #                if ret != 0:
+	#			print ret
+	#			sys.exit(10)
+
+			bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-dev.tar.gz" %(platform,release))		
+			os.rename(bundle_name,os.path.join('Build/Bundles',"ohNet-%s-%s-dev-%s.tar.gz" %(version,platform,release)))
+
+	
 	def do_postAction(self):
 		nightly = self.options.nightly
 		release = self.options.release
@@ -242,7 +255,7 @@ class JenkinsBuild():
 		if nightly == '1':
 			if os_platform == 'linux' and arch == 'x86':
 				postAction.valgrind_parse()
-				postAction.gen_docs()
+				#postAction.gen_docs()
 
 			if os_platform == 'linux' and arch == 'arm':
 				postAction.arm_tests('nightly')
@@ -259,7 +272,7 @@ def main():
 	Build.get_platform()
 	Build.set_platform_args()
 	Build.get_build_args()
-	Build.do_build()
+#	Build.do_build()
 	Build.do_postAction()
 
 if __name__ == "__main__":
