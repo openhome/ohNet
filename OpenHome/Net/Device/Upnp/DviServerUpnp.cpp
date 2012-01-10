@@ -779,6 +779,7 @@ void DviSessionUpnp::Renew()
     TUint duration = iHeaderTimeout.Timeout();
     subscription->Renew(duration);
 
+    iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
 	WriteServerHeader(*iWriterResponse);
     IWriterAscii& writerSid = iWriterResponse->WriteHeaderField(HeaderSid::kHeaderSid);
@@ -791,6 +792,7 @@ void DviSessionUpnp::Renew()
     writerTimeout.WriteFlush();
    	iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
+    iResponseEnded = true;
 
     LOG(kDvEvent, "Renew subscription (complete): ");
     LOG(kDvEvent, iHeaderSid.Sid());
