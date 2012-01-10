@@ -334,7 +334,7 @@ void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
         iLock.Signal();
         return;
     }
-    TBool sameDevice = (device == &aDevice);
+    TBool sameDevice = ((void*)device == (void*)&aDevice);
     device->RemoveRef();
     if (!sameDevice) {
         // aDevice has been replaced, probably because its location changed
@@ -358,7 +358,7 @@ void CpiDeviceList::DoRemove(CpiDevice& aDevice)
     iLock.Wait();
     TBool found = false;
     for (TUint i=0; i<(TUint)iPendingRemove.size(); i++) {
-        if (iPendingRemove[i] == &aDevice) {
+        if ((void*)iPendingRemove[i] == (void*)&aDevice) {
             iPendingRemove.erase(iPendingRemove.begin() + i);
             found = true;
             break;
