@@ -455,7 +455,7 @@ void DviProtocolUpnp::SendAliveNotifications()
         catch (NetworkError&) {}
     }
     TUint maxUpdateTimeMs = Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
-    TUint updateTimeMs = Random((2*maxUpdateTimeMs)/3, maxUpdateTimeMs/3);
+    TUint updateTimeMs = Random(maxUpdateTimeMs/2, maxUpdateTimeMs/4);
     iAliveTimer->FireIn(updateTimeMs);
     iLock.Signal();
 }
