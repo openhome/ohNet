@@ -347,10 +347,10 @@ void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
 
 void CpiDeviceList::NotifyRemoved(CpiDevice& aDevice)
 {
-    DoRemove(aDevice);
+    (void)DoRemove(aDevice);
 }
 
-void CpiDeviceList::DoRemove(CpiDevice& aDevice)
+TBool CpiDeviceList::DoRemove(CpiDevice& aDevice)
 {
     LOG(kDevice, "> CpiDeviceList::DoRemove for device ");
     LOG(kDevice, aDevice.Udn());
@@ -368,7 +368,7 @@ void CpiDeviceList::DoRemove(CpiDevice& aDevice)
         // device isn't in this list
         LOG(kDevice, "< CpiDeviceList::DoRemove, device not in list\n");
         iLock.Signal();
-        return;
+        return false;
     }
     if (!aDevice.IsReady()) {
         iLock.Signal();
@@ -382,6 +382,7 @@ void CpiDeviceList::DoRemove(CpiDevice& aDevice)
         iRemoved(aDevice);
     }
     aDevice.RemoveRef();
+    return true;
 }
 
 void CpiDeviceList::NotifyRefreshed()
@@ -407,20 +408,25 @@ void CpiDeviceList::NotifyRefreshed()
                 if (!device->IsReady()) {
                     it++;
                 }
-                else {    
+                else {
                     device->AddRef();
                     iLock.Signal();
-                    DoRemove(*device);
+                    TBool removed = DoRemove(*device);
                     device->RemoveRef();
                     iLock.Wait();
-                    it = iMap.begin();
-                }    
+                    if (removed) {
+                       it = iMap.begin();
+                    }
+                    else {
+                        it++;
+                    }
+                }
             }
         }
     }
     ClearMap(iRefreshMap);
     iLock.Signal();
-}
+   }
 
 void CpiDeviceList::ListObjectDetails() const
 {

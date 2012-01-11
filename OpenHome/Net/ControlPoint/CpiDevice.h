@@ -258,7 +258,7 @@ private:
     void RemoveRef();
     void NotifyAdded(CpiDevice& aDevice);
     void NotifyRemoved(CpiDevice& aDevice);
-    void DoRemove(CpiDevice& aDevice);
+    TBool DoRemove(CpiDevice& aDevice);
     void NotifyRefreshed();
 private: // from IStackObject
     void ListObjectDetails() const;
