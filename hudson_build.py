@@ -97,9 +97,7 @@ class JenkinsBuild():
 			self.options.nightly = '0'
 
 		if env_release == 'true' or self.options.release == True:
-			print "enabling nightly build as release is enabled"
 			self.options.release = '1'
-			self.options.nightly = '1'
 
 		else:
 			self.options.release = '0'
@@ -199,21 +197,19 @@ class JenkinsBuild():
 				sys.exit(10)
 
 	def do_release(self):
+		rem = remote()
+
 		nightly = self.options.nightly
 		release = self.options.release
 		platform_args = self.platform_args
 		platform = self.options.platform
 		version = self.options.version
 		
-		rem = remote()
-
 		release_targets = []
 		release_targets.append('release')
 		release_targets.append('debug')
 		
 		for release in release_targets:
-			rem = remote()
-
 			release_args = []
 			release_args.append('make')
 			release_args.append('bundle-dev')
@@ -245,11 +241,8 @@ class JenkinsBuild():
 
 			bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-dev.tar.gz" %(platform,release))		
 			os.rename(bundle_name,os.path.join('Build/Bundles',"ohNet-%s-%s-dev-%s.tar.gz" %(version,platform,release)))
-
-			ret = rem.rsync('releases','www.openhome.org','Build/Bundles/' '~/www/artifacts/ohNet/')
-                        if ret != 0:
-				print ret
-				sys.exit(10)
+			rem.rsync('releases','www.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
+                        
 	
 	def do_postAction(self):
 		nightly = self.options.nightly
