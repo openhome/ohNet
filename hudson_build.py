@@ -30,7 +30,7 @@ class PostActions():
 			print ret
 			sys.exit(10)
 
-		rem.rsync('hudson-rsync','openhome.org','Build/docs/','~/build/nightly/docs')
+		rem.rsync('hudson-rsync','openhome.org','Build/Docs/','~/build/nightly/docs')
 		if ret != 0:
 			print ret
 			sys.exit(10)
@@ -67,6 +67,7 @@ class JenkinsBuild():
 		env_platform = os.environ.get('PLATFORM')
 		env_nightly = os.environ.get('NIGHTLY')
 		env_release = os.environ.get('RELEASE')
+		env_version = os.environ.get('RELEASE_VERSION')
 
 		parser = OptionParser()
 		parser.add_option("-p", "--platform", dest="platform",
@@ -77,7 +78,8 @@ class JenkinsBuild():
 		parser.add_option("-r", "--release",
 		  action="store_true", dest="release", default=False,
 		  help="publish release")
-
+		parser.add_option("-v", "--version", dest="version",
+			help="version number for release")
 		(self.options, self.args) = parser.parse_args()
 		
 		# check if env variables are set
@@ -85,6 +87,9 @@ class JenkinsBuild():
 
 		if env_platform != None:
 			self.options.platform = env_platform
+
+                if env_version != None:
+                        self.options.version = env_version
 		
 		if env_nightly == 'true' or self.options.nightly == True:
 			 self.options.nightly = '1'
@@ -98,7 +103,6 @@ class JenkinsBuild():
 
 		else:
 			self.options.release = '0'
-
 
 		print "options for build are nightly:%s and release:%s on platform %s" %(self.options.nightly,self.options.release,self.options.platform)
 
@@ -165,17 +169,17 @@ class JenkinsBuild():
 		os_platform = self.platform['os']
 		build_args = self.build_args
 		platform_args = self.platform_args
+
+		build = []
 			
 		if platform_args == []:
-			platform_args.extend(build_args)
+			build.extend(build_args)
 
 		else:
-			platform_args.append('&&')
-			platform_args.extend(build_args)
-
-		print 'running build with %s' %(platform_args,)
-
-
+			build.extend(platform_args)
+			build.append('&&')
+			build.extend(build_args)
+			
 		build_targets = []
 		build_targets.append('debug')
 
@@ -184,10 +188,12 @@ class JenkinsBuild():
 
 		for build_t in build_targets:
 			if build_t == 'release':
-				platform_args.append('--release')
-				platform_args.append('--incremental')
+				build.append('--release')
+				build.append('--incremental')
 
-			ret = subprocess.check_call(platform_args)			
+			print 'running build with %s' %(build,)
+
+			ret = subprocess.check_call(build)			
 			if ret != 0:
 				print ret
 				sys.exit(10)
@@ -197,6 +203,7 @@ class JenkinsBuild():
 		release = self.options.release
 		platform_args = self.platform_args
 		platform = self.options.platform
+		version = self.options.version
 		
 		rem = remote()
 
@@ -205,6 +212,8 @@ class JenkinsBuild():
 		release_targets.append('debug')
 		
 		for release in release_targets:
+			rem = remote()
+
 			release_args = []
 			release_args.append('make')
 			release_args.append('bundle-dev')
@@ -214,7 +223,6 @@ class JenkinsBuild():
 			build = []
 	
 			if platform_args == []:
-				 build.extend(platform_args)
 				 build.append('make')
 				 build.append('bundle-dev')
 				 build.append('targetplatform=%s' %(platform,))
@@ -228,9 +236,21 @@ class JenkinsBuild():
 				build.append('targetplatform=%s' %(platform,))
 				build.append('releasetype=%s' %(release,))
 
-			ret = subprocess.check_call(build)
-			print build			
+			print "doing release with bundle %s" %(build,)
 
+			ret = subprocess.check_call(build)
+                        if ret != 0:
+				print ret
+				sys.exit(10)
+
+			bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-dev.tar.gz" %(platform,release))		
+			os.rename(bundle_name,os.path.join('Build/Bundles',"ohNet-%s-%s-dev-%s.tar.gz" %(version,platform,release)))
+
+			ret = rem.rsync('releases','www.openhome.org','Build/Bundles/' '~/www/artifacts/ohNet/')
+                        if ret != 0:
+				print ret
+				sys.exit(10)
+	
 	def do_postAction(self):
 		nightly = self.options.nightly
 		release = self.options.release
