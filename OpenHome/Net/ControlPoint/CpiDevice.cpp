@@ -426,7 +426,7 @@ void CpiDeviceList::NotifyRefreshed()
     }
     ClearMap(iRefreshMap);
     iLock.Signal();
-   }
+}
 
 void CpiDeviceList::ListObjectDetails() const
 {
