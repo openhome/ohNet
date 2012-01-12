@@ -36,7 +36,8 @@ class remote():
 			dst = "%s@%s:%s" %(username,host,dst)
 
 			cmd.append('rsync'),
-			cmd.append('-avz'),
+			cmd.append('-r'),
+			cmd.append('-v'),
 			cmd.append(src),
 			cmd.append(dst)
 			
