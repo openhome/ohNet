@@ -116,7 +116,7 @@ class JenkinsBuild():
 		'windows-x86': { 'os': 'windows', 'arch':'x86'},
 		'windows-x64': { 'os': 'windows', 'arch':'x64'},
 		'macos-x64': { 'os': 'macos', 'arch':'x86'},
-		'arm': { 'os': 'linux', 'arch': 'arm'},
+		'linux-arm': { 'os': 'linux', 'arch': 'arm'},
 		 }
 		
 		current_platform = self.options.platform
