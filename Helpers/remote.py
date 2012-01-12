@@ -38,6 +38,8 @@ class remote():
 			cmd.append('rsync'),
 			cmd.append('-r'),
 			cmd.append('-v'),
+			cmd.append('--chmod=o+rwx'),
+			cmd.append('-p'),
 			cmd.append(src),
 			cmd.append(dst)
 			
