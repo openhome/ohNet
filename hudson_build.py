@@ -11,6 +11,10 @@ class PostActions():
 		val.get_files('vgout')
 		val.parse_file()
 
+	def valgrind_stub(self):
+		val = valgrindParser()
+		val.put_dummy('vgout')
+
 	def do_release(self,platform):
 		rem = remote()
 		release_targets = []
@@ -255,6 +259,8 @@ class JenkinsBuild():
 			if os_platform == 'linux' and arch == 'x86':
 				postAction.valgrind_parse()
 				postAction.gen_docs()
+			else:
+				postAction.valgrind_stub()
 
 			if os_platform == 'linux' and arch == 'arm':
 				postAction.arm_tests('nightly')
