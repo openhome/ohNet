@@ -111,12 +111,12 @@ class JenkinsBuild():
 	def get_platform(self):
 		
 		platforms = { 
-		'linux-x86': { 'os':'linux', 'arch':'x86'},
-		'linux-x64': { 'os':'linux', 'arch':'x64'},
-		'windows-x86': { 'os': 'windows', 'arch':'x86'},
-		'windows-x64': { 'os': 'windows', 'arch':'x64'},
-		'macos-x64': { 'os': 'macos', 'arch':'x86'},
-		'linux-arm': { 'os': 'linux', 'arch': 'arm'},
+		'Linux-x86': { 'os':'linux', 'arch':'x86'},
+		'Linux-x64': { 'os':'linux', 'arch':'x64'},
+		'Windows-x86': { 'os': 'windows', 'arch':'x86'},
+		'Windows-x64': { 'os': 'windows', 'arch':'x64'},
+		'Macos-x64': { 'os': 'macos', 'arch':'x86'},
+		'Linux-ARM': { 'os': 'linux', 'arch': 'arm'},
 		 }
 		
 		current_platform = self.options.platform
