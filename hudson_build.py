@@ -255,12 +255,13 @@ class JenkinsBuild():
 		arch = self.platform['arch']
 		postAction = PostActions()
 
+		# generate dummy XML even on on-commit tests
+		postAction.valgrind_stub()
+
 		if nightly == '1':
 			if os_platform == 'linux' and arch == 'x86':
 				postAction.valgrind_parse()
 				postAction.gen_docs()
-			else:
-				postAction.valgrind_stub()
 
 			if os_platform == 'linux' and arch == 'arm':
 				postAction.arm_tests('nightly')
