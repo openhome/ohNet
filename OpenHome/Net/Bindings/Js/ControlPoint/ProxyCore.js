@@ -31,7 +31,6 @@ OhNet.SubscriptionManager = (function () {
     var RENEW_TRIGGER = 0.7; // The multiplier in which to send the renewal message. (Send renew message every RENEW_TRIGGER * DEFAULT_SUBSCRIPTION_TIMEOUT_SEC)
     var DEBUG = false; // A flag to enable debugging messages written to console
 
-
     // Private Variables
     var services = []; // Collection of OhNet services
     var websocket = null; // HTML 5 web socket object to handle property state events
@@ -818,49 +817,35 @@ OhNet.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 }
 
 
+
 /**
-* A wrapper of the jQuery ajax request
+* A wrapper of the ajax request
 * @method createAjaxRequest
 * @param {Function} successFunction The function to execute once the ajax request returns
 * @param {Function} errorFunction The function to execute if an error occurs in the ajax request
 */
 OhNet.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorFunction) {
-    var _this = this;
-    x$(document).xhr(_this.url,
-    {
-        async: true,
-        method: 'POST',
-        callback: function () {
-            if (this.status) {
-                if (successFunction) {
-                    try {
-                        successFunction(this);
-                    } catch (e) {
-                        console.log("createAjaxRequest: " + e);
-                        if (errorFunction) { errorFunction(this); };
-                    }
-                }
-            } else {
-                console.log("Invalid Status createAjaxRequest: " + _this.url);
-                if (errorFunction) { errorFunction(); };
-            }
-        },
-        headers:
-           [{ name: "SOAPAction", value: _this.getSoapAction() },
-            { name: "Content-Type", value: "application/x-www-form-urlencoded; charset=UTF-8"}]
-        ,
-        data: _this.envelope,
-        error: function () {
-            if (errorFunction) {
-                errorFunction(this);
-            }
-            else {
-                console.log('SOAP Message ERROR: ' + this.responseText);
-            }
-        }
-    });
-}
 
+    var request = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+    request.onreadystatechange = function () {
+        if (request.readyState != 4)
+            return;
+        if (request.status == 200) {
+            if (successFunction)
+                successFunction(request);
+        }
+        else {
+            if (errorFunction)
+                errorFunction(request);
+        }
+    };
+
+    request.open('POST', this.url, true);
+    request.setRequestHeader('SOAPAction', this.getSoapAction());
+    request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    request.send(this.envelope);
+}
 
 /**
 * Provides a default error handler to output the error to console
