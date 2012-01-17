@@ -536,10 +536,10 @@ void DviSessionUpnp::Run()
         if (method == Http::kMethodGet) {
             Get();
         }
-                else if (method == Http::kMethodHead) {
-                        iResourceWriterHeadersOnly = true;
-                        Get();
-                }
+        else if (method == Http::kMethodHead) {
+            iResourceWriterHeadersOnly = true;
+            Get();
+        }
         else if (method == Http::kMethodPost) {
             Post();
         }
