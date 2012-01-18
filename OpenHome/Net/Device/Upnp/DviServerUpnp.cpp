@@ -442,6 +442,10 @@ void PropertyWriterFactory::NotifySubscriptionDeleted(const Brx& aSid)
     RemoveRef();
 }
 
+void PropertyWriterFactory::NotifySubscriptionExpired(const Brx& /*aSid*/)
+{
+}
+
 PropertyWriterFactory::~PropertyWriterFactory()
 {
 }

@@ -75,6 +75,7 @@ void DviSubscription::Stop()
     iTimer->Cancel();
     iService = NULL;
     iLock.Signal();
+    iWriterFactory.NotifySubscriptionExpired(iSid);
 }
 
 void DviSubscription::AddRef()
@@ -239,6 +240,7 @@ void DviSubscription::Expired()
     Stack::Mutex().Wait();
     iExpired = true;
     Stack::Mutex().Signal();
+    // no need to call NotifySubscriptionExpired - line below calls back into Stop() which performs the notification
     iService->RemoveSubscription(iSid);
 }
 

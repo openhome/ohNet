@@ -961,6 +961,10 @@ void DviSessionWebSocket::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 {
 }
 
+void DviSessionWebSocket::NotifySubscriptionExpired(const Brx& /*aSid*/)
+{
+}
+
 void DviSessionWebSocket::LongPollRequest()
 {
     try {
@@ -1555,6 +1559,14 @@ IPropertyWriter* DviPropertyUpdateCollection::CreateWriter(const IDviSubscriptio
 
 void DviPropertyUpdateCollection::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 {
+}
+
+void DviPropertyUpdateCollection::NotifySubscriptionExpired(const Brx& aSid)
+{
+    try {
+        RemoveSubscription(aSid);
+    }
+    catch (InvalidSid&) { }
 }
 
 PropertyUpdate* DviPropertyUpdateCollection::MergeUpdate(PropertyUpdate* aUpdate)

@@ -300,7 +300,7 @@ class DviPropertyUpdateCollection : public IPropertyWriterFactory, private IPoll
 public:
     DviPropertyUpdateCollection();
     ~DviPropertyUpdateCollection();
-    void AddSubscription(const Brx& aClientId, DviSubscription* aSubscription); // !!!! AddRef
+    void AddSubscription(const Brx& aClientId, DviSubscription* aSubscription);
     void RemoveSubscription(const Brx& aSid);
     void SetClientSignal(const Brx& aClientId, Semaphore* aSem);
     void WriteUpdates(const Brx& aClientId, IWriter& aWriter);
@@ -311,7 +311,8 @@ private:
     PropertyUpdatesFlattened* FindBySid(const Brx& aSid, TUint& aIndex);
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
-    void NotifySubscriptionDeleted(const Brx& aSid); // !!!! RemoveRef
+    void NotifySubscriptionDeleted(const Brx& aSid);
+    void NotifySubscriptionExpired(const Brx& aSid);
 private: // IPolledUpdateMerger
     PropertyUpdate* MergeUpdate(PropertyUpdate* aUpdate);
 private:
@@ -362,6 +363,7 @@ private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData,
                                   const Brx& aSid, TUint aSequenceNumber);
     void NotifySubscriptionDeleted(const Brx& aSid);
+    void NotifySubscriptionExpired(const Brx& aSid);
 private:
     class SubscriptionWrapper
     {
