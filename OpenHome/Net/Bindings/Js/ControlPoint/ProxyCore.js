@@ -272,7 +272,7 @@ OhNet.SubscriptionManager = (function () {
             }
 
             if (method == "PropertyUpdate") {
-                receivePropertyUpdate(subscriptionId, xmlDoc);
+                receivePropertyUpdate(xmlDoc);
             }
             else if (method == "SubscribeCompleted") {
             	var udnNode = xmlDoc.getElementsByTagNameNS("*", "UDN"); // NON-IE
@@ -304,54 +304,65 @@ OhNet.SubscriptionManager = (function () {
     * @param {Int} subscriptionId The subscription id of the service
     * @param {Object} xmlDoc The XML to traverse
     */
-    var receivePropertyUpdate = function (subscriptionId, xmlDoc) {
-    	
-    	if(!services[subscriptionId])
-		{
-			pendingPropertyUpdates[subscriptionId] = xmlDoc;
-			return;	
+    var receivePropertyUpdate = function (xmlDoc) {
+    	try
+    	{
+	    	var subscriptionNodes = xmlDoc.getElementsByTagNameNS("*", "SUBSCRIPTION"); // NON-IE
+	    	for(var i = 0 , count = subscriptionNodes.length;  i < count; i++)
+	    	{
+	    		var subscriptionId = subscriptionNodes[i].getElementsByTagNameNS("*", "SID")[0].textContent; // NON-IE
+	    		
+		    	if(!services[subscriptionId])
+				{
+					pendingPropertyUpdates[subscriptionId] = xmlDoc;
+					return;	
+				}
+		    	
+		        var properties = xmlDoc.getElementsByTagNameNS("*", "property"); // NON-IE
+		        if (properties) {
+		            for (var i = 0, count = properties.length; i < count; i++) {
+		                var property = properties[i].childNodes[0];
+		                if (property) {
+		                    setPropertyUpdate(subscriptionId, property.tagName, property.textContent);
+		                    if (DEBUG) {
+		                        console.log("setPropertyUpdate");
+		                        console.log("receivePropertyUpdate/subscriptionId: " + subscriptionId);
+		                        console.log("receivePropertyUpdate/property.tagName: " + property.tagName);
+		                        console.log("receivePropertyUpdate/property.textContent: " + property.textContent);
+		                    }
+		                }
+		                else {
+		                    if (DEBUG) {
+		                        console.log("receivePropertyUpdate/property: NULL");
+		                    }
+		                }
+		            }
+		
+		            for (var i = 0, count = properties.length; i < count; i++) {
+		                var property = properties[i].childNodes[0];
+		                if (property) {
+		                    setPropertyChanged(subscriptionId, property.tagName, property.textContent);
+		                    if (DEBUG)
+		                        console.log("setPropertyChanged");
+		                }
+		                else {
+		                    if (DEBUG) {
+		                        console.log("receivePropertyUpdate/property: NULL");
+		                    }
+		                }
+		            }
+		        }
+		        else {
+		            if (DEBUG) {
+		                console.log("receivePropertyUpdate/properties: NULL");
+		            }
+		        }
+	       }
 		}
-    	
-        var properties = xmlDoc.getElementsByTagNameNS("*", "property"); // NON-IE
-        if (properties) {
-            for (var i = 0, count = properties.length; i < count; i++) {
-                var property = properties[i].childNodes[0];
-                if (property) {
-                    setPropertyUpdate(subscriptionId, property.tagName, property.textContent);
-                    if (DEBUG) {
-                        console.log("setPropertyUpdate");
-                        console.log("receivePropertyUpdate/subscriptionId: " + subscriptionId);
-                        console.log("receivePropertyUpdate/property.tagName: " + property.tagName);
-                        console.log("receivePropertyUpdate/property.textContent: " + property.textContent);
-                    }
-                }
-                else {
-                    if (DEBUG) {
-                        console.log("receivePropertyUpdate/property: NULL");
-                    }
-                }
-            }
-
-            for (var i = 0, count = properties.length; i < count; i++) {
-                var property = properties[i].childNodes[0];
-                if (property) {
-                    setPropertyChanged(subscriptionId, property.tagName, property.textContent);
-                    if (DEBUG)
-                        console.log("setPropertyChanged");
-                }
-                else {
-                    if (DEBUG) {
-                        console.log("receivePropertyUpdate/property: NULL");
-                    }
-                }
-            }
-        }
-        else {
-            if (DEBUG) {
-                console.log("receivePropertyUpdate/properties: NULL");
-            }
-        }
-
+		catch(e)
+		{
+			console.log(e);
+		}
     };
 
 
@@ -434,69 +445,6 @@ OhNet.SubscriptionManager = (function () {
 
     };
 	
-	/**
-    * Remove the pending service and add it to the services with the 
-    * subscription id generated from the node.
-    * @method receiveSubscribeCompleted
-    * @param {Int} subscriptionId The subscription id of the service
-    * @param {Object} xmlDoc The XML to traverse
-    */
-    var receiveSubscribeCompleted = function (subscriptionId,udn,service, xmlDoc) {
-		
-		if (DEBUG) {
-			console.log("receiveSubscribeCompleted/subscriptionId: "+subscriptionId); 
-            console.log("receiveSubscribeCompleted/udn: "+udn);
-            console.log("receiveSubscribeCompleted/service: "+service);
-        }
-                
-        var timeoutNode = xmlDoc.getElementsByTagNameNS("*", "TIMEOUT");
-        if (timeoutNode) {
-            var timeout = timeoutNode[0].textContent;
-            if (timeout) {
-            	if (DEBUG) {
-                    console.log("receiveSubscribeCompleted/pendingServices.length: "+pendingServices.length);
-                }
-                for(var i = 0 ; i < pendingServices.length; i++)
-                {
-                	var pendingService = pendingServices[i];
-                	if(pendingService.udn == udn && pendingService.serviceName == service)
-                	{
-                		services[subscriptionId] = pendingService;
-                		pendingServices.splice(i,1);
-                		var service = services[subscriptionId];
-		                if (service.serviceAddedFunction) {
-		                    service.serviceAddedFunction();
-		                    service.serviceAddedFunction = null;
-		                }
-                		if (DEBUG) {
-                			console.log("receiveSubscribeCompleted/Removing pending service");
-                    		console.log("receiveSubscribeCompleted/pendingServices.length: "+pendingServices.length);
-                		}
-                		break;
-                	}
-                }
-                
-			
-                setSubscriptionTimeout(subscriptionId, timeout);
-
-                if (DEBUG) {
-                    console.log("receiveSubscribeCompleted/subscriptionId: " + subscriptionId);
-                    console.log("receiveSubscribeCompleted/timeout: " + timeout);
-                }
-            }
-            else {
-                if (DEBUG) {
-                    console.log("receiveSubscribeCompleted/timeoutNode: NULL");
-                }
-            }
-        }
-        else {
-            if (DEBUG) {
-                console.log("receiveSubscribeCompleted/timeouts: NULL");
-            }
-        }
-
-    };
     
     /**
     * Socket event for when an error occurs.  Debugging purposes only.
