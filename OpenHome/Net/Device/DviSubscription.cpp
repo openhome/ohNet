@@ -255,6 +255,19 @@ void PropertyWriter::SetWriter(IWriter& aWriter)
     iWriter = &aWriter;
 }
 
+void PropertyWriter::WriteVariable(IWriter& aWriter, const Brx& aName, const Brx& aValue)
+{ // static
+    aWriter.Write(Brn("<e:property>"));
+    aWriter.Write('<');
+    aWriter.Write(aName);
+    aWriter.Write('>');
+    aWriter.Write(aValue);
+    aWriter.Write(Brn("</"));
+    aWriter.Write(aName);
+    aWriter.Write('>');
+    aWriter.Write(Brn("</e:property>"));
+}
+
 void PropertyWriter::PropertyWriteString(const Brx& aName, const Brx& aValue)
 {
     WriterBwh writer(1024);
@@ -295,15 +308,7 @@ void PropertyWriter::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
 void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
 {
     ASSERT(iWriter != NULL);
-    iWriter->Write(Brn("<e:property>"));
-    iWriter->Write('<');
-    iWriter->Write(aName);
-    iWriter->Write('>');
-    iWriter->Write(aValue);
-    iWriter->Write(Brn("</"));
-    iWriter->Write(aName);
-    iWriter->Write('>');
-    iWriter->Write(Brn("</e:property>"));
+    WriteVariable(*iWriter, aName, aValue);
 }
 
 
