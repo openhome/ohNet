@@ -16,6 +16,8 @@
 #include <map>
 
 EXCEPTION(WebSocketError);
+EXCEPTION(InvalidSid);
+EXCEPTION(InvalidClientId);
 
 namespace OpenHome {
 namespace Net {
@@ -38,6 +40,7 @@ public:
     static const Brn kTagNt;
     static const Brn kTagTimeout;
     static const Brn kTagNts;
+    static const Brn kTagSubscription;
     static const Brn kTagSeq;
     static const Brn kMethodSubscribe;
     static const Brn kMethodUnsubscribe;
@@ -215,6 +218,107 @@ private:
     Bwh iMessage;
 };
 
+class PropertyUpdate
+{
+public:
+    class Property
+    {
+    public:
+        Property(const Brx& aName, const Brx& aValue);
+        Property(const Brx& aName, WriterBwh& aValue);
+        const Brx& Name() const;
+        const Brx& Value() const;
+        void TransferValueTo(Property& aDest);
+    private:
+        Brh iName;
+        Brh iValue;
+    };
+public:
+    PropertyUpdate(const Brx& aSid, TUint aSeqNum);
+    ~PropertyUpdate();
+    void Add(const Brx& aName, const Brx& aValue);
+    void Add(const Brx& aName, WriterBwh& aValue);
+    const Brx& Sid() const;
+    TUint SeqNum() const;
+    void Merge(PropertyUpdate& aPropertyUpdate);
+    void Write(IWriter& aWriter);
+private:
+    Brh iSid;
+    TUint iSeqNum;
+    std::vector<Property*> iProperties;
+};
+
+class IPolledUpdateMerger
+{
+public:
+    virtual PropertyUpdate* MergeUpdate(PropertyUpdate* aUpdate) = 0;
+};
+
+class PropertyWriterPolled : public IPropertyWriter, private INonCopyable
+{
+public:
+    PropertyWriterPolled(IPolledUpdateMerger& aMerger, const Brx& aSid, TUint aSeqNum);
+    ~PropertyWriterPolled();
+private: // IPropertyWriter
+    void PropertyWriteString(const Brx& aName, const Brx& aValue);
+    void PropertyWriteInt(const Brx& aName, TInt aValue);
+    void PropertyWriteUint(const Brx& aName, TUint aValue);
+    void PropertyWriteBool(const Brx& aName, TBool aValue);
+    void PropertyWriteBinary(const Brx& aName, const Brx& aValue);
+    void PropertyWriteEnd();
+private:
+    IPolledUpdateMerger& iMerger;
+    PropertyUpdate* iPropertyUpdate;
+};
+
+class PropertyUpdatesFlattened
+{
+public:
+    PropertyUpdatesFlattened(const Brx& aClientId);
+    ~PropertyUpdatesFlattened();
+    const Brx& ClientId() const;
+    void AddSubscription(const Brx& aSid);
+    void RemoveSubscription(const Brx& aSid);
+    TBool ContainsSubscription(const Brx& aSid) const;
+    TBool IsEmpty() const;
+    PropertyUpdate* MergeUpdate(PropertyUpdate* aUpdate);
+    void SetClientSignal(Semaphore* aSem);
+    void WriteUpdates(IWriter& aWriter);
+private:
+    Brh iClientId;
+    typedef std::map<Brn,PropertyUpdate*,BufferCmp> UpdatesMap;
+    UpdatesMap iUpdatesMap;
+    typedef std::map<Brn,Brh*,BufferCmp> SidMap;
+    SidMap iSidMap;
+    Semaphore* iSem;
+};
+
+class PropertyUpdateCollection : public IPropertyWriterFactory, private IPolledUpdateMerger
+{
+public:
+    PropertyUpdateCollection();
+    void Detach();
+    void AddSubscription(const Brx& aClientId, const Brx& aSid);
+    void RemoveSubscription(const Brx& aSid);
+    void SetClientSignal(const Brx& aClientId, Semaphore* aSem);
+    void WriteUpdates(const Brx& aClientId, IWriter& aWriter);
+private:
+    ~PropertyUpdateCollection();
+    PropertyUpdatesFlattened* FindByClientId(const Brx& aClientId);
+    PropertyUpdatesFlattened* FindByClientId(const Brx& aClientId, TUint& aIndex);
+    PropertyUpdatesFlattened* FindBySid(const Brx& aSid);
+    PropertyUpdatesFlattened* FindBySid(const Brx& aSid, TUint& aIndex);
+private: // IPropertyWriterFactory
+    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
+    void NotifySubscriptionDeleted(const Brx& aSid);
+private: // IPolledUpdateMerger
+    PropertyUpdate* MergeUpdate(PropertyUpdate* aUpdate);
+private:
+    Mutex iLock;
+    std::vector<PropertyUpdatesFlattened*> iUpdates;
+    TBool iDetached;
+};
+
 class DviService;
 
 class DviSessionWebSocket : public SocketTcpSession, private IPropertyWriterFactory
@@ -290,7 +394,7 @@ private:
     Map iMap;
     Mutex iInterruptLock;
     Semaphore iShutdownSem;
-    Fifo<Brh*> iPropertyUpdates;
+    Fifo<Brh*> iPropertyUpdates; // used for web sockets
 };
 
 class DviServerWebSocket : public DviServer

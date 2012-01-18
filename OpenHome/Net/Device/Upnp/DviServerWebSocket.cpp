@@ -50,6 +50,7 @@ const Brn WebSocket::kTagSid("SID");
 const Brn WebSocket::kTagNt("NT");
 const Brn WebSocket::kTagTimeout("TIMEOUT");
 const Brn WebSocket::kTagNts("NTS");
+const Brn WebSocket::kTagSubscription("SUBSCRIPTION");
 const Brn WebSocket::kTagSeq("SEQ");
 const Brn WebSocket::kMethodSubscribe("Subscribe");
 const Brn WebSocket::kMethodUnsubscribe("Unsubscribe");
@@ -961,6 +962,418 @@ DviSessionWebSocket::SubscriptionWrapper::~SubscriptionWrapper()
     iService.RemoveSubscription(iSubscription.Sid());
     iService.RemoveRef();
     iSubscription.RemoveRef();
+}
+
+
+// PropertyUpdate
+
+PropertyUpdate::Property::Property(const Brx& aName, const Brx& aValue)
+    : iName(aName)
+    , iValue(aValue)
+{
+}
+
+PropertyUpdate::Property::Property(const Brx& aName, WriterBwh& aValue)
+    : iName(aName)
+{
+    aValue.TransferTo(iValue);
+}
+
+const Brx& PropertyUpdate::Property::Name() const
+{
+    return iName;
+}
+
+const Brx& PropertyUpdate::Property::Value() const
+{
+    return iValue;
+}
+
+void PropertyUpdate::Property::TransferValueTo(Property& aDest)
+{
+    iValue.TransferTo(aDest.iValue);
+}
+
+PropertyUpdate::PropertyUpdate(const Brx& aSid, TUint aSeqNum)
+    : iSid(aSid)
+    , iSeqNum(aSeqNum)
+{
+}
+
+PropertyUpdate::~PropertyUpdate()
+{
+    for (TUint i=0; i<(TUint)iProperties.size(); i++) {
+        delete iProperties[i];
+    }
+}
+
+void PropertyUpdate::Add(const Brx& aName, const Brx& aValue)
+{
+    iProperties.push_back(new Property(aName, aValue));
+}
+
+void PropertyUpdate::Add(const Brx& aName, WriterBwh& aValue)
+{
+    iProperties.push_back(new Property(aName, aValue));
+}
+
+const Brx& PropertyUpdate::Sid() const
+{
+    return iSid;
+}
+
+TUint PropertyUpdate::SeqNum() const
+{
+    return iSeqNum;
+}
+
+void PropertyUpdate::Merge(PropertyUpdate& aPropertyUpdate)
+{
+    ASSERT(iSid == aPropertyUpdate.Sid());
+    ASSERT(iSeqNum < aPropertyUpdate.SeqNum());
+    iSeqNum = aPropertyUpdate.SeqNum();
+    for (TUint i=(TUint)aPropertyUpdate.iProperties.size() - 1; i >= 0; i--) {
+        TBool found = false;
+        Property* prop = aPropertyUpdate.iProperties[i];
+        for (TUint j=0; j<iProperties.size(); j++) {
+            if (iProperties[j]->Name() == prop->Name()) {
+                prop->TransferValueTo(*(iProperties[j]));
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            iProperties.push_back(prop);
+            aPropertyUpdate.iProperties.erase(aPropertyUpdate.iProperties.begin() + i);
+        }
+    }
+}
+
+void PropertyUpdate::Write(IWriter& aWriter)
+{
+    WriteTag(aWriter, WebSocket::kTagMethod, WebSocket::kMethodPropertyUpdate);
+    WriteTag(aWriter, WebSocket::kTagNt, WebSocket::kValueNt);
+    WriteTag(aWriter, WebSocket::kTagNts, WebSocket::kValuePropChange);
+    WriteTag(aWriter, WebSocket::kTagSid, iSid);
+    Bws<Ascii::kMaxUintStringBytes> seq;
+    (void)Ascii::AppendDec(seq, iSeqNum);
+    WriteTag(aWriter, WebSocket::kTagSeq, seq);
+    aWriter.Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
+    for (TUint i=0; i<(TUint)iProperties.size(); i++) {
+        WriteTag(aWriter, iProperties[i]->Name(), iProperties[i]->Value());
+    }
+    aWriter.Write(Brn("</e:propertyset></root>"));
+    aWriter.Write('<');
+    aWriter.Write(WebSocket::kTagSubscription);
+    aWriter.Write('/');
+    aWriter.Write('>');
+}
+
+
+// PropertyWriterPolled
+
+PropertyWriterPolled::PropertyWriterPolled(IPolledUpdateMerger& aMerger, const Brx& aSid, TUint aSeqNum)
+    : iMerger(aMerger)
+{
+    iPropertyUpdate = new PropertyUpdate(aSid, aSeqNum);
+}
+
+PropertyWriterPolled::~PropertyWriterPolled()
+{
+    delete iPropertyUpdate;
+}
+
+void PropertyWriterPolled::PropertyWriteString(const Brx& aName, const Brx& aValue)
+{
+    WriterBwh writer(1024);
+    Converter::ToXmlEscaped(writer, aValue);
+    iPropertyUpdate->Add(aName, writer);
+}
+
+void PropertyWriterPolled::PropertyWriteInt(const Brx& aName, TInt aValue)
+{
+    Bws<Ascii::kMaxIntStringBytes> buf;
+    (void)Ascii::AppendDec(buf, aValue);
+    iPropertyUpdate->Add(aName, buf);
+}
+
+void PropertyWriterPolled::PropertyWriteUint(const Brx& aName, TUint aValue)
+{
+    Bws<Ascii::kMaxUintStringBytes> buf;
+    (void)Ascii::AppendDec(buf, aValue);
+    iPropertyUpdate->Add(aName, buf);
+}
+
+void PropertyWriterPolled::PropertyWriteBool(const Brx& aName, TBool aValue)
+{
+    PropertyWriteUint(aName, (aValue? 1 : 0));
+}
+
+void PropertyWriterPolled::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
+{
+    WriterBwh writer(1024);
+    Converter::ToBase64(writer, aValue);
+    iPropertyUpdate->Add(aName, writer);
+}
+
+void PropertyWriterPolled::PropertyWriteEnd()
+{
+    iPropertyUpdate = iMerger.MergeUpdate(iPropertyUpdate);
+}
+
+   
+// PropertyUpdatesFlattened
+
+PropertyUpdatesFlattened::PropertyUpdatesFlattened(const Brx& aClientId)
+    : iClientId(aClientId)
+{
+}
+
+PropertyUpdatesFlattened::~PropertyUpdatesFlattened()
+{
+    UpdatesMap::iterator it = iUpdatesMap.begin();
+    while (it != iUpdatesMap.end()) {
+        delete it->second;
+        it++;
+    }
+    ASSERT(iSidMap.size() == 0);
+}
+
+const Brx& PropertyUpdatesFlattened::ClientId() const
+{
+    return iClientId;
+}
+
+void PropertyUpdatesFlattened::AddSubscription(const Brx& aSid)
+{
+    Brh* sid = new Brh(aSid);
+    Brn buf(*sid);
+    iSidMap.insert(std::pair<Brn,Brh*>(buf, sid));
+}
+
+void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid)
+{
+    Brn sid(aSid);
+    SidMap::iterator it = iSidMap.find(sid);
+    if (it != iSidMap.end()) {
+        delete it->second;
+        iSidMap.erase(it);
+    }
+    // remove any pending updates for this subscription too
+    UpdatesMap::iterator it2 = iUpdatesMap.find(sid);
+    if (it2 != iUpdatesMap.end()) {
+        delete it2->second;
+        iUpdatesMap.erase(it2);
+    }
+}
+
+TBool PropertyUpdatesFlattened::ContainsSubscription(const Brx& aSid) const
+{
+    Brn sid(aSid);
+    return (iSidMap.find(sid) != iSidMap.end());
+}
+
+TBool PropertyUpdatesFlattened::IsEmpty() const
+{
+    return (iSidMap.size() == 0);
+}
+
+PropertyUpdate* PropertyUpdatesFlattened::MergeUpdate(PropertyUpdate* aUpdate)
+{
+    PropertyUpdate* ret = aUpdate;
+    Brn sid(aUpdate->Sid());
+    UpdatesMap::iterator it = iUpdatesMap.find(sid);
+    if (it == iUpdatesMap.end()) {
+        iUpdatesMap.insert(std::pair<Brn,PropertyUpdate*>(sid, aUpdate));
+        ret = NULL;
+    }
+    else {
+        it->second->Merge(*aUpdate);
+    }
+    if (iSem != NULL) {
+        iSem->Signal();
+        iSem = NULL;
+    }
+    return ret;
+}
+
+void PropertyUpdatesFlattened::SetClientSignal(Semaphore* aSem)
+{
+    iSem = aSem;
+    if (aSem != NULL && iSidMap.size() > 0) {
+        aSem->Signal();
+        aSem = NULL;
+    }
+}
+
+void PropertyUpdatesFlattened::WriteUpdates(IWriter& aWriter)
+{
+    aWriter.Write(Brn("<root>"));
+    UpdatesMap::iterator it = iUpdatesMap.begin();
+    while (it != iUpdatesMap.end()) {
+        aWriter.Write('<');
+        aWriter.Write(WebSocket::kTagSubscription);
+        aWriter.Write('>');
+        it->second->Write(aWriter);
+        aWriter.Write('<');
+        aWriter.Write(WebSocket::kTagSubscription);
+        aWriter.Write('/');
+        aWriter.Write('>');
+        delete it->second;
+        it++;
+    }
+    iUpdatesMap.clear();
+    aWriter.Write(Brn("</root>"));
+}
+
+
+// PropertyUpdateCollection
+
+PropertyUpdateCollection::PropertyUpdateCollection()
+    : iLock("MPUC")
+    , iDetached(false)
+{
+}
+
+void PropertyUpdateCollection::Detach()
+{
+    iLock.Wait();
+    iDetached = true;
+    TBool isDead = (iUpdates.size() == 0);
+    iLock.Signal();
+    if (isDead) {
+        delete this;
+    }
+}
+
+PropertyUpdateCollection::~PropertyUpdateCollection()
+{
+    ASSERT(iUpdates.size() == 0);
+    // !!!! Maybe this should be ref counted, self-deleting when its vector empties (and the server has exited)
+    for (TUint i=0; i<(TUint)iUpdates.size(); i++) {
+        delete iUpdates[i];
+    }
+}
+
+void PropertyUpdateCollection::AddSubscription(const Brx& aClientId, const Brx& aSid)
+{
+    AutoMutex a(iLock);
+    PropertyUpdatesFlattened* updates = FindByClientId(aClientId);
+    if (updates == NULL) {
+        updates = new PropertyUpdatesFlattened(aClientId);
+        iUpdates.push_back(updates);
+    }
+    updates->AddSubscription(aSid);
+}
+
+void PropertyUpdateCollection::RemoveSubscription(const Brx& aSid)
+{
+    TBool isDead = false;
+    iLock.Wait();
+    TUint index;
+    PropertyUpdatesFlattened* updates = FindBySid(aSid, index);
+    if (updates == NULL) {
+        iLock.Signal();
+        THROW(InvalidSid);
+    }
+    updates->RemoveSubscription(aSid);
+    if (updates->IsEmpty()) {
+        delete updates;
+        iUpdates.erase(iUpdates.begin() + index);
+        isDead = (iDetached && iUpdates.size() == 0);
+    }
+    iLock.Signal();
+    if (isDead) {
+        delete this;
+    }
+}
+
+void PropertyUpdateCollection::SetClientSignal(const Brx& aClientId, Semaphore* aSem)
+{
+    AutoMutex a(iLock);
+    PropertyUpdatesFlattened* updates = FindByClientId(aClientId);
+    if (updates == NULL) {
+        THROW(InvalidClientId);
+    }
+    updates->SetClientSignal(aSem);
+}
+
+void PropertyUpdateCollection::WriteUpdates(const Brx& aClientId, IWriter& aWriter)
+{
+    AutoMutex a(iLock);
+    PropertyUpdatesFlattened* updates = FindByClientId(aClientId);
+    if (updates == NULL) {
+        THROW(InvalidClientId);
+    }
+    updates->WriteUpdates(aWriter);
+}
+
+PropertyUpdatesFlattened* PropertyUpdateCollection::FindByClientId(const Brx& aClientId)
+{
+    TUint ignore;
+    return FindByClientId(aClientId, ignore);
+}
+
+PropertyUpdatesFlattened* PropertyUpdateCollection::FindByClientId(const Brx& aClientId, TUint& aIndex)
+{
+    // assumes called with iLock held
+    for (TUint i=0; i<(TUint)iUpdates.size(); i++) {
+        PropertyUpdatesFlattened* updates = iUpdates[i];
+        if (updates->ClientId() == aClientId) {
+            aIndex = i;
+            return updates;
+        }
+    }
+    aIndex = 0xffffffff;
+    return NULL;
+}
+
+PropertyUpdatesFlattened* PropertyUpdateCollection::FindBySid(const Brx& aSid)
+{
+    TUint ignore;
+    return FindBySid(aSid, ignore);
+}
+
+PropertyUpdatesFlattened* PropertyUpdateCollection::FindBySid(const Brx& aSid, TUint& aIndex)
+{
+    // assumes called with iLock held
+    for (TUint i=0; i<(TUint)iUpdates.size(); i++) {
+        PropertyUpdatesFlattened* updates = iUpdates[i];
+        if (updates->ContainsSubscription(aSid)) {
+            aIndex = i;
+            return updates;
+        }
+    }
+    aIndex = 0xffffffff;
+    return NULL;
+}
+
+IPropertyWriter* PropertyUpdateCollection::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
+{
+    AutoMutex a(iLock);
+    if (FindBySid(aSid) != NULL) {
+        return new PropertyWriterPolled(*this, aSid, aSequenceNumber);
+    }
+    return NULL;
+}
+
+void PropertyUpdateCollection::NotifySubscriptionDeleted(const Brx& aSid)
+{
+    try {
+        RemoveSubscription(aSid);
+    }
+    catch (InvalidSid&) { }
+}
+
+PropertyUpdate* PropertyUpdateCollection::MergeUpdate(PropertyUpdate* aUpdate)
+{
+    AutoMutex a(iLock);
+    PropertyUpdatesFlattened* updates = FindBySid(aUpdate->Sid());
+    if (updates == NULL) {
+        delete aUpdate;
+        return NULL;
+    }
+    return updates->MergeUpdate(aUpdate);
 }
 
     
