@@ -42,7 +42,9 @@ OhNet.SubscriptionManager = (function () {
     var Debug;
     var SubscriptionTimeoutSeconds;
     var webSocketPort;
-
+    
+    var pendingServices = [];
+	var pendingPropertyUpdates = {};
     // Public Variables
     var running = false; // A flag to state if the Subscription Manager is running
 
@@ -83,13 +85,12 @@ OhNet.SubscriptionManager = (function () {
         message += "<METHOD>Subscribe</METHOD>";
         message += "<UDN>" + service.udn + "</UDN>";
         message += "<SERVICE>" + service.serviceName + "</SERVICE>";
-        message += "<SID>" + service.subscriptionId + "</SID>";
         message += "<NT>upnp:event</NT>";
         message += "<TIMEOUT>" + subscriptionTimeoutSec + "</TIMEOUT>";
         message += "</ROOT>";
 
         if (DEBUG) {
-            console.log("subscribeMessage/message: " + message);
+            console.log(">> subscribeMessage/message: " + message);
         }
         return message;
     };
@@ -110,7 +111,7 @@ OhNet.SubscriptionManager = (function () {
         message += "</ROOT>";
 
         if (DEBUG) {
-            console.log("unsubscribeMessage/message: " + message);
+            console.log(">> unsubscribeMessage/message: " + message);
         }
 
         return message;
@@ -133,7 +134,7 @@ OhNet.SubscriptionManager = (function () {
         message += "</ROOT>";
 
         if (DEBUG) {
-            console.log("renewMessage/message: " + message);
+            console.log(">> renewMessage/message: " + message);
         }
 
         return message;
@@ -141,7 +142,7 @@ OhNet.SubscriptionManager = (function () {
 
 
     /**
-    * Starts the timer to renew subscriptions.  
+    * Starts the timer to renew subscriptions. 
     * The actual subscription timeout is returned by the OhNet Service. 
     * subscriptionTimeoutSec is the suggested timeout sent to the server.
     * @method setSubscriptionTimeout
@@ -268,7 +269,7 @@ OhNet.SubscriptionManager = (function () {
     };
 
     /**
-    * Parses the XML message recieved from the OhNet Service
+    * Parses the XML message received from the OhNet Service
     * @method receiveMessage
     * @param {String} message The XML message
     */
@@ -284,14 +285,25 @@ OhNet.SubscriptionManager = (function () {
             var subscriptionId = subscriptionIdNode[0].textContent;
 
             if (DEBUG) {
-                console.log("receiveMessage/method: " + method);
+                console.log("<< receiveMessage/method: " + method);
             }
 
             if (method == "PropertyUpdate") {
                 receivePropertyUpdate(subscriptionId, xmlDoc);
             }
-            else if (method == "SubscriptionTimeout") {
-                receiveSubscriptionTimeout(subscriptionId, xmlDoc);
+            else if (method == "SubscribeCompleted") {
+            	var udnNode = xmlDoc.getElementsByTagNameNS("*", "UDN"); // NON-IE
+            	var udn = udnNode[0].textContent;
+            	var serviceNode = xmlDoc.getElementsByTagNameNS("*", "SERVICE"); // NON-IE
+            	var service = serviceNode[0].textContent;
+                receiveSubscribeCompleted(subscriptionId,udn,service, xmlDoc);
+                if(pendingPropertyUpdates[subscriptionId])
+                {
+                	receivePropertyUpdate(subscriptionId, pendingPropertyServices[subscriptionId]);
+                }
+            }
+            else if (method == "RenewCompleted") {
+            	receiveRenewCompleted(subscriptionId, xmlDoc);
             }
         }
         else {
@@ -310,7 +322,13 @@ OhNet.SubscriptionManager = (function () {
     * @param {Object} xmlDoc The XML to traverse
     */
     var receivePropertyUpdate = function (subscriptionId, xmlDoc) {
-
+    	
+    	if(!services[subscriptionId])
+		{
+			pendingPropertyUpdates[subscriptionId] = xmlDoc;
+			return;	
+		}
+    	
         var properties = xmlDoc.getElementsByTagNameNS("*", "property"); // NON-IE
         if (properties) {
             for (var i = 0, count = properties.length; i < count; i++) {
@@ -353,46 +371,150 @@ OhNet.SubscriptionManager = (function () {
 
     };
 
-    /**
-    * Traveres the XML object to extract the subscription timeout
-    * @method receiveSubscriptionTimeout
+
+	/**
+    * Remove the pending service and add it to the services with the 
+    * subscription id generated from the node.
+    * @method receiveSubscribeCompleted
     * @param {Int} subscriptionId The subscription id of the service
+    * @param {String} udn The udn name
+    * @param {String} service The Service name
     * @param {Object} xmlDoc The XML to traverse
     */
-    var receiveSubscriptionTimeout = function (subscriptionId, xmlDoc) {
-
-        var timeoutNode = xmlDoc.getElementsByTagNameNS("*", "TIMEOUT");
-        if (timeoutNode) {
-            var timeout = timeoutNode[0].textContent;
-            if (timeout) {
-                var service = services[subscriptionId];
-
+    var receiveSubscribeCompleted = function (subscriptionId,udn,service, xmlDoc) {
+		
+		if (DEBUG) {
+			console.log("receiveSubscribeCompleted/subscriptionId: "+subscriptionId); 
+            console.log("receiveSubscribeCompleted/udn: "+udn);
+            console.log("receiveSubscribeCompleted/service: "+service);
+            console.log("receiveSubscribeCompleted/pendingServices.length: "+pendingServices.length);
+        }
+        
+        for(var i = 0 ; i < pendingServices.length; i++)
+        {
+        	var pendingService = pendingServices[i];
+        	if(pendingService.udn == udn && pendingService.serviceName == service)
+        	{
+        		services[subscriptionId] = pendingService;
+        		pendingServices.splice(i,1);
+        		var service = services[subscriptionId];
                 if (service.serviceAddedFunction) {
                     service.serviceAddedFunction();
                     service.serviceAddedFunction = null;
                 }
+        		if (DEBUG) {
+        			console.log("receiveSubscribeCompleted/Removing pending service");
+            		console.log("receiveSubscribeCompleted/pendingServices.length: "+pendingServices.length);
+        		}
+        		break;
+        	}
+        }        
+        receiveRenewCompleted(subscriptionId,xmlDoc);
+    };
+    
+    
+	/**
+    * Starts the timer to renew subscriptions. 
+    * The actual subscription timeout is returned by the OhNet Service.
+    * subscriptionTimeoutSec is the suggested timeout sent to the server.
+    * @method receiveRenewCompleted
+    * @param {Int} subscriptionId The subscription id of the service
+    * @param {Object} xmlDoc The XML to traverse
+    */
+    var receiveRenewCompleted = function (subscriptionId, xmlDoc) {
+		
+		if (DEBUG) {
+			console.log("receiveRenewCompleted/subscriptionId: "+subscriptionId); 
+        }
+                
+        var timeoutNode = xmlDoc.getElementsByTagNameNS("*", "TIMEOUT");
+        if (timeoutNode) {
+            var timeout = timeoutNode[0].textContent;
+            if (timeout) {
                 setSubscriptionTimeout(subscriptionId, timeout);
-
                 if (DEBUG) {
-                    console.log("receiveSubscriptionTimeout/subscriptionId: " + subscriptionId);
-                    console.log("receiveSubscriptionTimeout/timeout: " + timeout);
+                    console.log("receiveRenewCompleted/subscriptionId: " + subscriptionId);
+                    console.log("receiveRenewCompleted/timeout: " + timeout);
                 }
             }
             else {
                 if (DEBUG) {
-                    console.log("receiveSubscriptionTimeout/timeoutNode: NULL");
+                    console.log("receiveRenewCompleted/timeoutNode: NULL");
                 }
             }
         }
         else {
             if (DEBUG) {
-                console.log("receiveSubscriptionTimeout/timeouts: NULL");
+                console.log("receiveSubscribeCompleted/timeouts: NULL");
             }
         }
 
     };
+	
+	/**
+    * Remove the pending service and add it to the services with the 
+    * subscription id generated from the node.
+    * @method receiveSubscribeCompleted
+    * @param {Int} subscriptionId The subscription id of the service
+    * @param {Object} xmlDoc The XML to traverse
+    */
+    var receiveSubscribeCompleted = function (subscriptionId,udn,service, xmlDoc) {
+		
+		if (DEBUG) {
+			console.log("receiveSubscribeCompleted/subscriptionId: "+subscriptionId); 
+            console.log("receiveSubscribeCompleted/udn: "+udn);
+            console.log("receiveSubscribeCompleted/service: "+service);
+        }
+                
+        var timeoutNode = xmlDoc.getElementsByTagNameNS("*", "TIMEOUT");
+        if (timeoutNode) {
+            var timeout = timeoutNode[0].textContent;
+            if (timeout) {
+            	if (DEBUG) {
+                    console.log("receiveSubscribeCompleted/pendingServices.length: "+pendingServices.length);
+                }
+                for(var i = 0 ; i < pendingServices.length; i++)
+                {
+                	var pendingService = pendingServices[i];
+                	if(pendingService.udn == udn && pendingService.serviceName == service)
+                	{
+                		services[subscriptionId] = pendingService;
+                		pendingServices.splice(i,1);
+                		var service = services[subscriptionId];
+		                if (service.serviceAddedFunction) {
+		                    service.serviceAddedFunction();
+		                    service.serviceAddedFunction = null;
+		                }
+                		if (DEBUG) {
+                			console.log("receiveSubscribeCompleted/Removing pending service");
+                    		console.log("receiveSubscribeCompleted/pendingServices.length: "+pendingServices.length);
+                		}
+                		break;
+                	}
+                }
+                
+			
+                setSubscriptionTimeout(subscriptionId, timeout);
 
+                if (DEBUG) {
+                    console.log("receiveSubscribeCompleted/subscriptionId: " + subscriptionId);
+                    console.log("receiveSubscribeCompleted/timeout: " + timeout);
+                }
+            }
+            else {
+                if (DEBUG) {
+                    console.log("receiveSubscribeCompleted/timeoutNode: NULL");
+                }
+            }
+        }
+        else {
+            if (DEBUG) {
+                console.log("receiveSubscribeCompleted/timeouts: NULL");
+            }
+        }
 
+    };
+    
     /**
     * Socket event for when an error occurs.  Debugging purposes only.
     * @method onSocketError
@@ -460,7 +582,7 @@ OhNet.SubscriptionManager = (function () {
     };
 
     /**
-    * Socket event for when a message is recieved.
+    * Socket event for when a message is received.
     * @method onSocketMessage
     * @param {Object} event The data received
     */
@@ -564,10 +686,7 @@ OhNet.SubscriptionManager = (function () {
     var addService = function (service, serviceAddedFunction) {
 
         if (running) {
-
-            var uId = generateSubscriptionId();
-            service.subscriptionId = uId;
-            services[uId] = service;
+			pendingServices.push(service);
 
             if (serviceAddedFunction) {
                 service.serviceAddedFunction = serviceAddedFunction;

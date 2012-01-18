@@ -42,7 +42,8 @@ public:
     static const Brn kMethodSubscribe;
     static const Brn kMethodUnsubscribe;
     static const Brn kMethodRenew;
-    static const Brn kMethodSubscriptionTimeout;
+    static const Brn kMethodSubscriptionSid;
+    static const Brn kMethodSubscriptionRenewed;
     static const Brn kMethodPropertyUpdate;
     static const Brn kValueProtocol;
     static const Brn kValueNt;
@@ -130,7 +131,7 @@ private:
     TUint iVersion;;
 };
 
-class SubscriptionDataWs : public IDviSubscriptionUserData
+/*class SubscriptionDataWs : public IDviSubscriptionUserData
 {
 public:
     SubscriptionDataWs(const Brx& aSubscriberSid);
@@ -141,7 +142,7 @@ private:
     ~SubscriptionDataWs() {}
 private:
     Brh iSubscriberSid;
-};
+};*/
 
 class DviSessionWebSocket;
 
@@ -244,7 +245,8 @@ private:
     void Subscribe(const Brx& aRequest);
     void Unsubscribe(const Brx& aRequest);
     void Renew(const Brx& aRequest);
-    void WriteSubscriptionTimeout(const Brx& aSid, TUint aSeconds);
+    void WriteSubscriptionSid(const Brx& aDevice, const Brx& aService, const Brx& aSid, TUint aSeconds);
+    void WriteSubscriptionRenewed(const Brx& aSid, TUint aSeconds);
     void WritePropertyUpdates();
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData,

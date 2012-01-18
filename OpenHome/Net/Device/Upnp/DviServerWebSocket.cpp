@@ -54,7 +54,8 @@ const Brn WebSocket::kTagSeq("SEQ");
 const Brn WebSocket::kMethodSubscribe("Subscribe");
 const Brn WebSocket::kMethodUnsubscribe("Unsubscribe");
 const Brn WebSocket::kMethodRenew("Renew");
-const Brn WebSocket::kMethodSubscriptionTimeout("SubscriptionTimeout");
+const Brn WebSocket::kMethodSubscriptionSid("SubscribeCompleted");
+const Brn WebSocket::kMethodSubscriptionRenewed("RenewCompleted");
 const Brn WebSocket::kMethodPropertyUpdate("PropertyUpdate");
 const Brn WebSocket::kValueProtocol("upnpevent.openhome.org");
 const Brn WebSocket::kValueNt("upnp:event");
@@ -219,6 +220,7 @@ void WsHeaderVersion::Process(const Brx& aValue)
 }
 
 
+#if 0
 // SubscriptionDataWs
 
 SubscriptionDataWs::SubscriptionDataWs(const Brx& aSubscriberSid)
@@ -240,7 +242,7 @@ void SubscriptionDataWs::Release()
 {
     delete this;
 }
-
+#endif
 
 // PropertyWriterWs
 
@@ -815,7 +817,7 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     LOG(kDvWebSocket, "WS: Subscribe\n");
     Brn udn = XmlParserBasic::Find(WebSocket::kTagUdn, aRequest);
     Brn serviceId = XmlParserBasic::Find(WebSocket::kTagService, aRequest);
-    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
+    //Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
     Brn nt = XmlParserBasic::Find(WebSocket::kTagNt, aRequest);
     if (nt != WebSocket::kValueNt) {
         THROW(WebSocketError);
@@ -847,11 +849,12 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     }
     Brh sid2;
     device->CreateSid(sid2);
-    SubscriptionDataWs* data = new SubscriptionDataWs(sid);
-    DviSubscription* subscription = new DviSubscription(*device, *this, data, sid2, timeout);
+    //SubscriptionDataWs* data = new SubscriptionDataWs(sid);
+    DviSubscription* subscription = new DviSubscription(*device, *this, NULL/*data*/, sid2, timeout);
+	Brn sid(subscription->Sid());
 
     try {
-        WriteSubscriptionTimeout(sid, timeout);
+        WriteSubscriptionSid(udn, serviceId, sid, timeout);
     }
     catch (WriterError&) {
         subscription->RemoveRef();
@@ -903,15 +906,33 @@ void DviSessionWebSocket::Renew(const Brx& aRequest)
         THROW(WebSocketError);
     }
     wrapper->Subscription().Renew(timeout);
-    WriteSubscriptionTimeout(wrapper->Sid(), timeout);
+    WriteSubscriptionRenewed(wrapper->Sid(), timeout);
 }
 
-void DviSessionWebSocket::WriteSubscriptionTimeout(const Brx& aSid, TUint aSeconds)
+void DviSessionWebSocket::WriteSubscriptionSid(const Brx& aDevice, const Brx& aService, const Brx& aSid, TUint aSeconds)
 {
     WriterBwh writer(1024);
     writer.Write(Brn("<?xml version=\"1.0\"?>"));
     writer.Write(Brn("<root>"));
-    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionTimeout);
+    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionSid);
+    WriteTag(writer, WebSocket::kTagUdn, aDevice);
+    WriteTag(writer, WebSocket::kTagService, aService);
+    WriteTag(writer, WebSocket::kTagSid, aSid);
+    Bws<Ascii::kMaxUintStringBytes> timeout;
+    (void)Ascii::AppendDec(timeout, aSeconds);
+    WriteTag(writer, WebSocket::kTagTimeout, timeout);
+    writer.Write(Brn("</root>"));
+    Brh resp;
+    writer.TransferTo(resp);
+    iProtocol->Write(resp);
+}
+
+void DviSessionWebSocket::WriteSubscriptionRenewed(const Brx& aSid, TUint aSeconds)
+{
+    WriterBwh writer(1024);
+    writer.Write(Brn("<?xml version=\"1.0\"?>"));
+    writer.Write(Brn("<root>"));
+    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionRenewed);
     WriteTag(writer, WebSocket::kTagSid, aSid);
     Bws<Ascii::kMaxUintStringBytes> timeout;
     (void)Ascii::AppendDec(timeout, aSeconds);
@@ -934,10 +955,10 @@ void DviSessionWebSocket::WritePropertyUpdates()
     }
 }
 
-IPropertyWriter* DviSessionWebSocket::CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& /*aSid*/, TUint aSequenceNumber)
+IPropertyWriter* DviSessionWebSocket::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
 {
-    const SubscriptionDataWs* data = reinterpret_cast<const SubscriptionDataWs*>(aUserData->Data());
-    return new PropertyWriterWs(*this, data->SubscriberSid(), aSequenceNumber);
+    //const SubscriptionDataWs* data = reinterpret_cast<const SubscriptionDataWs*>(aUserData->Data());
+    return new PropertyWriterWs(*this, aSid/*data->SubscriberSid()*/, aSequenceNumber);
 }
 
 void DviSessionWebSocket::NotifySubscriptionDeleted(const Brx& /*aSid*/)
