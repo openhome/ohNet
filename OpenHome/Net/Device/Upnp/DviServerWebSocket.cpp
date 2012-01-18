@@ -519,11 +519,12 @@ void WsProtocol80::Close(TUint16 aCode)
 
 // DviSessionWebSocket
 
-DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
+DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort, PropertyUpdateCollection& aPropertyUpdateCollection)
     : iEndpoint(aPort, aInterface)
     , iInterruptLock("WSIM")
     , iShutdownSem("WSIS", 1)
     , iPropertyUpdates(kMaxPropertyUpdates)
+    , iPropertyUpdateCollection(aPropertyUpdateCollection)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -1383,7 +1384,13 @@ DviServerWebSocket::DviServerWebSocket()
 {
     if (Stack::InitParams().DvNumWebSocketThreads() > 0) {
         Initialise();
-    }    
+    }
+    iPropertyUpdateCollection = new PropertyUpdateCollection();
+}
+
+DviServerWebSocket::~DviServerWebSocket()
+{
+    iPropertyUpdateCollection->Detach();
 }
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
@@ -1393,7 +1400,7 @@ SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
 	const TUint numWsThreads = Stack::InitParams().DvNumWebSocketThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "WS%2lu", (unsigned long)i);
-        server->Add(&thName[0], new DviSessionWebSocket(aNif.Address(), server->Port()));
+        server->Add(&thName[0], new DviSessionWebSocket(aNif.Address(), server->Port(), *iPropertyUpdateCollection));
     }
     return server;
 }

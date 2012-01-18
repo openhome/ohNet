@@ -324,7 +324,7 @@ class DviService;
 class DviSessionWebSocket : public SocketTcpSession, private IPropertyWriterFactory
 {
 public:
-    DviSessionWebSocket(TIpAddress aInterface, TUint aPort);
+    DviSessionWebSocket(TIpAddress aInterface, TUint aPort, PropertyUpdateCollection& aPropertyUpdateCollection);
     ~DviSessionWebSocket();
     void QueuePropertyUpdate(Brh* aUpdate);
 private:
@@ -395,14 +395,18 @@ private:
     Mutex iInterruptLock;
     Semaphore iShutdownSem;
     Fifo<Brh*> iPropertyUpdates; // used for web sockets
+    PropertyUpdateCollection& iPropertyUpdateCollection;
 };
 
 class DviServerWebSocket : public DviServer
 {
 public:
     DviServerWebSocket();
+    ~DviServerWebSocket();
 protected:
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
+private:
+    PropertyUpdateCollection* iPropertyUpdateCollection;
 };
 
 } // namespace Net
