@@ -97,14 +97,14 @@ namespace OpenHome.Net.Device
         /// This should only be used with CpDeviceDv.
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
-        OpenHome.Net.Device.DvDevice CreateDevice(string aUdn);
+        OpenHome.Net.Device.IDvDevice CreateDevice(string aUdn);
 
         /// <summary>
         /// Constructor.  Creates a device capable of operating on any of the protocols the device
         /// stack supports as standard but with no services or attributes as yet
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
-        OpenHome.Net.Device.DvDevice CreateDeviceStandard(string aUdn);
+        OpenHome.Net.Device.IDvDevice CreateDeviceStandard(string aUdn);
 
         /// <summary>
         /// Constructor.  Creates a device capable of serving UI files and of operating on any of the
@@ -112,7 +112,7 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
         /// <param name="aResourceManager">Allows the owner of a device to serve UI files.</param>
-        OpenHome.Net.Device.DvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager);
+        OpenHome.Net.Device.IDvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager);
     }
 
     /// <summary>
@@ -144,6 +144,7 @@ namespace OpenHome.Net.Device
             return new DvDevice(aUdn);
         }
 
+
         /// <summary>
         /// Constructor.  Creates a device capable of operating on any of the protocols the device
         /// stack supports as standard but with no services or attributes as yet
@@ -164,9 +165,63 @@ namespace OpenHome.Net.Device
         {
             return new DvDeviceStandard(aUdn, aResourceManager);
         }
+
+        // Explicit interface implementations. These forward to the regular methods.
+
+        /// <summary>
+        /// Constructor.  Creates a device without support for any protocol but capable of adding services or attributes.
+        /// This should only be used with CpDeviceDv.
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        OpenHome.Net.Device.IDvDevice IDvDeviceFactory.CreateDevice(string aUdn)
+        {
+            return CreateDevice(aUdn);
+        }
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of operating on any of the protocols the device
+        /// stack supports as standard but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        OpenHome.Net.Device.IDvDevice IDvDeviceFactory.CreateDeviceStandard(string aUdn)
+        {
+            return CreateDeviceStandard(aUdn);
+        }
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of serving UI files and of operating on any of the
+        /// protocols the device stack supports as standard but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
+        OpenHome.Net.Device.IDvDevice IDvDeviceFactory.CreateDeviceStandard(string aUdn, IResourceManager aResourceManager)
+        {
+            return CreateDeviceStandard(aUdn, aResourceManager);
+        }
     }
-    
-    public class DvDevice : IDisposable
+
+    /// <summary>
+    /// Interface to allow unit-testing of code that uses DvDevices.
+    /// </summary>
+    public interface IDvDevice : IDisposable
+    {
+        /// <summary>
+        /// Constructing providers cannot be done with just the interface.
+        /// A genuine instance of DvDevice is required. This provides access
+        /// to it.
+        /// </summary>
+        DvDevice RawDevice { get; }
+        string Udn();
+        bool Enabled();
+        void SetEnabled();
+        void SetDisabled(Action aCompleted);
+        void GetAttribute(string aKey, out string aValue);
+        void SetAttribute(string aKey, string aValue);
+        //void SetXmlExtension(string aXml);
+        IntPtr Handle();
+    }
+
+    public class DvDevice : IDvDevice
     {
         [DllImport("ohNet")]
         static extern unsafe IntPtr DvDeviceCreate(char* aUdn);
@@ -204,6 +259,8 @@ namespace OpenHome.Net.Device
             Marshal.FreeHGlobal((IntPtr)udn);
             iCallbackDisabled = new DisabledCallback(Disabled);
         }
+
+        DvDevice IDvDevice.RawDevice { get { return this; } }
 
         protected DvDevice()
         {
