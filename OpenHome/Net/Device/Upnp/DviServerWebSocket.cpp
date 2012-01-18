@@ -14,6 +14,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/sha.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Parser.h>
 
 #include <stdlib.h>
 
@@ -52,9 +53,11 @@ const Brn WebSocket::kTagTimeout("TIMEOUT");
 const Brn WebSocket::kTagNts("NTS");
 const Brn WebSocket::kTagSubscription("SUBSCRIPTION");
 const Brn WebSocket::kTagSeq("SEQ");
+const Brn WebSocket::kTagClientId("CLIENTID");
 const Brn WebSocket::kMethodSubscribe("Subscribe");
 const Brn WebSocket::kMethodUnsubscribe("Unsubscribe");
 const Brn WebSocket::kMethodRenew("Renew");
+const Brn WebSocket::kMethodGetPropertyUpdates("GetPropertyUpdates");
 const Brn WebSocket::kMethodSubscriptionTimeout("SubscriptionTimeout");
 const Brn WebSocket::kMethodPropertyUpdate("PropertyUpdate");
 const Brn WebSocket::kValueProtocol("upnpevent.openhome.org");
@@ -519,12 +522,14 @@ void WsProtocol80::Close(TUint16 aCode)
 
 // DviSessionWebSocket
 
-DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort, PropertyUpdateCollection& aPropertyUpdateCollection)
+DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
     : iEndpoint(aPort, aInterface)
     , iInterruptLock("WSIM")
     , iShutdownSem("WSIS", 1)
     , iPropertyUpdates(kMaxPropertyUpdates)
-    , iPropertyUpdateCollection(aPropertyUpdateCollection)
+    , iPropertyUpdateCollection(DviStack::PropertyUpdateCollection())
+    , iLongPollSem("DVLP", 0)
+    , iExit(false)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -542,11 +547,14 @@ DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort, Pro
     iReaderRequest->AddHeader(iHeaderOrigin);
     iReaderRequest->AddHeader(iHeadverKeyV8);
     iReaderRequest->AddHeader(iHeaderVersion);
+    iReaderRequest->AddHeader(iHeaderContentLength);
 }
 
 DviSessionWebSocket::~DviSessionWebSocket()
 {
+    iExit = true;
     Interrupt(true);
+    iLongPollSem.Signal();
     iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
@@ -578,7 +586,14 @@ void DviSessionWebSocket::Run()
         if (iReaderRequest->MethodNotAllowed()) {
             Error(HttpStatus::kMethodNotAllowed);
         }
-        Handshake();
+        const Brx& method = iReaderRequest->Method();
+        if (method == Http::kMethodGet) {
+            Handshake();
+        }
+        else if (method == Http::kMethodPost) {
+            LongPollRequest();
+            return;
+        }
     }
     catch (HttpError&) {
         iErrorStatus = &HttpStatus::kBadRequest;
@@ -946,7 +961,202 @@ void DviSessionWebSocket::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 {
 }
 
-    
+void DviSessionWebSocket::LongPollRequest()
+{
+    try {
+        DoLongPollRequest();
+    }
+    catch (HttpError&) { }
+    catch (WriterError&) { }
+    catch (ReaderError&) { }
+    catch (XmlError&) { }
+    catch (InvalidSid&) { }
+    catch (InvalidClientId&) { }
+    try {
+        if (!iResponseStarted) {
+            if (iErrorStatus == &HttpStatus::kOk) {
+                iErrorStatus = &HttpStatus::kNotFound;
+            }
+            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
+            Http::WriteHeaderConnectionClose(*iWriterResponse);
+            iWriterResponse->WriteFlush();
+        }
+        else if (!iResponseEnded) {
+            iWriterResponse->WriteFlush();
+        }
+    }
+    catch (WriterError&) { }
+}
+
+void DviSessionWebSocket::DoLongPollRequest()
+{
+    Parser parser(iReaderRequest->Uri());
+    Brn requestUri = parser.Next('/');
+    Brn entity(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
+    if (requestUri == WebSocket::kMethodSubscribe) {
+        LongPollSubscribe(entity);
+    }
+    else if (requestUri == WebSocket::kMethodUnsubscribe) {
+        LongPollUnsubscribe(entity);
+    }
+    else if (requestUri == WebSocket::kMethodRenew) {
+        LongPollRenew(entity);
+    }
+    else if (requestUri == WebSocket::kMethodGetPropertyUpdates) {
+        LongPollGetPropertyUpdates(entity);
+    }
+    else {
+        Error(HttpStatus::kBadRequest);
+    }
+}
+
+void DviSessionWebSocket::LongPollSubscribe(const Brx& aRequest)
+{
+    LOG(kDvWebSocket, "WS: LongPollSubscribe\n");
+    Brn clientId = XmlParserBasic::Find(WebSocket::kTagClientId, aRequest);
+    Brn udn = XmlParserBasic::Find(WebSocket::kTagUdn, aRequest);
+    Brn serviceId = XmlParserBasic::Find(WebSocket::kTagService, aRequest);
+    Brn nt = XmlParserBasic::Find(WebSocket::kTagNt, aRequest);
+    if (nt != WebSocket::kValueNt) {
+        Error(HttpStatus::kBadRequest);
+    }
+    TUint timeout = 0;
+    try {
+        timeout = Ascii::Uint(XmlParserBasic::Find(WebSocket::kTagTimeout, aRequest));
+    }
+    catch (AsciiError&) {
+        Error(HttpStatus::kBadRequest);
+    }
+    static const TUint kTimeoutLongPollSecs = 5 * 60; // set a short timeout as we won't be notified when clients vanish
+    if (timeout > kTimeoutLongPollSecs) {
+        timeout = kTimeoutLongPollSecs;
+    }
+
+    DviDevice* device = DviStack::DeviceMap().Find(udn);
+    if (device == NULL) {
+        Error(HttpStatus::kBadRequest);
+    }
+    DviService* service = NULL;
+    const TUint serviceCount = device->ServiceCount();
+    for (TUint i=0; i<serviceCount; i++) {
+        DviService* s = &device->Service(i);
+        if (s->ServiceType().PathUpnp() == serviceId) {
+            service = s;
+            break;
+        }
+    }
+    if (service == NULL) {
+        Error(HttpStatus::kBadRequest);
+    }
+    Brh sid;
+    device->CreateSid(sid);
+    DviSubscription* subscription = new DviSubscription(*device, iPropertyUpdateCollection, NULL, sid, timeout);
+
+    try {
+        WriterBwh writer(1024);
+        writer.Write(Brn("<?xml version=\"1.0\"?>"));
+        writer.Write(Brn("<root>"));
+        WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionTimeout);
+        WriteTag(writer, WebSocket::kTagUdn, udn);
+        WriteTag(writer, WebSocket::kTagService, serviceId);
+        WriteTag(writer, WebSocket::kTagSid, sid);
+        Bws<Ascii::kMaxUintStringBytes> timeoutBuf;
+        (void)Ascii::AppendDec(timeoutBuf, timeout);
+        WriteTag(writer, WebSocket::kTagTimeout, timeoutBuf);
+        writer.Write(Brn("</root>"));
+        Brh response;
+        writer.TransferTo(response);
+
+        LongPollWriteResponse(response);
+    }
+    catch (WriterError&) {
+        subscription->RemoveRef();
+        THROW(WriterError);
+    }
+
+    // Start subscription, prompting delivery of the first update (covering all state variables)
+    iPropertyUpdateCollection.AddSubscription(clientId, subscription);
+    DviSubscriptionManager::AddSubscription(*subscription);
+    service->AddSubscription(subscription);
+}
+
+void DviSessionWebSocket::LongPollUnsubscribe(const Brx& aRequest)
+{
+    LOG(kDvWebSocket, "WS: LongPollUnsubscribe\n");
+    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
+    iPropertyUpdateCollection.RemoveSubscription(sid);
+
+    iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
+    iResponseStarted = iResponseEnded = true;
+    iWriterResponse->WriteFlush();
+}
+
+void DviSessionWebSocket::LongPollRenew(const Brx& aRequest)
+{
+    LOG(kDvWebSocket, "WS: LongPollRenew\n");
+    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
+    TUint timeout;
+    try {
+        timeout = Ascii::Uint(XmlParserBasic::Find(WebSocket::kTagTimeout, aRequest));
+    }
+    catch (AsciiError&) {
+        THROW(XmlError);
+    }
+    DviSubscription* subscription = DviSubscriptionManager::Find(sid);
+    if (subscription == NULL) {
+        Error(HttpStatus::kBadRequest);
+    }
+    subscription->Renew(timeout);
+
+    WriterBwh writer(1024);
+    writer.Write(Brn("<?xml version=\"1.0\"?>"));
+    writer.Write(Brn("<root>"));
+    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionTimeout);
+    WriteTag(writer, WebSocket::kTagSid, sid);
+    Bws<Ascii::kMaxUintStringBytes> timeoutBuf;
+    (void)Ascii::AppendDec(timeoutBuf, timeout);
+    WriteTag(writer, WebSocket::kTagTimeout, timeoutBuf);
+    writer.Write(Brn("</root>"));
+    Brh response;
+    writer.TransferTo(response);
+
+    LongPollWriteResponse(response);
+}
+
+void DviSessionWebSocket::LongPollGetPropertyUpdates(const Brx& aRequest)
+{
+    LOG(kDvWebSocket, "WS: LongPollGetPropertyUpdates\n");
+    Brn clientId = XmlParserBasic::Find(WebSocket::kTagClientId, aRequest);
+    try {
+        iPropertyUpdateCollection.SetClientSignal(clientId, &iLongPollSem);
+        iLongPollSem.Wait(30*1000);
+        iPropertyUpdateCollection.SetClientSignal(clientId, NULL);
+        if (!iExit) {
+            WriterBwh writer(1024);
+            iPropertyUpdateCollection.WriteUpdates(clientId, writer);
+            Brh response;
+            writer.TransferTo(response);
+            LongPollWriteResponse(response);
+        }
+    }
+    catch (Timeout&) {
+        iPropertyUpdateCollection.SetClientSignal(clientId, NULL);
+    }
+}
+
+void DviSessionWebSocket::LongPollWriteResponse(const Brx& aResponse)
+{
+    iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
+    iResponseStarted = true;
+    Http::WriteHeaderContentLength(*iWriterResponse, aResponse.Bytes());
+    Http::WriteHeaderConnectionClose(*iWriterResponse);
+    iWriterResponse->Write(Brn("\r\n"));
+    iWriterResponse->Write(aResponse);
+    iResponseEnded = true;
+    iWriterResponse->WriteFlush();
+}
+
+
 // DviSessionWebSocket::SubscriptionWrapper
 
 DviSessionWebSocket::SubscriptionWrapper::SubscriptionWrapper(DviSubscription& aSubscription, const Brx& aSid, DviService& aService)
@@ -1137,7 +1347,11 @@ PropertyUpdatesFlattened::~PropertyUpdatesFlattened()
         delete it->second;
         it++;
     }
-    ASSERT(iSidMap.size() == 0);
+    SubscriptionMap::iterator it2 = iSubscriptionMap.begin();
+    while (it2 != iSubscriptionMap.end()) {
+        it2->second->RemoveRef();
+        it2++;
+    }
 }
 
 const Brx& PropertyUpdatesFlattened::ClientId() const
@@ -1145,20 +1359,19 @@ const Brx& PropertyUpdatesFlattened::ClientId() const
     return iClientId;
 }
 
-void PropertyUpdatesFlattened::AddSubscription(const Brx& aSid)
+void PropertyUpdatesFlattened::AddSubscription(DviSubscription* aSubscription)
 {
-    Brh* sid = new Brh(aSid);
-    Brn buf(*sid);
-    iSidMap.insert(std::pair<Brn,Brh*>(buf, sid));
+    Brn buf(aSubscription->Sid());
+    iSubscriptionMap.insert(std::pair<Brn,DviSubscription*>(buf, aSubscription));
 }
 
 void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid)
 {
     Brn sid(aSid);
-    SidMap::iterator it = iSidMap.find(sid);
-    if (it != iSidMap.end()) {
-        delete it->second;
-        iSidMap.erase(it);
+    SubscriptionMap::iterator it = iSubscriptionMap.find(sid);
+    if (it != iSubscriptionMap.end()) {
+        it->second->RemoveRef();
+        iSubscriptionMap.erase(it);
     }
     // remove any pending updates for this subscription too
     UpdatesMap::iterator it2 = iUpdatesMap.find(sid);
@@ -1171,12 +1384,12 @@ void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid)
 TBool PropertyUpdatesFlattened::ContainsSubscription(const Brx& aSid) const
 {
     Brn sid(aSid);
-    return (iSidMap.find(sid) != iSidMap.end());
+    return (iSubscriptionMap.find(sid) != iSubscriptionMap.end());
 }
 
 TBool PropertyUpdatesFlattened::IsEmpty() const
 {
-    return (iSidMap.size() == 0);
+    return (iSubscriptionMap.size() == 0);
 }
 
 PropertyUpdate* PropertyUpdatesFlattened::MergeUpdate(PropertyUpdate* aUpdate)
@@ -1201,7 +1414,7 @@ PropertyUpdate* PropertyUpdatesFlattened::MergeUpdate(PropertyUpdate* aUpdate)
 void PropertyUpdatesFlattened::SetClientSignal(Semaphore* aSem)
 {
     iSem = aSem;
-    if (aSem != NULL && iSidMap.size() > 0) {
+    if (aSem != NULL && iSubscriptionMap.size() > 0) {
         aSem->Signal();
         aSem = NULL;
     }
@@ -1228,35 +1441,24 @@ void PropertyUpdatesFlattened::WriteUpdates(IWriter& aWriter)
 }
 
 
-// PropertyUpdateCollection
+// DviPropertyUpdateCollection
 
-PropertyUpdateCollection::PropertyUpdateCollection()
+DviPropertyUpdateCollection::DviPropertyUpdateCollection()
     : iLock("MPUC")
-    , iDetached(false)
 {
 }
 
-void PropertyUpdateCollection::Detach()
+DviPropertyUpdateCollection::~DviPropertyUpdateCollection()
 {
-    iLock.Wait();
-    iDetached = true;
-    TBool isDead = (iUpdates.size() == 0);
-    iLock.Signal();
-    if (isDead) {
-        delete this;
-    }
-}
-
-PropertyUpdateCollection::~PropertyUpdateCollection()
-{
-    ASSERT(iUpdates.size() == 0);
-    // !!!! Maybe this should be ref counted, self-deleting when its vector empties (and the server has exited)
+    // we rely on DviPropertyUpdateCollection being deleted after DviSubscriptionManager
+    // ...this means we can assume that all subscriptions have already been deleted
+    // ...so we can destroy our remaining objects without worrying about publisher threads being in the process of writing updates
     for (TUint i=0; i<(TUint)iUpdates.size(); i++) {
         delete iUpdates[i];
     }
 }
 
-void PropertyUpdateCollection::AddSubscription(const Brx& aClientId, const Brx& aSid)
+void DviPropertyUpdateCollection::AddSubscription(const Brx& aClientId, DviSubscription* aSubscription)
 {
     AutoMutex a(iLock);
     PropertyUpdatesFlattened* updates = FindByClientId(aClientId);
@@ -1264,32 +1466,25 @@ void PropertyUpdateCollection::AddSubscription(const Brx& aClientId, const Brx& 
         updates = new PropertyUpdatesFlattened(aClientId);
         iUpdates.push_back(updates);
     }
-    updates->AddSubscription(aSid);
+    updates->AddSubscription(aSubscription);
 }
 
-void PropertyUpdateCollection::RemoveSubscription(const Brx& aSid)
+void DviPropertyUpdateCollection::RemoveSubscription(const Brx& aSid)
 {
-    TBool isDead = false;
-    iLock.Wait();
+    AutoMutex a(iLock);
     TUint index;
     PropertyUpdatesFlattened* updates = FindBySid(aSid, index);
     if (updates == NULL) {
-        iLock.Signal();
         THROW(InvalidSid);
     }
     updates->RemoveSubscription(aSid);
     if (updates->IsEmpty()) {
         delete updates;
         iUpdates.erase(iUpdates.begin() + index);
-        isDead = (iDetached && iUpdates.size() == 0);
-    }
-    iLock.Signal();
-    if (isDead) {
-        delete this;
     }
 }
 
-void PropertyUpdateCollection::SetClientSignal(const Brx& aClientId, Semaphore* aSem)
+void DviPropertyUpdateCollection::SetClientSignal(const Brx& aClientId, Semaphore* aSem)
 {
     AutoMutex a(iLock);
     PropertyUpdatesFlattened* updates = FindByClientId(aClientId);
@@ -1299,7 +1494,7 @@ void PropertyUpdateCollection::SetClientSignal(const Brx& aClientId, Semaphore* 
     updates->SetClientSignal(aSem);
 }
 
-void PropertyUpdateCollection::WriteUpdates(const Brx& aClientId, IWriter& aWriter)
+void DviPropertyUpdateCollection::WriteUpdates(const Brx& aClientId, IWriter& aWriter)
 {
     AutoMutex a(iLock);
     PropertyUpdatesFlattened* updates = FindByClientId(aClientId);
@@ -1309,13 +1504,13 @@ void PropertyUpdateCollection::WriteUpdates(const Brx& aClientId, IWriter& aWrit
     updates->WriteUpdates(aWriter);
 }
 
-PropertyUpdatesFlattened* PropertyUpdateCollection::FindByClientId(const Brx& aClientId)
+PropertyUpdatesFlattened* DviPropertyUpdateCollection::FindByClientId(const Brx& aClientId)
 {
     TUint ignore;
     return FindByClientId(aClientId, ignore);
 }
 
-PropertyUpdatesFlattened* PropertyUpdateCollection::FindByClientId(const Brx& aClientId, TUint& aIndex)
+PropertyUpdatesFlattened* DviPropertyUpdateCollection::FindByClientId(const Brx& aClientId, TUint& aIndex)
 {
     // assumes called with iLock held
     for (TUint i=0; i<(TUint)iUpdates.size(); i++) {
@@ -1329,13 +1524,13 @@ PropertyUpdatesFlattened* PropertyUpdateCollection::FindByClientId(const Brx& aC
     return NULL;
 }
 
-PropertyUpdatesFlattened* PropertyUpdateCollection::FindBySid(const Brx& aSid)
+PropertyUpdatesFlattened* DviPropertyUpdateCollection::FindBySid(const Brx& aSid)
 {
     TUint ignore;
     return FindBySid(aSid, ignore);
 }
 
-PropertyUpdatesFlattened* PropertyUpdateCollection::FindBySid(const Brx& aSid, TUint& aIndex)
+PropertyUpdatesFlattened* DviPropertyUpdateCollection::FindBySid(const Brx& aSid, TUint& aIndex)
 {
     // assumes called with iLock held
     for (TUint i=0; i<(TUint)iUpdates.size(); i++) {
@@ -1349,7 +1544,7 @@ PropertyUpdatesFlattened* PropertyUpdateCollection::FindBySid(const Brx& aSid, T
     return NULL;
 }
 
-IPropertyWriter* PropertyUpdateCollection::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
+IPropertyWriter* DviPropertyUpdateCollection::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
 {
     AutoMutex a(iLock);
     if (FindBySid(aSid) != NULL) {
@@ -1358,15 +1553,11 @@ IPropertyWriter* PropertyUpdateCollection::CreateWriter(const IDviSubscriptionUs
     return NULL;
 }
 
-void PropertyUpdateCollection::NotifySubscriptionDeleted(const Brx& aSid)
+void DviPropertyUpdateCollection::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 {
-    try {
-        RemoveSubscription(aSid);
-    }
-    catch (InvalidSid&) { }
 }
 
-PropertyUpdate* PropertyUpdateCollection::MergeUpdate(PropertyUpdate* aUpdate)
+PropertyUpdate* DviPropertyUpdateCollection::MergeUpdate(PropertyUpdate* aUpdate)
 {
     AutoMutex a(iLock);
     PropertyUpdatesFlattened* updates = FindBySid(aUpdate->Sid());
@@ -1385,12 +1576,6 @@ DviServerWebSocket::DviServerWebSocket()
     if (Stack::InitParams().DvNumWebSocketThreads() > 0) {
         Initialise();
     }
-    iPropertyUpdateCollection = new PropertyUpdateCollection();
-}
-
-DviServerWebSocket::~DviServerWebSocket()
-{
-    iPropertyUpdateCollection->Detach();
 }
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
@@ -1400,7 +1585,7 @@ SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
 	const TUint numWsThreads = Stack::InitParams().DvNumWebSocketThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "WS%2lu", (unsigned long)i);
-        server->Add(&thName[0], new DviSessionWebSocket(aNif.Address(), server->Port(), *iPropertyUpdateCollection));
+        server->Add(&thName[0], new DviSessionWebSocket(aNif.Address(), server->Port()));
     }
     return server;
 }

@@ -32,6 +32,7 @@ public:
     static DviDeviceMap& DeviceMap();
     static DviSubscriptionManager& SubscriptionManager();
     static IMdnsProvider* MdnsProvider();
+    static DviPropertyUpdateCollection& PropertyUpdateCollection();
 private:
     ~DviStack();
     static DviStack* Self();
@@ -43,6 +44,7 @@ private:
     DviSubscriptionManager* iSubscriptionManager;
     DviServerWebSocket* iDviServerWebSocket;
     IMdnsProvider* iMdns;
+    DviPropertyUpdateCollection* iPropertyUpdateCollection;
 };
 
 } // namespace Net

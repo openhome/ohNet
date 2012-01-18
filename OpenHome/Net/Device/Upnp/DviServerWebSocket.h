@@ -42,9 +42,11 @@ public:
     static const Brn kTagNts;
     static const Brn kTagSubscription;
     static const Brn kTagSeq;
+    static const Brn kTagClientId;
     static const Brn kMethodSubscribe;
     static const Brn kMethodUnsubscribe;
     static const Brn kMethodRenew;
+    static const Brn kMethodGetPropertyUpdates;
     static const Brn kMethodSubscriptionTimeout;
     static const Brn kMethodPropertyUpdate;
     static const Brn kValueProtocol;
@@ -277,7 +279,7 @@ public:
     PropertyUpdatesFlattened(const Brx& aClientId);
     ~PropertyUpdatesFlattened();
     const Brx& ClientId() const;
-    void AddSubscription(const Brx& aSid);
+    void AddSubscription(DviSubscription* aSubscription);
     void RemoveSubscription(const Brx& aSid);
     TBool ContainsSubscription(const Brx& aSid) const;
     TBool IsEmpty() const;
@@ -288,35 +290,33 @@ private:
     Brh iClientId;
     typedef std::map<Brn,PropertyUpdate*,BufferCmp> UpdatesMap;
     UpdatesMap iUpdatesMap;
-    typedef std::map<Brn,Brh*,BufferCmp> SidMap;
-    SidMap iSidMap;
+    typedef std::map<Brn,DviSubscription*,BufferCmp> SubscriptionMap;
+    SubscriptionMap iSubscriptionMap;
     Semaphore* iSem;
 };
 
-class PropertyUpdateCollection : public IPropertyWriterFactory, private IPolledUpdateMerger
+class DviPropertyUpdateCollection : public IPropertyWriterFactory, private IPolledUpdateMerger
 {
 public:
-    PropertyUpdateCollection();
-    void Detach();
-    void AddSubscription(const Brx& aClientId, const Brx& aSid);
+    DviPropertyUpdateCollection();
+    ~DviPropertyUpdateCollection();
+    void AddSubscription(const Brx& aClientId, DviSubscription* aSubscription); // !!!! AddRef
     void RemoveSubscription(const Brx& aSid);
     void SetClientSignal(const Brx& aClientId, Semaphore* aSem);
     void WriteUpdates(const Brx& aClientId, IWriter& aWriter);
 private:
-    ~PropertyUpdateCollection();
     PropertyUpdatesFlattened* FindByClientId(const Brx& aClientId);
     PropertyUpdatesFlattened* FindByClientId(const Brx& aClientId, TUint& aIndex);
     PropertyUpdatesFlattened* FindBySid(const Brx& aSid);
     PropertyUpdatesFlattened* FindBySid(const Brx& aSid, TUint& aIndex);
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
-    void NotifySubscriptionDeleted(const Brx& aSid);
+    void NotifySubscriptionDeleted(const Brx& aSid); // !!!! RemoveRef
 private: // IPolledUpdateMerger
     PropertyUpdate* MergeUpdate(PropertyUpdate* aUpdate);
 private:
     Mutex iLock;
     std::vector<PropertyUpdatesFlattened*> iUpdates;
-    TBool iDetached;
 };
 
 class DviService;
@@ -324,7 +324,7 @@ class DviService;
 class DviSessionWebSocket : public SocketTcpSession, private IPropertyWriterFactory
 {
 public:
-    DviSessionWebSocket(TIpAddress aInterface, TUint aPort, PropertyUpdateCollection& aPropertyUpdateCollection);
+    DviSessionWebSocket(TIpAddress aInterface, TUint aPort);
     ~DviSessionWebSocket();
     void QueuePropertyUpdate(Brh* aUpdate);
 private:
@@ -350,6 +350,14 @@ private:
     void Renew(const Brx& aRequest);
     void WriteSubscriptionTimeout(const Brx& aSid, TUint aSeconds);
     void WritePropertyUpdates();
+private: // long polling
+    void LongPollRequest();
+    void DoLongPollRequest();
+    void LongPollSubscribe(const Brx& aRequest);
+    void LongPollUnsubscribe(const Brx& aRequest);
+    void LongPollRenew(const Brx& aRequest);
+    void LongPollGetPropertyUpdates(const Brx& aRequest);
+    void LongPollWriteResponse(const Brx& aResponse);
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData,
                                   const Brx& aSid, TUint aSequenceNumber);
@@ -387,6 +395,7 @@ private:
     WsHeaderOrigin iHeaderOrigin;
     WsHeaderKey80 iHeadverKeyV8;
     WsHeaderVersion iHeaderVersion;
+    HttpHeaderContentLength iHeaderContentLength;
     const HttpStatus* iErrorStatus;
     WsProtocol* iProtocol;
     TBool iExit;
@@ -395,18 +404,18 @@ private:
     Mutex iInterruptLock;
     Semaphore iShutdownSem;
     Fifo<Brh*> iPropertyUpdates; // used for web sockets
-    PropertyUpdateCollection& iPropertyUpdateCollection;
+    DviPropertyUpdateCollection& iPropertyUpdateCollection;
+    Semaphore iLongPollSem;
+    TBool iResponseStarted;
+    TBool iResponseEnded;
 };
 
 class DviServerWebSocket : public DviServer
 {
 public:
     DviServerWebSocket();
-    ~DviServerWebSocket();
 protected:
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
-private:
-    PropertyUpdateCollection* iPropertyUpdateCollection;
 };
 
 } // namespace Net
