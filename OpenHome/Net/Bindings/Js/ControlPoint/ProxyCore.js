@@ -56,23 +56,6 @@ OhNet.SubscriptionManager = (function () {
     // Functions
 
     /**
-    * Generates the next subscription id to identity the subscription
-    * @method generateSubscriptionId
-    * @return {Int} The next subscription id (Increment)
-    */
-    var generateSubscriptionId = function () {
-
-        subscriptionCounter = subscriptionCounter + 1;
-
-        if (DEBUG) {
-            console.log("generateSubscriptionId/subscriptionCounter: " + subscriptionCounter);
-        }
-
-        return subscriptionCounter;
-    };
-
-
-    /**
     * Generates the subscribe message to register the service's subscription
     * @method subscribeMessage
     * @param {Object} service The service interested in subscribing
@@ -83,6 +66,7 @@ OhNet.SubscriptionManager = (function () {
         var message = "<?xml verison='1.0' ?>";
         message += "<ROOT>";
         message += "<METHOD>Subscribe</METHOD>";
+        message += "<CLIENTID>" + service.clientId + "</CLIENTID>";
         message += "<UDN>" + service.udn + "</UDN>";
         message += "<SERVICE>" + service.serviceName + "</SERVICE>";
         message += "<NT>upnp:event</NT>";
@@ -154,8 +138,7 @@ OhNet.SubscriptionManager = (function () {
         var service = services[subscriptionId];
         if (service) {
             var actualSubscriptionTimeoutMs = timeoutSeconds * 1000 * RENEW_TRIGGER;
-
-            var timer = setTimeout(function () {
+			 var timer = setTimeout(function () {
                 renewSubscription(subscriptionId);
             }, actualSubscriptionTimeoutMs);
 
@@ -246,7 +229,7 @@ OhNet.SubscriptionManager = (function () {
     * @param {Int} subscriptionId The subscription id of the service
     */
     var renewSubscription = function (subscriptionId) {
-
+		
         var service = services[subscriptionId];
         if (service) {
             if (service.SubscriptionTimer) {
@@ -593,6 +576,23 @@ OhNet.SubscriptionManager = (function () {
             console.log("onSocketMessage/event.data: " + event.data);
         }
     };
+    
+    /**
+    * A helper method to generate a GUID as a client id
+    * @method generateGUID
+    */
+    var generateGUID = function () {
+
+    	var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+	        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+	        return v.toString(16);;
+	    });
+	    if (DEBUG) {
+        	console.log("generateGUID/guid: " + guid);
+    	}
+    	return guid;
+    };
+    
 
 
     /**
@@ -691,6 +691,7 @@ OhNet.SubscriptionManager = (function () {
             if (serviceAddedFunction) {
                 service.serviceAddedFunction = serviceAddedFunction;
             }
+            service.clientId = generateGUID();
             websocket.send(subscribeMessage(service));
             if (DEBUG) {
                 console.log("addService/service.subscriptionId : " + service.subscriptionId);
