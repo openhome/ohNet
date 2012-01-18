@@ -86,12 +86,13 @@ OhNet.SubscriptionManager = (function () {
     * @param {Int} subscriptionId The subscription id of the service interested in unsubscribing
     * @return {String} The unsubscribe message to be sent to the OhNet service 
     */
-    var unsubscribeMessage = function (subscriptionId) {
+    var unsubscribeMessage = function (subscriptionId,clientId) {
 
         var message = "<?xml verison='1.0' ?>";
         message += "<ROOT>";
         message += "<METHOD>Unsubscribe</METHOD>";
         message += "<SID>" + subscriptionId + "</SID>";
+        message += "<CLIENTID>" + clientId + "</SID>";
         message += "</ROOT>";
 
         if (DEBUG) {
@@ -464,7 +465,6 @@ OhNet.SubscriptionManager = (function () {
     */
     var onSocketClose = function () {
 
-        // if (DEBUG) {
         console.log("onSocketClose");
         stop();
 
@@ -485,8 +485,6 @@ OhNet.SubscriptionManager = (function () {
         }
         
         websocketOnClose = true;
-
-        //    }
     };
 
 
@@ -663,7 +661,7 @@ OhNet.SubscriptionManager = (function () {
 
         if (service) {
 
-            websocket.send(unsubscribeMessage(subscriptionId));
+            websocket.send(unsubscribeMessage(subscriptionId,service.clientId));
 
             if (service.SubscriptionTimer) { // Stop in-progress timers
                 clearTimeout(service.SubscriptionTimer);
