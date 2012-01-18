@@ -530,8 +530,8 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
         current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
         return;
     }
-    iLock.Wait();
     iNextRefreshTimer->Cancel();
+    iLock.Wait();
     iPendingRefreshCount = 0;
     iLock.Signal();
     StopListeners();
@@ -566,10 +566,10 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 
 void CpiDeviceListUpnp::RemoveAll()
 {
-    iLock.Wait();
     iRefreshTimer->Cancel();
-    CancelRefresh();
     iNextRefreshTimer->Cancel();
+    iLock.Wait();
+    CancelRefresh();
     iPendingRefreshCount = 0;
     std::vector<CpiDevice*> devices;
     Map::iterator it = iMap.begin();
