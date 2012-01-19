@@ -124,6 +124,10 @@ void CpiDeviceDv::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 {
 }
 
+void CpiDeviceDv::NotifySubscriptionExpired(const Brx& /*aSid*/)
+{
+}
+
 
 // InvocationDv
 

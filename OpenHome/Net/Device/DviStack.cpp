@@ -27,6 +27,7 @@ DviStack::DviStack()
     if (Stack::InitParams().DvIsBonjourEnabled()) {
         iMdns = new OpenHome::Net::MdnsProvider(""); // replace this to allow clients to set an alternative Bonjour implementation
     }
+    iPropertyUpdateCollection = new DviPropertyUpdateCollection();
 }
 
 DviStack::~DviStack()
@@ -36,6 +37,7 @@ DviStack::~DviStack()
     delete iDviServerUpnp;
     delete iDviDeviceMap;
     delete iSubscriptionManager;
+    delete iPropertyUpdateCollection;
 }
 
 TUint DviStack::BootId()
@@ -90,6 +92,12 @@ IMdnsProvider* DviStack::MdnsProvider()
 {
     DviStack* self = DviStack::Self();
     return self->iMdns;
+}
+
+DviPropertyUpdateCollection& DviStack::PropertyUpdateCollection()
+{
+    DviStack* self = DviStack::Self();
+    return *(self->iPropertyUpdateCollection);
 }
 
 DviStack* DviStack::Self()
