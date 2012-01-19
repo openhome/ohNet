@@ -264,6 +264,9 @@ PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSi
     Bws<Ascii::kMaxUintStringBytes> seq;
     (void)Ascii::AppendDec(seq, aSequenceNumber);
     WriteTag(iWriter, WebSocket::kTagSeq, seq);
+    iWriter.Write('<');
+    iWriter.Write(WebSocket::kTagSubscription);
+    iWriter.Write('>');
     iWriter.Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
 }
 
@@ -273,6 +276,10 @@ PropertyWriterWs::~PropertyWriterWs()
 
 void PropertyWriterWs::PropertyWriteEnd()
 {
+    iWriter.Write('<');
+    iWriter.Write('/');
+    iWriter.Write(WebSocket::kTagSubscription);
+    iWriter.Write('>');
     iWriter.Write(Brn("</e:propertyset></root>"));
     Brh* buf = new Brh;
     iWriter.TransferTo(*buf);
