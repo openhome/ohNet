@@ -12,3 +12,9 @@ _ReSharper.*
 /xout/
 /ohSongcast/Build/
 
+OpenHome/Net/Bindings/C/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.h
+OpenHome/Net/Bindings/C/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1C.cpp
+OpenHome/Net/Bindings/Cpp/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.h
+OpenHome/Net/Bindings/Cpp/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1Std.cpp
+OpenHome/Net/Bindings/Cs/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.cs
+OpenHome/Net/Bindings/Java/org/openhome/net/device/providers/DvProviderOpenhomeOrgSubscriptionLongPoll1.java

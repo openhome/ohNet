@@ -181,4 +181,11 @@
     <type>TestLights</type>
     <version>1</version>
   </service>
+  <service>
+    <publisher>OpenHome</publisher>
+    <dcpdir></dcpdir>
+    <domain>openhome.org</domain>
+    <type>SubscriptionLongPoll</type>
+    <version>1</version>
+  </service>
 </servicelist>
