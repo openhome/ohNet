@@ -136,19 +136,6 @@ private:
     TUint iVersion;;
 };
 
-/*class SubscriptionDataWs : public IDviSubscriptionUserData
-{
-public:
-    SubscriptionDataWs(const Brx& aSubscriberSid);
-    const Brx& SubscriberSid() const;
-    virtual const void* Data() const;
-    virtual void Release();
-private:
-    ~SubscriptionDataWs() {}
-private:
-    Brh iSubscriberSid;
-};*/
-
 class DviSessionWebSocket;
 
 class PropertyWriterWs : public PropertyWriter
@@ -354,8 +341,8 @@ private:
     void WriteSubscriptionRenewed(const Brx& aSid, TUint aSeconds);
     void WritePropertyUpdates();
 private: // long polling
-    void LongPollRequest();
-    void DoLongPollRequest();
+    void LongPollRequest(const Brx& aPollMethod);
+    void DoLongPollRequest(const Brx& aPollMethod);
     void LongPollSubscribe(const Brx& aRequest);
     void LongPollUnsubscribe(const Brx& aRequest);
     void LongPollRenew(const Brx& aRequest);
@@ -400,6 +387,7 @@ private:
     WsHeaderKey80 iHeadverKeyV8;
     WsHeaderVersion iHeaderVersion;
     HttpHeaderContentLength iHeaderContentLength;
+    HttpHeaderAccessControlRequestMethod iHeaderAccessControlRequestMethod;
     const HttpStatus* iErrorStatus;
     WsProtocol* iProtocol;
     TBool iExit;
