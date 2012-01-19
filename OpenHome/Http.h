@@ -68,6 +68,7 @@ public:
     static const Brn kHeaderServer;
     static const Brn kHeaderVary;
     static const Brn kHeaderWwwAuthenticate;
+    static const Brn kHeaderAllowOrigin;
     // Entity headers
     static const Brn kHeaderAllow;
     static const Brn kHeaderContentEncoding;

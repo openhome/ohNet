@@ -522,7 +522,7 @@ void DviSessionUpnp::Run()
     iReaderRequest->Flush();
     iWriterChunked->SetChunked(false);
     iInvocationService = NULL;
-        iResourceWriterHeadersOnly = false;
+    iResourceWriterHeadersOnly = false;
     // check headers
     try {
         try {
@@ -867,6 +867,9 @@ void DviSessionUpnp::WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeTyp
 		writer.Write(Brn("; charset=\"utf-8\""));
 		writer.WriteFlush();
 	}
+    // we need to allow requests to multiple (two) origins if the client uses long polling
+    // !!!! could/should probably change this to specify our ip address but any port
+    iWriterResponse->WriteHeader(Http::kHeaderAllowOrigin, Brn("*")); 
     Http::WriteHeaderConnectionClose(*iWriterResponse);
     iWriterResponse->WriteFlush();
     if (aTotalBytes == 0) {
