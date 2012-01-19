@@ -604,6 +604,9 @@ void DviSessionWebSocket::Run()
             LongPollRequest();
             return;
         }
+        else {
+            Error(HttpStatus::kBadRequest);
+        }
     }
     catch (HttpError&) {
         iErrorStatus = &HttpStatus::kBadRequest;
