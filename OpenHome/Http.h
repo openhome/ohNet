@@ -58,6 +58,7 @@ public:
     static const Brn kHeaderReferer;
     static const Brn kHeaderTe;
     static const Brn kHeaderUserAgent;
+    static const Brn kHeaderAccessControlRequestMethod;
     // Response headers
     static const Brn kHeaderAcceptRanges;
     static const Brn kHeaderAge;
@@ -423,6 +424,18 @@ private:
     void Process(const Brx& aValue);
 private:
     TBool iContinue;
+};
+
+class HttpHeaderAccessControlRequestMethod : public HttpHeader
+{
+public:
+    const Brx& Method() const;
+private:
+    TBool Recognise(const Brx& aHeader);
+    void Process(const Brx& aValue);
+private:
+    static const TUint kMaxMethodBytes = 32;
+    Bws<kMaxMethodBytes> iMethod;
 };
 
 class EndpointHttp : public Endpoint
