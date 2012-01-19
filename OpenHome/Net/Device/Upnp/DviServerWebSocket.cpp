@@ -1289,6 +1289,9 @@ void PropertyUpdate::Merge(PropertyUpdate& aPropertyUpdate)
 
 void PropertyUpdate::Write(IWriter& aWriter)
 {
+    aWriter.Write('<');
+    aWriter.Write(WebSocket::kTagSubscription);
+    aWriter.Write('>');
     WriteTag(aWriter, WebSocket::kTagMethod, WebSocket::kMethodPropertyUpdate);
     WriteTag(aWriter, WebSocket::kTagNt, WebSocket::kValueNt);
     WriteTag(aWriter, WebSocket::kTagNts, WebSocket::kValuePropChange);
@@ -1300,10 +1303,10 @@ void PropertyUpdate::Write(IWriter& aWriter)
     for (TUint i=0; i<(TUint)iProperties.size(); i++) {
         WriteTag(aWriter, iProperties[i]->Name(), iProperties[i]->Value());
     }
-    aWriter.Write(Brn("</e:propertyset></root>"));
+    aWriter.Write(Brn("</e:propertyset>"));
     aWriter.Write('<');
-    aWriter.Write(WebSocket::kTagSubscription);
     aWriter.Write('/');
+    aWriter.Write(WebSocket::kTagSubscription);
     aWriter.Write('>');
 }
 
@@ -1453,14 +1456,7 @@ void PropertyUpdatesFlattened::WriteUpdates(IWriter& aWriter)
     aWriter.Write(Brn("<root>"));
     UpdatesMap::iterator it = iUpdatesMap.begin();
     while (it != iUpdatesMap.end()) {
-        aWriter.Write('<');
-        aWriter.Write(WebSocket::kTagSubscription);
-        aWriter.Write('>');
         it->second->Write(aWriter);
-        aWriter.Write('<');
-        aWriter.Write(WebSocket::kTagSubscription);
-        aWriter.Write('/');
-        aWriter.Write('>');
         delete it->second;
         it++;
     }
