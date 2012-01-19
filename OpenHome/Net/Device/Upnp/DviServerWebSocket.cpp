@@ -257,6 +257,9 @@ PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSi
     SetWriter(iWriter);
     iWriter.Write(Brn("<?xml version=\"1.0\"?>"));
     iWriter.Write(Brn("<root>"));
+    iWriter.Write('<');
+    iWriter.Write(WebSocket::kTagSubscription);
+    iWriter.Write('>');
     WriteTag(iWriter, WebSocket::kTagMethod, WebSocket::kMethodPropertyUpdate);
     WriteTag(iWriter, WebSocket::kTagNt, WebSocket::kValueNt);
     WriteTag(iWriter, WebSocket::kTagNts, WebSocket::kValuePropChange);
@@ -264,9 +267,6 @@ PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSi
     Bws<Ascii::kMaxUintStringBytes> seq;
     (void)Ascii::AppendDec(seq, aSequenceNumber);
     WriteTag(iWriter, WebSocket::kTagSeq, seq);
-    iWriter.Write('<');
-    iWriter.Write(WebSocket::kTagSubscription);
-    iWriter.Write('>');
     iWriter.Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
 }
 
@@ -603,6 +603,9 @@ void DviSessionWebSocket::Run()
         else if (method == Http::kMethodPost) {
             LongPollRequest();
             return;
+        }
+        else {
+            Error(HttpStatus::kBadRequest);
         }
     }
     catch (HttpError&) {
@@ -997,6 +1000,7 @@ void DviSessionWebSocket::NotifySubscriptionExpired(const Brx& /*aSid*/)
 void DviSessionWebSocket::LongPollRequest()
 {
     try {
+        iResponseStarted = iResponseEnded = false;
         DoLongPollRequest();
     }
     catch (HttpError&) { }
@@ -1012,9 +1016,8 @@ void DviSessionWebSocket::LongPollRequest()
             }
             iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
             Http::WriteHeaderConnectionClose(*iWriterResponse);
-            iWriterResponse->WriteFlush();
         }
-        else if (!iResponseEnded) {
+        if (!iResponseEnded) {
             iWriterResponse->WriteFlush();
         }
     }
