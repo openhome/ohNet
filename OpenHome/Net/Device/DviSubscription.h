@@ -29,6 +29,7 @@ public:
     virtual IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, 
                                           const Brx& aSid, TUint aSequenceNumber) = 0;
     virtual void NotifySubscriptionDeleted(const Brx& aSid) = 0;
+    virtual void NotifySubscriptionExpired(const Brx& aSid) = 0;
 };
 
 class DviDevice;
@@ -72,6 +73,7 @@ class PropertyWriter : public IPropertyWriter
 protected:
     PropertyWriter();
     void SetWriter(IWriter& aWriter);
+    static void WriteVariable(IWriter& aWriter, const Brx& aName, const Brx& aValue);
 private: // IPropertyWriter
     void PropertyWriteString(const Brx& aName, const Brx& aValue);
     void PropertyWriteInt(const Brx& aName, TInt aValue);
