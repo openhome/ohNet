@@ -57,6 +57,7 @@ const Brn Http::kHeaderRetryAfter("Retry-After");
 const Brn Http::kHeaderServer("Server");
 const Brn Http::kHeaderVary("Vary");
 const Brn Http::kHeaderWwwAuthenticate("WWW-Authenticate");
+const Brn Http::kHeaderAllowOrigin("Access-Control-Allow-Origin");
 const Brn Http::kHeaderAllow("Allow");
 const Brn Http::kHeaderContentEncoding("Content-Encoding");
 const Brn Http::kHeaderContentLanguage("Content-Language");
