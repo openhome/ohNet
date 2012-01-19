@@ -254,7 +254,7 @@ OhNet.SubscriptionManager = (function () {
         var service = services[subscriptionId];
         if (service) {
             if (service.SubscriptionTimer) {
-                sendMessage(renewMessage(subscriptionId));
+                sendMessage(renewMessage(subscriptionId),'Renew');
                 if (DEBUG) {
                     console.log("renewSubscription/subscriptionId: " + subscriptionId);
                 }
@@ -296,7 +296,7 @@ OhNet.SubscriptionManager = (function () {
                 receivePropertyUpdate(xmlDoc);
                 if(!webSocketLive && longPollingUrl!= '')
                 {
-                	sendMessage(getPropertyUpdatesMessage());
+                	sendMessage(getPropertyUpdatesMessage(),'GetPropertyUpdates');
                 }
             }
             else if (method == "SubscribeCompleted") {
@@ -312,7 +312,7 @@ OhNet.SubscriptionManager = (function () {
                 
                 if(!webSocketLive && longPollingUrl!= '')
                 {
-                	sendMessage(getPropertyUpdatesMessage());
+                	sendMessage(getPropertyUpdatesMessage(),'GetPropertyUpdates');
                 }
             }
             else if (method == "RenewCompleted") {
@@ -578,8 +578,9 @@ OhNet.SubscriptionManager = (function () {
     * Send a message based either through websockets or long polling
     * @method sendMessage
     * @param {String} message The message to send
+    * @param {String} method The method to call for long polling only
     */
-    var sendMessage = function (message) {
+    var sendMessage = function (message,method) {
 		if(webSocketLive)
 		{
 			websocket.send(message);
@@ -597,7 +598,7 @@ OhNet.SubscriptionManager = (function () {
 		            receiveMessage(request.responseText);  
 		        }
 		    };
-		    request.open('POST', longPollingUrl, true);
+		    request.open('POST', longPollingUrl+method, true);
 		    request.timeout = 60000;
 		    request.send(message);
 		}
@@ -735,7 +736,7 @@ OhNet.SubscriptionManager = (function () {
             if (serviceAddedFunction) {
                 service.serviceAddedFunction = serviceAddedFunction;
             }
-            sendMessage(subscribeMessage(service))
+            sendMessage(subscribeMessage(service),'Subscribe')
             if (DEBUG) {
                 console.log("addService/service.subscriptionId : " + service.subscriptionId);
             }
@@ -758,7 +759,7 @@ OhNet.SubscriptionManager = (function () {
 
         if (service) {
 
-            sendMessage(unsubscribeMessage(subscriptionId));
+            sendMessage(unsubscribeMessage(subscriptionId),'Unsubscribe');
 
             if (service.SubscriptionTimer) { // Stop in-progress timers
                 clearTimeout(service.SubscriptionTimer);
