@@ -276,11 +276,12 @@ PropertyWriterWs::~PropertyWriterWs()
 
 void PropertyWriterWs::PropertyWriteEnd()
 {
+    iWriter.Write(Brn("</e:propertyset>"));
     iWriter.Write('<');
     iWriter.Write('/');
     iWriter.Write(WebSocket::kTagSubscription);
     iWriter.Write('>');
-    iWriter.Write(Brn("</e:propertyset></root>"));
+    iWriter.Write(Brn("</root>"));
     Brh* buf = new Brh;
     iWriter.TransferTo(*buf);
     iSession.QueuePropertyUpdate(buf);
