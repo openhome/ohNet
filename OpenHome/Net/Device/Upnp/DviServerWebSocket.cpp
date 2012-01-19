@@ -533,12 +533,12 @@ void WsProtocol80::Close(TUint16 aCode)
 
 DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
     : iEndpoint(aPort, aInterface)
+    , iExit(false)
     , iInterruptLock("WSIM")
     , iShutdownSem("WSIS", 1)
     , iPropertyUpdates(kMaxPropertyUpdates)
     , iPropertyUpdateCollection(DviStack::PropertyUpdateCollection())
     , iLongPollSem("DVLP", 0)
-    , iExit(false)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
