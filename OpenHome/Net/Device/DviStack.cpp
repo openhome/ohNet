@@ -19,6 +19,7 @@ DviStack::DviStack()
     , iMdns(NULL)
 {
     Stack::SetDviStack(this);
+    iPropertyUpdateCollection = new DviPropertyUpdateCollection();
     TUint port = (Stack::InitParams().DvIsBonjourEnabled()? 80 : 0);
     iDviServerUpnp = new DviServerUpnp(port);
     iDviDeviceMap = new DviDeviceMap;
@@ -27,7 +28,6 @@ DviStack::DviStack()
     if (Stack::InitParams().DvIsBonjourEnabled()) {
         iMdns = new OpenHome::Net::MdnsProvider(""); // replace this to allow clients to set an alternative Bonjour implementation
     }
-    iPropertyUpdateCollection = new DviPropertyUpdateCollection();
 }
 
 DviStack::~DviStack()
