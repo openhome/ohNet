@@ -1000,6 +1000,7 @@ void DviSessionWebSocket::NotifySubscriptionExpired(const Brx& /*aSid*/)
 void DviSessionWebSocket::LongPollRequest()
 {
     try {
+        iResponseStarted = iResponseEnded = false;
         DoLongPollRequest();
     }
     catch (HttpError&) { }
@@ -1015,9 +1016,8 @@ void DviSessionWebSocket::LongPollRequest()
             }
             iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
             Http::WriteHeaderConnectionClose(*iWriterResponse);
-            iWriterResponse->WriteFlush();
         }
-        else if (!iResponseEnded) {
+        if (!iResponseEnded) {
             iWriterResponse->WriteFlush();
         }
     }
