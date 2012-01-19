@@ -26,24 +26,22 @@ if (typeof OhNet == "undefined" || !OhNet) {
 OhNet.SubscriptionManager = (function () {
 
     // Constants 
-    var VERSION = "2.0";
     var DEFAULT_SUBSCRIPTION_TIMEOUT_SEC = 1800; // The default suggested timeout in seconds for each subscription.
     var WEBSOCKETRETRYATTEMPTS = 1; // The number if retries for websockets before falling back to long polling (does not include initial attempt).
     var RENEW_TRIGGER = 0.7; // The multiplier in which to send the renewal message. (Send renew message every RENEW_TRIGGER * DEFAULT_SUBSCRIPTION_TIMEOUT_SEC)
     var DEBUG = false; // A flag to enable debugging messages written to console
- 	var ALLOWWEBSOCKET = false; // A flag to force the subscription manager to always use long polling
+ 	var ALLOWWEBSOCKET = true; // A flag to force the subscription manager to always use long polling
  	
     // Private Variables
     var services = []; // Collection of OhNet services
     var websocket = null; // HTML 5 web socket object to handle property state events
     var subscriptionCounter = -1; // A unique identifier for each subscription (zero-based).
-    var subscriptionTimeoutSec = -1; // The suggested timeout in seconds for each subscription.
+    var SubscriptionTimeoutSeconds = -1; // The suggested timeout in seconds for each subscription.
 	var clientId = '';
 	
     var StartedFunction;
     var ErrorFunction;
     var Debug;
-    var SubscriptionTimeoutSeconds;
     var webSocketPort;
     var webSocketAttempts = 0;
     var webSocketLive = false;
@@ -73,7 +71,7 @@ OhNet.SubscriptionManager = (function () {
         message += "<UDN>" + service.udn + "</UDN>";
         message += "<SERVICE>" + service.serviceName + "</SERVICE>";
         message += "<NT>upnp:event</NT>";
-        message += "<TIMEOUT>" + subscriptionTimeoutSec + "</TIMEOUT>";
+        message += "<TIMEOUT>" + subscriptionTimeoutSeconds + "</TIMEOUT>";
         message += "</ROOT>";
 
         if (DEBUG) {
@@ -118,7 +116,7 @@ OhNet.SubscriptionManager = (function () {
         message += "<ROOT>";
         message += "<METHOD>Renew</METHOD>";
         message += "<SID>" + subscriptionId + "</SID>";
-        message += "<TIMEOUT>" + subscriptionTimeoutSec + "</TIMEOUT>";
+        message += "<TIMEOUT>" + subscriptionTimeoutSeconds + "</TIMEOUT>";
         message += "</ROOT>";
 
         if (DEBUG) {
@@ -151,7 +149,7 @@ OhNet.SubscriptionManager = (function () {
     /**
     * Starts the timer to renew subscriptions. 
     * The actual subscription timeout is returned by the OhNet Service. 
-    * subscriptionTimeoutSec is the suggested timeout sent to the server.
+    * subscriptionTimeoutSeconds is the suggested timeout sent to the server.
     * @method setSubscriptionTimeout
     * @param {Int} subscriptionId The subscription id of the service
     * @param {Int} timeoutSeconds The actual subscription timeout
@@ -442,7 +440,7 @@ OhNet.SubscriptionManager = (function () {
 	/**
     * Starts the timer to renew subscriptions. 
     * The actual subscription timeout is returned by the OhNet Service.
-    * subscriptionTimeoutSec is the suggested timeout sent to the server.
+    * subscriptionTimeoutSeconds is the suggested timeout sent to the server.
     * @method receiveRenewCompleted
     * @param {Int} subscriptionId The subscription id of the service
     * @param {Object} xmlDoc The XML to traverse
@@ -514,9 +512,13 @@ OhNet.SubscriptionManager = (function () {
     * @method reconnect
     */
     var reconnect = function () {
-        start(StartedFunction, webSocketPort, Debug, SubscriptionTimeoutSeconds);
+        start({
+        	startedFunction : StartedFunction,
+    		port : webSocketPort,
+    		debugMode : Debug,
+    		subscriptionTimeoutSeconds : SubscriptionTimeoutSeconds
+        });
     };
-
     /**
     * Socket event for when the socket is opened.  Debugging purposes only.
     * @method onSocketOpen
@@ -558,6 +560,21 @@ OhNet.SubscriptionManager = (function () {
     };
     
     /**
+    * A helper method to merge options
+    * @method extend
+    * @param {Object} defaults Collection that contains default options
+    * @param {Object} options Collection that contains user defined options
+    */
+     var mergeOptions = function (defaults,options) {
+    	var newoptions = {};
+    	for (var attrname in defaults) { newoptions[attrname] = defaults[attrname]; }
+    	for (var attrname in options) { newoptions[attrname] = options[attrname]; }
+    	return newoptions;
+    };
+
+    
+    
+    /**
     * Send a message based either through websockets or long polling
     * @method sendMessage
     * @param {String} message The message to send
@@ -592,34 +609,44 @@ OhNet.SubscriptionManager = (function () {
     /**
     * Starts the Subscription Manager and opens a Web Socket.
     * @method start
-    * @param {Function} startedFunction The function to call once the Subscription Manager successfully starts.
-    * @param {Boolean} debugMode A switch to turn debugging on to log debugging messages to console.
-    * @param {Int} subscriptionTimeoutSeconds The suggested subscription timeout value.  Overrides the default.
+    * @param {Object} options Contains user defined options
     */
-    var start = function (startedFunction, port, debugMode, subscriptionTimeoutSeconds, errorFunction) {
+    var start = function (options) { 
     	
+    	var defaults = {
+    		startedFunction : null,
+    		port : null,
+    		debugMode : false,
+    		subscriptionTimeoutSeconds : DEFAULT_SUBSCRIPTION_TIMEOUT_SEC,
+    		errorFunction : null,
+    		allowWebSockets : true
+    	};
+    	
+    	options = mergeOptions(defaults,options);
+    	
+    	ALLOWWEBSOCKET = options.allowWebSockets;
     	clientId = generateGUID();
-        StartedFunction = startedFunction;
-        ErrorFunction = errorFunction;
-        Debug = debugMode;
-        SubscriptionTimeoutSeconds = subscriptionTimeoutSeconds;
-        webSocketPort = port;
-        if (debugMode) {
-            DEBUG = debugMode;
-            console.log("*** OhNet.SubscriptionManager v" + VERSION + " ***");
-        }
-
-        subscriptionTimeoutSec = subscriptionTimeoutSeconds ? subscriptionTimeoutSeconds : DEFAULT_SUBSCRIPTION_TIMEOUT_SEC;
+        StartedFunction = options.startedFunction;
+        ErrorFunction = options.errorFunction;
+        Debug = options.debugMode;
+        webSocketPort = options.port;
+        subscriptionTimeoutSeconds = options.subscriptionTimeoutSeconds;
         
-        if(port && port!="")
+        console.log(options);
+        if (Debug) {
+            DEBUG = options.debugMode;
+            console.log("*** OhNet.SubscriptionManager ***");
+        }
+        
+        if(options.port && options.port!="")
         {	
         	var websocketSupported = ("WebSocket" in window);
         	if (websocketSupported && ALLOWWEBSOCKET) { // NON-IE check if Websockets is supported
-        		startWebSocket("ws://" + window.location.hostname + ":"+port+"/");
+        		startWebSocket("ws://" + window.location.hostname + ":"+options.port+"/");
 	        }
 	        else {
 	        	
-	            startLongPolling("http://" + window.location.hostname + ":"+port+"/");
+	            startLongPolling("http://" + window.location.hostname + ":"+options.port+"/");
 	        }
         }
         else
@@ -628,8 +655,8 @@ OhNet.SubscriptionManager = (function () {
                 console.log("start/port: NULL");
             }
             
-            if(errorFunction)
-            	errorFunction('Connection failed.');
+            if(options.errorFunction)
+            	options.errorFunction('Connection failed.');
         }
     };
     
