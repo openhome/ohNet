@@ -27,14 +27,37 @@ private: // DvProviderOpenhomeOrgSubscriptionLongPoll1
     void Renew(IDvInvocation& aInvocation, const Brx& aSid, TUint aRequestedDuration, IDvInvocationResponseUint& aDuration);
     void GetPropertyUpdates(IDvInvocation& aInvocation, const Brx& aClientId, IDvInvocationResponseString& aUpdates);
 private:
+    void GetPropertyUpdatesComplete();
+private:
     static const TUint kTimeoutLongPollSecs = 5 * 60; // 5 mins
     static const TUint kGetUpdatesMaxDelay = 30 * 1000; // 30 secs
+    static const TUint kErrorCodeBadDevice = 810;
+    static const TUint kErrorCodeBadService = 811;
+    static const TUint kErrorCodeBadSubscription = 812;
+    static const TUint kErrorCodeTooManyRequests = 813;
+    static const Brn kErrorDescBadDevice;
+    static const Brn kErrorDescBadService;
+    static const Brn kErrorDescBadSubscription;
+    static const Brn kErrorDescTooManyRequests;
+    friend class AutoGetPropertyUpdatesComplete;
 private:
     DviPropertyUpdateCollection& iPropertyUpdateCollection;
+    Mutex iLock;
     Semaphore iUpdatesReady;
     Semaphore iShutdown;
     TBool iExit;
+    TUint iMaxClientCount;
     TUint iClientCount;
+private:
+    // cleans up when GetPropertyUpdates exits
+    class AutoGetPropertyUpdatesComplete : private INonCopyable
+    {
+    public:
+        AutoGetPropertyUpdatesComplete(DviProviderSubscriptionLongPoll& aLongPoll);
+        ~AutoGetPropertyUpdatesComplete();
+    private:
+        DviProviderSubscriptionLongPoll& iLongPoll;
+    };
 };
 
 } // namespace Net

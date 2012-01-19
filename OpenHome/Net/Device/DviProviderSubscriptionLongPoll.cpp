@@ -8,9 +8,16 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+
+const Brn DviProviderSubscriptionLongPoll::kErrorDescBadDevice("Device does not exist");
+const Brn DviProviderSubscriptionLongPoll::kErrorDescBadService("Service does not exist");
+const Brn DviProviderSubscriptionLongPoll::kErrorDescBadSubscription("Subscription does not exist");
+const Brn DviProviderSubscriptionLongPoll::kErrorDescTooManyRequests("Too many long poll requests already active");
+
 DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DvDevice& aDevice)
     : DvProviderOpenhomeOrgSubscriptionLongPoll1(aDevice)
     , iPropertyUpdateCollection(DviStack::PropertyUpdateCollection())
+    , iLock("LPMX")
     , iUpdatesReady("LPUR", 0)
     , iShutdown("LPSH", 0)
 {
@@ -18,7 +25,10 @@ DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DvDevice& aDevi
     EnableActionUnsubscribe();
     EnableActionRenew();
     EnableActionGetPropertyUpdates();
+
     iShutdown.Signal();
+    iMaxClientCount = Stack::InitParams().DvNumServerThreads() / 2;
+    ASSERT(iMaxClientCount > 0);
 }
 
 DviProviderSubscriptionLongPoll::~DviProviderSubscriptionLongPoll()
@@ -37,7 +47,7 @@ void DviProviderSubscriptionLongPoll::Subscribe(IDvInvocation& aInvocation, cons
 
     DviDevice* device = DviStack::DeviceMap().Find(aUdn);
     if (device == NULL) {
-        aInvocation.Error(501, Brn("Subscribe: no such device"));
+        aInvocation.Error(kErrorCodeBadDevice, kErrorDescBadDevice);
     }
     DviService* service = NULL;
     const TUint serviceCount = device->ServiceCount();
@@ -49,7 +59,7 @@ void DviProviderSubscriptionLongPoll::Subscribe(IDvInvocation& aInvocation, cons
         }
     }
     if (service == NULL) {
-        aInvocation.Error(501, Brn("Subscribe: no such service"));
+        aInvocation.Error(kErrorCodeBadService, kErrorDescBadService);
     }
     Brh sid;
     device->CreateSid(sid);
@@ -62,7 +72,7 @@ void DviProviderSubscriptionLongPoll::Subscribe(IDvInvocation& aInvocation, cons
     aDuration.Write(timeout);
     aInvocation.EndResponse();
 
-    // Start subscription, prompting delivery of the first update (covering all state variables)
+    // Start subscription, prompting availability of the first update (covering all state variables)
     iPropertyUpdateCollection.AddSubscription(aClientId, subscription);
     DviSubscriptionManager::AddSubscription(*subscription);
     service->AddSubscription(subscription);
@@ -79,7 +89,7 @@ void DviProviderSubscriptionLongPoll::Renew(IDvInvocation& aInvocation, const Br
 {
     DviSubscription* subscription = DviSubscriptionManager::Find(aSid);
     if (subscription == NULL) {
-        aInvocation.Error(501, Brn("Renew: no such subscription"));
+        aInvocation.Error(kErrorCodeBadSubscription, kErrorDescBadSubscription);
     }
     TUint timeout = aRequestedDuration;
     subscription->Renew(timeout);
@@ -90,8 +100,20 @@ void DviProviderSubscriptionLongPoll::Renew(IDvInvocation& aInvocation, const Br
 
 void DviProviderSubscriptionLongPoll::GetPropertyUpdates(IDvInvocation& aInvocation, const Brx& aClientId, IDvInvocationResponseString& aUpdates)
 {
-    // FIXME - limit number of concurrent requests, leaving some provider threads for regular (much shorter running) actions
-    iShutdown.Wait();
+    iLock.Wait();
+    if (iExit) {
+        aInvocation.Error(501, Brx::Empty());
+    }
+    if (iClientCount == iMaxClientCount) {
+        aInvocation.Error(kErrorCodeTooManyRequests, kErrorDescTooManyRequests);
+    }
+    if (iClientCount == 0) {
+        iShutdown.Wait();
+    }
+    iClientCount++;
+    iLock.Signal();
+
+    AutoGetPropertyUpdatesComplete a(*this);
     Brh response;
     try {
         iPropertyUpdateCollection.SetClientSignal(aClientId, &iUpdatesReady);
@@ -112,5 +134,25 @@ void DviProviderSubscriptionLongPoll::GetPropertyUpdates(IDvInvocation& aInvocat
     }
     aUpdates.WriteFlush();
     aInvocation.EndResponse();
-    iShutdown.Signal(); // FIXME - needs to be called in event of any exception too
+}
+
+void DviProviderSubscriptionLongPoll::GetPropertyUpdatesComplete()
+{
+    iLock.Wait();
+    iClientCount--;
+    TBool couldShutdown = (iClientCount==0);
+    iLock.Signal();
+    if (couldShutdown) {
+        iShutdown.Signal();
+    }
+}
+
+DviProviderSubscriptionLongPoll::AutoGetPropertyUpdatesComplete::AutoGetPropertyUpdatesComplete(DviProviderSubscriptionLongPoll& aLongPoll)
+    : iLongPoll(aLongPoll)
+{
+}
+
+DviProviderSubscriptionLongPoll::AutoGetPropertyUpdatesComplete::~AutoGetPropertyUpdatesComplete()
+{
+    iLongPoll.GetPropertyUpdatesComplete();
 }
