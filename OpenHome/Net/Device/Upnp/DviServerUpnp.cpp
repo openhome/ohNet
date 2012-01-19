@@ -867,7 +867,7 @@ void DviSessionUpnp::WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeTyp
 		writer.Write(Brn("; charset=\"utf-8\""));
 		writer.WriteFlush();
 	}
-    // we need to allow requests to multiple (two) origins if the client uses long polling
+    // we need to allow requests to multiple (two) origins if the client is js and uses long polling
     // !!!! could/should probably change this to specify our ip address but any port
     iWriterResponse->WriteHeader(Http::kHeaderAllowOrigin, Brn("*")); 
     Http::WriteHeaderConnectionClose(*iWriterResponse);
