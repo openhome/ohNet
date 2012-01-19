@@ -581,7 +581,8 @@ void DviSessionWebSocket::Run()
         }
         else if (method == Http::kMethodPost) {
             Parser parser(iReaderRequest->Uri());
-            Brn pollMethod = parser.Next('/');
+            (void)parser.Next('/');
+            Brn pollMethod = parser.Remaining();
             LongPollRequest(pollMethod);
             return;
         }
@@ -591,9 +592,10 @@ void DviSessionWebSocket::Run()
                 Error(HttpStatus::kBadRequest);
             }
             Parser parser(iReaderRequest->Uri());
-            Brn pollMethod = parser.Next('/');
-            pollMethod.Set(parser.Next('/'));
-            pollMethod.Set(parser.Next('/'));
+            (void)parser.Next('/');
+            (void)parser.Next('/');
+            (void)parser.Next('/');
+            Brn pollMethod = parser.Remaining();
             LongPollRequest(pollMethod);
             return;
         }
@@ -1173,7 +1175,7 @@ void DviSessionWebSocket::LongPollWriteResponse(const Brx& aResponse)
 {
     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
     iResponseStarted = true;
-    Http::WriteHeaderContentLength(*iWriterResponse, aResponse.Bytes());
+    Http::WriteHeaderContentLength(*iWriterResponse, aResponse.Bytes() + 2 /* additional crlf */);
     Http::WriteHeaderConnectionClose(*iWriterResponse);
     iWriterResponse->Write(Brn("\r\n"));
     iWriterResponse->Write(aResponse);
@@ -1362,6 +1364,7 @@ void PropertyWriterPolled::PropertyWriteEnd()
 
 PropertyUpdatesFlattened::PropertyUpdatesFlattened(const Brx& aClientId)
     : iClientId(aClientId)
+    , iSem(NULL)
 {
 }
 
