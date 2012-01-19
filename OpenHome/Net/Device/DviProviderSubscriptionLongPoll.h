@@ -27,7 +27,8 @@ private: // DvProviderOpenhomeOrgSubscriptionLongPoll1
     void Renew(IDvInvocation& aInvocation, const Brx& aSid, TUint aRequestedDuration, IDvInvocationResponseUint& aDuration);
     void GetPropertyUpdates(IDvInvocation& aInvocation, const Brx& aClientId, IDvInvocationResponseString& aUpdates);
 private:
-    void GetPropertyUpdatesComplete();
+    void StartGetPropertyUpdates(IDvInvocation& aInvocation);
+    void EndGetPropertyUpdates();
 private:
     static const TUint kTimeoutLongPollSecs = 5 * 60; // 5 mins
     static const TUint kGetUpdatesMaxDelay = 30 * 1000; // 30 secs

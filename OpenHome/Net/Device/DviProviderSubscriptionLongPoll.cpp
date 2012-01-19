@@ -20,6 +20,8 @@ DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DvDevice& aDevi
     , iLock("LPMX")
     , iUpdatesReady("LPUR", 0)
     , iShutdown("LPSH", 0)
+    , iExit(false)
+    , iClientCount(0)
 {
     EnableActionSubscribe();
     EnableActionUnsubscribe();
@@ -100,19 +102,7 @@ void DviProviderSubscriptionLongPoll::Renew(IDvInvocation& aInvocation, const Br
 
 void DviProviderSubscriptionLongPoll::GetPropertyUpdates(IDvInvocation& aInvocation, const Brx& aClientId, IDvInvocationResponseString& aUpdates)
 {
-    iLock.Wait();
-    if (iExit) {
-        aInvocation.Error(501, Brx::Empty());
-    }
-    if (iClientCount == iMaxClientCount) {
-        aInvocation.Error(kErrorCodeTooManyRequests, kErrorDescTooManyRequests);
-    }
-    if (iClientCount == 0) {
-        iShutdown.Wait();
-    }
-    iClientCount++;
-    iLock.Signal();
-
+    StartGetPropertyUpdates(aInvocation);
     AutoGetPropertyUpdatesComplete a(*this);
     Brh response;
     try {
@@ -136,7 +126,22 @@ void DviProviderSubscriptionLongPoll::GetPropertyUpdates(IDvInvocation& aInvocat
     aInvocation.EndResponse();
 }
 
-void DviProviderSubscriptionLongPoll::GetPropertyUpdatesComplete()
+void DviProviderSubscriptionLongPoll::StartGetPropertyUpdates(IDvInvocation& aInvocation)
+{
+    AutoMutex a(iLock);
+    if (iExit) {
+        aInvocation.Error(501, Brx::Empty());
+    }
+    if (iClientCount == iMaxClientCount) {
+        aInvocation.Error(kErrorCodeTooManyRequests, kErrorDescTooManyRequests);
+    }
+    if (iClientCount == 0) {
+        iShutdown.Wait();
+    }
+    iClientCount++;
+}
+
+void DviProviderSubscriptionLongPoll::EndGetPropertyUpdates()
 {
     iLock.Wait();
     iClientCount--;
@@ -154,5 +159,5 @@ DviProviderSubscriptionLongPoll::AutoGetPropertyUpdatesComplete::AutoGetProperty
 
 DviProviderSubscriptionLongPoll::AutoGetPropertyUpdatesComplete::~AutoGetPropertyUpdatesComplete()
 {
-    iLongPoll.GetPropertyUpdatesComplete();
+    iLongPoll.EndGetPropertyUpdates();
 }
