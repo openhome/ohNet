@@ -59,17 +59,20 @@
 
                     testSubscriptionManager: function () {
                         _this = this;
-                        OhNet.SubscriptionManager.start(function () {
-                            proxy = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
-                            proxy.subscribe(function () {
-                                _this.resume();
-                            });
-                            proxy2 = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
-                            proxy2.subscribe();
-
-
-                            Y.Assert.isNotUndefined(proxy);
-                        }, 54321, true);
+                        OhNet.SubscriptionManager.start({
+               				startedFunction: function () {
+                				proxy = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
+	                            proxy.subscribe(function () {
+	                                _this.resume();
+	                            });
+	                            proxy2 = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
+	                            proxy2.subscribe();
+                            	Y.Assert.isNotUndefined(proxy);
+                   			},
+	                   		port: 54321,
+	                   		debugMode: true,
+	                   		allowWebSockets: true
+           				});
                         this.wait(kAsyncTimeoutMS);
                     },
 
