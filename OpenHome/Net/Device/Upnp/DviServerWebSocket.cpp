@@ -1086,7 +1086,7 @@ void DviSessionWebSocket::LongPollSubscribe(const Brx& aRequest)
         WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionSid);
         WriteTag(writer, WebSocket::kTagUdn, udn);
         WriteTag(writer, WebSocket::kTagService, serviceId);
-        WriteTag(writer, WebSocket::kTagSid, sid);
+        WriteTag(writer, WebSocket::kTagSid, subscription->Sid());
         Bws<Ascii::kMaxUintStringBytes> timeoutBuf;
         (void)Ascii::AppendDec(timeoutBuf, timeout);
         WriteTag(writer, WebSocket::kTagTimeout, timeoutBuf);
