@@ -36,7 +36,7 @@ OhNet.SubscriptionManager = (function () {
     var services = []; // Collection of OhNet services
     var websocket = null; // HTML 5 web socket object to handle property state events
     var subscriptionCounter = -1; // A unique identifier for each subscription (zero-based).
-    var SubscriptionTimeoutSeconds = -1; // The suggested timeout in seconds for each subscription.
+    var subscriptionTimeoutSeconds = -1; // The suggested timeout in seconds for each subscription.
 	var clientId = '';
 	
     var StartedFunction;
@@ -46,7 +46,7 @@ OhNet.SubscriptionManager = (function () {
     var webSocketAttempts = 0;
     var webSocketLive = false;
     var longPollingUrl = '';
-   
+    var longPollingProxy = null;
     
     var pendingServices = [];
 	var pendingPropertyUpdates = {};
@@ -254,7 +254,14 @@ OhNet.SubscriptionManager = (function () {
         var service = services[subscriptionId];
         if (service) {
             if (service.SubscriptionTimer) {
-                sendMessage(renewMessage(subscriptionId),'Renew');
+                if(webSocketLive)
+				{
+					websocket.send(renewMessage(subscriptionId));
+				}
+				else
+				{
+					renewRequest(subscriptionId);
+				}
                 if (DEBUG) {
                     console.log("renewSubscription/subscriptionId: " + subscriptionId);
                 }
@@ -271,6 +278,68 @@ OhNet.SubscriptionManager = (function () {
             }
         }
     };
+    
+    var renewRequest = function(sid)
+    {
+		longPollingProxy.Renew(sid,subscriptionTimeoutSeconds, function(result) {
+			setSubscriptionTimeout(sid, result.Duration);
+		});
+    }
+    
+    var unsubscribeRequest = function(sid)
+    {
+    	longPollingProxy.Unsubscribe(sid);
+    }
+    
+    
+    
+    var subscribeRequest = function(service)
+    {
+    	var srv = service;
+		longPollingProxy.Subscribe(clientId,service.udn,service.serviceName,subscriptionTimeoutSeconds, function(result) {
+
+			for(var i = 0 ; i < pendingServices.length; i++)
+        	{
+	        	var pendingService = pendingServices[i];
+	        	
+	        	if(pendingService.udn == srv.udn && pendingService.serviceName == srv.serviceName)
+	        	{
+	        		services[result.subscriptionId] = pendingService;
+	        		pendingServices.splice(i,1);
+	        		var service = services[result.subscriptionId];
+	                if (service.serviceAddedFunction) {
+	                    service.serviceAddedFunction();
+	                    service.serviceAddedFunction = null;
+	                }
+	        		if (DEBUG) {
+	        			console.log("receiveSubscribeCompleted/Removing pending service");
+	            		console.log("receiveSubscribeCompleted/pendingServices.length: "+pendingServices.length);
+	        		}
+	        		break;
+	        	}
+        	}
+        	if(pendingPropertyUpdates[result.subscriptionId])
+            {
+            	receivePropertyUpdate(pendingPropertyServices[result.subscriptionId]);
+            }    
+           
+           	if(!webSocketLive && longPollingUrl!= '')
+            {
+               	propertyUpdateRequest();
+            }
+		});
+    }
+    
+    var propertyUpdateRequest = function()
+    {
+    	longPollingProxy.GetPropertyUpdates(clientId, function(results) {
+    		receivePropertyUpdate(results.Updates);
+    		console.log(results);
+    		//propertyUpdateRequest();
+    	});
+    }
+    
+    
 
     /**
     * Parses the XML message received from the OhNet Service
@@ -296,7 +365,7 @@ OhNet.SubscriptionManager = (function () {
                 receivePropertyUpdate(xmlDoc);
                 if(!webSocketLive && longPollingUrl!= '')
                 {
-                	sendMessage(getPropertyUpdatesMessage(),'GetPropertyUpdates');
+                //	websocket.send(getPropertyUpdatesMessage());
                 }
             }
             else if (method == "SubscribeCompleted") {
@@ -307,12 +376,12 @@ OhNet.SubscriptionManager = (function () {
                 receiveSubscribeCompleted(subscriptionId,udn,service, xmlDoc);
                 if(pendingPropertyUpdates[subscriptionId])
                 {
-                	receivePropertyUpdate(subscriptionId, pendingPropertyServices[subscriptionId]);
+                	receivePropertyUpdate(pendingPropertyServices[subscriptionId]);
                 }
                 
                 if(!webSocketLive && longPollingUrl!= '')
                 {
-                	sendMessage(getPropertyUpdatesMessage(),'GetPropertyUpdates');
+                	//sendMessage(getPropertyUpdatesMessage(),'GetPropertyUpdates');
                 }
             }
             else if (method == "RenewCompleted") {
@@ -516,7 +585,7 @@ OhNet.SubscriptionManager = (function () {
         	startedFunction : StartedFunction,
     		port : webSocketPort,
     		debugMode : Debug,
-    		subscriptionTimeoutSeconds : SubscriptionTimeoutSeconds
+    		subscriptionTimeoutSeconds : subscriptionTimeoutSeconds
         });
     };
     /**
@@ -573,40 +642,6 @@ OhNet.SubscriptionManager = (function () {
     };
 
     
-    
-    /**
-    * Send a message based either through websockets or long polling
-    * @method sendMessage
-    * @param {String} message The message to send
-    * @param {String} method The method to call for long polling only
-    */
-    var sendMessage = function (message,method) {
-		if(webSocketLive)
-		{
-			websocket.send(message);
-		}
-		else // Long Polling
-		{
-			var request = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-		    request.onreadystatechange = function () {
-		        if (request.readyState != 4)
-		            return;
-		        if (request.status == 200) {
-		        	if (DEBUG) {
-            			console.log("sendMessage/LongPolling/responseText: " + request.responseText);
-        			}
-		            receiveMessage(request.responseText);  
-		        }
-		    };
-		    request.open('POST', longPollingUrl+method, true);
-		    request.timeout = 60000;
-		    request.send(message);
-		}
-    	
-    };
-    
-       
-
     /**
     * Starts the Subscription Manager and opens a Web Socket.
     * @method start
@@ -633,7 +668,7 @@ OhNet.SubscriptionManager = (function () {
         webSocketPort = options.port;
         subscriptionTimeoutSeconds = options.subscriptionTimeoutSeconds;
         
-        console.log(options);
+
         if (Debug) {
             DEBUG = options.debugMode;
             console.log("*** OhNet.SubscriptionManager ***");
@@ -670,6 +705,7 @@ OhNet.SubscriptionManager = (function () {
     	if (DEBUG) {
             console.log("startLongPolling: Starting");
         }
+        longPollingProxy =  new CpProxyOpenhomeOrgSubscriptionLongPoll1(nodeUdn);
         longPollingUrl = url;
         running = true;
         StartedFunction();
@@ -736,7 +772,15 @@ OhNet.SubscriptionManager = (function () {
             if (serviceAddedFunction) {
                 service.serviceAddedFunction = serviceAddedFunction;
             }
-            sendMessage(subscribeMessage(service),'Subscribe')
+            if(webSocketLive)
+			{
+				websocket.send(subscribeMessage(service));
+			}
+			else
+			{
+
+				subscribeRequest(service);
+			}
             if (DEBUG) {
                 console.log("addService/service.subscriptionId : " + service.subscriptionId);
             }
@@ -758,9 +802,14 @@ OhNet.SubscriptionManager = (function () {
         var service = services[subscriptionId];
 
         if (service) {
-
-            sendMessage(unsubscribeMessage(subscriptionId),'Unsubscribe');
-
+			if(webSocketLive)
+            {
+            	websocket.send(unsubscribeMessage(subscriptionId));
+			}
+			else
+			{
+				unsubscribeRequest(subscriptionId);
+			}
             if (service.SubscriptionTimer) { // Stop in-progress timers
                 clearTimeout(service.SubscriptionTimer);
             }
