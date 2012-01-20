@@ -1445,7 +1445,7 @@ PropertyUpdate* PropertyUpdatesFlattened::MergeUpdate(PropertyUpdate* aUpdate)
 void PropertyUpdatesFlattened::SetClientSignal(Semaphore* aSem)
 {
     iSem = aSem;
-    if (aSem != NULL && iSubscriptionMap.size() > 0) {
+    if (aSem != NULL && iUpdatesMap.size() > 0) {
         aSem->Signal();
         aSem = NULL;
     }
