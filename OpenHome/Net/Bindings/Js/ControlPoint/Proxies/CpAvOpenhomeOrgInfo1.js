@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgInfo1
-* @module ohNet
+* @module ohnet
 * @class Info
 */
 	
@@ -18,18 +18,18 @@ var CpProxyAvOpenhomeOrgInfo1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new OhNet.ServiceProperty("TrackCount","int");
-	this.serviceProperties["DetailsCount"] = new OhNet.ServiceProperty("DetailsCount","int");
-	this.serviceProperties["MetatextCount"] = new OhNet.ServiceProperty("MetatextCount","int");
-	this.serviceProperties["Uri"] = new OhNet.ServiceProperty("Uri","string");
-	this.serviceProperties["Metadata"] = new OhNet.ServiceProperty("Metadata","string");
-	this.serviceProperties["Duration"] = new OhNet.ServiceProperty("Duration","int");
-	this.serviceProperties["BitRate"] = new OhNet.ServiceProperty("BitRate","int");
-	this.serviceProperties["BitDepth"] = new OhNet.ServiceProperty("BitDepth","int");
-	this.serviceProperties["SampleRate"] = new OhNet.ServiceProperty("SampleRate","int");
-	this.serviceProperties["Lossless"] = new OhNet.ServiceProperty("Lossless","bool");
-	this.serviceProperties["CodecName"] = new OhNet.ServiceProperty("CodecName","string");
-	this.serviceProperties["Metatext"] = new OhNet.ServiceProperty("Metatext","string");
+	this.serviceProperties["TrackCount"] = new ohnet.serviceproperty("TrackCount","int");
+	this.serviceProperties["DetailsCount"] = new ohnet.serviceproperty("DetailsCount","int");
+	this.serviceProperties["MetatextCount"] = new ohnet.serviceproperty("MetatextCount","int");
+	this.serviceProperties["Uri"] = new ohnet.serviceproperty("Uri","string");
+	this.serviceProperties["Metadata"] = new ohnet.serviceproperty("Metadata","string");
+	this.serviceProperties["Duration"] = new ohnet.serviceproperty("Duration","int");
+	this.serviceProperties["BitRate"] = new ohnet.serviceproperty("BitRate","int");
+	this.serviceProperties["BitDepth"] = new ohnet.serviceproperty("BitDepth","int");
+	this.serviceProperties["SampleRate"] = new ohnet.serviceproperty("SampleRate","int");
+	this.serviceProperties["Lossless"] = new ohnet.serviceproperty("Lossless","bool");
+	this.serviceProperties["CodecName"] = new ohnet.serviceproperty("CodecName","string");
+	this.serviceProperties["Metatext"] = new ohnet.serviceproperty("Metatext","string");
 }
 
 
@@ -40,7 +40,7 @@ var CpProxyAvOpenhomeOrgInfo1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -49,7 +49,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.subscribe = function (serviceAddedFunction) 
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -63,7 +63,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgInfo1.prototype.TrackCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.TrackCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -76,7 +76,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.TrackCount_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgInfo1.prototype.DetailsCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.DetailsCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -89,7 +89,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.DetailsCount_Changed = function (stateChange
 CpProxyAvOpenhomeOrgInfo1.prototype.MetatextCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.MetatextCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -102,7 +102,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.MetatextCount_Changed = function (stateChang
 CpProxyAvOpenhomeOrgInfo1.prototype.Uri_Changed = function (stateChangedFunction) {
     this.serviceProperties.Uri.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -115,7 +115,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Uri_Changed = function (stateChangedFunction
 CpProxyAvOpenhomeOrgInfo1.prototype.Metadata_Changed = function (stateChangedFunction) {
     this.serviceProperties.Metadata.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -128,7 +128,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Metadata_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgInfo1.prototype.Duration_Changed = function (stateChangedFunction) {
     this.serviceProperties.Duration.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -141,7 +141,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Duration_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgInfo1.prototype.BitRate_Changed = function (stateChangedFunction) {
     this.serviceProperties.BitRate.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -154,7 +154,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.BitRate_Changed = function (stateChangedFunc
 CpProxyAvOpenhomeOrgInfo1.prototype.BitDepth_Changed = function (stateChangedFunction) {
     this.serviceProperties.BitDepth.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -167,7 +167,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.BitDepth_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgInfo1.prototype.SampleRate_Changed = function (stateChangedFunction) {
     this.serviceProperties.SampleRate.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -180,7 +180,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.SampleRate_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgInfo1.prototype.Lossless_Changed = function (stateChangedFunction) {
     this.serviceProperties.Lossless.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -193,7 +193,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Lossless_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgInfo1.prototype.CodecName_Changed = function (stateChangedFunction) {
     this.serviceProperties.CodecName.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -206,7 +206,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.CodecName_Changed = function (stateChangedFu
 CpProxyAvOpenhomeOrgInfo1.prototype.Metatext_Changed = function (stateChangedFunction) {
     this.serviceProperties.Metatext.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 
@@ -218,11 +218,11 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Metatext_Changed = function (stateChangedFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.Counters = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Counters", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Counters", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["TrackCount"] = OhNet.SoapRequest.readIntParameter(result["TrackCount"]);	
-		result["DetailsCount"] = OhNet.SoapRequest.readIntParameter(result["DetailsCount"]);	
-		result["MetatextCount"] = OhNet.SoapRequest.readIntParameter(result["MetatextCount"]);	
+		result["TrackCount"] = ohnet.soaprequest.readIntParameter(result["TrackCount"]);	
+		result["DetailsCount"] = ohnet.soaprequest.readIntParameter(result["DetailsCount"]);	
+		result["MetatextCount"] = ohnet.soaprequest.readIntParameter(result["MetatextCount"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -240,10 +240,10 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Counters = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.Track = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Track", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Track", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Uri"] = OhNet.SoapRequest.readStringParameter(result["Uri"]);	
-		result["Metadata"] = OhNet.SoapRequest.readStringParameter(result["Metadata"]);	
+		result["Uri"] = ohnet.soaprequest.readStringParameter(result["Uri"]);	
+		result["Metadata"] = ohnet.soaprequest.readStringParameter(result["Metadata"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -261,14 +261,14 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Track = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.Details = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Details", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Details", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Duration"] = OhNet.SoapRequest.readIntParameter(result["Duration"]);	
-		result["BitRate"] = OhNet.SoapRequest.readIntParameter(result["BitRate"]);	
-		result["BitDepth"] = OhNet.SoapRequest.readIntParameter(result["BitDepth"]);	
-		result["SampleRate"] = OhNet.SoapRequest.readIntParameter(result["SampleRate"]);	
-		result["Lossless"] = OhNet.SoapRequest.readBoolParameter(result["Lossless"]);	
-		result["CodecName"] = OhNet.SoapRequest.readStringParameter(result["CodecName"]);	
+		result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]);	
+		result["BitRate"] = ohnet.soaprequest.readIntParameter(result["BitRate"]);	
+		result["BitDepth"] = ohnet.soaprequest.readIntParameter(result["BitDepth"]);	
+		result["SampleRate"] = ohnet.soaprequest.readIntParameter(result["SampleRate"]);	
+		result["Lossless"] = ohnet.soaprequest.readBoolParameter(result["Lossless"]);	
+		result["CodecName"] = ohnet.soaprequest.readStringParameter(result["CodecName"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -286,9 +286,9 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Details = function(successFunction, errorFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.Metatext = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Metatext", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Metatext", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);

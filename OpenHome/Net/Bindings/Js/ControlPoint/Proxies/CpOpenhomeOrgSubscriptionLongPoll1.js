@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyOpenhomeOrgSubscriptionLongPoll1
-* @module ohNet
+* @module ohnet
 * @class SubscriptionLongPoll
 */
 	
@@ -28,7 +28,7 @@ var CpProxyOpenhomeOrgSubscriptionLongPoll1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -37,7 +37,7 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.subscribe = function (serviceA
 * @method Unsubscribe
 */
 CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -54,14 +54,14 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.unsubscribe = function () {
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Subscribe = function(ClientId, Udn, Service, RequestedDuration, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Subscribe", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Subscribe", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ClientId", ClientId);
     request.writeStringParameter("Udn", Udn);
     request.writeStringParameter("Service", Service);
     request.writeIntParameter("RequestedDuration", RequestedDuration);
     request.send(function(result){
-		result["Sid"] = OhNet.SoapRequest.readStringParameter(result["Sid"]);	
-		result["Duration"] = OhNet.SoapRequest.readIntParameter(result["Duration"]);	
+		result["Sid"] = ohnet.soaprequest.readStringParameter(result["Sid"]);	
+		result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -80,7 +80,7 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Subscribe = function(ClientId,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Unsubscribe = function(Sid, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Unsubscribe", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Unsubscribe", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Sid", Sid);
     request.send(function(result){
 	
@@ -102,11 +102,11 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Unsubscribe = function(Sid, su
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Renew = function(Sid, RequestedDuration, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Renew", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Renew", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Sid", Sid);
     request.writeIntParameter("RequestedDuration", RequestedDuration);
     request.send(function(result){
-		result["Duration"] = OhNet.SoapRequest.readIntParameter(result["Duration"]);	
+		result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -125,10 +125,10 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Renew = function(Sid, Requeste
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.GetPropertyUpdates = function(ClientId, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetPropertyUpdates", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetPropertyUpdates", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ClientId", ClientId);
     request.send(function(result){
-		result["Updates"] = OhNet.SoapRequest.readStringParameter(result["Updates"]);	
+		result["Updates"] = ohnet.soaprequest.readStringParameter(result["Updates"]);	
 	
 		if (successFunction){
 			successFunction(result);

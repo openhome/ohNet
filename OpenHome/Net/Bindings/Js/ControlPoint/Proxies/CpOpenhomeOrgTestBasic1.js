@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyOpenhomeOrgTestBasic1
-* @module ohNet
+* @module ohnet
 * @class TestBasic
 */
 	
@@ -18,11 +18,11 @@ var CpProxyOpenhomeOrgTestBasic1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["VarUint"] = new OhNet.ServiceProperty("VarUint","int");
-	this.serviceProperties["VarInt"] = new OhNet.ServiceProperty("VarInt","int");
-	this.serviceProperties["VarBool"] = new OhNet.ServiceProperty("VarBool","bool");
-	this.serviceProperties["VarStr"] = new OhNet.ServiceProperty("VarStr","string");
-	this.serviceProperties["VarBin"] = new OhNet.ServiceProperty("VarBin","binary");
+	this.serviceProperties["VarUint"] = new ohnet.serviceproperty("VarUint","int");
+	this.serviceProperties["VarInt"] = new ohnet.serviceproperty("VarInt","int");
+	this.serviceProperties["VarBool"] = new ohnet.serviceproperty("VarBool","bool");
+	this.serviceProperties["VarStr"] = new ohnet.serviceproperty("VarStr","string");
+	this.serviceProperties["VarBin"] = new ohnet.serviceproperty("VarBin","binary");
 }
 
 
@@ -33,7 +33,7 @@ var CpProxyOpenhomeOrgTestBasic1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -42,7 +42,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.subscribe = function (serviceAddedFunctio
 * @method Unsubscribe
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -56,7 +56,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.unsubscribe = function () {
 CpProxyOpenhomeOrgTestBasic1.prototype.VarUint_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarUint.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -69,7 +69,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.VarUint_Changed = function (stateChangedF
 CpProxyOpenhomeOrgTestBasic1.prototype.VarInt_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarInt.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -82,7 +82,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.VarInt_Changed = function (stateChangedFu
 CpProxyOpenhomeOrgTestBasic1.prototype.VarBool_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarBool.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -95,7 +95,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.VarBool_Changed = function (stateChangedF
 CpProxyOpenhomeOrgTestBasic1.prototype.VarStr_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarStr.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -108,7 +108,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.VarStr_Changed = function (stateChangedFu
 CpProxyOpenhomeOrgTestBasic1.prototype.VarBin_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarBin.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readBinaryParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readBinaryParameter(state)); 
 	});
 }
 
@@ -121,10 +121,10 @@ CpProxyOpenhomeOrgTestBasic1.prototype.VarBin_Changed = function (stateChangedFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.Increment = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Increment", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Increment", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-		result["Result"] = OhNet.SoapRequest.readIntParameter(result["Result"]);	
+		result["Result"] = ohnet.soaprequest.readIntParameter(result["Result"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -143,10 +143,10 @@ CpProxyOpenhomeOrgTestBasic1.prototype.Increment = function(Value, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.Decrement = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Decrement", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Decrement", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-		result["Result"] = OhNet.SoapRequest.readIntParameter(result["Result"]);	
+		result["Result"] = ohnet.soaprequest.readIntParameter(result["Result"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -165,10 +165,10 @@ CpProxyOpenhomeOrgTestBasic1.prototype.Decrement = function(Value, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.Toggle = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Toggle", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Toggle", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
-		result["Result"] = OhNet.SoapRequest.readBoolParameter(result["Result"]);	
+		result["Result"] = ohnet.soaprequest.readBoolParameter(result["Result"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -187,10 +187,10 @@ CpProxyOpenhomeOrgTestBasic1.prototype.Toggle = function(Value, successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.EchoString = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("EchoString", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("EchoString", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Value", Value);
     request.send(function(result){
-		result["Result"] = OhNet.SoapRequest.readStringParameter(result["Result"]);	
+		result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -209,10 +209,10 @@ CpProxyOpenhomeOrgTestBasic1.prototype.EchoString = function(Value, successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.EchoBinary = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("EchoBinary", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("EchoBinary", this.url, this.domain, this.type, this.version);		
     request.writeBinaryParameter("Value", Value);
     request.send(function(result){
-		result["Result"] = OhNet.SoapRequest.readBinaryParameter(result["Result"]);	
+		result["Result"] = ohnet.soaprequest.readBinaryParameter(result["Result"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -231,7 +231,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.EchoBinary = function(Value, successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.SetUint = function(ValueUint, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetUint", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetUint", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ValueUint", ValueUint);
     request.send(function(result){
 	
@@ -251,9 +251,9 @@ CpProxyOpenhomeOrgTestBasic1.prototype.SetUint = function(ValueUint, successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.GetUint = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetUint", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetUint", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["ValueUint"] = OhNet.SoapRequest.readIntParameter(result["ValueUint"]);	
+		result["ValueUint"] = ohnet.soaprequest.readIntParameter(result["ValueUint"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -272,7 +272,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.GetUint = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.SetInt = function(ValueInt, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetInt", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetInt", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ValueInt", ValueInt);
     request.send(function(result){
 	
@@ -292,9 +292,9 @@ CpProxyOpenhomeOrgTestBasic1.prototype.SetInt = function(ValueInt, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.GetInt = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetInt", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetInt", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["ValueInt"] = OhNet.SoapRequest.readIntParameter(result["ValueInt"]);	
+		result["ValueInt"] = ohnet.soaprequest.readIntParameter(result["ValueInt"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -313,7 +313,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.GetInt = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.SetBool = function(ValueBool, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetBool", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetBool", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("ValueBool", ValueBool);
     request.send(function(result){
 	
@@ -333,9 +333,9 @@ CpProxyOpenhomeOrgTestBasic1.prototype.SetBool = function(ValueBool, successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.GetBool = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetBool", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetBool", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["ValueBool"] = OhNet.SoapRequest.readBoolParameter(result["ValueBool"]);	
+		result["ValueBool"] = ohnet.soaprequest.readBoolParameter(result["ValueBool"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -356,7 +356,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.GetBool = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.SetMultiple = function(ValueUint, ValueInt, ValueBool, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetMultiple", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetMultiple", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ValueUint", ValueUint);
     request.writeIntParameter("ValueInt", ValueInt);
     request.writeBoolParameter("ValueBool", ValueBool);
@@ -379,7 +379,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.SetMultiple = function(ValueUint, ValueIn
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.SetString = function(ValueStr, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetString", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetString", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ValueStr", ValueStr);
     request.send(function(result){
 	
@@ -399,9 +399,9 @@ CpProxyOpenhomeOrgTestBasic1.prototype.SetString = function(ValueStr, successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.GetString = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetString", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetString", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["ValueStr"] = OhNet.SoapRequest.readStringParameter(result["ValueStr"]);	
+		result["ValueStr"] = ohnet.soaprequest.readStringParameter(result["ValueStr"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -420,7 +420,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.GetString = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.SetBinary = function(ValueBin, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetBinary", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetBinary", this.url, this.domain, this.type, this.version);		
     request.writeBinaryParameter("ValueBin", ValueBin);
     request.send(function(result){
 	
@@ -440,9 +440,9 @@ CpProxyOpenhomeOrgTestBasic1.prototype.SetBinary = function(ValueBin, successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.GetBinary = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetBinary", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetBinary", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["ValueBin"] = OhNet.SoapRequest.readBinaryParameter(result["ValueBin"]);	
+		result["ValueBin"] = ohnet.soaprequest.readBinaryParameter(result["ValueBin"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -460,7 +460,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.GetBinary = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.ToggleBool = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("ToggleBool", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("ToggleBool", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -481,7 +481,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.ToggleBool = function(successFunction, er
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.WriteFile = function(Data, FileFullName, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("WriteFile", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("WriteFile", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Data", Data);
     request.writeStringParameter("FileFullName", FileFullName);
     request.send(function(result){
@@ -502,7 +502,7 @@ CpProxyOpenhomeOrgTestBasic1.prototype.WriteFile = function(Data, FileFullName, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.Shutdown = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Shutdown", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Shutdown", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){

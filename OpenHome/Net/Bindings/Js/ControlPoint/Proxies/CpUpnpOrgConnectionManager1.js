@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxySchemasUpnpOrgConnectionManager1
-* @module ohNet
+* @module ohnet
 * @class ConnectionManager
 */
 	
@@ -18,9 +18,9 @@ var CpProxySchemasUpnpOrgConnectionManager1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["SourceProtocolInfo"] = new OhNet.ServiceProperty("SourceProtocolInfo","string");
-	this.serviceProperties["SinkProtocolInfo"] = new OhNet.ServiceProperty("SinkProtocolInfo","string");
-	this.serviceProperties["CurrentConnectionIDs"] = new OhNet.ServiceProperty("CurrentConnectionIDs","string");
+	this.serviceProperties["SourceProtocolInfo"] = new ohnet.serviceproperty("SourceProtocolInfo","string");
+	this.serviceProperties["SinkProtocolInfo"] = new ohnet.serviceproperty("SinkProtocolInfo","string");
+	this.serviceProperties["CurrentConnectionIDs"] = new ohnet.serviceproperty("CurrentConnectionIDs","string");
 }
 
 
@@ -31,7 +31,7 @@ var CpProxySchemasUpnpOrgConnectionManager1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -40,7 +40,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.subscribe = function (serviceA
 * @method Unsubscribe
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -54,7 +54,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.unsubscribe = function () {
 CpProxySchemasUpnpOrgConnectionManager1.prototype.SourceProtocolInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.SourceProtocolInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -67,7 +67,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.SourceProtocolInfo_Changed = f
 CpProxySchemasUpnpOrgConnectionManager1.prototype.SinkProtocolInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.SinkProtocolInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -80,7 +80,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.SinkProtocolInfo_Changed = fun
 CpProxySchemasUpnpOrgConnectionManager1.prototype.CurrentConnectionIDs_Changed = function (stateChangedFunction) {
     this.serviceProperties.CurrentConnectionIDs.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 
@@ -92,10 +92,10 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.CurrentConnectionIDs_Changed =
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.GetProtocolInfo = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetProtocolInfo", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetProtocolInfo", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Source"] = OhNet.SoapRequest.readStringParameter(result["Source"]);	
-		result["Sink"] = OhNet.SoapRequest.readStringParameter(result["Sink"]);	
+		result["Source"] = ohnet.soaprequest.readStringParameter(result["Source"]);	
+		result["Sink"] = ohnet.soaprequest.readStringParameter(result["Sink"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -117,15 +117,15 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.GetProtocolInfo = function(suc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.PrepareForConnection = function(RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("PrepareForConnection", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("PrepareForConnection", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RemoteProtocolInfo", RemoteProtocolInfo);
     request.writeStringParameter("PeerConnectionManager", PeerConnectionManager);
     request.writeIntParameter("PeerConnectionID", PeerConnectionID);
     request.writeStringParameter("Direction", Direction);
     request.send(function(result){
-		result["ConnectionID"] = OhNet.SoapRequest.readIntParameter(result["ConnectionID"]);	
-		result["AVTransportID"] = OhNet.SoapRequest.readIntParameter(result["AVTransportID"]);	
-		result["RcsID"] = OhNet.SoapRequest.readIntParameter(result["RcsID"]);	
+		result["ConnectionID"] = ohnet.soaprequest.readIntParameter(result["ConnectionID"]);	
+		result["AVTransportID"] = ohnet.soaprequest.readIntParameter(result["AVTransportID"]);	
+		result["RcsID"] = ohnet.soaprequest.readIntParameter(result["RcsID"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -144,7 +144,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.PrepareForConnection = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.ConnectionComplete = function(ConnectionID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("ConnectionComplete", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("ConnectionComplete", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ConnectionID", ConnectionID);
     request.send(function(result){
 	
@@ -164,9 +164,9 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.ConnectionComplete = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.GetCurrentConnectionIDs = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetCurrentConnectionIDs", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetCurrentConnectionIDs", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["ConnectionIDs"] = OhNet.SoapRequest.readStringParameter(result["ConnectionIDs"]);	
+		result["ConnectionIDs"] = ohnet.soaprequest.readStringParameter(result["ConnectionIDs"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -185,16 +185,16 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.GetCurrentConnectionIDs = func
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.GetCurrentConnectionInfo = function(ConnectionID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetCurrentConnectionInfo", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetCurrentConnectionInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ConnectionID", ConnectionID);
     request.send(function(result){
-		result["RcsID"] = OhNet.SoapRequest.readIntParameter(result["RcsID"]);	
-		result["AVTransportID"] = OhNet.SoapRequest.readIntParameter(result["AVTransportID"]);	
-		result["ProtocolInfo"] = OhNet.SoapRequest.readStringParameter(result["ProtocolInfo"]);	
-		result["PeerConnectionManager"] = OhNet.SoapRequest.readStringParameter(result["PeerConnectionManager"]);	
-		result["PeerConnectionID"] = OhNet.SoapRequest.readIntParameter(result["PeerConnectionID"]);	
-		result["Direction"] = OhNet.SoapRequest.readStringParameter(result["Direction"]);	
-		result["Status"] = OhNet.SoapRequest.readStringParameter(result["Status"]);	
+		result["RcsID"] = ohnet.soaprequest.readIntParameter(result["RcsID"]);	
+		result["AVTransportID"] = ohnet.soaprequest.readIntParameter(result["AVTransportID"]);	
+		result["ProtocolInfo"] = ohnet.soaprequest.readStringParameter(result["ProtocolInfo"]);	
+		result["PeerConnectionManager"] = ohnet.soaprequest.readStringParameter(result["PeerConnectionManager"]);	
+		result["PeerConnectionID"] = ohnet.soaprequest.readIntParameter(result["PeerConnectionID"]);	
+		result["Direction"] = ohnet.soaprequest.readStringParameter(result["Direction"]);	
+		result["Status"] = ohnet.soaprequest.readStringParameter(result["Status"]);	
 	
 		if (successFunction){
 			successFunction(result);
