@@ -1,7 +1,6 @@
 #include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 #include <OpenHome/Net/Private/DviServerWebSocket.h>
 #include <OpenHome/Private/Printer.h>
-//#include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
 #include <OpenHome/Private/Converter.h>
 
@@ -111,8 +110,6 @@ void PropertyUpdate::Write(IWriter& aWriter)
     aWriter.Write(WebSocket::kTagSubscription);
     aWriter.Write('>');
     WriteTag(aWriter, WebSocket::kTagMethod, WebSocket::kMethodPropertyUpdate);
-    WriteTag(aWriter, WebSocket::kTagNt, WebSocket::kValueNt);
-    WriteTag(aWriter, WebSocket::kTagNts, WebSocket::kValuePropChange);
     WriteTag(aWriter, WebSocket::kTagSid, iSid);
     Bws<Ascii::kMaxUintStringBytes> seq;
     (void)Ascii::AppendDec(seq, iSeqNum);
