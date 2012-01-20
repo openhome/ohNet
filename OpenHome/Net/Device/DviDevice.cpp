@@ -563,14 +563,18 @@ DviDevice* DviDeviceMap::Find(const Brx& aUdn)
 
 void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     Parser parser(aUriTail);
     (void)parser.Next('/'); // skip leading slash
     Brn dir = parser.Next('/');
     if (dir.Bytes() > 0) {
         Map::iterator it = iMap.find(dir);
         if (it != iMap.end()) {
-            it->second->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
+            DviDevice* device = it->second;
+            iLock.Signal();
+            device->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
+            return;
         }
     }
+    iLock.Signal();
 }
