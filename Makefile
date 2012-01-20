@@ -207,6 +207,7 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Device/DviService.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DviStack.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DviSubscription.h $(inc_build)/OpenHome/Net/Private
+	$(cp) OpenHome/Net/Device/DviPropertyUpdateCollection.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/FunctorDviInvocation.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DviProviderSubscriptionLongPoll.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Bonjour/*.h $(inc_build)/OpenHome/Net/Private
