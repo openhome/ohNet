@@ -322,7 +322,7 @@ void DeviceBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, 
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
-    Brn emptyString("C:\\git\\ohnet\\OpenHome\\Net\\Bindings\\Js\\ControlPoint");
+    Brn emptyString("");
     OptionString config("-c", "--config", emptyString, "[full dir path] to folder containing web UI");
     parser.AddOption(&config);
     OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
@@ -335,9 +335,9 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         return;
     }
 
-    //if (loopback.Value()) {
+    if (loopback.Value()) {
         aInitParams->SetUseLoopbackNetworkAdapter();
-    //}
+    }
     aInitParams->SetDvNumWebSocketThreads(5);
     aInitParams->SetDvWebSocketPort(54321);
     UpnpLibrary::Initialise(aInitParams);
