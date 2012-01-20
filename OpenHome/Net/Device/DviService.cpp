@@ -101,7 +101,16 @@ void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName)
 {
     for (TUint i=0; i<iDvActions.size(); i++) {
         if (iDvActions[i].Action()->Name() == aActionName) {
-            iDvActions[i].Functor()(aInvocation);
+            try {
+                iDvActions[i].Functor()(aInvocation);
+            }
+            catch (Exception& e) {
+                Brn msg(e.Message());
+                aInvocation.InvocationReportError(801, msg);
+            }
+            catch (...) {
+                aInvocation.InvocationReportError(801, Brn("Unknown error"));
+            }
             return;
         }
     }

@@ -94,6 +94,9 @@ void DviProviderSubscriptionLongPoll::Renew(IDvInvocation& aInvocation, const Br
         aInvocation.Error(kErrorCodeBadSubscription, kErrorDescBadSubscription);
     }
     TUint timeout = aRequestedDuration;
+    if (timeout > kTimeoutLongPollSecs) {
+        timeout = kTimeoutLongPollSecs;
+    }
     subscription->Renew(timeout);
     aInvocation.StartResponse();
     aDuration.Write(timeout);
