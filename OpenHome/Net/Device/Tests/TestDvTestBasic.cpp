@@ -250,7 +250,7 @@ DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
     iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
     iTestBasic = new ProviderTestBasic(*iDevice);
-    iDevice->SetAttribute("LongPollEnable", "");
+    iDevice->SetAttribute("Core.LongPollEnable", "");
     iDevice->SetEnabled();
 }
 

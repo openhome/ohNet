@@ -167,7 +167,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     if (strlen(aKey) < 4 || strncmp(aKey, "Test", 4) != 0) {
         ASSERT(iEnabled == eDisabled);
     }
-    if (name.Bytes() == 0) {
+    if (name == Brn("Core")) {
         static const char* longPollEnable = "LongPollEnable";
         if (iProviderSubscriptionLongPoll == NULL && 
             strncmp(aKey, "longPollEnable", sizeof(longPollEnable)-1) == 0) {
