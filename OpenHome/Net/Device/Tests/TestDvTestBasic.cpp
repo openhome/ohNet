@@ -48,7 +48,6 @@ private:
 private:
     DvDeviceStandard* iDevice;
     ProviderTestBasic* iTestBasic;
-    DviProviderSubscriptionLongPoll* iProviderLongPoll;
     Brh iConfigDir;
 };
 
@@ -251,13 +250,12 @@ DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
     iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
     iTestBasic = new ProviderTestBasic(*iDevice);
-    iProviderLongPoll = new DviProviderSubscriptionLongPoll(*iDevice);
+    iDevice->SetAttribute("LongPollEnable", "");
     iDevice->SetEnabled();
 }
 
 DeviceBasic::~DeviceBasic()
 {
-    delete iProviderLongPoll;
     delete iTestBasic;
     delete iDevice;
 }

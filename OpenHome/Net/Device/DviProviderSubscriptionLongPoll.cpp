@@ -14,7 +14,7 @@ const Brn DviProviderSubscriptionLongPoll::kErrorDescBadService("Service does no
 const Brn DviProviderSubscriptionLongPoll::kErrorDescBadSubscription("Subscription does not exist");
 const Brn DviProviderSubscriptionLongPoll::kErrorDescTooManyRequests("Too many long poll requests already active");
 
-DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DvDevice& aDevice)
+DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDevice)
     : DvProviderOpenhomeOrgSubscriptionLongPoll1(aDevice)
     , iPropertyUpdateCollection(DviStack::PropertyUpdateCollection())
     , iLock("LPMX")

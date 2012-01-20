@@ -19,7 +19,7 @@ class DviPropertyUpdateCollection;
 class DviProviderSubscriptionLongPoll : public DvProviderOpenhomeOrgSubscriptionLongPoll1
 {
 public:
-    DviProviderSubscriptionLongPoll(DvDevice& aDevice);
+    DviProviderSubscriptionLongPoll(DviDevice& aDevice);
     ~DviProviderSubscriptionLongPoll();
 private: // DvProviderOpenhomeOrgSubscriptionLongPoll1
     void Subscribe(IDvInvocation& aInvocation, const Brx& aClientId, const Brx& aUdn, const Brx& aService, TUint aRequestedDuration, IDvInvocationResponseString& aSid, IDvInvocationResponseUint& aDuration);
