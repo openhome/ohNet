@@ -161,7 +161,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     Brn name = parser.Next('.');
     aKey += name.Bytes() + 1;
     // assume keys starting 'Test' are a special case which can be updated at any time
-    if (strlen(aKey) <4 || strncmp(aKey, "Test", 4) != 0) {
+    if (strlen(aKey) != 4 || strncmp(aKey, "Test", 4) != 0) {
         ASSERT(iEnabled == eDisabled);
     }
     for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
