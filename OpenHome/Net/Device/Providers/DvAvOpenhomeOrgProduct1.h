@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -284,6 +285,12 @@ protected:
      */
     DvProviderAvOpenhomeOrgProduct1(DvDevice& aDevice);
     /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderAvOpenhomeOrgProduct1(DviDevice& aDevice);
+    /**
      * Enable the ManufacturerName property.
      */
     void EnablePropertyManufacturerName();
@@ -540,6 +547,7 @@ private:
     virtual void SourceXmlChangeCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
 private:
     DvProviderAvOpenhomeOrgProduct1();
+    void Construct();
     void DoManufacturer(IDviInvocation& aInvocation);
     void DoModel(IDviInvocation& aInvocation);
     void DoProduct(IDviInvocation& aInvocation);

@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -45,6 +46,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgScheduledRecording1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderUpnpOrgScheduledRecording1(DviDevice& aDevice);
     /**
      * Enable the LastChange property.
      */
@@ -304,6 +311,7 @@ private:
     virtual void GetRecordTaskConflicts(IDvInvocation& aInvocation, const Brx& aRecordTaskID, IDvInvocationResponseString& aRecordTaskConflictIDList, IDvInvocationResponseUint& aUpdateID);
 private:
     DvProviderUpnpOrgScheduledRecording1();
+    void Construct();
     void DoGetSortCapabilities(IDviInvocation& aInvocation);
     void DoGetPropertyList(IDviInvocation& aInvocation);
     void DoGetAllowedValues(IDviInvocation& aInvocation);

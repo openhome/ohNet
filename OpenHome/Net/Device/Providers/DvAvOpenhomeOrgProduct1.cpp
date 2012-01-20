@@ -226,6 +226,17 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyAttributes(Brhz& aValue)
 DvProviderAvOpenhomeOrgProduct1::DvProviderAvOpenhomeOrgProduct1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Product", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgProduct1::DvProviderAvOpenhomeOrgProduct1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "Product", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgProduct1::Construct()
+{
     iPropertyManufacturerName = NULL;
     iPropertyManufacturerInfo = NULL;
     iPropertyManufacturerUrl = NULL;

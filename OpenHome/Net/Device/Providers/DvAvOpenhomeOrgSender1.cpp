@@ -70,6 +70,17 @@ void DvProviderAvOpenhomeOrgSender1::GetPropertyAttributes(Brhz& aValue)
 DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Sender", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "Sender", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgSender1::Construct()
+{
     iPropertyPresentationUrl = NULL;
     iPropertyMetadata = NULL;
     iPropertyAudio = NULL;

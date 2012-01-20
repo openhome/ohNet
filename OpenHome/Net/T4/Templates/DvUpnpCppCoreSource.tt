@@ -75,6 +75,17 @@ void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
 <#=className#>::<#=className#>(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
+    Construct();
+}
+
+<#=className#>::<#=className#>(DviDevice& aDevice)
+    : DvProvider(aDevice, "<#=domain#>", "<#=type#>", <#=version#>)
+{
+    Construct();
+}
+
+void <#=className#>::Construct()
+{
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
     iProperty<#=s.name#> = NULL;

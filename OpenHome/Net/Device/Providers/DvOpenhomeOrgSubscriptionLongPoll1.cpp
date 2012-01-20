@@ -10,6 +10,17 @@ using namespace OpenHome::Net;
 DvProviderOpenhomeOrgSubscriptionLongPoll1::DvProviderOpenhomeOrgSubscriptionLongPoll1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "openhome.org", "SubscriptionLongPoll", 1)
 {
+    Construct();
+}
+
+DvProviderOpenhomeOrgSubscriptionLongPoll1::DvProviderOpenhomeOrgSubscriptionLongPoll1(DviDevice& aDevice)
+    : DvProvider(aDevice, "openhome.org", "SubscriptionLongPoll", 1)
+{
+    Construct();
+}
+
+void DvProviderOpenhomeOrgSubscriptionLongPoll1::Construct()
+{
 }
 
 void DvProviderOpenhomeOrgSubscriptionLongPoll1::EnableActionSubscribe()

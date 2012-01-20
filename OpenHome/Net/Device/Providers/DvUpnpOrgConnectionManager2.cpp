@@ -46,6 +46,17 @@ void DvProviderUpnpOrgConnectionManager2::GetPropertyCurrentConnectionIDs(Brhz& 
 DvProviderUpnpOrgConnectionManager2::DvProviderUpnpOrgConnectionManager2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ConnectionManager", 2)
 {
+    Construct();
+}
+
+DvProviderUpnpOrgConnectionManager2::DvProviderUpnpOrgConnectionManager2(DviDevice& aDevice)
+    : DvProvider(aDevice, "upnp.org", "ConnectionManager", 2)
+{
+    Construct();
+}
+
+void DvProviderUpnpOrgConnectionManager2::Construct()
+{
     iPropertySourceProtocolInfo = NULL;
     iPropertySinkProtocolInfo = NULL;
     iPropertyCurrentConnectionIDs = NULL;

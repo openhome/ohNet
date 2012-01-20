@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -102,6 +103,12 @@ protected:
      */
     DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice);
     /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderAvOpenhomeOrgSender1(DviDevice& aDevice);
+    /**
      * Enable the PresentationUrl property.
      */
     void EnablePropertyPresentationUrl();
@@ -194,6 +201,7 @@ private:
     virtual void Attributes(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgSender1();
+    void Construct();
     void DoPresentationUrl(IDviInvocation& aInvocation);
     void DoMetadata(IDviInvocation& aInvocation);
     void DoAudio(IDviInvocation& aInvocation);

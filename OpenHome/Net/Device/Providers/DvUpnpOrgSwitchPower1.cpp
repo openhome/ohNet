@@ -22,6 +22,17 @@ void DvProviderUpnpOrgSwitchPower1::GetPropertyStatus(TBool& aValue)
 DvProviderUpnpOrgSwitchPower1::DvProviderUpnpOrgSwitchPower1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "SwitchPower", 1)
 {
+    Construct();
+}
+
+DvProviderUpnpOrgSwitchPower1::DvProviderUpnpOrgSwitchPower1(DviDevice& aDevice)
+    : DvProvider(aDevice, "upnp.org", "SwitchPower", 1)
+{
+    Construct();
+}
+
+void DvProviderUpnpOrgSwitchPower1::Construct()
+{
     iPropertyStatus = NULL;
 }
 

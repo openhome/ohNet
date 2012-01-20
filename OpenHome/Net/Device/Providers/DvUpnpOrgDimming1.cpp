@@ -70,6 +70,17 @@ void DvProviderUpnpOrgDimming1::GetPropertyRampPaused(TBool& aValue)
 DvProviderUpnpOrgDimming1::DvProviderUpnpOrgDimming1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "Dimming", 1)
 {
+    Construct();
+}
+
+DvProviderUpnpOrgDimming1::DvProviderUpnpOrgDimming1(DviDevice& aDevice)
+    : DvProvider(aDevice, "upnp.org", "Dimming", 1)
+{
+    Construct();
+}
+
+void DvProviderUpnpOrgDimming1::Construct()
+{
     iPropertyLoadLevelStatus = NULL;
     iPropertyStepDelta = NULL;
     iPropertyRampRate = NULL;

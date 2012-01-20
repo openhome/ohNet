@@ -46,6 +46,17 @@ void DvProviderUpnpOrgContentDirectory1::GetPropertyContainerUpdateIDs(Brhz& aVa
 DvProviderUpnpOrgContentDirectory1::DvProviderUpnpOrgContentDirectory1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ContentDirectory", 1)
 {
+    Construct();
+}
+
+DvProviderUpnpOrgContentDirectory1::DvProviderUpnpOrgContentDirectory1(DviDevice& aDevice)
+    : DvProvider(aDevice, "upnp.org", "ContentDirectory", 1)
+{
+    Construct();
+}
+
+void DvProviderUpnpOrgContentDirectory1::Construct()
+{
     iPropertyTransferIDs = NULL;
     iPropertySystemUpdateID = NULL;
     iPropertyContainerUpdateIDs = NULL;

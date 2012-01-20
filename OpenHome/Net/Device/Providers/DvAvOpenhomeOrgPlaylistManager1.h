@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -115,6 +116,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgPlaylistManager1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderAvOpenhomeOrgPlaylistManager1(DviDevice& aDevice);
     /**
      * Enable the Metadata property.
      */
@@ -422,6 +429,7 @@ private:
     virtual void DeleteAll(IDvInvocation& aInvocation, TUint aId);
 private:
     DvProviderAvOpenhomeOrgPlaylistManager1();
+    void Construct();
     void DoMetadata(IDviInvocation& aInvocation);
     void DoImagesXml(IDviInvocation& aInvocation);
     void DoPlaylistReadArray(IDviInvocation& aInvocation);

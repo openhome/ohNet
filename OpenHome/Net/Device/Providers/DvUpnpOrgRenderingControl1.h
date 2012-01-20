@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -45,6 +46,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgRenderingControl1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderUpnpOrgRenderingControl1(DviDevice& aDevice);
     /**
      * Enable the LastChange property.
      */
@@ -542,6 +549,7 @@ private:
     virtual void SetLoudness(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TBool aDesiredLoudness);
 private:
     DvProviderUpnpOrgRenderingControl1();
+    void Construct();
     void DoListPresets(IDviInvocation& aInvocation);
     void DoSelectPreset(IDviInvocation& aInvocation);
     void DoGetBrightness(IDviInvocation& aInvocation);

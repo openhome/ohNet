@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -185,6 +186,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgVolume1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderAvOpenhomeOrgVolume1(DviDevice& aDevice);
     /**
      * Enable the Volume property.
      */
@@ -456,6 +463,7 @@ private:
     virtual void VolumeLimit(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
 private:
     DvProviderAvOpenhomeOrgVolume1();
+    void Construct();
     void DoCharacteristics(IDviInvocation& aInvocation);
     void DoSetVolume(IDviInvocation& aInvocation);
     void DoVolumeInc(IDviInvocation& aInvocation);

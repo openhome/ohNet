@@ -52,6 +52,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -91,6 +92,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     <#=className#>(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    <#=className#>(DviDevice& aDevice);
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
     /**
@@ -121,6 +128,7 @@ private:
 <#  } #>
 private:
     <#=className#>();
+    void Construct();
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     void Do<#=a.name#>(IDviInvocation& aInvocation);

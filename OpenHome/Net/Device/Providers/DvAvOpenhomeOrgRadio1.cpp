@@ -94,6 +94,17 @@ void DvProviderAvOpenhomeOrgRadio1::GetPropertyProtocolInfo(Brhz& aValue)
 DvProviderAvOpenhomeOrgRadio1::DvProviderAvOpenhomeOrgRadio1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Radio", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgRadio1::DvProviderAvOpenhomeOrgRadio1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "Radio", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgRadio1::Construct()
+{
     iPropertyUri = NULL;
     iPropertyMetadata = NULL;
     iPropertyTransportState = NULL;

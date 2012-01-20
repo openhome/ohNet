@@ -22,6 +22,17 @@ void DvProviderUpnpOrgRenderingControl1::GetPropertyLastChange(Brhz& aValue)
 DvProviderUpnpOrgRenderingControl1::DvProviderUpnpOrgRenderingControl1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "RenderingControl", 1)
 {
+    Construct();
+}
+
+DvProviderUpnpOrgRenderingControl1::DvProviderUpnpOrgRenderingControl1(DviDevice& aDevice)
+    : DvProvider(aDevice, "upnp.org", "RenderingControl", 1)
+{
+    Construct();
+}
+
+void DvProviderUpnpOrgRenderingControl1::Construct()
+{
     iPropertyLastChange = NULL;
 }
 

@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -31,6 +32,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderOpenhomeOrgSubscriptionLongPoll1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderOpenhomeOrgSubscriptionLongPoll1(DviDevice& aDevice);
     /**
      * Signal that the action Subscribe is supported.
      * The action's availability will be published in the device's service.xml.
@@ -90,6 +97,7 @@ private:
     virtual void GetPropertyUpdates(IDvInvocation& aInvocation, const Brx& aClientId, IDvInvocationResponseString& aUpdates);
 private:
     DvProviderOpenhomeOrgSubscriptionLongPoll1();
+    void Construct();
     void DoSubscribe(IDviInvocation& aInvocation);
     void DoUnsubscribe(IDviInvocation& aInvocation);
     void DoRenew(IDviInvocation& aInvocation);

@@ -82,6 +82,17 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::GetPropertyTracksMax(TUint& aValue
 DvProviderAvOpenhomeOrgPlaylistManager1::DvProviderAvOpenhomeOrgPlaylistManager1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "PlaylistManager", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgPlaylistManager1::DvProviderAvOpenhomeOrgPlaylistManager1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "PlaylistManager", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::Construct()
+{
     iPropertyMetadata = NULL;
     iPropertyImagesXml = NULL;
     iPropertyIdArray = NULL;
