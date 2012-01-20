@@ -116,7 +116,7 @@ void PropertyUpdate::Write(IWriter& aWriter)
     WriteTag(aWriter, WebSocket::kTagSeq, seq);
     aWriter.Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
     for (TUint i=0; i<(TUint)iProperties.size(); i++) {
-        WriteTag(aWriter, iProperties[i]->Name(), iProperties[i]->Value());
+        PropertyWriter::WriteVariable(aWriter, iProperties[i]->Name(), iProperties[i]->Value());
     }
     aWriter.Write(Brn("</e:propertyset>"));
     aWriter.Write('<');

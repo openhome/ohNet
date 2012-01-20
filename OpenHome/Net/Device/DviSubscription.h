@@ -70,10 +70,11 @@ private:
 
 class PropertyWriter : public IPropertyWriter
 {
+public:
+    static void WriteVariable(IWriter& aWriter, const Brx& aName, const Brx& aValue);
 protected:
     PropertyWriter();
     void SetWriter(IWriter& aWriter);
-    static void WriteVariable(IWriter& aWriter, const Brx& aName, const Brx& aValue);
 private: // IPropertyWriter
     void PropertyWriteString(const Brx& aName, const Brx& aValue);
     void PropertyWriteInt(const Brx& aName, TInt aValue);
