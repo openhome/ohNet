@@ -15,6 +15,7 @@
 #include <OpenHome/Net/Private/DviServerWebSocket.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Bonjour.h>
+#include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 
 #include <vector>
 

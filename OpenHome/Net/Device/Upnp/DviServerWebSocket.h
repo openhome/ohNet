@@ -12,7 +12,6 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
-#include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 
 #include <map>
 
@@ -239,14 +238,6 @@ private:
     void WriteSubscriptionSid(const Brx& aDevice, const Brx& aService, const Brx& aSid, TUint aSeconds);
     void WriteSubscriptionRenewed(const Brx& aSid, TUint aSeconds);
     void WritePropertyUpdates();
-private: // long polling
-    void LongPollRequest(const Brx& aPollMethod);
-    void DoLongPollRequest(const Brx& aPollMethod);
-    void LongPollSubscribe(const Brx& aRequest);
-    void LongPollUnsubscribe(const Brx& aRequest);
-    void LongPollRenew(const Brx& aRequest);
-    void LongPollGetPropertyUpdates(const Brx& aRequest);
-    void LongPollWriteResponse(const Brx& aResponse);
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData,
                                   const Brx& aSid, TUint aSequenceNumber);
@@ -286,7 +277,6 @@ private:
     WsHeaderKey80 iHeadverKeyV8;
     WsHeaderVersion iHeaderVersion;
     HttpHeaderContentLength iHeaderContentLength;
-    HttpHeaderAccessControlRequestMethod iHeaderAccessControlRequestMethod;
     const HttpStatus* iErrorStatus;
     WsProtocol* iProtocol;
     TBool iExit;
@@ -295,10 +285,6 @@ private:
     Mutex iInterruptLock;
     Semaphore iShutdownSem;
     Fifo<Brh*> iPropertyUpdates; // used for web sockets
-    DviPropertyUpdateCollection& iPropertyUpdateCollection;
-    Semaphore iLongPollSem;
-    TBool iResponseStarted;
-    TBool iResponseEnded;
 };
 
 class DviServerWebSocket : public DviServer

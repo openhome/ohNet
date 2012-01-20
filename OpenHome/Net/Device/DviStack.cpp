@@ -7,6 +7,7 @@
 #include <OpenHome/Net/Private/DviServerWebSocket.h>
 #include <OpenHome/Net/Private/Bonjour.h>
 #include <OpenHome/Net/Private/MdnsProvider.h> // replace this to allow clients to set an alternative Bonjour implementation
+#include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;

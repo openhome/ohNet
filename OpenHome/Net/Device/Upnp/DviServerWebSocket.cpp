@@ -514,8 +514,6 @@ DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
     , iInterruptLock("WSIM")
     , iShutdownSem("WSIS", 1)
     , iPropertyUpdates(kMaxPropertyUpdates)
-    , iPropertyUpdateCollection(DviStack::PropertyUpdateCollection())
-    , iLongPollSem("DVLP", 0)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -523,8 +521,6 @@ DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
     iReaderRequest->AddMethod(Http::kMethodGet);
-    iReaderRequest->AddMethod(Http::kMethodPost);
-    iReaderRequest->AddMethod(Http::kMethodOptions);
 
     iReaderRequest->AddHeader(iHeaderHost);
     iReaderRequest->AddHeader(iHeaderConnection);
@@ -536,14 +532,12 @@ DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
     iReaderRequest->AddHeader(iHeadverKeyV8);
     iReaderRequest->AddHeader(iHeaderVersion);
     iReaderRequest->AddHeader(iHeaderContentLength);
-    iReaderRequest->AddHeader(iHeaderAccessControlRequestMethod);
 }
 
 DviSessionWebSocket::~DviSessionWebSocket()
 {
     iExit = true;
     Interrupt(true);
-    iLongPollSem.Signal();
     iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
@@ -575,34 +569,7 @@ void DviSessionWebSocket::Run()
         if (iReaderRequest->MethodNotAllowed()) {
             Error(HttpStatus::kMethodNotAllowed);
         }
-        const Brx& method = iReaderRequest->Method();
-        if (method == Http::kMethodGet) {
-            Handshake();
-        }
-        else if (method == Http::kMethodPost) {
-            Parser parser(iReaderRequest->Uri());
-            (void)parser.Next('/');
-            Brn pollMethod = parser.Remaining();
-            LongPollRequest(pollMethod);
-            return;
-        }
-        else if (method == Http::kMethodOptions) {
-            if (!iHeaderAccessControlRequestMethod.Received() ||
-                iHeaderAccessControlRequestMethod.Method() != Http::kMethodPost) {
-                Error(HttpStatus::kBadRequest);
-            }
-            Parser parser(iReaderRequest->Uri());
-            (void)parser.Next('/');
-            (void)parser.Next('/');
-            (void)parser.Next('/');
-            Brn pollMethod = parser.Remaining();
-            LongPollRequest(pollMethod);
-            return;
-        }
-        else {
-            // shouldn't get here - we only registered to allow the above methods
-            ASSERTS();
-        }
+        Handshake();
     }
     catch (HttpError&) {
         iErrorStatus = &HttpStatus::kBadRequest;
@@ -988,199 +955,6 @@ void DviSessionWebSocket::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 
 void DviSessionWebSocket::NotifySubscriptionExpired(const Brx& /*aSid*/)
 {
-}
-
-void DviSessionWebSocket::LongPollRequest(const Brx& aPollMethod)
-{
-    try {
-        iResponseStarted = iResponseEnded = false;
-        DoLongPollRequest(aPollMethod);
-    }
-    catch (HttpError&) { }
-    catch (WriterError&) { }
-    catch (ReaderError&) { }
-    catch (XmlError&) { }
-    catch (InvalidSid&) { }
-    catch (InvalidClientId&) { }
-    try {
-        if (!iResponseStarted) {
-            if (iErrorStatus == &HttpStatus::kOk) {
-                iErrorStatus = &HttpStatus::kNotFound;
-            }
-            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-            Http::WriteHeaderConnectionClose(*iWriterResponse);
-        }
-        if (!iResponseEnded) {
-            iWriterResponse->WriteFlush();
-        }
-    }
-    catch (WriterError&) { }
-}
-
-void DviSessionWebSocket::DoLongPollRequest(const Brx& aPollMethod)
-{
-    Brn entity(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
-    if (aPollMethod == WebSocket::kMethodSubscribe) {
-        LongPollSubscribe(entity);
-    }
-    else if (aPollMethod == WebSocket::kMethodUnsubscribe) {
-        LongPollUnsubscribe(entity);
-    }
-    else if (aPollMethod == WebSocket::kMethodRenew) {
-        LongPollRenew(entity);
-    }
-    else if (aPollMethod == WebSocket::kMethodGetPropertyUpdates) {
-        LongPollGetPropertyUpdates(entity);
-    }
-    else {
-        Error(HttpStatus::kBadRequest);
-    }
-}
-
-void DviSessionWebSocket::LongPollSubscribe(const Brx& aRequest)
-{
-    LOG(kDvWebSocket, "WS: LongPollSubscribe\n");
-    Brn clientId = XmlParserBasic::Find(WebSocket::kTagClientId, aRequest);
-    Brn udn = XmlParserBasic::Find(WebSocket::kTagUdn, aRequest);
-    Brn serviceId = XmlParserBasic::Find(WebSocket::kTagService, aRequest);
-    Brn nt = XmlParserBasic::Find(WebSocket::kTagNt, aRequest);
-    if (nt != WebSocket::kValueNt) {
-        Error(HttpStatus::kBadRequest);
-    }
-    TUint timeout = 0;
-    try {
-        timeout = Ascii::Uint(XmlParserBasic::Find(WebSocket::kTagTimeout, aRequest));
-    }
-    catch (AsciiError&) {
-        Error(HttpStatus::kBadRequest);
-    }
-    static const TUint kTimeoutLongPollSecs = 5 * 60; // set a short timeout as we won't be notified when clients vanish
-    if (timeout > kTimeoutLongPollSecs) {
-        timeout = kTimeoutLongPollSecs;
-    }
-
-    DviDevice* device = DviStack::DeviceMap().Find(udn);
-    if (device == NULL) {
-        Error(HttpStatus::kBadRequest);
-    }
-    DviService* service = NULL;
-    const TUint serviceCount = device->ServiceCount();
-    for (TUint i=0; i<serviceCount; i++) {
-        DviService* s = &device->Service(i);
-        if (s->ServiceType().PathUpnp() == serviceId) {
-            service = s;
-            break;
-        }
-    }
-    if (service == NULL) {
-        Error(HttpStatus::kBadRequest);
-    }
-    Brh sid;
-    device->CreateSid(sid);
-    DviSubscription* subscription = new DviSubscription(*device, iPropertyUpdateCollection, NULL, sid, timeout);
-
-    try {
-        WriterBwh writer(1024);
-        writer.Write(Brn("<?xml version=\"1.0\"?>"));
-        writer.Write(Brn("<root>"));
-        WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionSid);
-        WriteTag(writer, WebSocket::kTagUdn, udn);
-        WriteTag(writer, WebSocket::kTagService, serviceId);
-        WriteTag(writer, WebSocket::kTagSid, subscription->Sid());
-        Bws<Ascii::kMaxUintStringBytes> timeoutBuf;
-        (void)Ascii::AppendDec(timeoutBuf, timeout);
-        WriteTag(writer, WebSocket::kTagTimeout, timeoutBuf);
-        writer.Write(Brn("</root>"));
-        Brh response;
-        writer.TransferTo(response);
-
-        LongPollWriteResponse(response);
-    }
-    catch (WriterError&) {
-        subscription->RemoveRef();
-        THROW(WriterError);
-    }
-
-    // Start subscription, prompting delivery of the first update (covering all state variables)
-    iPropertyUpdateCollection.AddSubscription(clientId, subscription);
-    DviSubscriptionManager::AddSubscription(*subscription);
-    service->AddSubscription(subscription);
-}
-
-void DviSessionWebSocket::LongPollUnsubscribe(const Brx& aRequest)
-{
-    LOG(kDvWebSocket, "WS: LongPollUnsubscribe\n");
-    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
-    iPropertyUpdateCollection.RemoveSubscription(sid);
-
-    iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
-    iResponseStarted = iResponseEnded = true;
-    iWriterResponse->WriteFlush();
-}
-
-void DviSessionWebSocket::LongPollRenew(const Brx& aRequest)
-{
-    LOG(kDvWebSocket, "WS: LongPollRenew\n");
-    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
-    TUint timeout;
-    try {
-        timeout = Ascii::Uint(XmlParserBasic::Find(WebSocket::kTagTimeout, aRequest));
-    }
-    catch (AsciiError&) {
-        THROW(XmlError);
-    }
-    DviSubscription* subscription = DviSubscriptionManager::Find(sid);
-    if (subscription == NULL) {
-        Error(HttpStatus::kBadRequest);
-    }
-    subscription->Renew(timeout);
-
-    WriterBwh writer(1024);
-    writer.Write(Brn("<?xml version=\"1.0\"?>"));
-    writer.Write(Brn("<root>"));
-    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionRenewed);
-    WriteTag(writer, WebSocket::kTagSid, sid);
-    Bws<Ascii::kMaxUintStringBytes> timeoutBuf;
-    (void)Ascii::AppendDec(timeoutBuf, timeout);
-    WriteTag(writer, WebSocket::kTagTimeout, timeoutBuf);
-    writer.Write(Brn("</root>"));
-    Brh response;
-    writer.TransferTo(response);
-
-    LongPollWriteResponse(response);
-}
-
-void DviSessionWebSocket::LongPollGetPropertyUpdates(const Brx& aRequest)
-{
-    LOG(kDvWebSocket, "WS: LongPollGetPropertyUpdates\n");
-    Brn clientId = XmlParserBasic::Find(WebSocket::kTagClientId, aRequest);
-    try {
-        iPropertyUpdateCollection.SetClientSignal(clientId, &iLongPollSem);
-        iLongPollSem.Wait(30*1000);
-        iPropertyUpdateCollection.SetClientSignal(clientId, NULL);
-        if (!iExit) {
-            WriterBwh writer(1024);
-            iPropertyUpdateCollection.WriteUpdates(clientId, writer);
-            Brh response;
-            writer.TransferTo(response);
-            LongPollWriteResponse(response);
-        }
-    }
-    catch (Timeout&) {
-        iPropertyUpdateCollection.SetClientSignal(clientId, NULL);
-    }
-}
-
-void DviSessionWebSocket::LongPollWriteResponse(const Brx& aResponse)
-{
-    iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
-    iResponseStarted = true;
-    Http::WriteHeaderContentLength(*iWriterResponse, aResponse.Bytes() + 2 /* additional crlf */);
-    Http::WriteHeaderConnectionClose(*iWriterResponse);
-    iWriterResponse->Write(Brn("\r\n"));
-    iWriterResponse->Write(aResponse);
-    iResponseEnded = true;
-    iWriterResponse->WriteFlush();
 }
 
 
