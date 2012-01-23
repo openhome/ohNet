@@ -170,60 +170,6 @@ copy_build_includes:
 	copy Os\*.h $(inc_build)\OpenHome > nul
 	copy Os\*.inl $(inc_build)\OpenHome > nul
 
-copy_build_includes_old:
-	if not exist $(inc_build) mkdir $(inc_build)
-	if not exist $(inc_build)\C mkdir $(inc_build)\C
-	if not exist $(inc_build)\Cpp mkdir $(inc_build)\Cpp
-	if not exist $(inc_build)\Cpp\Core mkdir $(inc_build)\Cpp\Core
-	if not exist $(inc_build)\Cpp\Std mkdir $(inc_build)\Cpp\Std
-    if not exist $(inc_build)\Js mkdir $(inc_build)\Js
-    if not exist $(inc_build)\Js\Tests mkdir $(inc_build)\Js\Tests
-    if not exist $(inc_build)\Js\Tests\css mkdir $(inc_build)\Js\Tests\css
-    if not exist $(inc_build)\Js\Tests\Scripts mkdir $(inc_build)\Js\Tests\Scripts
-    if not exist $(inc_build)\Js\Tests\extern mkdir $(inc_build)\Js\Tests\extern
-    if not exist $(inc_build)\Js\Tests\proxy mkdir $(inc_build)\Js\Tests\proxy
-    if not exist $(inc_build)\Js\Tests\test mkdir $(inc_build)\Js\Tests\test
-    if not exist $(inc_build)\Js\Tests\test\assets mkdir $(inc_build)\Js\Tests\test\assets
-    if not exist $(inc_build)\Js\Tests\test\assets\skins mkdir $(inc_build)\Js\Tests\test\assets\skins
-    if not exist $(inc_build)\Js\Tests\test\assets\skins\sam mkdir $(inc_build)\Js\Tests\test\assets\skins\sam
-	copy Api\*.h $(inc_build) > nul
-	copy Api\C\*.h $(inc_build)\C > nul
-	copy Api\Cpp\*.h $(inc_build)\Cpp > nul
-	copy Api\Cpp\*.inl $(inc_build)\Cpp > nul
-	copy Api\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
-	copy Api\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
-	copy *.h $(inc_build) > nul
-	copy Bonjour\*.h $(inc_build) > nul
-	copy Bonjour\mDNSCore\*.h $(inc_build) > nul
-	copy ControlPoint\*.h $(inc_build) > nul
-	copy ControlPoint\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
-	copy ControlPoint\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
-	copy ControlPoint\Services\C\*.h $(inc_build)\C > nul
-	copy ControlPoint\Dv\*.h $(inc_build) > nul
-	copy ControlPoint\Upnp\*.h $(inc_build) > nul
-	copy Device\*.h $(inc_build) > nul
-	copy Device\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
-	copy Device\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
-	copy Device\Services\C\*.h $(inc_build)\C > nul
-	copy Device\Upnp\*.h $(inc_build) > nul
-	copy Network\*.h $(inc_build) > nul
-	copy Service\*.h $(inc_build) > nul
-	copy Ssdp\*.h $(inc_build) > nul
-	copy Os\*.h $(inc_build) > nul
-	copy Os\*.inl $(inc_build) > nul
-	copy Public\C\*.h $(inc_build)\C > nul
-	copy Public\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
-	copy Thread\Thread.h $(inc_build) > nul
-	copy Utils\*.h $(inc_build) > nul
-	copy TestFramework\*.h $(inc_build) > nul
-    copy Public\Js\OhNet.Web.UI.Tests\*.html $(inc_build)\Js\Tests > nul
-    copy Public\Js\OhNet.Web.UI.Tests\favicon.ico $(inc_build)\Js\Tests > nul
-    copy Public\Js\OhNet.Web.UI.Tests\css\*.css $(inc_build)\Js\Tests\css > nul
-    copy Public\Js\OhNet.Web.UI.Tests\Scripts\*.js $(inc_build)\Js\Tests\Scripts > nul
-    copy Public\Js\OhNet.Web.UI.Tests\test\assets\skins\sam\*.css $(inc_build)\Js\Tests\test\assets\skins\sam > nul
-    copy Public\Js\WebUIsdk\*.js $(inc_build)\Js\Tests\extern > nul
-    copy ControlPoint\Services\Js\CpOpenhomeOrgTestBasic1.js $(inc_build)\Js\Tests\proxy > nul
-    
 install :
 	if not exist "$(installdir)" mkdir "$(installdir)"
 	if not exist "$(installlibdir)" mkdir "$(installlibdir)"
