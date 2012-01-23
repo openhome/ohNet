@@ -51,8 +51,11 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgMediaServer1Destroy(THandle aHandle);
  * @param[out] aInfo
  * @param[out] aUrl
  * @param[out] aImageUri
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -90,8 +93,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndManufacturer(THandl
  * @param[out] aInfo
  * @param[out] aUrl
  * @param[out] aImageUri
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -129,8 +135,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndModel(THandle aHand
  * @param[out] aInfo
  * @param[out] aUrl
  * @param[out] aImageUri
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncProduct(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncProduct(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -165,8 +174,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndProduct(THandle aHa
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgMediaServer1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncAttributes(THandle aHandle, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncAttributes(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -199,8 +211,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndAttributes(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgMediaServer1Create
  * @param[in]  aRequest
  * @param[out] aResult
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncQuery(THandle aHandle, const char* aRequest, char** aResult);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncQuery(THandle aHandle, const char* aRequest, char** aResult);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

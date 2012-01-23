@@ -686,11 +686,18 @@ void STDCALL CpProxyAvOpenhomeOrgInfo1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount)
+int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncCounters(*aTrackCount, *aDetailsCount, *aMetatextCount);
+    int32_t err = 0;
+    try {
+        proxyC->SyncCounters(*aTrackCount, *aDetailsCount, *aMetatextCount);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -717,15 +724,22 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, OhNetHandl
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, char** aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aUri;
     Brh buf_aMetadata;
-    proxyC->SyncTrack(buf_aUri, buf_aMetadata);
-    *aUri = buf_aUri.Extract();
-    *aMetadata = buf_aMetadata.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncTrack(buf_aUri, buf_aMetadata);
+        *aUri = buf_aUri.Extract();
+        *aMetadata = buf_aMetadata.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -758,14 +772,21 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName)
+int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aLossless = 0;
     Brh buf_aCodecName;
-    proxyC->SyncDetails(*aDuration, *aBitRate, *aBitDepth, *aSampleRate, *(TBool*)aLossless, buf_aCodecName);
-    *aCodecName = buf_aCodecName.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncDetails(*aDuration, *aBitRate, *aBitDepth, *aSampleRate, *(TBool*)aLossless, buf_aCodecName);
+        *aCodecName = buf_aCodecName.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -796,13 +817,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, OhNetHandle
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncMetatext(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncMetatext(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

@@ -787,7 +787,7 @@ void STDCALL CpProxyAvOpenhomeOrgMediaServer1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -795,11 +795,18 @@ void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncManufacturer(THandle aHandle, c
     Brh buf_aInfo;
     Brh buf_aUrl;
     Brh buf_aImageUri;
-    proxyC->SyncManufacturer(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
-    *aName = buf_aName.Extract();
-    *aInfo = buf_aInfo.Extract();
-    *aUrl = buf_aUrl.Extract();
-    *aImageUri = buf_aImageUri.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncManufacturer(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
+        *aName = buf_aName.Extract();
+        *aInfo = buf_aInfo.Extract();
+        *aUrl = buf_aUrl.Extract();
+        *aImageUri = buf_aImageUri.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginManufacturer(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -838,7 +845,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndManufacturer(THandle aHandle,
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -846,11 +853,18 @@ void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncModel(THandle aHandle, char** a
     Brh buf_aInfo;
     Brh buf_aUrl;
     Brh buf_aImageUri;
-    proxyC->SyncModel(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
-    *aName = buf_aName.Extract();
-    *aInfo = buf_aInfo.Extract();
-    *aUrl = buf_aUrl.Extract();
-    *aImageUri = buf_aImageUri.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncModel(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
+        *aName = buf_aName.Extract();
+        *aInfo = buf_aInfo.Extract();
+        *aUrl = buf_aUrl.Extract();
+        *aImageUri = buf_aImageUri.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginModel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -889,7 +903,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndModel(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncProduct(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncProduct(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -897,11 +911,18 @@ void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncProduct(THandle aHandle, char**
     Brh buf_aInfo;
     Brh buf_aUrl;
     Brh buf_aImageUri;
-    proxyC->SyncProduct(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
-    *aName = buf_aName.Extract();
-    *aInfo = buf_aInfo.Extract();
-    *aUrl = buf_aUrl.Extract();
-    *aImageUri = buf_aImageUri.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncProduct(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
+        *aName = buf_aName.Extract();
+        *aInfo = buf_aInfo.Extract();
+        *aUrl = buf_aUrl.Extract();
+        *aImageUri = buf_aImageUri.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginProduct(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -940,13 +961,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndProduct(THandle aHandle, OhNe
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncAttributes(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncAttributes(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncAttributes(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncAttributes(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginAttributes(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -976,14 +1004,21 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndAttributes(THandle aHandle, O
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncQuery(THandle aHandle, const char* aRequest, char** aResult)
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncQuery(THandle aHandle, const char* aRequest, char** aResult)
 {
     CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRequest(aRequest);
     Brh buf_aResult;
-    proxyC->SyncQuery(buf_aRequest, buf_aResult);
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncQuery(buf_aRequest, buf_aResult);
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginQuery(THandle aHandle, const char* aRequest, OhNetCallbackAsync aCallback, void* aPtr)

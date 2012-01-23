@@ -537,15 +537,22 @@ void STDCALL CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSource;
     Brh buf_aSink;
-    proxyC->SyncGetProtocolInfo(buf_aSource, buf_aSink);
-    *aSource = buf_aSource.Extract();
-    *aSink = buf_aSink.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetProtocolInfo(buf_aSource, buf_aSink);
+        *aSource = buf_aSource.Extract();
+        *aSink = buf_aSink.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -578,14 +585,21 @@ int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHand
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRemoteProtocolInfo(aRemoteProtocolInfo);
     Brh buf_aPeerConnectionManager(aPeerConnectionManager);
     Brh buf_aDirection(aDirection);
-    proxyC->SyncPrepareForConnection(buf_aRemoteProtocolInfo, buf_aPeerConnectionManager, aPeerConnectionID, buf_aDirection, *aConnectionID, *aAVTransportID, *aRcsID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPrepareForConnection(buf_aRemoteProtocolInfo, buf_aPeerConnectionManager, aPeerConnectionID, buf_aDirection, *aConnectionID, *aAVTransportID, *aRcsID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, OhNetCallbackAsync aCallback, void* aPtr)
@@ -615,11 +629,18 @@ int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle 
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncConnectionComplete(aConnectionID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncConnectionComplete(aConnectionID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -646,13 +667,20 @@ int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aH
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aConnectionIDs;
-    proxyC->SyncGetCurrentConnectionIDs(buf_aConnectionIDs);
-    *aConnectionIDs = buf_aConnectionIDs.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetCurrentConnectionIDs(buf_aConnectionIDs);
+        *aConnectionIDs = buf_aConnectionIDs.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -682,7 +710,7 @@ int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THand
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -690,11 +718,18 @@ void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandl
     Brh buf_aPeerConnectionManager;
     Brh buf_aDirection;
     Brh buf_aStatus;
-    proxyC->SyncGetCurrentConnectionInfo(aConnectionID, *aRcsID, *aAVTransportID, buf_aProtocolInfo, buf_aPeerConnectionManager, *aPeerConnectionID, buf_aDirection, buf_aStatus);
-    *aProtocolInfo = buf_aProtocolInfo.Extract();
-    *aPeerConnectionManager = buf_aPeerConnectionManager.Extract();
-    *aDirection = buf_aDirection.Extract();
-    *aStatus = buf_aStatus.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetCurrentConnectionInfo(aConnectionID, *aRcsID, *aAVTransportID, buf_aProtocolInfo, buf_aPeerConnectionManager, *aPeerConnectionID, buf_aDirection, buf_aStatus);
+        *aProtocolInfo = buf_aProtocolInfo.Extract();
+        *aPeerConnectionManager = buf_aPeerConnectionManager.Extract();
+        *aDirection = buf_aDirection.Extract();
+        *aStatus = buf_aStatus.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr)

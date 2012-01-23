@@ -320,7 +320,7 @@ void STDCALL <#=className#>Destroy(THandle aHandle)
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
+int32_t STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -347,25 +347,32 @@ void STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
     *a<#=o.name#> = 0;
 <#      } #>
 <#  } #>
+    int32_t err = 0;
+    try {
 <#  if (a.outargs.Count == 0) #>
 <#  { #>
-    proxyC->Sync<#=a.name#>(<#=InNames(a)#>);
+        proxyC->Sync<#=a.name#>(<#=InNames(a)#>);
 <#  } #>
 <#  else #>
 <#  { #>
-    proxyC->Sync<#=a.name#>(<#=InNamesTrailingComma(a)#><#=OutArgNames(a)#>);
+        proxyC->Sync<#=a.name#>(<#=InNamesTrailingComma(a)#><#=OutArgNames(a)#>);
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
 <#          { #>
 <#              if (o.variable.type == "bin.base64") #>
 <#              { #>
-    *a<#=o.name#>Len = buf_a<#=o.name#>.Bytes();
+        *a<#=o.name#>Len = buf_a<#=o.name#>.Bytes();
 <#              } #>
-    *a<#=o.name#> = buf_a<#=o.name#>.Extract();
+        *a<#=o.name#> = buf_a<#=o.name#>.Extract();
 <#          } #>
 <#      } #>
 <#  } #>
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr)

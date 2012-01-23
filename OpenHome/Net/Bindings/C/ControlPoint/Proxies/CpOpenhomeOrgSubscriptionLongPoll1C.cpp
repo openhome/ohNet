@@ -329,7 +329,7 @@ void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncSubscribe(THandle aHandle, const char* aClientId, const char* aUdn, const char* aService, uint32_t aRequestedDuration, char** aSid, uint32_t* aDuration)
+int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncSubscribe(THandle aHandle, const char* aClientId, const char* aUdn, const char* aService, uint32_t aRequestedDuration, char** aSid, uint32_t* aDuration)
 {
     CpProxyOpenhomeOrgSubscriptionLongPoll1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgSubscriptionLongPoll1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -337,8 +337,15 @@ void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncSubscribe(THandle aHandl
     Brh buf_aUdn(aUdn);
     Brh buf_aService(aService);
     Brh buf_aSid;
-    proxyC->SyncSubscribe(buf_aClientId, buf_aUdn, buf_aService, aRequestedDuration, buf_aSid, *aDuration);
-    *aSid = buf_aSid.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncSubscribe(buf_aClientId, buf_aUdn, buf_aService, aRequestedDuration, buf_aSid, *aDuration);
+        *aSid = buf_aSid.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1BeginSubscribe(THandle aHandle, const char* aClientId, const char* aUdn, const char* aService, uint32_t aRequestedDuration, OhNetCallbackAsync aCallback, void* aPtr)
@@ -371,12 +378,19 @@ int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1EndSubscribe(THandle aHan
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncUnsubscribe(THandle aHandle, const char* aSid)
+int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncUnsubscribe(THandle aHandle, const char* aSid)
 {
     CpProxyOpenhomeOrgSubscriptionLongPoll1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgSubscriptionLongPoll1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSid(aSid);
-    proxyC->SyncUnsubscribe(buf_aSid);
+    int32_t err = 0;
+    try {
+        proxyC->SyncUnsubscribe(buf_aSid);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1BeginUnsubscribe(THandle aHandle, const char* aSid, OhNetCallbackAsync aCallback, void* aPtr)
@@ -404,12 +418,19 @@ int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1EndUnsubscribe(THandle aH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncRenew(THandle aHandle, const char* aSid, uint32_t aRequestedDuration, uint32_t* aDuration)
+int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncRenew(THandle aHandle, const char* aSid, uint32_t aRequestedDuration, uint32_t* aDuration)
 {
     CpProxyOpenhomeOrgSubscriptionLongPoll1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgSubscriptionLongPoll1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSid(aSid);
-    proxyC->SyncRenew(buf_aSid, aRequestedDuration, *aDuration);
+    int32_t err = 0;
+    try {
+        proxyC->SyncRenew(buf_aSid, aRequestedDuration, *aDuration);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1BeginRenew(THandle aHandle, const char* aSid, uint32_t aRequestedDuration, OhNetCallbackAsync aCallback, void* aPtr)
@@ -437,14 +458,21 @@ int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1EndRenew(THandle aHandle,
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncGetPropertyUpdates(THandle aHandle, const char* aClientId, char** aUpdates)
+int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncGetPropertyUpdates(THandle aHandle, const char* aClientId, char** aUpdates)
 {
     CpProxyOpenhomeOrgSubscriptionLongPoll1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgSubscriptionLongPoll1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aClientId(aClientId);
     Brh buf_aUpdates;
-    proxyC->SyncGetPropertyUpdates(buf_aClientId, buf_aUpdates);
-    *aUpdates = buf_aUpdates.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetPropertyUpdates(buf_aClientId, buf_aUpdates);
+        *aUpdates = buf_aUpdates.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1BeginGetPropertyUpdates(THandle aHandle, const char* aClientId, OhNetCallbackAsync aCallback, void* aPtr)

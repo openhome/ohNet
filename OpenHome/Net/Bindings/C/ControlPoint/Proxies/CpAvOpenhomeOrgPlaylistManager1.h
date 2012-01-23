@@ -48,8 +48,11 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1Destroy(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aMetadata
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncMetadata(THandle aHandle, char** aMetadata);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncMetadata(THandle aHandle, char** aMetadata);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -81,8 +84,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndMetadata(THandl
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aImagesXml
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncImagesXml(THandle aHandle, char** aImagesXml);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncImagesXml(THandle aHandle, char** aImagesXml);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -116,8 +122,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndImagesXml(THand
  * @param[in]  aId
  * @param[out] aArray
  * @param[out] aArrayLen
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadArray(THandle aHandle, uint32_t aId, char** aArray, uint32_t* aArrayLen);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadArray(THandle aHandle, uint32_t aId, char** aArray, uint32_t* aArrayLen);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -152,8 +161,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistReadArr
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aIdList
  * @param[out] aPlaylistList
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadList(THandle aHandle, const char* aIdList, char** aPlaylistList);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadList(THandle aHandle, const char* aIdList, char** aPlaylistList);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -189,8 +201,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistReadLis
  * @param[out] aName
  * @param[out] aDescription
  * @param[out] aImageId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistRead(THandle aHandle, uint32_t aId, char** aName, char** aDescription, uint32_t* aImageId);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistRead(THandle aHandle, uint32_t aId, char** aName, char** aDescription, uint32_t* aImageId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -226,8 +241,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistRead(TH
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aId
  * @param[in]  aName
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetName(THandle aHandle, uint32_t aId, const char* aName);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetName(THandle aHandle, uint32_t aId, const char* aName);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -261,8 +279,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistSetName
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aId
  * @param[in]  aDescription
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetDescription(THandle aHandle, uint32_t aId, const char* aDescription);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetDescription(THandle aHandle, uint32_t aId, const char* aDescription);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -296,8 +317,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistSetDesc
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aId
  * @param[in]  aImageId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetImageId(THandle aHandle, uint32_t aId, uint32_t aImageId);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetImageId(THandle aHandle, uint32_t aId, uint32_t aImageId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -334,8 +358,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistSetImag
  * @param[in]  aDescription
  * @param[in]  aImageId
  * @param[out] aNewId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistInsert(THandle aHandle, uint32_t aAfterId, const char* aName, const char* aDescription, uint32_t aImageId, uint32_t* aNewId);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistInsert(THandle aHandle, uint32_t aAfterId, const char* aName, const char* aDescription, uint32_t aImageId, uint32_t* aNewId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -371,8 +398,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistInsert(
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistDeleteId(THandle aHandle, uint32_t aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistDeleteId(THandle aHandle, uint32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -405,8 +435,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistDeleteI
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aId
  * @param[in]  aAfterId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistMove(THandle aHandle, uint32_t aId, uint32_t aAfterId);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistMove(THandle aHandle, uint32_t aId, uint32_t aAfterId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -439,8 +472,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistMove(TH
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistsMax(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistsMax(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -472,8 +508,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistsMax(TH
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncTracksMax(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncTracksMax(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -509,8 +548,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndTracksMax(THand
  * @param[out] aIdArrayLen
  * @param[out] aTokenArray
  * @param[out] aTokenArrayLen
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArrays(THandle aHandle, uint32_t* aToken, char** aIdArray, uint32_t* aIdArrayLen, char** aTokenArray, uint32_t* aTokenArrayLen);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArrays(THandle aHandle, uint32_t* aToken, char** aIdArray, uint32_t* aIdArrayLen, char** aTokenArray, uint32_t* aTokenArrayLen);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -547,8 +589,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistArrays(
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aToken
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArraysChanged(THandle aHandle, uint32_t aToken, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArraysChanged(THandle aHandle, uint32_t aToken, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -583,8 +628,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistArraysC
  * @param[in]  aId
  * @param[in]  aTrackId
  * @param[out] aMetadata
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, char** aMetadata);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, char** aMetadata);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -620,8 +668,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndRead(THandle aH
  * @param[in]  aId
  * @param[in]  aTrackIdList
  * @param[out] aTrackList
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncReadList(THandle aHandle, uint32_t aId, const char* aTrackIdList, char** aTrackList);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncReadList(THandle aHandle, uint32_t aId, const char* aTrackIdList, char** aTrackList);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -658,8 +709,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndReadList(THandl
  * @param[in]  aAfterTrackId
  * @param[in]  aMetadata
  * @param[out] aNewTrackId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aMetadata, uint32_t* aNewTrackId);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aMetadata, uint32_t* aNewTrackId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -695,8 +749,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndInsert(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aId
  * @param[in]  aTrackId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncDeleteId(THandle aHandle, uint32_t aId, uint32_t aTrackId);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncDeleteId(THandle aHandle, uint32_t aId, uint32_t aTrackId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -729,8 +786,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndDeleteId(THandl
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylistManager1Create
  * @param[in]  aId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncDeleteAll(THandle aHandle, uint32_t aId);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncDeleteAll(THandle aHandle, uint32_t aId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

@@ -48,8 +48,11 @@ DllExport void STDCALL CpProxyUpnpOrgContentDirectory1Destroy(THandle aHandle);
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory1Create
  * @param[out] aSearchCaps
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSearchCapabilities(THandle aHandle, char** aSearchCaps);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSearchCapabilities(THandle aHandle, char** aSearchCaps);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -81,8 +84,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndGetSearchCapabilitie
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory1Create
  * @param[out] aSortCaps
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSortCapabilities(THandle aHandle, char** aSortCaps);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSortCapabilities(THandle aHandle, char** aSortCaps);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -114,8 +120,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndGetSortCapabilities(
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory1Create
  * @param[out] aId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSystemUpdateID(THandle aHandle, uint32_t* aId);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSystemUpdateID(THandle aHandle, uint32_t* aId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -156,8 +165,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndGetSystemUpdateID(TH
  * @param[out] aNumberReturned
  * @param[out] aTotalMatches
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -207,8 +219,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndBrowse(THandle aHand
  * @param[out] aNumberReturned
  * @param[out] aTotalMatches
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -252,8 +267,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndSearch(THandle aHand
  * @param[in]  aElements
  * @param[out] aObjectID
  * @param[out] aResult
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -288,8 +306,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndCreateObject(THandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory1Create
  * @param[in]  aObjectID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncDestroyObject(THandle aHandle, const char* aObjectID);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncDestroyObject(THandle aHandle, const char* aObjectID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -323,8 +344,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndDestroyObject(THandl
  * @param[in]  aObjectID
  * @param[in]  aCurrentTagValue
  * @param[in]  aNewTagValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -360,8 +384,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndUpdateObject(THandle
  * @param[in]  aSourceURI
  * @param[in]  aDestinationURI
  * @param[out] aTransferID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -397,8 +424,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndImportResource(THand
  * @param[in]  aSourceURI
  * @param[in]  aDestinationURI
  * @param[out] aTransferID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -432,8 +462,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndExportResource(THand
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory1Create
  * @param[in]  aTransferID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncStopTransferResource(THandle aHandle, uint32_t aTransferID);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncStopTransferResource(THandle aHandle, uint32_t aTransferID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -468,8 +501,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndStopTransferResource
  * @param[out] aTransferStatus
  * @param[out] aTransferLength
  * @param[out] aTransferTotal
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncGetTransferProgress(THandle aHandle, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetTransferProgress(THandle aHandle, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -504,8 +540,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndGetTransferProgress(
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory1Create
  * @param[in]  aResourceURI
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncDeleteResource(THandle aHandle, const char* aResourceURI);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncDeleteResource(THandle aHandle, const char* aResourceURI);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -539,8 +578,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndDeleteResource(THand
  * @param[in]  aContainerID
  * @param[in]  aObjectID
  * @param[out] aNewID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, char** aNewID);
+DllExport int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, char** aNewID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

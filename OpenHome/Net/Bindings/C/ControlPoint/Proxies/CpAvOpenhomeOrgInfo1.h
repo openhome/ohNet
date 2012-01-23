@@ -50,8 +50,11 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1Destroy(THandle aHandle);
  * @param[out] aTrackCount
  * @param[out] aDetailsCount
  * @param[out] aMetatextCount
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -86,8 +89,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aUri
  * @param[out] aMetadata
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, char** aMetadata);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, char** aMetadata);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -125,8 +131,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, OhN
  * @param[out] aSampleRate
  * @param[out] aLossless
  * @param[out] aCodecName
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -163,8 +172,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, O
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

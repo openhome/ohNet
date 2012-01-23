@@ -1360,11 +1360,18 @@ void STDCALL CpProxyOpenhomeOrgTestBasic1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncIncrement(THandle aHandle, uint32_t aValue, uint32_t* aResult)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncIncrement(THandle aHandle, uint32_t aValue, uint32_t* aResult)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncIncrement(aValue, *aResult);
+    int32_t err = 0;
+    try {
+        proxyC->SyncIncrement(aValue, *aResult);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginIncrement(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1391,11 +1398,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndIncrement(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncDecrement(THandle aHandle, int32_t aValue, int32_t* aResult)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncDecrement(THandle aHandle, int32_t aValue, int32_t* aResult)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncDecrement(aValue, *aResult);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDecrement(aValue, *aResult);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginDecrement(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1422,12 +1436,19 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndDecrement(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncToggle(THandle aHandle, uint32_t aValue, uint32_t* aResult)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncToggle(THandle aHandle, uint32_t aValue, uint32_t* aResult)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aResult = 0;
-    proxyC->SyncToggle((aValue==0? false : true), *(TBool*)aResult);
+    int32_t err = 0;
+    try {
+        proxyC->SyncToggle((aValue==0? false : true), *(TBool*)aResult);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginToggle(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1455,14 +1476,21 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndToggle(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoString(THandle aHandle, const char* aValue, char** aResult)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoString(THandle aHandle, const char* aValue, char** aResult)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue(aValue);
     Brh buf_aResult;
-    proxyC->SyncEchoString(buf_aValue, buf_aResult);
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncEchoString(buf_aValue, buf_aResult);
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginEchoString(THandle aHandle, const char* aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1493,16 +1521,23 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoString(THandle aHandle, OhNet
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoBinary(THandle aHandle, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoBinary(THandle aHandle, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
     buf_aValue.Set((const TByte*)aValue, aValueLen);
     Brh buf_aResult;
-    proxyC->SyncEchoBinary(buf_aValue, buf_aResult);
-    *aResultLen = buf_aResult.Bytes();
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncEchoBinary(buf_aValue, buf_aResult);
+        *aResultLen = buf_aResult.Bytes();
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginEchoBinary(THandle aHandle, const char* aValue, uint32_t aValueLen, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1536,11 +1571,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoBinary(THandle aHandle, OhNet
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetUint(THandle aHandle, uint32_t aValueUint)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetUint(THandle aHandle, uint32_t aValueUint)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetUint(aValueUint);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetUint(aValueUint);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginSetUint(THandle aHandle, uint32_t aValueUint, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1567,11 +1609,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetUint(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetUint(THandle aHandle, uint32_t* aValueUint)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetUint(THandle aHandle, uint32_t* aValueUint)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncGetUint(*aValueUint);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetUint(*aValueUint);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginGetUint(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1598,11 +1647,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetUint(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetInt(THandle aHandle, int32_t aValueInt)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetInt(THandle aHandle, int32_t aValueInt)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetInt(aValueInt);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetInt(aValueInt);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginSetInt(THandle aHandle, int32_t aValueInt, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1629,11 +1685,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetInt(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetInt(THandle aHandle, int32_t* aValueInt)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetInt(THandle aHandle, int32_t* aValueInt)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncGetInt(*aValueInt);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetInt(*aValueInt);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginGetInt(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1660,11 +1723,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetInt(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetBool(THandle aHandle, uint32_t aValueBool)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetBool(THandle aHandle, uint32_t aValueBool)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetBool((aValueBool==0? false : true));
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetBool((aValueBool==0? false : true));
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginSetBool(THandle aHandle, uint32_t aValueBool, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1691,12 +1761,19 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetBool(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBool(THandle aHandle, uint32_t* aValueBool)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBool(THandle aHandle, uint32_t* aValueBool)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aValueBool = 0;
-    proxyC->SyncGetBool(*(TBool*)aValueBool);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetBool(*(TBool*)aValueBool);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginGetBool(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1724,11 +1801,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetBool(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetMultiple(THandle aHandle, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetMultiple(THandle aHandle, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetMultiple(aValueUint, aValueInt, (aValueBool==0? false : true));
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetMultiple(aValueUint, aValueInt, (aValueBool==0? false : true));
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginSetMultiple(THandle aHandle, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1755,12 +1839,19 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetMultiple(THandle aHandle, OhNe
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetString(THandle aHandle, const char* aValueStr)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetString(THandle aHandle, const char* aValueStr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValueStr(aValueStr);
-    proxyC->SyncSetString(buf_aValueStr);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetString(buf_aValueStr);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginSetString(THandle aHandle, const char* aValueStr, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1788,13 +1879,20 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetString(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetString(THandle aHandle, char** aValueStr)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetString(THandle aHandle, char** aValueStr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValueStr;
-    proxyC->SyncGetString(buf_aValueStr);
-    *aValueStr = buf_aValueStr.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetString(buf_aValueStr);
+        *aValueStr = buf_aValueStr.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginGetString(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1824,13 +1922,20 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetString(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetBinary(THandle aHandle, const char* aValueBin, uint32_t aValueBinLen)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetBinary(THandle aHandle, const char* aValueBin, uint32_t aValueBinLen)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValueBin;
     buf_aValueBin.Set((const TByte*)aValueBin, aValueBinLen);
-    proxyC->SyncSetBinary(buf_aValueBin);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetBinary(buf_aValueBin);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginSetBinary(THandle aHandle, const char* aValueBin, uint32_t aValueBinLen, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1859,14 +1964,21 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetBinary(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBinary(THandle aHandle, char** aValueBin, uint32_t* aValueBinLen)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBinary(THandle aHandle, char** aValueBin, uint32_t* aValueBinLen)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValueBin;
-    proxyC->SyncGetBinary(buf_aValueBin);
-    *aValueBinLen = buf_aValueBin.Bytes();
-    *aValueBin = buf_aValueBin.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetBinary(buf_aValueBin);
+        *aValueBinLen = buf_aValueBin.Bytes();
+        *aValueBin = buf_aValueBin.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginGetBinary(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1898,11 +2010,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetBinary(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncToggleBool(THandle aHandle)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncToggleBool(THandle aHandle)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncToggleBool();
+    int32_t err = 0;
+    try {
+        proxyC->SyncToggleBool();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginToggleBool(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1929,13 +2048,20 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndToggleBool(THandle aHandle, OhNet
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncWriteFile(THandle aHandle, const char* aData, const char* aFileFullName)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncWriteFile(THandle aHandle, const char* aData, const char* aFileFullName)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aData(aData);
     Brh buf_aFileFullName(aFileFullName);
-    proxyC->SyncWriteFile(buf_aData, buf_aFileFullName);
+    int32_t err = 0;
+    try {
+        proxyC->SyncWriteFile(buf_aData, buf_aFileFullName);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginWriteFile(THandle aHandle, const char* aData, const char* aFileFullName, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1964,11 +2090,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndWriteFile(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1SyncShutdown(THandle aHandle)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncShutdown(THandle aHandle)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncShutdown();
+    int32_t err = 0;
+    try {
+        proxyC->SyncShutdown();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1BeginShutdown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

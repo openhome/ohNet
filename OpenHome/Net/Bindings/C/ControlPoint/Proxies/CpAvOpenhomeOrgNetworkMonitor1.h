@@ -48,8 +48,11 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1Destroy(THandle aHandl
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgNetworkMonitor1Create
  * @param[out] aName
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncName(THandle aHandle, char** aName);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncName(THandle aHandle, char** aName);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -83,8 +86,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1EndName(THandle aHa
  * @param[out] aSender
  * @param[out] aReceiver
  * @param[out] aResults
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncPorts(THandle aHandle, uint32_t* aSender, uint32_t* aReceiver, uint32_t* aResults);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncPorts(THandle aHandle, uint32_t* aSender, uint32_t* aReceiver, uint32_t* aResults);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
