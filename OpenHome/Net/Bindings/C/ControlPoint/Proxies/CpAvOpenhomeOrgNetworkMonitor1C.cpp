@@ -302,13 +302,20 @@ void STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncName(THandle aHandle, char** aName)
+int32_t STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncName(THandle aHandle, char** aName)
 {
     CpProxyAvOpenhomeOrgNetworkMonitor1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgNetworkMonitor1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aName;
-    proxyC->SyncName(buf_aName);
-    *aName = buf_aName.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncName(buf_aName);
+        *aName = buf_aName.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1BeginName(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -338,11 +345,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1EndName(THandle aHandle, OhNe
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncPorts(THandle aHandle, uint32_t* aSender, uint32_t* aReceiver, uint32_t* aResults)
+int32_t STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncPorts(THandle aHandle, uint32_t* aSender, uint32_t* aReceiver, uint32_t* aResults)
 {
     CpProxyAvOpenhomeOrgNetworkMonitor1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgNetworkMonitor1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncPorts(*aSender, *aReceiver, *aResults);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPorts(*aSender, *aReceiver, *aResults);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1BeginPorts(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

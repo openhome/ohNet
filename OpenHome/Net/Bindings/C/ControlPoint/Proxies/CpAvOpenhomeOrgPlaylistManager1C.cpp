@@ -1534,13 +1534,20 @@ void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncMetadata(THandle aHandle, char** aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncMetadata(THandle aHandle, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aMetadata;
-    proxyC->SyncMetadata(buf_aMetadata);
-    *aMetadata = buf_aMetadata.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncMetadata(buf_aMetadata);
+        *aMetadata = buf_aMetadata.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginMetadata(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1570,13 +1577,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndMetadata(THandle aHandle,
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncImagesXml(THandle aHandle, char** aImagesXml)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncImagesXml(THandle aHandle, char** aImagesXml)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aImagesXml;
-    proxyC->SyncImagesXml(buf_aImagesXml);
-    *aImagesXml = buf_aImagesXml.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncImagesXml(buf_aImagesXml);
+        *aImagesXml = buf_aImagesXml.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginImagesXml(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1606,14 +1620,21 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndImagesXml(THandle aHandle
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadArray(THandle aHandle, uint32_t aId, char** aArray, uint32_t* aArrayLen)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadArray(THandle aHandle, uint32_t aId, char** aArray, uint32_t* aArrayLen)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aArray;
-    proxyC->SyncPlaylistReadArray(aId, buf_aArray);
-    *aArrayLen = buf_aArray.Bytes();
-    *aArray = buf_aArray.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistReadArray(aId, buf_aArray);
+        *aArrayLen = buf_aArray.Bytes();
+        *aArray = buf_aArray.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistReadArray(THandle aHandle, uint32_t aId, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1645,14 +1666,21 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistReadArray(THandle
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadList(THandle aHandle, const char* aIdList, char** aPlaylistList)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadList(THandle aHandle, const char* aIdList, char** aPlaylistList)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aIdList(aIdList);
     Brh buf_aPlaylistList;
-    proxyC->SyncPlaylistReadList(buf_aIdList, buf_aPlaylistList);
-    *aPlaylistList = buf_aPlaylistList.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistReadList(buf_aIdList, buf_aPlaylistList);
+        *aPlaylistList = buf_aPlaylistList.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistReadList(THandle aHandle, const char* aIdList, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1683,15 +1711,22 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistReadList(THandle 
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistRead(THandle aHandle, uint32_t aId, char** aName, char** aDescription, uint32_t* aImageId)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistRead(THandle aHandle, uint32_t aId, char** aName, char** aDescription, uint32_t* aImageId)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aName;
     Brh buf_aDescription;
-    proxyC->SyncPlaylistRead(aId, buf_aName, buf_aDescription, *aImageId);
-    *aName = buf_aName.Extract();
-    *aDescription = buf_aDescription.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistRead(aId, buf_aName, buf_aDescription, *aImageId);
+        *aName = buf_aName.Extract();
+        *aDescription = buf_aDescription.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistRead(THandle aHandle, uint32_t aId, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1724,12 +1759,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistRead(THandle aHan
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetName(THandle aHandle, uint32_t aId, const char* aName)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetName(THandle aHandle, uint32_t aId, const char* aName)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aName(aName);
-    proxyC->SyncPlaylistSetName(aId, buf_aName);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistSetName(aId, buf_aName);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistSetName(THandle aHandle, uint32_t aId, const char* aName, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1757,12 +1799,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistSetName(THandle a
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetDescription(THandle aHandle, uint32_t aId, const char* aDescription)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetDescription(THandle aHandle, uint32_t aId, const char* aDescription)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aDescription(aDescription);
-    proxyC->SyncPlaylistSetDescription(aId, buf_aDescription);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistSetDescription(aId, buf_aDescription);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistSetDescription(THandle aHandle, uint32_t aId, const char* aDescription, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1790,11 +1839,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistSetDescription(TH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetImageId(THandle aHandle, uint32_t aId, uint32_t aImageId)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistSetImageId(THandle aHandle, uint32_t aId, uint32_t aImageId)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncPlaylistSetImageId(aId, aImageId);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistSetImageId(aId, aImageId);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistSetImageId(THandle aHandle, uint32_t aId, uint32_t aImageId, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1821,13 +1877,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistSetImageId(THandl
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistInsert(THandle aHandle, uint32_t aAfterId, const char* aName, const char* aDescription, uint32_t aImageId, uint32_t* aNewId)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistInsert(THandle aHandle, uint32_t aAfterId, const char* aName, const char* aDescription, uint32_t aImageId, uint32_t* aNewId)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aName(aName);
     Brh buf_aDescription(aDescription);
-    proxyC->SyncPlaylistInsert(aAfterId, buf_aName, buf_aDescription, aImageId, *aNewId);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistInsert(aAfterId, buf_aName, buf_aDescription, aImageId, *aNewId);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistInsert(THandle aHandle, uint32_t aAfterId, const char* aName, const char* aDescription, uint32_t aImageId, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1856,11 +1919,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistInsert(THandle aH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistDeleteId(THandle aHandle, uint32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistDeleteId(THandle aHandle, uint32_t aValue)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncPlaylistDeleteId(aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistDeleteId(aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistDeleteId(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1887,11 +1957,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistDeleteId(THandle 
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistMove(THandle aHandle, uint32_t aId, uint32_t aAfterId)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistMove(THandle aHandle, uint32_t aId, uint32_t aAfterId)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncPlaylistMove(aId, aAfterId);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistMove(aId, aAfterId);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistMove(THandle aHandle, uint32_t aId, uint32_t aAfterId, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1918,11 +1995,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistMove(THandle aHan
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistsMax(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistsMax(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncPlaylistsMax(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistsMax(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistsMax(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1949,11 +2033,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistsMax(THandle aHan
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncTracksMax(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncTracksMax(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncTracksMax(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncTracksMax(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginTracksMax(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1980,17 +2071,24 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndTracksMax(THandle aHandle
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArrays(THandle aHandle, uint32_t* aToken, char** aIdArray, uint32_t* aIdArrayLen, char** aTokenArray, uint32_t* aTokenArrayLen)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArrays(THandle aHandle, uint32_t* aToken, char** aIdArray, uint32_t* aIdArrayLen, char** aTokenArray, uint32_t* aTokenArrayLen)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aIdArray;
     Brh buf_aTokenArray;
-    proxyC->SyncPlaylistArrays(*aToken, buf_aIdArray, buf_aTokenArray);
-    *aIdArrayLen = buf_aIdArray.Bytes();
-    *aIdArray = buf_aIdArray.Extract();
-    *aTokenArrayLen = buf_aTokenArray.Bytes();
-    *aTokenArray = buf_aTokenArray.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistArrays(*aToken, buf_aIdArray, buf_aTokenArray);
+        *aIdArrayLen = buf_aIdArray.Bytes();
+        *aIdArray = buf_aIdArray.Extract();
+        *aTokenArrayLen = buf_aTokenArray.Bytes();
+        *aTokenArray = buf_aTokenArray.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistArrays(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -2027,12 +2125,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistArrays(THandle aH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArraysChanged(THandle aHandle, uint32_t aToken, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArraysChanged(THandle aHandle, uint32_t aToken, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aValue = 0;
-    proxyC->SyncPlaylistArraysChanged(aToken, *(TBool*)aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlaylistArraysChanged(aToken, *(TBool*)aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginPlaylistArraysChanged(THandle aHandle, uint32_t aToken, OhNetCallbackAsync aCallback, void* aPtr)
@@ -2060,13 +2165,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistArraysChanged(THa
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, char** aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aMetadata;
-    proxyC->SyncRead(aId, aTrackId, buf_aMetadata);
-    *aMetadata = buf_aMetadata.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncRead(aId, aTrackId, buf_aMetadata);
+        *aMetadata = buf_aMetadata.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, OhNetCallbackAsync aCallback, void* aPtr)
@@ -2096,14 +2208,21 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndRead(THandle aHandle, OhN
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncReadList(THandle aHandle, uint32_t aId, const char* aTrackIdList, char** aTrackList)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncReadList(THandle aHandle, uint32_t aId, const char* aTrackIdList, char** aTrackList)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aTrackIdList(aTrackIdList);
     Brh buf_aTrackList;
-    proxyC->SyncReadList(aId, buf_aTrackIdList, buf_aTrackList);
-    *aTrackList = buf_aTrackList.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncReadList(aId, buf_aTrackIdList, buf_aTrackList);
+        *aTrackList = buf_aTrackList.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginReadList(THandle aHandle, uint32_t aId, const char* aTrackIdList, OhNetCallbackAsync aCallback, void* aPtr)
@@ -2134,12 +2253,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndReadList(THandle aHandle,
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aMetadata, uint32_t* aNewTrackId)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aMetadata, uint32_t* aNewTrackId)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aMetadata(aMetadata);
-    proxyC->SyncInsert(aId, aAfterTrackId, buf_aMetadata, *aNewTrackId);
+    int32_t err = 0;
+    try {
+        proxyC->SyncInsert(aId, aAfterTrackId, buf_aMetadata, *aNewTrackId);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginInsert(THandle aHandle, uint32_t aId, uint32_t aAfterTrackId, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr)
@@ -2167,11 +2293,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndInsert(THandle aHandle, O
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncDeleteId(THandle aHandle, uint32_t aId, uint32_t aTrackId)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncDeleteId(THandle aHandle, uint32_t aId, uint32_t aTrackId)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncDeleteId(aId, aTrackId);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDeleteId(aId, aTrackId);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginDeleteId(THandle aHandle, uint32_t aId, uint32_t aTrackId, OhNetCallbackAsync aCallback, void* aPtr)
@@ -2198,11 +2331,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndDeleteId(THandle aHandle,
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncDeleteAll(THandle aHandle, uint32_t aId)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncDeleteAll(THandle aHandle, uint32_t aId)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncDeleteAll(aId);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDeleteAll(aId);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginDeleteAll(THandle aHandle, uint32_t aId, OhNetCallbackAsync aCallback, void* aPtr)

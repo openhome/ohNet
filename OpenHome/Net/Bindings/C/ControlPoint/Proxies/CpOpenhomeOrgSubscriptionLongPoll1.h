@@ -53,8 +53,11 @@ DllExport void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1Destroy(THandle aH
  * @param[in]  aRequestedDuration
  * @param[out] aSid
  * @param[out] aDuration
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncSubscribe(THandle aHandle, const char* aClientId, const char* aUdn, const char* aService, uint32_t aRequestedDuration, char** aSid, uint32_t* aDuration);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncSubscribe(THandle aHandle, const char* aClientId, const char* aUdn, const char* aService, uint32_t aRequestedDuration, char** aSid, uint32_t* aDuration);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -91,8 +94,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1EndSubscribe(TH
  *
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgSubscriptionLongPoll1Create
  * @param[in]  aSid
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncUnsubscribe(THandle aHandle, const char* aSid);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncUnsubscribe(THandle aHandle, const char* aSid);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -126,8 +132,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1EndUnsubscribe(
  * @param[in]  aSid
  * @param[in]  aRequestedDuration
  * @param[out] aDuration
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncRenew(THandle aHandle, const char* aSid, uint32_t aRequestedDuration, uint32_t* aDuration);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncRenew(THandle aHandle, const char* aSid, uint32_t aRequestedDuration, uint32_t* aDuration);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -162,8 +171,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1EndRenew(THandl
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgSubscriptionLongPoll1Create
  * @param[in]  aClientId
  * @param[out] aUpdates
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncGetPropertyUpdates(THandle aHandle, const char* aClientId, char** aUpdates);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncGetPropertyUpdates(THandle aHandle, const char* aClientId, char** aUpdates);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

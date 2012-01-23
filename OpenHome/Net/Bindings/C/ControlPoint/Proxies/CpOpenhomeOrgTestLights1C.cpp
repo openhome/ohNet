@@ -540,11 +540,18 @@ void STDCALL CpProxyOpenhomeOrgTestLights1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetCount(THandle aHandle, uint32_t* aCount)
+int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetCount(THandle aHandle, uint32_t* aCount)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncGetCount(*aCount);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetCount(*aCount);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestLights1BeginGetCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -571,13 +578,20 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetCount(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetRoom(THandle aHandle, uint32_t aIndex, char** aRoomName)
+int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetRoom(THandle aHandle, uint32_t aIndex, char** aRoomName)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRoomName;
-    proxyC->SyncGetRoom(aIndex, buf_aRoomName);
-    *aRoomName = buf_aRoomName.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetRoom(aIndex, buf_aRoomName);
+        *aRoomName = buf_aRoomName.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestLights1BeginGetRoom(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
@@ -607,13 +621,20 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetRoom(THandle aHandle, OhNetHa
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetName(THandle aHandle, uint32_t aIndex, char** aFriendlyName)
+int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetName(THandle aHandle, uint32_t aIndex, char** aFriendlyName)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aFriendlyName;
-    proxyC->SyncGetName(aIndex, buf_aFriendlyName);
-    *aFriendlyName = buf_aFriendlyName.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetName(aIndex, buf_aFriendlyName);
+        *aFriendlyName = buf_aFriendlyName.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestLights1BeginGetName(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
@@ -643,11 +664,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetName(THandle aHandle, OhNetHa
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetPosition(THandle aHandle, uint32_t aIndex, uint32_t* aX, uint32_t* aY, uint32_t* aZ)
+int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetPosition(THandle aHandle, uint32_t aIndex, uint32_t* aX, uint32_t* aY, uint32_t* aZ)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncGetPosition(aIndex, *aX, *aY, *aZ);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetPosition(aIndex, *aX, *aY, *aZ);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestLights1BeginGetPosition(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
@@ -674,11 +702,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetPosition(THandle aHandle, OhN
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestLights1SyncSetColor(THandle aHandle, uint32_t aIndex, uint32_t aColor)
+int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncSetColor(THandle aHandle, uint32_t aIndex, uint32_t aColor)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetColor(aIndex, aColor);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetColor(aIndex, aColor);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestLights1BeginSetColor(THandle aHandle, uint32_t aIndex, uint32_t aColor, OhNetCallbackAsync aCallback, void* aPtr)
@@ -705,11 +740,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndSetColor(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColor(THandle aHandle, uint32_t aIndex, uint32_t* aColor)
+int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColor(THandle aHandle, uint32_t aIndex, uint32_t* aColor)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncGetColor(aIndex, *aColor);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetColor(aIndex, *aColor);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestLights1BeginGetColor(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
@@ -736,11 +778,18 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetColor(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColorComponents(THandle aHandle, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue)
+int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColorComponents(THandle aHandle, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncGetColorComponents(aColor, *aBrightness, *aRed, *aGreen, *aBlue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetColorComponents(aColor, *aBrightness, *aRed, *aGreen, *aBlue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestLights1BeginGetColorComponents(THandle aHandle, uint32_t aColor, OhNetCallbackAsync aCallback, void* aPtr)

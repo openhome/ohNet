@@ -53,8 +53,11 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1Destroy(THandle aHandle);
  * @param[out] aVolumeMilliDbPerStep
  * @param[out] aBalanceMax
  * @param[out] aFadeMax
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncCharacteristics(THandle aHandle, uint32_t* aVolumeMax, uint32_t* aVolumeUnity, uint32_t* aVolumeSteps, uint32_t* aVolumeMilliDbPerStep, uint32_t* aBalanceMax, uint32_t* aFadeMax);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncCharacteristics(THandle aHandle, uint32_t* aVolumeMax, uint32_t* aVolumeUnity, uint32_t* aVolumeSteps, uint32_t* aVolumeMilliDbPerStep, uint32_t* aBalanceMax, uint32_t* aFadeMax);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -91,8 +94,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndCharacteristics(THandle 
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[in]  aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetVolume(THandle aHandle, uint32_t aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetVolume(THandle aHandle, uint32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -123,8 +129,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndSetVolume(THandle aHandl
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeInc(THandle aHandle);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeInc(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -154,8 +163,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndVolumeInc(THandle aHandl
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeDec(THandle aHandle);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeDec(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -186,8 +198,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndVolumeDec(THandle aHandl
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolume(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolume(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -219,8 +234,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndVolume(THandle aHandle, 
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[in]  aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetBalance(THandle aHandle, int32_t aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetBalance(THandle aHandle, int32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -251,8 +269,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndSetBalance(THandle aHand
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalanceInc(THandle aHandle);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalanceInc(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -282,8 +303,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndBalanceInc(THandle aHand
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalanceDec(THandle aHandle);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalanceDec(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -314,8 +338,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndBalanceDec(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalance(THandle aHandle, int32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalance(THandle aHandle, int32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -347,8 +374,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndBalance(THandle aHandle,
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[in]  aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetFade(THandle aHandle, int32_t aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetFade(THandle aHandle, int32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -379,8 +409,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndSetFade(THandle aHandle,
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncFadeInc(THandle aHandle);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncFadeInc(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -410,8 +443,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndFadeInc(THandle aHandle,
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncFadeDec(THandle aHandle);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncFadeDec(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -442,8 +478,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndFadeDec(THandle aHandle,
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncFade(THandle aHandle, int32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncFade(THandle aHandle, int32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -475,8 +514,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndFade(THandle aHandle, Oh
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[in]  aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetMute(THandle aHandle, uint32_t aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetMute(THandle aHandle, uint32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -508,8 +550,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndSetMute(THandle aHandle,
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncMute(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncMute(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -541,8 +586,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndMute(THandle aHandle, Oh
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeLimit(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeLimit(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

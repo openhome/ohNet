@@ -1314,11 +1314,18 @@ void STDCALL CpProxyAvOpenhomeOrgVolume1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncCharacteristics(THandle aHandle, uint32_t* aVolumeMax, uint32_t* aVolumeUnity, uint32_t* aVolumeSteps, uint32_t* aVolumeMilliDbPerStep, uint32_t* aBalanceMax, uint32_t* aFadeMax)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncCharacteristics(THandle aHandle, uint32_t* aVolumeMax, uint32_t* aVolumeUnity, uint32_t* aVolumeSteps, uint32_t* aVolumeMilliDbPerStep, uint32_t* aBalanceMax, uint32_t* aFadeMax)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncCharacteristics(*aVolumeMax, *aVolumeUnity, *aVolumeSteps, *aVolumeMilliDbPerStep, *aBalanceMax, *aFadeMax);
+    int32_t err = 0;
+    try {
+        proxyC->SyncCharacteristics(*aVolumeMax, *aVolumeUnity, *aVolumeSteps, *aVolumeMilliDbPerStep, *aBalanceMax, *aFadeMax);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginCharacteristics(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1345,11 +1352,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndCharacteristics(THandle aHandle, O
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetVolume(THandle aHandle, uint32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetVolume(THandle aHandle, uint32_t aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetVolume(aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetVolume(aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginSetVolume(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1376,11 +1390,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndSetVolume(THandle aHandle, OhNetHa
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeInc(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeInc(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncVolumeInc();
+    int32_t err = 0;
+    try {
+        proxyC->SyncVolumeInc();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginVolumeInc(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1407,11 +1428,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndVolumeInc(THandle aHandle, OhNetHa
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeDec(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeDec(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncVolumeDec();
+    int32_t err = 0;
+    try {
+        proxyC->SyncVolumeDec();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginVolumeDec(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1438,11 +1466,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndVolumeDec(THandle aHandle, OhNetHa
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolume(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolume(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncVolume(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncVolume(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginVolume(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1469,11 +1504,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndVolume(THandle aHandle, OhNetHandl
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetBalance(THandle aHandle, int32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetBalance(THandle aHandle, int32_t aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetBalance(aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetBalance(aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginSetBalance(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1500,11 +1542,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndSetBalance(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalanceInc(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalanceInc(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncBalanceInc();
+    int32_t err = 0;
+    try {
+        proxyC->SyncBalanceInc();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginBalanceInc(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1531,11 +1580,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndBalanceInc(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalanceDec(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalanceDec(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncBalanceDec();
+    int32_t err = 0;
+    try {
+        proxyC->SyncBalanceDec();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginBalanceDec(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1562,11 +1618,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndBalanceDec(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalance(THandle aHandle, int32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalance(THandle aHandle, int32_t* aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncBalance(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncBalance(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginBalance(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1593,11 +1656,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndBalance(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetFade(THandle aHandle, int32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetFade(THandle aHandle, int32_t aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetFade(aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetFade(aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginSetFade(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1624,11 +1694,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndSetFade(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncFadeInc(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncFadeInc(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncFadeInc();
+    int32_t err = 0;
+    try {
+        proxyC->SyncFadeInc();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginFadeInc(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1655,11 +1732,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndFadeInc(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncFadeDec(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncFadeDec(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncFadeDec();
+    int32_t err = 0;
+    try {
+        proxyC->SyncFadeDec();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginFadeDec(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1686,11 +1770,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndFadeDec(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncFade(THandle aHandle, int32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncFade(THandle aHandle, int32_t* aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncFade(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncFade(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginFade(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1717,11 +1808,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndFade(THandle aHandle, OhNetHandleA
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetMute(THandle aHandle, uint32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncSetMute(THandle aHandle, uint32_t aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetMute((aValue==0? false : true));
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetMute((aValue==0? false : true));
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginSetMute(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1748,12 +1846,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndSetMute(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncMute(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncMute(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aValue = 0;
-    proxyC->SyncMute(*(TBool*)aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncMute(*(TBool*)aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginMute(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1781,11 +1886,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndMute(THandle aHandle, OhNetHandleA
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeLimit(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeLimit(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncVolumeLimit(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncVolumeLimit(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1BeginVolumeLimit(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

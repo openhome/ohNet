@@ -50,8 +50,11 @@ DllExport void STDCALL CpProxyUpnpOrgAVTransport1Destroy(THandle aHandle);
  * @param[in]  aInstanceID
  * @param[in]  aCurrentURI
  * @param[in]  aCurrentURIMetaData
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -87,8 +90,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndSetAVTransportURI(THandle
  * @param[in]  aInstanceID
  * @param[in]  aNextURI
  * @param[in]  aNextURIMetaData
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -131,8 +137,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndSetNextAVTransportURI(THa
  * @param[out] aPlayMedium
  * @param[out] aRecordMedium
  * @param[out] aWriteStatus
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncGetMediaInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncGetMediaInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -176,8 +185,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndGetMediaInfo(THandle aHan
  * @param[out] aCurrentTransportState
  * @param[out] aCurrentTransportStatus
  * @param[out] aCurrentSpeed
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncGetTransportInfo(THandle aHandle, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncGetTransportInfo(THandle aHandle, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -220,8 +232,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndGetTransportInfo(THandle 
  * @param[out] aAbsTime
  * @param[out] aRelCount
  * @param[out] aAbsCount
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncGetPositionInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncGetPositionInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -264,8 +279,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndGetPositionInfo(THandle a
  * @param[out] aPlayMedia
  * @param[out] aRecMedia
  * @param[out] aRecQualityModes
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -302,8 +320,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndGetDeviceCapabilities(THa
  * @param[in]  aInstanceID
  * @param[out] aPlayMode
  * @param[out] aRecQualityMode
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncGetTransportSettings(THandle aHandle, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncGetTransportSettings(THandle aHandle, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -337,8 +358,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndGetTransportSettings(THan
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncStop(THandle aHandle, uint32_t aInstanceID);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncStop(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -371,8 +395,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndStop(THandle aHandle, OhN
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
  * @param[in]  aSpeed
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -405,8 +432,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndPlay(THandle aHandle, OhN
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncPause(THandle aHandle, uint32_t aInstanceID);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncPause(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -438,8 +468,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndPause(THandle aHandle, Oh
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncRecord(THandle aHandle, uint32_t aInstanceID);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncRecord(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -473,8 +506,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndRecord(THandle aHandle, O
  * @param[in]  aInstanceID
  * @param[in]  aUnit
  * @param[in]  aTarget
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -508,8 +544,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndSeek(THandle aHandle, OhN
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncNext(THandle aHandle, uint32_t aInstanceID);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncNext(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -541,8 +580,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndNext(THandle aHandle, OhN
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncPrevious(THandle aHandle, uint32_t aInstanceID);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncPrevious(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -575,8 +617,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndPrevious(THandle aHandle,
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
  * @param[in]  aNewPlayMode
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -610,8 +655,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndSetPlayMode(THandle aHand
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
  * @param[in]  aNewRecordQualityMode
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -645,8 +693,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1EndSetRecordQualityMode(THan
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[in]  aInstanceID
  * @param[out] aActions
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgAVTransport1SyncGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, char** aActions);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport1SyncGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, char** aActions);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

@@ -512,13 +512,20 @@ void STDCALL CpProxyAvOpenhomeOrgSender1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1SyncPresentationUrl(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncPresentationUrl(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncPresentationUrl(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncPresentationUrl(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgSender1BeginPresentationUrl(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -548,13 +555,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndPresentationUrl(THandle aHandle, O
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1SyncMetadata(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncMetadata(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncMetadata(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncMetadata(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgSender1BeginMetadata(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -584,12 +598,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndMetadata(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1SyncAudio(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncAudio(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aValue = 0;
-    proxyC->SyncAudio(*(TBool*)aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncAudio(*(TBool*)aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgSender1BeginAudio(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -617,13 +638,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndAudio(THandle aHandle, OhNetHandle
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1SyncStatus(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncStatus(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncStatus(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncStatus(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgSender1BeginStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -653,13 +681,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndStatus(THandle aHandle, OhNetHandl
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1SyncAttributes(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncAttributes(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncAttributes(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncAttributes(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgSender1BeginAttributes(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

@@ -48,8 +48,11 @@ DllExport void STDCALL CpProxyUpnpOrgDimming1Destroy(THandle aHandle);
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[in]  anewLoadlevelTarget
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -81,8 +84,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(THandle aH
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aGetLoadlevelTarget
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(THandle aHandle, uint32_t* aGetLoadlevelTarget);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(THandle aHandle, uint32_t* aGetLoadlevelTarget);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -114,8 +120,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(THandle aH
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aretLoadlevelStatus
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(THandle aHandle, uint32_t* aretLoadlevelStatus);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(THandle aHandle, uint32_t* aretLoadlevelStatus);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -147,8 +156,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(THandle aH
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[in]  anewOnEffectLevel
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -180,8 +192,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndSetOnEffectLevel(THandle aHan
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[in]  anewOnEffect
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncSetOnEffect(THandle aHandle, const char* anewOnEffect);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncSetOnEffect(THandle aHandle, const char* anewOnEffect);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -214,8 +229,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndSetOnEffect(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aretOnEffect
  * @param[out] aretOnEffectLevel
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(THandle aHandle, char** aretOnEffect, uint32_t* aretOnEffectLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(THandle aHandle, char** aretOnEffect, uint32_t* aretOnEffectLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -247,8 +265,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndGetOnEffectParameters(THandle
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncStepUp(THandle aHandle);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncStepUp(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -278,8 +299,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndStepUp(THandle aHandle, OhNet
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncStepDown(THandle aHandle);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncStepDown(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -309,8 +333,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndStepDown(THandle aHandle, OhN
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncStartRampUp(THandle aHandle);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncStartRampUp(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -340,8 +367,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndStartRampUp(THandle aHandle, 
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncStartRampDown(THandle aHandle);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncStartRampDown(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -371,8 +401,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndStartRampDown(THandle aHandle
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncStopRamp(THandle aHandle);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncStopRamp(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -404,8 +437,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndStopRamp(THandle aHandle, OhN
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[in]  anewLoadLevelTarget
  * @param[in]  anewRampTime
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -438,8 +474,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndStartRampToLevel(THandle aHan
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[in]  anewStepDelta
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncSetStepDelta(THandle aHandle, uint32_t anewStepDelta);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncSetStepDelta(THandle aHandle, uint32_t anewStepDelta);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -471,8 +510,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndSetStepDelta(THandle aHandle,
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aretStepDelta
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncGetStepDelta(THandle aHandle, uint32_t* aretStepDelta);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetStepDelta(THandle aHandle, uint32_t* aretStepDelta);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -504,8 +546,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndGetStepDelta(THandle aHandle,
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[in]  anewRampRate
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncSetRampRate(THandle aHandle, uint32_t anewRampRate);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncSetRampRate(THandle aHandle, uint32_t anewRampRate);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -537,8 +582,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndSetRampRate(THandle aHandle, 
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aretRampRate
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncGetRampRate(THandle aHandle, uint32_t* aretRampRate);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetRampRate(THandle aHandle, uint32_t* aretRampRate);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -569,8 +617,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndGetRampRate(THandle aHandle, 
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncPauseRamp(THandle aHandle);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncPauseRamp(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -600,8 +651,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndPauseRamp(THandle aHandle, Oh
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncResumeRamp(THandle aHandle);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncResumeRamp(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -632,8 +686,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndResumeRamp(THandle aHandle, O
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aretIsRamping
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t* aretIsRamping);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t* aretIsRamping);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -665,8 +722,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle,
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aretRampPaused
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_t* aretRampPaused);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_t* aretRampPaused);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -698,8 +758,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aretRampTime
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgDimming1SyncGetRampTime(THandle aHandle, uint32_t* aretRampTime);
+DllExport int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetRampTime(THandle aHandle, uint32_t* aretRampTime);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
