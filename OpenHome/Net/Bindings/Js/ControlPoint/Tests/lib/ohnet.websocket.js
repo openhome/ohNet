@@ -61,19 +61,46 @@ ohnet.websocket = function (clientId,url,options) {
 	
 }
 
-
+/**
+* Subscribes a service
+* @method subscribe
+* @param {Object} service The service to subscribe
+*/
 ohnet.websocket.prototype.subscribe = function (service) {
 	this.sendMessage(this.subscribeMessage(service));
 }
 
+/**
+* Unsubscribes a service
+* @method unsubscribe
+* @param {String} subscriptionId The subscriptionId of the service to unsubscribe
+*/
 ohnet.websocket.prototype.unsubscribe = function (subscriptionId) {
 	this.sendMessage(this.unsubscribeMessage(subscriptionId));
 }
 
+/**
+* Requests to renew the subscription before it timesout
+* @method renew
+* @param {String} subscriptionId The subscriptionId of the service to renew
+*/
 ohnet.websocket.prototype.renew = function (subscriptionId) {
 	this.sendMessage(this.renewMessage(subscriptionId));
 }
 
+/**
+* Closes the websocket
+* @method close
+*/
+ohnet.websocket.prototype.close = function () {
+	this.socket.close()
+}
+
+/**
+* Helper method to send message via websocket
+* @method sendMessage
+* * @param {String} message The message to send
+*/
 ohnet.websocket.prototype.sendMessage = function (message) {
 	if (this.debug) { console.log('>> ' + message); }
 	this.socket.send(message);
@@ -189,12 +216,3 @@ ohnet.websocket.prototype.getPropertyUpdatesMessage = function () {
     return message;
 };
 
-/**
-* Generates the Renew message to renew the service's subscription
-* @method renewMessage
-* @param {Int} subscriptionId The subscription id of the service interested in renewing the subscription
-* @return {String} The renew message to be sent to the ohnet service 
-*/
-ohnet.websocket.prototype.close = function () {
-   this.socket.close();
-};

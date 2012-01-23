@@ -36,7 +36,7 @@ ohnet.subscriptionmanager = (function () {
 	var clientId = ''; 
 	var allowWebSockets = true; // A flag to force the subscription manager to always use long polling
     var StartedFunction, ErrorFunction, Debug, webSocketPort, webSocketLive = false, webSocketAttempts = 0, ws,lp;
-    var services = [], pendingServices = [], pendingPropertyUpdates = {};
+    var services = {}, pendingServices = [], pendingPropertyUpdates = {};
     
     // Public Variables
     var running = false; // A flag to state if the Subscription Manager is running
@@ -180,20 +180,19 @@ ohnet.subscriptionmanager = (function () {
 	*/
 	var receivePropertyUpdate = function (xmlDoc) {
 	    	var subscriptionNodes = xmlDoc.getElementsByTagNameNS("*", "SUBSCRIPTION"); // NON-IE
-	    	for(var i = 0 , count = subscriptionNodes.length;  i < count; i++)
+	    	for(var i = 0 ; i < subscriptionNodes.length; i++)
 	    	{
 	    		var subscriptionId = subscriptionNodes[i].getElementsByTagNameNS("*", "SID")[0].textContent; // NON-IE#
-	    		
 	    		if(!services[subscriptionId])
 				{
 					pendingPropertyUpdates[subscriptionId] = xmlDoc;
 					return;	
 				}
 		    
-		        var properties = xmlDoc.getElementsByTagNameNS("*", "property"); // NON-IE
+		        var properties = subscriptionNodes[i].getElementsByTagNameNS("*", "property"); // NON-IE
 		        if (properties) {
-		        	for (var i = 0, count = properties.length; i < count; i++) {
-		        		var property = properties[i].childNodes[0];
+		        	for (var j = 0; j < properties.length; j++) {
+		        		var property = properties[j].childNodes[0];
 		                if (property) {
 		                    setPropertyUpdate(subscriptionId, property.tagName, property.textContent);
 		                    if (Debug) {
@@ -202,8 +201,8 @@ ohnet.subscriptionmanager = (function () {
 		                }
 		            }
 		
-		            for (var i = 0, count = properties.length; i < count; i++) {
-		                var property = properties[i].childNodes[0];
+		            for (var p = 0; p < properties.length; p++) {
+		                var property = properties[p].childNodes[0];
 		                if (property) {
 		                    setPropertyChanged(subscriptionId, property.tagName, property.textContent);
 		                }
@@ -376,18 +375,31 @@ ohnet.subscriptionmanager = (function () {
     * @method stop
     */
     var stop = function () {
-        for (var i = services.length - 1; i > -1; i--) {
-            var service = services[i];
-            if (service) {
-                removeService(service.subscriptionId);
-            }
-        }
+    	for (var key in services) {
+  			if (services.hasOwnProperty(key)) {
+    			removeService(services[key]);
+  			}
+		}
+      
         if (webSocketLive) {
             ws.close();
         }
     };
     
-
+ 	/**
+    * Helper method to count services
+    * @method countServices
+    */
+    var countServices = function () {
+       var serviceCount = 0; 
+       for (var key in services) {
+  			if (services.hasOwnProperty(key)) {
+  				serviceCount ++;
+  			}
+  		}
+  		return serviceCount;
+    };
+    
     /**
     * Adds a new service to the Services collection and subscribes for property changes
     * @method addService
@@ -401,7 +413,7 @@ ohnet.subscriptionmanager = (function () {
             if (serviceAddedFunction) {
                 service.serviceAddedFunction = serviceAddedFunction;
             }
-            (webSocketLive) ? ws.subscribe(service) : lp.subscribe(service);
+            (webSocketLive) ? ws.subscribe(service) : lp.subscribe(service,countServices()==0);
         }
         else {
             if (Debug) {
@@ -420,12 +432,13 @@ ohnet.subscriptionmanager = (function () {
         var service = services[subscriptionId];
 
         if (service) {
-			(webSocketLive) ? ws.unsubscribe(subscriptionId) : lp.unsubscribe(subscriptionId);
+        	delete services[subscriptionId];
+			(webSocketLive) ? ws.unsubscribe(subscriptionId) : lp.unsubscribe(subscriptionId,countServices()==0);
 			
             if (service.SubscriptionTimer) { // Stop in-progress timers
                 clearTimeout(service.SubscriptionTimer);
             }
-            delete services[subscriptionId];
+            
         }
     };
 

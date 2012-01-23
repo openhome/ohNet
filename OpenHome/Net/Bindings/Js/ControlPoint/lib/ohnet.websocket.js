@@ -89,6 +89,14 @@ ohnet.websocket.prototype.renew = function (subscriptionId) {
 }
 
 /**
+* Closes the websocket
+* @method close
+*/
+ohnet.websocket.prototype.close = function () {
+	this.socket.close()
+}
+
+/**
 * Helper method to send message via websocket
 * @method sendMessage
 * * @param {String} message The message to send
