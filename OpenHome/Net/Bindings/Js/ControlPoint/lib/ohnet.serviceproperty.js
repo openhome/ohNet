@@ -77,12 +77,7 @@ ohnet.serviceproperty.prototype.setValue = function (value) {
 */
 ohnet.serviceproperty.prototype.reportChanged = function (value) {
     for (var i = this.listeners.length - 1; i > -1; i--) {
-        try {
             this.listeners[i].call(this, value);
-
-        } catch (e) {
-            console.log("reportChanged: " + e);
-        }
     }
 }
 

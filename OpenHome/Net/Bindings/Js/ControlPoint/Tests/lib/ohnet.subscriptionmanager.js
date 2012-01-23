@@ -104,6 +104,7 @@ ohnet.subscriptionmanager = (function () {
 	    	if(pendingService.udn == udn && pendingService.serviceName == service)
 	    	{
 				services[subscriptionId] = pendingService;
+				services[subscriptionId].subscriptionId = subscriptionId;
 	    		pendingServices.splice(i,1);
 	    		
 				var service = services[subscriptionId];
@@ -394,7 +395,7 @@ ohnet.subscriptionmanager = (function () {
     var addService = function (service, serviceAddedFunction) {
         if (running) {
 			pendingServices.push(service);
-
+			
             if (serviceAddedFunction) {
                 service.serviceAddedFunction = serviceAddedFunction;
             }
@@ -414,6 +415,7 @@ ohnet.subscriptionmanager = (function () {
     * @param {Int} subscriptionId The subscription id of the service
     */
     var removeService = function (subscriptionId) {
+    	console.log(subscriptionId);
         var service = services[subscriptionId];
 
         if (service) {
@@ -423,15 +425,6 @@ ohnet.subscriptionmanager = (function () {
                 clearTimeout(service.SubscriptionTimer);
             }
             delete services[subscriptionId];
-
-            if (Debug) {
-                console.log("removeService\services[aSubscriptionId] (Should be null): " + services[subscriptionId]);
-            }
-        }
-        else {
-            if (Debug) {
-                console.log("removeService\service: NULL");
-            }
         }
     };
 
