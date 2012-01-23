@@ -164,7 +164,7 @@ copy_build_includes:
 	copy OpenHome\Net\Bindings\Cpp\Device\*.h $(inc_build)\OpenHome\Net\Cpp > nul
 	copy OpenHome\Net\Bindings\Cpp\Device\Providers\*.h $(inc_build)\OpenHome\Net\Cpp > nul
     xcopy OpenHome\Net\Bindings\Js\ControlPoint\Tests\*.*/s $(inc_build)\OpenHome\Net\Private\Js\Tests /y > nul
-    copy OpenHome\Net\Bindings\Js\ControlPoint\*.js $(inc_build)\OpenHome\Net\Private\Js\Tests\extern > nul
+    copy OpenHome\Net\Bindings\Js\ControlPoint\lib\*.js $(inc_build)\OpenHome\Net\Private\Js\Tests\lib > nul
     copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgTestBasic1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies > nul
     copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies > nul
 	copy Os\*.h $(inc_build)\OpenHome > nul
