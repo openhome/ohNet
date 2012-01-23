@@ -110,8 +110,12 @@ void DeviceList::InvokeSync()
     THandle h = CpProxyUpnpOrgConnectionManager1Create(device);
     char* source;
     char* sink;
-    CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(h, &source, &sink);
-    Print("source is %s\nsink is %s\n\n", source, sink);
+    if (CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(h, &source, &sink) == 0) {
+        Print("source is %s\nsink is %s\n\n", source, sink);
+    }
+    else {
+        Print("ERROR: invocation failed\n");
+    }
     free(sink);
     free(source);
     CpProxyUpnpOrgConnectionManager1Destroy(h);
