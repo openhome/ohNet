@@ -153,7 +153,8 @@ copy_build_includes:
 	mkdir -p $(inc_build)/OpenHome/Net/Cpp
 	mkdir -p $(inc_build)/OpenHome/Net/Private/Js
 	mkdir -p $(inc_build)/OpenHome/Net/Private/Js/Tests
-	mkdir -p $(inc_build)/OpenHome/Net/Private/Js/Tests/proxy
+	mkdir -p $(inc_build)/OpenHome/Net/Private/Js/Tests/lib
+	mkdir -p $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
 	$(cp) OpenHome/*.h $(inc_build)/OpenHome/Private
 	$(cp) OpenHome/Buffer.inl $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/Buffer.h
@@ -224,8 +225,9 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Bindings/Cpp/Device/*.h $(inc_build)/OpenHome/Net/Cpp
 	$(cp) OpenHome/Net/Bindings/Cpp/Device/Providers/*.h $(inc_build)/OpenHome/Net/Cpp
 	$(cp) -r OpenHome/Net/Bindings/Js/ControlPoint/Tests/*.* $(inc_build)/OpenHome/Net/Private/Js/Tests
-	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/*.js $(inc_build)/OpenHome/Net/Private/Js/Tests
-	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxy
+	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/lib/*.js $(inc_build)/OpenHome/Net/Private/Js/Tests/lib
+	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
+	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
 	$(cp) Os/*.h $(inc_build)/OpenHome
 	$(cp) Os/*.inl $(inc_build)/OpenHome
 
