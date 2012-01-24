@@ -1,6 +1,7 @@
 #include <OpenHome/Net/C/DvDevice.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include "DviDeviceC.h"
+#include <OpenHome/Private/Stream.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -38,25 +39,46 @@ void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::
 	ASSERT(iResourceManager != NULL);
 	iResourceWriter = &aResourceWriter;
 	Brhz uriTail(aUriTail);
-	iResourceManager(iCallbackArg, uriTail.CString(), aInterface, &aLanguageList, this, WriteResourceBegin, WriteResource, WriteResourceEnd);
+	int32_t err = iResourceManager(iCallbackArg, uriTail.CString(), aInterface, &aLanguageList, this, WriteResourceBegin, WriteResource, WriteResourceEnd);
+    if (err != 0) {
+        THROW(WriterError);
+    }
 }
 
-void STDCALL DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType)
+int32_t STDCALL DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType)
 { // static
 	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
-	self->iResourceWriter->WriteResourceBegin(aTotalBytes, aMimeType);
+    try {
+	    self->iResourceWriter->WriteResourceBegin(aTotalBytes, aMimeType);
+    }
+    catch (...) {
+        return -1;
+    }
+    return 0;
 }
 
-void STDCALL DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes)
+int32_t STDCALL DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes)
 { // static
 	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
-	self->iResourceWriter->WriteResource(aData, aBytes);
+    try {
+    	self->iResourceWriter->WriteResource(aData, aBytes);
+    }
+    catch (...) {
+        return -1;
+    }
+    return 0;
 }
 
-void STDCALL DviDeviceC::WriteResourceEnd(void* aPtr)
+int32_t STDCALL DviDeviceC::WriteResourceEnd(void* aPtr)
 { // static
 	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
-	self->iResourceWriter->WriteResourceEnd();
+    try {
+    	self->iResourceWriter->WriteResourceEnd();
+    }
+    catch (...) {
+        return -1;
+    }
+    return 0;
 }
 
 
