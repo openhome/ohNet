@@ -111,7 +111,7 @@ ohnet.longpolling.prototype.propertyUpdate = function () {
 			}
 			if(_this.pollingStarted)
 			{
-				_this.propertyUpdate();
+				setTimeout(function() { _this.propertyUpdate(); },10); // hack to stop safari from displaying loading cursor
 			}
 		});
 	}
