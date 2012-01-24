@@ -261,6 +261,7 @@ ohnet.subscriptionmanager = (function () {
     */
     var onSocketOpen = function () {
 		webSocketLive = true;
+		running = true;
         console.log("onSocketOpen");
         if(StartedFunction)
         	StartedFunction();
@@ -366,7 +367,7 @@ ohnet.subscriptionmanager = (function () {
 			onReceiveSubscribeCompleted: receiveSubscribeCompleted,
 			onReceiveRenewCompleted: receiveRenewCompleted
     	});
-        running = true;
+        
    	}; 
 
  
@@ -419,7 +420,7 @@ ohnet.subscriptionmanager = (function () {
             if (Debug) {
                 console.log("addService/running: false");
             }
-            alert("Subscription Manager is not running.  Please ensure 'ohnet.SubscriptionManager.start();' has been called prior to subscribing.");
+            alert("Subscription Manager is not running.  Please ensure 'ohnet.subscriptionmanager.start();' has been called prior to subscribing.");
         }
     };
 
