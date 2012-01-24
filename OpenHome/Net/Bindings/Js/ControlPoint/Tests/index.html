@@ -360,7 +360,7 @@
                     testVarBinary_Changed: function () {
                         _this = this;
                         var i = ""; ;
-                        for (var c = 0; c < Math.floor(Math.random()*257); c++) {
+                        for (var c = 0; c < Math.floor(Math.random()*257)+100; c++) {
                             i += String.fromCharCode(c);
                         }
                         proxy.VarBin_Changed(function (state) {
