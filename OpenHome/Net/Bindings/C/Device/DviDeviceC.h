@@ -24,7 +24,6 @@ protected:
     DvDevice* iDevice;
 	OhNetCallbackResourceManager iResourceManager;
 	void* iCallbackArg;
-	IResourceWriter* iResourceWriter;
 };
 
 class DviDeviceStandardC : public DviDeviceC

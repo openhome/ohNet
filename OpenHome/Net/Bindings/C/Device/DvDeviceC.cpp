@@ -14,14 +14,12 @@ DviDeviceC::DviDeviceC(const char* aUdn)
 	iDevice = new DvDevice(udn);
 	iResourceManager = NULL;
 	iCallbackArg = NULL;
-	iResourceWriter = NULL;
 }
 
 DviDeviceC::DviDeviceC()
 {
 	iResourceManager = NULL;
 	iCallbackArg = NULL;
-	iResourceWriter = NULL;
 }
 
 DviDeviceC::~DviDeviceC()
@@ -37,9 +35,8 @@ DvDevice* DviDeviceC::Device()
 void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
 	ASSERT(iResourceManager != NULL);
-	iResourceWriter = &aResourceWriter;
 	Brhz uriTail(aUriTail);
-	int32_t err = iResourceManager(iCallbackArg, uriTail.CString(), aInterface, &aLanguageList, this, WriteResourceBegin, WriteResource, WriteResourceEnd);
+	int32_t err = iResourceManager(iCallbackArg, uriTail.CString(), aInterface, &aLanguageList, &aResourceWriter, WriteResourceBegin, WriteResource, WriteResourceEnd);
     if (err != 0) {
         THROW(WriterError);
     }
@@ -47,9 +44,9 @@ void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::
 
 int32_t STDCALL DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType)
 { // static
-	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
+	IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
     try {
-	    self->iResourceWriter->WriteResourceBegin(aTotalBytes, aMimeType);
+	    writer->WriteResourceBegin(aTotalBytes, aMimeType);
     }
     catch (...) {
         return -1;
@@ -59,9 +56,9 @@ int32_t STDCALL DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes,
 
 int32_t STDCALL DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes)
 { // static
-	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
+	IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
     try {
-    	self->iResourceWriter->WriteResource(aData, aBytes);
+    	writer->WriteResource(aData, aBytes);
     }
     catch (...) {
         return -1;
@@ -71,9 +68,9 @@ int32_t STDCALL DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint
 
 int32_t STDCALL DviDeviceC::WriteResourceEnd(void* aPtr)
 { // static
-	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
+	IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
     try {
-    	self->iResourceWriter->WriteResourceEnd();
+    	writer->WriteResourceEnd();
     }
     catch (...) {
         return -1;
@@ -96,7 +93,6 @@ DviDeviceStandardC::DviDeviceStandardC(const char* aUdn, OhNetCallbackResourceMa
 	iDevice = new DvDeviceStandard(udn, *this);
 	iResourceManager = aResourceManager;
 	iCallbackArg = aPtr;
-	iResourceWriter = NULL;
 }
 
 
