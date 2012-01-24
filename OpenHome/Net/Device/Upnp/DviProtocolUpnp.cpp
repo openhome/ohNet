@@ -260,10 +260,10 @@ TInt DviProtocolUpnp::FindListenerForInterface(TIpAddress aAdapter)
 
 void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
-    AutoMutex a(iLock);
     if (aUriTail == kDeviceXmlName) {
         Brh xml;
         Brn xmlBuf;
+        iLock.Wait();
         const TInt index = FindListenerForInterface(aAdapter);
         if (index == -1) {
             return;
@@ -284,6 +284,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
                 xmlBuf.Set(xml);
             }
         }
+        iLock.Signal();
         aResourceWriter.WriteResourceBegin(xmlBuf.Bytes(), kOhNetMimeTypeXml);
         aResourceWriter.WriteResource(xmlBuf.Ptr(), xmlBuf.Bytes());
         aResourceWriter.WriteResourceEnd();
@@ -299,6 +300,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
             }
         }
         else if (rem == kServiceXmlName) {
+            iLock.Wait();
             DviService* service = 0;
             const TUint count = iDevice.ServiceCount();
             for (TUint i=0; i<count; i++) {
@@ -308,6 +310,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
                     break;
                 }
             }
+            iLock.Signal();
             if (service == 0) {
                 THROW(ReaderError);
             }
