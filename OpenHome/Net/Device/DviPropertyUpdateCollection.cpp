@@ -198,12 +198,13 @@ PropertyUpdatesFlattened::~PropertyUpdatesFlattened()
         delete it->second;
         it++;
     }
-    SubscriptionMap::iterator it2 = iSubscriptionMap.begin();
+    // don't clear iSubscriptionMap.  Assume the subscriptions will already have been cleared.
+    /*SubscriptionMap::iterator it2 = iSubscriptionMap.begin();
     while (it2 != iSubscriptionMap.end()) {
         DviSubscription* subscription = it2->second;
         subscription->Service()->RemoveSubscription(subscription->Sid());
         it2++;
-    }
+    }*/
 }
 
 const Brx& PropertyUpdatesFlattened::ClientId() const
@@ -228,9 +229,8 @@ void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid)
             delete it2->second;
             iUpdatesMap.erase(it2);
         }
-        DviSubscription* subscription = it->second;
         iSubscriptionMap.erase(it);
-        subscription->Service()->RemoveSubscription(aSid);
+        it->second->Service()->RemoveSubscription(aSid);
     }
 }
 
