@@ -279,7 +279,7 @@ ohnet.subscriptionmanager = (function () {
     	
     	var defaults = {
     		startedFunction : null,
-    		port : null,
+    		port : 54321,
     		debugMode : false,
     		subscriptionTimeoutSeconds : DEFAULT_SUBSCRIPTION_TIMEOUT_SEC,
     		errorFunction : null,
