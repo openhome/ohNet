@@ -2,6 +2,7 @@
 #include <OpenHome/Net/Private/DviServerWebSocket.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
+#include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Private/Converter.h>
 
 using namespace OpenHome;
@@ -84,21 +85,25 @@ TUint PropertyUpdate::SeqNum() const
 
 void PropertyUpdate::Merge(PropertyUpdate& aPropertyUpdate)
 {
+    if (aPropertyUpdate.iProperties.size() == 0) {
+        return;
+    }
     ASSERT(iSid == aPropertyUpdate.Sid());
     ASSERT(iSeqNum < aPropertyUpdate.SeqNum());
     iSeqNum = aPropertyUpdate.SeqNum();
-    for (TUint i=(TUint)aPropertyUpdate.iProperties.size() - 1; i >= 0; i--) {
+    for (TInt i=(TInt)aPropertyUpdate.iProperties.size() - 1; i >= 0; i--) {
         TBool found = false;
-        Property* prop = aPropertyUpdate.iProperties[i];
+        Property* srcProp = aPropertyUpdate.iProperties[i];
         for (TUint j=0; j<iProperties.size(); j++) {
-            if (iProperties[j]->Name() == prop->Name()) {
-                prop->TransferValueTo(*(iProperties[j]));
+            Property* destProp = iProperties[j];
+            if (destProp->Name() == srcProp->Name()) {
+                srcProp->TransferValueTo(*destProp);
                 found = true;
                 break;
             }
         }
         if (!found) {
-            iProperties.push_back(prop);
+            iProperties.push_back(srcProp);
             aPropertyUpdate.iProperties.erase(aPropertyUpdate.iProperties.begin() + i);
         }
     }
@@ -195,7 +200,8 @@ PropertyUpdatesFlattened::~PropertyUpdatesFlattened()
     }
     SubscriptionMap::iterator it2 = iSubscriptionMap.begin();
     while (it2 != iSubscriptionMap.end()) {
-        it2->second->RemoveRef();
+        DviSubscription* subscription = it2->second;
+        subscription->Service()->RemoveSubscription(subscription->Sid());
         it2++;
     }
 }
@@ -216,14 +222,15 @@ void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid)
     Brn sid(aSid);
     SubscriptionMap::iterator it = iSubscriptionMap.find(sid);
     if (it != iSubscriptionMap.end()) {
-        it->second->RemoveRef();
+        // remove any pending updates for this subscription too
+        UpdatesMap::iterator it2 = iUpdatesMap.find(sid);
+        if (it2 != iUpdatesMap.end()) {
+            delete it2->second;
+            iUpdatesMap.erase(it2);
+        }
+        DviSubscription* subscription = it->second;
         iSubscriptionMap.erase(it);
-    }
-    // remove any pending updates for this subscription too
-    UpdatesMap::iterator it2 = iUpdatesMap.find(sid);
-    if (it2 != iUpdatesMap.end()) {
-        delete it2->second;
-        iUpdatesMap.erase(it2);
+        subscription->Service()->RemoveSubscription(aSid);
     }
 }
 
@@ -399,7 +406,13 @@ void DviPropertyUpdateCollection::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 void DviPropertyUpdateCollection::NotifySubscriptionExpired(const Brx& aSid)
 {
     try {
-        RemoveSubscription(aSid);
+        // We'll get here after a call to RemoveSubscription.
+        // ...and calling it again will cause a recursive lock.
+        // use of Timer::IsInManagerThread is nasty.  We have no way of knowing that this'll only be called recursively or in a timer callback.
+        // Note that this also turns out to be a handy way of avoiding problems inside ~DviPropertyUpdateCollection
+        if (Timer::IsInManagerThread()) {
+            RemoveSubscription(aSid);
+        }
     }
     catch (InvalidSid&) { }
 }
