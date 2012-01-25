@@ -53,7 +53,6 @@ ohnet.subscriptionmanager = (function () {
     * @param {Int} timeoutSeconds The actual subscription timeout
     */
     var setSubscriptionTimeout = function (subscriptionId, timeoutSeconds) {
-
         var service = services[subscriptionId];
         if (service) {
             var actualSubscriptionTimeoutMs = timeoutSeconds * 1000 * RENEW_TRIGGER;
@@ -165,10 +164,11 @@ ohnet.subscriptionmanager = (function () {
 	* @param {Object} xmlDoc The XML to traverse
 	*/
 	var receiveRenewCompleted = function (subscriptionId, timeout) {
-	    setSubscriptionTimeout(subscriptionId, timeout);
-	    if (this.debug) {
+		if (Debug) {
 	        console.log("receiveRenewCompleted - subscriptionId:" + subscriptionId + ' timeout:'+timeout);
 	    }
+	    setSubscriptionTimeout(subscriptionId, timeout);
+	    
 	};
 
 
@@ -265,10 +265,7 @@ ohnet.subscriptionmanager = (function () {
         console.log("onSocketOpen");
         if(StartedFunction)
         	StartedFunction();
-    };
-
-   
-    
+    };    
   
     
     /**
@@ -420,7 +417,7 @@ ohnet.subscriptionmanager = (function () {
             if (Debug) {
                 console.log("addService/running: false");
             }
-            alert("Subscription Manager is not running.  Please ensure 'ohnet.subscriptionmanager.start();' has been called prior to subscribing.");
+            console.log("Subscription Manager is not running.  Please ensure 'ohnet.subscriptionmanager.start();' has been called prior to subscribing.");
         }
     };
 
