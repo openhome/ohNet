@@ -30,6 +30,28 @@ private:
     void StartGetPropertyUpdates(IDvInvocation& aInvocation);
     void EndGetPropertyUpdates();
 private:
+    // cleans up when GetPropertyUpdates exits
+    class AutoGetPropertyUpdatesComplete : private INonCopyable
+    {
+    public:
+        AutoGetPropertyUpdatesComplete(DviProviderSubscriptionLongPoll& aLongPoll);
+        ~AutoGetPropertyUpdatesComplete();
+    private:
+        DviProviderSubscriptionLongPoll& iLongPoll;
+    };
+
+    class UpdateReadySignal
+    {
+    public:
+        UpdateReadySignal() : iSem(NULL) {}
+        TBool IsFree() const { return (iSem != NULL); }
+        void Signal() { if (iSem != NULL) iSem->Signal(); }
+        void Set(Semaphore& aSem) { iSem = &aSem; }
+        void Clear() { iSem = NULL; }
+    private:
+        Semaphore* iSem;
+    };
+private:
     static const TUint kTimeoutLongPollSecs = 5 * 60; // 5 mins
     static const TUint kGetUpdatesMaxDelay = 30 * 1000; // 30 secs
     static const TUint kErrorCodeBadDevice = 810;
@@ -44,21 +66,11 @@ private:
 private:
     DviPropertyUpdateCollection& iPropertyUpdateCollection;
     Mutex iLock;
-    Semaphore iUpdatesReady;
+    std::vector<UpdateReadySignal> iUpdateReady;
     Semaphore iShutdown;
     TBool iExit;
     TUint iMaxClientCount;
     TUint iClientCount;
-private:
-    // cleans up when GetPropertyUpdates exits
-    class AutoGetPropertyUpdatesComplete : private INonCopyable
-    {
-    public:
-        AutoGetPropertyUpdatesComplete(DviProviderSubscriptionLongPoll& aLongPoll);
-        ~AutoGetPropertyUpdatesComplete();
-    private:
-        DviProviderSubscriptionLongPoll& iLongPoll;
-    };
 };
 
 } // namespace Net

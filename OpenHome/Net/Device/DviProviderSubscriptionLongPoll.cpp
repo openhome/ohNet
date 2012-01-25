@@ -4,6 +4,8 @@
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
+#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Thread.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -18,7 +20,6 @@ DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDev
     : DvProviderOpenhomeOrgSubscriptionLongPoll1(aDevice)
     , iPropertyUpdateCollection(DviStack::PropertyUpdateCollection())
     , iLock("LPMX")
-    , iUpdatesReady("LPUR", 0)
     , iShutdown("LPSH", 0)
     , iExit(false)
     , iClientCount(0)
@@ -31,12 +32,18 @@ DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDev
     iShutdown.Signal();
     iMaxClientCount = Stack::InitParams().DvNumServerThreads() / 2;
     ASSERT(iMaxClientCount > 0);
+    UpdateReadySignal empty;
+    for (TUint i=0; i<iMaxClientCount; i++) {
+        iUpdateReady.push_back(empty);
+    }
 }
 
 DviProviderSubscriptionLongPoll::~DviProviderSubscriptionLongPoll()
 {
     iExit = true;
-    iUpdatesReady.Signal();
+    for (TUint i=0; i<iMaxClientCount; i++) {
+        iUpdateReady[i].Signal();
+    }
     iShutdown.Wait();
 }
 
@@ -107,10 +114,21 @@ void DviProviderSubscriptionLongPoll::GetPropertyUpdates(IDvInvocation& aInvocat
 {
     StartGetPropertyUpdates(aInvocation);
     AutoGetPropertyUpdatesComplete a(*this);
+    Semaphore sem("PSLP", 0);
+    UpdateReadySignal* updateReadySignal = NULL;
     Brh response;
     try {
-        iPropertyUpdateCollection.SetClientSignal(aClientId, &iUpdatesReady);
-        iUpdatesReady.Wait(kGetUpdatesMaxDelay);
+        iPropertyUpdateCollection.SetClientSignal(aClientId, &sem);
+        iLock.Wait();
+        for (TUint i=0; i<iMaxClientCount; i++) {
+            updateReadySignal = &iUpdateReady[i];
+            if (updateReadySignal->IsFree()) {
+                updateReadySignal->Set(sem);
+                break;
+            }
+        }
+        iLock.Signal();
+        sem.Wait(kGetUpdatesMaxDelay);
         iPropertyUpdateCollection.SetClientSignal(aClientId, NULL);
         if (!iExit) {
             WriterBwh writer(1024);
@@ -121,6 +139,9 @@ void DviProviderSubscriptionLongPoll::GetPropertyUpdates(IDvInvocation& aInvocat
     catch (Timeout&) {
         iPropertyUpdateCollection.SetClientSignal(aClientId, NULL);
     }
+    iLock.Wait();
+    updateReadySignal->Clear();
+    iLock.Signal();
     aInvocation.StartResponse();
     if (response.Bytes() > 0) {
         aUpdates.Write(response);
@@ -154,6 +175,7 @@ void DviProviderSubscriptionLongPoll::EndGetPropertyUpdates()
         iShutdown.Signal();
     }
 }
+
 
 DviProviderSubscriptionLongPoll::AutoGetPropertyUpdatesComplete::AutoGetPropertyUpdatesComplete(DviProviderSubscriptionLongPoll& aLongPoll)
     : iLongPoll(aLongPoll)

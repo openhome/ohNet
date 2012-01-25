@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/DviSubscription.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Net/Private/Stack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -268,9 +269,9 @@ PropertyUpdate* PropertyUpdatesFlattened::MergeUpdate(PropertyUpdate* aUpdate)
 void PropertyUpdatesFlattened::SetClientSignal(Semaphore* aSem)
 {
     iSem = aSem;
-    if (aSem != NULL && iUpdatesMap.size() > 0) {
-        aSem->Signal();
-        aSem = NULL;
+    if (iSem != NULL && iUpdatesMap.size() > 0) {
+        iSem->Signal();
+        iSem = NULL;
     }
 }
 
