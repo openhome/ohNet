@@ -121,12 +121,13 @@ void DviProviderSubscriptionLongPoll::GetPropertyUpdates(IDvInvocation& aInvocat
         iPropertyUpdateCollection.SetClientSignal(aClientId, &sem);
         iLock.Wait();
         for (TUint i=0; i<iMaxClientCount; i++) {
-            updateReadySignal = &iUpdateReady[i];
-            if (updateReadySignal->IsFree()) {
+            if (iUpdateReady[i].IsFree()) {
+                updateReadySignal = &iUpdateReady[i];
                 updateReadySignal->Set(sem);
                 break;
             }
         }
+        ASSERT(updateReadySignal != NULL);
         iLock.Signal();
         sem.Wait(kGetUpdatesMaxDelay);
         iPropertyUpdateCollection.SetClientSignal(aClientId, NULL);

@@ -44,7 +44,7 @@ private:
     {
     public:
         UpdateReadySignal() : iSem(NULL) {}
-        TBool IsFree() const { return (iSem != NULL); }
+        TBool IsFree() const { return (iSem == NULL); }
         void Signal() { if (iSem != NULL) iSem->Signal(); }
         void Set(Semaphore& aSem) { iSem = &aSem; }
         void Clear() { iSem = NULL; }
