@@ -34,8 +34,10 @@ typedef THandle DvDeviceC;
  * @param[in] aWriterData  Opaque pointer passed to OhNetCallbackResourceManager
  * @param[in] aTotalBytes  Size in bytes of the file.  Can be 0 if size is unknown.
  * @param[in] aMimeType    MIME type of the file.  May be NULL if this is unknown.
+ *
+ * @return  0 on success; non-zero on error.
  */
-typedef void (STDCALL *OhNetCallbackWriteResourceBegin)(void* aWriterData, uint32_t aTotalBytes, const char* aMimeType);
+typedef int32_t (STDCALL *OhNetCallbackWriteResourceBegin)(void* aWriterData, uint32_t aTotalBytes, const char* aMimeType);
 
 /**
  * Callback which runs to serve a chunk of a file
@@ -45,8 +47,10 @@ typedef void (STDCALL *OhNetCallbackWriteResourceBegin)(void* aWriterData, uint3
  * @param[in] aWriterData  Opaque pointer passed to OhNetCallbackResourceManager
  * @param[in] aData        File data to write
  * @param[in] aBytes       Size in bytes of aData
+ *
+ * @return  0 on success; non-zero on error.
  */
-typedef void (STDCALL *OhNetCallbackWriteResource)(void* aWriterData, const uint8_t* aData, uint32_t aBytes);
+typedef int32_t (STDCALL *OhNetCallbackWriteResource)(void* aWriterData, const uint8_t* aData, uint32_t aBytes);
 
 /**
  * Called when serving of a file is complete
@@ -57,8 +61,10 @@ typedef void (STDCALL *OhNetCallbackWriteResource)(void* aWriterData, const uint
  * callbacks does not match aTotalBytes.
  *
  * @param[in] aWriterData  Opaque pointer passed to OhNetCallbackResourceManager
+ *
+ * @return  0 on success; non-zero on error.
  */
-typedef void (STDCALL *OhNetCallbackWriteResourceEnd)(void* aWriterData);
+typedef int32_t (STDCALL *OhNetCallbackWriteResourceEnd)(void* aWriterData);
 
 /**
  * Callback which runs when a device is asked to serve an unknown file
@@ -77,11 +83,13 @@ typedef void (STDCALL *OhNetCallbackWriteResourceEnd)(void* aWriterData);
  *                            into memory).
  * @param[in] aWriteEnd       Callback to be run at the end of serving a file.
  *                            Must be called if aWriteBegin is called.
+ *
+ * @return  0 on success; non-zero on error.
  */
-typedef void (STDCALL *OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
-	                                                 OhNetCallbackWriteResourceBegin aWriteBegin,
-                                                     OhNetCallbackWriteResource aWriteResource,
-                                                     OhNetCallbackWriteResourceEnd aWriteEnd);
+typedef int32_t (STDCALL *OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
+	                                                    OhNetCallbackWriteResourceBegin aWriteBegin,
+                                                        OhNetCallbackWriteResource aWriteResource,
+                                                        OhNetCallbackWriteResourceEnd aWriteEnd);
 
 
 /**

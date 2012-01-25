@@ -229,8 +229,9 @@ void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid)
             delete it2->second;
             iUpdatesMap.erase(it2);
         }
+        DviSubscription* subscription = it->second;
         iSubscriptionMap.erase(it);
-        it->second->Service()->RemoveSubscription(aSid);
+        subscription->Service()->RemoveSubscription(aSid);
     }
 }
 

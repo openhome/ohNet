@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-void STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
+int32_t STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
 	                         OhNetCallbackWriteResourceBegin aWriteBegin,
                              OhNetCallbackWriteResource aWriteResource,
                              OhNetCallbackWriteResourceEnd aWriteEnd)
@@ -35,7 +35,7 @@ void STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, TIpA
 		{
 			printf("DvDeviceStandardJNI: Unable to attach thread to JVM.\n");
 			fflush(stdout);
-			return;
+			return 0;
 		}
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
@@ -43,7 +43,7 @@ void STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, TIpA
 	if (mid == 0) {
 		printf("Method ID writeResource() not found.\n");
 		fflush(stdout);
-		return;
+		return 0;
 	}
 
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid,
@@ -60,6 +60,7 @@ void STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, TIpA
 	{
 		(*vm)->DetachCurrentThread(vm);
 	}
+    return 0;
 }
 
 /*

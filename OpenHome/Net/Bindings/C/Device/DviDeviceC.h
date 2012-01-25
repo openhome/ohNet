@@ -17,14 +17,13 @@ protected:
     DviDeviceC();
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
-    static void STDCALL WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType);
-    static void STDCALL WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes);
-    static void STDCALL WriteResourceEnd(void* aPtr);
+    static int32_t STDCALL WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType);
+    static int32_t STDCALL WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes);
+    static int32_t STDCALL WriteResourceEnd(void* aPtr);
 protected:
     DvDevice* iDevice;
 	OhNetCallbackResourceManager iResourceManager;
 	void* iCallbackArg;
-	IResourceWriter* iResourceWriter;
 };
 
 class DviDeviceStandardC : public DviDeviceC
