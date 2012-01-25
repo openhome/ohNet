@@ -90,8 +90,11 @@ ohnet.longpolling.prototype.unsubscribe = function (subscriptionId,noSubscriptio
 * @param {String} subscriptionId The subscriptionId of the service to renew
 */
 ohnet.longpolling.prototype.renew = function (subscriptionId) {
+	var _this = this;
 	if (this.debug) { console.log('>> Renew'); }
-	this.proxy.Renew(subscriptionId);
+	this.proxy.Renew(subscriptionId,this.subscriptionTimeoutSeconds,function(result) {
+		_this.onReceiveRenewCompleted(subscriptionId, result.Duration);
+	});
 }
 
 /**
