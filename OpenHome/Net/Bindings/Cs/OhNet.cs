@@ -589,6 +589,8 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetSetCurrentSubnet(IntPtr aSubnet);
         [DllImport("ohNet")]
+        static extern IntPtr OhNetCurrentSubnetAdapter(IntPtr aCookie);
+        [DllImport("ohNet")]
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
         private bool iIsDisposed;
@@ -694,6 +696,19 @@ namespace OpenHome.Net.Core
         public void Close()
         {
             OhNetLibraryClose();
+        }
+
+        /// <summary>
+        /// Query which subnet is in use.
+        /// </summary>
+        /// <param name="aCookie">Identifier for NetworkAdapter reference.  Must be used in a later call to NetworkAdapter.RemoveRef()</param>
+        /// <returns>Network adapter.  Or null if no subnet is selected or we're running the device stack on all subnets.</returns>
+        public static NetworkAdapter CurrentSubnetAdapter(string aCookie)
+        {
+            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            IntPtr nif = OhNetCurrentSubnetAdapter(cookie);
+            Marshal.FreeHGlobal(cookie);
+            return (nif == null ? null : new NetworkAdapter(nif));
         }
 
         /// <summary>
