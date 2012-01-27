@@ -708,7 +708,7 @@ namespace OpenHome.Net.Core
             IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
             IntPtr nif = OhNetCurrentSubnetAdapter(cookie);
             Marshal.FreeHGlobal(cookie);
-            return (nif == null ? null : new NetworkAdapter(nif));
+            return (nif == IntPtr.Zero ? null : new NetworkAdapter(nif));
         }
 
         /// <summary>
