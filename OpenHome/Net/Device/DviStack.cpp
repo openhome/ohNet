@@ -21,7 +21,15 @@ DviStack::DviStack()
 {
     Stack::SetDviStack(this);
     iPropertyUpdateCollection = new DviPropertyUpdateCollection();
-    TUint port = (Stack::InitParams().DvIsBonjourEnabled()? 80 : 0);
+    TUint port = Stack::InitParams().DvUpnpServerPort();
+    if (Stack::InitParams().DvIsBonjourEnabled()) {
+        if (port == 0) {
+            port = 80;
+        }
+        else {
+            Log::Print("WARNING: ignoring mdns setting to choose device server port specified in DvUpnpWebServerPort()\n");
+        }
+    }
     iDviServerUpnp = new DviServerUpnp(port);
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager;

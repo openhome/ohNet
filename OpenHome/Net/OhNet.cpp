@@ -299,6 +299,16 @@ void InitialisationParams::SetDvNumWebSocketThreads(uint32_t aNumThreads)
     iDvNumWebSocketThreads = aNumThreads;
 }
 
+void InitialisationParams::SetCpUpnpEventServerPort(TUint aPort)
+{
+    iCpUpnpEventServerPort = aPort;
+}
+
+void InitialisationParams::SetDvUpnpServerPort(TUint aPort)
+{
+    iDvUpnpWebServerPort = aPort;
+}
+
 void InitialisationParams::SetDvWebSocketPort(TUint aPort)
 {
     iDvWebSocketPort = aPort;
@@ -434,6 +444,16 @@ uint32_t InitialisationParams::DvNumWebSocketThreads() const
 	return iDvNumWebSocketThreads;
 }
 
+uint32_t InitialisationParams::CpUpnpEventServerPort() const
+{
+    return iCpUpnpEventServerPort;
+}
+
+uint32_t InitialisationParams::DvUpnpServerPort() const
+{
+    return iDvUpnpWebServerPort;
+}
+
 uint32_t InitialisationParams::DvWebSocketPort() const
 {
     return iDvWebSocketPort;
@@ -461,6 +481,8 @@ InitialisationParams::InitialisationParams()
     , iDvNumServerThreads(4)
 	, iDvNumPublisherThreads(4)
     , iDvNumWebSocketThreads(0)
+    , iCpUpnpEventServerPort(0)
+    , iDvUpnpWebServerPort(55178)
     , iDvWebSocketPort(0)
     , iEnableBonjour(false)
 {

@@ -254,9 +254,22 @@ namespace OpenHome.Net.Core
         /// support</remarks>
         public uint DvNumWebSocketThreads { get; set; }
 
+        /// <summary>Set the tcp port number the control point stack's UPnP event server will run on.</summary>
+        /// <remarks>The default value is 0 (meaning that the OS will assign a port).
+        /// You should only set this if you know the full set of services (plus their port
+        /// requirements) running on a device.</remarks>
+        public uint CpUpnpEventPort { get; set; }
+
+        /// <summary>Set the tcp port number the device stack's UPnP web server will run on.</summary>
+        /// <remarks>The default value is 55178.
+        /// You should only rely on this (or another non-zero value) if you know the full
+        /// set of services (plus their port requirements) running on a device.</remarks>
+        public uint DvUpnpWebServerPort { get; set; }
+
         /// <summary>Get/set the tcp port number the WebSocket server will run on.</summary>
         /// <remarks>The default value is 0 (meaning that the OS will assign a port).
-        ///  You should question your design if you need to use this.</remarks>
+        /// You should only set this if you know the full set of services (plus their port
+        /// requirements) running on a device.</remarks>
         public uint DvWebSocketPort { get; set; }
 
         /// <summary>
@@ -325,6 +338,10 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetDvNumWebSocketThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetCpUpnpEventServerPort(IntPtr aParams, uint aPort);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetDvUpnpServerPort(IntPtr aParams, uint aPort);
+        [DllImport("ohNet")]
         static extern void OhNetInitParamsSetDvWebSocketPort(IntPtr aParams, uint aPort);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams);
@@ -358,6 +375,10 @@ namespace OpenHome.Net.Core
         static extern uint OhNetInitParamsDvNumPublisherThreads(IntPtr aParams);
         [DllImport("ohNet")]
         static extern uint OhNetInitParamsDvNumWebSocketThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsCpUpnpEventServerPort(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsDvUpnpServerPort(IntPtr aParams);
         [DllImport("ohNet")]
         static extern uint OhNetInitParamsDvWebSocketPort(IntPtr aParams);
         [DllImport("ohNet")]
@@ -404,6 +425,8 @@ namespace OpenHome.Net.Core
             DvNumServerThreads = OhNetInitParamsDvNumServerThreads(defaultParams); 
             DvNumPublisherThreads = OhNetInitParamsDvNumPublisherThreads(defaultParams);
             DvNumWebSocketThreads = OhNetInitParamsDvNumWebSocketThreads(defaultParams);
+            CpUpnpEventPort = OhNetInitParamsCpUpnpEventServerPort(defaultParams);
+            DvUpnpWebServerPort = OhNetInitParamsDvUpnpServerPort(defaultParams);
             DvWebSocketPort = OhNetInitParamsDvWebSocketPort(defaultParams);
             UseLoopbackNetworkAdapter = false; // FIXME: No getter?
             DvEnableBonjour = OhNetInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
@@ -464,6 +487,8 @@ namespace OpenHome.Net.Core
             OhNetInitParamsSetDvNumServerThreads(nativeParams, DvNumServerThreads);
             OhNetInitParamsSetDvNumPublisherThreads(nativeParams, DvNumPublisherThreads);
             OhNetInitParamsSetDvNumWebSocketThreads(nativeParams, DvNumWebSocketThreads);
+            OhNetInitParamsSetCpUpnpEventServerPort(nativeParams, CpUpnpEventPort);
+            OhNetInitParamsSetDvUpnpServerPort(nativeParams, DvUpnpWebServerPort);
             OhNetInitParamsSetDvWebSocketPort(nativeParams, DvWebSocketPort);
             if (DvEnableBonjour)
             {

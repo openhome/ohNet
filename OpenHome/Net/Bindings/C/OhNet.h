@@ -394,9 +394,34 @@ DllExport void STDCALL OhNetInitParamsSetDvNumPublisherThreads(OhNetHandleInitPa
 DllExport void STDCALL OhNetInitParamsSetDvNumWebSocketThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads);
 
 /**
- * Set the tcp port number web socket servers will run on.
+ * Set the tcp port number the control point stack's UPnP event server will run on.
  *
- * You should question your design if you need to use this.
+ * The default value is 0 (meaning that the OS will assign a port).
+ * You should only set this if you know the full set of services (plus their port
+ * requirements) running on a device.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aPort            Port number.  0 (the default value) implies an OS-assigned port.
+ */ 
+DllExport void STDCALL OhNetInitParamsSetCpUpnpEventServerPort(OhNetHandleInitParams aParams, uint32_t aPort);
+
+/**
+ * Set the tcp port number the device stack's UPnP web server will run on.
+ *
+ * The default value is 55178.
+ * You should only rely on this (or another non-zero value) if you know the full
+ * set of services (plus their port requirements) running on a device.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aPort            Port number.  0 implies an OS-assigned port.
+ */ 
+DllExport void STDCALL OhNetInitParamsSetDvUpnpServerPort(OhNetHandleInitParams aParams, uint32_t aPort);
+
+/**
+ * Set the tcp port number the device stack's websocket server will run on.
+ *
+ * You should only rely on this (or another non-zero value) if you know the full
+ * set of services (plus their port requirements) running on a device.
  *
  * @param[in] aParams          Initialisation params
  * @param[in] aPort            Port number.  0 (the default value) implies an OS-assigned port.
@@ -542,11 +567,29 @@ DllExport uint32_t STDCALL OhNetInitParamsDvNumPublisherThreads(OhNetHandleInitP
 DllExport uint32_t STDCALL OhNetInitParamsDvNumWebSocketThreads(OhNetHandleInitParams aParams);
 
 /**
- * Query the port the WebSocket server will run on.
+ * Query the port the control point stack's UPnP event server will run on.
  *
  * @param[in] aParams          Initialisation params
  *
- * @return  port number
+ * @return  Port number.  May be 0 (meaning OS will assign a port later).
+ */
+DllExport uint32_t STDCALL OhNetInitParamsCpUpnpEventServerPort(OhNetHandleInitParams aParams);
+
+/**
+ * Query the port the device stack's UPnP web server will run on.
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  Port number.  May be 0 (meaning OS will assign a port later).
+ */
+DllExport uint32_t STDCALL OhNetInitParamsDvUpnpServerPort(OhNetHandleInitParams aParams);
+
+/**
+ * Query the port the device stack's WebSocket server will run on.
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  Port number.  May be 0 (meaning OS will assign a port later).
  */
 DllExport uint32_t STDCALL OhNetInitParamsDvWebSocketPort(OhNetHandleInitParams aParams);
 
