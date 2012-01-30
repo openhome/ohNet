@@ -214,7 +214,7 @@ class JenkinsBuild():
             else:
                 build.extend(platform_args)
                 build.append('&&')
-                                build.append('make')
+                build.append('make')
                 build.append('bundle-dev')
                 build.append('targetplatform=%s' %(platform,))
                 build.append('releasetype=%s' %(release,))
@@ -222,7 +222,7 @@ class JenkinsBuild():
             print "doing release with bundle %s" %(build,)
 
             ret = subprocess.check_call(build)
-                        if ret != 0:
+            if ret != 0:
                 print ret
                 sys.exit(10)
 
@@ -255,7 +255,7 @@ class JenkinsBuild():
             if os_platform == 'linux' and arch == 'arm':
                 postAction.arm_tests('commit')    
         if os_platform != 'macos' and release == '1':
-                self.do_release()
+            self.do_release()
 def main():
     Build = JenkinsBuild()
     Build.get_options()
