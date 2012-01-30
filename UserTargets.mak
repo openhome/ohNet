@@ -8,6 +8,7 @@ all : Tests proxies CpProxyDotNetAssemblies devices DvDeviceDotNetAssemblies
 clean :
 	$(rmdir) $(objdir)
 	$(rmdir) $(inc_build)
+	$(rmdir) Build/Bundles
 
 mostlyclean : clean clean-t4
 	$(rmdir) Generated
