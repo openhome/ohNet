@@ -26,16 +26,13 @@ class PostActions():
     def gen_docs(self):
         rem = remote()
         ret = subprocess.check_call('make docs', shell=True)
-
         if ret != 0:
             print ret
             sys.exit(10)
-
         rem.rsync('hudson-zapp','ohnet.linn.co.uk','Build/Docs/','~/doc')
         if ret != 0:
             print ret
             sys.exit(10)
-
         rem.rsync('hudson-rsync','openhome.org','Build/Docs/','~/build/nightly/docs')
         if ret != 0:
             print ret
@@ -44,21 +41,15 @@ class PostActions():
     def arm_tests(self,type):
         rem = remote()
         ret = rem.rsync('root','sheeva010.linn.co.uk','Build','~/')
-
         if ret != 0:
             print ret
             sys.exit(10)
-
         ret = rem.rsync('root','sheeva010.linn.co.uk','AllTests.py','~/')
-
         if ret != 0:
             print ret
             sys.exit(10)
-
-        
         if type == 'nightly':
             ret = rem.rssh('root','sheeva010.linn.co.uk','python AllTests.py -f -t')            
-
             if ret != 0:
                 print ret
                 sys.exit(10)
@@ -93,25 +84,20 @@ class JenkinsBuild():
 
         if env_platform != None:
             self.options.platform = env_platform
-
-                if env_version != None:
-                        self.options.version = env_version
-        
+        if env_version != None:
+            self.options.version = env_version
         if env_nightly == 'true' or self.options.nightly == True:
              self.options.nightly = '1'
         else:
             self.options.nightly = '0'
-
         if env_release == 'true' or self.options.release == True:
             self.options.release = '1'
-
         else:
             self.options.release = '0'
 
         print "options for build are nightly:%s and release:%s on platform %s" %(self.options.nightly,self.options.release,self.options.platform)
 
     def get_platform(self):
-        
         platforms = { 
         'Linux-x86': { 'os':'linux', 'arch':'x86'},
         'Linux-x64': { 'os':'linux', 'arch':'x64'},
@@ -120,7 +106,6 @@ class JenkinsBuild():
         'Macos-x64': { 'os': 'macos', 'arch':'x86'},
         'Linux-ARM': { 'os': 'linux', 'arch': 'arm'},
          }
-        
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
 
@@ -128,7 +113,7 @@ class JenkinsBuild():
         os_platform = self.platform['os']
         arch = self.platform['arch']
         args=[]
-        
+
         if os_platform == 'windows' and arch == 'x86':
             args.append('vcvarsall.bat')
         if os_platform == 'windows' and arch == 'x64':
@@ -169,16 +154,13 @@ class JenkinsBuild():
     def do_build(self):
         nightly = self.options.nightly
         release = self.options.release
-
         os_platform = self.platform['os']
         build_args = self.build_args
         platform_args = self.platform_args
-
         build = []
             
         if platform_args == []:
             build.extend(build_args)
-
         else:
             build.extend(platform_args)
             build.append('&&')
@@ -229,7 +211,6 @@ class JenkinsBuild():
                  build.append('bundle-dev')
                  build.append('targetplatform=%s' %(platform,))
                  build.append('releasetype=%s' %(release,))
-
             else:
                 build.extend(platform_args)
                 build.append('&&')
@@ -273,8 +254,6 @@ class JenkinsBuild():
         else:
             if os_platform == 'linux' and arch == 'arm':
                 postAction.arm_tests('commit')    
-
-
         if os_platform != 'macos' and release == '1':
                 self.do_release()
 def main():
