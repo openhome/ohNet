@@ -4,6 +4,8 @@ from optparse import OptionParser
 from Helpers.valgrind_parser import *
 from Helpers.remote import *
 import sys
+from os import path
+import os
 
 class PostActions():
 	def valgrind_parse(self):
@@ -244,7 +246,10 @@ class JenkinsBuild():
 				sys.exit(10)
 
 			bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-dev.tar.gz" %(platform,release))		
-			os.rename(bundle_name,os.path.join('Build/Bundles',"ohNet-%s-%s-dev-%s.tar.gz" %(version,platform,release)))
+            dest = os.path.join('Build/Bundles',"ohNet-%s-%s-dev-%s.tar.gz" %(version,platform,release))
+            if os.path.exists(dest):
+                os.remove(dest)
+			os.rename(bundle_name, dest)
 			rem.rsync('releases','www.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
                         
 	
