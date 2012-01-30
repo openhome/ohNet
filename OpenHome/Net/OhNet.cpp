@@ -451,6 +451,9 @@ uint32_t InitialisationParams::CpUpnpEventServerPort() const
 
 uint32_t InitialisationParams::DvUpnpServerPort() const
 {
+    if (iEnableBonjour) {
+        return 80;
+    }
     return iDvUpnpWebServerPort;
 }
 
