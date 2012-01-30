@@ -45,6 +45,8 @@ def main():
     bundle_fileprefix = "ohNet-%s-%s%s" % (targetname, release_type, "-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
+    if os.path.exists(bundle_path):
+        os.remove(bundle_path)
 
     tf = tarfile.open(bundle_path, 'w:gz')
 
