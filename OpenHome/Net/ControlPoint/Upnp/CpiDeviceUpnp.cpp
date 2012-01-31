@@ -544,6 +544,10 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
         return;
     }
 
+    // we used to only remove devices for subnet changes
+    // its not clear why this was correct - any interface change will result in control/event urls changing
+    RemoveAll();
+    
     iLock.Wait();
     iInterface = current->Address();
     TUint msearchTime = Stack::InitParams().MsearchTimeSecs();
@@ -551,10 +555,6 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     iLock.Signal();
     current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
-    // we used to only remove devices for subnet changes
-    // its not clear why this was correct - any interface change will result in control/event urls changing
-    RemoveAll();
-    
     iSsdpLock.Wait();
     iUnicastListener = new SsdpListenerUnicast(*this, iInterface);
     iUnicastListener->Start();
