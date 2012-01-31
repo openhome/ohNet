@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace OpenHome.Net.Core
 {
@@ -31,6 +32,22 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class NetworkAdapter
     {
+        internal class CookieWrapper : IDisposable
+        {
+            public string AsString { get; private set; }
+            public IntPtr AsCString { get; private set; }
+
+            internal CookieWrapper(string aCookie)
+            {
+                AsString = aCookie;
+                AsCString = Marshal.StringToHGlobalAnsi(aCookie);
+            }
+            public void Dispose()
+            {
+                Marshal.FreeHGlobal(AsCString);
+            }
+        }
+
         [DllImport("ohNet")]
         static extern uint OhNetNetworkAdapterAddress(IntPtr aNif);
         [DllImport("ohNet")]
@@ -45,6 +62,7 @@ namespace OpenHome.Net.Core
         static extern void OhNetNetworkAdapterRemoveRef(IntPtr aNif, IntPtr aCookie);
 
         private IntPtr iHandle;
+        private List<CookieWrapper> iCookies;
 
         /// <summary>
         /// Constructor. Not intended for external use.
@@ -54,6 +72,7 @@ namespace OpenHome.Net.Core
         public NetworkAdapter(IntPtr aHandle)
         {
             iHandle = aHandle;
+            iCookies = new List<CookieWrapper>();
         }
 
         internal IntPtr Handle()
@@ -110,9 +129,17 @@ namespace OpenHome.Net.Core
         /// Each call to AddRef() must later have exactly one matching call to RemoveRef().</remarks>
         public void AddRef(string aCookie)
         {
-            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
-            OhNetNetworkAdapterAddRef(iHandle, cookie);
-            Marshal.FreeHGlobal(cookie);
+            OhNetNetworkAdapterAddRef(iHandle, AddManagedCookie(aCookie).AsCString);
+        }
+
+        internal CookieWrapper AddManagedCookie(string aCookie)
+        {
+            CookieWrapper cookie = new CookieWrapper(aCookie);
+            lock (this)
+            {
+                iCookies.Add(cookie);
+            }
+            return cookie;
         }
 
         /// <summary>
@@ -121,9 +148,23 @@ namespace OpenHome.Net.Core
         /// <remarks>Removing the final reference causes the network adapter to be deleted.</remarks>
         public void RemoveRef(string aCookie)
         {
-            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
-            OhNetNetworkAdapterRemoveRef(iHandle, cookie);
-            Marshal.FreeHGlobal(cookie);
+            CookieWrapper cookie = null;
+            lock (this)
+            {
+                for (int i = 0; i < iCookies.Count; i++)
+                {
+                    if (iCookies[i].AsString == aCookie)
+                    {
+                        cookie = iCookies[i];
+                        iCookies.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+            if (cookie == null)
+                throw new ArgumentException();
+            OhNetNetworkAdapterRemoveRef(iHandle, cookie.AsCString);
+            cookie.Dispose();
         }
     }
 
@@ -708,7 +749,11 @@ namespace OpenHome.Net.Core
             IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
             IntPtr nif = OhNetCurrentSubnetAdapter(cookie);
             Marshal.FreeHGlobal(cookie);
-            return (nif == IntPtr.Zero ? null : new NetworkAdapter(nif));
+            if (nif == IntPtr.Zero)
+                return null;
+            NetworkAdapter n = new NetworkAdapter(nif);
+            n.AddManagedCookie(aCookie);
+            return n;
         }
 
         /// <summary>
