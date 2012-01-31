@@ -34,6 +34,17 @@ void DvProviderUpnpOrgAVTransport2::GetPropertyDRMState(Brhz& aValue)
 DvProviderUpnpOrgAVTransport2::DvProviderUpnpOrgAVTransport2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "AVTransport", 2)
 {
+    Construct();
+}
+
+DvProviderUpnpOrgAVTransport2::DvProviderUpnpOrgAVTransport2(DviDevice& aDevice)
+    : DvProvider(aDevice, "upnp.org", "AVTransport", 2)
+{
+    Construct();
+}
+
+void DvProviderUpnpOrgAVTransport2::Construct()
+{
     iPropertyLastChange = NULL;
     iPropertyDRMState = NULL;
 }

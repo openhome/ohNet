@@ -36,7 +36,6 @@ public:
     void FireAt(TUint aTime); // Absolute (at specified millisecond)
     void Cancel();
     ~Timer();
-private:
     static TBool IsInManagerThread();
 private:
     Functor iFunctor;

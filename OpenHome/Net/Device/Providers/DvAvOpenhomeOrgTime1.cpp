@@ -46,6 +46,17 @@ void DvProviderAvOpenhomeOrgTime1::GetPropertySeconds(TUint& aValue)
 DvProviderAvOpenhomeOrgTime1::DvProviderAvOpenhomeOrgTime1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Time", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgTime1::DvProviderAvOpenhomeOrgTime1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "Time", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgTime1::Construct()
+{
     iPropertyTrackCount = NULL;
     iPropertyDuration = NULL;
     iPropertySeconds = NULL;

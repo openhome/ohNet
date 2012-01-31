@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxySchemasUpnpOrgAVTransport1
-* @module ohNet
+* @module ohnet
 * @class AVTransport
 */
 	
@@ -18,7 +18,7 @@ var CpProxySchemasUpnpOrgAVTransport1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["LastChange"] = new OhNet.ServiceProperty("LastChange","string");
+	this.serviceProperties["LastChange"] = new ohnet.serviceproperty("LastChange","string");
 }
 
 
@@ -29,7 +29,7 @@ var CpProxySchemasUpnpOrgAVTransport1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -38,7 +38,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.subscribe = function (serviceAddedFu
 * @method Unsubscribe
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -52,7 +52,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.unsubscribe = function () {
 CpProxySchemasUpnpOrgAVTransport1.prototype.LastChange_Changed = function (stateChangedFunction) {
     this.serviceProperties.LastChange.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 
@@ -67,7 +67,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.LastChange_Changed = function (state
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.SetAVTransportURI = function(InstanceID, CurrentURI, CurrentURIMetaData, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetAVTransportURI", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetAVTransportURI", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("CurrentURI", CurrentURI);
     request.writeStringParameter("CurrentURIMetaData", CurrentURIMetaData);
@@ -92,7 +92,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.SetAVTransportURI = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.SetNextAVTransportURI = function(InstanceID, NextURI, NextURIMetaData, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetNextAVTransportURI", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetNextAVTransportURI", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NextURI", NextURI);
     request.writeStringParameter("NextURIMetaData", NextURIMetaData);
@@ -115,18 +115,18 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.SetNextAVTransportURI = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.GetMediaInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetMediaInfo", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetMediaInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["NrTracks"] = OhNet.SoapRequest.readIntParameter(result["NrTracks"]);	
-		result["MediaDuration"] = OhNet.SoapRequest.readStringParameter(result["MediaDuration"]);	
-		result["CurrentURI"] = OhNet.SoapRequest.readStringParameter(result["CurrentURI"]);	
-		result["CurrentURIMetaData"] = OhNet.SoapRequest.readStringParameter(result["CurrentURIMetaData"]);	
-		result["NextURI"] = OhNet.SoapRequest.readStringParameter(result["NextURI"]);	
-		result["NextURIMetaData"] = OhNet.SoapRequest.readStringParameter(result["NextURIMetaData"]);	
-		result["PlayMedium"] = OhNet.SoapRequest.readStringParameter(result["PlayMedium"]);	
-		result["RecordMedium"] = OhNet.SoapRequest.readStringParameter(result["RecordMedium"]);	
-		result["WriteStatus"] = OhNet.SoapRequest.readStringParameter(result["WriteStatus"]);	
+		result["NrTracks"] = ohnet.soaprequest.readIntParameter(result["NrTracks"]);	
+		result["MediaDuration"] = ohnet.soaprequest.readStringParameter(result["MediaDuration"]);	
+		result["CurrentURI"] = ohnet.soaprequest.readStringParameter(result["CurrentURI"]);	
+		result["CurrentURIMetaData"] = ohnet.soaprequest.readStringParameter(result["CurrentURIMetaData"]);	
+		result["NextURI"] = ohnet.soaprequest.readStringParameter(result["NextURI"]);	
+		result["NextURIMetaData"] = ohnet.soaprequest.readStringParameter(result["NextURIMetaData"]);	
+		result["PlayMedium"] = ohnet.soaprequest.readStringParameter(result["PlayMedium"]);	
+		result["RecordMedium"] = ohnet.soaprequest.readStringParameter(result["RecordMedium"]);	
+		result["WriteStatus"] = ohnet.soaprequest.readStringParameter(result["WriteStatus"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -145,12 +145,12 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.GetMediaInfo = function(InstanceID, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.GetTransportInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetTransportInfo", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetTransportInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentTransportState"] = OhNet.SoapRequest.readStringParameter(result["CurrentTransportState"]);	
-		result["CurrentTransportStatus"] = OhNet.SoapRequest.readStringParameter(result["CurrentTransportStatus"]);	
-		result["CurrentSpeed"] = OhNet.SoapRequest.readStringParameter(result["CurrentSpeed"]);	
+		result["CurrentTransportState"] = ohnet.soaprequest.readStringParameter(result["CurrentTransportState"]);	
+		result["CurrentTransportStatus"] = ohnet.soaprequest.readStringParameter(result["CurrentTransportStatus"]);	
+		result["CurrentSpeed"] = ohnet.soaprequest.readStringParameter(result["CurrentSpeed"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -169,17 +169,17 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.GetTransportInfo = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.GetPositionInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetPositionInfo", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetPositionInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["Track"] = OhNet.SoapRequest.readIntParameter(result["Track"]);	
-		result["TrackDuration"] = OhNet.SoapRequest.readStringParameter(result["TrackDuration"]);	
-		result["TrackMetaData"] = OhNet.SoapRequest.readStringParameter(result["TrackMetaData"]);	
-		result["TrackURI"] = OhNet.SoapRequest.readStringParameter(result["TrackURI"]);	
-		result["RelTime"] = OhNet.SoapRequest.readStringParameter(result["RelTime"]);	
-		result["AbsTime"] = OhNet.SoapRequest.readStringParameter(result["AbsTime"]);	
-		result["RelCount"] = OhNet.SoapRequest.readIntParameter(result["RelCount"]);	
-		result["AbsCount"] = OhNet.SoapRequest.readIntParameter(result["AbsCount"]);	
+		result["Track"] = ohnet.soaprequest.readIntParameter(result["Track"]);	
+		result["TrackDuration"] = ohnet.soaprequest.readStringParameter(result["TrackDuration"]);	
+		result["TrackMetaData"] = ohnet.soaprequest.readStringParameter(result["TrackMetaData"]);	
+		result["TrackURI"] = ohnet.soaprequest.readStringParameter(result["TrackURI"]);	
+		result["RelTime"] = ohnet.soaprequest.readStringParameter(result["RelTime"]);	
+		result["AbsTime"] = ohnet.soaprequest.readStringParameter(result["AbsTime"]);	
+		result["RelCount"] = ohnet.soaprequest.readIntParameter(result["RelCount"]);	
+		result["AbsCount"] = ohnet.soaprequest.readIntParameter(result["AbsCount"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -198,12 +198,12 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.GetPositionInfo = function(InstanceI
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.GetDeviceCapabilities = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetDeviceCapabilities", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetDeviceCapabilities", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["PlayMedia"] = OhNet.SoapRequest.readStringParameter(result["PlayMedia"]);	
-		result["RecMedia"] = OhNet.SoapRequest.readStringParameter(result["RecMedia"]);	
-		result["RecQualityModes"] = OhNet.SoapRequest.readStringParameter(result["RecQualityModes"]);	
+		result["PlayMedia"] = ohnet.soaprequest.readStringParameter(result["PlayMedia"]);	
+		result["RecMedia"] = ohnet.soaprequest.readStringParameter(result["RecMedia"]);	
+		result["RecQualityModes"] = ohnet.soaprequest.readStringParameter(result["RecQualityModes"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -222,11 +222,11 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.GetDeviceCapabilities = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.GetTransportSettings = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetTransportSettings", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetTransportSettings", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["PlayMode"] = OhNet.SoapRequest.readStringParameter(result["PlayMode"]);	
-		result["RecQualityMode"] = OhNet.SoapRequest.readStringParameter(result["RecQualityMode"]);	
+		result["PlayMode"] = ohnet.soaprequest.readStringParameter(result["PlayMode"]);	
+		result["RecQualityMode"] = ohnet.soaprequest.readStringParameter(result["RecQualityMode"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -245,7 +245,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.GetTransportSettings = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.Stop = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Stop", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -267,7 +267,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.Stop = function(InstanceID, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.Play = function(InstanceID, Speed, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Play", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Speed", Speed);
     request.send(function(result){
@@ -289,7 +289,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.Play = function(InstanceID, Speed, s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.Pause = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Pause", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -310,7 +310,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.Pause = function(InstanceID, success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.Record = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Record", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Record", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -333,7 +333,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.Record = function(InstanceID, succes
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.Seek = function(InstanceID, Unit, Target, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Seek", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Seek", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Unit", Unit);
     request.writeStringParameter("Target", Target);
@@ -356,7 +356,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.Seek = function(InstanceID, Unit, Ta
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.Next = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Next", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Next", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -377,7 +377,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.Next = function(InstanceID, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.Previous = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Previous", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Previous", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -399,7 +399,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.Previous = function(InstanceID, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.SetPlayMode = function(InstanceID, NewPlayMode, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetPlayMode", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetPlayMode", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NewPlayMode", NewPlayMode);
     request.send(function(result){
@@ -422,7 +422,7 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.SetPlayMode = function(InstanceID, N
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.SetRecordQualityMode = function(InstanceID, NewRecordQualityMode, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetRecordQualityMode", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetRecordQualityMode", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NewRecordQualityMode", NewRecordQualityMode);
     request.send(function(result){
@@ -444,10 +444,10 @@ CpProxySchemasUpnpOrgAVTransport1.prototype.SetRecordQualityMode = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport1.prototype.GetCurrentTransportActions = function(InstanceID, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("GetCurrentTransportActions", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("GetCurrentTransportActions", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["Actions"] = OhNet.SoapRequest.readStringParameter(result["Actions"]);	
+		result["Actions"] = ohnet.soaprequest.readStringParameter(result["Actions"]);	
 	
 		if (successFunction){
 			successFunction(result);

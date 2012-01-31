@@ -49,8 +49,11 @@ DllExport void STDCALL CpProxyUpnpOrgRenderingControl1Destroy(THandle aHandle);
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentPresetNameList
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncListPresets(THandle aHandle, uint32_t aInstanceID, char** aCurrentPresetNameList);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncListPresets(THandle aHandle, uint32_t aInstanceID, char** aCurrentPresetNameList);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -84,8 +87,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndListPresets(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aPresetName
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -119,8 +125,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSelectPreset(THandle
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentBrightness
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBrightness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBrightness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -154,8 +163,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetBrightness(THandl
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBrightness
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -189,8 +201,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetBrightness(THandl
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentContrast
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentContrast);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentContrast);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -224,8 +239,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetContrast(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredContrast
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -259,8 +277,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetContrast(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentSharpness
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentSharpness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentSharpness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -294,8 +315,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetSharpness(THandle
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredSharpness
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -329,8 +353,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetSharpness(THandle
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentRedVideoGain
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -364,8 +391,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetRedVideoGain(THan
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredRedVideoGain
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -399,8 +429,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetRedVideoGain(THan
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentGreenVideoGain
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -434,8 +467,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetGreenVideoGain(TH
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredGreenVideoGain
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -469,8 +505,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetGreenVideoGain(TH
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentBlueVideoGain
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -504,8 +543,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetBlueVideoGain(THa
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBlueVideoGain
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -539,8 +581,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetBlueVideoGain(THa
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentRedVideoBlackLevel
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -574,8 +619,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetRedVideoBlackLeve
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredRedVideoBlackLevel
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -609,8 +657,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetRedVideoBlackLeve
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentGreenVideoBlackLevel
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -644,8 +695,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetGreenVideoBlackLe
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredGreenVideoBlackLevel
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -679,8 +733,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetGreenVideoBlackLe
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentBlueVideoBlackLevel
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -714,8 +771,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetBlueVideoBlackLev
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBlueVideoBlackLevel
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -749,8 +809,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetBlueVideoBlackLev
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentColorTemperature
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -784,8 +847,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetColorTemperature(
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredColorTemperature
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -819,8 +885,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetColorTemperature(
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentHorizontalKeystone
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -854,8 +923,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetHorizontalKeyston
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredHorizontalKeystone
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -889,8 +961,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetHorizontalKeyston
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[out] aCurrentVerticalKeystone
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -924,8 +999,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetVerticalKeystone(
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl1Create
  * @param[in]  aInstanceID
  * @param[in]  aDesiredVerticalKeystone
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -960,8 +1038,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetVerticalKeystone(
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aCurrentMute
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -997,8 +1078,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetMute(THandle aHan
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[in]  aDesiredMute
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1034,8 +1118,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetMute(THandle aHan
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aCurrentVolume
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1071,8 +1158,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetVolume(THandle aH
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[in]  aDesiredVolume
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1108,8 +1198,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetVolume(THandle aH
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aCurrentVolume
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1145,8 +1238,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetVolumeDB(THandle 
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[in]  aDesiredVolume
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1183,8 +1279,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetVolumeDB(THandle 
  * @param[in]  aChannel
  * @param[out] aMinValue
  * @param[out] aMaxValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1221,8 +1320,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetVolumeDBRange(THa
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[out] aCurrentLoudness
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1258,8 +1360,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetLoudness(THandle 
  * @param[in]  aInstanceID
  * @param[in]  aChannel
  * @param[in]  aDesiredLoudness
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

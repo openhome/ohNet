@@ -15,5 +15,3 @@ Files at the following locations are licensed under separate terms:
   JsDoc/*
   Docs/fop-1.0/*
 
-See these files for details of the relevant licenses.
-See XuiLicense.txt for the license for xui-2.0.0.min.js.

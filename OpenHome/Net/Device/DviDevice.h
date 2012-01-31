@@ -27,6 +27,7 @@ public:
 };
 
 class DviSubscription;
+class DviProviderSubscriptionLongPoll;
 class DviDevice : public IResourceManager, private IStackObject
 {
 public:
@@ -96,6 +97,7 @@ private:
     Functor iDisableComplete;
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
+    DviProviderSubscriptionLongPoll* iProviderSubscriptionLongPoll;
 };
 
 class DviDeviceStandard : public DviDevice

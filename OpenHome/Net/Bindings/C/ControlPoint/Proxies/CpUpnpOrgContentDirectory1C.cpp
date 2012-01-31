@@ -1141,13 +1141,20 @@ void STDCALL CpProxyUpnpOrgContentDirectory1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSearchCapabilities(THandle aHandle, char** aSearchCaps)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSearchCapabilities(THandle aHandle, char** aSearchCaps)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSearchCaps;
-    proxyC->SyncGetSearchCapabilities(buf_aSearchCaps);
-    *aSearchCaps = buf_aSearchCaps.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetSearchCapabilities(buf_aSearchCaps);
+        *aSearchCaps = buf_aSearchCaps.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginGetSearchCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1177,13 +1184,20 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndGetSearchCapabilities(THandle 
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSortCapabilities(THandle aHandle, char** aSortCaps)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSortCapabilities(THandle aHandle, char** aSortCaps)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSortCaps;
-    proxyC->SyncGetSortCapabilities(buf_aSortCaps);
-    *aSortCaps = buf_aSortCaps.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetSortCapabilities(buf_aSortCaps);
+        *aSortCaps = buf_aSortCaps.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginGetSortCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1213,11 +1227,18 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndGetSortCapabilities(THandle aH
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSystemUpdateID(THandle aHandle, uint32_t* aId)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSystemUpdateID(THandle aHandle, uint32_t* aId)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncGetSystemUpdateID(*aId);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetSystemUpdateID(*aId);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginGetSystemUpdateID(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1244,7 +1265,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndGetSystemUpdateID(THandle aHan
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1253,8 +1274,15 @@ void STDCALL CpProxyUpnpOrgContentDirectory1SyncBrowse(THandle aHandle, const ch
     Brh buf_aFilter(aFilter);
     Brh buf_aSortCriteria(aSortCriteria);
     Brh buf_aResult;
-    proxyC->SyncBrowse(buf_aObjectID, buf_aBrowseFlag, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, buf_aResult, *aNumberReturned, *aTotalMatches, *aUpdateID);
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncBrowse(buf_aObjectID, buf_aBrowseFlag, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, buf_aResult, *aNumberReturned, *aTotalMatches, *aUpdateID);
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1288,7 +1316,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndBrowse(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1297,8 +1325,15 @@ void STDCALL CpProxyUpnpOrgContentDirectory1SyncSearch(THandle aHandle, const ch
     Brh buf_aFilter(aFilter);
     Brh buf_aSortCriteria(aSortCriteria);
     Brh buf_aResult;
-    proxyC->SyncSearch(buf_aContainerID, buf_aSearchCriteria, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, buf_aResult, *aNumberReturned, *aTotalMatches, *aUpdateID);
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncSearch(buf_aContainerID, buf_aSearchCriteria, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, buf_aResult, *aNumberReturned, *aTotalMatches, *aUpdateID);
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1332,7 +1367,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndSearch(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1340,9 +1375,16 @@ void STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateObject(THandle aHandle, co
     Brh buf_aElements(aElements);
     Brh buf_aObjectID;
     Brh buf_aResult;
-    proxyC->SyncCreateObject(buf_aContainerID, buf_aElements, buf_aObjectID, buf_aResult);
-    *aObjectID = buf_aObjectID.Extract();
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncCreateObject(buf_aContainerID, buf_aElements, buf_aObjectID, buf_aResult);
+        *aObjectID = buf_aObjectID.Extract();
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1377,12 +1419,19 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndCreateObject(THandle aHandle, 
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncDestroyObject(THandle aHandle, const char* aObjectID)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncDestroyObject(THandle aHandle, const char* aObjectID)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
-    proxyC->SyncDestroyObject(buf_aObjectID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDestroyObject(buf_aObjectID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginDestroyObject(THandle aHandle, const char* aObjectID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1410,14 +1459,21 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndDestroyObject(THandle aHandle,
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aCurrentTagValue(aCurrentTagValue);
     Brh buf_aNewTagValue(aNewTagValue);
-    proxyC->SyncUpdateObject(buf_aObjectID, buf_aCurrentTagValue, buf_aNewTagValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncUpdateObject(buf_aObjectID, buf_aCurrentTagValue, buf_aNewTagValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1447,13 +1503,20 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndUpdateObject(THandle aHandle, 
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSourceURI(aSourceURI);
     Brh buf_aDestinationURI(aDestinationURI);
-    proxyC->SyncImportResource(buf_aSourceURI, buf_aDestinationURI, *aTransferID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncImportResource(buf_aSourceURI, buf_aDestinationURI, *aTransferID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1482,13 +1545,20 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndImportResource(THandle aHandle
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSourceURI(aSourceURI);
     Brh buf_aDestinationURI(aDestinationURI);
-    proxyC->SyncExportResource(buf_aSourceURI, buf_aDestinationURI, *aTransferID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncExportResource(buf_aSourceURI, buf_aDestinationURI, *aTransferID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1517,11 +1587,18 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndExportResource(THandle aHandle
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncStopTransferResource(THandle aHandle, uint32_t aTransferID)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncStopTransferResource(THandle aHandle, uint32_t aTransferID)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncStopTransferResource(aTransferID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncStopTransferResource(aTransferID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginStopTransferResource(THandle aHandle, uint32_t aTransferID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1548,17 +1625,24 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndStopTransferResource(THandle a
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncGetTransferProgress(THandle aHandle, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetTransferProgress(THandle aHandle, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aTransferStatus;
     Brh buf_aTransferLength;
     Brh buf_aTransferTotal;
-    proxyC->SyncGetTransferProgress(aTransferID, buf_aTransferStatus, buf_aTransferLength, buf_aTransferTotal);
-    *aTransferStatus = buf_aTransferStatus.Extract();
-    *aTransferLength = buf_aTransferLength.Extract();
-    *aTransferTotal = buf_aTransferTotal.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetTransferProgress(aTransferID, buf_aTransferStatus, buf_aTransferLength, buf_aTransferTotal);
+        *aTransferStatus = buf_aTransferStatus.Extract();
+        *aTransferLength = buf_aTransferLength.Extract();
+        *aTransferTotal = buf_aTransferTotal.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginGetTransferProgress(THandle aHandle, uint32_t aTransferID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1594,12 +1678,19 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndGetTransferProgress(THandle aH
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncDeleteResource(THandle aHandle, const char* aResourceURI)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncDeleteResource(THandle aHandle, const char* aResourceURI)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aResourceURI(aResourceURI);
-    proxyC->SyncDeleteResource(buf_aResourceURI);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDeleteResource(buf_aResourceURI);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginDeleteResource(THandle aHandle, const char* aResourceURI, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1627,15 +1718,22 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1EndDeleteResource(THandle aHandle
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, char** aNewID)
+int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, char** aNewID)
 {
     CpProxyUpnpOrgContentDirectory1C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aNewID;
-    proxyC->SyncCreateReference(buf_aContainerID, buf_aObjectID, buf_aNewID);
-    *aNewID = buf_aNewID.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncCreateReference(buf_aContainerID, buf_aObjectID, buf_aNewID);
+        *aNewID = buf_aNewID.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgContentDirectory1BeginCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, OhNetCallbackAsync aCallback, void* aPtr)

@@ -49,8 +49,11 @@ DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1Destroy(THandle aHandle)
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[out] aSortCaps
  * @param[out] aSortLevelCap
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetSortCapabilities(THandle aHandle, char** aSortCaps, uint32_t* aSortLevelCap);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetSortCapabilities(THandle aHandle, char** aSortCaps, uint32_t* aSortLevelCap);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -84,8 +87,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndGetSortCapabilitie
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[in]  aDataTypeID
  * @param[out] aPropertyList
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetPropertyList(THandle aHandle, const char* aDataTypeID, char** aPropertyList);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetPropertyList(THandle aHandle, const char* aDataTypeID, char** aPropertyList);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -120,8 +126,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndGetPropertyList(TH
  * @param[in]  aDataTypeID
  * @param[in]  aFilter
  * @param[out] aPropertyInfo
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, char** aPropertyInfo);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, char** aPropertyInfo);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -155,8 +164,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndGetAllowedValues(T
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[out] aId
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetStateUpdateID(THandle aHandle, uint32_t* aId);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetStateUpdateID(THandle aHandle, uint32_t* aId);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -195,8 +207,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndGetStateUpdateID(T
  * @param[out] aNumberReturned
  * @param[out] aTotalMatches
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -243,8 +258,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndBrowseRecordSchedu
  * @param[out] aNumberReturned
  * @param[out] aTotalMatches
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -287,8 +305,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndBrowseRecordTasks(
  * @param[out] aRecordScheduleID
  * @param[out] aResult
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncCreateRecordSchedule(THandle aHandle, const char* aElements, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncCreateRecordSchedule(THandle aHandle, const char* aElements, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -323,8 +344,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndCreateRecordSchedu
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[in]  aRecordScheduleID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -359,8 +383,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndDeleteRecordSchedu
  * @param[in]  aFilter
  * @param[out] aResult
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -395,8 +422,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndGetRecordSchedule(
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[in]  aRecordScheduleID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -428,8 +458,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndEnableRecordSchedu
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[in]  aRecordScheduleID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -461,8 +494,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndDisableRecordSched
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[in]  aRecordTaskID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordTask(THandle aHandle, const char* aRecordTaskID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordTask(THandle aHandle, const char* aRecordTaskID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -497,8 +533,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndDeleteRecordTask(T
  * @param[in]  aFilter
  * @param[out] aResult
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -533,8 +572,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndGetRecordTask(THan
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[in]  aRecordTaskID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncEnableRecordTask(THandle aHandle, const char* aRecordTaskID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncEnableRecordTask(THandle aHandle, const char* aRecordTaskID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -566,8 +608,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndEnableRecordTask(T
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[in]  aRecordTaskID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncDisableRecordTask(THandle aHandle, const char* aRecordTaskID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncDisableRecordTask(THandle aHandle, const char* aRecordTaskID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -599,8 +644,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndDisableRecordTask(
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[in]  aRecordTaskID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncResetRecordTask(THandle aHandle, const char* aRecordTaskID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncResetRecordTask(THandle aHandle, const char* aRecordTaskID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -634,8 +682,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndResetRecordTask(TH
  * @param[in]  aRecordScheduleID
  * @param[out] aRecordScheduleConflictIDList
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -671,8 +722,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1EndGetRecordScheduleC
  * @param[in]  aRecordTaskID
  * @param[out] aRecordTaskConflictIDList
  * @param[out] aUpdateID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, char** aRecordTaskConflictIDList, uint32_t* aUpdateID);
+DllExport int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, char** aRecordTaskConflictIDList, uint32_t* aUpdateID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

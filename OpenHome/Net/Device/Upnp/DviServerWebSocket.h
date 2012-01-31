@@ -38,11 +38,15 @@ public:
     static const Brn kTagNt;
     static const Brn kTagTimeout;
     static const Brn kTagNts;
+    static const Brn kTagSubscription;
     static const Brn kTagSeq;
+    static const Brn kTagClientId;
     static const Brn kMethodSubscribe;
     static const Brn kMethodUnsubscribe;
     static const Brn kMethodRenew;
-    static const Brn kMethodSubscriptionTimeout;
+    static const Brn kMethodSubscriptionSid;
+    static const Brn kMethodSubscriptionRenewed;
+    static const Brn kMethodGetPropertyUpdates;
     static const Brn kMethodPropertyUpdate;
     static const Brn kValueProtocol;
     static const Brn kValueNt;
@@ -128,19 +132,6 @@ private:
     void Process(const Brx& aValue);
 private:
     TUint iVersion;;
-};
-
-class SubscriptionDataWs : public IDviSubscriptionUserData
-{
-public:
-    SubscriptionDataWs(const Brx& aSubscriberSid);
-    const Brx& SubscriberSid() const;
-    virtual const void* Data() const;
-    virtual void Release();
-private:
-    ~SubscriptionDataWs() {}
-private:
-    Brh iSubscriberSid;
 };
 
 class DviSessionWebSocket;
@@ -244,12 +235,14 @@ private:
     void Subscribe(const Brx& aRequest);
     void Unsubscribe(const Brx& aRequest);
     void Renew(const Brx& aRequest);
-    void WriteSubscriptionTimeout(const Brx& aSid, TUint aSeconds);
+    void WriteSubscriptionSid(const Brx& aDevice, const Brx& aService, const Brx& aSid, TUint aSeconds);
+    void WriteSubscriptionRenewed(const Brx& aSid, TUint aSeconds);
     void WritePropertyUpdates();
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData,
                                   const Brx& aSid, TUint aSequenceNumber);
     void NotifySubscriptionDeleted(const Brx& aSid);
+    void NotifySubscriptionExpired(const Brx& aSid);
 private:
     class SubscriptionWrapper
     {
@@ -283,6 +276,7 @@ private:
     WsHeaderOrigin iHeaderOrigin;
     WsHeaderKey80 iHeadverKeyV8;
     WsHeaderVersion iHeaderVersion;
+    HttpHeaderContentLength iHeaderContentLength;
     const HttpStatus* iErrorStatus;
     WsProtocol* iProtocol;
     TBool iExit;
@@ -290,7 +284,7 @@ private:
     Map iMap;
     Mutex iInterruptLock;
     Semaphore iShutdownSem;
-    Fifo<Brh*> iPropertyUpdates;
+    Fifo<Brh*> iPropertyUpdates; // used for web sockets
 };
 
 class DviServerWebSocket : public DviServer

@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgSender1
-* @module ohNet
+* @module ohnet
 * @class Sender
 */
 	
@@ -18,11 +18,11 @@ var CpProxyAvOpenhomeOrgSender1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["PresentationUrl"] = new OhNet.ServiceProperty("PresentationUrl","string");
-	this.serviceProperties["Metadata"] = new OhNet.ServiceProperty("Metadata","string");
-	this.serviceProperties["Audio"] = new OhNet.ServiceProperty("Audio","bool");
-	this.serviceProperties["Status"] = new OhNet.ServiceProperty("Status","string");
-	this.serviceProperties["Attributes"] = new OhNet.ServiceProperty("Attributes","string");
+	this.serviceProperties["PresentationUrl"] = new ohnet.serviceproperty("PresentationUrl","string");
+	this.serviceProperties["Metadata"] = new ohnet.serviceproperty("Metadata","string");
+	this.serviceProperties["Audio"] = new ohnet.serviceproperty("Audio","bool");
+	this.serviceProperties["Status"] = new ohnet.serviceproperty("Status","string");
+	this.serviceProperties["Attributes"] = new ohnet.serviceproperty("Attributes","string");
 }
 
 ServiceSender.kStatusEnabled = "Enabled";
@@ -36,7 +36,7 @@ ServiceSender.kStatusBlocked = "Blocked";
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgSender1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -45,7 +45,7 @@ CpProxyAvOpenhomeOrgSender1.prototype.subscribe = function (serviceAddedFunction
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgSender1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -59,7 +59,7 @@ CpProxyAvOpenhomeOrgSender1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgSender1.prototype.PresentationUrl_Changed = function (stateChangedFunction) {
     this.serviceProperties.PresentationUrl.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -72,7 +72,7 @@ CpProxyAvOpenhomeOrgSender1.prototype.PresentationUrl_Changed = function (stateC
 CpProxyAvOpenhomeOrgSender1.prototype.Metadata_Changed = function (stateChangedFunction) {
     this.serviceProperties.Metadata.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -85,7 +85,7 @@ CpProxyAvOpenhomeOrgSender1.prototype.Metadata_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgSender1.prototype.Audio_Changed = function (stateChangedFunction) {
     this.serviceProperties.Audio.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -98,7 +98,7 @@ CpProxyAvOpenhomeOrgSender1.prototype.Audio_Changed = function (stateChangedFunc
 CpProxyAvOpenhomeOrgSender1.prototype.Status_Changed = function (stateChangedFunction) {
     this.serviceProperties.Status.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -111,7 +111,7 @@ CpProxyAvOpenhomeOrgSender1.prototype.Status_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgSender1.prototype.Attributes_Changed = function (stateChangedFunction) {
     this.serviceProperties.Attributes.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 
@@ -123,9 +123,9 @@ CpProxyAvOpenhomeOrgSender1.prototype.Attributes_Changed = function (stateChange
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgSender1.prototype.PresentationUrl = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("PresentationUrl", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("PresentationUrl", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -143,9 +143,9 @@ CpProxyAvOpenhomeOrgSender1.prototype.PresentationUrl = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgSender1.prototype.Metadata = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Metadata", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Metadata", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -163,9 +163,9 @@ CpProxyAvOpenhomeOrgSender1.prototype.Metadata = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgSender1.prototype.Audio = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Audio", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Audio", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readBoolParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -183,9 +183,9 @@ CpProxyAvOpenhomeOrgSender1.prototype.Audio = function(successFunction, errorFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgSender1.prototype.Status = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Status", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Status", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -203,9 +203,9 @@ CpProxyAvOpenhomeOrgSender1.prototype.Status = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgSender1.prototype.Attributes = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Attributes", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Attributes", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);

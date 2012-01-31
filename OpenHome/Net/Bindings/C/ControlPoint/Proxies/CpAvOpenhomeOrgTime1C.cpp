@@ -212,11 +212,18 @@ void STDCALL CpProxyAvOpenhomeOrgTime1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds)
+int32_t STDCALL CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncTime(*aTrackCount, *aDuration, *aSeconds);
+    int32_t err = 0;
+    try {
+        proxyC->SyncTime(*aTrackCount, *aDuration, *aSeconds);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

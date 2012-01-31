@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -101,6 +102,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgDimming1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderUpnpOrgDimming1(DviDevice& aDevice);
     /**
      * Enable the LoadLevelStatus property.
      */
@@ -418,6 +425,7 @@ private:
     virtual void GetRampTime(IDvInvocation& aInvocation, IDvInvocationResponseUint& aretRampTime);
 private:
     DvProviderUpnpOrgDimming1();
+    void Construct();
     void DoSetLoadLevelTarget(IDviInvocation& aInvocation);
     void DoGetLoadLevelTarget(IDviInvocation& aInvocation);
     void DoGetLoadLevelStatus(IDviInvocation& aInvocation);

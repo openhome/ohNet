@@ -22,6 +22,17 @@ void DvProviderUpnpOrgScheduledRecording2::GetPropertyLastChange(Brhz& aValue)
 DvProviderUpnpOrgScheduledRecording2::DvProviderUpnpOrgScheduledRecording2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ScheduledRecording", 2)
 {
+    Construct();
+}
+
+DvProviderUpnpOrgScheduledRecording2::DvProviderUpnpOrgScheduledRecording2(DviDevice& aDevice)
+    : DvProvider(aDevice, "upnp.org", "ScheduledRecording", 2)
+{
+    Construct();
+}
+
+void DvProviderUpnpOrgScheduledRecording2::Construct()
+{
     iPropertyLastChange = NULL;
 }
 

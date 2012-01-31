@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -87,6 +88,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgContentDirectory3(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderUpnpOrgContentDirectory3(DviDevice& aDevice);
     /**
      * Enable the SystemUpdateID property.
      */
@@ -386,6 +393,7 @@ private:
     virtual void GetFreeFormQueryCapabilities(IDvInvocation& aInvocation, IDvInvocationResponseString& aFFQCapabilities);
 private:
     DvProviderUpnpOrgContentDirectory3();
+    void Construct();
     void DoGetSearchCapabilities(IDviInvocation& aInvocation);
     void DoGetSortCapabilities(IDviInvocation& aInvocation);
     void DoGetSortExtensionCapabilities(IDviInvocation& aInvocation);

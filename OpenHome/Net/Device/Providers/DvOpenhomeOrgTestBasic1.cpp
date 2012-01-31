@@ -70,6 +70,17 @@ void DvProviderOpenhomeOrgTestBasic1::GetPropertyVarBin(Brh& aValue)
 DvProviderOpenhomeOrgTestBasic1::DvProviderOpenhomeOrgTestBasic1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "openhome.org", "TestBasic", 1)
 {
+    Construct();
+}
+
+DvProviderOpenhomeOrgTestBasic1::DvProviderOpenhomeOrgTestBasic1(DviDevice& aDevice)
+    : DvProvider(aDevice, "openhome.org", "TestBasic", 1)
+{
+    Construct();
+}
+
+void DvProviderOpenhomeOrgTestBasic1::Construct()
+{
     iPropertyVarUint = NULL;
     iPropertyVarInt = NULL;
     iPropertyVarBool = NULL;

@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/DviProtocolUpnp.h> // for DviProtocolUpnp ctor only
 #include <OpenHome/Net/Private/DviStack.h>
+#include <OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -43,6 +44,7 @@ void DviDevice::Construct(const Brx& aUdn)
     iParent = NULL;
     iProtocolDisableCount = 0;
     iSubscriptionId = 0;
+    iProviderSubscriptionLongPoll = NULL;
     DviDeviceMap::Add(*this);
 }
 
@@ -81,6 +83,7 @@ void DviDevice::Destroy()
     }
     iServices.clear();
     iServiceLock.Signal();
+    delete iProviderSubscriptionLongPoll;
     RemoveWeakRef();
 }
 
@@ -161,15 +164,25 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     Brn name = parser.Next('.');
     aKey += name.Bytes() + 1;
     // assume keys starting 'Test' are a special case which can be updated at any time
-    if (strlen(aKey) <4 || strncmp(aKey, "Test", 4) != 0) {
+    if (strlen(aKey) < 4 || strncmp(aKey, "Test", 4) != 0) {
         ASSERT(iEnabled == eDisabled);
     }
-    for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
-        IDvProtocol* protocol = iProtocols[i];
-        if (protocol->ProtocolName() == name) {
-            protocol->SetAttribute(aKey, aValue);
+    if (name == Brn("Core")) {
+        static const char* longPollEnable = "LongPollEnable";
+        if (iProviderSubscriptionLongPoll == NULL && 
+            strncmp(aKey, longPollEnable, sizeof(longPollEnable)-1) == 0) {
+            iProviderSubscriptionLongPoll = new DviProviderSubscriptionLongPoll(*this);
             ConfigChanged();
-            break;
+        }
+    }
+    else {
+        for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
+            IDvProtocol* protocol = iProtocols[i];
+            if (protocol->ProtocolName() == name) {
+                protocol->SetAttribute(aKey, aValue);
+                ConfigChanged();
+                break;
+            }
         }
     }
 }
@@ -550,14 +563,18 @@ DviDevice* DviDeviceMap::Find(const Brx& aUdn)
 
 void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     Parser parser(aUriTail);
     (void)parser.Next('/'); // skip leading slash
     Brn dir = parser.Next('/');
     if (dir.Bytes() > 0) {
         Map::iterator it = iMap.find(dir);
         if (it != iMap.end()) {
-            it->second->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
+            DviDevice* device = it->second;
+            iLock.Signal();
+            device->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
+            return;
         }
     }
+    iLock.Signal();
 }

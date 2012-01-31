@@ -219,6 +219,18 @@ void STDCALL OhNetInitParamsSetDvNumWebSocketThreads(OhNetHandleInitParams aPara
 	ip->SetDvNumWebSocketThreads(aNumThreads);
 }
 
+void STDCALL OhNetInitParamsSetCpUpnpEventServerPort(OhNetHandleInitParams aParams, TUint aPort)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	ip->SetCpUpnpEventServerPort(aPort);
+}
+
+void STDCALL OhNetInitParamsSetDvUpnpServerPort(OhNetHandleInitParams aParams, TUint aPort)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	ip->SetDvUpnpServerPort(aPort);
+}
+
 void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams aParams, uint32_t aPort)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
@@ -313,6 +325,18 @@ uint32_t STDCALL OhNetInitParamsDvNumWebSocketThreads(OhNetHandleInitParams aPar
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	return ip->DvNumWebSocketThreads();
+}
+
+uint32_t STDCALL OhNetInitParamsCpUpnpEventServerPort(OhNetHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	return ip->CpUpnpEventServerPort();
+}
+
+uint32_t STDCALL OhNetInitParamsDvUpnpServerPort(OhNetHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	return ip->DvUpnpServerPort();
 }
 
 uint32_t STDCALL OhNetInitParamsDvWebSocketPort(OhNetHandleInitParams aParams)

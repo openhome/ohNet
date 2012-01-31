@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -73,6 +74,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgContentDirectory1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderUpnpOrgContentDirectory1(DviDevice& aDevice);
     /**
      * Enable the TransferIDs property.
      */
@@ -284,6 +291,7 @@ private:
     virtual void CreateReference(IDvInvocation& aInvocation, const Brx& aContainerID, const Brx& aObjectID, IDvInvocationResponseString& aNewID);
 private:
     DvProviderUpnpOrgContentDirectory1();
+    void Construct();
     void DoGetSearchCapabilities(IDviInvocation& aInvocation);
     void DoGetSortCapabilities(IDviInvocation& aInvocation);
     void DoGetSystemUpdateID(IDviInvocation& aInvocation);

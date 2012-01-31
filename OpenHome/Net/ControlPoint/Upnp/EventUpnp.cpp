@@ -217,7 +217,7 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
 // EventServerUpnp
 
 EventServerUpnp::EventServerUpnp(TIpAddress aInterface)
-    : iTcpServer("EVNT", 0, aInterface)
+    : iTcpServer("EVNT", Stack::InitParams().CpUpnpEventServerPort(), aInterface)
 {
     TChar name[5] = "ESS ";
 #ifndef _WIN32

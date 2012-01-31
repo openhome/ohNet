@@ -48,6 +48,7 @@ const Brn Http::kHeaderRange("Range");
 const Brn Http::kHeaderReferer("Referer");
 const Brn Http::kHeaderTe("Te");
 const Brn Http::kHeaderUserAgent("User-Agent");
+const Brn Http::kHeaderAccessControlRequestMethod("Access-Control-Request-Method");
 const Brn Http::kHeaderAcceptRanges("Accept-Ranges");
 const Brn Http::kHeaderAge("Age");
 const Brn Http::kHeaderETag("ETag");
@@ -57,6 +58,7 @@ const Brn Http::kHeaderRetryAfter("Retry-After");
 const Brn Http::kHeaderServer("Server");
 const Brn Http::kHeaderVary("Vary");
 const Brn Http::kHeaderWwwAuthenticate("WWW-Authenticate");
+const Brn Http::kHeaderAllowOrigin("Access-Control-Allow-Origin");
 const Brn Http::kHeaderAllow("Allow");
 const Brn Http::kHeaderContentEncoding("Content-Encoding");
 const Brn Http::kHeaderContentLanguage("Content-Language");
@@ -872,6 +874,25 @@ void HttpHeaderExpect::Process(const Brx& aValue)
 {
     SetReceived();
     iContinue = (aValue == Http::kExpect100Continue);
+}
+
+
+// HttpHeaderAccessControlRequestMethod
+
+const Brx& HttpHeaderAccessControlRequestMethod::Method() const
+{
+    return iMethod;
+}
+
+TBool HttpHeaderAccessControlRequestMethod::Recognise(const Brx& aHeader)
+{
+    return (Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderAccessControlRequestMethod));
+}
+
+void HttpHeaderAccessControlRequestMethod::Process(const Brx& aValue)
+{
+    SetReceived();
+    iMethod.Append(aValue);
 }
 
 

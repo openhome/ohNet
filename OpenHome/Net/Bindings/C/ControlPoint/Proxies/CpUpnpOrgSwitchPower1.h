@@ -48,8 +48,11 @@ DllExport void STDCALL CpProxyUpnpOrgSwitchPower1Destroy(THandle aHandle);
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  * @param[in]  anewTargetValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTargetValue);
+DllExport int32_t STDCALL CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTargetValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -81,8 +84,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  * @param[out] aRetTargetValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTargetValue);
+DllExport int32_t STDCALL CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTargetValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -114,8 +120,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  * @param[out] aResultStatus
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultStatus);
+DllExport int32_t STDCALL CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultStatus);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

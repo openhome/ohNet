@@ -49,8 +49,11 @@ DllExport void STDCALL CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle);
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aSource
  * @param[out] aSink
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -89,8 +92,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THa
  * @param[out] aConnectionID
  * @param[out] aAVTransportID
  * @param[out] aRcsID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -128,8 +134,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndPrepareForConnectio
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[in]  aConnectionID
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -161,8 +170,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndConnectionComplete(
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aConnectionIDs
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -201,8 +213,11 @@ DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectio
  * @param[out] aPeerConnectionID
  * @param[out] aDirection
  * @param[out] aStatus
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

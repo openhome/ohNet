@@ -7,6 +7,7 @@
 #include <OpenHome/Net/Private/DviServerWebSocket.h>
 #include <OpenHome/Net/Private/Bonjour.h>
 #include <OpenHome/Net/Private/MdnsProvider.h> // replace this to allow clients to set an alternative Bonjour implementation
+#include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -19,7 +20,8 @@ DviStack::DviStack()
     , iMdns(NULL)
 {
     Stack::SetDviStack(this);
-    TUint port = (Stack::InitParams().DvIsBonjourEnabled()? 80 : 0);
+    iPropertyUpdateCollection = new DviPropertyUpdateCollection();
+    TUint port = Stack::InitParams().DvUpnpServerPort();
     iDviServerUpnp = new DviServerUpnp(port);
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager;
@@ -36,6 +38,7 @@ DviStack::~DviStack()
     delete iDviServerUpnp;
     delete iDviDeviceMap;
     delete iSubscriptionManager;
+    delete iPropertyUpdateCollection;
 }
 
 TUint DviStack::BootId()
@@ -90,6 +93,12 @@ IMdnsProvider* DviStack::MdnsProvider()
 {
     DviStack* self = DviStack::Self();
     return self->iMdns;
+}
+
+DviPropertyUpdateCollection& DviStack::PropertyUpdateCollection()
+{
+    DviStack* self = DviStack::Self();
+    return *(self->iPropertyUpdateCollection);
 }
 
 DviStack* DviStack::Self()

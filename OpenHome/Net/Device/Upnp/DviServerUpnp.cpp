@@ -442,6 +442,10 @@ void PropertyWriterFactory::NotifySubscriptionDeleted(const Brx& aSid)
     RemoveRef();
 }
 
+void PropertyWriterFactory::NotifySubscriptionExpired(const Brx& /*aSid*/)
+{
+}
+
 PropertyWriterFactory::~PropertyWriterFactory()
 {
 }
@@ -518,7 +522,7 @@ void DviSessionUpnp::Run()
     iReaderRequest->Flush();
     iWriterChunked->SetChunked(false);
     iInvocationService = NULL;
-        iResourceWriterHeadersOnly = false;
+    iResourceWriterHeadersOnly = false;
     // check headers
     try {
         try {
@@ -536,10 +540,10 @@ void DviSessionUpnp::Run()
         if (method == Http::kMethodGet) {
             Get();
         }
-                else if (method == Http::kMethodHead) {
-                        iResourceWriterHeadersOnly = true;
-                        Get();
-                }
+        else if (method == Http::kMethodHead) {
+            iResourceWriterHeadersOnly = true;
+            Get();
+        }
         else if (method == Http::kMethodPost) {
             Post();
         }

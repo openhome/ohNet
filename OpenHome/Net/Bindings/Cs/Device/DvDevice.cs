@@ -5,6 +5,10 @@ using System.Collections.Generic;
 
 namespace OpenHome.Net.Device
 {
+    public class ResourceWriterError : Exception
+    {
+    }
+    
     /// <summary>
     /// Interface passed to implementors of DvDevice allowing them to serve UI files to Control Points
     /// </summary>
@@ -72,18 +76,24 @@ namespace OpenHome.Net.Device
         public unsafe void WriteResourceBegin(int aTotalBytes, string aMimeType)
         {
             char* mimeType = (char*)Marshal.StringToHGlobalAnsi(aMimeType).ToPointer();
-            iWriteBegin(iWriterData, aTotalBytes, mimeType);
+            int err = iWriteBegin(iWriterData, aTotalBytes, mimeType);
             Marshal.FreeHGlobal((IntPtr)mimeType);
+            if (err != 0)
+                throw new ResourceWriterError();
         }
 
         public void WriteResource(byte[] aData, int aBytes)
         {
-            iWriteResource(iWriterData, aData, aBytes);
+            int err = iWriteResource(iWriterData, aData, aBytes);
+            if (err != 0)
+                throw new ResourceWriterError();
         }
 
         public void WriteResourceEnd()
         {
-            iWriteEnd(iWriterData);
+            int err = iWriteEnd(iWriterData);
+            if (err != 0)
+                throw new ResourceWriterError();
         }
     }
 
@@ -97,14 +107,14 @@ namespace OpenHome.Net.Device
         /// This should only be used with CpDeviceDv.
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
-        OpenHome.Net.Device.DvDevice CreateDevice(string aUdn);
+        OpenHome.Net.Device.IDvDevice CreateDevice(string aUdn);
 
         /// <summary>
         /// Constructor.  Creates a device capable of operating on any of the protocols the device
         /// stack supports as standard but with no services or attributes as yet
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
-        OpenHome.Net.Device.DvDevice CreateDeviceStandard(string aUdn);
+        OpenHome.Net.Device.IDvDevice CreateDeviceStandard(string aUdn);
 
         /// <summary>
         /// Constructor.  Creates a device capable of serving UI files and of operating on any of the
@@ -112,7 +122,7 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
         /// <param name="aResourceManager">Allows the owner of a device to serve UI files.</param>
-        OpenHome.Net.Device.DvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager);
+        OpenHome.Net.Device.IDvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager);
     }
 
     /// <summary>
@@ -144,6 +154,7 @@ namespace OpenHome.Net.Device
             return new DvDevice(aUdn);
         }
 
+
         /// <summary>
         /// Constructor.  Creates a device capable of operating on any of the protocols the device
         /// stack supports as standard but with no services or attributes as yet
@@ -164,9 +175,63 @@ namespace OpenHome.Net.Device
         {
             return new DvDeviceStandard(aUdn, aResourceManager);
         }
+
+        // Explicit interface implementations. These forward to the regular methods.
+
+        /// <summary>
+        /// Constructor.  Creates a device without support for any protocol but capable of adding services or attributes.
+        /// This should only be used with CpDeviceDv.
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        OpenHome.Net.Device.IDvDevice IDvDeviceFactory.CreateDevice(string aUdn)
+        {
+            return CreateDevice(aUdn);
+        }
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of operating on any of the protocols the device
+        /// stack supports as standard but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        OpenHome.Net.Device.IDvDevice IDvDeviceFactory.CreateDeviceStandard(string aUdn)
+        {
+            return CreateDeviceStandard(aUdn);
+        }
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of serving UI files and of operating on any of the
+        /// protocols the device stack supports as standard but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
+        OpenHome.Net.Device.IDvDevice IDvDeviceFactory.CreateDeviceStandard(string aUdn, IResourceManager aResourceManager)
+        {
+            return CreateDeviceStandard(aUdn, aResourceManager);
+        }
     }
-    
-    public class DvDevice : IDisposable
+
+    /// <summary>
+    /// Interface to allow unit-testing of code that uses DvDevices.
+    /// </summary>
+    public interface IDvDevice : IDisposable
+    {
+        /// <summary>
+        /// Constructing providers cannot be done with just the interface.
+        /// A genuine instance of DvDevice is required. This provides access
+        /// to it.
+        /// </summary>
+        DvDevice RawDevice { get; }
+        string Udn();
+        bool Enabled();
+        void SetEnabled();
+        void SetDisabled(Action aCompleted);
+        void GetAttribute(string aKey, out string aValue);
+        void SetAttribute(string aKey, string aValue);
+        //void SetXmlExtension(string aXml);
+        IntPtr Handle();
+    }
+
+    public class DvDevice : IDvDevice
     {
         [DllImport("ohNet")]
         static extern unsafe IntPtr DvDeviceCreate(char* aUdn);
@@ -204,6 +269,8 @@ namespace OpenHome.Net.Device
             Marshal.FreeHGlobal((IntPtr)udn);
             iCallbackDisabled = new DisabledCallback(Disabled);
         }
+
+        DvDevice IDvDevice.RawDevice { get { return this; } }
 
         protected DvDevice()
         {
@@ -355,13 +422,13 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern unsafe IntPtr DvResourceWriterLanguage(IntPtr aHandle, uint aIndex);
 
-        public unsafe delegate void CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, char* aMimeType);
-        public delegate void CallbackWriteResource(IntPtr aPtr, byte[] aData, int aBytes);
-        public delegate void CallbackWriteResourceEnd(IntPtr aPtr);
-        private unsafe delegate void CallbackResourceManager(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
-                                                             CallbackWriteResourceBegin aWriteBegin,
-                                                             CallbackWriteResource aWriteResource,
-                                                             CallbackWriteResourceEnd aWriteEnd);
+        public unsafe delegate int CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, char* aMimeType);
+        public delegate int CallbackWriteResource(IntPtr aPtr, byte[] aData, int aBytes);
+        public delegate int CallbackWriteResourceEnd(IntPtr aPtr);
+        private unsafe delegate int CallbackResourceManager(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
+                                                            CallbackWriteResourceBegin aWriteBegin,
+                                                            CallbackWriteResource aWriteResource,
+                                                            CallbackWriteResourceEnd aWriteEnd);
 
         private IResourceManager iResourceManager;
         private CallbackResourceManager iCallbackResourceManager;
@@ -395,10 +462,10 @@ namespace OpenHome.Net.Device
             Marshal.FreeHGlobal((IntPtr)udn);
         }
 
-        private static unsafe void WriteResource(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
-                                                 CallbackWriteResourceBegin aWriteBegin,
-                                                 CallbackWriteResource aWriteResource,
-                                                 CallbackWriteResourceEnd aWriteEnd)
+        private static unsafe int WriteResource(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
+                                                CallbackWriteResourceBegin aWriteBegin,
+                                                CallbackWriteResource aWriteResource,
+                                                CallbackWriteResourceEnd aWriteEnd)
         {
             GCHandle gch = GCHandle.FromIntPtr(aUserData);
             DvDeviceStandard self = (DvDeviceStandard)gch.Target;
@@ -410,7 +477,16 @@ namespace OpenHome.Net.Device
                 languageList.Add(Marshal.PtrToStringAnsi(DvResourceWriterLanguage(aLanguageList, i)));
             }
             ResourceWriter writer = new ResourceWriter(aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
-            writer.Write(self.iResourceManager, uriTail, aInterface, languageList);
+            try
+            {
+                writer.Write(self.iResourceManager, uriTail, aInterface, languageList);
+
+            }
+            catch
+            {
+                return -1;
+            }
+            return 0;
         }
     }
 }

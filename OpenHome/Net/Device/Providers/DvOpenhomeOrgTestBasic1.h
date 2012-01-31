@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -101,6 +102,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderOpenhomeOrgTestBasic1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderOpenhomeOrgTestBasic1(DviDevice& aDevice);
     /**
      * Enable the VarUint property.
      */
@@ -390,6 +397,7 @@ private:
     virtual void Shutdown(IDvInvocation& aInvocation);
 private:
     DvProviderOpenhomeOrgTestBasic1();
+    void Construct();
     void DoIncrement(IDviInvocation& aInvocation);
     void DoDecrement(IDviInvocation& aInvocation);
     void DoToggle(IDviInvocation& aInvocation);

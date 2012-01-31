@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -129,6 +130,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderAvOpenhomeOrgPlaylist1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderAvOpenhomeOrgPlaylist1(DviDevice& aDevice);
     /**
      * Enable the TransportState property.
      */
@@ -496,6 +503,7 @@ private:
     virtual void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgPlaylist1();
+    void Construct();
     void DoPlay(IDviInvocation& aInvocation);
     void DoPause(IDviInvocation& aInvocation);
     void DoStop(IDviInvocation& aInvocation);

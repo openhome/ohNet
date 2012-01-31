@@ -94,6 +94,17 @@ void DvProviderAvOpenhomeOrgPlaylist1::GetPropertyProtocolInfo(Brhz& aValue)
 DvProviderAvOpenhomeOrgPlaylist1::DvProviderAvOpenhomeOrgPlaylist1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Playlist", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgPlaylist1::DvProviderAvOpenhomeOrgPlaylist1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "Playlist", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgPlaylist1::Construct()
+{
     iPropertyTransportState = NULL;
     iPropertyRepeat = NULL;
     iPropertyShuffle = NULL;

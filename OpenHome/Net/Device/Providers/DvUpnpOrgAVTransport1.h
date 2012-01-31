@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -45,6 +46,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgAVTransport1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderUpnpOrgAVTransport1(DviDevice& aDevice);
     /**
      * Enable the LastChange property.
      */
@@ -290,6 +297,7 @@ private:
     virtual void GetCurrentTransportActions(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aActions);
 private:
     DvProviderUpnpOrgAVTransport1();
+    void Construct();
     void DoSetAVTransportURI(IDviInvocation& aInvocation);
     void DoSetNextAVTransportURI(IDviInvocation& aInvocation);
     void DoGetMediaInfo(IDviInvocation& aInvocation);

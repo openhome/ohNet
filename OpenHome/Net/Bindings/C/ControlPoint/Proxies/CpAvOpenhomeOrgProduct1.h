@@ -51,8 +51,11 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1Destroy(THandle aHandle);
  * @param[out] aInfo
  * @param[out] aUrl
  * @param[out] aImageUri
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -90,8 +93,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndManufacturer(THandle aH
  * @param[out] aInfo
  * @param[out] aUrl
  * @param[out] aImageUri
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -130,8 +136,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndModel(THandle aHandle, 
  * @param[out] aInfo
  * @param[out] aUrl
  * @param[out] aImageUri
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -167,8 +176,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndProduct(THandle aHandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -200,8 +212,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[in]  aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetStandby(THandle aHandle, uint32_t aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetStandby(THandle aHandle, uint32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -233,8 +248,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetStandby(THandle aHan
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -266,8 +284,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceCount(THandle aHa
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -299,8 +320,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceXml(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -332,8 +356,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceIndex(THandle aHa
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[in]  aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, uint32_t aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, uint32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -365,8 +392,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetSourceIndex(THandle 
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[in]  aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHandle, const char* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHandle, const char* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -402,8 +432,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetSourceIndexByName(TH
  * @param[out] aType
  * @param[out] aName
  * @param[out] aVisible
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -439,8 +472,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle,
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -472,8 +508,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndAttributes(THandle aHan
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHandle, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

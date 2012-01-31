@@ -1241,11 +1241,18 @@ void STDCALL CpProxyAvOpenhomeOrgRadio1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncPlay(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncPlay(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncPlay();
+    int32_t err = 0;
+    try {
+        proxyC->SyncPlay();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginPlay(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1272,11 +1279,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndPlay(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncPause(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncPause(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncPause();
+    int32_t err = 0;
+    try {
+        proxyC->SyncPause();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginPause(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1303,11 +1317,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndPause(THandle aHandle, OhNetHandleA
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncStop(THandle aHandle)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncStop(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncStop();
+    int32_t err = 0;
+    try {
+        proxyC->SyncStop();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginStop(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1334,11 +1355,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndStop(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncSeekSecondAbsolute(THandle aHandle, uint32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncSeekSecondAbsolute(THandle aHandle, uint32_t aValue)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSeekSecondAbsolute(aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSeekSecondAbsolute(aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1365,11 +1393,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndSeekSecondAbsolute(THandle aHandle,
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncSeekSecondRelative(THandle aHandle, int32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncSeekSecondRelative(THandle aHandle, int32_t aValue)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSeekSecondRelative(aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSeekSecondRelative(aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1396,15 +1431,22 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndSeekSecondRelative(THandle aHandle,
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncChannel(THandle aHandle, char** aUri, char** aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncChannel(THandle aHandle, char** aUri, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aUri;
     Brh buf_aMetadata;
-    proxyC->SyncChannel(buf_aUri, buf_aMetadata);
-    *aUri = buf_aUri.Extract();
-    *aMetadata = buf_aMetadata.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncChannel(buf_aUri, buf_aMetadata);
+        *aUri = buf_aUri.Extract();
+        *aMetadata = buf_aMetadata.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginChannel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1437,13 +1479,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndChannel(THandle aHandle, OhNetHandl
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncSetChannel(THandle aHandle, const char* aUri, const char* aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncSetChannel(THandle aHandle, const char* aUri, const char* aMetadata)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aUri(aUri);
     Brh buf_aMetadata(aMetadata);
-    proxyC->SyncSetChannel(buf_aUri, buf_aMetadata);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetChannel(buf_aUri, buf_aMetadata);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginSetChannel(THandle aHandle, const char* aUri, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1472,13 +1521,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndSetChannel(THandle aHandle, OhNetHa
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncTransportState(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncTransportState(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncTransportState(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncTransportState(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginTransportState(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1508,11 +1564,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndTransportState(THandle aHandle, OhN
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncId(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncId(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncId(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncId(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginId(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1539,12 +1602,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndId(THandle aHandle, OhNetHandleAsyn
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncSetId(THandle aHandle, uint32_t aValue, const char* aUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncSetId(THandle aHandle, uint32_t aValue, const char* aUri)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aUri(aUri);
-    proxyC->SyncSetId(aValue, buf_aUri);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetId(aValue, buf_aUri);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginSetId(THandle aHandle, uint32_t aValue, const char* aUri, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1572,13 +1642,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndSetId(THandle aHandle, OhNetHandleA
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncRead(THandle aHandle, uint32_t aId, char** aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncRead(THandle aHandle, uint32_t aId, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aMetadata;
-    proxyC->SyncRead(aId, buf_aMetadata);
-    *aMetadata = buf_aMetadata.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncRead(aId, buf_aMetadata);
+        *aMetadata = buf_aMetadata.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginRead(THandle aHandle, uint32_t aId, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1608,14 +1685,21 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndRead(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncReadList(THandle aHandle, const char* aIdList, char** aChannelList)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncReadList(THandle aHandle, const char* aIdList, char** aChannelList)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aIdList(aIdList);
     Brh buf_aChannelList;
-    proxyC->SyncReadList(buf_aIdList, buf_aChannelList);
-    *aChannelList = buf_aChannelList.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncReadList(buf_aIdList, buf_aChannelList);
+        *aChannelList = buf_aChannelList.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginReadList(THandle aHandle, const char* aIdList, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1646,14 +1730,21 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndReadList(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncIdArray(THandle aHandle, uint32_t* aToken, char** aArray, uint32_t* aArrayLen)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncIdArray(THandle aHandle, uint32_t* aToken, char** aArray, uint32_t* aArrayLen)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aArray;
-    proxyC->SyncIdArray(*aToken, buf_aArray);
-    *aArrayLen = buf_aArray.Bytes();
-    *aArray = buf_aArray.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncIdArray(*aToken, buf_aArray);
+        *aArrayLen = buf_aArray.Bytes();
+        *aArray = buf_aArray.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginIdArray(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1685,12 +1776,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndIdArray(THandle aHandle, OhNetHandl
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncIdArrayChanged(THandle aHandle, uint32_t aToken, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncIdArrayChanged(THandle aHandle, uint32_t aToken, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aValue = 0;
-    proxyC->SyncIdArrayChanged(aToken, *(TBool*)aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncIdArrayChanged(aToken, *(TBool*)aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1718,11 +1816,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndIdArrayChanged(THandle aHandle, OhN
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncChannelsMax(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncChannelsMax(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncChannelsMax(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncChannelsMax(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginChannelsMax(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1749,13 +1854,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndChannelsMax(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgRadio1SyncProtocolInfo(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncProtocolInfo(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncProtocolInfo(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncProtocolInfo(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgRadio1BeginProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

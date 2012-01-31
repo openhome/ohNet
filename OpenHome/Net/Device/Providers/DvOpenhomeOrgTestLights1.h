@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -31,6 +32,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderOpenhomeOrgTestLights1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderOpenhomeOrgTestLights1(DviDevice& aDevice);
     /**
      * Signal that the action GetCount is supported.
      * The action's availability will be published in the device's service.xml.
@@ -132,6 +139,7 @@ private:
     virtual void GetColorComponents(IDvInvocation& aInvocation, TUint aColor, IDvInvocationResponseUint& aBrightness, IDvInvocationResponseUint& aRed, IDvInvocationResponseUint& aGreen, IDvInvocationResponseUint& aBlue);
 private:
     DvProviderOpenhomeOrgTestLights1();
+    void Construct();
     void DoGetCount(IDviInvocation& aInvocation);
     void DoGetRoom(IDviInvocation& aInvocation);
     void DoGetName(IDviInvocation& aInvocation);

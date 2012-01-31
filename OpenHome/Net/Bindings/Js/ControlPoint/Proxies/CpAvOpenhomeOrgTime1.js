@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgTime1
-* @module ohNet
+* @module ohnet
 * @class Time
 */
 	
@@ -18,9 +18,9 @@ var CpProxyAvOpenhomeOrgTime1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new OhNet.ServiceProperty("TrackCount","int");
-	this.serviceProperties["Duration"] = new OhNet.ServiceProperty("Duration","int");
-	this.serviceProperties["Seconds"] = new OhNet.ServiceProperty("Seconds","int");
+	this.serviceProperties["TrackCount"] = new ohnet.serviceproperty("TrackCount","int");
+	this.serviceProperties["Duration"] = new ohnet.serviceproperty("Duration","int");
+	this.serviceProperties["Seconds"] = new ohnet.serviceproperty("Seconds","int");
 }
 
 
@@ -31,7 +31,7 @@ var CpProxyAvOpenhomeOrgTime1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgTime1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -40,7 +40,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.subscribe = function (serviceAddedFunction) 
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgTime1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -54,7 +54,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgTime1.prototype.TrackCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.TrackCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -67,7 +67,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.TrackCount_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgTime1.prototype.Duration_Changed = function (stateChangedFunction) {
     this.serviceProperties.Duration.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -80,7 +80,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.Duration_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgTime1.prototype.Seconds_Changed = function (stateChangedFunction) {
     this.serviceProperties.Seconds.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 
@@ -92,11 +92,11 @@ CpProxyAvOpenhomeOrgTime1.prototype.Seconds_Changed = function (stateChangedFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgTime1.prototype.Time = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Time", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Time", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["TrackCount"] = OhNet.SoapRequest.readIntParameter(result["TrackCount"]);	
-		result["Duration"] = OhNet.SoapRequest.readIntParameter(result["Duration"]);	
-		result["Seconds"] = OhNet.SoapRequest.readIntParameter(result["Seconds"]);	
+		result["TrackCount"] = ohnet.soaprequest.readIntParameter(result["TrackCount"]);	
+		result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]);	
+		result["Seconds"] = ohnet.soaprequest.readIntParameter(result["Seconds"]);	
 	
 		if (successFunction){
 			successFunction(result);

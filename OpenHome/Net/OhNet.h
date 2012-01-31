@@ -253,9 +253,24 @@ public:
      */
     void SetDvNumWebSocketThreads(uint32_t aNumThreads);
     /**
-     * Set the tcp port number web socket servers will run on.
+     * Set the tcp port number the control point stack's UPnP event server will run on.
      * The default value is 0 (meaning that the OS will assign a port).
-     * You should question your design if you need to use this.
+     * You should only set this if you know the full set of services (plus their port
+     * requirements) running on a device.
+     */ 
+    void SetCpUpnpEventServerPort(TUint aPort);
+    /**
+     * Set the tcp port number the device stack's UPnP web server will run on.
+     * The default value is 55178.
+     * You should only rely on this (or another non-zero value) if you know the full
+     * set of services (plus their port requirements) running on a device.
+     */ 
+    void SetDvUpnpServerPort(TUint aPort);
+    /**
+     * Set the tcp port number the device stack's websocket servers will run on.
+     * The default value is 0 (meaning that the OS will assign a port).
+     * You should only set this if you know the full set of services (plus their port
+     * requirements) running on a device.
      */
     void SetDvWebSocketPort(TUint aPort);
     /**
@@ -292,6 +307,8 @@ public:
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
     uint32_t DvNumWebSocketThreads() const;
+    uint32_t CpUpnpEventServerPort() const;
+    uint32_t DvUpnpServerPort() const;
     uint32_t DvWebSocketPort() const;
     bool DvIsBonjourEnabled() const;
 private:
@@ -325,6 +342,8 @@ private:
     uint32_t iDvNumServerThreads;
 	uint32_t iDvNumPublisherThreads;
     uint32_t iDvNumWebSocketThreads;
+    uint32_t iCpUpnpEventServerPort;
+    uint32_t iDvUpnpWebServerPort;
     uint32_t iDvWebSocketPort;
     bool iEnableBonjour;
 };

@@ -14,6 +14,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/sha.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Parser.h>
 
 #include <stdlib.h>
 
@@ -50,11 +51,15 @@ const Brn WebSocket::kTagSid("SID");
 const Brn WebSocket::kTagNt("NT");
 const Brn WebSocket::kTagTimeout("TIMEOUT");
 const Brn WebSocket::kTagNts("NTS");
+const Brn WebSocket::kTagSubscription("SUBSCRIPTION");
 const Brn WebSocket::kTagSeq("SEQ");
+const Brn WebSocket::kTagClientId("CLIENTID");
 const Brn WebSocket::kMethodSubscribe("Subscribe");
 const Brn WebSocket::kMethodUnsubscribe("Unsubscribe");
 const Brn WebSocket::kMethodRenew("Renew");
-const Brn WebSocket::kMethodSubscriptionTimeout("SubscriptionTimeout");
+const Brn WebSocket::kMethodSubscriptionSid("SubscribeCompleted");
+const Brn WebSocket::kMethodSubscriptionRenewed("RenewCompleted");
+const Brn WebSocket::kMethodGetPropertyUpdates("GetPropertyUpdates");
 const Brn WebSocket::kMethodPropertyUpdate("PropertyUpdate");
 const Brn WebSocket::kValueProtocol("upnpevent.openhome.org");
 const Brn WebSocket::kValueNt("upnp:event");
@@ -219,29 +224,6 @@ void WsHeaderVersion::Process(const Brx& aValue)
 }
 
 
-// SubscriptionDataWs
-
-SubscriptionDataWs::SubscriptionDataWs(const Brx& aSubscriberSid)
-    : iSubscriberSid(aSubscriberSid)
-{
-}
-
-const Brx& SubscriptionDataWs::SubscriberSid() const
-{
-    return iSubscriberSid;
-}
-
-const void* SubscriptionDataWs::Data() const
-{
-    return this;
-}
-
-void SubscriptionDataWs::Release()
-{
-    delete this;
-}
-
-
 // PropertyWriterWs
 
 PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSid, TUint aSequenceNumber)
@@ -251,6 +233,9 @@ PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSi
     SetWriter(iWriter);
     iWriter.Write(Brn("<?xml version=\"1.0\"?>"));
     iWriter.Write(Brn("<root>"));
+    iWriter.Write('<');
+    iWriter.Write(WebSocket::kTagSubscription);
+    iWriter.Write('>');
     WriteTag(iWriter, WebSocket::kTagMethod, WebSocket::kMethodPropertyUpdate);
     WriteTag(iWriter, WebSocket::kTagNt, WebSocket::kValueNt);
     WriteTag(iWriter, WebSocket::kTagNts, WebSocket::kValuePropChange);
@@ -267,7 +252,12 @@ PropertyWriterWs::~PropertyWriterWs()
 
 void PropertyWriterWs::PropertyWriteEnd()
 {
-    iWriter.Write(Brn("</e:propertyset></root>"));
+    iWriter.Write(Brn("</e:propertyset>"));
+    iWriter.Write('<');
+    iWriter.Write('/');
+    iWriter.Write(WebSocket::kTagSubscription);
+    iWriter.Write('>');
+    iWriter.Write(Brn("</root>"));
     Brh* buf = new Brh;
     iWriter.TransferTo(*buf);
     iSession.QueuePropertyUpdate(buf);
@@ -520,6 +510,7 @@ void WsProtocol80::Close(TUint16 aCode)
 
 DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
     : iEndpoint(aPort, aInterface)
+    , iExit(false)
     , iInterruptLock("WSIM")
     , iShutdownSem("WSIS", 1)
     , iPropertyUpdates(kMaxPropertyUpdates)
@@ -540,10 +531,12 @@ DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
     iReaderRequest->AddHeader(iHeaderOrigin);
     iReaderRequest->AddHeader(iHeadverKeyV8);
     iReaderRequest->AddHeader(iHeaderVersion);
+    iReaderRequest->AddHeader(iHeaderContentLength);
 }
 
 DviSessionWebSocket::~DviSessionWebSocket()
 {
+    iExit = true;
     Interrupt(true);
     iShutdownSem.Wait();
     delete iWriterResponse;
@@ -815,7 +808,6 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     LOG(kDvWebSocket, "WS: Subscribe\n");
     Brn udn = XmlParserBasic::Find(WebSocket::kTagUdn, aRequest);
     Brn serviceId = XmlParserBasic::Find(WebSocket::kTagService, aRequest);
-    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
     Brn nt = XmlParserBasic::Find(WebSocket::kTagNt, aRequest);
     if (nt != WebSocket::kValueNt) {
         THROW(WebSocketError);
@@ -845,13 +837,13 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     if (service == NULL) {
         THROW(WebSocketError);
     }
-    Brh sid2;
-    device->CreateSid(sid2);
-    SubscriptionDataWs* data = new SubscriptionDataWs(sid);
-    DviSubscription* subscription = new DviSubscription(*device, *this, data, sid2, timeout);
+    Brh sid;
+    device->CreateSid(sid);
+    DviSubscription* subscription = new DviSubscription(*device, *this, NULL, sid, timeout);
+	Brn sidBuf(subscription->Sid());
 
     try {
-        WriteSubscriptionTimeout(sid, timeout);
+        WriteSubscriptionSid(udn, serviceId, sidBuf, timeout);
     }
     catch (WriterError&) {
         subscription->RemoveRef();
@@ -860,7 +852,7 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
 
     // Start subscription, prompting delivery of the first update (covering all state variables)
     DviSubscriptionManager::AddSubscription(*subscription);
-    DviSessionWebSocket::SubscriptionWrapper* wrapper = new DviSessionWebSocket::SubscriptionWrapper(*subscription, sid, *service);
+    DviSessionWebSocket::SubscriptionWrapper* wrapper = new DviSessionWebSocket::SubscriptionWrapper(*subscription, sidBuf, *service);
     service->AddSubscription(subscription);
     Brn key(wrapper->Sid());
     iMap.insert(std::pair<Brn,DviSessionWebSocket::SubscriptionWrapper*>(key, wrapper));
@@ -903,15 +895,33 @@ void DviSessionWebSocket::Renew(const Brx& aRequest)
         THROW(WebSocketError);
     }
     wrapper->Subscription().Renew(timeout);
-    WriteSubscriptionTimeout(wrapper->Sid(), timeout);
+    WriteSubscriptionRenewed(wrapper->Sid(), timeout);
 }
 
-void DviSessionWebSocket::WriteSubscriptionTimeout(const Brx& aSid, TUint aSeconds)
+void DviSessionWebSocket::WriteSubscriptionSid(const Brx& aDevice, const Brx& aService, const Brx& aSid, TUint aSeconds)
 {
     WriterBwh writer(1024);
     writer.Write(Brn("<?xml version=\"1.0\"?>"));
     writer.Write(Brn("<root>"));
-    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionTimeout);
+    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionSid);
+    WriteTag(writer, WebSocket::kTagUdn, aDevice);
+    WriteTag(writer, WebSocket::kTagService, aService);
+    WriteTag(writer, WebSocket::kTagSid, aSid);
+    Bws<Ascii::kMaxUintStringBytes> timeout;
+    (void)Ascii::AppendDec(timeout, aSeconds);
+    WriteTag(writer, WebSocket::kTagTimeout, timeout);
+    writer.Write(Brn("</root>"));
+    Brh resp;
+    writer.TransferTo(resp);
+    iProtocol->Write(resp);
+}
+
+void DviSessionWebSocket::WriteSubscriptionRenewed(const Brx& aSid, TUint aSeconds)
+{
+    WriterBwh writer(1024);
+    writer.Write(Brn("<?xml version=\"1.0\"?>"));
+    writer.Write(Brn("<root>"));
+    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionRenewed);
     WriteTag(writer, WebSocket::kTagSid, aSid);
     Bws<Ascii::kMaxUintStringBytes> timeout;
     (void)Ascii::AppendDec(timeout, aSeconds);
@@ -934,17 +944,20 @@ void DviSessionWebSocket::WritePropertyUpdates()
     }
 }
 
-IPropertyWriter* DviSessionWebSocket::CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& /*aSid*/, TUint aSequenceNumber)
+IPropertyWriter* DviSessionWebSocket::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
 {
-    const SubscriptionDataWs* data = reinterpret_cast<const SubscriptionDataWs*>(aUserData->Data());
-    return new PropertyWriterWs(*this, data->SubscriberSid(), aSequenceNumber);
+    return new PropertyWriterWs(*this, aSid, aSequenceNumber);
 }
 
 void DviSessionWebSocket::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 {
 }
 
-    
+void DviSessionWebSocket::NotifySubscriptionExpired(const Brx& /*aSid*/)
+{
+}
+
+
 // DviSessionWebSocket::SubscriptionWrapper
 
 DviSessionWebSocket::SubscriptionWrapper::SubscriptionWrapper(DviSubscription& aSubscription, const Brx& aSid, DviService& aService)
@@ -963,14 +976,14 @@ DviSessionWebSocket::SubscriptionWrapper::~SubscriptionWrapper()
     iSubscription.RemoveRef();
 }
 
-    
+
 // DviServerWebSocket
 
 DviServerWebSocket::DviServerWebSocket()
 {
     if (Stack::InitParams().DvNumWebSocketThreads() > 0) {
         Initialise();
-    }    
+    }
 }
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)

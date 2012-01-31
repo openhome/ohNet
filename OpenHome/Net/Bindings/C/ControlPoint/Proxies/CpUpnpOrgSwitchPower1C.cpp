@@ -264,11 +264,18 @@ void STDCALL CpProxyUpnpOrgSwitchPower1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTargetValue)
+int32_t STDCALL CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTargetValue)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetTarget((anewTargetValue==0? false : true));
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetTarget((anewTargetValue==0? false : true));
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_t anewTargetValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -295,12 +302,19 @@ int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTargetValue)
+int32_t STDCALL CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTargetValue)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aRetTargetValue = 0;
-    proxyC->SyncGetTarget(*(TBool*)aRetTargetValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetTarget(*(TBool*)aRetTargetValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -328,12 +342,19 @@ int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultStatus)
+int32_t STDCALL CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultStatus)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aResultStatus = 0;
-    proxyC->SyncGetStatus(*(TBool*)aResultStatus);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetStatus(*(TBool*)aResultStatus);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

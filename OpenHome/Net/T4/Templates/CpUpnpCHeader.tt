@@ -114,8 +114,11 @@ DllExport void STDCALL <#=className#>Destroy(THandle aHandle);
  * @param[out] a<#=o.name#>Len
 <#          } #>
 <#      } #>
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>);
+DllExport int32_t STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

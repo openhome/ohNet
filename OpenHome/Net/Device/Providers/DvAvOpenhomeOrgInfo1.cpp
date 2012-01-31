@@ -154,6 +154,17 @@ void DvProviderAvOpenhomeOrgInfo1::GetPropertyMetatext(Brhz& aValue)
 DvProviderAvOpenhomeOrgInfo1::DvProviderAvOpenhomeOrgInfo1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Info", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgInfo1::DvProviderAvOpenhomeOrgInfo1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "Info", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgInfo1::Construct()
+{
     iPropertyTrackCount = NULL;
     iPropertyDetailsCount = NULL;
     iPropertyMetatextCount = NULL;

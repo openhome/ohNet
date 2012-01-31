@@ -50,8 +50,11 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgTime1Destroy(THandle aHandle);
  * @param[out] aTrackCount
  * @param[out] aDuration
  * @param[out] aSeconds
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

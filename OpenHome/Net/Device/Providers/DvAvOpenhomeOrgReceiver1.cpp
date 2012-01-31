@@ -58,6 +58,17 @@ void DvProviderAvOpenhomeOrgReceiver1::GetPropertyProtocolInfo(Brhz& aValue)
 DvProviderAvOpenhomeOrgReceiver1::DvProviderAvOpenhomeOrgReceiver1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Receiver", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgReceiver1::DvProviderAvOpenhomeOrgReceiver1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "Receiver", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgReceiver1::Construct()
+{
     iPropertyUri = NULL;
     iPropertyMetadata = NULL;
     iPropertyTransportState = NULL;

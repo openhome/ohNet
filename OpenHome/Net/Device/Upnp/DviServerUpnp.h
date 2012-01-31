@@ -124,6 +124,7 @@ public:
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
     void NotifySubscriptionDeleted(const Brx& aSid);
+    void NotifySubscriptionExpired(const Brx& aSid);
 private:
     ~PropertyWriterFactory();
     void AddRef();

@@ -82,6 +82,9 @@ objects_proxies = \
                   $(objdir)CpOpenhomeOrgTestLights1.$(objext) \
                   $(objdir)CpOpenhomeOrgTestLights1C.$(objext) \
                   $(objdir)CpOpenhomeOrgTestLights1Std.$(objext) \
+                  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.$(objext) \
+                  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1C.$(objext) \
+                  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) \
 
 # Service proxies have well controlled dependencies so we can document a more limited set of headers
 headers_proxy = $(inc_build)/OpenHome/Buffer.h \
@@ -123,6 +126,7 @@ proxy_dotnet_assemblies = \
         CpAvOpenhomeOrgNetworkMonitor1.net.dll \
         CpOpenhomeOrgTestBasic1.net.dll \
         CpOpenhomeOrgTestLights1.net.dll \
+        CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
 
 proxy_dotnet_assemblies_with_path = \
         $(objdir)CpUpnpOrgAVTransport1.net.dll \
@@ -151,6 +155,7 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)CpAvOpenhomeOrgNetworkMonitor1.net.dll \
         $(objdir)CpOpenhomeOrgTestBasic1.net.dll \
         $(objdir)CpOpenhomeOrgTestLights1.net.dll \
+        $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
 
 proxy_java_classes_with_path = \
         $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgAVTransport1.class \
@@ -179,6 +184,7 @@ proxy_java_classes_with_path = \
         $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgNetworkMonitor1.class \
         $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestBasic1.class \
         $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestLights1.class \
+        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgSubscriptionLongPoll1.class \
 
 
 proxies : ohNetCore $(objects_proxies)
@@ -339,6 +345,12 @@ $(objdir)CpOpenhomeOrgTestLights1C.$(objext) : $(proxyC)CpOpenhomeOrgTestLights1
 	$(compiler)CpOpenhomeOrgTestLights1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestLights1C.cpp
 $(objdir)CpOpenhomeOrgTestLights1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpOpenhomeOrgTestLights1.h
 	$(compiler)CpOpenhomeOrgTestLights1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp
+$(objdir)CpOpenhomeOrgSubscriptionLongPoll1.$(objext) : $(proxyCppCore)CpOpenhomeOrgSubscriptionLongPoll1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.h
+	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgSubscriptionLongPoll1.cpp
+$(objdir)CpOpenhomeOrgSubscriptionLongPoll1C.$(objext) : $(proxyC)CpOpenhomeOrgSubscriptionLongPoll1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.h
+	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgSubscriptionLongPoll1C.cpp
+$(objdir)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgSubscriptionLongPoll1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.h
+	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgSubscriptionLongPoll1Std.cpp
 
 proxy_dlls = \
              CpUpnpOrgAVTransport1Dll \
@@ -367,6 +379,7 @@ proxy_dlls = \
              CpAvOpenhomeOrgNetworkMonitor1Dll \
              CpOpenhomeOrgTestBasic1Dll \
              CpOpenhomeOrgTestLights1Dll \
+             CpOpenhomeOrgSubscriptionLongPoll1Dll \
 
 CpProxyDlls: $(proxy_dlls)
 
@@ -448,6 +461,9 @@ $(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)Cp
 CpOpenhomeOrgTestLights1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext)
 $(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestLights1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext) $(objdir)CpOpenhomeOrgTestLights1.$(objext)
+CpOpenhomeOrgSubscriptionLongPoll1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgSubscriptionLongPoll1.$(dllext)
+$(objdir)$(dllprefix)CpOpenhomeOrgSubscriptionLongPoll1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgSubscriptionLongPoll1.$(dllext) $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.$(objext)
 
 # Proxy assemblies for .NET:
 
@@ -583,6 +599,11 @@ $(objdir)CpOpenhomeOrgTestLights1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOp
 		/out:$(objdir)CpOpenhomeOrgTestLights1.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpOpenhomeOrgTestLights1.cs
+$(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
+		$(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.cs
 
 # Proxy classes for Java:
 
@@ -640,5 +661,7 @@ $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestBasic1.clas
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyOpenhomeOrgTestBasic1.java
 $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
+$(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgSubscriptionLongPoll1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgSubscriptionLongPoll1.java
+	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyOpenhomeOrgSubscriptionLongPoll1.java
 
 

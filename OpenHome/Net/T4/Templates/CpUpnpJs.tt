@@ -84,7 +84,7 @@
 #>
 /**
 * Service Proxy for <#=className#>
-* @module ohNet
+* @module ohnet
 * @class <#=type#>
 */
 	
@@ -102,7 +102,7 @@ var <#=className#> = function(udn){
 	this.serviceProperties = {};
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-	this.serviceProperties["<#=s.prettyname#>"] = new OhNet.ServiceProperty("<#=s.prettyname#>","<#=svtype[s.type].ToLower()#>");
+	this.serviceProperties["<#=s.prettyname#>"] = new ohnet.serviceproperty("<#=s.prettyname#>","<#=svtype[s.type].ToLower()#>");
 <#  } #>
 }
 
@@ -121,7 +121,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 <#=className#>.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -130,7 +130,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @method Unsubscribe
 */
 <#=className#>.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -146,7 +146,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 <#=className#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
     this.serviceProperties.<#=s.prettyname#>.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.read<#=svtype[s.type]#>Parameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.read<#=svtype[s.type]#>Parameter(state)); 
 	});
 }
 <#  } #>
@@ -165,7 +165,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 <#=className#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
-	var request = new OhNet.SoapRequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
     request.write<#=svtype[i.variable.type]#>Parameter("<#=i.name#>", <#=i.name#>);
@@ -173,7 +173,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
     request.send(function(result){
 <#          foreach (Argument o in a.outargs) #>
 <#          { #>
-		result["<#=o.name#>"] = OhNet.SoapRequest.read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
+		result["<#=o.name#>"] = ohnet.soaprequest.read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
 <#          } #>	
 		if (successFunction){
 			successFunction(result);

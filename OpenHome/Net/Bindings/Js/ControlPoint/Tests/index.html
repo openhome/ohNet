@@ -4,10 +4,17 @@
     <title></title>
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
     <META HTTP-EQUIV="Expires" CONTENT="-1">        
-   <link rel="stylesheet" type="text/css" href="test/assets/skins/sam/skin.css" />
-    <script src="extern/xui-2.0.0.min.js" type="text/javascript"></script>
-    <script src="extern/ProxyCore.js" type="text/javascript"></script>
-    <script src="proxy/CpOpenhomeOrgTestBasic1.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="test/assets/skins/sam/skin.css" />
+   	<script src="lib/ohnet.util.js" type="text/javascript"></script>
+   	<script src="Node.js" type="text/javascript"></script>
+    <script src="lib/ohnet.subscriptionmanager.js" type="text/javascript"></script>
+    <script src="lib/ohnet.serviceproperty.js" type="text/javascript"></script>
+    <script src="lib/ohnet.longpolling.js" type="text/javascript"></script>
+    <script src="lib/ohnet.websocket.js" type="text/javascript"></script>
+    <script src="lib/ohnet.soaprequest.js" type="text/javascript"></script>
+    <script src="lib/ohnet.subscriptionmanager.js" type="text/javascript"></script>
+    <script src="proxies/CpOpenhomeOrgSubscriptionLongPoll1.js" type="text/javascript"></script>
+    <script src="proxies/CpOpenhomeOrgTestBasic1.js" type="text/javascript"></script>
     <script src="scripts/yui-min.js" type="text/javascript"></script>
     <script src="scripts/io-base-min.js" type="text/javascript"></script>
     <script src="scripts/querystring-stringify-simple-min.js" type="text/javascript"></script>
@@ -25,15 +32,36 @@
     <script src="scripts/event-simulate-min.js" type="text/javascript"></script>
     <script src="scripts/test-min.js" type="text/javascript"></script>
     <script type="text/javascript">
+         var nodeUdn = "device-ohNetTestBasic";
+        var webSocketPort = 54321;
+
         var outputFile = true;
         var kAsyncTimeoutMS = 15000; //300;
         var _Y;
          var proxy;
+         
+         var testBool = true,testInt = 0 , testUInt = 0;
         function pageLoad() {
             YUI({ logInclude: { TestRunner: true} }).use('test', function (Y) {
                 _Y = Y;
-               
-                var testCase = new Y.Test.Case({
+
+				var testCase = getTestCase(Y,true);
+				var testCaseLongPolling = getTestCase(Y,false);
+
+                Y.Test.Runner.add(testCase);
+                 Y.Test.Runner.add(testCaseLongPolling);
+                Y.Test.Runner.subscribe(Y.Test.Runner.COMPLETE_EVENT, onComplete);
+
+                Y.Test.Runner.run();
+            });
+
+
+
+        }
+        
+        function getTestCase(Y,websocket)
+        {
+        	 var testCase = new Y.Test.Case({
 
                     name: "Test Proxy",
 
@@ -59,17 +87,20 @@
 
                     testSubscriptionManager: function () {
                         _this = this;
-                        OhNet.SubscriptionManager.start(function () {
-                            proxy = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
-                            proxy.subscribe(function () {
-                                _this.resume();
-                            });
-                            proxy2 = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
-                            proxy2.subscribe();
-
-
-                            Y.Assert.isNotUndefined(proxy);
-                        }, 54321, true);
+                        ohnet.subscriptionmanager.start({
+               				startedFunction: function () {
+                				proxy = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
+	                            proxy.subscribe(function () {
+	                                _this.resume();
+	                            });
+	                            proxy2 = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
+	                            proxy2.subscribe();
+                            	Y.Assert.isNotUndefined(proxy);
+                   			},
+	                   		port: 54321,
+	                   		debugMode: false,
+	                   		allowWebSockets: websocket
+           				});
                         this.wait(kAsyncTimeoutMS);
                     },
 
@@ -188,6 +219,7 @@
                         var i = false;
                         proxy.Toggle(i, function (result) {
                             proxy.Toggle(result["Result"], function (result) {
+
                                 Y.Assert.areEqual(i, result["Result"]);
                                 _this.resume();
                             });
@@ -250,57 +282,77 @@
                         });
                         this.wait(kAsyncTimeoutMS);
                     },
-
-                    testVarUint_Changed: function () {
+					testVarUint_Get: function () {
                         _this = this;
                         proxy.GetUint(function (result) {
-                            proxy.VarUint_Changed(function (state) {
-                                Y.Assert.areEqual(state, result["ValueUint"] + 1);
+                           testUInt = result.ValueUint;
                                 _this.resume();
-                            });
-                            proxy.SetUint(result["ValueUint"] + 1);
                         });
 
                         this.wait(kAsyncTimeoutMS);
                     },
-
-                    testVarInt_Changed: function () {
+                    testVarUint_Changed: function () {
                         _this = this;
-                        proxy.GetInt(function (result) {
-                            proxy.VarInt_Changed(function (state) {
-                                Y.Assert.areEqual(state, result["ValueInt"] + 1);
+                            proxy.VarUint_Changed(function (state) {
+                                Y.Assert.areEqual(state, testUInt + 1);
                                 _this.resume();
                             });
-                            proxy.SetInt(result["ValueInt"] + 1);
+                            proxy.SetUint(testUInt + 1);
+                    
+
+                        this.wait(kAsyncTimeoutMS);
+                    },
+    				testVarInt_Get: function () {
+                        _this = this;
+                        proxy.GetInt(function (result) {
+                       			testInt = result.ValueInt;
+                                _this.resume();
                         });
 
                         this.wait(kAsyncTimeoutMS);
+                    },
+                    testVarInt_Changed: function () {
+                        _this = this;
+                        proxy.VarInt_Changed(function (state) {
+                            Y.Assert.areEqual(state, testInt + 1);
+                            _this.resume();
+                        });
+                        proxy.SetInt(testInt + 1);
+                      
+
+                        this.wait(kAsyncTimeoutMS);
+                    },
+  						testVarBool_Get: function () {
+                        _this = this;
+						 proxy.GetBool(function (result) {
+						 	testBool = result.ValueBool;
+                                _this.resume();
+                        	
+						 });
+						 
+						 this.wait(kAsyncTimeoutMS);
                     },
 
                     testVarBool_Changed: function () {
                         _this = this;
-                        proxy.GetBool(function (result) {
-                            proxy.VarBool_Changed(function (state) {
-                                Y.Assert.areEqual(state, !result["ValueBool"]);
+			             proxy.VarBool_Changed(function (state) {
+                            Y.Assert.areEqual(state, !testBool);
                                 _this.resume();
-                            });
-                            proxy.SetBool(!result["ValueBool"]);
-                        });
+                        	});
+                        proxy.SetBool(!testBool);
 
                         this.wait(kAsyncTimeoutMS);
                     },
 
                     testVarString_Changed: function () {
                         _this = this;
-                        proxy.GetString(function (result) {
-                            if (result["ValueStr"] == null)
-                                result["ValueStr"] = "";
-                            proxy.VarStr_Changed(function (state) {
-                                Y.Assert.areEqual(state, result["ValueStr"] + "<&'tag\">");
-                                _this.resume();
-                            });
-                            proxy.SetString(result["ValueStr"] + "<&'tag\">");
+                       var str = getRandomString(Math.floor(Math.random()*100));
+                        proxy.VarStr_Changed(function (state) {
+                            Y.Assert.areEqual(state, str);
+                            _this.resume();
                         });
+                        proxy.SetString(str);
+           
 
                         this.wait(kAsyncTimeoutMS);
                     },
@@ -308,50 +360,49 @@
                     testVarBinary_Changed: function () {
                         _this = this;
                         var i = ""; ;
-                        for (var c = 0; c < 256; c++) {
+                        for (var c = 0; c < Math.floor(Math.random()*257)+100; c++) {
                             i += String.fromCharCode(c);
-
                         }
-                        proxy.GetBinary(function (result) {
-                            if (result["ValueBin"] == null)
-                                result["ValueBin"] = "";
-                            proxy.VarBin_Changed(function (state) {
-                                Y.Assert.areEqual(state, result["ValueBin"] + i);
-                                _this.resume();
-                            });
-                            proxy.SetBinary(result["ValueBin"] + i);
+                        proxy.VarBin_Changed(function (state) {
+                            Y.Assert.areEqual(state, i);
+                            _this.resume();
                         });
-
+                        proxy.SetBinary(i);
+                        
                         this.wait(kAsyncTimeoutMS);
                     },
 
                     testProxy2: function () {
                         proxy.unsubscribe();
                         _this = this;
-                        proxy2.GetString(function (result) {
-                            proxy2.VarStr_Changed(function (state) {
-                                Y.Assert.areEqual(state, result["ValueStr"]+"<&'tag\">");
-                                _this.resume();
-                            });
-                            // Value set by Proxy 1
-                            proxy.SetString(result["ValueStr"]+ "<&'tag\">");
-        
+                        var str = getRandomString(Math.floor(Math.random()*100));
+                        
+                        proxy2.VarStr_Changed(function (state) {
+                           Y.Assert.areEqual(state, str);
+                             _this.resume();
+                             ohnet.subscriptionmanager.stop();
                         });
+                        
+                        // Value set by Proxy 1
+                        proxy.SetString(str);
 
                         this.wait(kAsyncTimeoutMS);
                     },
 
                 });
-
-
-                Y.Test.Runner.add(testCase);
-                Y.Test.Runner.subscribe(Y.Test.Runner.COMPLETE_EVENT, onComplete);
-
-                Y.Test.Runner.run();
-            });
-
-
-
+        	return testCase;
+        }
+        
+        function getRandomString(length)
+        {
+        	var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+			var string_length =length;
+			var randomstring = '';
+			for (var i=0; i<string_length; i++) {
+				var rnum = Math.floor(Math.random() * chars.length);
+				randomstring += chars.substring(rnum,rnum+1);
+			}
+			return randomstring;
         }
 
         function onComplete(results) {

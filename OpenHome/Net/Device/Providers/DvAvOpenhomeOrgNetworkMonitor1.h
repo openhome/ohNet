@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -88,6 +89,12 @@ protected:
      */
     DvProviderAvOpenhomeOrgNetworkMonitor1(DvDevice& aDevice);
     /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderAvOpenhomeOrgNetworkMonitor1(DviDevice& aDevice);
+    /**
      * Enable the Name property.
      */
     void EnablePropertyName();
@@ -134,6 +141,7 @@ private:
     virtual void Ports(IDvInvocation& aInvocation, IDvInvocationResponseUint& aSender, IDvInvocationResponseUint& aReceiver, IDvInvocationResponseUint& aResults);
 private:
     DvProviderAvOpenhomeOrgNetworkMonitor1();
+    void Construct();
     void DoName(IDviInvocation& aInvocation);
     void DoPorts(IDviInvocation& aInvocation);
 private:

@@ -1435,7 +1435,7 @@ void STDCALL CpProxyAvOpenhomeOrgProduct1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1443,11 +1443,18 @@ void STDCALL CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char*
     Brh buf_aInfo;
     Brh buf_aUrl;
     Brh buf_aImageUri;
-    proxyC->SyncManufacturer(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
-    *aName = buf_aName.Extract();
-    *aInfo = buf_aInfo.Extract();
-    *aUrl = buf_aUrl.Extract();
-    *aImageUri = buf_aImageUri.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncManufacturer(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
+        *aName = buf_aName.Extract();
+        *aInfo = buf_aInfo.Extract();
+        *aUrl = buf_aUrl.Extract();
+        *aImageUri = buf_aImageUri.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginManufacturer(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1486,7 +1493,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndManufacturer(THandle aHandle, OhN
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1494,11 +1501,18 @@ void STDCALL CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName
     Brh buf_aInfo;
     Brh buf_aUrl;
     Brh buf_aImageUri;
-    proxyC->SyncModel(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
-    *aName = buf_aName.Extract();
-    *aInfo = buf_aInfo.Extract();
-    *aUrl = buf_aUrl.Extract();
-    *aImageUri = buf_aImageUri.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncModel(buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
+        *aName = buf_aName.Extract();
+        *aInfo = buf_aInfo.Extract();
+        *aUrl = buf_aUrl.Extract();
+        *aImageUri = buf_aImageUri.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginModel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1537,7 +1551,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndModel(THandle aHandle, OhNetHandl
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1546,12 +1560,19 @@ void STDCALL CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRo
     Brh buf_aInfo;
     Brh buf_aUrl;
     Brh buf_aImageUri;
-    proxyC->SyncProduct(buf_aRoom, buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
-    *aRoom = buf_aRoom.Extract();
-    *aName = buf_aName.Extract();
-    *aInfo = buf_aInfo.Extract();
-    *aUrl = buf_aUrl.Extract();
-    *aImageUri = buf_aImageUri.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncProduct(buf_aRoom, buf_aName, buf_aInfo, buf_aUrl, buf_aImageUri);
+        *aRoom = buf_aRoom.Extract();
+        *aName = buf_aName.Extract();
+        *aInfo = buf_aInfo.Extract();
+        *aUrl = buf_aUrl.Extract();
+        *aImageUri = buf_aImageUri.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginProduct(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1593,12 +1614,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndProduct(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aValue = 0;
-    proxyC->SyncStandby(*(TBool*)aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncStandby(*(TBool*)aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginStandby(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1626,11 +1654,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle, OhNetHan
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetStandby(THandle aHandle, uint32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetStandby(THandle aHandle, uint32_t aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetStandby((aValue==0? false : true));
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetStandby((aValue==0? false : true));
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSetStandby(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1657,11 +1692,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetStandby(THandle aHandle, OhNet
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSourceCount(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSourceCount(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSourceCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1688,13 +1730,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceCount(THandle aHandle, OhNe
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncSourceXml(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncSourceXml(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSourceXml(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1724,11 +1773,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceXml(THandle aHandle, OhNetH
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSourceIndex(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSourceIndex(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSourceIndex(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1755,11 +1811,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceIndex(THandle aHandle, OhNe
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, uint32_t aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, uint32_t aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSetSourceIndex(aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetSourceIndex(aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndex(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1786,12 +1849,19 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetSourceIndex(THandle aHandle, O
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHandle, const char* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHandle, const char* aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue(aValue);
-    proxyC->SyncSetSourceIndexByName(buf_aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSetSourceIndexByName(buf_aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndexByName(THandle aHandle, const char* aValue, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1819,7 +1889,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetSourceIndexByName(THandle aHan
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1827,10 +1897,17 @@ void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aI
     Brh buf_aType;
     Brh buf_aName;
     *aVisible = 0;
-    proxyC->SyncSource(aIndex, buf_aSystemName, buf_aType, buf_aName, *(TBool*)aVisible);
-    *aSystemName = buf_aSystemName.Extract();
-    *aType = buf_aType.Extract();
-    *aName = buf_aName.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncSource(aIndex, buf_aSystemName, buf_aType, buf_aName, *(TBool*)aVisible);
+        *aSystemName = buf_aSystemName.Extract();
+        *aType = buf_aType.Extract();
+        *aName = buf_aName.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSource(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1867,13 +1944,20 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle, OhNetHand
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
-    proxyC->SyncAttributes(buf_aValue);
-    *aValue = buf_aValue.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncAttributes(buf_aValue);
+        *aValue = buf_aValue.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginAttributes(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1903,11 +1987,18 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndAttributes(THandle aHandle, OhNet
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHandle, uint32_t* aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHandle, uint32_t* aValue)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncSourceXmlChangeCount(*aValue);
+    int32_t err = 0;
+    try {
+        proxyC->SyncSourceXmlChangeCount(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSourceXmlChangeCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)

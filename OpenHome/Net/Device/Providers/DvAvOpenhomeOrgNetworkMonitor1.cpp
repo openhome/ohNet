@@ -58,6 +58,17 @@ void DvProviderAvOpenhomeOrgNetworkMonitor1::GetPropertyResults(TUint& aValue)
 DvProviderAvOpenhomeOrgNetworkMonitor1::DvProviderAvOpenhomeOrgNetworkMonitor1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "NetworkMonitor", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgNetworkMonitor1::DvProviderAvOpenhomeOrgNetworkMonitor1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "NetworkMonitor", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgNetworkMonitor1::Construct()
+{
     iPropertyName = NULL;
     iPropertySender = NULL;
     iPropertyReceiver = NULL;

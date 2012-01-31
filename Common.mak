@@ -50,12 +50,15 @@ objects_core = $(objdir)Ascii.$(objext) \
                $(objdir)DvInvocationC.$(objext) \
                $(objdir)DvInvocationStd.$(objext) \
     		   $(objdir)DviProtocolUpnp.$(objext) \
+    		   $(objdir)DviProviderSubscriptionLongPoll.$(objext) \
+    		   $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) \
     		   $(objdir)DviServer.$(objext) \
     		   $(objdir)DviServerUpnp.$(objext) \
     		   $(objdir)DviServerWebSocket.$(objext) \
     		   $(objdir)DviService.$(objext) \
     		   $(objdir)DviStack.$(objext) \
     		   $(objdir)DviSubscription.$(objext) \
+    		   $(objdir)DviPropertyUpdateCollection.$(objext) \
     		   $(objdir)DvProvider.$(objext) \
     		   $(objdir)DvProviderC.$(objext) \
     		   $(objdir)DvServerUpnp.$(objext) \
@@ -155,6 +158,8 @@ headers =   $(inc_build)/OpenHome/Buffer.h \
             $(inc_build)/OpenHome/Net/Private/DviService.h \
             $(inc_build)/OpenHome/Net/Private/DviStack.h \
             $(inc_build)/OpenHome/Net/Private/DviSubscription.h \
+            $(inc_build)/OpenHome/Net/Private/DviPropertyUpdateCollection.h \
+    		$(inc_build)/OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h \
             $(inc_build)/OpenHome/Net/Private/Error.h \
             $(inc_build)/OpenHome/Net/Private/EventUpnp.h \
             $(inc_build)/OpenHome/Net/Private/FunctorCpiDevice.h \
@@ -272,6 +277,8 @@ $(objdir)DvInvocationStd.$(objext) : OpenHome/Net/Bindings/Cpp/Device/DvInvocati
 	$(compiler)DvInvocationStd.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp
 $(objdir)DviProtocolUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp $(headers)
 	$(compiler)DviProtocolUpnp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp
+$(objdir)DviProviderSubscriptionLongPoll.$(objext) : OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext)  $(headers)
+	$(compiler)DviProviderSubscriptionLongPoll.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp
 $(objdir)DviServer.$(objext) : OpenHome/Net/Device/DviServer.cpp $(headers)
 	$(compiler)DviServer.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviServer.cpp
 $(objdir)DviServerUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviServerUpnp.cpp $(headers)
@@ -284,6 +291,8 @@ $(objdir)DviStack.$(objext) : OpenHome/Net/Device/DviStack.cpp $(headers)
 	$(compiler)DviStack.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviStack.cpp
 $(objdir)DviSubscription.$(objext) : OpenHome/Net/Device/DviSubscription.cpp $(headers)
 	$(compiler)DviSubscription.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviSubscription.cpp
+$(objdir)DviPropertyUpdateCollection.$(objext) : OpenHome/Net/Device/DviPropertyUpdateCollection.cpp $(headers)
+	$(compiler)DviPropertyUpdateCollection.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviPropertyUpdateCollection.cpp
 $(objdir)DvProvider.$(objext) : OpenHome/Net/Device/DvProvider.cpp $(headers)
 	$(compiler)DvProvider.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DvProvider.cpp
 $(objdir)DvProviderC.$(objext) : OpenHome/Net/Bindings/C/Device/DvProviderC.cpp $(headers)

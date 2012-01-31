@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgMediaServer1
-* @module ohNet
+* @module ohnet
 * @class MediaServer
 */
 	
@@ -18,19 +18,19 @@ var CpProxyAvOpenhomeOrgMediaServer1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["ManufacturerName"] = new OhNet.ServiceProperty("ManufacturerName","string");
-	this.serviceProperties["ManufacturerInfo"] = new OhNet.ServiceProperty("ManufacturerInfo","string");
-	this.serviceProperties["ManufacturerUrl"] = new OhNet.ServiceProperty("ManufacturerUrl","string");
-	this.serviceProperties["ManufacturerImageUri"] = new OhNet.ServiceProperty("ManufacturerImageUri","string");
-	this.serviceProperties["ModelName"] = new OhNet.ServiceProperty("ModelName","string");
-	this.serviceProperties["ModelInfo"] = new OhNet.ServiceProperty("ModelInfo","string");
-	this.serviceProperties["ModelUrl"] = new OhNet.ServiceProperty("ModelUrl","string");
-	this.serviceProperties["ModelImageUri"] = new OhNet.ServiceProperty("ModelImageUri","string");
-	this.serviceProperties["ProductName"] = new OhNet.ServiceProperty("ProductName","string");
-	this.serviceProperties["ProductInfo"] = new OhNet.ServiceProperty("ProductInfo","string");
-	this.serviceProperties["ProductUrl"] = new OhNet.ServiceProperty("ProductUrl","string");
-	this.serviceProperties["ProductImageUri"] = new OhNet.ServiceProperty("ProductImageUri","string");
-	this.serviceProperties["Attributes"] = new OhNet.ServiceProperty("Attributes","string");
+	this.serviceProperties["ManufacturerName"] = new ohnet.serviceproperty("ManufacturerName","string");
+	this.serviceProperties["ManufacturerInfo"] = new ohnet.serviceproperty("ManufacturerInfo","string");
+	this.serviceProperties["ManufacturerUrl"] = new ohnet.serviceproperty("ManufacturerUrl","string");
+	this.serviceProperties["ManufacturerImageUri"] = new ohnet.serviceproperty("ManufacturerImageUri","string");
+	this.serviceProperties["ModelName"] = new ohnet.serviceproperty("ModelName","string");
+	this.serviceProperties["ModelInfo"] = new ohnet.serviceproperty("ModelInfo","string");
+	this.serviceProperties["ModelUrl"] = new ohnet.serviceproperty("ModelUrl","string");
+	this.serviceProperties["ModelImageUri"] = new ohnet.serviceproperty("ModelImageUri","string");
+	this.serviceProperties["ProductName"] = new ohnet.serviceproperty("ProductName","string");
+	this.serviceProperties["ProductInfo"] = new ohnet.serviceproperty("ProductInfo","string");
+	this.serviceProperties["ProductUrl"] = new ohnet.serviceproperty("ProductUrl","string");
+	this.serviceProperties["ProductImageUri"] = new ohnet.serviceproperty("ProductImageUri","string");
+	this.serviceProperties["Attributes"] = new ohnet.serviceproperty("Attributes","string");
 }
 
 
@@ -41,7 +41,7 @@ var CpProxyAvOpenhomeOrgMediaServer1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgMediaServer1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -50,7 +50,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.subscribe = function (serviceAddedFun
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgMediaServer1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -64,7 +64,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ManufacturerName_Changed = function (stateChangedFunction) {
     this.serviceProperties.ManufacturerName.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -77,7 +77,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ManufacturerName_Changed = function (
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ManufacturerInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.ManufacturerInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -90,7 +90,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ManufacturerInfo_Changed = function (
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ManufacturerUrl_Changed = function (stateChangedFunction) {
     this.serviceProperties.ManufacturerUrl.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -103,7 +103,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ManufacturerUrl_Changed = function (s
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ManufacturerImageUri_Changed = function (stateChangedFunction) {
     this.serviceProperties.ManufacturerImageUri.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -116,7 +116,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ManufacturerImageUri_Changed = functi
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ModelName_Changed = function (stateChangedFunction) {
     this.serviceProperties.ModelName.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -129,7 +129,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ModelName_Changed = function (stateCh
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ModelInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.ModelInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -142,7 +142,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ModelInfo_Changed = function (stateCh
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ModelUrl_Changed = function (stateChangedFunction) {
     this.serviceProperties.ModelUrl.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -155,7 +155,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ModelUrl_Changed = function (stateCha
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ModelImageUri_Changed = function (stateChangedFunction) {
     this.serviceProperties.ModelImageUri.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -168,7 +168,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ModelImageUri_Changed = function (sta
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ProductName_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductName.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -181,7 +181,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ProductName_Changed = function (state
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ProductInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -194,7 +194,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ProductInfo_Changed = function (state
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ProductUrl_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductUrl.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -207,7 +207,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ProductUrl_Changed = function (stateC
 CpProxyAvOpenhomeOrgMediaServer1.prototype.ProductImageUri_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductImageUri.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 	
@@ -220,7 +220,7 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.ProductImageUri_Changed = function (s
 CpProxyAvOpenhomeOrgMediaServer1.prototype.Attributes_Changed = function (stateChangedFunction) {
     this.serviceProperties.Attributes.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
 	});
 }
 
@@ -232,12 +232,12 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.Attributes_Changed = function (stateC
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgMediaServer1.prototype.Manufacturer = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Manufacturer", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Manufacturer", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Name"] = OhNet.SoapRequest.readStringParameter(result["Name"]);	
-		result["Info"] = OhNet.SoapRequest.readStringParameter(result["Info"]);	
-		result["Url"] = OhNet.SoapRequest.readStringParameter(result["Url"]);	
-		result["ImageUri"] = OhNet.SoapRequest.readStringParameter(result["ImageUri"]);	
+		result["Name"] = ohnet.soaprequest.readStringParameter(result["Name"]);	
+		result["Info"] = ohnet.soaprequest.readStringParameter(result["Info"]);	
+		result["Url"] = ohnet.soaprequest.readStringParameter(result["Url"]);	
+		result["ImageUri"] = ohnet.soaprequest.readStringParameter(result["ImageUri"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -255,12 +255,12 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.Manufacturer = function(successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgMediaServer1.prototype.Model = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Model", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Model", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Name"] = OhNet.SoapRequest.readStringParameter(result["Name"]);	
-		result["Info"] = OhNet.SoapRequest.readStringParameter(result["Info"]);	
-		result["Url"] = OhNet.SoapRequest.readStringParameter(result["Url"]);	
-		result["ImageUri"] = OhNet.SoapRequest.readStringParameter(result["ImageUri"]);	
+		result["Name"] = ohnet.soaprequest.readStringParameter(result["Name"]);	
+		result["Info"] = ohnet.soaprequest.readStringParameter(result["Info"]);	
+		result["Url"] = ohnet.soaprequest.readStringParameter(result["Url"]);	
+		result["ImageUri"] = ohnet.soaprequest.readStringParameter(result["ImageUri"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -278,12 +278,12 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.Model = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgMediaServer1.prototype.Product = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Product", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Product", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Name"] = OhNet.SoapRequest.readStringParameter(result["Name"]);	
-		result["Info"] = OhNet.SoapRequest.readStringParameter(result["Info"]);	
-		result["Url"] = OhNet.SoapRequest.readStringParameter(result["Url"]);	
-		result["ImageUri"] = OhNet.SoapRequest.readStringParameter(result["ImageUri"]);	
+		result["Name"] = ohnet.soaprequest.readStringParameter(result["Name"]);	
+		result["Info"] = ohnet.soaprequest.readStringParameter(result["Info"]);	
+		result["Url"] = ohnet.soaprequest.readStringParameter(result["Url"]);	
+		result["ImageUri"] = ohnet.soaprequest.readStringParameter(result["ImageUri"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -301,9 +301,9 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.Product = function(successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgMediaServer1.prototype.Attributes = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Attributes", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Attributes", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -322,10 +322,10 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.Attributes = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgMediaServer1.prototype.Query = function(Request, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Query", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Query", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Request", Request);
     request.send(function(result){
-		result["Result"] = OhNet.SoapRequest.readStringParameter(result["Result"]);	
+		result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]);	
 	
 		if (successFunction){
 			successFunction(result);

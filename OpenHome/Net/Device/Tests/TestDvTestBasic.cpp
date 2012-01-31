@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Core/DvStack.h>
 #include <OpenHome/Net/Core/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>
+#include <OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h>
 
 #include <stdlib.h>
 #include <vector>
@@ -249,6 +250,7 @@ DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
     iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
     iTestBasic = new ProviderTestBasic(*iDevice);
+    iDevice->SetAttribute("Core.LongPollEnable", "");
     iDevice->SetEnabled();
 }
 

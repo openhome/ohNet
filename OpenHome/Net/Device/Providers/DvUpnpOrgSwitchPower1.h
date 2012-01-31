@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -45,6 +46,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgSwitchPower1(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderUpnpOrgSwitchPower1(DviDevice& aDevice);
     /**
      * Enable the Status property.
      */
@@ -94,6 +101,7 @@ private:
     virtual void GetStatus(IDvInvocation& aInvocation, IDvInvocationResponseBool& aResultStatus);
 private:
     DvProviderUpnpOrgSwitchPower1();
+    void Construct();
     void DoSetTarget(IDviInvocation& aInvocation);
     void DoGetTarget(IDviInvocation& aInvocation);
     void DoGetStatus(IDviInvocation& aInvocation);

@@ -47,8 +47,11 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgReceiver1Destroy(THandle aHandle);
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncPlay(THandle aHandle);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncPlay(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -78,8 +81,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndPlay(THandle aHandle, 
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncStop(THandle aHandle);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncStop(THandle aHandle);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -111,8 +117,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndStop(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
  * @param[in]  aUri
  * @param[in]  aMetadata
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncSetSender(THandle aHandle, const char* aUri, const char* aMetadata);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncSetSender(THandle aHandle, const char* aUri, const char* aMetadata);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -146,8 +155,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndSetSender(THandle aHan
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
  * @param[out] aUri
  * @param[out] aMetadata
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncSender(THandle aHandle, char** aUri, char** aMetadata);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncSender(THandle aHandle, char** aUri, char** aMetadata);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -180,8 +192,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndSender(THandle aHandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncProtocolInfo(THandle aHandle, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncProtocolInfo(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -213,8 +228,11 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndProtocolInfo(THandle a
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
  * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncTransportState(THandle aHandle, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncTransportState(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

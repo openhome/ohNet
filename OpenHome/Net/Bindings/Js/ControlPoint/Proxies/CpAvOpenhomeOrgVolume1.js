@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgVolume1
-* @module ohNet
+* @module ohnet
 * @class Volume
 */
 	
@@ -18,17 +18,17 @@ var CpProxyAvOpenhomeOrgVolume1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["Volume"] = new OhNet.ServiceProperty("Volume","int");
-	this.serviceProperties["Mute"] = new OhNet.ServiceProperty("Mute","bool");
-	this.serviceProperties["Balance"] = new OhNet.ServiceProperty("Balance","int");
-	this.serviceProperties["Fade"] = new OhNet.ServiceProperty("Fade","int");
-	this.serviceProperties["VolumeLimit"] = new OhNet.ServiceProperty("VolumeLimit","int");
-	this.serviceProperties["VolumeMax"] = new OhNet.ServiceProperty("VolumeMax","int");
-	this.serviceProperties["VolumeUnity"] = new OhNet.ServiceProperty("VolumeUnity","int");
-	this.serviceProperties["VolumeSteps"] = new OhNet.ServiceProperty("VolumeSteps","int");
-	this.serviceProperties["VolumeMilliDbPerStep"] = new OhNet.ServiceProperty("VolumeMilliDbPerStep","int");
-	this.serviceProperties["BalanceMax"] = new OhNet.ServiceProperty("BalanceMax","int");
-	this.serviceProperties["FadeMax"] = new OhNet.ServiceProperty("FadeMax","int");
+	this.serviceProperties["Volume"] = new ohnet.serviceproperty("Volume","int");
+	this.serviceProperties["Mute"] = new ohnet.serviceproperty("Mute","bool");
+	this.serviceProperties["Balance"] = new ohnet.serviceproperty("Balance","int");
+	this.serviceProperties["Fade"] = new ohnet.serviceproperty("Fade","int");
+	this.serviceProperties["VolumeLimit"] = new ohnet.serviceproperty("VolumeLimit","int");
+	this.serviceProperties["VolumeMax"] = new ohnet.serviceproperty("VolumeMax","int");
+	this.serviceProperties["VolumeUnity"] = new ohnet.serviceproperty("VolumeUnity","int");
+	this.serviceProperties["VolumeSteps"] = new ohnet.serviceproperty("VolumeSteps","int");
+	this.serviceProperties["VolumeMilliDbPerStep"] = new ohnet.serviceproperty("VolumeMilliDbPerStep","int");
+	this.serviceProperties["BalanceMax"] = new ohnet.serviceproperty("BalanceMax","int");
+	this.serviceProperties["FadeMax"] = new ohnet.serviceproperty("FadeMax","int");
 }
 
 
@@ -39,7 +39,7 @@ var CpProxyAvOpenhomeOrgVolume1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.subscribe = function (serviceAddedFunction) {
-    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
+    ohnet.subscriptionmanager.addService(this,serviceAddedFunction);
 }
 
 
@@ -48,7 +48,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.subscribe = function (serviceAddedFunction
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.unsubscribe = function () {
-    OhNet.SubscriptionManager.removeService(this.subscriptionId);
+    ohnet.subscriptionmanager.removeService(this.subscriptionId);
 }
 
 
@@ -62,7 +62,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgVolume1.prototype.Volume_Changed = function (stateChangedFunction) {
     this.serviceProperties.Volume.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -75,7 +75,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Volume_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgVolume1.prototype.Mute_Changed = function (stateChangedFunction) {
     this.serviceProperties.Mute.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -88,7 +88,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Mute_Changed = function (stateChangedFunct
 CpProxyAvOpenhomeOrgVolume1.prototype.Balance_Changed = function (stateChangedFunction) {
     this.serviceProperties.Balance.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -101,7 +101,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Balance_Changed = function (stateChangedFu
 CpProxyAvOpenhomeOrgVolume1.prototype.Fade_Changed = function (stateChangedFunction) {
     this.serviceProperties.Fade.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -114,7 +114,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Fade_Changed = function (stateChangedFunct
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeLimit_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeLimit.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -127,7 +127,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeLimit_Changed = function (stateChang
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeMax_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeMax.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -140,7 +140,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeMax_Changed = function (stateChanged
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeUnity_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeUnity.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -153,7 +153,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeUnity_Changed = function (stateChang
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeSteps_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeSteps.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -166,7 +166,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeSteps_Changed = function (stateChang
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeMilliDbPerStep_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeMilliDbPerStep.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -179,7 +179,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeMilliDbPerStep_Changed = function (s
 CpProxyAvOpenhomeOrgVolume1.prototype.BalanceMax_Changed = function (stateChangedFunction) {
     this.serviceProperties.BalanceMax.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 	
@@ -192,7 +192,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.BalanceMax_Changed = function (stateChange
 CpProxyAvOpenhomeOrgVolume1.prototype.FadeMax_Changed = function (stateChangedFunction) {
     this.serviceProperties.FadeMax.addListener(function (state) 
 	{ 
-		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
 	});
 }
 
@@ -204,14 +204,14 @@ CpProxyAvOpenhomeOrgVolume1.prototype.FadeMax_Changed = function (stateChangedFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Characteristics = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Characteristics", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Characteristics", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["VolumeMax"] = OhNet.SoapRequest.readIntParameter(result["VolumeMax"]);	
-		result["VolumeUnity"] = OhNet.SoapRequest.readIntParameter(result["VolumeUnity"]);	
-		result["VolumeSteps"] = OhNet.SoapRequest.readIntParameter(result["VolumeSteps"]);	
-		result["VolumeMilliDbPerStep"] = OhNet.SoapRequest.readIntParameter(result["VolumeMilliDbPerStep"]);	
-		result["BalanceMax"] = OhNet.SoapRequest.readIntParameter(result["BalanceMax"]);	
-		result["FadeMax"] = OhNet.SoapRequest.readIntParameter(result["FadeMax"]);	
+		result["VolumeMax"] = ohnet.soaprequest.readIntParameter(result["VolumeMax"]);	
+		result["VolumeUnity"] = ohnet.soaprequest.readIntParameter(result["VolumeUnity"]);	
+		result["VolumeSteps"] = ohnet.soaprequest.readIntParameter(result["VolumeSteps"]);	
+		result["VolumeMilliDbPerStep"] = ohnet.soaprequest.readIntParameter(result["VolumeMilliDbPerStep"]);	
+		result["BalanceMax"] = ohnet.soaprequest.readIntParameter(result["BalanceMax"]);	
+		result["FadeMax"] = ohnet.soaprequest.readIntParameter(result["FadeMax"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -230,7 +230,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Characteristics = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.SetVolume = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetVolume", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetVolume", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -250,7 +250,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.SetVolume = function(Value, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeInc = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("VolumeInc", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("VolumeInc", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -269,7 +269,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeInc = function(successFunction, erro
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeDec = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("VolumeDec", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("VolumeDec", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -288,9 +288,9 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeDec = function(successFunction, erro
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Volume = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Volume", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Volume", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -309,7 +309,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Volume = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.SetBalance = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetBalance", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetBalance", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -329,7 +329,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.SetBalance = function(Value, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.BalanceInc = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("BalanceInc", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("BalanceInc", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -348,7 +348,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.BalanceInc = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.BalanceDec = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("BalanceDec", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("BalanceDec", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -367,9 +367,9 @@ CpProxyAvOpenhomeOrgVolume1.prototype.BalanceDec = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Balance = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Balance", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Balance", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -388,7 +388,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Balance = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.SetFade = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetFade", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetFade", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -408,7 +408,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.SetFade = function(Value, successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.FadeInc = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("FadeInc", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("FadeInc", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -427,7 +427,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.FadeInc = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.FadeDec = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("FadeDec", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("FadeDec", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -446,9 +446,9 @@ CpProxyAvOpenhomeOrgVolume1.prototype.FadeDec = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Fade = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Fade", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Fade", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -467,7 +467,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Fade = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.SetMute = function(Value, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("SetMute", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("SetMute", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
 	
@@ -487,9 +487,9 @@ CpProxyAvOpenhomeOrgVolume1.prototype.SetMute = function(Value, successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Mute = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("Mute", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("Mute", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readBoolParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -507,9 +507,9 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Mute = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeLimit = function(successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("VolumeLimit", this.url, this.domain, this.type, this.version);		
+	var request = new ohnet.soaprequest("VolumeLimit", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);

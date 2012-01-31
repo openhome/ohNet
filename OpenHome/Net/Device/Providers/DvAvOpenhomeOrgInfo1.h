@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -200,6 +201,12 @@ protected:
      */
     DvProviderAvOpenhomeOrgInfo1(DvDevice& aDevice);
     /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderAvOpenhomeOrgInfo1(DviDevice& aDevice);
+    /**
      * Enable the TrackCount property.
      */
     void EnablePropertyTrackCount();
@@ -306,6 +313,7 @@ private:
     virtual void Metatext(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgInfo1();
+    void Construct();
     void DoCounters(IDviInvocation& aInvocation);
     void DoTrack(IDviInvocation& aInvocation);
     void DoDetails(IDviInvocation& aInvocation);

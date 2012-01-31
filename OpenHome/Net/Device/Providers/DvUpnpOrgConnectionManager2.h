@@ -9,6 +9,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DviDevice;
 class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
@@ -73,6 +74,12 @@ protected:
      * @param[in] aDevice  Device which owns this provider
      */
     DvProviderUpnpOrgConnectionManager2(DvDevice& aDevice);
+    /**
+     * Constructor.  Not for external use.
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderUpnpOrgConnectionManager2(DviDevice& aDevice);
     /**
      * Enable the SourceProtocolInfo property.
      */
@@ -158,6 +165,7 @@ private:
     virtual void GetCurrentConnectionInfo(IDvInvocation& aInvocation, TInt aConnectionID, IDvInvocationResponseInt& aRcsID, IDvInvocationResponseInt& aAVTransportID, IDvInvocationResponseString& aProtocolInfo, IDvInvocationResponseString& aPeerConnectionManager, IDvInvocationResponseInt& aPeerConnectionID, IDvInvocationResponseString& aDirection, IDvInvocationResponseString& aStatus);
 private:
     DvProviderUpnpOrgConnectionManager2();
+    void Construct();
     void DoGetProtocolInfo(IDviInvocation& aInvocation);
     void DoPrepareForConnection(IDviInvocation& aInvocation);
     void DoConnectionComplete(IDviInvocation& aInvocation);

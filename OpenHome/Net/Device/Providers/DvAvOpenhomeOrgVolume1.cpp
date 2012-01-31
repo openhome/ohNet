@@ -142,6 +142,17 @@ void DvProviderAvOpenhomeOrgVolume1::GetPropertyFadeMax(TUint& aValue)
 DvProviderAvOpenhomeOrgVolume1::DvProviderAvOpenhomeOrgVolume1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Volume", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgVolume1::DvProviderAvOpenhomeOrgVolume1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "Volume", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgVolume1::Construct()
+{
     iPropertyVolume = NULL;
     iPropertyMute = NULL;
     iPropertyBalance = NULL;

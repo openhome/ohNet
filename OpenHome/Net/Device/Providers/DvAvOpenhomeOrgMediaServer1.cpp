@@ -166,6 +166,17 @@ void DvProviderAvOpenhomeOrgMediaServer1::GetPropertyAttributes(Brhz& aValue)
 DvProviderAvOpenhomeOrgMediaServer1::DvProviderAvOpenhomeOrgMediaServer1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "MediaServer", 1)
 {
+    Construct();
+}
+
+DvProviderAvOpenhomeOrgMediaServer1::DvProviderAvOpenhomeOrgMediaServer1(DviDevice& aDevice)
+    : DvProvider(aDevice, "av.openhome.org", "MediaServer", 1)
+{
+    Construct();
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1::Construct()
+{
     iPropertyManufacturerName = NULL;
     iPropertyManufacturerInfo = NULL;
     iPropertyManufacturerUrl = NULL;

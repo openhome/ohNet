@@ -48,8 +48,11 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestLights1Destroy(THandle aHandle);
  *
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestLights1Create
  * @param[out] aCount
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetCount(THandle aHandle, uint32_t* aCount);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetCount(THandle aHandle, uint32_t* aCount);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -82,8 +85,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetCount(THandle aHand
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestLights1Create
  * @param[in]  aIndex
  * @param[out] aRoomName
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetRoom(THandle aHandle, uint32_t aIndex, char** aRoomName);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetRoom(THandle aHandle, uint32_t aIndex, char** aRoomName);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -117,8 +123,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetRoom(THandle aHandl
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestLights1Create
  * @param[in]  aIndex
  * @param[out] aFriendlyName
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetName(THandle aHandle, uint32_t aIndex, char** aFriendlyName);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetName(THandle aHandle, uint32_t aIndex, char** aFriendlyName);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -154,8 +163,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetName(THandle aHandl
  * @param[out] aX
  * @param[out] aY
  * @param[out] aZ
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetPosition(THandle aHandle, uint32_t aIndex, uint32_t* aX, uint32_t* aY, uint32_t* aZ);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetPosition(THandle aHandle, uint32_t aIndex, uint32_t* aX, uint32_t* aY, uint32_t* aZ);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -191,8 +203,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetPosition(THandle aH
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestLights1Create
  * @param[in]  aIndex
  * @param[in]  aColor
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestLights1SyncSetColor(THandle aHandle, uint32_t aIndex, uint32_t aColor);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncSetColor(THandle aHandle, uint32_t aIndex, uint32_t aColor);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -226,8 +241,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndSetColor(THandle aHand
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestLights1Create
  * @param[in]  aIndex
  * @param[out] aColor
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColor(THandle aHandle, uint32_t aIndex, uint32_t* aColor);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColor(THandle aHandle, uint32_t aIndex, uint32_t* aColor);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -264,8 +282,11 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1EndGetColor(THandle aHand
  * @param[out] aRed
  * @param[out] aGreen
  * @param[out] aBlue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColorComponents(THandle aHandle, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColorComponents(THandle aHandle, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action

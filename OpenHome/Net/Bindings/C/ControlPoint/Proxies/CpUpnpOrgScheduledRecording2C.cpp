@@ -1337,13 +1337,20 @@ void STDCALL CpProxyUpnpOrgScheduledRecording2Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetSortCapabilities(THandle aHandle, char** aSortCaps, uint32_t* aSortLevelCap)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetSortCapabilities(THandle aHandle, char** aSortCaps, uint32_t* aSortLevelCap)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSortCaps;
-    proxyC->SyncGetSortCapabilities(buf_aSortCaps, *aSortLevelCap);
-    *aSortCaps = buf_aSortCaps.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetSortCapabilities(buf_aSortCaps, *aSortLevelCap);
+        *aSortCaps = buf_aSortCaps.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginGetSortCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1373,14 +1380,21 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndGetSortCapabilities(THandle 
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetPropertyList(THandle aHandle, const char* aDataTypeID, char** aPropertyList)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetPropertyList(THandle aHandle, const char* aDataTypeID, char** aPropertyList)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aDataTypeID(aDataTypeID);
     Brh buf_aPropertyList;
-    proxyC->SyncGetPropertyList(buf_aDataTypeID, buf_aPropertyList);
-    *aPropertyList = buf_aPropertyList.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetPropertyList(buf_aDataTypeID, buf_aPropertyList);
+        *aPropertyList = buf_aPropertyList.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginGetPropertyList(THandle aHandle, const char* aDataTypeID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1411,15 +1425,22 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndGetPropertyList(THandle aHan
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, char** aPropertyInfo)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, char** aPropertyInfo)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aDataTypeID(aDataTypeID);
     Brh buf_aFilter(aFilter);
     Brh buf_aPropertyInfo;
-    proxyC->SyncGetAllowedValues(buf_aDataTypeID, buf_aFilter, buf_aPropertyInfo);
-    *aPropertyInfo = buf_aPropertyInfo.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetAllowedValues(buf_aDataTypeID, buf_aFilter, buf_aPropertyInfo);
+        *aPropertyInfo = buf_aPropertyInfo.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1451,11 +1472,18 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndGetAllowedValues(THandle aHa
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetStateUpdateID(THandle aHandle, uint32_t* aId)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetStateUpdateID(THandle aHandle, uint32_t* aId)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->SyncGetStateUpdateID(*aId);
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetStateUpdateID(*aId);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginGetStateUpdateID(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1482,15 +1510,22 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndGetStateUpdateID(THandle aHa
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aFilter(aFilter);
     Brh buf_aSortCriteria(aSortCriteria);
     Brh buf_aResult;
-    proxyC->SyncBrowseRecordSchedules(buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, buf_aResult, *aNumberReturned, *aTotalMatches, *aUpdateID);
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncBrowseRecordSchedules(buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, buf_aResult, *aNumberReturned, *aTotalMatches, *aUpdateID);
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1522,7 +1557,7 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndBrowseRecordSchedules(THandl
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1530,8 +1565,15 @@ void STDCALL CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordTasks(THandle aHan
     Brh buf_aFilter(aFilter);
     Brh buf_aSortCriteria(aSortCriteria);
     Brh buf_aResult;
-    proxyC->SyncBrowseRecordTasks(buf_aRecordScheduleID, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, buf_aResult, *aNumberReturned, *aTotalMatches, *aUpdateID);
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncBrowseRecordTasks(buf_aRecordScheduleID, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, buf_aResult, *aNumberReturned, *aTotalMatches, *aUpdateID);
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1564,16 +1606,23 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndBrowseRecordTasks(THandle aH
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncCreateRecordSchedule(THandle aHandle, const char* aElements, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncCreateRecordSchedule(THandle aHandle, const char* aElements, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aElements(aElements);
     Brh buf_aRecordScheduleID;
     Brh buf_aResult;
-    proxyC->SyncCreateRecordSchedule(buf_aElements, buf_aRecordScheduleID, buf_aResult, *aUpdateID);
-    *aRecordScheduleID = buf_aRecordScheduleID.Extract();
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncCreateRecordSchedule(buf_aElements, buf_aRecordScheduleID, buf_aResult, *aUpdateID);
+        *aRecordScheduleID = buf_aRecordScheduleID.Extract();
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginCreateRecordSchedule(THandle aHandle, const char* aElements, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1607,12 +1656,19 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndCreateRecordSchedule(THandle
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
-    proxyC->SyncDeleteRecordSchedule(buf_aRecordScheduleID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDeleteRecordSchedule(buf_aRecordScheduleID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1640,15 +1696,22 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndDeleteRecordSchedule(THandle
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, char** aResult, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, char** aResult, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
     Brh buf_aFilter(aFilter);
     Brh buf_aResult;
-    proxyC->SyncGetRecordSchedule(buf_aRecordScheduleID, buf_aFilter, buf_aResult, *aUpdateID);
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetRecordSchedule(buf_aRecordScheduleID, buf_aFilter, buf_aResult, *aUpdateID);
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1680,12 +1743,19 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndGetRecordSchedule(THandle aH
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
-    proxyC->SyncEnableRecordSchedule(buf_aRecordScheduleID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncEnableRecordSchedule(buf_aRecordScheduleID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1713,12 +1783,19 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndEnableRecordSchedule(THandle
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
-    proxyC->SyncDisableRecordSchedule(buf_aRecordScheduleID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDisableRecordSchedule(buf_aRecordScheduleID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1746,12 +1823,19 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndDisableRecordSchedule(THandl
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncDeleteRecordTask(THandle aHandle, const char* aRecordTaskID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncDeleteRecordTask(THandle aHandle, const char* aRecordTaskID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    proxyC->SyncDeleteRecordTask(buf_aRecordTaskID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDeleteRecordTask(buf_aRecordTaskID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1779,15 +1863,22 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndDeleteRecordTask(THandle aHa
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, char** aResult, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, char** aResult, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
     Brh buf_aFilter(aFilter);
     Brh buf_aResult;
-    proxyC->SyncGetRecordTask(buf_aRecordTaskID, buf_aFilter, buf_aResult, *aUpdateID);
-    *aResult = buf_aResult.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetRecordTask(buf_aRecordTaskID, buf_aFilter, buf_aResult, *aUpdateID);
+        *aResult = buf_aResult.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1819,12 +1910,19 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndGetRecordTask(THandle aHandl
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncEnableRecordTask(THandle aHandle, const char* aRecordTaskID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncEnableRecordTask(THandle aHandle, const char* aRecordTaskID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    proxyC->SyncEnableRecordTask(buf_aRecordTaskID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncEnableRecordTask(buf_aRecordTaskID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginEnableRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1852,12 +1950,19 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndEnableRecordTask(THandle aHa
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncDisableRecordTask(THandle aHandle, const char* aRecordTaskID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncDisableRecordTask(THandle aHandle, const char* aRecordTaskID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    proxyC->SyncDisableRecordTask(buf_aRecordTaskID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncDisableRecordTask(buf_aRecordTaskID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginDisableRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1885,12 +1990,19 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndDisableRecordTask(THandle aH
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncResetRecordTask(THandle aHandle, const char* aRecordTaskID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncResetRecordTask(THandle aHandle, const char* aRecordTaskID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    proxyC->SyncResetRecordTask(buf_aRecordTaskID);
+    int32_t err = 0;
+    try {
+        proxyC->SyncResetRecordTask(buf_aRecordTaskID);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginResetRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1918,14 +2030,21 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndResetRecordTask(THandle aHan
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
     Brh buf_aRecordScheduleConflictIDList;
-    proxyC->SyncGetRecordScheduleConflicts(buf_aRecordScheduleID, buf_aRecordScheduleConflictIDList, *aUpdateID);
-    *aRecordScheduleConflictIDList = buf_aRecordScheduleConflictIDList.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetRecordScheduleConflicts(buf_aRecordScheduleID, buf_aRecordScheduleConflictIDList, *aUpdateID);
+        *aRecordScheduleConflictIDList = buf_aRecordScheduleConflictIDList.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr)
@@ -1956,14 +2075,21 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording2EndGetRecordScheduleConflicts(T
     return err;
 }
 
-void STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, char** aRecordTaskConflictIDList, uint32_t* aUpdateID)
+int32_t STDCALL CpProxyUpnpOrgScheduledRecording2SyncGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, char** aRecordTaskConflictIDList, uint32_t* aUpdateID)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
     Brh buf_aRecordTaskConflictIDList;
-    proxyC->SyncGetRecordTaskConflicts(buf_aRecordTaskID, buf_aRecordTaskConflictIDList, *aUpdateID);
-    *aRecordTaskConflictIDList = buf_aRecordTaskConflictIDList.Extract();
+    int32_t err = 0;
+    try {
+        proxyC->SyncGetRecordTaskConflicts(buf_aRecordTaskID, buf_aRecordTaskConflictIDList, *aUpdateID);
+        *aRecordTaskConflictIDList = buf_aRecordTaskConflictIDList.Extract();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
 }
 
 void STDCALL CpProxyUpnpOrgScheduledRecording2BeginGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
