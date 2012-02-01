@@ -37,10 +37,10 @@ namespace OpenHome.Net.Core
             public string AsString { get; private set; }
             public IntPtr AsCString { get; private set; }
 
-            internal CookieWrapper(string aCookie)
+            internal CookieWrapper(string aCookie, IntPtr aCString)
             {
                 AsString = aCookie;
-                AsCString = Marshal.StringToHGlobalAnsi(aCookie);
+                AsCString = aCString;
             }
             public void Dispose()
             {
@@ -129,12 +129,14 @@ namespace OpenHome.Net.Core
         /// Each call to AddRef() must later have exactly one matching call to RemoveRef().</remarks>
         public void AddRef(string aCookie)
         {
-            OhNetNetworkAdapterAddRef(iHandle, AddManagedCookie(aCookie).AsCString);
+            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            OhNetNetworkAdapterAddRef(iHandle, cookie);
+            AddManagedCookie(aCookie, cookie);
         }
 
-        internal CookieWrapper AddManagedCookie(string aCookie)
+        internal CookieWrapper AddManagedCookie(string aCookie, IntPtr aCString)
         {
-            CookieWrapper cookie = new CookieWrapper(aCookie);
+            CookieWrapper cookie = new CookieWrapper(aCookie, aCString);
             lock (this)
             {
                 iCookies.Add(cookie);
@@ -748,11 +750,10 @@ namespace OpenHome.Net.Core
         {
             IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
             IntPtr nif = OhNetCurrentSubnetAdapter(cookie);
-            Marshal.FreeHGlobal(cookie);
             if (nif == IntPtr.Zero)
                 return null;
             NetworkAdapter n = new NetworkAdapter(nif);
-            n.AddManagedCookie(aCookie);
+            n.AddManagedCookie(aCookie, cookie);
             return n;
         }
 
