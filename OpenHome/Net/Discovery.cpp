@@ -491,10 +491,20 @@ void SsdpListenerUnicast::Run()
                                 }
                             }
                         default:
+                            LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected target - %u\n", iHeaderSt.Target());
                             break;
                         }
                     }
+                    else {
+                        LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected headers\n");
+                    }
                 }
+                else {
+                    LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected status - %u\n", iReaderResponse.Status());
+                }
+            }
+            else {
+                    LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected http version - %u\n", iReaderResponse.Version());
             }
         }
         catch (HttpError&) {
