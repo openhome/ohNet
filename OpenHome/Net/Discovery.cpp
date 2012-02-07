@@ -500,7 +500,7 @@ void SsdpListenerUnicast::Run()
                     }
                 }
                 else {
-                    LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected status - %u\n", iReaderResponse.Status());
+                    LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected status - %u\n", iReaderResponse.Status().Code());
                 }
             }
             else {
