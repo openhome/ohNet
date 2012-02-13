@@ -15,6 +15,8 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern IntPtr OhNetSubnetAt(IntPtr aList, uint aIndex);
         [DllImport("ohNet")]
+        static extern IntPtr OhNetCurrentSubnetAdapter(IntPtr aCookie);
+        [DllImport("ohNet")]
         static extern void OhNetSubnetListDestroy(IntPtr aList);
 
         private IntPtr iHandle;
@@ -45,6 +47,22 @@ namespace OpenHome.Net.Core
         public NetworkAdapter SubnetAt(uint aIndex)
         {
             return new NetworkAdapter(OhNetSubnetAt(iHandle, aIndex));
+        }
+
+        /// <summary>
+        /// Query which subnet is in use.
+        /// </summary>
+        /// <param name="aCookie">Identifier for NetworkAdapter reference.  Must be used in a later call to NetworkAdapter.RemoveRef()</param>
+        /// <returns>Network adapter.  Or null if no subnet is selected or we're running the device stack on all subnets.</returns>
+        public static NetworkAdapter CurrentAdapter(string aCookie)
+        {
+            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            IntPtr nif = OhNetCurrentSubnetAdapter(cookie);
+            if (nif == IntPtr.Zero)
+                return null;
+            NetworkAdapter n = new NetworkAdapter(nif);
+            n.AddManagedCookie(aCookie, cookie);
+            return n;
         }
 
         /// <summary>
