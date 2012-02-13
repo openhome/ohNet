@@ -640,11 +640,7 @@ namespace OpenHome.Net.Core
 
         private CallbackFreeMemory iCallbackFreeMemory;
 
-        /// <summary>
-        /// Initialise the library
-        /// </summary>
-        /// <remarks>Must be called before any other library function.</remarks>
-        public void Initialise(InitParams aParams)
+        private void Initialise(InitParams aParams)
         {
             IntPtr nativeInitParams = aParams.AllocNativeInitParams(IntPtr.Zero);
             iCallbackFreeMemory = new CallbackFreeMemory(FreeMemory);
@@ -656,6 +652,11 @@ namespace OpenHome.Net.Core
             }
         }
 
+        /// <summary>
+        /// Create the library instance.
+        /// </summary>
+        /// <remarks>Only one instance per process is allowed.
+        /// This must be called before any other library function.</remarks>
         public static Library Create(InitParams aParams)
         {
             Library instance = new Library();
@@ -663,19 +664,8 @@ namespace OpenHome.Net.Core
             return instance;
         }
 
-        /// <summary>
-        /// Lightweight alternative to UpnpLibraryInitialise
-        /// </summary>
-        /// <remarks>Intended for unit tests which are useful to platform porting only.
-        /// 
-        /// No class APIs other than Close() can be called if this is used.</remarks>
-        /// <param name="aInitParams">Initialisation options.  Ownership of these passes to the library.</param>
-        public void InitialiseMinimal(IntPtr aInitParams)
+        private Library()
         {
-            if (0 != OhNetLibraryInitialiseMinimal(aInitParams))
-            {
-                throw new LibraryException();
-            }
         }
 
         /// <summary>
@@ -731,15 +721,6 @@ namespace OpenHome.Net.Core
         }
 
         /// <summary>
-        /// Close the UPnP library
-        /// </summary>
-        /// <remarks>No more library functions should be called after this.</remarks>
-        public void Close()
-        {
-            OhNetLibraryClose();
-        }
-
-        /// <summary>
         /// Free memory returned by native code
         /// </summary>
         /// <param name="aPtr">IntPtr returned by native code which is documented as requiring explicit destruction</param>
@@ -770,7 +751,7 @@ namespace OpenHome.Net.Core
             if (!iIsDisposed)
             {
                 iIsDisposed = true;
-                Close();
+                OhNetLibraryClose();
             }
         }
     }

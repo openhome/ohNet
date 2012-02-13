@@ -10,15 +10,15 @@ namespace OpenHome.Net
         public static void Main(string[] args)
         {
             Core.InitParams initParams = new Core.InitParams();
-            Core.Library lib = new Core.Library();
-            lib.Initialise(initParams);
-            Core.SubnetList subnetList = new Core.SubnetList();
-            Core.NetworkAdapter nif = subnetList.SubnetAt(0);
-            uint subnet = nif.Subnet();
-            subnetList.Destroy();
-            lib.StartCp(subnet);
-            new Runner((int)initParams.MsearchTimeSecs);
-            lib.Close();
+            using (Core.Library lib = Core.Library.Create(initParams))
+            {
+                Core.SubnetList subnetList = new Core.SubnetList();
+                Core.NetworkAdapter nif = subnetList.SubnetAt(0);
+                uint subnet = nif.Subnet();
+                subnetList.Dispose();
+                lib.StartCp(subnet);
+                new Runner((int)initParams.MsearchTimeSecs);
+            }
         }
     }
 

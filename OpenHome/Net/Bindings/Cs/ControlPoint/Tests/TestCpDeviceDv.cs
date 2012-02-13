@@ -18,25 +18,24 @@ namespace OpenHome.Net
                 MsearchTimeSecs = 1,
                 UseLoopbackNetworkAdapter = true
             };
-            Library lib = new Library();
-            lib.Initialise(initParams);
-            SubnetList subnetList = new SubnetList();
-            NetworkAdapter nif = subnetList.SubnetAt(0);
-            uint subnet = nif.Subnet();
-            subnetList.Destroy();
-            lib.StartCombined(subnet);
+            using (Library lib = Library.Create(initParams))
+            {
+                SubnetList subnetList = new SubnetList();
+                NetworkAdapter nif = subnetList.SubnetAt(0);
+                uint subnet = nif.Subnet();
+                subnetList.Dispose();
+                lib.StartCombined(subnet);
 
-            Console.Write("TestCpDeviceDvCs - starting\n");
-            DeviceBasic device = new DeviceBasic();
-            CpDeviceDv cpDevice = new CpDeviceDv(device.Device());
-            TestBasicCp cp = new TestBasicCp(cpDevice);
-            cp.TestActions();
-            cp.TestSubscriptions();
-            cpDevice.RemoveRef();
-            device.Dispose();
-            Console.Write("TestCpDeviceDvCs - completed\n");
-            
-            lib.Close();
+                Console.Write("TestCpDeviceDvCs - starting\n");
+                DeviceBasic device = new DeviceBasic();
+                CpDeviceDv cpDevice = new CpDeviceDv(device.Device());
+                TestBasicCp cp = new TestBasicCp(cpDevice);
+                cp.TestActions();
+                cp.TestSubscriptions();
+                cpDevice.RemoveRef();
+                device.Dispose();
+                Console.Write("TestCpDeviceDvCs - completed\n");
+            }
         }
     }
 }
