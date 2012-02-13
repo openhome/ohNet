@@ -63,8 +63,8 @@ class JenkinsBuild():
     def get_options(self):
         env_platform = os.environ.get('PLATFORM')
         env_nightly = os.environ.get('NIGHTLY')
-        env_release = os.environ.get('RELEASE')
-        env_version = os.environ.get('RELEASE_VERSION')
+        env_release = os.environ.get('PUBLISH')
+        env_version = os.environ.get('PUBLISH_VERSION')
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
@@ -72,7 +72,7 @@ class JenkinsBuild():
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
-        parser.add_option("-r", "--release",
+        parser.add_option("-r", "--publish",
           action="store_true", dest="release", default=False,
           help="publish release")
         parser.add_option("-v", "--version", dest="version",
