@@ -6,7 +6,7 @@ namespace OpenHome.Net.Core
     /// <summary>
     /// A subnet list.
     /// </summary>
-	public class SubnetList
+	public class SubnetList : IDisposable
 	{
         [DllImport("ohNet")]
         static extern IntPtr OhNetSubnetListCreate();
@@ -68,7 +68,7 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Destroy the subnet list
         /// </summary>
-        public void Destroy()
+        public void Dispose()
         {
             OhNetSubnetListDestroy(iHandle);
         }
