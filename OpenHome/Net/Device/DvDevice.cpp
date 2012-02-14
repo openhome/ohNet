@@ -72,3 +72,8 @@ DvDeviceStandard::DvDeviceStandard(const Brx& aUdn, IResourceManager& aResourceM
 {
     iDevice = new DviDeviceStandard(aUdn, aResourceManager);
 }
+
+void DvDeviceStandard::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri)
+{
+    iDevice->GetResourceManagerUri(aAdapter, aUri);
+}

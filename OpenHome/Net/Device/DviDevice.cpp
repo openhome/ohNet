@@ -322,6 +322,18 @@ void DviDevice::SetCustomData(const TChar* aProtocol, const TChar* aTag, void* a
     }
 }
 
+void DviDevice::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri)
+{
+    Brn protocolName("Upnp"); // FIXME
+    for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
+        IDvProtocol* protocol = iProtocols[i];
+        if (protocol->ProtocolName() == protocolName) {
+            protocol->GetResourceManagerUri(aAdapter, aUri);
+            break;
+        }
+    }
+}
+
 void DviDevice::SetParent(DviDevice* aParent)
 {
     ASSERT(!Enabled());

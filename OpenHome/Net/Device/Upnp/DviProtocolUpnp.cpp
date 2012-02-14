@@ -419,6 +419,32 @@ void DviProtocolUpnp::SetCustomData(const TChar* aTag, void* aData)
     }
 }
 
+void DviProtocolUpnp::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri)
+{
+    if (iDevice.ResourceManager() == NULL) {
+        return;
+    }
+    for (TUint i=0; i<(TUint)iAdapters.size(); i++) {
+        if (iAdapters[i]->Interface() == aAdapter.Address()) {
+            WriterBwh writer(1024);
+            writer.Write("http://");
+            Bws<Endpoint::kMaxEndpointBytes> buf;
+            Endpoint ep(iAdapters[i]->ServerPort(), aAdapter.Address());
+            ep.AppendEndpoint(buf);
+            writer.Write(buf);
+            writer.Write('/');
+            writer.Write(iDevice.Udn());
+            writer.Write('/');
+            writer.Write(kProtocolName);
+            writer.Write('/');
+            writer.Write(iDevice.kResourceDir);
+            writer.Write('/');
+            writer.TransferTo(aUri);
+            return;
+        }
+    }
+}
+
 void DviProtocolUpnp::SubnetDisabled()
 {
     iLock.Wait();

@@ -24,6 +24,7 @@ public:
     virtual void GetAttribute(const TChar* aKey, const TChar** aValue) const = 0;
     virtual void SetAttribute(const TChar* aKey, const TChar* aValue) = 0;
     virtual void SetCustomData(const TChar* aTag, void* aData) = 0;
+    virtual void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri) = 0;
 };
 
 class DviSubscription;
@@ -58,6 +59,7 @@ public:
     void CreateSid(Brh& aSid);
     IResourceManager* ResourceManager();
     void SetCustomData(const TChar* aProtocol, const TChar* Tag, void* aData);
+    void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri);
 protected:
     DviDevice(const Brx& aUdn, IResourceManager& aResourceManager);
     ~DviDevice();

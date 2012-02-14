@@ -94,6 +94,7 @@ public: // from IDvProtocol
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
     void SetCustomData(const TChar* aTag, void* aData);
+    void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri);
 private: // from IUpnpMsearchHandler
     void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter);
     void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter);
