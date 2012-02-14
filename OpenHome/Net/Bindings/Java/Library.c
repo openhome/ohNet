@@ -102,10 +102,11 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetSetCurrentSubnet
   (JNIEnv *aEnv, jclass aClass, jlong aSubnet)
 {
 	OhNetHandleNetworkAdapter subnet = (OhNetHandleNetworkAdapter) (size_t)aSubnet;
+	TIpAddress subnetAddress = OhNetNetworkAdapterSubnet(subnet);
 	aEnv = aEnv;
 	aClass = aClass;
-	
-	OhNetSetCurrentSubnet(subnet);
+
+	OhNetSetCurrentSubnet(subnetAddress);
 }
 
 /*
