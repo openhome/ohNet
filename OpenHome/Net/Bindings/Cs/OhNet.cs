@@ -630,7 +630,7 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetFree(IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern void OhNetSetCurrentSubnet(IntPtr aSubnet);
+        static extern void OhNetSetCurrentSubnet(uint aSubnet);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
@@ -738,7 +738,7 @@ namespace OpenHome.Net.Core
         /// <param name="aSubnet">Handle returned by SubnetAt()</param>
         public void SetCurrentSubnet(NetworkAdapter aSubnet)
         {
-            OhNetSetCurrentSubnet(aSubnet.Handle());
+            OhNetSetCurrentSubnet(aSubnet.Subnet());
         }
 
         private void FreeMemory(IntPtr aPtr)
