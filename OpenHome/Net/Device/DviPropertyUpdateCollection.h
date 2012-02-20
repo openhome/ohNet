@@ -74,7 +74,7 @@ public:
     ~PropertyUpdatesFlattened();
     const Brx& ClientId() const;
     void AddSubscription(DviSubscription* aSubscription);
-    void RemoveSubscription(const Brx& aSid);
+    void RemoveSubscription(const Brx& aSid, TBool aExpired);
     TBool ContainsSubscription(const Brx& aSid) const;
     TBool IsEmpty() const;
     PropertyUpdate* MergeUpdate(PropertyUpdate* aUpdate);
@@ -99,6 +99,7 @@ public:
     void SetClientSignal(const Brx& aClientId, Semaphore* aSem);
     void WriteUpdates(const Brx& aClientId, IWriter& aWriter);
 private:
+    void RemoveSubscription(const Brx& aSid, TBool aExpired);
     PropertyUpdatesFlattened* FindByClientId(const Brx& aClientId);
     PropertyUpdatesFlattened* FindByClientId(const Brx& aClientId, TUint& aIndex);
     PropertyUpdatesFlattened* FindBySid(const Brx& aSid);

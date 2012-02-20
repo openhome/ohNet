@@ -713,7 +713,7 @@ DllExport void STDCALL OhNetSubnetListDestroy(OhNetHandleNetworkAdapterList aLis
  *
  * @param aSubnet              The subnet to use
  */
-DllExport void STDCALL OhNetSetCurrentSubnet(OhNetHandleNetworkAdapter aSubnet);
+DllExport void STDCALL OhNetSetCurrentSubnet(uint32_t aSubnet);
 
 /**
  * Query which network adapter is currently selected.

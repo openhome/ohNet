@@ -146,6 +146,20 @@ DvDeviceC STDCALL DvDeviceStandardCreateNoResources(const char* aUdn)
 	return (DvDeviceC)wrapper;
 }
 
+char* STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle aAdapter)
+{
+    Brh uri;
+    NetworkAdapter* nif = (NetworkAdapter*)aAdapter;
+    ASSERT(nif != NULL);
+    reinterpret_cast<DvDeviceStandard*>(DviDeviceC::DeviceFromHandle(aDevice))->GetResourceManagerUri(*nif, uri);
+    if (uri.Bytes() == 0) {
+        return NULL;
+    }
+    else {
+        return (char*)uri.Extract();
+    }
+}
+
 DvDeviceC STDCALL DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr)
 {
 	DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn, aResourceManager, aPtr);

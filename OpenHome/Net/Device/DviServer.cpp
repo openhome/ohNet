@@ -45,13 +45,12 @@ void DviServer::Initialise()
     Functor functor = MakeFunctor(*this, &DviServer::SubnetListChanged);
     NetworkAdapterList& nifList = Stack::NetworkAdapterList();
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
-    iLock.Wait();
+    AutoMutex a(iLock);
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TUint i=0; i<subnetList->size(); i++) {
         AddServer(*(*subnetList)[i]);
     }
     NetworkAdapterList::DestroySubnetList(subnetList);
-    iLock.Signal();
 }
 
 void DviServer::AddServer(NetworkAdapter& aNif)

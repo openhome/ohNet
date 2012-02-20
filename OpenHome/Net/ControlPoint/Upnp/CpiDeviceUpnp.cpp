@@ -182,8 +182,7 @@ void CpiDeviceUpnp::NotifyRemovedBeforeReady()
 
 void CpiDeviceUpnp::Release()
 {
-    iDevice = NULL; // device will delete itself when this returns;
-    delete this;
+    delete this; // iDevice not deleted here; it'll delete itself when this returns
 }
 
 CpiDeviceUpnp::~CpiDeviceUpnp()

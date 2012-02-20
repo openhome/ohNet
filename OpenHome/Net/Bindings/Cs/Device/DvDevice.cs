@@ -418,9 +418,13 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern unsafe IntPtr DvDeviceStandardCreate(char* aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
         [DllImport("ohNet")]
+        static extern unsafe IntPtr DvDeviceStandardGetResourceManagerUri(IntPtr aDevice, IntPtr aAdapter);
+        [DllImport("ohNet")]
         static extern unsafe uint DvResourceWriterLanguageCount(IntPtr aHandle);
         [DllImport("ohNet")]
         static extern unsafe IntPtr DvResourceWriterLanguage(IntPtr aHandle, uint aIndex);
+        [DllImport("ohNet")]
+        static extern void OhNetFree(IntPtr aPtr);
 
         public unsafe delegate int CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, char* aMimeType);
         public delegate int CallbackWriteResource(IntPtr aPtr, byte[] aData, int aBytes);
@@ -460,6 +464,21 @@ namespace OpenHome.Net.Device
             iCallbackResourceManager = new CallbackResourceManager(WriteResource);
             iHandle = DvDeviceStandardCreate(udn, iCallbackResourceManager, ptr);
             Marshal.FreeHGlobal((IntPtr)udn);
+        }
+
+        /// <summary>
+        /// Query the base uri for the resource manager.
+        /// </summary>
+        /// <param name="aAdapter">The network adapter to return a uri for.</param>
+        /// <returns>The base uri.  May be null if there is no resource manager.</returns>
+        public string ResourceManagerUri(Core.NetworkAdapter aAdapter)
+        {
+            IntPtr cStr = DvDeviceStandardGetResourceManagerUri(iHandle, aAdapter.Handle());
+            if (cStr == IntPtr.Zero)
+                return null;
+            string uri = Marshal.PtrToStringAnsi(cStr);
+            OhNetFree(cStr);
+            return uri;
         }
 
         private static unsafe int WriteResource(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,

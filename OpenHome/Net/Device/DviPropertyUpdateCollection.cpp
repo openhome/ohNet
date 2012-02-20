@@ -219,7 +219,7 @@ void PropertyUpdatesFlattened::AddSubscription(DviSubscription* aSubscription)
     iSubscriptionMap.insert(std::pair<Brn,DviSubscription*>(buf, aSubscription));
 }
 
-void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid)
+void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid, TBool aExpired)
 {
     Brn sid(aSid);
     SubscriptionMap::iterator it = iSubscriptionMap.find(sid);
@@ -232,7 +232,9 @@ void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid)
         }
         DviSubscription* subscription = it->second;
         iSubscriptionMap.erase(it);
-        subscription->Service()->RemoveSubscription(aSid);
+        if (!aExpired) {
+            subscription->Service()->RemoveSubscription(aSid);
+        }
     }
 }
 
@@ -319,13 +321,18 @@ void DviPropertyUpdateCollection::AddSubscription(const Brx& aClientId, DviSubsc
 
 void DviPropertyUpdateCollection::RemoveSubscription(const Brx& aSid)
 {
+    RemoveSubscription(aSid, false);
+}
+
+void DviPropertyUpdateCollection::RemoveSubscription(const Brx& aSid, TBool aExpired)
+{
     AutoMutex a(iLock);
     TUint index;
     PropertyUpdatesFlattened* updates = FindBySid(aSid, index);
     if (updates == NULL) {
         THROW(InvalidSid);
     }
-    updates->RemoveSubscription(aSid);
+    updates->RemoveSubscription(aSid, aExpired);
     if (updates->IsEmpty()) {
         delete updates;
         iUpdates.erase(iUpdates.begin() + index);
@@ -413,7 +420,7 @@ void DviPropertyUpdateCollection::NotifySubscriptionExpired(const Brx& aSid)
         // use of Timer::IsInManagerThread is nasty.  We have no way of knowing that this'll only be called recursively or in a timer callback.
         // Note that this also turns out to be a handy way of avoiding problems inside ~DviPropertyUpdateCollection
         if (Timer::IsInManagerThread()) {
-            RemoveSubscription(aSid);
+            RemoveSubscription(aSid, true);
         }
     }
     catch (InvalidSid&) { }

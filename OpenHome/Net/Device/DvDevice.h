@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/DvResourceWriter.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <vector>
 
@@ -135,6 +136,13 @@ public:
      * @param[in] aResourceManager  Allows the owner of a device to serve UI files
      */
     DvDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager);
+    /**
+     * Query the base uri for the resource manager.
+     *
+     * @param[in]  aAdapter  the network adapter to return a uri for.
+     * @param[out] aUri      the base uri.  May be zero length if there is no resource manager.
+     */
+    void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri);
 };
 
 } // namespace Net

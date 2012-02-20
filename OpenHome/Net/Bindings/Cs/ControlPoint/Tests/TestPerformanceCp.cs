@@ -50,7 +50,7 @@ namespace OpenHome.Net.ControlPoint
                 SubnetList subnetList = new SubnetList();
                 NetworkAdapter nif = subnetList.SubnetAt(0);
                 uint subnet = nif.Subnet();
-                subnetList.Destroy();
+                subnetList.Dispose();
                 var deviceListFactory = new CpUpnpDeviceListFactory(lib.StartCp(subnet));
                 CpDevice device = null;
                 Semaphore sem = new Semaphore(0, 1);

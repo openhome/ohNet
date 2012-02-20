@@ -121,3 +121,15 @@ DvDeviceStdStandard::~DvDeviceStdStandard()
 {
     delete iResourceManager;
 }
+
+void DvDeviceStdStandard::GetResourceManagerUri(const NetworkAdapter& aAdapter, std::string& aUri)
+{
+    Brh uri;
+    iDevice->GetResourceManagerUri(aAdapter, uri);
+    if (uri.Bytes() == 0) {
+        aUri = std::string();
+    }
+    else {
+        aUri = std::string((const char*)uri.Ptr(), (size_t)uri.Bytes());
+    }
+}
