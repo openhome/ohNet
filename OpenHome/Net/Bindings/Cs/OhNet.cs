@@ -106,7 +106,7 @@ namespace OpenHome.Net.Core
         {
             IntPtr cStr = OhNetNetworkAdapterName(iHandle);
             string name = Marshal.PtrToStringAnsi(cStr);
-            Library.Free(cStr);
+            // Library.Free(cStr) not necessary because a copy is not allocated by the underlying NetworkAdapter object
             return name;
         }
 

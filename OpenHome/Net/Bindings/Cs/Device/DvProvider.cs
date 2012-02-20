@@ -415,7 +415,14 @@ namespace OpenHome.Net.Device
             String str = "";
             if (cStr != IntPtr.Zero)
             {
-                str = Marshal.PtrToStringAnsi((IntPtr)cStr);
+                int size = 0;
+                while (Marshal.ReadByte(cStr, size) != 0)
+                {
+                    size++;
+                }
+                byte[] array = new byte[size];
+                Marshal.Copy(cStr, array, 0, size);
+                str = Encoding.UTF8.GetString(array);
             }
             OhNetFree((IntPtr)cStr);
             CheckError(err);
@@ -525,7 +532,15 @@ namespace OpenHome.Net.Device
                 aValue = "";
             }
             IntPtr name = Marshal.StringToHGlobalAnsi(aName);
-            IntPtr value = Marshal.StringToHGlobalAnsi(aValue);
+
+            // Marshall string value to UTF-8
+
+            byte[] array = Encoding.UTF8.GetBytes(aValue);
+            int size = (Marshal.SizeOf(array[0]) * array.Length) + 1;
+            IntPtr value = Marshal.AllocHGlobal(size);
+            Marshal.Copy(array, 0, value, array.Length);
+            Marshal.WriteByte(value, size - 1, 0);
+
             int err = DvInvocationWriteStringStart(iHandle, name);
             if (err == 0)
             {
