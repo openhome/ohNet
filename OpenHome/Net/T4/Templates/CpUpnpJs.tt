@@ -104,15 +104,18 @@ var <#=className#> = function(udn){
 <#  { #>
 	this.serviceProperties["<#=s.prettyname#>"] = new ohnet.serviceproperty("<#=s.prettyname#>","<#=svtype[s.type].ToLower()#>");
 <#  } #>
-}
 
-<#  foreach (Variable s in u.evented) #>
+    <#  foreach (Variable s in u.evented) #>
 <#  { #>
+        this.<#=s.prettyname#>AllowedValues = [];
 <#      foreach (string v in s.values) #>
 <#      { #>
-Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
+            this.<#=s.prettyname#>AllowedValues.push("<#=v#>");
 <#      } #>
 <#  } #>
+
+}
+
 
 
 /**
