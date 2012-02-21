@@ -6,7 +6,7 @@ namespace OpenHome.Net.Core
     /// <summary>
     /// A subnet list.
     /// </summary>
-	public class SubnetList
+	public class SubnetList : IDisposable
 	{
         [DllImport("ohNet")]
         static extern IntPtr OhNetSubnetListCreate();
@@ -14,6 +14,8 @@ namespace OpenHome.Net.Core
         static extern uint OhNetSubnetListSize(IntPtr aList);
         [DllImport("ohNet")]
         static extern IntPtr OhNetSubnetAt(IntPtr aList, uint aIndex);
+        [DllImport("ohNet")]
+        static extern IntPtr OhNetCurrentSubnetAdapter(IntPtr aCookie);
         [DllImport("ohNet")]
         static extern void OhNetSubnetListDestroy(IntPtr aList);
 
@@ -48,9 +50,25 @@ namespace OpenHome.Net.Core
         }
 
         /// <summary>
+        /// Query which subnet is in use.
+        /// </summary>
+        /// <param name="aCookie">Identifier for NetworkAdapter reference.  Must be used in a later call to NetworkAdapter.RemoveRef()</param>
+        /// <returns>Network adapter.  Or null if no subnet is selected or we're running the device stack on all subnets.</returns>
+        public static NetworkAdapter CurrentAdapter(string aCookie)
+        {
+            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            IntPtr nif = OhNetCurrentSubnetAdapter(cookie);
+            if (nif == IntPtr.Zero)
+                return null;
+            NetworkAdapter n = new NetworkAdapter(nif);
+            n.AddManagedCookie(aCookie, cookie);
+            return n;
+        }
+
+        /// <summary>
         /// Destroy the subnet list
         /// </summary>
-        public void Destroy()
+        public void Dispose()
         {
             OhNetSubnetListDestroy(iHandle);
         }

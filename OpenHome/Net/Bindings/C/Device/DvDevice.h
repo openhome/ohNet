@@ -201,6 +201,16 @@ DllExport DvDeviceC STDCALL DvDeviceStandardCreateNoResources(const char* aUdn);
 DllExport DvDeviceC STDCALL DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr);
 
 /**
+ * Query the base uri for the resource manager.
+ *
+ * @param[in] aDevice   Handle returned by DvDeviceCreate[NoResources]
+ * @param[in] aAdapter  The network adapter to return a uri for.
+ *
+ * @return  The base uri.  May be NULL if there is no resource manager.
+ */
+DllExport char* STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle aAdapter);
+
+/**
  * Query the number of languages accepted by the resource writer.
  *
  * @param[in] aLanguageList  Handle passed to OhNetCallbackResourceManager.

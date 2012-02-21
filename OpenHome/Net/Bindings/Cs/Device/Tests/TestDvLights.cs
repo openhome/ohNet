@@ -14,16 +14,16 @@ namespace OpenHome.Net
             // !!!! add OptionParser class rather than relying on the user guessing that the first arg
             // is an int 1..3 and the second is the path of a folder that'll serve a test UI
             Core.InitParams initParams = new Core.InitParams();
-            Core.Library lib = new Core.Library();
-            lib.Initialise(initParams);
-            lib.StartDv();
-            Console.Write("TestDvLights - starting\n");
-            DeviceLights device = new DeviceLights(Convert.ToInt32(args[0]), args[1]);
-            Semaphore blocker = new Semaphore(0, 1);
-            blocker.WaitOne(60 * 60 * 1000); // make the device available for 1 hour then assume we've been forgotten about and exit
-            device.Dispose();
-            Console.Write("TestDvLights - exiting\n");
-            lib.Close();
+            using (Core.Library lib = Core.Library.Create(initParams))
+            {
+                lib.StartDv();
+                Console.Write("TestDvLights - starting\n");
+                DeviceLights device = new DeviceLights(Convert.ToInt32(args[0]), args[1]);
+                Semaphore blocker = new Semaphore(0, 1);
+                blocker.WaitOne(60 * 60 * 1000); // make the device available for 1 hour then assume we've been forgotten about and exit
+                device.Dispose();
+                Console.Write("TestDvLights - exiting\n");
+            }
         }
     }
 

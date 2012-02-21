@@ -419,6 +419,32 @@ void DviProtocolUpnp::SetCustomData(const TChar* aTag, void* aData)
     }
 }
 
+void DviProtocolUpnp::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri)
+{
+    if (iDevice.ResourceManager() == NULL) {
+        return;
+    }
+    for (TUint i=0; i<(TUint)iAdapters.size(); i++) {
+        if (iAdapters[i]->Interface() == aAdapter.Address()) {
+            WriterBwh writer(1024);
+            writer.Write("http://");
+            Bws<Endpoint::kMaxEndpointBytes> buf;
+            Endpoint ep(iAdapters[i]->ServerPort(), aAdapter.Address());
+            ep.AppendEndpoint(buf);
+            writer.Write(buf);
+            writer.Write('/');
+            writer.Write(iDevice.Udn());
+            writer.Write('/');
+            writer.Write(kProtocolName);
+            writer.Write('/');
+            writer.Write(iDevice.kResourceDir);
+            writer.Write('/');
+            writer.TransferTo(aUri);
+            return;
+        }
+    }
+}
+
 void DviProtocolUpnp::SubnetDisabled()
 {
     iLock.Wait();
@@ -1223,7 +1249,9 @@ DviMsgScheduler* DviMsgScheduler::NewNotifyUpdate(IUpnpAnnouncementData& aAnnoun
 DviMsgScheduler::~DviMsgScheduler()
 {
     delete iTimer;
-    delete iMsg;
+    if (iMsg) {
+        delete iMsg;
+    }
 }
 
 void DviMsgScheduler::Stop()
@@ -1235,14 +1263,16 @@ void DviMsgScheduler::Stop()
 }
 
 DviMsgScheduler::DviMsgScheduler(IUpnpMsgListener& aListener, TUint aMx)
-    : iEndTimeMs(Os::TimeInMs() + (900 * aMx))
+    : iMsg(NULL)
+    , iEndTimeMs(Os::TimeInMs() + (900 * aMx))
     , iListener(aListener)
 {
     Construct();
 }
 
 DviMsgScheduler::DviMsgScheduler(IUpnpMsgListener& aListener)
-    : iEndTimeMs(0)
+    : iMsg(NULL)
+    , iEndTimeMs(0)
     , iListener(aListener)
 {
     Construct();
@@ -1298,7 +1328,9 @@ void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 
 DviMsg::~DviMsg()
 {
-    delete iNotifier;
+    if (iNotifier) {
+        delete iNotifier;
+    }
 }
 
 TUint DviMsg::TotalMsgCount() const
@@ -1331,6 +1363,7 @@ TUint DviMsg::NextMsg()
 
 DviMsg::DviMsg(IUpnpAnnouncementData& aAnnouncementData, Bwh& aUri)
     : iAnnouncementData(aAnnouncementData)
+    , iNotifier(NULL)
 	, iStop(false)
 {
     iIndex = (iAnnouncementData.IsRoot()? 0 : 1);

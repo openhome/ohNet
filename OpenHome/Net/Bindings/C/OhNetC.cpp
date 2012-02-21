@@ -418,10 +418,9 @@ void STDCALL OhNetSubnetListDestroy(OhNetHandleNetworkAdapterList aList)
     UpnpLibrary::DestroySubnetList(list);
 }
 
-void STDCALL OhNetSetCurrentSubnet(OhNetHandleNetworkAdapter aSubnet)
+void STDCALL OhNetSetCurrentSubnet(uint32_t aSubnet)
 {
-    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aSubnet);
-    UpnpLibrary::SetCurrentSubnet(nif->Subnet());
+    UpnpLibrary::SetCurrentSubnet(aSubnet);
 }
 
 OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter(const char* aCookie)

@@ -18,15 +18,15 @@ namespace OpenHome.Net.Device
                 MsearchTimeSecs = 1,
                 UseLoopbackNetworkAdapter = true
             };
-            Library lib = new Library();
-            lib.Initialise(initParams);
-            SubnetList subnetList = new SubnetList();
-            NetworkAdapter nif = subnetList.SubnetAt(0);
-            uint subnet = nif.Subnet();
-            subnetList.Destroy();
-            lib.StartCombined(subnet);
-            new Runner();
-            lib.Close();
+            using (Library lib = Library.Create(initParams))
+            {
+                SubnetList subnetList = new SubnetList();
+                NetworkAdapter nif = subnetList.SubnetAt(0);
+                uint subnet = nif.Subnet();
+                subnetList.Dispose();
+                lib.StartCombined(subnet);
+                new Runner();
+            }
         }
     }
 

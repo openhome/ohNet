@@ -37,10 +37,10 @@ namespace OpenHome.Net.Core
             public string AsString { get; private set; }
             public IntPtr AsCString { get; private set; }
 
-            internal CookieWrapper(string aCookie)
+            internal CookieWrapper(string aCookie, IntPtr aCString)
             {
                 AsString = aCookie;
-                AsCString = Marshal.StringToHGlobalAnsi(aCookie);
+                AsCString = aCString;
             }
             public void Dispose()
             {
@@ -106,7 +106,7 @@ namespace OpenHome.Net.Core
         {
             IntPtr cStr = OhNetNetworkAdapterName(iHandle);
             string name = Marshal.PtrToStringAnsi(cStr);
-            Library.Free(cStr);
+            // Library.Free(cStr) not necessary because a copy is not allocated by the underlying NetworkAdapter object
             return name;
         }
 
@@ -129,12 +129,14 @@ namespace OpenHome.Net.Core
         /// Each call to AddRef() must later have exactly one matching call to RemoveRef().</remarks>
         public void AddRef(string aCookie)
         {
-            OhNetNetworkAdapterAddRef(iHandle, AddManagedCookie(aCookie).AsCString);
+            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            OhNetNetworkAdapterAddRef(iHandle, cookie);
+            AddManagedCookie(aCookie, cookie);
         }
 
-        internal CookieWrapper AddManagedCookie(string aCookie)
+        internal CookieWrapper AddManagedCookie(string aCookie, IntPtr aCString)
         {
-            CookieWrapper cookie = new CookieWrapper(aCookie);
+            CookieWrapper cookie = new CookieWrapper(aCookie, aCString);
             lock (this)
             {
                 iCookies.Add(cookie);
@@ -628,9 +630,7 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetFree(IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern void OhNetSetCurrentSubnet(IntPtr aSubnet);
-        [DllImport("ohNet")]
-        static extern IntPtr OhNetCurrentSubnetAdapter(IntPtr aCookie);
+        static extern void OhNetSetCurrentSubnet(uint aSubnet);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
@@ -640,11 +640,7 @@ namespace OpenHome.Net.Core
 
         private CallbackFreeMemory iCallbackFreeMemory;
 
-        /// <summary>
-        /// Initialise the library
-        /// </summary>
-        /// <remarks>Must be called before any other library function.</remarks>
-        public void Initialise(InitParams aParams)
+        private void Initialise(InitParams aParams)
         {
             IntPtr nativeInitParams = aParams.AllocNativeInitParams(IntPtr.Zero);
             iCallbackFreeMemory = new CallbackFreeMemory(FreeMemory);
@@ -656,6 +652,11 @@ namespace OpenHome.Net.Core
             }
         }
 
+        /// <summary>
+        /// Create the library instance.
+        /// </summary>
+        /// <remarks>Only one instance per process is allowed.
+        /// This must be called before any other library function.</remarks>
         public static Library Create(InitParams aParams)
         {
             Library instance = new Library();
@@ -663,19 +664,8 @@ namespace OpenHome.Net.Core
             return instance;
         }
 
-        /// <summary>
-        /// Lightweight alternative to UpnpLibraryInitialise
-        /// </summary>
-        /// <remarks>Intended for unit tests which are useful to platform porting only.
-        /// 
-        /// No class APIs other than Close() can be called if this is used.</remarks>
-        /// <param name="aInitParams">Initialisation options.  Ownership of these passes to the library.</param>
-        public void InitialiseMinimal(IntPtr aInitParams)
+        private Library()
         {
-            if (0 != OhNetLibraryInitialiseMinimal(aInitParams))
-            {
-                throw new LibraryException();
-            }
         }
 
         /// <summary>
@@ -731,32 +721,6 @@ namespace OpenHome.Net.Core
         }
 
         /// <summary>
-        /// Close the UPnP library
-        /// </summary>
-        /// <remarks>No more library functions should be called after this.</remarks>
-        public void Close()
-        {
-            OhNetLibraryClose();
-        }
-
-        /// <summary>
-        /// Query which subnet is in use.
-        /// </summary>
-        /// <param name="aCookie">Identifier for NetworkAdapter reference.  Must be used in a later call to NetworkAdapter.RemoveRef()</param>
-        /// <returns>Network adapter.  Or null if no subnet is selected or we're running the device stack on all subnets.</returns>
-        public static NetworkAdapter CurrentSubnetAdapter(string aCookie)
-        {
-            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
-            IntPtr nif = OhNetCurrentSubnetAdapter(cookie);
-            Marshal.FreeHGlobal(cookie);
-            if (nif == IntPtr.Zero)
-                return null;
-            NetworkAdapter n = new NetworkAdapter(nif);
-            n.AddManagedCookie(aCookie);
-            return n;
-        }
-
-        /// <summary>
         /// Free memory returned by native code
         /// </summary>
         /// <param name="aPtr">IntPtr returned by native code which is documented as requiring explicit destruction</param>
@@ -774,7 +738,7 @@ namespace OpenHome.Net.Core
         /// <param name="aSubnet">Handle returned by SubnetAt()</param>
         public void SetCurrentSubnet(NetworkAdapter aSubnet)
         {
-            OhNetSetCurrentSubnet(aSubnet.Handle());
+            OhNetSetCurrentSubnet(aSubnet.Subnet());
         }
 
         private void FreeMemory(IntPtr aPtr)
@@ -787,7 +751,7 @@ namespace OpenHome.Net.Core
             if (!iIsDisposed)
             {
                 iIsDisposed = true;
-                Close();
+                OhNetLibraryClose();
             }
         }
     }

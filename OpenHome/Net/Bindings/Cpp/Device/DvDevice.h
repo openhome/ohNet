@@ -142,6 +142,13 @@ public:
     DvDeviceStdStandard(const std::string& aUdn, IResourceManagerStd& aResourceManager);
 
     ~DvDeviceStdStandard();
+    /**
+     * Query the base uri for the resource manager.
+     *
+     * @param[in]  aAdapter  the network adapter to return a uri for.
+     * @param[out] aUri      the base uri.  May be zero length if there is no resource manager.
+     */
+    void GetResourceManagerUri(const NetworkAdapter& aAdapter, std::string& aUri);
 private:
     DvResourceManagerStd* iResourceManager;
 };
