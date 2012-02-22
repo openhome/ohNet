@@ -107,10 +107,12 @@ var <#=className#> = function(udn){
 
     <#  foreach (Variable s in u.evented) #>
 <#  { #>
-        this.<#=s.prettyname#>AllowedValues = [];
+      <#  if(s.values.Count > 0) { #>  
+    this.<#=s.prettyname#>AllowedValues = [];
 <#      foreach (string v in s.values) #>
 <#      { #>
-            this.<#=s.prettyname#>AllowedValues.push("<#=v#>");
+    this.<#=s.prettyname#>AllowedValues.push("<#=v#>");
+<#      } #>
 <#      } #>
 <#  } #>
 
