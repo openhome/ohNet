@@ -536,7 +536,7 @@ namespace OpenHome.Net.Device
             // Marshall string value to UTF-8
 
             byte[] array = Encoding.UTF8.GetBytes(aValue);
-            int size = (Marshal.SizeOf(array[0]) * array.Length) + 1;
+            int size = array.Length + 1;
             IntPtr value = Marshal.AllocHGlobal(size);
             Marshal.Copy(array, 0, value, array.Length);
             Marshal.WriteByte(value, size - 1, 0);
