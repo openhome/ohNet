@@ -239,7 +239,6 @@ namespace OpenHome.Net.ControlPoint
             {
                 Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
                 Console.WriteLine("       Only ProxyError can be thrown by action complete delegates");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             iSem.Release();
         }
