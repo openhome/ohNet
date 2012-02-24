@@ -76,7 +76,7 @@ private: // from IUpnpMsgListener
     void NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler);
 private:
     void AddInterface(const NetworkAdapter& aAdapter);
-    void SubnetListChanged();
+    void HandleInterfaceChange();
     TInt FindAdapter(TIpAddress aAdapter, const std::vector<NetworkAdapter*>& aAdapterList);
     TInt FindListenerForSubnet(TIpAddress aSubnet);
     TInt FindListenerForInterface(TIpAddress aSubnet);
@@ -106,6 +106,7 @@ private:
     AttributeMap iAttributeMap;
     Mutex iLock;
     std::vector<DviProtocolUpnpAdapterSpecificData*> iAdapters;
+    TInt iCurrentAdapterChangeListenerId;
     TInt iSubnetListChangeListenerId;
     std::vector<DviMsgScheduler*> iMsgSchedulers;
     TUint iSubnetDisableCount;
