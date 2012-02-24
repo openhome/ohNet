@@ -156,7 +156,8 @@ char* STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle a
         return NULL;
     }
     else {
-        return (char*)uri.Extract();
+        Brhz uriz(uri);
+        return (char*)uriz.Transfer();
     }
 }
 
