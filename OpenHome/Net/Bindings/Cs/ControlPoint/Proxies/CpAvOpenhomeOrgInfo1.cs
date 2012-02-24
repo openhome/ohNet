@@ -947,45 +947,24 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyAvOpenhomeOrgInfo1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionCounters.Dispose();
-                iActionTrack.Dispose();
-                iActionDetails.Dispose();
-                iActionMetatext.Dispose();
-                iTrackCount.Dispose();
-                iDetailsCount.Dispose();
-                iMetatextCount.Dispose();
-                iUri.Dispose();
-                iMetadata.Dispose();
-                iDuration.Dispose();
-                iBitRate.Dispose();
-                iBitDepth.Dispose();
-                iSampleRate.Dispose();
-                iLossless.Dispose();
-                iCodecName.Dispose();
-                iMetatext.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionCounters.Dispose();
+            iActionTrack.Dispose();
+            iActionDetails.Dispose();
+            iActionMetatext.Dispose();
+            iTrackCount.Dispose();
+            iDetailsCount.Dispose();
+            iMetatextCount.Dispose();
+            iUri.Dispose();
+            iMetadata.Dispose();
+            iDuration.Dispose();
+            iBitRate.Dispose();
+            iBitDepth.Dispose();
+            iSampleRate.Dispose();
+            iLossless.Dispose();
+            iCodecName.Dispose();
+            iMetatext.Dispose();
         }
     }
 }

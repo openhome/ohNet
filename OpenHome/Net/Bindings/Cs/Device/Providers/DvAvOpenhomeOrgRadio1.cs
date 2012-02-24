@@ -1578,26 +1578,8 @@ namespace OpenHome.Net.Device.Providers
         /// </summary>
         public virtual void Dispose()
         {
-            DoDispose();
-            GC.SuppressFinalize(this);
-        }
-
-        ~DvProviderAvOpenhomeOrgRadio1()
-        {
-            DoDispose();
-        }
-
-        private void DoDispose()
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProvider();
-                iHandle = IntPtr.Zero;
-            }
+            DisposeProvider();
+            iHandle = IntPtr.Zero;
             iGch.Free();
         }
     }

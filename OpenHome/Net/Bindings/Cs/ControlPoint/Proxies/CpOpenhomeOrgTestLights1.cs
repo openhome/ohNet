@@ -640,36 +640,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyOpenhomeOrgTestLights1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionGetCount.Dispose();
-                iActionGetRoom.Dispose();
-                iActionGetName.Dispose();
-                iActionGetPosition.Dispose();
-                iActionSetColor.Dispose();
-                iActionGetColor.Dispose();
-                iActionGetColorComponents.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionGetCount.Dispose();
+            iActionGetRoom.Dispose();
+            iActionGetName.Dispose();
+            iActionGetPosition.Dispose();
+            iActionSetColor.Dispose();
+            iActionGetColor.Dispose();
+            iActionGetColorComponents.Dispose();
         }
     }
 }

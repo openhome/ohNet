@@ -382,32 +382,10 @@ namespace OpenHome.Net.Device
         /// </summary>
         public void Dispose()
         {
-            DoDispose();
-            GC.SuppressFinalize(this);
-        }
-
-        ~DvDevice()
-        {
-            DoDispose();
-        }
-
-        private void DoDispose()
-        {
-            IntPtr handle;
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                handle = iHandle;
-                iHandle = IntPtr.Zero;
-            }
-            DvDeviceDestroy(handle);
+            DvDeviceDestroy(iHandle);
+            iHandle = IntPtr.Zero;
             if (iGch.IsAllocated)
-            {
                 iGch.Free();
-            }
         }
     }
 

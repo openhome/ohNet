@@ -1621,53 +1621,32 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyOpenhomeOrgTestBasic1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionIncrement.Dispose();
-                iActionDecrement.Dispose();
-                iActionToggle.Dispose();
-                iActionEchoString.Dispose();
-                iActionEchoBinary.Dispose();
-                iActionSetUint.Dispose();
-                iActionGetUint.Dispose();
-                iActionSetInt.Dispose();
-                iActionGetInt.Dispose();
-                iActionSetBool.Dispose();
-                iActionGetBool.Dispose();
-                iActionSetMultiple.Dispose();
-                iActionSetString.Dispose();
-                iActionGetString.Dispose();
-                iActionSetBinary.Dispose();
-                iActionGetBinary.Dispose();
-                iActionToggleBool.Dispose();
-                iActionWriteFile.Dispose();
-                iActionShutdown.Dispose();
-                iVarUint.Dispose();
-                iVarInt.Dispose();
-                iVarBool.Dispose();
-                iVarStr.Dispose();
-                iVarBin.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionIncrement.Dispose();
+            iActionDecrement.Dispose();
+            iActionToggle.Dispose();
+            iActionEchoString.Dispose();
+            iActionEchoBinary.Dispose();
+            iActionSetUint.Dispose();
+            iActionGetUint.Dispose();
+            iActionSetInt.Dispose();
+            iActionGetInt.Dispose();
+            iActionSetBool.Dispose();
+            iActionGetBool.Dispose();
+            iActionSetMultiple.Dispose();
+            iActionSetString.Dispose();
+            iActionGetString.Dispose();
+            iActionSetBinary.Dispose();
+            iActionGetBinary.Dispose();
+            iActionToggleBool.Dispose();
+            iActionWriteFile.Dispose();
+            iActionShutdown.Dispose();
+            iVarUint.Dispose();
+            iVarInt.Dispose();
+            iVarBool.Dispose();
+            iVarStr.Dispose();
+            iVarBin.Dispose();
         }
     }
 }

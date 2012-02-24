@@ -1913,60 +1913,39 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyAvOpenhomeOrgProduct1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionManufacturer.Dispose();
-                iActionModel.Dispose();
-                iActionProduct.Dispose();
-                iActionStandby.Dispose();
-                iActionSetStandby.Dispose();
-                iActionSourceCount.Dispose();
-                iActionSourceXml.Dispose();
-                iActionSourceIndex.Dispose();
-                iActionSetSourceIndex.Dispose();
-                iActionSetSourceIndexByName.Dispose();
-                iActionSource.Dispose();
-                iActionAttributes.Dispose();
-                iActionSourceXmlChangeCount.Dispose();
-                iManufacturerName.Dispose();
-                iManufacturerInfo.Dispose();
-                iManufacturerUrl.Dispose();
-                iManufacturerImageUri.Dispose();
-                iModelName.Dispose();
-                iModelInfo.Dispose();
-                iModelUrl.Dispose();
-                iModelImageUri.Dispose();
-                iProductRoom.Dispose();
-                iProductName.Dispose();
-                iProductInfo.Dispose();
-                iProductUrl.Dispose();
-                iProductImageUri.Dispose();
-                iStandby.Dispose();
-                iSourceIndex.Dispose();
-                iSourceCount.Dispose();
-                iSourceXml.Dispose();
-                iAttributes.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionManufacturer.Dispose();
+            iActionModel.Dispose();
+            iActionProduct.Dispose();
+            iActionStandby.Dispose();
+            iActionSetStandby.Dispose();
+            iActionSourceCount.Dispose();
+            iActionSourceXml.Dispose();
+            iActionSourceIndex.Dispose();
+            iActionSetSourceIndex.Dispose();
+            iActionSetSourceIndexByName.Dispose();
+            iActionSource.Dispose();
+            iActionAttributes.Dispose();
+            iActionSourceXmlChangeCount.Dispose();
+            iManufacturerName.Dispose();
+            iManufacturerInfo.Dispose();
+            iManufacturerUrl.Dispose();
+            iManufacturerImageUri.Dispose();
+            iModelName.Dispose();
+            iModelInfo.Dispose();
+            iModelUrl.Dispose();
+            iModelImageUri.Dispose();
+            iProductRoom.Dispose();
+            iProductName.Dispose();
+            iProductInfo.Dispose();
+            iProductUrl.Dispose();
+            iProductImageUri.Dispose();
+            iStandby.Dispose();
+            iSourceIndex.Dispose();
+            iSourceCount.Dispose();
+            iSourceXml.Dispose();
+            iAttributes.Dispose();
         }
     }
 }

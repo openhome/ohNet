@@ -1082,47 +1082,26 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyAvOpenhomeOrgMediaServer1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionManufacturer.Dispose();
-                iActionModel.Dispose();
-                iActionProduct.Dispose();
-                iActionAttributes.Dispose();
-                iActionQuery.Dispose();
-                iManufacturerName.Dispose();
-                iManufacturerInfo.Dispose();
-                iManufacturerUrl.Dispose();
-                iManufacturerImageUri.Dispose();
-                iModelName.Dispose();
-                iModelInfo.Dispose();
-                iModelUrl.Dispose();
-                iModelImageUri.Dispose();
-                iProductName.Dispose();
-                iProductInfo.Dispose();
-                iProductUrl.Dispose();
-                iProductImageUri.Dispose();
-                iAttributes.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionManufacturer.Dispose();
+            iActionModel.Dispose();
+            iActionProduct.Dispose();
+            iActionAttributes.Dispose();
+            iActionQuery.Dispose();
+            iManufacturerName.Dispose();
+            iManufacturerInfo.Dispose();
+            iManufacturerUrl.Dispose();
+            iManufacturerImageUri.Dispose();
+            iModelName.Dispose();
+            iModelInfo.Dispose();
+            iModelUrl.Dispose();
+            iModelImageUri.Dispose();
+            iProductName.Dispose();
+            iProductInfo.Dispose();
+            iProductUrl.Dispose();
+            iProductImageUri.Dispose();
+            iAttributes.Dispose();
         }
     }
 }

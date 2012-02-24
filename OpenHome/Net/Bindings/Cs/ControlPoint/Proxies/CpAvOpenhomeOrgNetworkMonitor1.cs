@@ -383,35 +383,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyAvOpenhomeOrgNetworkMonitor1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionName.Dispose();
-                iActionPorts.Dispose();
-                iName.Dispose();
-                iSender.Dispose();
-                iReceiver.Dispose();
-                iResults.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionName.Dispose();
+            iActionPorts.Dispose();
+            iName.Dispose();
+            iSender.Dispose();
+            iReceiver.Dispose();
+            iResults.Dispose();
         }
     }
 }

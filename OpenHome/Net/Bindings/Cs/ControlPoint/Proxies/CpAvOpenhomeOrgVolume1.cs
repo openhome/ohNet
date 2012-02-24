@@ -1640,56 +1640,35 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyAvOpenhomeOrgVolume1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionCharacteristics.Dispose();
-                iActionSetVolume.Dispose();
-                iActionVolumeInc.Dispose();
-                iActionVolumeDec.Dispose();
-                iActionVolume.Dispose();
-                iActionSetBalance.Dispose();
-                iActionBalanceInc.Dispose();
-                iActionBalanceDec.Dispose();
-                iActionBalance.Dispose();
-                iActionSetFade.Dispose();
-                iActionFadeInc.Dispose();
-                iActionFadeDec.Dispose();
-                iActionFade.Dispose();
-                iActionSetMute.Dispose();
-                iActionMute.Dispose();
-                iActionVolumeLimit.Dispose();
-                iVolume.Dispose();
-                iMute.Dispose();
-                iBalance.Dispose();
-                iFade.Dispose();
-                iVolumeLimit.Dispose();
-                iVolumeMax.Dispose();
-                iVolumeUnity.Dispose();
-                iVolumeSteps.Dispose();
-                iVolumeMilliDbPerStep.Dispose();
-                iBalanceMax.Dispose();
-                iFadeMax.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionCharacteristics.Dispose();
+            iActionSetVolume.Dispose();
+            iActionVolumeInc.Dispose();
+            iActionVolumeDec.Dispose();
+            iActionVolume.Dispose();
+            iActionSetBalance.Dispose();
+            iActionBalanceInc.Dispose();
+            iActionBalanceDec.Dispose();
+            iActionBalance.Dispose();
+            iActionSetFade.Dispose();
+            iActionFadeInc.Dispose();
+            iActionFadeDec.Dispose();
+            iActionFade.Dispose();
+            iActionSetMute.Dispose();
+            iActionMute.Dispose();
+            iActionVolumeLimit.Dispose();
+            iVolume.Dispose();
+            iMute.Dispose();
+            iBalance.Dispose();
+            iFade.Dispose();
+            iVolumeLimit.Dispose();
+            iVolumeMax.Dispose();
+            iVolumeUnity.Dispose();
+            iVolumeSteps.Dispose();
+            iVolumeMilliDbPerStep.Dispose();
+            iBalanceMax.Dispose();
+            iFadeMax.Dispose();
         }
     }
 }

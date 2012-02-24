@@ -156,8 +156,12 @@ namespace OpenHome.Net.ControlPoint
         /// </summary>
         public void Dispose()
         {
-            DoDispose();
-            GC.SuppressFinalize(this);
+            if (iHandle != IntPtr.Zero)
+            {
+                CpDeviceListDestroy(iHandle);
+                iHandle = IntPtr.Zero;
+                iGch.Free();
+            }
         }
 
         protected CpDeviceList()
@@ -197,21 +201,6 @@ namespace OpenHome.Net.ControlPoint
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
                 Console.WriteLine("         No exceptions should be thrown by device list change delegates");
-            }
-        }
-
-        ~CpDeviceList()
-        {
-            DoDispose();
-        }
-
-        private void DoDispose()
-        {
-            if (iHandle != IntPtr.Zero)
-            {
-                CpDeviceListDestroy(iHandle);
-                iHandle = IntPtr.Zero;
-                iGch.Free();
             }
         }
     }

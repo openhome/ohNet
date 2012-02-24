@@ -1643,49 +1643,28 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyUpnpOrgContentDirectory2()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionGetSearchCapabilities.Dispose();
-                iActionGetSortCapabilities.Dispose();
-                iActionGetSortExtensionCapabilities.Dispose();
-                iActionGetFeatureList.Dispose();
-                iActionGetSystemUpdateID.Dispose();
-                iActionBrowse.Dispose();
-                iActionSearch.Dispose();
-                iActionCreateObject.Dispose();
-                iActionDestroyObject.Dispose();
-                iActionUpdateObject.Dispose();
-                iActionMoveObject.Dispose();
-                iActionImportResource.Dispose();
-                iActionExportResource.Dispose();
-                iActionDeleteResource.Dispose();
-                iActionStopTransferResource.Dispose();
-                iActionGetTransferProgress.Dispose();
-                iActionCreateReference.Dispose();
-                iSystemUpdateID.Dispose();
-                iContainerUpdateIDs.Dispose();
-                iTransferIDs.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionGetSearchCapabilities.Dispose();
+            iActionGetSortCapabilities.Dispose();
+            iActionGetSortExtensionCapabilities.Dispose();
+            iActionGetFeatureList.Dispose();
+            iActionGetSystemUpdateID.Dispose();
+            iActionBrowse.Dispose();
+            iActionSearch.Dispose();
+            iActionCreateObject.Dispose();
+            iActionDestroyObject.Dispose();
+            iActionUpdateObject.Dispose();
+            iActionMoveObject.Dispose();
+            iActionImportResource.Dispose();
+            iActionExportResource.Dispose();
+            iActionDeleteResource.Dispose();
+            iActionStopTransferResource.Dispose();
+            iActionGetTransferProgress.Dispose();
+            iActionCreateReference.Dispose();
+            iSystemUpdateID.Dispose();
+            iContainerUpdateIDs.Dispose();
+            iTransferIDs.Dispose();
         }
     }
 }

@@ -1877,55 +1877,34 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyAvOpenhomeOrgPlaylistManager1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionMetadata.Dispose();
-                iActionImagesXml.Dispose();
-                iActionPlaylistReadArray.Dispose();
-                iActionPlaylistReadList.Dispose();
-                iActionPlaylistRead.Dispose();
-                iActionPlaylistSetName.Dispose();
-                iActionPlaylistSetDescription.Dispose();
-                iActionPlaylistSetImageId.Dispose();
-                iActionPlaylistInsert.Dispose();
-                iActionPlaylistDeleteId.Dispose();
-                iActionPlaylistMove.Dispose();
-                iActionPlaylistsMax.Dispose();
-                iActionTracksMax.Dispose();
-                iActionPlaylistArrays.Dispose();
-                iActionPlaylistArraysChanged.Dispose();
-                iActionRead.Dispose();
-                iActionReadList.Dispose();
-                iActionInsert.Dispose();
-                iActionDeleteId.Dispose();
-                iActionDeleteAll.Dispose();
-                iMetadata.Dispose();
-                iImagesXml.Dispose();
-                iIdArray.Dispose();
-                iTokenArray.Dispose();
-                iPlaylistsMax.Dispose();
-                iTracksMax.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionMetadata.Dispose();
+            iActionImagesXml.Dispose();
+            iActionPlaylistReadArray.Dispose();
+            iActionPlaylistReadList.Dispose();
+            iActionPlaylistRead.Dispose();
+            iActionPlaylistSetName.Dispose();
+            iActionPlaylistSetDescription.Dispose();
+            iActionPlaylistSetImageId.Dispose();
+            iActionPlaylistInsert.Dispose();
+            iActionPlaylistDeleteId.Dispose();
+            iActionPlaylistMove.Dispose();
+            iActionPlaylistsMax.Dispose();
+            iActionTracksMax.Dispose();
+            iActionPlaylistArrays.Dispose();
+            iActionPlaylistArraysChanged.Dispose();
+            iActionRead.Dispose();
+            iActionReadList.Dispose();
+            iActionInsert.Dispose();
+            iActionDeleteId.Dispose();
+            iActionDeleteAll.Dispose();
+            iMetadata.Dispose();
+            iImagesXml.Dispose();
+            iIdArray.Dispose();
+            iTokenArray.Dispose();
+            iPlaylistsMax.Dispose();
+            iTracksMax.Dispose();
         }
     }
 }

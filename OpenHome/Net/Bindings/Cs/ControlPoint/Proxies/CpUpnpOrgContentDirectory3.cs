@@ -1936,53 +1936,32 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyUpnpOrgContentDirectory3()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionGetSearchCapabilities.Dispose();
-                iActionGetSortCapabilities.Dispose();
-                iActionGetSortExtensionCapabilities.Dispose();
-                iActionGetFeatureList.Dispose();
-                iActionGetSystemUpdateID.Dispose();
-                iActionGetServiceResetToken.Dispose();
-                iActionBrowse.Dispose();
-                iActionSearch.Dispose();
-                iActionCreateObject.Dispose();
-                iActionDestroyObject.Dispose();
-                iActionUpdateObject.Dispose();
-                iActionMoveObject.Dispose();
-                iActionImportResource.Dispose();
-                iActionExportResource.Dispose();
-                iActionDeleteResource.Dispose();
-                iActionStopTransferResource.Dispose();
-                iActionGetTransferProgress.Dispose();
-                iActionCreateReference.Dispose();
-                iActionFreeFormQuery.Dispose();
-                iActionGetFreeFormQueryCapabilities.Dispose();
-                iSystemUpdateID.Dispose();
-                iContainerUpdateIDs.Dispose();
-                iLastChange.Dispose();
-                iTransferIDs.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionGetSearchCapabilities.Dispose();
+            iActionGetSortCapabilities.Dispose();
+            iActionGetSortExtensionCapabilities.Dispose();
+            iActionGetFeatureList.Dispose();
+            iActionGetSystemUpdateID.Dispose();
+            iActionGetServiceResetToken.Dispose();
+            iActionBrowse.Dispose();
+            iActionSearch.Dispose();
+            iActionCreateObject.Dispose();
+            iActionDestroyObject.Dispose();
+            iActionUpdateObject.Dispose();
+            iActionMoveObject.Dispose();
+            iActionImportResource.Dispose();
+            iActionExportResource.Dispose();
+            iActionDeleteResource.Dispose();
+            iActionStopTransferResource.Dispose();
+            iActionGetTransferProgress.Dispose();
+            iActionCreateReference.Dispose();
+            iActionFreeFormQuery.Dispose();
+            iActionGetFreeFormQueryCapabilities.Dispose();
+            iSystemUpdateID.Dispose();
+            iContainerUpdateIDs.Dispose();
+            iLastChange.Dispose();
+            iTransferIDs.Dispose();
         }
     }
 }
