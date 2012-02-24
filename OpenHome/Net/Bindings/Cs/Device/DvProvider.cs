@@ -527,31 +527,31 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteString(String aName, String aValue)
         {
-            if (aValue == null)
-            {
-                aValue = "";
-            }
             IntPtr name = Marshal.StringToHGlobalAnsi(aName);
 
             // Marshall string value to UTF-8
 
             byte[] array = Encoding.UTF8.GetBytes(aValue);
-            int size = (Marshal.SizeOf(array[0]) * array.Length) + 1;
-            IntPtr value = Marshal.AllocHGlobal(size);
+            IntPtr value = Marshal.AllocHGlobal(array.Length + 1);
             Marshal.Copy(array, 0, value, array.Length);
-            Marshal.WriteByte(value, size - 1, 0);
+            Marshal.WriteByte(value, array.Length, 0);
 
             int err = DvInvocationWriteStringStart(iHandle, name);
+
             if (err == 0)
             {
                 err = DvInvocationWriteString(iHandle, value);
             }
+
             Marshal.FreeHGlobal(value);
+
             if (err == 0)
             {
                 err = DvInvocationWriteStringEnd(iHandle, name);
             }
+
             Marshal.FreeHGlobal(name);
+
             CheckError(err);
         }
         /// <summary>
