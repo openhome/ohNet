@@ -1687,55 +1687,34 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyUpnpOrgDimming1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionSetLoadLevelTarget.Dispose();
-                iActionGetLoadLevelTarget.Dispose();
-                iActionGetLoadLevelStatus.Dispose();
-                iActionSetOnEffectLevel.Dispose();
-                iActionSetOnEffect.Dispose();
-                iActionGetOnEffectParameters.Dispose();
-                iActionStepUp.Dispose();
-                iActionStepDown.Dispose();
-                iActionStartRampUp.Dispose();
-                iActionStartRampDown.Dispose();
-                iActionStopRamp.Dispose();
-                iActionStartRampToLevel.Dispose();
-                iActionSetStepDelta.Dispose();
-                iActionGetStepDelta.Dispose();
-                iActionSetRampRate.Dispose();
-                iActionGetRampRate.Dispose();
-                iActionPauseRamp.Dispose();
-                iActionResumeRamp.Dispose();
-                iActionGetIsRamping.Dispose();
-                iActionGetRampPaused.Dispose();
-                iActionGetRampTime.Dispose();
-                iLoadLevelStatus.Dispose();
-                iStepDelta.Dispose();
-                iRampRate.Dispose();
-                iIsRamping.Dispose();
-                iRampPaused.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionSetLoadLevelTarget.Dispose();
+            iActionGetLoadLevelTarget.Dispose();
+            iActionGetLoadLevelStatus.Dispose();
+            iActionSetOnEffectLevel.Dispose();
+            iActionSetOnEffect.Dispose();
+            iActionGetOnEffectParameters.Dispose();
+            iActionStepUp.Dispose();
+            iActionStepDown.Dispose();
+            iActionStartRampUp.Dispose();
+            iActionStartRampDown.Dispose();
+            iActionStopRamp.Dispose();
+            iActionStartRampToLevel.Dispose();
+            iActionSetStepDelta.Dispose();
+            iActionGetStepDelta.Dispose();
+            iActionSetRampRate.Dispose();
+            iActionGetRampRate.Dispose();
+            iActionPauseRamp.Dispose();
+            iActionResumeRamp.Dispose();
+            iActionGetIsRamping.Dispose();
+            iActionGetRampPaused.Dispose();
+            iActionGetRampTime.Dispose();
+            iLoadLevelStatus.Dispose();
+            iStepDelta.Dispose();
+            iRampRate.Dispose();
+            iIsRamping.Dispose();
+            iRampPaused.Dispose();
         }
     }
 }

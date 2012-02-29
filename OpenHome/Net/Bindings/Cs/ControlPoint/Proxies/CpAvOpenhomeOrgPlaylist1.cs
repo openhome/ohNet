@@ -2039,60 +2039,39 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyAvOpenhomeOrgPlaylist1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionPlay.Dispose();
-                iActionPause.Dispose();
-                iActionStop.Dispose();
-                iActionNext.Dispose();
-                iActionPrevious.Dispose();
-                iActionSetRepeat.Dispose();
-                iActionRepeat.Dispose();
-                iActionSetShuffle.Dispose();
-                iActionShuffle.Dispose();
-                iActionSeekSecondAbsolute.Dispose();
-                iActionSeekSecondRelative.Dispose();
-                iActionSeekId.Dispose();
-                iActionSeekIndex.Dispose();
-                iActionTransportState.Dispose();
-                iActionId.Dispose();
-                iActionRead.Dispose();
-                iActionReadList.Dispose();
-                iActionInsert.Dispose();
-                iActionDeleteId.Dispose();
-                iActionDeleteAll.Dispose();
-                iActionTracksMax.Dispose();
-                iActionIdArray.Dispose();
-                iActionIdArrayChanged.Dispose();
-                iActionProtocolInfo.Dispose();
-                iTransportState.Dispose();
-                iRepeat.Dispose();
-                iShuffle.Dispose();
-                iId.Dispose();
-                iIdArray.Dispose();
-                iTracksMax.Dispose();
-                iProtocolInfo.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionPlay.Dispose();
+            iActionPause.Dispose();
+            iActionStop.Dispose();
+            iActionNext.Dispose();
+            iActionPrevious.Dispose();
+            iActionSetRepeat.Dispose();
+            iActionRepeat.Dispose();
+            iActionSetShuffle.Dispose();
+            iActionShuffle.Dispose();
+            iActionSeekSecondAbsolute.Dispose();
+            iActionSeekSecondRelative.Dispose();
+            iActionSeekId.Dispose();
+            iActionSeekIndex.Dispose();
+            iActionTransportState.Dispose();
+            iActionId.Dispose();
+            iActionRead.Dispose();
+            iActionReadList.Dispose();
+            iActionInsert.Dispose();
+            iActionDeleteId.Dispose();
+            iActionDeleteAll.Dispose();
+            iActionTracksMax.Dispose();
+            iActionIdArray.Dispose();
+            iActionIdArrayChanged.Dispose();
+            iActionProtocolInfo.Dispose();
+            iTransportState.Dispose();
+            iRepeat.Dispose();
+            iShuffle.Dispose();
+            iId.Dispose();
+            iIdArray.Dispose();
+            iTracksMax.Dispose();
+            iProtocolInfo.Dispose();
         }
     }
 }

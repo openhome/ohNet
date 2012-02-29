@@ -323,37 +323,16 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~<#=className#>()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-                iAction<#=a.name#>.Dispose();
+            iAction<#=a.name#>.Dispose();
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-                i<#=s.name#>.Dispose();
+            i<#=s.name#>.Dispose();
 <#  } #>
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
         }
     }
 }

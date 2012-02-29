@@ -1507,52 +1507,31 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyAvOpenhomeOrgRadio1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionPlay.Dispose();
-                iActionPause.Dispose();
-                iActionStop.Dispose();
-                iActionSeekSecondAbsolute.Dispose();
-                iActionSeekSecondRelative.Dispose();
-                iActionChannel.Dispose();
-                iActionSetChannel.Dispose();
-                iActionTransportState.Dispose();
-                iActionId.Dispose();
-                iActionSetId.Dispose();
-                iActionRead.Dispose();
-                iActionReadList.Dispose();
-                iActionIdArray.Dispose();
-                iActionIdArrayChanged.Dispose();
-                iActionChannelsMax.Dispose();
-                iActionProtocolInfo.Dispose();
-                iUri.Dispose();
-                iMetadata.Dispose();
-                iTransportState.Dispose();
-                iId.Dispose();
-                iIdArray.Dispose();
-                iChannelsMax.Dispose();
-                iProtocolInfo.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionPlay.Dispose();
+            iActionPause.Dispose();
+            iActionStop.Dispose();
+            iActionSeekSecondAbsolute.Dispose();
+            iActionSeekSecondRelative.Dispose();
+            iActionChannel.Dispose();
+            iActionSetChannel.Dispose();
+            iActionTransportState.Dispose();
+            iActionId.Dispose();
+            iActionSetId.Dispose();
+            iActionRead.Dispose();
+            iActionReadList.Dispose();
+            iActionIdArray.Dispose();
+            iActionIdArrayChanged.Dispose();
+            iActionChannelsMax.Dispose();
+            iActionProtocolInfo.Dispose();
+            iUri.Dispose();
+            iMetadata.Dispose();
+            iTransportState.Dispose();
+            iId.Dispose();
+            iIdArray.Dispose();
+            iChannelsMax.Dispose();
+            iProtocolInfo.Dispose();
         }
     }
 }

@@ -35,7 +35,8 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     iLock.Wait();
     iServer = &DviStack::ServerUpnp();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
-    Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetListChanged);
+    Functor functor = MakeFunctor(*this, &DviProtocolUpnp::HandleInterfaceChange);
+    iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
     iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
     std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
     NetworkAdapter* current = adapterList.CurrentAdapter("DviProtocolUpnp ctor");
@@ -58,6 +59,7 @@ DviProtocolUpnp::~DviProtocolUpnp()
 {
     delete iAliveTimer;
     iLock.Wait();
+    Stack::NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iAdapters.size(); i++) {
         delete iAdapters[i];
@@ -151,7 +153,7 @@ void DviProtocolUpnp::AddInterface(const NetworkAdapter& aAdapter)
     iAdapters.push_back(adapter);
 }
 
-void DviProtocolUpnp::SubnetListChanged()
+void DviProtocolUpnp::HandleInterfaceChange()
 {
     // !!!! untested
     if (!iDevice.Enabled()) {
@@ -162,7 +164,7 @@ void DviProtocolUpnp::SubnetListChanged()
 	std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
     iLock.Wait();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
-    NetworkAdapter* current = adapterList.CurrentAdapter("DviProtocolUpnp::SubnetListChanged");
+    NetworkAdapter* current = adapterList.CurrentAdapter("DviProtocolUpnp::HandleInterfaceChange");
     TUint i = 0;
     if (current != 0) {
         // remove listeners whose interface is no longer available
@@ -181,7 +183,7 @@ void DviProtocolUpnp::SubnetListChanged()
                 update = true;
             }
         }
-        current->RemoveRef("DviProtocolUpnp::SubnetListChanged");
+        current->RemoveRef("DviProtocolUpnp::HandleInterfaceChange");
     }
     else {
         std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();

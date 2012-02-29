@@ -307,7 +307,16 @@ namespace OpenHome.Net.Core
         /// <remarks>The default value is 55178.
         /// You should only rely on this (or another non-zero value) if you know the full
         /// set of services (plus their port requirements) running on a device.</remarks>
-        public uint DvUpnpWebServerPort { get; set; }
+        public uint DvUpnpWebServerPort
+        {
+            get
+            {
+                if (DvEnableBonjour)
+                    return 80;
+                return iDvUpnpWebServerPort;
+            }
+            set { iDvUpnpWebServerPort = value; }
+        }
 
         /// <summary>Get/set the tcp port number the WebSocket server will run on.</summary>
         /// <remarks>The default value is 0 (meaning that the OS will assign a port).
@@ -329,6 +338,8 @@ namespace OpenHome.Net.Core
         /// Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
         /// Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.</remarks>
         public bool DvEnableBonjour { get; set; }
+
+        private uint iDvUpnpWebServerPort;
 
         [DllImport ("ohNet")]
         static extern IntPtr OhNetInitParamsCreate();

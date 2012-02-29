@@ -2991,67 +2991,46 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyUpnpOrgRenderingControl2()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionListPresets.Dispose();
-                iActionSelectPreset.Dispose();
-                iActionGetBrightness.Dispose();
-                iActionSetBrightness.Dispose();
-                iActionGetContrast.Dispose();
-                iActionSetContrast.Dispose();
-                iActionGetSharpness.Dispose();
-                iActionSetSharpness.Dispose();
-                iActionGetRedVideoGain.Dispose();
-                iActionSetRedVideoGain.Dispose();
-                iActionGetGreenVideoGain.Dispose();
-                iActionSetGreenVideoGain.Dispose();
-                iActionGetBlueVideoGain.Dispose();
-                iActionSetBlueVideoGain.Dispose();
-                iActionGetRedVideoBlackLevel.Dispose();
-                iActionSetRedVideoBlackLevel.Dispose();
-                iActionGetGreenVideoBlackLevel.Dispose();
-                iActionSetGreenVideoBlackLevel.Dispose();
-                iActionGetBlueVideoBlackLevel.Dispose();
-                iActionSetBlueVideoBlackLevel.Dispose();
-                iActionGetColorTemperature.Dispose();
-                iActionSetColorTemperature.Dispose();
-                iActionGetHorizontalKeystone.Dispose();
-                iActionSetHorizontalKeystone.Dispose();
-                iActionGetVerticalKeystone.Dispose();
-                iActionSetVerticalKeystone.Dispose();
-                iActionGetMute.Dispose();
-                iActionSetMute.Dispose();
-                iActionGetVolume.Dispose();
-                iActionSetVolume.Dispose();
-                iActionGetVolumeDB.Dispose();
-                iActionSetVolumeDB.Dispose();
-                iActionGetVolumeDBRange.Dispose();
-                iActionGetLoudness.Dispose();
-                iActionSetLoudness.Dispose();
-                iActionGetStateVariables.Dispose();
-                iActionSetStateVariables.Dispose();
-                iLastChange.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionListPresets.Dispose();
+            iActionSelectPreset.Dispose();
+            iActionGetBrightness.Dispose();
+            iActionSetBrightness.Dispose();
+            iActionGetContrast.Dispose();
+            iActionSetContrast.Dispose();
+            iActionGetSharpness.Dispose();
+            iActionSetSharpness.Dispose();
+            iActionGetRedVideoGain.Dispose();
+            iActionSetRedVideoGain.Dispose();
+            iActionGetGreenVideoGain.Dispose();
+            iActionSetGreenVideoGain.Dispose();
+            iActionGetBlueVideoGain.Dispose();
+            iActionSetBlueVideoGain.Dispose();
+            iActionGetRedVideoBlackLevel.Dispose();
+            iActionSetRedVideoBlackLevel.Dispose();
+            iActionGetGreenVideoBlackLevel.Dispose();
+            iActionSetGreenVideoBlackLevel.Dispose();
+            iActionGetBlueVideoBlackLevel.Dispose();
+            iActionSetBlueVideoBlackLevel.Dispose();
+            iActionGetColorTemperature.Dispose();
+            iActionSetColorTemperature.Dispose();
+            iActionGetHorizontalKeystone.Dispose();
+            iActionSetHorizontalKeystone.Dispose();
+            iActionGetVerticalKeystone.Dispose();
+            iActionSetVerticalKeystone.Dispose();
+            iActionGetMute.Dispose();
+            iActionSetMute.Dispose();
+            iActionGetVolume.Dispose();
+            iActionSetVolume.Dispose();
+            iActionGetVolumeDB.Dispose();
+            iActionSetVolumeDB.Dispose();
+            iActionGetVolumeDBRange.Dispose();
+            iActionGetLoudness.Dispose();
+            iActionSetLoudness.Dispose();
+            iActionGetStateVariables.Dispose();
+            iActionSetStateVariables.Dispose();
+            iLastChange.Dispose();
         }
     }
 }

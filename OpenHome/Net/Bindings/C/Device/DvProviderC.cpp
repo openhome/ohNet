@@ -349,6 +349,9 @@ int32_t STDCALL DvInvocationWriteString(DvInvocationC aInvocation, const char* a
     catch (WriterError&) {
         return -1;
     }
+    catch (ParameterValidationError&) {
+        return -1;
+    }
     return 0;
 }
 

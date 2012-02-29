@@ -481,7 +481,13 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
        filtering here.
        This should be reconsidered if we ever add more clients of SsdpListenerMulticast */
     TBool reachable = false;
-    Uri uri(aLocation);
+    Uri uri;
+    try {
+        uri.Replace(aLocation);
+    }
+    catch (UriError&) {
+        return false;
+    }
     iLock.Wait();
     Endpoint endpt(0, uri.Host());
     NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");

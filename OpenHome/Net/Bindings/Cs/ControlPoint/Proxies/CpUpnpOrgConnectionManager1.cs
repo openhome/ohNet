@@ -677,37 +677,16 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyUpnpOrgConnectionManager1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionGetProtocolInfo.Dispose();
-                iActionPrepareForConnection.Dispose();
-                iActionConnectionComplete.Dispose();
-                iActionGetCurrentConnectionIDs.Dispose();
-                iActionGetCurrentConnectionInfo.Dispose();
-                iSourceProtocolInfo.Dispose();
-                iSinkProtocolInfo.Dispose();
-                iCurrentConnectionIDs.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionGetProtocolInfo.Dispose();
+            iActionPrepareForConnection.Dispose();
+            iActionConnectionComplete.Dispose();
+            iActionGetCurrentConnectionIDs.Dispose();
+            iActionGetCurrentConnectionInfo.Dispose();
+            iSourceProtocolInfo.Dispose();
+            iSinkProtocolInfo.Dispose();
+            iCurrentConnectionIDs.Dispose();
         }
     }
 }

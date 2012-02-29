@@ -885,7 +885,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetAVTransportURI", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -900,9 +900,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetAVTransportURI", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -936,7 +935,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetNextAVTransportURI", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -951,9 +950,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetNextAVTransportURI", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -992,7 +990,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetMediaInfo", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1016,9 +1014,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetMediaInfo", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1058,7 +1055,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetMediaInfo_Ext", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1083,9 +1080,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetMediaInfo_Ext", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1118,7 +1114,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetTransportInfo", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1136,9 +1132,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetTransportInfo", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1176,7 +1171,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetPositionInfo", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1199,9 +1194,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetPositionInfo", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1234,7 +1228,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetDeviceCapabilities", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1252,9 +1246,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetDeviceCapabilities", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1286,7 +1279,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetTransportSettings", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1303,9 +1296,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetTransportSettings", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1335,7 +1327,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Stop", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1350,9 +1342,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Stop", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1384,7 +1375,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Play", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1399,9 +1390,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Play", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1431,7 +1421,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Pause", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1446,9 +1436,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Pause", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1478,7 +1467,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Record", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1493,9 +1482,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Record", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1529,7 +1517,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Seek", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1544,9 +1532,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Seek", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1576,7 +1563,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Next", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1591,9 +1578,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Next", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1623,7 +1609,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Previous", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1638,9 +1624,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Previous", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1672,7 +1657,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetPlayMode", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1687,9 +1672,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetPlayMode", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1721,7 +1705,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetRecordQualityMode", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1736,9 +1720,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetRecordQualityMode", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1769,7 +1752,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetCurrentTransportActions", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1785,9 +1768,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetCurrentTransportActions", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1818,7 +1800,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetDRMState", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1834,9 +1816,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetDRMState", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1869,7 +1850,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetStateVariables", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1885,9 +1866,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetStateVariables", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1926,7 +1906,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetStateVariables", e.TargetSite.Name);
                 Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
@@ -1942,9 +1922,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetStateVariables", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1954,26 +1933,8 @@ namespace OpenHome.Net.Device.Providers
         /// </summary>
         public virtual void Dispose()
         {
-            DoDispose();
-            GC.SuppressFinalize(this);
-        }
-
-        ~DvProviderUpnpOrgAVTransport2()
-        {
-            DoDispose();
-        }
-
-        private void DoDispose()
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProvider();
-                iHandle = IntPtr.Zero;
-            }
+            DisposeProvider();
+            iHandle = IntPtr.Zero;
             iGch.Free();
         }
     }

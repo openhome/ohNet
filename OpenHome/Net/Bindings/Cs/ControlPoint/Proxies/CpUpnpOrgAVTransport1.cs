@@ -1589,47 +1589,26 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyUpnpOrgAVTransport1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionSetAVTransportURI.Dispose();
-                iActionSetNextAVTransportURI.Dispose();
-                iActionGetMediaInfo.Dispose();
-                iActionGetTransportInfo.Dispose();
-                iActionGetPositionInfo.Dispose();
-                iActionGetDeviceCapabilities.Dispose();
-                iActionGetTransportSettings.Dispose();
-                iActionStop.Dispose();
-                iActionPlay.Dispose();
-                iActionPause.Dispose();
-                iActionRecord.Dispose();
-                iActionSeek.Dispose();
-                iActionNext.Dispose();
-                iActionPrevious.Dispose();
-                iActionSetPlayMode.Dispose();
-                iActionSetRecordQualityMode.Dispose();
-                iActionGetCurrentTransportActions.Dispose();
-                iLastChange.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionSetAVTransportURI.Dispose();
+            iActionSetNextAVTransportURI.Dispose();
+            iActionGetMediaInfo.Dispose();
+            iActionGetTransportInfo.Dispose();
+            iActionGetPositionInfo.Dispose();
+            iActionGetDeviceCapabilities.Dispose();
+            iActionGetTransportSettings.Dispose();
+            iActionStop.Dispose();
+            iActionPlay.Dispose();
+            iActionPause.Dispose();
+            iActionRecord.Dispose();
+            iActionSeek.Dispose();
+            iActionNext.Dispose();
+            iActionPrevious.Dispose();
+            iActionSetPlayMode.Dispose();
+            iActionSetRecordQualityMode.Dispose();
+            iActionGetCurrentTransportActions.Dispose();
+            iLastChange.Dispose();
         }
     }
 }

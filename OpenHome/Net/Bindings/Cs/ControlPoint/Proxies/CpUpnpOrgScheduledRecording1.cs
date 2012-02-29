@@ -1626,48 +1626,27 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DoDispose(true);
-        }
-
-        ~CpProxyUpnpOrgScheduledRecording1()
-        {
-            DoDispose(false);
-        }
-
-        private void DoDispose(bool aDisposing)
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                DisposeProxy();
-                iHandle = IntPtr.Zero;
-                iActionGetSortCapabilities.Dispose();
-                iActionGetPropertyList.Dispose();
-                iActionGetAllowedValues.Dispose();
-                iActionGetStateUpdateID.Dispose();
-                iActionBrowseRecordSchedules.Dispose();
-                iActionBrowseRecordTasks.Dispose();
-                iActionCreateRecordSchedule.Dispose();
-                iActionDeleteRecordSchedule.Dispose();
-                iActionGetRecordSchedule.Dispose();
-                iActionEnableRecordSchedule.Dispose();
-                iActionDisableRecordSchedule.Dispose();
-                iActionDeleteRecordTask.Dispose();
-                iActionGetRecordTask.Dispose();
-                iActionEnableRecordTask.Dispose();
-                iActionDisableRecordTask.Dispose();
-                iActionResetRecordTask.Dispose();
-                iActionGetRecordScheduleConflicts.Dispose();
-                iActionGetRecordTaskConflicts.Dispose();
-                iLastChange.Dispose();
-            }
-            if (aDisposing)
-            {
-                GC.SuppressFinalize(this);
-            }
+            DisposeProxy();
+            iHandle = IntPtr.Zero;
+            iActionGetSortCapabilities.Dispose();
+            iActionGetPropertyList.Dispose();
+            iActionGetAllowedValues.Dispose();
+            iActionGetStateUpdateID.Dispose();
+            iActionBrowseRecordSchedules.Dispose();
+            iActionBrowseRecordTasks.Dispose();
+            iActionCreateRecordSchedule.Dispose();
+            iActionDeleteRecordSchedule.Dispose();
+            iActionGetRecordSchedule.Dispose();
+            iActionEnableRecordSchedule.Dispose();
+            iActionDisableRecordSchedule.Dispose();
+            iActionDeleteRecordTask.Dispose();
+            iActionGetRecordTask.Dispose();
+            iActionEnableRecordTask.Dispose();
+            iActionDisableRecordTask.Dispose();
+            iActionResetRecordTask.Dispose();
+            iActionGetRecordScheduleConflicts.Dispose();
+            iActionGetRecordTaskConflicts.Dispose();
+            iLastChange.Dispose();
         }
     }
 }
