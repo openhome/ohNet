@@ -54,7 +54,7 @@ ohnet.longpolling = function (clientId,nodeUdn,options) {
 */
 ohnet.longpolling.prototype.subscribe = function (service,firstSubscription) {
 	var _this = this;
-	if (this.debug) { console.log('>> Subscribe'); }
+	if (this.debug) { console.log('>> Subscribe' + ' : No Services: ' + firstSubscription); }
 	var srv = service;
 	this.proxy.Subscribe(this.clientId,service.udn,service.serviceName,this.subscriptionTimeoutSeconds,
 		function(result)
@@ -107,6 +107,7 @@ ohnet.longpolling.prototype.propertyUpdate = function () {
 	if(this.pollingStarted)
 	{
 		this.proxy.GetPropertyUpdates(this.clientId, function(results) {
+            if (this.debug) { console.log('<< GetPropertyUpdates'); }
 			if (window.DOMParser) { // NON-IE
 	            var parser = new DOMParser();
 	            var xmlDoc = parser.parseFromString(results.Updates, "text/xml");
