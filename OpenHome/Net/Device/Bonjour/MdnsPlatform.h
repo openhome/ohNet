@@ -51,8 +51,8 @@ private:
     static void SetPort(mDNSIPPort& aPort, TUint aValue);
     static void SetDomainLabel(domainlabel& aLabel, const TChar* aBuffer);
     static void SetDomainName(domainname& aName, const TChar* aBuffer);
-    static void InitCallback(mDNS* aCore, Status aStatus);
-    static void ServiceCallback(mDNS* aCore, ServiceRecordSet* aRecordSet, Status aStatus);
+    static void InitCallback(mDNS* aCore, mStatus aStatus);
+    static void ServiceCallback(mDNS* aCore, ServiceRecordSet* aRecordSet, mStatus aStatus);
 private:
     class Nif : INonCopyable
     {
