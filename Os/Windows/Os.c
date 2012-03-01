@@ -108,7 +108,7 @@ typedef struct OsStackTrace
     SYMBOL_INFO* iSymbol;
 } OsStackTrace;
 
-#define STACK_TRACE_ENABLE
+//#define STACK_TRACE_ENABLE
 
 THandle OsStackTraceInitialise()
 {
@@ -150,6 +150,8 @@ uint32_t OsStackTraceNumEntries(THandle aStackTrace)
 const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
 {
 #ifndef STACK_TRACE_ENABLE
+    aStackTrace = aStackTrace;
+    aIndex = aIndex;
     return NULL;
 #else
     OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
