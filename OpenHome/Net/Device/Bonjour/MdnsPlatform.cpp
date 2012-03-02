@@ -325,14 +325,14 @@ void MdnsPlatform::RenameAndReregisterService(TUint aHandle, const TChar* aName)
     LOG(kBonjour, "Bonjour             RenameService - Complete\n");
 }
 
-void MdnsPlatform::InitCallback(mDNS* m, Status aStatus)
+void MdnsPlatform::InitCallback(mDNS* m, mStatus aStatus)
 {
     LOG(kBonjour, "Bonjour             InitCallback\n");
     m->mDNSPlatformStatus = aStatus;
     ASSERT(aStatus == mStatus_NoError);
 }
 
-void MdnsPlatform::ServiceCallback(mDNS* /*m*/, ServiceRecordSet* /*aRecordSet*/, Status /*aStatus*/)
+void MdnsPlatform::ServiceCallback(mDNS* /*m*/, ServiceRecordSet* /*aRecordSet*/, mStatus /*aStatus*/)
 {
     LOG(kBonjour, "Bonjour             ServiceCallback\n");
 }

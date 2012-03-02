@@ -108,13 +108,17 @@ typedef struct OsStackTrace
     SYMBOL_INFO* iSymbol;
 } OsStackTrace;
 
+//#define STACK_TRACE_ENABLE
+
 THandle OsStackTraceInitialise()
 {
     OsStackTrace* stackTrace = (OsStackTrace*)calloc(sizeof(OsStackTrace), 1);
+#ifdef STACK_TRACE_ENABLE
     if (stackTrace == NULL) {
         return kHandleNull;
     }
     stackTrace->iCount = CaptureStackBackTrace(0, 100, stackTrace->iStack, NULL);
+#endif /* STACK_TRACE_ENABLE */
     return stackTrace;
 }
 
@@ -145,6 +149,11 @@ uint32_t OsStackTraceNumEntries(THandle aStackTrace)
 
 const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
 {
+#ifndef STACK_TRACE_ENABLE
+    aStackTrace = aStackTrace;
+    aIndex = aIndex;
+    return NULL;
+#else
     OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
     if (stackTrace->iSymbol == NULL) {
         stackTrace->iSymbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256, 1);
@@ -156,6 +165,7 @@ const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
     }
     SymFromAddr(gDebugSymbolHandle, (DWORD64)(stackTrace->iStack[aIndex]), 0, stackTrace->iSymbol);
     return stackTrace->iSymbol->Name;
+#endif
 }
 
 void OsStackTraceFinalise(THandle aStackTrace)
