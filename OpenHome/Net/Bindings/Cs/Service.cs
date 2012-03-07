@@ -41,7 +41,7 @@ namespace OpenHome.Net.Core
         /// <param name="aStep">Gap between allowed values</param>
         public unsafe ParameterInt(String aName, int aMinValue = Int32.MinValue, int aMaxValue = Int32.MaxValue, int aStep = 1)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateInt(name, aMinValue, aMaxValue, aStep);
             Marshal.FreeHGlobal(name);
         }
@@ -64,7 +64,7 @@ namespace OpenHome.Net.Core
         /// <param name="aStep">Gap between allowed values</param>
         public unsafe ParameterUint(String aName, uint aMinValue = 0, uint aMaxValue = uint.MaxValue, uint aStep = 1)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateUint(name, aMinValue, aMaxValue, aStep);
             Marshal.FreeHGlobal(name);
         }
@@ -84,7 +84,7 @@ namespace OpenHome.Net.Core
         /// <param name="aName">Parameter name</param>
         public unsafe ParameterBool(String aName)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateBool(name);
             Marshal.FreeHGlobal(name);
         }
@@ -105,7 +105,7 @@ namespace OpenHome.Net.Core
         /// <param name="aAllowedValues">List of allowed values for the string</param>
         public unsafe ParameterString(String aName, List<String> aAllowedValues)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             IntPtr[] allowed = aAllowedValues.Select<string, IntPtr>(Marshal.StringToHGlobalAnsi).ToArray();
             fixed (IntPtr* pAllowed = allowed)
             {
@@ -133,7 +133,7 @@ namespace OpenHome.Net.Core
         /// <param name="aName">Parameter name</param>
         public unsafe ParameterBinary(String aName)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateBinary(name);
             Marshal.FreeHGlobal(name);
         }
@@ -146,7 +146,7 @@ namespace OpenHome.Net.Core
 
         public unsafe ParameterRelated(String aName, OpenHome.Net.Core.Property aProperty)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateRelated(name, aProperty.Handle());
             Marshal.FreeHGlobal(name);
         }
@@ -240,7 +240,7 @@ namespace OpenHome.Net.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServicePropertyCreateIntCp(name, iCallbackValueChanged, ptr);
             Marshal.FreeHGlobal(name);
         }
@@ -300,7 +300,7 @@ namespace OpenHome.Net.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServicePropertyCreateUintCp(name, iCallbackValueChanged, ptr);
             Marshal.FreeHGlobal(name);
         }
@@ -360,7 +360,7 @@ namespace OpenHome.Net.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServicePropertyCreateBoolCp(name, iCallbackValueChanged, ptr);
             Marshal.FreeHGlobal(name);
         }
@@ -424,7 +424,7 @@ namespace OpenHome.Net.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServicePropertyCreateStringCp(name, iCallbackValueChanged, ptr);
             Marshal.FreeHGlobal(name);
         }
@@ -459,7 +459,7 @@ namespace OpenHome.Net.Core
         /// <returns>True if the property's value was changed; false otherwise</returns>
         public bool SetValue(string aValue)
         {
-            IntPtr val = Marshal.StringToHGlobalAnsi(aValue);
+            IntPtr val = InteropUtils.StringToHGlobalUtf8(aValue);
             uint changed = ServicePropertySetValueString(iHandle, val);
             Marshal.FreeHGlobal(val);
             return (changed != 0);
@@ -491,7 +491,7 @@ namespace OpenHome.Net.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServicePropertyCreateBinaryCp(name, iCallbackValueChanged, ptr);
             Marshal.FreeHGlobal(name);
         }
@@ -566,7 +566,7 @@ namespace OpenHome.Net.Core
         /// <param name="aName">Action name</param>
         public unsafe Action(String aName)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceActionCreate(name);
             Marshal.FreeHGlobal(name);
             iInputParameters = new List<Parameter>();

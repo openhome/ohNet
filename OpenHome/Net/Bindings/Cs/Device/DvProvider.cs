@@ -75,8 +75,8 @@ namespace OpenHome.Net.Device
         /// <param name="aVersion">Version number of the service</param>
         protected unsafe DvProvider(DvDevice aDevice, String aDomain, String aType, uint aVersion)
         {
-            IntPtr domain = Marshal.StringToHGlobalAnsi(aDomain);
-            IntPtr type = Marshal.StringToHGlobalAnsi(aType);
+            IntPtr domain = InteropUtils.StringToHGlobalUtf8(aDomain);
+            IntPtr type = InteropUtils.StringToHGlobalUtf8(aType);
             iHandle = DvProviderCreate(aDevice.Handle(), domain, type, aVersion);
             Marshal.FreeHGlobal(type);
             Marshal.FreeHGlobal(domain);
@@ -186,7 +186,7 @@ namespace OpenHome.Net.Device
         protected unsafe bool SetPropertyString(PropertyString aProperty, String aValue)
         {
             uint changed;
-            IntPtr value = Marshal.StringToHGlobalAnsi(aValue);
+            IntPtr value = InteropUtils.StringToHGlobalUtf8(aValue);
             int err = DvProviderSetPropertyString(iHandle, aProperty.Handle(), value, &changed);
             Marshal.FreeHGlobal(value);
             if (err != 0)
@@ -366,7 +366,7 @@ namespace OpenHome.Net.Device
         /// <returns>Value of the input argument</returns>
         public unsafe int ReadInt(String aName)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             int val;
             int err = DvInvocationReadInt(iHandle, name, &val);
             Marshal.FreeHGlobal(name);
@@ -380,7 +380,7 @@ namespace OpenHome.Net.Device
         /// <returns>Value of the input argument</returns>
         public unsafe uint ReadUint(String aName)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             uint val;
             int err = DvInvocationReadUint(iHandle, name, &val);
             Marshal.FreeHGlobal(name);
@@ -394,7 +394,7 @@ namespace OpenHome.Net.Device
         /// <returns>Value of the input argument</returns>
         public unsafe bool ReadBool(String aName)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             uint val;
             int err = DvInvocationReadBool(iHandle, name, &val);
             Marshal.FreeHGlobal(name);
@@ -408,7 +408,7 @@ namespace OpenHome.Net.Device
         /// <returns>Value of the input argument</returns>
         public unsafe String ReadString(String aName)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             IntPtr cStr;
             int err = DvInvocationReadString(iHandle, name, &cStr);
             Marshal.FreeHGlobal(name);
@@ -435,7 +435,7 @@ namespace OpenHome.Net.Device
         /// <returns>Value of the input argument</returns>
         public unsafe byte[] ReadBinary(String aName)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             IntPtr data;
             uint len;
             int err = DvInvocationReadBinary(iHandle, name, &data, &len);
@@ -469,7 +469,7 @@ namespace OpenHome.Net.Device
         /// <param name="aDescription">Error description</param>
         public unsafe void ReportError(uint aCode, String aDescription)
         {
-            IntPtr desc = Marshal.StringToHGlobalAnsi(aDescription);
+            IntPtr desc = InteropUtils.StringToHGlobalUtf8(aDescription);
             // no point in propogating any error - client code can't cope with error reporting failing
             DvInvocationReportError(iHandle, aCode, desc);
             Marshal.FreeHGlobal(desc);
@@ -490,7 +490,7 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteInt(String aName, int aValue)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             int err = DvInvocationWriteInt(iHandle, name, aValue);
             Marshal.FreeHGlobal(name);
             CheckError(err);
@@ -502,7 +502,7 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteUint(String aName, uint aValue)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             int err = DvInvocationWriteUint(iHandle, name, aValue);
             Marshal.FreeHGlobal(name);
             CheckError(err);
@@ -514,7 +514,7 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteBool(String aName, bool aValue)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             uint val = (aValue? 1u : 0u);
             int err = DvInvocationWriteBool(iHandle, name, val);
             Marshal.FreeHGlobal(name);
@@ -527,31 +527,15 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteString(String aName, String aValue)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
-
-            // Marshall string value to UTF-8
-
-            byte[] array = Encoding.UTF8.GetBytes(aValue);
-            IntPtr value = Marshal.AllocHGlobal(array.Length + 1);
-            Marshal.Copy(array, 0, value, array.Length);
-            Marshal.WriteByte(value, array.Length, 0);
-
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
+            IntPtr value = InteropUtils.StringToHGlobalUtf8(aValue);
             int err = DvInvocationWriteStringStart(iHandle, name);
-
             if (err == 0)
-            {
                 err = DvInvocationWriteString(iHandle, value);
-            }
-
             Marshal.FreeHGlobal(value);
-
             if (err == 0)
-            {
                 err = DvInvocationWriteStringEnd(iHandle, name);
-            }
-
             Marshal.FreeHGlobal(name);
-
             CheckError(err);
         }
         /// <summary>
@@ -561,7 +545,7 @@ namespace OpenHome.Net.Device
         /// <param name="aData">Value of the output argument</param>
         public unsafe void WriteBinary(String aName, byte[] aData)
         {
-            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             int err = DvInvocationWriteBinaryStart(iHandle, name);
             if (err == 0)
             {

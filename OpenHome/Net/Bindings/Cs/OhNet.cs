@@ -129,7 +129,7 @@ namespace OpenHome.Net.Core
         /// Each call to AddRef() must later have exactly one matching call to RemoveRef().</remarks>
         public void AddRef(string aCookie)
         {
-            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            IntPtr cookie = InteropUtils.StringToHGlobalUtf8(aCookie);
             OhNetNetworkAdapterAddRef(iHandle, cookie);
             AddManagedCookie(aCookie, cookie);
         }
@@ -764,6 +764,18 @@ namespace OpenHome.Net.Core
                 iIsDisposed = true;
                 OhNetLibraryClose();
             }
+        }
+    }
+
+    internal class InteropUtils
+    {
+        internal static IntPtr StringToHGlobalUtf8(string aStr)
+        {
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(aStr);
+            IntPtr ptr = Marshal.AllocHGlobal(bytes.Length + 1);
+            Marshal.Copy(bytes, 0, ptr, bytes.Length);
+            Marshal.WriteByte(ptr, bytes.Length, (byte)0);
+            return ptr;
         }
     }
 }

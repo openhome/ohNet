@@ -56,7 +56,7 @@ namespace OpenHome.Net.Core
         /// <returns>Network adapter.  Or null if no subnet is selected or we're running the device stack on all subnets.</returns>
         public static NetworkAdapter CurrentAdapter(string aCookie)
         {
-            IntPtr cookie = Marshal.StringToHGlobalAnsi(aCookie);
+            IntPtr cookie = InteropUtils.StringToHGlobalUtf8(aCookie);
             IntPtr nif = OhNetCurrentSubnetAdapter(cookie);
             if (nif == IntPtr.Zero)
                 return null;
