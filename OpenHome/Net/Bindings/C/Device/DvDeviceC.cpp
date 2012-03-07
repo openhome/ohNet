@@ -114,6 +114,19 @@ const char* STDCALL DvDeviceUdn(DvDeviceC aDevice)
 	return (const char*)DviDeviceC::DeviceFromHandle(aDevice)->Udn().Ptr();
 }
 
+void STDCALL DvDeviceGetUdn(DvDeviceC aDevice, const char** aUdn, uint32_t* aLen)
+{
+    Brn udn(DviDeviceC::DeviceFromHandle(aDevice)->Udn());
+    if (udn.Bytes() == 0) {
+        *aUdn = NULL;
+        *aLen = 0;
+    }
+    else {
+        *aUdn = (const char*)udn.Ptr();
+        *aLen = udn.Bytes();
+    }
+}
+
 int32_t STDCALL DvDeviceEnabled(DvDeviceC aDevice)
 {
 	return (DviDeviceC::DeviceFromHandle(aDevice)->Enabled()? 1 : 0);
@@ -146,7 +159,7 @@ DvDeviceC STDCALL DvDeviceStandardCreateNoResources(const char* aUdn)
 	return (DvDeviceC)wrapper;
 }
 
-char* STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle aAdapter)
+char* STDCALL DvDeviceStandardResourceManagerUri(DvDeviceC aDevice, THandle aAdapter)
 {
     Brh uri;
     NetworkAdapter* nif = (NetworkAdapter*)aAdapter;
@@ -158,6 +171,22 @@ char* STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle a
     else {
         Brhz uriz(uri);
         return (char*)uriz.Transfer();
+    }
+}
+
+void STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle aAdapter, char** aUri, uint32_t* aLen)
+{
+    Brh uri;
+    NetworkAdapter* nif = (NetworkAdapter*)aAdapter;
+    ASSERT(nif != NULL);
+    reinterpret_cast<DvDeviceStandard*>(DviDeviceC::DeviceFromHandle(aDevice))->GetResourceManagerUri(*nif, uri);
+    if (uri.Bytes() == 0) {
+        *aUri = NULL;
+        *aLen = 0;
+    }
+    else {
+        *aLen = uri.Bytes();
+        *aUri = (char*)uri.Extract();
     }
 }
 

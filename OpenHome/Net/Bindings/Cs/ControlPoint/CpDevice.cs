@@ -14,7 +14,7 @@ namespace OpenHome.Net.ControlPoint
     public class CpDevice
     {
         [DllImport ("ohNet", CharSet = CharSet.Ansi)]
-        static extern IntPtr CpDeviceCUdn(IntPtr aDevice);
+        static extern unsafe void CpDeviceCGetUdn(IntPtr aDevice, IntPtr* aUdn, uint* aLen);
         [DllImport ("ohNet")]
         static extern void CpDeviceCAddRef(IntPtr aDevice);
         [DllImport ("ohNet")]
@@ -40,11 +40,12 @@ namespace OpenHome.Net.ControlPoint
         /// Query the unique identifier associated with a device
         /// </summary>
         /// <returns>Device's (universally unique) name</returns>
-        public String Udn()
+        public unsafe String Udn()
         {
-            IntPtr ip = CpDeviceCUdn(iHandle);
-            String udn = Marshal.PtrToStringAnsi(ip);
-            return udn;
+            IntPtr ptr;
+            uint len;
+            CpDeviceCGetUdn(iHandle, &ptr, &len);
+            return InteropUtils.PtrToStringUtf8(ptr, len);
         }
         
         /// <summary>

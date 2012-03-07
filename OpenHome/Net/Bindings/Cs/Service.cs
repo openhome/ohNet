@@ -409,9 +409,9 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern IntPtr ServicePropertyCreateStringDv(IntPtr aParameterHandle);
         [DllImport("ohNet")]
-        static extern unsafe IntPtr ServicePropertyValueString(IntPtr aHandle);
+        static extern unsafe void ServicePropertyGetValueString(IntPtr aHandle, IntPtr* aData, uint* aLen);
         [DllImport("ohNet")]
-        static extern unsafe void OhNetFree(IntPtr aPtr);
+        static extern void OhNetFree(IntPtr aPtr);
         [DllImport("ohNet")]
         static extern uint ServicePropertySetValueString(IntPtr aHandle, IntPtr aValue);
 
@@ -446,9 +446,11 @@ namespace OpenHome.Net.Core
         /// <returns>String property value</returns>
         public unsafe String Value()
         {
-            IntPtr cStr = ServicePropertyValueString(iHandle);
-            String str = Marshal.PtrToStringAnsi(cStr);
-            OhNetFree(cStr);
+            IntPtr ptr;
+            uint len;
+            ServicePropertyGetValueString(iHandle, &ptr, &len);
+            String str = InteropUtils.PtrToStringUtf8(ptr, len);
+            OhNetFree(ptr);
             return str;
         }
 
@@ -554,7 +556,7 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void ServiceActionAddOutputParameter(IntPtr aAction, IntPtr aParameter);
         [DllImport("ohNet")]
-        static extern unsafe IntPtr ServiceActionName(IntPtr aAction);
+        static extern unsafe void ServiceActionGetName(IntPtr aAction, IntPtr* aName, uint* aLen);
 
         private IntPtr iHandle;
         private List<Parameter> iInputParameters;
@@ -619,8 +621,10 @@ namespace OpenHome.Net.Core
         /// <returns>Action name</returns>
         public unsafe String Name()
         {
-            IntPtr str = ServiceActionName(iHandle);
-            return Marshal.PtrToStringAnsi(str);
+            IntPtr str;
+            uint len;
+            ServiceActionGetName(iHandle, &str, &len);
+            return InteropUtils.PtrToStringUtf8(str, len);
         }
 
         internal IntPtr Handle()

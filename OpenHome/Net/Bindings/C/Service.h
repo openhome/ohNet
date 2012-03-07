@@ -293,6 +293,16 @@ DllExport uint32_t STDCALL ServicePropertyValueBool(ServiceProperty aProperty);
 DllExport const char* STDCALL ServicePropertyValueString(ServiceProperty aProperty);
 
 /**
+ * Read the current value of a string property
+ *
+ * @param[in]  aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
+ * @param[out] aData      Copy of the current value of the property.  Ownership is passed to the caller.
+ *                        Use OhNetFree to later free it
+ * @param[out] aLen       Number of bytes of data returned
+ */
+DllExport void STDCALL ServicePropertyGetValueString(ServiceProperty aProperty, const char** aData, uint32_t* aLen);
+
+/**
  * Read the current value of a binary property
  *
  * @param[in]  aProperty  Returned by ServicePropertyCreateBinary[Cp|Dv]
@@ -408,6 +418,17 @@ DllExport void STDCALL ServiceActionAddOutputParameter(ServiceAction aAction, Se
  * @return   The action name
  */
 DllExport const char* STDCALL ServiceActionName(ServiceAction aAction);
+
+/**
+ * Query the action name
+ *
+ * @param[in] aAction     Returned by ServiceActionCreate
+ * @param[out] aName      Copy of the current value of the property.  Ownership remains with aAction.
+ * @param[out] aLen       Number of bytes of data returned
+ *
+ * @return   The action name
+ */
+DllExport void STDCALL ServiceActionGetName(ServiceAction aAction, const char** aName, uint32_t* aLen);
 
 /* @} */
 

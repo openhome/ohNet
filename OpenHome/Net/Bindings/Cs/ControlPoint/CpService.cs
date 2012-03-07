@@ -179,7 +179,7 @@ namespace OpenHome.Net.ControlPoint
         [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateStringOutput(IntPtr aParameter);
         [DllImport("ohNet")]
-        static extern unsafe char* ActionArgumentValueString(IntPtr aHandle);
+        static extern unsafe void ActionArgumentGetValueString(IntPtr aHandle, IntPtr* aData, uint* aLen);
         [DllImport("ohNet")]
         static extern unsafe void OhNetFree(IntPtr aPtr);
 
@@ -217,9 +217,11 @@ namespace OpenHome.Net.ControlPoint
         /// <returns>Current value of the argument</returns>
         unsafe String Value()
         {
-            char* cStr = ActionArgumentValueString(iHandle);
-            String ret = Marshal.PtrToStringAnsi((IntPtr)cStr);
-            OhNetFree((IntPtr)cStr);
+            IntPtr ptr;
+            uint len;
+            ActionArgumentGetValueString(iHandle, &ptr, &len);
+            String ret = InteropUtils.PtrToStringUtf8(ptr, len);
+            OhNetFree(ptr);
             return ret;
         }
     }
@@ -305,7 +307,7 @@ namespace OpenHome.Net.ControlPoint
         [DllImport("ohNet")]
         static extern unsafe uint CpInvocationOutputBool(IntPtr aInvocation, uint aIndex);
         [DllImport("ohNet")]
-        static extern unsafe IntPtr CpInvocationOutputString(IntPtr aInvocation, uint aIndex);
+        static extern unsafe void CpInvocationGetOutputString(IntPtr aInvocation, uint aIndex, IntPtr* aData, uint* aLen);
         [DllImport("ohNet")]
         static extern unsafe void CpInvocationGetOutputBinary(IntPtr aInvocation, uint aIndex, IntPtr* aData, uint* aLen);
 
@@ -415,13 +417,13 @@ namespace OpenHome.Net.ControlPoint
         /// <returns>Value of the string output argument</returns>
         public static unsafe String OutputString(IntPtr aHandle, uint aIndex)
         {
-            IntPtr cStr = CpInvocationOutputString(aHandle, aIndex);
-            if (cStr == IntPtr.Zero)
-            {
+            IntPtr ptr;
+            uint len;
+            CpInvocationGetOutputString(aHandle, aIndex, &ptr, &len);
+            if (ptr == IntPtr.Zero)
                 return null;
-            }
-            String str = Marshal.PtrToStringAnsi(cStr);
-            OhNetFree(cStr);
+            String str = InteropUtils.PtrToStringUtf8(ptr, len);
+            OhNetFree(ptr);
             return str;
         }
 

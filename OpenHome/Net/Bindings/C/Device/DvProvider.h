@@ -220,8 +220,9 @@ DllExport void STDCALL DvInvocationGetAdapter(DvInvocationC aInvocation, TIpAddr
  *
  * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation.
  * @param[out] aPrefix      The prefix to resource uris.
+ * @param[out] aLen         Length (in bytes) of aPrefix.
  */
-DllExport void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const char** aPrefix);
+DllExport void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const char** aPrefix, uint32_t* aLen);
 
 /**
  * Begin reading (input arguments for) an invocation

@@ -14,6 +14,21 @@ const char* STDCALL CpDeviceCUdn(CpDeviceC aDevice)
     return (const char*)device->Udn().Ptr();
 }
 
+void STDCALL CpDeviceCGetUdn(CpDeviceC aDevice, const char** aUdn, uint32_t* aLen)
+{
+    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
+    ASSERT(device != NULL);
+    Brn udn(device->Udn());
+    if (udn.Bytes() == 0) {
+        *aUdn = NULL;
+        *aLen = 0;
+    }
+    else {
+        *aUdn = (const char*)udn.Ptr();
+        *aLen = udn.Bytes();
+    }
+}
+
 void STDCALL CpDeviceCAddRef(CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);

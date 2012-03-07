@@ -269,6 +269,18 @@ DllExport char* STDCALL ActionArgumentValueString(ActionArgument aArgument);
  *                        Use OhNetFree() to later destroy it.
  * @param[out] aLen       Length (in bytes) of aData
  */
+DllExport void STDCALL ActionArgumentGetValueString(ActionArgument aArgument, char** aData, uint32_t* aLen);
+
+/**
+ * Read the value of a binary argument.
+ *
+ * Only intended for use with output arguments inside the invocation completed callback.
+ *
+ * @param[in]  aArgument  Returned by ActionArgumentCreateBinaryOutput
+ * @param[out] aData      Current value of the argument.  Ownership passes to the client.
+ *                        Use OhNetFree() to later destroy it.
+ * @param[out] aLen       Length (in bytes) of aData
+ */
 DllExport void STDCALL ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** aData, uint32_t* aLen);
 
 /* @} */
@@ -343,6 +355,16 @@ DllExport uint32_t STDCALL CpInvocationOutputBool(CpInvocationC aInvocation, uin
  * @return  Value of the string output argument.  Ownership passes to the caller.  Use OhNetFree() to destroy this.
  */
 DllExport char* STDCALL CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIndex);
+
+/**
+ * Read the value of a string output argument.  Only intended for use inside the invocation completed callback.
+ *
+ * @param[in]  aInvocation  Returned by CpServiceInvocation
+ * @param[in]  aIndex       Zero-based index into array of output arguments.  Must refer to a binary argument.
+ * @param[out] aData        Value of the string output argument.  Ownership passes to the caller.  Use OhNetFree() to destroy this.
+ * @param[out] aLen         Length (in bytes) of aData
+ */
+DllExport void STDCALL CpInvocationGetOutputString(CpInvocationC aInvocation, uint32_t aIndex, char** aData, uint32_t* aLen);
 
 /**
  * Read the value of a binary output argument.  Only intended for use inside the invocation completed callback.

@@ -137,6 +137,22 @@ char* STDCALL ActionArgumentValueString(ActionArgument aArgument)
     return buf.Extract();
 }
 
+void STDCALL ActionArgumentGetValueString(ActionArgument aArgument, char** aData, uint32_t* aLen)
+{
+    ArgumentString* arg = reinterpret_cast<ArgumentString*>(aArgument);
+    ASSERT(arg != NULL);
+    Brh buf;
+    arg->TransferTo(buf);
+    if (buf.Bytes() == 0) {
+        *aData = NULL;
+        *aLen = 0;
+    }
+    else {
+        *aLen = buf.Bytes();
+        *aData = (char*)buf.Extract();
+    }
+}
+
 void STDCALL ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** aData, uint32_t* aLen)
 {
     ArgumentBinary* arg = reinterpret_cast<ArgumentBinary*>(aArgument);
@@ -210,6 +226,24 @@ char* STDCALL CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aInde
     Brh buf;
     arg->TransferTo(buf);
     return (char*)buf.Extract();
+}
+
+void STDCALL CpInvocationGetOutputString(CpInvocationC aInvocation, uint32_t aIndex, char** aData, uint32_t* aLen)
+{
+    Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
+    ASSERT(invocation != NULL);
+    Invocation::VectorArguments& args = invocation->OutputArguments();
+    ArgumentString* arg = static_cast<ArgumentString*>(args[aIndex]);
+    Brh buf;
+    arg->TransferTo(buf);
+    if (buf.Bytes() == 0) {
+        *aData = NULL;
+        *aLen = 0;
+    }
+    else {
+        *aLen = buf.Bytes();
+        *aData = buf.Extract();
+    }
 }
 
 void STDCALL CpInvocationGetOutputBinary(CpInvocationC aInvocation, uint32_t aIndex, char** aData, uint32_t* aLen)

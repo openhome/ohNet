@@ -121,6 +121,15 @@ DllExport void STDCALL DvDeviceDestroy(DvDeviceC aDevice);
 DllExport const char* STDCALL DvDeviceUdn(DvDeviceC aDevice);
 
 /**
+ * Query the (client-specified) unique device name
+ *
+ * @param[in]  aDevice  Handle returned by DvDeviceCreate[NoResources]
+ * @param[out] aUdn     The name passed to the c'tor.  Ownership remains with aDevice.
+ * @param[out] aLen     Length (in bytes) of aUdn.
+ */
+DllExport void STDCALL DvDeviceGetUdn(DvDeviceC aDevice, const char** aUdn, uint32_t* aLen);
+
+/**
  * Query whether a device is enabled
  *
  * @param[in] aDevice  Handle returned by DvDeviceCreate[NoResources]
@@ -208,7 +217,17 @@ DllExport DvDeviceC STDCALL DvDeviceStandardCreate(const char* aUdn, OhNetCallba
  *
  * @return  The base uri.  May be NULL if there is no resource manager.
  */
-DllExport char* STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle aAdapter);
+DllExport char* STDCALL DvDeviceStandardResourceManagerUri(DvDeviceC aDevice, THandle aAdapter);
+
+/**
+ * Query the base uri for the resource manager.
+ *
+ * @param[in]  aDevice   Handle returned by DvDeviceCreate[NoResources]
+ * @param[in]  aAdapter  The network adapter to return a uri for.
+ * @param[out] aUri      The base uri.  May be NULL if there is no resource manager.  Use OhNetFree to destroy.
+ * @param[out] aLen      Length (in bytes) of *aUri.
+ */
+DllExport void STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle aAdapter, char** aUri, uint32_t* aLen);
 
 /**
  * Query the number of languages accepted by the resource writer.

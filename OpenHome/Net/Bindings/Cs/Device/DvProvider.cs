@@ -267,7 +267,7 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern unsafe void DvInvocationGetAdapter(IntPtr aInvocation, uint* aAdapter);
         [DllImport("ohNet")]
-        static extern unsafe void DvInvocationGetResourceUriPrefix(IntPtr aInvocation, IntPtr* aPrefix);
+        static extern unsafe void DvInvocationGetResourceUriPrefix(IntPtr aInvocation, IntPtr* aPrefix, uint* aLen);
         [DllImport("ohNet")]
         static extern int DvInvocationReadStart(IntPtr aInvocation);
         [DllImport("ohNet")]
@@ -346,8 +346,9 @@ namespace OpenHome.Net.Device
         public unsafe string ResourceUriPrefix()
         {
             IntPtr cPrefix;
-            DvInvocationGetResourceUriPrefix(iHandle, &cPrefix);
-            String prefix = (cPrefix == IntPtr.Zero? "" : Marshal.PtrToStringAnsi(cPrefix));
+            uint len;
+            DvInvocationGetResourceUriPrefix(iHandle, &cPrefix, &len);
+            String prefix = InteropUtils.PtrToStringUtf8(cPrefix, len);
             return prefix;
         }
         /// <summary>

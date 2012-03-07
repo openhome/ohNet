@@ -239,7 +239,7 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern void DvDeviceDestroy(IntPtr aDevice);
         [DllImport("ohNet")]
-        static extern unsafe char* DvDeviceUdn(IntPtr aDevice);
+        static extern unsafe void DvDeviceGetUdn(IntPtr aDevice, IntPtr* aUdn, uint* aLen);
         [DllImport("ohNet")]
         static extern int DvDeviceEnabled(IntPtr aDevice);
         [DllImport("ohNet")]
@@ -284,8 +284,10 @@ namespace OpenHome.Net.Device
         /// <returns>The name passed to the c'tor</returns>
         public unsafe String Udn()
         {
-            IntPtr ip = (IntPtr)DvDeviceUdn(iHandle);
-            String udn = Marshal.PtrToStringAnsi(ip);
+            IntPtr ptr;
+            uint len;
+            DvDeviceGetUdn(iHandle, &ptr, &len);
+            String udn = InteropUtils.PtrToStringUtf8(ptr, len);
             return udn;
         }
         
@@ -397,7 +399,7 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern IntPtr DvDeviceStandardCreate(IntPtr aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern unsafe IntPtr DvDeviceStandardGetResourceManagerUri(IntPtr aDevice, IntPtr aAdapter);
+        static extern unsafe void DvDeviceStandardGetResourceManagerUri(IntPtr aDevice, IntPtr aAdapter, IntPtr* aUri, uint* aLen);
         [DllImport("ohNet")]
         static extern unsafe uint DvResourceWriterLanguageCount(IntPtr aHandle);
         [DllImport("ohNet")]
@@ -450,13 +452,15 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aAdapter">The network adapter to return a uri for.</param>
         /// <returns>The base uri.  May be null if there is no resource manager.</returns>
-        public string ResourceManagerUri(Core.NetworkAdapter aAdapter)
+        public unsafe string ResourceManagerUri(Core.NetworkAdapter aAdapter)
         {
-            IntPtr cStr = DvDeviceStandardGetResourceManagerUri(iHandle, aAdapter.Handle());
-            if (cStr == IntPtr.Zero)
+            IntPtr ptr;
+            uint len;
+            DvDeviceStandardGetResourceManagerUri(iHandle, aAdapter.Handle(), &ptr, &len);
+            if (ptr == IntPtr.Zero)
                 return null;
-            string uri = Marshal.PtrToStringAnsi(cStr);
-            OhNetFree(cStr);
+            string uri = InteropUtils.PtrToStringUtf8(ptr, len);
+            OhNetFree(ptr);
             return uri;
         }
 

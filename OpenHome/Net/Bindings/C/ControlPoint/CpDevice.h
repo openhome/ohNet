@@ -34,6 +34,15 @@ typedef THandle HandleCpDeviceList;
 DllExport const char* STDCALL CpDeviceCUdn(CpDeviceC aDevice);
 
 /**
+ * Read a device's udn (aka uuid, aka name)
+ *
+ * @param[in]  aDevice       Device originally returned to a 'added' version of DeviceListChanged
+ * @param[out] aUdn          const pointer to the udn.  Ownership remains with aDevice.
+ * @param[out] aLen          Length (in bytes) of aUdn
+ */
+DllExport void STDCALL CpDeviceCGetUdn(CpDeviceC aDevice, const char** aUdn, uint32_t* aLen);
+
+/**
  * Claim a reference to a device.
  *
  * Devices passed to DeviceListChanged cannot be used outside the callback

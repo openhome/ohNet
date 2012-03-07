@@ -6,6 +6,8 @@
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Private/Printer.h>
 
+#include <string.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
@@ -169,10 +171,16 @@ void STDCALL DvInvocationGetAdapter(DvInvocationC aInvocation, TIpAddress* aAdap
     *aAdapter = invocation->Adapter();
 }
 
-void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const char** aPrefix)
+void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const char** aPrefix, uint32_t* aLen)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     *aPrefix = invocation->ResourceUriPrefix();
+    if (*aPrefix == NULL) {
+        *aLen = 0;
+    }
+    else {
+        *aLen = strlen(*aPrefix);
+    }
 }
 
 int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation)

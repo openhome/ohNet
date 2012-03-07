@@ -134,6 +134,21 @@ const char* STDCALL ServicePropertyValueString(ServiceProperty aProperty)
     return buf.Transfer();
 }
 
+void STDCALL ServicePropertyGetValueString(ServiceProperty aProperty, const char** aData, uint32_t* aLen)
+{
+    PropertyString* prop = reinterpret_cast<PropertyString*>(aProperty);
+    ASSERT(prop != NULL);
+    Brhz buf(prop->Value());
+    if (buf.Bytes() == 0) {
+        *aData = NULL;
+        *aLen = 0;
+    }
+    else {
+        *aLen = buf.Bytes();
+        *aData = buf.Transfer();
+    }
+}
+
 void STDCALL ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen)
 {
     PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);
@@ -231,4 +246,19 @@ const char* STDCALL ServiceActionName(ServiceAction aAction)
     OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ASSERT(action != NULL);
     return (const char*)action->Name().Ptr();
+}
+
+void STDCALL ServiceActionGetName(ServiceAction aAction, const char** aName, uint32_t* aLen)
+{
+    OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
+    ASSERT(action != NULL);
+    Brn name(action->Name());
+    if (name.Bytes() == 0) {
+        *aName = NULL;
+        *aLen = 0;
+    }
+    else {
+        *aName = (const char*)name.Ptr();
+        *aLen = name.Bytes();
+    }
 }
