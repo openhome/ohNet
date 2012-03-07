@@ -106,7 +106,7 @@ namespace OpenHome.Net.Core
         public unsafe ParameterString(String aName, List<String> aAllowedValues)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
-            IntPtr[] allowed = aAllowedValues.Select<string, IntPtr>(Marshal.StringToHGlobalAnsi).ToArray();
+            IntPtr[] allowed = aAllowedValues.Select<string, IntPtr>(InteropUtils.StringToHGlobalUtf8).ToArray();
             fixed (IntPtr* pAllowed = allowed)
             {
                 iHandle = ServiceParameterCreateString(name, pAllowed, (uint)aAllowedValues.Count);
