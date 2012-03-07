@@ -274,9 +274,9 @@ namespace OpenHome.Net.ControlPoint
     public class CpDeviceListUpnpUuid : CpDeviceList
     {
         [DllImport ("ohNet", CharSet = CharSet.Ansi)]
-        static extern unsafe IntPtr CpDeviceListCreateUpnpUuid(char* aUuid,
-                                                             CallbackDevice aAdded, IntPtr aPtrAdded,
-                                                             CallbackDevice aRemoved, IntPtr aPtrRemoved);
+        static extern IntPtr CpDeviceListCreateUpnpUuid(IntPtr aUuid,
+                                                        CallbackDevice aAdded, IntPtr aPtrAdded,
+                                                        CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
         /// <summary>
         /// Constructor
@@ -293,10 +293,10 @@ namespace OpenHome.Net.ControlPoint
         {
             iAdded = aAdded;
             iRemoved = aRemoved;
-            char* uuid = (char*)Marshal.StringToHGlobalAnsi(aUuid).ToPointer();
+            IntPtr uuid = InteropUtils.StringToHGlobalUtf8(aUuid);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
             iHandle = CpDeviceListCreateUpnpUuid(uuid, iFnAdded, ptr, iFnRemoved, ptr);
-            Marshal.FreeHGlobal((IntPtr)uuid);
+            Marshal.FreeHGlobal(uuid);
         }
     }
 
@@ -306,9 +306,9 @@ namespace OpenHome.Net.ControlPoint
     public class CpDeviceListUpnpDeviceType : CpDeviceList
     {
         [DllImport ("ohNet", CharSet = CharSet.Ansi)]
-        static extern unsafe IntPtr CpDeviceListCreateUpnpDeviceType(char* aDomainName, char* aDeviceType, uint aVersion,
-                                                                   CallbackDevice aAdded, IntPtr aPtrAdded,
-                                                                   CallbackDevice aRemoved, IntPtr aPtrRemoved);
+        static extern IntPtr CpDeviceListCreateUpnpDeviceType(IntPtr aDomainName, IntPtr aDeviceType, uint aVersion,
+                                                              CallbackDevice aAdded, IntPtr aPtrAdded,
+                                                              CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
         /// <summary>
         /// Constructor
@@ -328,12 +328,12 @@ namespace OpenHome.Net.ControlPoint
         {
             iAdded = aAdded;
             iRemoved = aRemoved;
-            char* domain = (char*)Marshal.StringToHGlobalAnsi(aDomainName).ToPointer();
-            char* type = (char*)Marshal.StringToHGlobalAnsi(aDeviceType).ToPointer();
+            IntPtr domain = InteropUtils.StringToHGlobalUtf8(aDomainName);
+            IntPtr type = InteropUtils.StringToHGlobalUtf8(aDeviceType);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
             iHandle = CpDeviceListCreateUpnpDeviceType(domain, type, aVersion, iFnAdded, ptr, iFnRemoved, ptr);
-            Marshal.FreeHGlobal((IntPtr)domain);
-            Marshal.FreeHGlobal((IntPtr)type);
+            Marshal.FreeHGlobal(domain);
+            Marshal.FreeHGlobal(type);
         }
     }
 
@@ -343,9 +343,9 @@ namespace OpenHome.Net.ControlPoint
     public class CpDeviceListUpnpServiceType : CpDeviceList
     {
         [DllImport ("ohNet", CharSet = CharSet.Ansi)]
-        static extern unsafe IntPtr CpDeviceListCreateUpnpServiceType(char* aDomainName, char* aServiceType, uint aVersion,
-                                                                      CallbackDevice aAdded, IntPtr aPtrAdded,
-                                                                      CallbackDevice aRemoved, IntPtr aPtrRemoved);
+        static extern IntPtr CpDeviceListCreateUpnpServiceType(IntPtr aDomainName, IntPtr aServiceType, uint aVersion,
+                                                               CallbackDevice aAdded, IntPtr aPtrAdded,
+                                                               CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
         /// <summary>
         /// Constructor
@@ -365,12 +365,12 @@ namespace OpenHome.Net.ControlPoint
         {
             iAdded = aAdded;
             iRemoved = aRemoved;
-            char* domain = (char*)Marshal.StringToHGlobalAnsi(aDomainName).ToPointer();
-            char* type = (char*)Marshal.StringToHGlobalAnsi(aServiceType).ToPointer();
+            IntPtr domain = InteropUtils.StringToHGlobalUtf8(aDomainName);
+            IntPtr type = InteropUtils.StringToHGlobalUtf8(aServiceType);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
             iHandle = CpDeviceListCreateUpnpServiceType(domain, type, aVersion, iFnAdded, ptr, iFnRemoved, ptr);
-            Marshal.FreeHGlobal((IntPtr)domain);
-            Marshal.FreeHGlobal((IntPtr)type);
+            Marshal.FreeHGlobal(domain);
+            Marshal.FreeHGlobal(type);
         }
     }
 }

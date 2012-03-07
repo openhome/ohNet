@@ -46,7 +46,7 @@ namespace OpenHome.Net.ControlPoint
     public class CpProxy : ICpProxy
     {
         [DllImport("ohNet")]
-        static extern unsafe IntPtr CpProxyCreate(char* aDomain, char* aName, uint aVersion, IntPtr aDevice);
+        static extern IntPtr CpProxyCreate(IntPtr aDomain, IntPtr aName, uint aVersion, IntPtr aDevice);
         [DllImport("ohNet")]
         static extern void CpProxyDestroy(IntPtr Proxy);
         [DllImport("ohNet")]
@@ -123,11 +123,11 @@ namespace OpenHome.Net.ControlPoint
 
         protected unsafe CpProxy(String aDomain, String aName, uint aVersion, CpDevice aDevice)
         {
-            char* domain = (char*)Marshal.StringToHGlobalAnsi(aDomain);
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr domain = InteropUtils.StringToHGlobalUtf8(aDomain);
+            IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = CpProxyCreate(domain, name, aVersion, aDevice.Handle());
-            Marshal.FreeHGlobal((IntPtr)domain);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(domain);
+            Marshal.FreeHGlobal(name);
             IntPtr serviceHandle = CpProxyService(iHandle);
             iService = new CpService(serviceHandle);
             iGchProxy = GCHandle.Alloc(this);

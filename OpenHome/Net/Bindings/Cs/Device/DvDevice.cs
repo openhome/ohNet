@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
+using OpenHome.Net.Core;
 
 namespace OpenHome.Net.Device
 {
@@ -75,9 +76,9 @@ namespace OpenHome.Net.Device
         
         public unsafe void WriteResourceBegin(int aTotalBytes, string aMimeType)
         {
-            char* mimeType = (char*)Marshal.StringToHGlobalAnsi(aMimeType).ToPointer();
+            IntPtr mimeType = InteropUtils.StringToHGlobalUtf8(aMimeType);
             int err = iWriteBegin(iWriterData, aTotalBytes, mimeType);
-            Marshal.FreeHGlobal((IntPtr)mimeType);
+            Marshal.FreeHGlobal(mimeType);
             if (err != 0)
                 throw new ResourceWriterError();
         }
@@ -224,7 +225,7 @@ namespace OpenHome.Net.Device
         string Udn();
         bool Enabled();
         void SetEnabled();
-        void SetDisabled(Action aCompleted);
+        void SetDisabled(System.Action aCompleted);
         void GetAttribute(string aKey, out string aValue);
         void SetAttribute(string aKey, string aValue);
         //void SetXmlExtension(string aXml);
@@ -234,7 +235,7 @@ namespace OpenHome.Net.Device
     public class DvDevice : IDvDevice
     {
         [DllImport("ohNet")]
-        static extern unsafe IntPtr DvDeviceCreate(char* aUdn);
+        static extern IntPtr DvDeviceCreate(IntPtr aUdn);
         [DllImport("ohNet")]
         static extern void DvDeviceDestroy(IntPtr aDevice);
         [DllImport("ohNet")]
@@ -244,13 +245,13 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern void DvDeviceSetEnabled(IntPtr aDevice);
         [DllImport("ohNet")]
-        static extern unsafe void DvDeviceSetDisabled(IntPtr aDevice, DisabledCallback aCompleted, IntPtr aPtr);
+        static extern void DvDeviceSetDisabled(IntPtr aDevice, DisabledCallback aCompleted, IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern unsafe void DvDeviceGetAttribute(IntPtr aDevice, char* aKey, char** aValue);
+        static extern unsafe void DvDeviceGetAttribute(IntPtr aDevice, IntPtr aKey, char** aValue);
         [DllImport("ohNet")]
-        static extern unsafe void DvDeviceSetAttribute(IntPtr aDevice, char* aKey, char* aValue);
+        static extern void DvDeviceSetAttribute(IntPtr aDevice, IntPtr aKey, IntPtr aValue);
         [DllImport("ohNet")]
-        static extern unsafe void OhNetFree(void* aPtr);
+        static extern void OhNetFree(IntPtr aPtr);
 
         protected IntPtr iHandle;
         protected GCHandle iGch;
@@ -264,9 +265,9 @@ namespace OpenHome.Net.Device
         /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
         public unsafe DvDevice(string aUdn)
         {
-            char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
+            IntPtr udn = InteropUtils.StringToHGlobalUtf8(aUdn);
             iHandle = DvDeviceCreate(udn);
-            Marshal.FreeHGlobal((IntPtr)udn);
+            Marshal.FreeHGlobal(udn);
             iCallbackDisabled = new DisabledCallback(Disabled);
         }
 
@@ -324,7 +325,7 @@ namespace OpenHome.Net.Device
         /// aCompleted callback before adding services or setting attributes.</remarks>
         /// <param name="aCompleted">Callback which runs when the device is fully disabled.
         /// Until this runs, the device should be considered to still be enabled.</param>
-        public void SetDisabled(Action aCompleted)
+        public void SetDisabled(System.Action aCompleted)
         {
             GCHandle gch = GCHandle.Alloc(aCompleted);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
@@ -347,10 +348,10 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">string containing the attribute or null if the attribute has not been set.</param>
         public unsafe void GetAttribute(string aKey, out string aValue)
         {
-            char* key = (char*)Marshal.StringToHGlobalAnsi(aKey).ToPointer();
+            IntPtr key = InteropUtils.StringToHGlobalUtf8(aKey);
             char* value;
             DvDeviceGetAttribute(iHandle, key, &value);
-            Marshal.FreeHGlobal((IntPtr)key);
+            Marshal.FreeHGlobal(key);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
         }
         
@@ -361,11 +362,11 @@ namespace OpenHome.Net.Device
         /// <param name="aValue">attribute will be set to a copy of this string</param>
         public unsafe void SetAttribute(string aKey, string aValue)
         {
-            char* key = (char*)Marshal.StringToHGlobalAnsi(aKey).ToPointer();
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
+            IntPtr key = InteropUtils.StringToHGlobalUtf8(aKey);
+            IntPtr value = InteropUtils.StringToHGlobalUtf8(aValue);
             DvDeviceSetAttribute(iHandle, key, value);
-            Marshal.FreeHGlobal((IntPtr)key);
-            Marshal.FreeHGlobal((IntPtr)value);
+            Marshal.FreeHGlobal(key);
+            Marshal.FreeHGlobal(value);
         }
 
         /// <summary>
@@ -392,9 +393,9 @@ namespace OpenHome.Net.Device
     public class DvDeviceStandard : DvDevice
     {
         [DllImport("ohNet")]
-        static extern unsafe IntPtr DvDeviceStandardCreateNoResources(char* aUdn);
+        static extern unsafe IntPtr DvDeviceStandardCreateNoResources(IntPtr aUdn);
         [DllImport("ohNet")]
-        static extern unsafe IntPtr DvDeviceStandardCreate(char* aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
+        static extern IntPtr DvDeviceStandardCreate(IntPtr aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
         [DllImport("ohNet")]
         static extern unsafe IntPtr DvDeviceStandardGetResourceManagerUri(IntPtr aDevice, IntPtr aAdapter);
         [DllImport("ohNet")]
@@ -404,13 +405,13 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern void OhNetFree(IntPtr aPtr);
 
-        public unsafe delegate int CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, char* aMimeType);
+        public delegate int CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, IntPtr aMimeType);
         public delegate int CallbackWriteResource(IntPtr aPtr, byte[] aData, int aBytes);
         public delegate int CallbackWriteResourceEnd(IntPtr aPtr);
-        private unsafe delegate int CallbackResourceManager(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
-                                                            CallbackWriteResourceBegin aWriteBegin,
-                                                            CallbackWriteResource aWriteResource,
-                                                            CallbackWriteResourceEnd aWriteEnd);
+        private delegate int CallbackResourceManager(IntPtr aUserData, IntPtr aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
+                                                     CallbackWriteResourceBegin aWriteBegin,
+                                                     CallbackWriteResource aWriteResource,
+                                                     CallbackWriteResourceEnd aWriteEnd);
 
         private IResourceManager iResourceManager;
         private CallbackResourceManager iCallbackResourceManager;
@@ -422,9 +423,9 @@ namespace OpenHome.Net.Device
         /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
         public unsafe DvDeviceStandard(string aUdn)
         {
-            char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
+            IntPtr udn = InteropUtils.StringToHGlobalUtf8(aUdn);
             iHandle = DvDeviceStandardCreateNoResources(udn);
-            Marshal.FreeHGlobal((IntPtr)udn);
+            Marshal.FreeHGlobal(udn);
         }
 
         /// <summary>
@@ -438,10 +439,10 @@ namespace OpenHome.Net.Device
             iResourceManager = aResourceManager;
             iGch = GCHandle.Alloc(this);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
+            IntPtr udn = InteropUtils.StringToHGlobalUtf8(aUdn);
             iCallbackResourceManager = new CallbackResourceManager(WriteResource);
             iHandle = DvDeviceStandardCreate(udn, iCallbackResourceManager, ptr);
-            Marshal.FreeHGlobal((IntPtr)udn);
+            Marshal.FreeHGlobal(udn);
         }
 
         /// <summary>
@@ -459,10 +460,10 @@ namespace OpenHome.Net.Device
             return uri;
         }
 
-        private static unsafe int WriteResource(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
-                                                CallbackWriteResourceBegin aWriteBegin,
-                                                CallbackWriteResource aWriteResource,
-                                                CallbackWriteResourceEnd aWriteEnd)
+        private static int WriteResource(IntPtr aUserData, IntPtr aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
+                                         CallbackWriteResourceBegin aWriteBegin,
+                                         CallbackWriteResource aWriteResource,
+                                         CallbackWriteResourceEnd aWriteEnd)
         {
             GCHandle gch = GCHandle.FromIntPtr(aUserData);
             DvDeviceStandard self = (DvDeviceStandard)gch.Target;

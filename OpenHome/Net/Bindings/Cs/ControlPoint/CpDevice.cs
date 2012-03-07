@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using OpenHome.Net.Core;
 
 namespace OpenHome.Net.ControlPoint
 {
@@ -19,7 +20,7 @@ namespace OpenHome.Net.ControlPoint
         [DllImport ("ohNet")]
         static extern void CpDeviceCRemoveRef(IntPtr aDevice);
         [DllImport ("ohNet", CharSet = CharSet.Ansi)]
-        static extern unsafe int CpDeviceCGetAttribute(IntPtr aDevice, char* aKey, char** aValue);
+        static extern unsafe int CpDeviceCGetAttribute(IntPtr aDevice, IntPtr aKey, char** aValue);
         [DllImport ("ohNet")]
         static extern unsafe void OhNetFree(void* aPtr);
 
@@ -75,10 +76,10 @@ namespace OpenHome.Net.ControlPoint
         /// aValue will not have been set if false is returned</returns>
         public unsafe bool GetAttribute(string aKey, out string aValue)
         {
-            char* key = (char*)Marshal.StringToHGlobalAnsi(aKey).ToPointer();
+            IntPtr key = InteropUtils.StringToHGlobalUtf8(aKey);
             char* value;
             int ret = CpDeviceCGetAttribute(iHandle, key, &value);
-            Marshal.FreeHGlobal((IntPtr)key);
+            Marshal.FreeHGlobal(key);
             if (ret != 0)
             {
                 aValue = Marshal.PtrToStringAnsi((IntPtr)value);

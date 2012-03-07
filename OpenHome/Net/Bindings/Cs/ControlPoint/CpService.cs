@@ -175,7 +175,7 @@ namespace OpenHome.Net.ControlPoint
     public class ArgumentString : Argument
     {
         [DllImport("ohNet")]
-        static extern unsafe IntPtr ActionArgumentCreateStringInput(IntPtr aParameter, char* aValue);
+        static extern IntPtr ActionArgumentCreateStringInput(IntPtr aParameter, IntPtr aValue);
         [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateStringOutput(IntPtr aParameter);
         [DllImport("ohNet")]
@@ -192,9 +192,9 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aValue">Value for the argument</param>
         public unsafe ArgumentString(ParameterString aParameter, String aValue)
         {
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
+            IntPtr value = InteropUtils.StringToHGlobalUtf8(aValue);
             iHandle = ActionArgumentCreateStringInput(aParameter.Handle(), value);
-            Marshal.FreeHGlobal((IntPtr)value);
+            Marshal.FreeHGlobal(value);
         }
 
         /// <summary>
