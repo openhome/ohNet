@@ -53,9 +53,10 @@ JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocation
 {
 	DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
 	const char* uriPrefix;
+    uint32_t len;
 	aClass = aClass;
 	
-	DvInvocationGetResourceUriPrefix(invocation, &uriPrefix);
+	DvInvocationGetResourceUriPrefix(invocation, &uriPrefix, &len);
 	return (*aEnv)->NewStringUTF(aEnv, uriPrefix);
 }
 
