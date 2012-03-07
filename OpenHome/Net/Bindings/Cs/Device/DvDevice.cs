@@ -457,8 +457,6 @@ namespace OpenHome.Net.Device
             IntPtr ptr;
             uint len;
             DvDeviceStandardGetResourceManagerUri(iHandle, aAdapter.Handle(), &ptr, &len);
-            if (ptr == IntPtr.Zero)
-                return null;
             string uri = InteropUtils.PtrToStringUtf8(ptr, len);
             OhNetFree(ptr);
             return uri;

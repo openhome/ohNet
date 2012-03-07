@@ -420,8 +420,6 @@ namespace OpenHome.Net.ControlPoint
             IntPtr ptr;
             uint len;
             CpInvocationGetOutputString(aHandle, aIndex, &ptr, &len);
-            if (ptr == IntPtr.Zero)
-                return null;
             String str = InteropUtils.PtrToStringUtf8(ptr, len);
             OhNetFree(ptr);
             return str;
