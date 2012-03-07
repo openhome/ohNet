@@ -29,10 +29,42 @@ void Converter::ToXmlEscaped(IWriter& aWriter, TByte aValue)
     }
 }
 
+TBool Converter::IsMultiByteChar(TByte aChar, TUint& aBytes)
+{
+    TBool multiByte = true;
+    if ((aChar & 0xF0) == 0xF0) {
+        aBytes = 4;
+    }
+    else if ((aChar & 0xE0) == 0xE0) {
+        aBytes = 3;
+    }
+    else if ((aChar & 0xC0) == 0xC0) {
+        aBytes = 2;
+    }
+    else {
+        multiByte = false;
+    }
+    return multiByte;
+}
+
 void Converter::ToXmlEscaped(IWriter& aWriter, const Brx& aValue)
 {
+    TUint utf8CharBytesRemaining = 0;
     for(TUint i = 0; i < aValue.Bytes(); ++i) {
-        ToXmlEscaped(aWriter, aValue[i]);
+        TByte ch = aValue[i];
+        if (utf8CharBytesRemaining == 0) {
+            TUint bytes;
+            if (IsMultiByteChar(ch, bytes)) {
+                utf8CharBytesRemaining = bytes;
+            }
+        }
+        if (utf8CharBytesRemaining > 0) {
+            utf8CharBytesRemaining--;
+            aWriter.Write(ch);
+        }
+        else {
+            ToXmlEscaped(aWriter, aValue[i]);
+        }
     }
 }
 
@@ -146,8 +178,22 @@ void Converter::FromXmlEscaped(Bwx& aValue)
 {
     TUint j = 0;
     TUint bytes = aValue.Bytes();
+    TUint utf8CharBytesRemaining = 0;
 
     for (TUint i = 0; i < bytes; i++) {
+        TByte ch = aValue[i];
+        if (utf8CharBytesRemaining == 0) {
+            TUint bytes;
+            if (IsMultiByteChar(ch, bytes)) {
+                utf8CharBytesRemaining = bytes;
+            }
+        }
+        if (utf8CharBytesRemaining > 0) {
+            utf8CharBytesRemaining--;
+            aValue[j++] = aValue[i];
+            continue;
+        }
+
         if (aValue[i] != '&') {
             aValue[j++] = aValue[i];
             continue;

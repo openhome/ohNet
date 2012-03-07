@@ -14,18 +14,12 @@ class Converter
 {
 public:
     static void ToBase64(IWriter& aWriter, const Brx& aValue);
-    static void ToXmlEscaped(IWriter& aWriter, TByte aValue);
     static void ToXmlEscaped(IWriter& aWriter, const Brx& aValue);
-
-    /**
-     * Conversion in place
-     */
-    static void FromBase64(Bwx& aValue);
-
-    /**
-     * Conversion in place
-     */
-    static void FromXmlEscaped(Bwx& aValue);
+    static void FromBase64(Bwx& aValue); // Converts in place
+    static void FromXmlEscaped(Bwx& aValue); // Converts in place
+private:
+    static void ToXmlEscaped(IWriter& aWriter, TByte aValue);
+    static TBool IsMultiByteChar(TByte aChar, TUint& aBytes);
 };
 
 } // namespace OpenHome
