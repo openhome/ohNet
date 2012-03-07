@@ -4,6 +4,7 @@
 #include "DviDeviceC.h"
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -230,6 +231,27 @@ int32_t STDCALL DvInvocationReadString(DvInvocationC aInvocation, const char* aN
         Brhz value;
         invocation->InvocationReadString(aName, value);
         *aValue = value.Transfer();
+    }
+    catch (InvocationError&) {
+        return -1;
+    }
+    return 0;
+}
+
+int32_t STDCALL DvInvocationReadStringAsBuffer(DvInvocationC aInvocation, const char* aName, char** aValue, uint32_t* aLen)
+{
+    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+    try {
+        Brhz value;
+        invocation->InvocationReadString(aName, value);
+        if (value.Bytes() == 0) {
+            *aValue = NULL;
+            *aLen = 0;
+        }
+        else {
+            *aLen = value.Bytes();
+            *aValue = value.Transfer();
+        }
     }
     catch (InvocationError&) {
         return -1;

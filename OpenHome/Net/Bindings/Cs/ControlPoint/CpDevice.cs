@@ -82,7 +82,7 @@ namespace OpenHome.Net.ControlPoint
             Marshal.FreeHGlobal(key);
             if (ret != 0)
             {
-                aValue = Marshal.PtrToStringAnsi((IntPtr)value);
+                aValue = InteropUtils.PtrToStringUtf8((IntPtr)value);
                 OhNetFree(value);
                 return true;
             }

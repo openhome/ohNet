@@ -105,7 +105,7 @@ namespace OpenHome.Net.Core
         public string Name()
         {
             IntPtr cStr = OhNetNetworkAdapterName(iHandle);
-            string name = Marshal.PtrToStringAnsi(cStr);
+            string name = InteropUtils.PtrToStringUtf8(cStr);
             // Library.Free(cStr) not necessary because a copy is not allocated by the underlying NetworkAdapter object
             return name;
         }
@@ -117,7 +117,7 @@ namespace OpenHome.Net.Core
         public string FullName()
         {
             IntPtr cStr = OhNetNetworkAdapterFullName(iHandle);
-            string name = Marshal.PtrToStringAnsi(cStr);
+            string name = InteropUtils.PtrToStringUtf8(cStr);
             Library.Free(cStr);
             return name;
         }
@@ -776,6 +776,30 @@ namespace OpenHome.Net.Core
             Marshal.Copy(bytes, 0, ptr, bytes.Length);
             Marshal.WriteByte(ptr, bytes.Length, (byte)0);
             return ptr;
+        }
+
+        internal static string PtrToStringUtf8(IntPtr aPtr, uint aLen) // aPtr is not nul-terminated
+        {
+            String str = "";
+            if (aLen > 0)
+            {
+                byte[] array = new byte[aLen];
+                Marshal.Copy(aPtr, array, 0, (int)aLen);
+                str = System.Text.Encoding.UTF8.GetString(array);
+            }
+            return str;
+        }
+
+        internal static string PtrToStringUtf8(IntPtr aPtr) // aPtr is nul-terminated
+        {
+            int len = 0;
+            while (Marshal.ReadByte(aPtr, len) != 0)
+                len++;
+            if (len == 0)
+                return "";
+            byte[] array = new byte[len];
+            Marshal.Copy(aPtr, array, 0, len);
+            return System.Text.Encoding.UTF8.GetString(array);
         }
     }
 }

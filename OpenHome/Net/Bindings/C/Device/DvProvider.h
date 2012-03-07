@@ -280,6 +280,18 @@ DllExport int32_t STDCALL DvInvocationReadBool(DvInvocationC aInvocation, const 
 DllExport int32_t STDCALL DvInvocationReadString(DvInvocationC aInvocation, const char* aName, char** aValue);
 
 /**
+ * Read the value of a string input argument for an invocation
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
+ * @param[in]  aName        Name of the parameter associated with this input argument
+ * @param[out] aValue       Value of the input argument.  Ownership passes to caller.  Use OhNetFree() to destroy.
+ * @param[out] aLen         Length (in bytes) of aData
+ *
+ * @return  0 on success; non-zero on error
+ */
+DllExport int32_t STDCALL DvInvocationReadStringAsBuffer(DvInvocationC aInvocation, const char* aName, char** aValue, uint32_t* aLen);
+
+/**
  * Read the value of an integer input argument for an invocation
  *
  * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation

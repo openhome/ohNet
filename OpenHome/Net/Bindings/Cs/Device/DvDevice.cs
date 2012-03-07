@@ -352,7 +352,7 @@ namespace OpenHome.Net.Device
             char* value;
             DvDeviceGetAttribute(iHandle, key, &value);
             Marshal.FreeHGlobal(key);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
+            aValue = InteropUtils.PtrToStringUtf8((IntPtr)value);
         }
         
         /// <summary>
@@ -467,12 +467,12 @@ namespace OpenHome.Net.Device
         {
             GCHandle gch = GCHandle.FromIntPtr(aUserData);
             DvDeviceStandard self = (DvDeviceStandard)gch.Target;
-            string uriTail = Marshal.PtrToStringAnsi((IntPtr)aUriTail);
+            string uriTail = InteropUtils.PtrToStringUtf8(aUriTail);
             List<string> languageList = new List<string>();
             uint count = DvResourceWriterLanguageCount(aLanguageList);
             for (uint i = 0; i < count; i++)
             {
-                languageList.Add(Marshal.PtrToStringAnsi(DvResourceWriterLanguage(aLanguageList, i)));
+                languageList.Add(InteropUtils.PtrToStringUtf8(DvResourceWriterLanguage(aLanguageList, i)));
             }
             ResourceWriter writer = new ResourceWriter(aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
             try

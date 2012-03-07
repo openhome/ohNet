@@ -277,7 +277,7 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern unsafe int DvInvocationReadBool(IntPtr aInvocation, IntPtr aName, uint* aValue);
         [DllImport("ohNet")]
-        static extern unsafe int DvInvocationReadString(IntPtr aInvocation, IntPtr aName, IntPtr* aValue);
+        static extern unsafe int DvInvocationReadStringAsBuffer(IntPtr aInvocation, IntPtr aName, IntPtr* aValue, uint* aLen);
         [DllImport("ohNet")]
         static extern unsafe int DvInvocationReadBinary(IntPtr aInvocation, IntPtr aName, IntPtr* aData, uint* aLen);
         [DllImport("ohNet")]
@@ -409,22 +409,12 @@ namespace OpenHome.Net.Device
         public unsafe String ReadString(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
-            IntPtr cStr;
-            int err = DvInvocationReadString(iHandle, name, &cStr);
+            IntPtr ptr;
+            uint len;
+            int err = DvInvocationReadStringAsBuffer(iHandle, name, &ptr, &len);
             Marshal.FreeHGlobal(name);
-            String str = "";
-            if (cStr != IntPtr.Zero)
-            {
-                int size = 0;
-                while (Marshal.ReadByte(cStr, size) != 0)
-                {
-                    size++;
-                }
-                byte[] array = new byte[size];
-                Marshal.Copy(cStr, array, 0, size);
-                str = Encoding.UTF8.GetString(array);
-            }
-            OhNetFree((IntPtr)cStr);
+            String str = InteropUtils.PtrToStringUtf8(ptr, len);
+            OhNetFree(ptr);
             CheckError(err);
             return str;
         }
