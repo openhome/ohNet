@@ -106,6 +106,7 @@ ohnet.longpolling.prototype.propertyUpdate = function () {
 	if (this.debug) { console.log('>> Property Update'); }
 	if(this.pollingStarted)
 	{
+		if (this.debug) { console.log('>> GetPropertyUpdates'); }
 		this.proxy.GetPropertyUpdates(this.clientId, function(results) {
             if (this.debug) { console.log('<< GetPropertyUpdates'); }
 			if (window.DOMParser) { // NON-IE
@@ -113,6 +114,14 @@ ohnet.longpolling.prototype.propertyUpdate = function () {
 	            var xmlDoc = parser.parseFromString(results.Updates, "text/xml");
 	          	_this.onReceivePropertyUpdate(xmlDoc);
 			}
+			if(_this.pollingStarted)
+			{
+				setTimeout(function() { _this.propertyUpdate(); },10); // hack to stop safari from displaying loading cursor
+			}
+		},
+		function()
+		{
+			if (this.debug) { console.log('Long poll failed, retrying...'); }
 			if(_this.pollingStarted)
 			{
 				setTimeout(function() { _this.propertyUpdate(); },10); // hack to stop safari from displaying loading cursor
