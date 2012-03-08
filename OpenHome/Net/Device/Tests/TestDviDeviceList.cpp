@@ -113,10 +113,14 @@ public:
 private:
     Mutex iLock;
     std::vector<CpDevice*> iList;
+    Semaphore iSem;
+    TUint iTargetCount;
 };
 
 CpDevices::CpDevices()
     : iLock("DLMX")
+    , iSem("DLSM", 0)
+    , iTargetCount(0)
 {
 }
 
@@ -133,12 +137,28 @@ void CpDevices::Clear()
         iList[i]->RemoveRef();
     }
     iList.clear();
+    (void)iSem.Clear();
     iLock.Signal();
 }
 
 void CpDevices::Validate(std::vector<const char*>& aExpectedUdns)
 {
-    ASSERT(aExpectedUdns.size() == iList.size());
+    iLock.Wait();
+    TBool wait = (aExpectedUdns.size() > iList.size());
+    iTargetCount = (TUint)aExpectedUdns.size();
+    iLock.Signal();
+    if (wait) {
+        try {
+            iSem.Wait(30 * 1000);
+        }
+        catch (Timeout&) {
+            Print("ERROR: Failed to detect sufficient devices\n");
+        }
+    }
+    if (aExpectedUdns.size() != iList.size()) {
+        Print("ERROR: expected %u devices, found %u\n", aExpectedUdns.size(), iList.size());
+        ASSERTS();
+    }
     while (aExpectedUdns.size() > 0) {
         Brn expected(aExpectedUdns[0]);
         TBool found = false;
@@ -165,6 +185,9 @@ void CpDevices::Added(CpDevice& aDevice)
         iList.push_back(&aDevice);
         aDevice.AddRef();
     }
+    if ((TUint)iList.size() == iTargetCount) {
+        iSem.Signal();
+    }
     iLock.Signal();
 }
 
@@ -185,6 +208,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     if (loopback.Value()) {
         aInitParams->SetUseLoopbackNetworkAdapter();
     }
+    aInitParams->SetMsearchTime(1);
     UpnpLibrary::Initialise(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
@@ -205,8 +229,6 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     TUint ver = 1;
     CpDeviceListUpnpServiceType* list =
                 new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
-    Blocker* blocker = new Blocker;
-    blocker->Wait(aInitParams->MsearchTimeSecs());
     std::vector<const char*> udns;
     udns.push_back((const char*)gNameDevice1.Ptr());
     udns.push_back((const char*)gNameDevice2.Ptr());
@@ -218,14 +240,12 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     Print("Count devices implementing service2\n");
     serviceType.Set("service2");
     list = new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
-    blocker->Wait(aInitParams->MsearchTimeSecs());
     udns.push_back((const char*)gNameDevice1_1.Ptr());
     udns.push_back((const char*)gNameDevice2.Ptr());
     deviceList->Validate(udns);
     udns.clear();
     delete list;
 
-    delete blocker;
     delete deviceList;
     delete devices;
 
