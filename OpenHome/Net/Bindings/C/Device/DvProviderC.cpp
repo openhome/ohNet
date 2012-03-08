@@ -179,7 +179,7 @@ void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const c
         *aLen = 0;
     }
     else {
-        *aLen = strlen(*aPrefix);
+        *aLen = (uint32_t)strlen(*aPrefix);
     }
 }
 
