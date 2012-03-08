@@ -383,8 +383,13 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         public void Dispose()
         {
-            DisposeProxy();
-            iHandle = IntPtr.Zero;
+            lock (this)
+            {
+                if (iHandle == IntPtr.Zero)
+                    return;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+            }
             iActionName.Dispose();
             iActionPorts.Dispose();
             iName.Dispose();

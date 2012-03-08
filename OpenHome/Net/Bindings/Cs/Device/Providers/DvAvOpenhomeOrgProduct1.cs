@@ -1931,9 +1931,8 @@ namespace OpenHome.Net.Device.Providers
         /// </summary>
         public virtual void Dispose()
         {
-            DisposeProvider();
-            iHandle = IntPtr.Zero;
-            iGch.Free();
+            if (DisposeProvider())
+                iGch.Free();
         }
     }
 }

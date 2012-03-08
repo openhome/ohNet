@@ -70,7 +70,13 @@ namespace OpenHome.Net.Core
         /// </summary>
         public void Dispose()
         {
-            OhNetSubnetListDestroy(iHandle);
+            lock (this)
+            {
+                if (iHandle == IntPtr.Zero)
+                    return;
+                OhNetSubnetListDestroy(iHandle);
+                iHandle = IntPtr.Zero;
+            }
         }
 	}
 }

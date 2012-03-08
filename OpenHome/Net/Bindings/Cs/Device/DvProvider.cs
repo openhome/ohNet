@@ -222,18 +222,19 @@ namespace OpenHome.Net.Device
         /// <summary>
         /// Must be called by each sub-class, preferably from their Dispose() method
         /// </summary>
-        protected void DisposeProvider()
+        protected bool DisposeProvider()
         {
-            DvProviderDestroy(iHandle);
-            iHandle = IntPtr.Zero;
-            for (int i = 0; i < iActions.Count; i++)
+            lock (this)
             {
-                iActions[i].Dispose();
+                if (iHandle == IntPtr.Zero)
+                    return false;
+                DvProviderDestroy(iHandle);
+                iHandle = IntPtr.Zero;
             }
+            // don't Dispose contents of iActions - the underlying native provider handles this
             for (int i = 0; i < iProperties.Count; i++)
-            {
                 iProperties[i].Dispose();
-            }
+            return true;
         }
     }
 

@@ -40,8 +40,13 @@ namespace OpenHome.Net.Device
 
         public void Dispose()
         {
-            DvServerUpnpDestroy(iHandle);
-            iHandle = IntPtr.Zero;
+            lock (this)
+            {
+                if (iHandle == IntPtr.Zero)
+                    return;
+                DvServerUpnpDestroy(iHandle);
+                iHandle = IntPtr.Zero;
+            }
         }
     }
 }

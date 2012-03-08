@@ -44,7 +44,14 @@ namespace OpenHome.Net.Core
             }
             public void Dispose()
             {
-                Marshal.FreeHGlobal(AsCString);
+                lock (this)
+                {
+                    if (AsCString != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(AsCString);
+                        AsCString = IntPtr.Zero;
+                    }
+                }
             }
         }
 

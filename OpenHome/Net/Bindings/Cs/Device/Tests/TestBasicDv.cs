@@ -167,8 +167,8 @@ namespace OpenHome.Net
         
         public void Dispose()
         {
-            iTestBasic.Dispose();
             iDevice.Dispose();
+            iTestBasic.Dispose();
         }
     }
 }

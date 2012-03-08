@@ -171,10 +171,14 @@ namespace OpenHome.Net.Core
 
         public void Dispose()
         {
-            iGch.Free();
-            if (iOwnsNativeProperty)
+            lock (this)
             {
-                ServicePropertyDestroy(iHandle);
+                if (iHandle == IntPtr.Zero)
+                    return;
+                iGch.Free();
+                if (iOwnsNativeProperty)
+                    ServicePropertyDestroy(iHandle);
+                iHandle = IntPtr.Zero;
             }
         }
 
@@ -637,12 +641,10 @@ namespace OpenHome.Net.Core
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
-                {
                     return;
-                }
+                ServiceActionDestroy(iHandle);
                 iHandle = IntPtr.Zero;
             }
-            ServiceActionDestroy(iHandle);
         }
     }
 }

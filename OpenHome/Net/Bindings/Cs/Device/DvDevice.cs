@@ -385,10 +385,15 @@ namespace OpenHome.Net.Device
         /// </summary>
         public void Dispose()
         {
-            DvDeviceDestroy(iHandle);
-            iHandle = IntPtr.Zero;
-            if (iGch.IsAllocated)
-                iGch.Free();
+            lock (this)
+            {
+                if (iHandle == IntPtr.Zero)
+                    return;
+                DvDeviceDestroy(iHandle);
+                iHandle = IntPtr.Zero;
+                if (iGch.IsAllocated)
+                    iGch.Free();
+            }
         }
     }
 

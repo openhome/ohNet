@@ -158,11 +158,14 @@ namespace OpenHome.Net.ControlPoint
         /// </summary>
         public void Dispose()
         {
-            if (iHandle != IntPtr.Zero)
+            lock (this)
             {
-                CpDeviceListDestroy(iHandle);
-                iHandle = IntPtr.Zero;
-                iGch.Free();
+                if (iHandle != IntPtr.Zero)
+                {
+                    CpDeviceListDestroy(iHandle);
+                    iHandle = IntPtr.Zero;
+                    iGch.Free();
+                }
             }
         }
 
