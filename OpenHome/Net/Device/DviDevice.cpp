@@ -356,10 +356,20 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     if (!aLocked) {
         iLock.Wait();
     }
-    ASSERT(iEnabled == eEnabled);
-    iEnabled = eDisabling;
     iDisableComplete = aCompleted;
-    iProtocolDisableCount = (TUint)iProtocols.size();
+    switch (iEnabled)
+    {
+    case eDisabled:
+        iProtocolDisableCount = 0;
+        break;
+    case eDisabling:
+        ASSERTS();
+        break;
+    case eEnabled:
+        iEnabled = eDisabling;
+        iProtocolDisableCount = (TUint)iProtocols.size();
+        break;
+    }
     if (!aLocked) {
         iLock.Signal();
     }
