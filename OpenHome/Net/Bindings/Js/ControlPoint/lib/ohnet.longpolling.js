@@ -32,7 +32,9 @@ ohnet.longpolling = function (clientId,nodeUdn,options) {
    			subscriptionTimeoutSeconds: 1800,
     		onReceivePropertyUpdate: null,
     		onReceiveSubscribeCompleted: null,
-    		onReceiveRenewCompleted: null
+    		onReceiveRenewCompleted: null,
+    		onReceiveError : null,
+    		onReceiveSuccess : null
     };
     
     options = ohnet.util.mergeOptions(defaults,options);
@@ -43,6 +45,8 @@ ohnet.longpolling = function (clientId,nodeUdn,options) {
     this.onReceivePropertyUpdate =  options.onReceivePropertyUpdate;
 	this.onReceiveSubscribeCompleted =  options.onReceiveSubscribeCompleted;
 	this.onReceiveRenewCompleted =  options.onReceiveRenewCompleted;
+	this.onReceiveError =  options.onReceiveError;
+	this.onReceiveSuccess =  options.onReceiveSuccess;
 }
 
 
@@ -54,6 +58,7 @@ ohnet.longpolling = function (clientId,nodeUdn,options) {
 */
 ohnet.longpolling.prototype.subscribe = function (service,firstSubscription) {
 	var _this = this;
+	this.pollingStarted = false;
 	if (this.debug) { console.log('>> Subscribe' + ' : No Services: ' + firstSubscription); }
 	var srv = service;
 	this.proxy.Subscribe(this.clientId,service.udn,service.serviceName,this.subscriptionTimeoutSeconds,
@@ -66,6 +71,10 @@ ohnet.longpolling.prototype.subscribe = function (service,firstSubscription) {
 				_this.propertyUpdate();
 				
 			}
+		},
+		function()
+		{
+			if (_this.onReceiveError) { _this.onReceiveError(); }
 		}
 	);
 }
@@ -76,7 +85,7 @@ ohnet.longpolling.prototype.subscribe = function (service,firstSubscription) {
 * @param {String} subscriptionId The subscriptionId of the service to unsubscribe
 */
 ohnet.longpolling.prototype.unsubscribe = function (subscriptionId,noSubscriptions) {
-	if (this.debug) { console.log('>> Unsubscribe'); }
+	if (this.debug) { console.log('>> Unsubscribe: '+subscriptionId); }
 	this.proxy.Unsubscribe(subscriptionId);
 	if(noSubscriptions && this.pollingStarted)
 	{
@@ -94,7 +103,12 @@ ohnet.longpolling.prototype.renew = function (subscriptionId) {
 	if (this.debug) { console.log('>> Renew'); }
 	this.proxy.Renew(subscriptionId,this.subscriptionTimeoutSeconds,function(result) {
 		_this.onReceiveRenewCompleted(subscriptionId, result.Duration);
-	});
+	},
+	function()
+	{
+		if (_this.onReceiveError) { _this.onReceiveError(); }
+	}
+	);
 }
 
 /**
@@ -108,7 +122,8 @@ ohnet.longpolling.prototype.propertyUpdate = function () {
 	{
 		if (this.debug) { console.log('>> GetPropertyUpdates'); }
 		this.proxy.GetPropertyUpdates(this.clientId, function(results) {
-            if (this.debug) { console.log('<< GetPropertyUpdates'); }
+            if (_this.debug) { console.log('<< GetPropertyUpdates'); }
+            if (_this.onReceiveSuccess) { _this.onReceiveSuccess(); }
 			if (window.DOMParser) { // NON-IE
 	            var parser = new DOMParser();
 	            var xmlDoc = parser.parseFromString(results.Updates, "text/xml");
@@ -121,7 +136,8 @@ ohnet.longpolling.prototype.propertyUpdate = function () {
 		},
 		function()
 		{
-			if (this.debug) { console.log('Long poll failed, retrying...'); }
+			if (_this.debug) { console.log('Long poll failed, retrying...'); }
+			if (_this.onReceiveError) { _this.onReceiveError(); }
 			if(_this.pollingStarted)
 			{
 				setTimeout(function() { _this.propertyUpdate(); },10); // hack to stop safari from displaying loading cursor
