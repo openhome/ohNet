@@ -15,6 +15,7 @@ namespace OpenHome.Net
                 Core.SubnetList subnetList = new Core.SubnetList();
                 Core.NetworkAdapter nif = subnetList.SubnetAt(0);
                 uint subnet = nif.Subnet();
+                Console.WriteLine("Using adapter: {0}", nif.Name());
                 subnetList.Dispose();
                 lib.StartCp(subnet);
                 new Runner((int)initParams.MsearchTimeSecs);
