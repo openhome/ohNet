@@ -59,7 +59,7 @@ namespace OpenHome.Net.Core
         static extern uint OhNetNetworkAdapterAddress(IntPtr aNif);
         [DllImport("ohNet")]
         static extern uint OhNetNetworkAdapterSubnet(IntPtr aNif);
-        [DllImport("ohNet", CallingConvention = CallingConvention.StdCall, EntryPoint = "OhNetNetworkAdapterName", ExactSpelling = false)]
+        [DllImport("ohNet")]
         static extern IntPtr OhNetNetworkAdapterName(IntPtr aNif);
         [DllImport("ohNet")]
         static extern IntPtr OhNetNetworkAdapterFullName(IntPtr aNif);
