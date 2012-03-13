@@ -69,7 +69,10 @@ ohnet.longpolling.prototype.subscribe = function (service,firstSubscription) {
 			{
 				_this.pollingStarted = true;
 				_this.propertyUpdate();
-				
+				if (_this.debug)
+				{
+					console.log('>> First Subscription - start polling');
+				} 
 			}
 		},
 		function()
