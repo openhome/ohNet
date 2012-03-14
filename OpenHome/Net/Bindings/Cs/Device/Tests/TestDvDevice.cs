@@ -48,7 +48,7 @@ namespace OpenHome.Net.Device
             Debug.Assert(iDeviceList.Count == 1);
             TestBasicCp cp = new TestBasicCp(iDeviceList[0]);
             cp.TestActions();
-	        cp.TestSubscriptions();
+            cp.TestSubscriptions();
             list.Dispose();
             lock (this)
             {
