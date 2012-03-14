@@ -16,9 +16,9 @@ class IDvInvocation
 {
 public:
     virtual TUint Version() const = 0;
-	virtual void Error(TInt aCode, const Brx& aReason) = 0;
-	virtual void StartResponse() = 0;
-	virtual void EndResponse() = 0;
+    virtual void Error(TInt aCode, const Brx& aReason) = 0;
+    virtual void StartResponse() = 0;
+    virtual void EndResponse() = 0;
     virtual TIpAddress Adapter() const = 0;
     virtual const char* ResourceUriPrefix() const = 0;
     virtual ~IDvInvocation() {}
@@ -27,21 +27,21 @@ public:
 class IDvInvocationResponseBool
 {
 public:
-	virtual void Write(TBool aValue) = 0;
+    virtual void Write(TBool aValue) = 0;
     virtual ~IDvInvocationResponseBool() {}
 };
 
 class IDvInvocationResponseUint
 {
 public:
-	virtual void Write(TUint aValue) = 0;
+    virtual void Write(TUint aValue) = 0;
     virtual ~IDvInvocationResponseUint() {}
 };
 
 class IDvInvocationResponseInt
 {
 public:
-	virtual void Write(TInt aValue) = 0;
+    virtual void Write(TInt aValue) = 0;
     virtual ~IDvInvocationResponseInt() {}
 };
 
@@ -51,7 +51,7 @@ public:
     virtual void Write(TByte aValue) = 0;
     virtual void Write(const Brx& aBuffer) = 0;
     virtual void WriteFlush() = 0;
-	virtual ~IDvInvocationResponseBinary() {}
+    virtual ~IDvInvocationResponseBinary() {}
 };
 
 class IDvInvocationResponseString : public IWriter
@@ -60,7 +60,7 @@ public:
     virtual void Write(TByte aValue) = 0;
     virtual void Write(const Brx& aBuffer) = 0;
     virtual void WriteFlush() = 0;
-	virtual ~IDvInvocationResponseString() {}
+    virtual ~IDvInvocationResponseString() {}
 };
 
 /* @} */

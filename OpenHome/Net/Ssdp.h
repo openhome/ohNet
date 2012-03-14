@@ -345,7 +345,7 @@ private:
     WriterBuffer iBuffer;
     WriterHttpResponse iWriter;
     TUint iConfigId;
-	Endpoint iRemote;
+    Endpoint iRemote;
 };
 
 } // namespace Net

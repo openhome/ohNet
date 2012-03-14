@@ -216,20 +216,20 @@ public:
      * Set the maximim time to wait before rejecting an event update from an unknown source.
      */
     void SetPendingSubscriptionTimeout(uint32_t aTimeoutMs);
-	/**
-	 * Set a callback which will be used to free memory that is allocated outside the library
-	 * This is intended for C# wrappers and can be ignored by most (all?) other clients
-	 */
-	void SetFreeExternalCallback(OhNetCallbackFreeExternal aCallback);
+    /**
+     * Set a callback which will be used to free memory that is allocated outside the library
+     * This is intended for C# wrappers and can be ignored by most (all?) other clients
+     */
+    void SetFreeExternalCallback(OhNetCallbackFreeExternal aCallback);
     /**
      * Limit the library to using only the loopback network interface.
      * Useful for testing but not expected to be used in production code
      */
     void SetUseLoopbackNetworkAdapter();
-	/**
-	 * Set the maximum time between device announcements for the device stack
-	 */
-	void SetDvMaxUpdateTime(uint32_t aSecs);
+    /**
+     * Set the maximum time between device announcements for the device stack
+     */
+    void SetDvMaxUpdateTime(uint32_t aSecs);
     /**
      * Set the number of threads which should be dedicated to processing
      * control/eventing/presentation requests.
@@ -301,9 +301,9 @@ public:
     uint32_t NumSubscriberThreads() const;
     uint32_t SubscriptionDurationSecs() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
-	OhNetCallbackFreeExternal FreeExternal() const;
+    OhNetCallbackFreeExternal FreeExternal() const;
     bool UseLoopbackNetworkAdapter() const;
-	uint32_t DvMaxUpdateTimeSecs() const;
+    uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
     uint32_t DvNumWebSocketThreads() const;
@@ -336,11 +336,11 @@ private:
     uint32_t iNumSubscriberThreads;
     uint32_t iSubscriptionDurationSecs;
     uint32_t iPendingSubscriptionTimeoutMs;
-	OhNetCallbackFreeExternal iFreeExternal;
+    OhNetCallbackFreeExternal iFreeExternal;
     bool iUseLoopbackNetworkAdapter;
-	uint32_t iDvMaxUpdateTimeSecs;
+    uint32_t iDvMaxUpdateTimeSecs;
     uint32_t iDvNumServerThreads;
-	uint32_t iDvNumPublisherThreads;
+    uint32_t iDvNumPublisherThreads;
     uint32_t iDvNumWebSocketThreads;
     uint32_t iCpUpnpEventServerPort;
     uint32_t iDvUpnpWebServerPort;

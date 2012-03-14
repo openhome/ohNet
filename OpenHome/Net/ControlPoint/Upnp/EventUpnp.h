@@ -44,7 +44,7 @@ class EventServerUpnp
 {
 public:
     EventServerUpnp(TIpAddress aInterface);
-	TUint Port() const { return iTcpServer.Port(); }
+    TUint Port() const { return iTcpServer.Port(); }
 private:
     SocketTcpServer iTcpServer;
 };

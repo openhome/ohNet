@@ -87,7 +87,7 @@ typedef int32_t (STDCALL *OhNetCallbackWriteResourceEnd)(void* aWriterData);
  * @return  0 on success; non-zero on error.
  */
 typedef int32_t (STDCALL *OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
-	                                                    OhNetCallbackWriteResourceBegin aWriteBegin,
+                                                        OhNetCallbackWriteResourceBegin aWriteBegin,
                                                         OhNetCallbackWriteResource aWriteResource,
                                                         OhNetCallbackWriteResourceEnd aWriteEnd);
 

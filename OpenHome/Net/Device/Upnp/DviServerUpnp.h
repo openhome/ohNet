@@ -154,7 +154,7 @@ private:
     void Unsubscribe();
     void Renew();
     void ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, DviService** aService);
-	void WriteServerHeader(IWriterHttpHeader& aWriter);
+    void WriteServerHeader(IWriterHttpHeader& aWriter);
     void InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescription);
 private: // IResourceWriter
     void WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeType);
@@ -216,7 +216,7 @@ private:
     DviDevice* iInvocationDevice;
     DviService* iInvocationService;
     mutable Bws<128> iResourceUriPrefix;
-	TBool iResourceWriterHeadersOnly;
+    TBool iResourceWriterHeadersOnly;
     PropertyWriterFactory* iPropertyWriterFactory;
     Semaphore iShutdownSem;
 };

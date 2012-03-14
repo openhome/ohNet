@@ -22,13 +22,13 @@ public:
 class BonjourWebPage : INonCopyable
 {
 public:
-	BonjourWebPage(IMdnsProvider& aMdns);
+    BonjourWebPage(IMdnsProvider& aMdns);
     ~BonjourWebPage();
     void SetEnabled(const TChar* aName, TIpAddress aInterface, TUint aPort, const TChar* aUri);
     void SetDisabled();
 private:
     IMdnsProvider& iMdns;
-	TUint iMdnsHandle;
+    TUint iMdnsHandle;
 };
 
 } // namespace Net
