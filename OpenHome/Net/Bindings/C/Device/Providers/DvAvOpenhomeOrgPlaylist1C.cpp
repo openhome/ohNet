@@ -1045,7 +1045,7 @@ void DvProviderAvOpenhomeOrgPlaylist1C::DoProtocolInfo(IDviInvocation& aInvocati
 
 THandle STDCALL DvProviderAvOpenhomeOrgPlaylist1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgPlaylist1C(aDevice);
+    return new DvProviderAvOpenhomeOrgPlaylist1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgPlaylist1Destroy(THandle aProvider)

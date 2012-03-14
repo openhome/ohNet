@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyAvOpenhomeOrgPlaylist1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyAvOpenhomeOrgPlaylist1 extends ICpProxy
 {
     public void syncPlay();
@@ -109,7 +109,7 @@ class SyncPlayAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endPlay(aAsyncHandle);
-		
+        
     }
 }
 
@@ -124,7 +124,7 @@ class SyncPauseAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endPause(aAsyncHandle);
-		
+        
     }
 }
 
@@ -139,7 +139,7 @@ class SyncStopAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endStop(aAsyncHandle);
-		
+        
     }
 }
 
@@ -154,7 +154,7 @@ class SyncNextAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endNext(aAsyncHandle);
-		
+        
     }
 }
 
@@ -169,7 +169,7 @@ class SyncPreviousAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endPrevious(aAsyncHandle);
-		
+        
     }
 }
 
@@ -184,7 +184,7 @@ class SyncSetRepeatAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetRepeat(aAsyncHandle);
-		
+        
     }
 }
 
@@ -204,7 +204,7 @@ class SyncRepeatAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endRepeat(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -220,7 +220,7 @@ class SyncSetShuffleAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetShuffle(aAsyncHandle);
-		
+        
     }
 }
 
@@ -240,7 +240,7 @@ class SyncShuffleAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endShuffle(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -256,7 +256,7 @@ class SyncSeekSecondAbsoluteAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSeekSecondAbsolute(aAsyncHandle);
-		
+        
     }
 }
 
@@ -271,7 +271,7 @@ class SyncSeekSecondRelativeAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSeekSecondRelative(aAsyncHandle);
-		
+        
     }
 }
 
@@ -286,7 +286,7 @@ class SyncSeekIdAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSeekId(aAsyncHandle);
-		
+        
     }
 }
 
@@ -301,7 +301,7 @@ class SyncSeekIndexAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSeekIndex(aAsyncHandle);
-		
+        
     }
 }
 
@@ -321,7 +321,7 @@ class SyncTransportStateAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endTransportState(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -342,7 +342,7 @@ class SyncIdAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endId(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -368,7 +368,7 @@ class SyncReadAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Read result = iService.endRead(aAsyncHandle);
-		
+        
         iUri = result.getUri();
         iMetadata = result.getMetadata();
     }
@@ -390,7 +390,7 @@ class SyncReadListAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endReadList(aAsyncHandle);
-		
+        
         iTrackList = result;
     }
 }
@@ -411,7 +411,7 @@ class SyncInsertAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endInsert(aAsyncHandle);
-		
+        
         iNewId = result;
     }
 }
@@ -427,7 +427,7 @@ class SyncDeleteIdAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endDeleteId(aAsyncHandle);
-		
+        
     }
 }
 
@@ -442,7 +442,7 @@ class SyncDeleteAllAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endDeleteAll(aAsyncHandle);
-		
+        
     }
 }
 
@@ -462,7 +462,7 @@ class SyncTracksMaxAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endTracksMax(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -488,7 +488,7 @@ class SyncIdArrayAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         IdArray result = iService.endIdArray(aAsyncHandle);
-		
+        
         iToken = result.getToken();
         iArray = result.getArray();
     }
@@ -510,7 +510,7 @@ class SyncIdArrayChangedAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endIdArrayChanged(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -531,7 +531,7 @@ class SyncProtocolInfoAvOpenhomeOrgPlaylist1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endProtocolInfo(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -632,7 +632,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyAvOpenhomeOrgPlaylist1(CpDevice aDevice)
@@ -653,35 +653,35 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
 
         iActionSetRepeat = new Action("SetRepeat");
         param = new ParameterBool("Value");
-		iActionSetRepeat.addInputParameter(param);
+        iActionSetRepeat.addInputParameter(param);
 
         iActionRepeat = new Action("Repeat");
         param = new ParameterBool("Value");
-		iActionRepeat.addOutputParameter(param);
+        iActionRepeat.addOutputParameter(param);
 
         iActionSetShuffle = new Action("SetShuffle");
         param = new ParameterBool("Value");
-		iActionSetShuffle.addInputParameter(param);
+        iActionSetShuffle.addInputParameter(param);
 
         iActionShuffle = new Action("Shuffle");
         param = new ParameterBool("Value");
-		iActionShuffle.addOutputParameter(param);
+        iActionShuffle.addOutputParameter(param);
 
         iActionSeekSecondAbsolute = new Action("SeekSecondAbsolute");
         param = new ParameterUint("Value");
-		iActionSeekSecondAbsolute.addInputParameter(param);
+        iActionSeekSecondAbsolute.addInputParameter(param);
 
         iActionSeekSecondRelative = new Action("SeekSecondRelative");
         param = new ParameterInt("Value");
-		iActionSeekSecondRelative.addInputParameter(param);
+        iActionSeekSecondRelative.addInputParameter(param);
 
         iActionSeekId = new Action("SeekId");
         param = new ParameterUint("Value");
-		iActionSeekId.addInputParameter(param);
+        iActionSeekId.addInputParameter(param);
 
         iActionSeekIndex = new Action("SeekIndex");
         param = new ParameterUint("Value");
-		iActionSeekIndex.addInputParameter(param);
+        iActionSeekIndex.addInputParameter(param);
 
         iActionTransportState = new Action("TransportState");
         allowedValues.add("Playing");
@@ -689,84 +689,84 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         allowedValues.add("Stopped");
         allowedValues.add("Buffering");
         param = new ParameterString("Value", allowedValues);
-		iActionTransportState.addOutputParameter(param);
+        iActionTransportState.addOutputParameter(param);
         allowedValues.clear();
 
         iActionId = new Action("Id");
         param = new ParameterUint("Value");
-		iActionId.addOutputParameter(param);
+        iActionId.addOutputParameter(param);
 
         iActionRead = new Action("Read");
         param = new ParameterUint("Id");
-		iActionRead.addInputParameter(param);
+        iActionRead.addInputParameter(param);
         param = new ParameterString("Uri", allowedValues);
-		iActionRead.addOutputParameter(param);
+        iActionRead.addOutputParameter(param);
         param = new ParameterString("Metadata", allowedValues);
-		iActionRead.addOutputParameter(param);
+        iActionRead.addOutputParameter(param);
 
         iActionReadList = new Action("ReadList");
         param = new ParameterString("IdList", allowedValues);
-		iActionReadList.addInputParameter(param);
+        iActionReadList.addInputParameter(param);
         param = new ParameterString("TrackList", allowedValues);
-		iActionReadList.addOutputParameter(param);
+        iActionReadList.addOutputParameter(param);
 
         iActionInsert = new Action("Insert");
         param = new ParameterUint("AfterId");
-		iActionInsert.addInputParameter(param);
+        iActionInsert.addInputParameter(param);
         param = new ParameterString("Uri", allowedValues);
-		iActionInsert.addInputParameter(param);
+        iActionInsert.addInputParameter(param);
         param = new ParameterString("Metadata", allowedValues);
-		iActionInsert.addInputParameter(param);
+        iActionInsert.addInputParameter(param);
         param = new ParameterUint("NewId");
-		iActionInsert.addOutputParameter(param);
+        iActionInsert.addOutputParameter(param);
 
         iActionDeleteId = new Action("DeleteId");
         param = new ParameterUint("Value");
-		iActionDeleteId.addInputParameter(param);
+        iActionDeleteId.addInputParameter(param);
 
         iActionDeleteAll = new Action("DeleteAll");
 
         iActionTracksMax = new Action("TracksMax");
         param = new ParameterUint("Value");
-		iActionTracksMax.addOutputParameter(param);
+        iActionTracksMax.addOutputParameter(param);
 
         iActionIdArray = new Action("IdArray");
         param = new ParameterUint("Token");
-		iActionIdArray.addOutputParameter(param);
+        iActionIdArray.addOutputParameter(param);
         param = new ParameterBinary("Array");
-		iActionIdArray.addOutputParameter(param);
+        iActionIdArray.addOutputParameter(param);
 
         iActionIdArrayChanged = new Action("IdArrayChanged");
         param = new ParameterUint("Token");
-		iActionIdArrayChanged.addInputParameter(param);
+        iActionIdArrayChanged.addInputParameter(param);
         param = new ParameterBool("Value");
-		iActionIdArrayChanged.addOutputParameter(param);
+        iActionIdArrayChanged.addOutputParameter(param);
 
         iActionProtocolInfo = new Action("ProtocolInfo");
         param = new ParameterString("Value", allowedValues);
-		iActionProtocolInfo.addOutputParameter(param);
+        iActionProtocolInfo.addOutputParameter(param);
 
         iTransportStateChanged = new PropertyChangeListener();
         iTransportState = new PropertyString("TransportState", iTransportStateChanged);
-		addProperty(iTransportState);
+        addProperty(iTransportState);
         iRepeatChanged = new PropertyChangeListener();
         iRepeat = new PropertyBool("Repeat", iRepeatChanged);
-		addProperty(iRepeat);
+        addProperty(iRepeat);
         iShuffleChanged = new PropertyChangeListener();
         iShuffle = new PropertyBool("Shuffle", iShuffleChanged);
-		addProperty(iShuffle);
+        addProperty(iShuffle);
         iIdChanged = new PropertyChangeListener();
         iId = new PropertyUint("Id", iIdChanged);
-		addProperty(iId);
+        addProperty(iId);
         iIdArrayChanged = new PropertyChangeListener();
         iIdArray = new PropertyBinary("IdArray", iIdArrayChanged);
-		addProperty(iIdArray);
+        addProperty(iIdArray);
         iTracksMaxChanged = new PropertyChangeListener();
         iTracksMax = new PropertyUint("TracksMax", iTracksMaxChanged);
-		addProperty(iTracksMax);
+        addProperty(iTracksMax);
         iProtocolInfoChanged = new PropertyChangeListener();
         iProtocolInfo = new PropertyString("ProtocolInfo", iProtocolInfoChanged);
-		addProperty(iProtocolInfo);
+        addProperty(iProtocolInfo);
         iPropertyLock = new Object();
     }
     /**
@@ -774,268 +774,268 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncPlay()
-	{
-	    SyncPlayAvOpenhomeOrgPlaylist1 sync = new SyncPlayAvOpenhomeOrgPlaylist1(this);
-	    beginPlay(sync.getListener());
-	    sync.waitToComplete();
+    public void syncPlay()
+    {
+        SyncPlayAvOpenhomeOrgPlaylist1 sync = new SyncPlayAvOpenhomeOrgPlaylist1(this);
+        beginPlay(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPlay}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPlay(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPlay}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPlay(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPlay, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPlay} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPlay} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPlay} method.
      */
-	public void endPlay(long aAsyncHandle)
+    public void endPlay(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncPause()
-	{
-	    SyncPauseAvOpenhomeOrgPlaylist1 sync = new SyncPauseAvOpenhomeOrgPlaylist1(this);
-	    beginPause(sync.getListener());
-	    sync.waitToComplete();
+    public void syncPause()
+    {
+        SyncPauseAvOpenhomeOrgPlaylist1 sync = new SyncPauseAvOpenhomeOrgPlaylist1(this);
+        beginPause(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPause}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPause(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPause}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPause(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPause, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPause} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPause} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPause} method.
      */
-	public void endPause(long aAsyncHandle)
+    public void endPause(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncStop()
-	{
-	    SyncStopAvOpenhomeOrgPlaylist1 sync = new SyncStopAvOpenhomeOrgPlaylist1(this);
-	    beginStop(sync.getListener());
-	    sync.waitToComplete();
+    public void syncStop()
+    {
+        SyncStopAvOpenhomeOrgPlaylist1 sync = new SyncStopAvOpenhomeOrgPlaylist1(this);
+        beginStop(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endStop}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginStop(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endStop}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginStop(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionStop, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginStop} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginStop} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginStop} method.
      */
-	public void endStop(long aAsyncHandle)
+    public void endStop(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncNext()
-	{
-	    SyncNextAvOpenhomeOrgPlaylist1 sync = new SyncNextAvOpenhomeOrgPlaylist1(this);
-	    beginNext(sync.getListener());
-	    sync.waitToComplete();
+    public void syncNext()
+    {
+        SyncNextAvOpenhomeOrgPlaylist1 sync = new SyncNextAvOpenhomeOrgPlaylist1(this);
+        beginNext(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endNext}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginNext(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endNext}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginNext(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionNext, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginNext} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginNext} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginNext} method.
      */
-	public void endNext(long aAsyncHandle)
+    public void endNext(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncPrevious()
-	{
-	    SyncPreviousAvOpenhomeOrgPlaylist1 sync = new SyncPreviousAvOpenhomeOrgPlaylist1(this);
-	    beginPrevious(sync.getListener());
-	    sync.waitToComplete();
+    public void syncPrevious()
+    {
+        SyncPreviousAvOpenhomeOrgPlaylist1 sync = new SyncPreviousAvOpenhomeOrgPlaylist1(this);
+        beginPrevious(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPrevious}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPrevious(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPrevious}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPrevious(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPrevious, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPrevious} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPrevious} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPrevious} method.
      */
-	public void endPrevious(long aAsyncHandle)
+    public void endPrevious(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetRepeat(boolean aValue)
-	{
-	    SyncSetRepeatAvOpenhomeOrgPlaylist1 sync = new SyncSetRepeatAvOpenhomeOrgPlaylist1(this);
-	    beginSetRepeat(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetRepeat(boolean aValue)
+    {
+        SyncSetRepeatAvOpenhomeOrgPlaylist1 sync = new SyncSetRepeatAvOpenhomeOrgPlaylist1(this);
+        beginSetRepeat(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetRepeat}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetRepeat(boolean aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetRepeat}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetRepeat(boolean aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetRepeat, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentBool((ParameterBool)iActionSetRepeat.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetRepeat} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetRepeat} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetRepeat} method.
      */
-	public void endSetRepeat(long aAsyncHandle)
+    public void endSetRepeat(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1043,43 +1043,43 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public boolean syncRepeat()
-	{
-	    SyncRepeatAvOpenhomeOrgPlaylist1 sync = new SyncRepeatAvOpenhomeOrgPlaylist1(this);
-	    beginRepeat(sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncRepeat()
+    {
+        SyncRepeatAvOpenhomeOrgPlaylist1 sync = new SyncRepeatAvOpenhomeOrgPlaylist1(this);
+        beginRepeat(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endRepeat}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginRepeat(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endRepeat}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginRepeat(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionRepeat, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentBool((ParameterBool)iActionRepeat.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginRepeat} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginRepeat} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginRepeat} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endRepeat(long aAsyncHandle)
+    public boolean endRepeat(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1089,54 +1089,54 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetShuffle(boolean aValue)
-	{
-	    SyncSetShuffleAvOpenhomeOrgPlaylist1 sync = new SyncSetShuffleAvOpenhomeOrgPlaylist1(this);
-	    beginSetShuffle(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetShuffle(boolean aValue)
+    {
+        SyncSetShuffleAvOpenhomeOrgPlaylist1 sync = new SyncSetShuffleAvOpenhomeOrgPlaylist1(this);
+        beginSetShuffle(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetShuffle}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetShuffle(boolean aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetShuffle}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetShuffle(boolean aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetShuffle, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentBool((ParameterBool)iActionSetShuffle.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetShuffle} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetShuffle} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetShuffle} method.
      */
-	public void endSetShuffle(long aAsyncHandle)
+    public void endSetShuffle(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1144,43 +1144,43 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public boolean syncShuffle()
-	{
-	    SyncShuffleAvOpenhomeOrgPlaylist1 sync = new SyncShuffleAvOpenhomeOrgPlaylist1(this);
-	    beginShuffle(sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncShuffle()
+    {
+        SyncShuffleAvOpenhomeOrgPlaylist1 sync = new SyncShuffleAvOpenhomeOrgPlaylist1(this);
+        beginShuffle(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endShuffle}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginShuffle(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endShuffle}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginShuffle(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionShuffle, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentBool((ParameterBool)iActionShuffle.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginShuffle} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginShuffle} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginShuffle} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endShuffle(long aAsyncHandle)
+    public boolean endShuffle(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1190,195 +1190,195 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSeekSecondAbsolute(long aValue)
-	{
-	    SyncSeekSecondAbsoluteAvOpenhomeOrgPlaylist1 sync = new SyncSeekSecondAbsoluteAvOpenhomeOrgPlaylist1(this);
-	    beginSeekSecondAbsolute(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSeekSecondAbsolute(long aValue)
+    {
+        SyncSeekSecondAbsoluteAvOpenhomeOrgPlaylist1 sync = new SyncSeekSecondAbsoluteAvOpenhomeOrgPlaylist1(this);
+        beginSeekSecondAbsolute(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSeekSecondAbsolute}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSeekSecondAbsolute(long aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSeekSecondAbsolute}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSeekSecondAbsolute(long aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSeekSecondAbsolute, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSeekSecondAbsolute.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSeekSecondAbsolute} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSeekSecondAbsolute} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSeekSecondAbsolute} method.
      */
-	public void endSeekSecondAbsolute(long aAsyncHandle)
+    public void endSeekSecondAbsolute(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSeekSecondRelative(int aValue)
-	{
-	    SyncSeekSecondRelativeAvOpenhomeOrgPlaylist1 sync = new SyncSeekSecondRelativeAvOpenhomeOrgPlaylist1(this);
-	    beginSeekSecondRelative(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSeekSecondRelative(int aValue)
+    {
+        SyncSeekSecondRelativeAvOpenhomeOrgPlaylist1 sync = new SyncSeekSecondRelativeAvOpenhomeOrgPlaylist1(this);
+        beginSeekSecondRelative(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSeekSecondRelative}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSeekSecondRelative(int aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSeekSecondRelative}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSeekSecondRelative(int aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSeekSecondRelative, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentInt((ParameterInt)iActionSeekSecondRelative.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSeekSecondRelative} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSeekSecondRelative} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSeekSecondRelative} method.
      */
-	public void endSeekSecondRelative(long aAsyncHandle)
+    public void endSeekSecondRelative(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSeekId(long aValue)
-	{
-	    SyncSeekIdAvOpenhomeOrgPlaylist1 sync = new SyncSeekIdAvOpenhomeOrgPlaylist1(this);
-	    beginSeekId(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSeekId(long aValue)
+    {
+        SyncSeekIdAvOpenhomeOrgPlaylist1 sync = new SyncSeekIdAvOpenhomeOrgPlaylist1(this);
+        beginSeekId(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSeekId}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSeekId(long aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSeekId}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSeekId(long aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSeekId, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSeekId.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSeekId} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSeekId} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSeekId} method.
      */
-	public void endSeekId(long aAsyncHandle)
+    public void endSeekId(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSeekIndex(long aValue)
-	{
-	    SyncSeekIndexAvOpenhomeOrgPlaylist1 sync = new SyncSeekIndexAvOpenhomeOrgPlaylist1(this);
-	    beginSeekIndex(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSeekIndex(long aValue)
+    {
+        SyncSeekIndexAvOpenhomeOrgPlaylist1 sync = new SyncSeekIndexAvOpenhomeOrgPlaylist1(this);
+        beginSeekIndex(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSeekIndex}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSeekIndex(long aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSeekIndex}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSeekIndex(long aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSeekIndex, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSeekIndex.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSeekIndex} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSeekIndex} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSeekIndex} method.
      */
-	public void endSeekIndex(long aAsyncHandle)
+    public void endSeekIndex(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1386,43 +1386,43 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public String syncTransportState()
-	{
-	    SyncTransportStateAvOpenhomeOrgPlaylist1 sync = new SyncTransportStateAvOpenhomeOrgPlaylist1(this);
-	    beginTransportState(sync.getListener());
-	    sync.waitToComplete();
+    public String syncTransportState()
+    {
+        SyncTransportStateAvOpenhomeOrgPlaylist1 sync = new SyncTransportStateAvOpenhomeOrgPlaylist1(this);
+        beginTransportState(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endTransportState}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginTransportState(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endTransportState}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginTransportState(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionTransportState, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionTransportState.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginTransportState} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginTransportState} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginTransportState} method.
      * @return the result of the previously invoked action.
      */
-	public String endTransportState(long aAsyncHandle)
+    public String endTransportState(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1432,7 +1432,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         String value = Invocation.getOutputString(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1440,43 +1440,43 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public long syncId()
-	{
-	    SyncIdAvOpenhomeOrgPlaylist1 sync = new SyncIdAvOpenhomeOrgPlaylist1(this);
-	    beginId(sync.getListener());
-	    sync.waitToComplete();
+    public long syncId()
+    {
+        SyncIdAvOpenhomeOrgPlaylist1 sync = new SyncIdAvOpenhomeOrgPlaylist1(this);
+        beginId(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endId}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginId(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endId}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginId(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionId, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionId.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginId} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginId} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginId} method.
      * @return the result of the previously invoked action.
      */
-	public long endId(long aAsyncHandle)
+    public long endId(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1486,7 +1486,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1494,31 +1494,31 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public Read syncRead(long aId)
-	{
-	    SyncReadAvOpenhomeOrgPlaylist1 sync = new SyncReadAvOpenhomeOrgPlaylist1(this);
-	    beginRead(aId, sync.getListener());
-	    sync.waitToComplete();
+    public Read syncRead(long aId)
+    {
+        SyncReadAvOpenhomeOrgPlaylist1 sync = new SyncReadAvOpenhomeOrgPlaylist1(this);
+        beginRead(aId, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Read(
             sync.getUri(),
             sync.getMetadata()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endRead}.
-	 * 
-	 * @param aId
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginRead(long aId, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endRead}.
+     * 
+     * @param aId
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginRead(long aId, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionRead, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionRead.getInputParameter(inIndex++), aId));
@@ -1528,16 +1528,16 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginRead} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginRead} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginRead} method.
      * @return the result of the previously invoked action.
      */
-	public Read endRead(long aAsyncHandle)
+    public Read endRead(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1549,9 +1549,9 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         return new Read(
             uri,
             metadata
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1559,28 +1559,28 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public String syncReadList(String aIdList)
-	{
-	    SyncReadListAvOpenhomeOrgPlaylist1 sync = new SyncReadListAvOpenhomeOrgPlaylist1(this);
-	    beginReadList(aIdList, sync.getListener());
-	    sync.waitToComplete();
+    public String syncReadList(String aIdList)
+    {
+        SyncReadListAvOpenhomeOrgPlaylist1 sync = new SyncReadListAvOpenhomeOrgPlaylist1(this);
+        beginReadList(aIdList, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getTrackList();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endReadList}.
-	 * 
-	 * @param aIdList
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginReadList(String aIdList, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endReadList}.
+     * 
+     * @param aIdList
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginReadList(String aIdList, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionReadList, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionReadList.getInputParameter(inIndex++), aIdList));
@@ -1589,16 +1589,16 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginReadList} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginReadList} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginReadList} method.
      * @return the result of the previously invoked action.
      */
-	public String endReadList(long aAsyncHandle)
+    public String endReadList(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1608,7 +1608,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         String trackList = Invocation.getOutputString(aAsyncHandle, index++);
         return trackList;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1616,30 +1616,30 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public long syncInsert(long aAfterId, String aUri, String aMetadata)
-	{
-	    SyncInsertAvOpenhomeOrgPlaylist1 sync = new SyncInsertAvOpenhomeOrgPlaylist1(this);
-	    beginInsert(aAfterId, aUri, aMetadata, sync.getListener());
-	    sync.waitToComplete();
+    public long syncInsert(long aAfterId, String aUri, String aMetadata)
+    {
+        SyncInsertAvOpenhomeOrgPlaylist1 sync = new SyncInsertAvOpenhomeOrgPlaylist1(this);
+        beginInsert(aAfterId, aUri, aMetadata, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getNewId();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endInsert}.
-	 * 
-	 * @param aAfterId
-	 * @param aUri
-	 * @param aMetadata
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginInsert(long aAfterId, String aUri, String aMetadata, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endInsert}.
+     * 
+     * @param aAfterId
+     * @param aUri
+     * @param aMetadata
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginInsert(long aAfterId, String aUri, String aMetadata, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionInsert, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionInsert.getInputParameter(inIndex++), aAfterId));
@@ -1650,16 +1650,16 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginInsert} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginInsert} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginInsert} method.
      * @return the result of the previously invoked action.
      */
-	public long endInsert(long aAsyncHandle)
+    public long endInsert(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1669,98 +1669,98 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         long newId = Invocation.getOutputUint(aAsyncHandle, index++);
         return newId;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDeleteId(long aValue)
-	{
-	    SyncDeleteIdAvOpenhomeOrgPlaylist1 sync = new SyncDeleteIdAvOpenhomeOrgPlaylist1(this);
-	    beginDeleteId(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncDeleteId(long aValue)
+    {
+        SyncDeleteIdAvOpenhomeOrgPlaylist1 sync = new SyncDeleteIdAvOpenhomeOrgPlaylist1(this);
+        beginDeleteId(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDeleteId}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDeleteId(long aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDeleteId}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDeleteId(long aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDeleteId, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionDeleteId.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDeleteId} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDeleteId} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDeleteId} method.
      */
-	public void endDeleteId(long aAsyncHandle)
+    public void endDeleteId(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDeleteAll()
-	{
-	    SyncDeleteAllAvOpenhomeOrgPlaylist1 sync = new SyncDeleteAllAvOpenhomeOrgPlaylist1(this);
-	    beginDeleteAll(sync.getListener());
-	    sync.waitToComplete();
+    public void syncDeleteAll()
+    {
+        SyncDeleteAllAvOpenhomeOrgPlaylist1 sync = new SyncDeleteAllAvOpenhomeOrgPlaylist1(this);
+        beginDeleteAll(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDeleteAll}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDeleteAll(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDeleteAll}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDeleteAll(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDeleteAll, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDeleteAll} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDeleteAll} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDeleteAll} method.
      */
-	public void endDeleteAll(long aAsyncHandle)
+    public void endDeleteAll(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1768,43 +1768,43 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public long syncTracksMax()
-	{
-	    SyncTracksMaxAvOpenhomeOrgPlaylist1 sync = new SyncTracksMaxAvOpenhomeOrgPlaylist1(this);
-	    beginTracksMax(sync.getListener());
-	    sync.waitToComplete();
+    public long syncTracksMax()
+    {
+        SyncTracksMaxAvOpenhomeOrgPlaylist1 sync = new SyncTracksMaxAvOpenhomeOrgPlaylist1(this);
+        beginTracksMax(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endTracksMax}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginTracksMax(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endTracksMax}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginTracksMax(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionTracksMax, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionTracksMax.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginTracksMax} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginTracksMax} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginTracksMax} method.
      * @return the result of the previously invoked action.
      */
-	public long endTracksMax(long aAsyncHandle)
+    public long endTracksMax(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1814,7 +1814,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1822,30 +1822,30 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public IdArray syncIdArray()
-	{
-	    SyncIdArrayAvOpenhomeOrgPlaylist1 sync = new SyncIdArrayAvOpenhomeOrgPlaylist1(this);
-	    beginIdArray(sync.getListener());
-	    sync.waitToComplete();
+    public IdArray syncIdArray()
+    {
+        SyncIdArrayAvOpenhomeOrgPlaylist1 sync = new SyncIdArrayAvOpenhomeOrgPlaylist1(this);
+        beginIdArray(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new IdArray(
             sync.getToken(),
             sync.getArray()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endIdArray}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginIdArray(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endIdArray}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginIdArray(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionIdArray, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionIdArray.getOutputParameter(outIndex++)));
@@ -1853,16 +1853,16 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginIdArray} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginIdArray} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginIdArray} method.
      * @return the result of the previously invoked action.
      */
-	public IdArray endIdArray(long aAsyncHandle)
+    public IdArray endIdArray(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1874,9 +1874,9 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         return new IdArray(
             token,
             array
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1884,28 +1884,28 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public boolean syncIdArrayChanged(long aToken)
-	{
-	    SyncIdArrayChangedAvOpenhomeOrgPlaylist1 sync = new SyncIdArrayChangedAvOpenhomeOrgPlaylist1(this);
-	    beginIdArrayChanged(aToken, sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncIdArrayChanged(long aToken)
+    {
+        SyncIdArrayChangedAvOpenhomeOrgPlaylist1 sync = new SyncIdArrayChangedAvOpenhomeOrgPlaylist1(this);
+        beginIdArrayChanged(aToken, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endIdArrayChanged}.
-	 * 
-	 * @param aToken
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginIdArrayChanged(long aToken, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endIdArrayChanged}.
+     * 
+     * @param aToken
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginIdArrayChanged(long aToken, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionIdArrayChanged, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionIdArrayChanged.getInputParameter(inIndex++), aToken));
@@ -1914,16 +1914,16 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginIdArrayChanged} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginIdArrayChanged} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginIdArrayChanged} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endIdArrayChanged(long aAsyncHandle)
+    public boolean endIdArrayChanged(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1933,7 +1933,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1941,43 +1941,43 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public String syncProtocolInfo()
-	{
-	    SyncProtocolInfoAvOpenhomeOrgPlaylist1 sync = new SyncProtocolInfoAvOpenhomeOrgPlaylist1(this);
-	    beginProtocolInfo(sync.getListener());
-	    sync.waitToComplete();
+    public String syncProtocolInfo()
+    {
+        SyncProtocolInfoAvOpenhomeOrgPlaylist1 sync = new SyncProtocolInfoAvOpenhomeOrgPlaylist1(this);
+        beginProtocolInfo(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endProtocolInfo}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginProtocolInfo(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endProtocolInfo}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginProtocolInfo(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionProtocolInfo, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionProtocolInfo.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginProtocolInfo} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginProtocolInfo} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginProtocolInfo} method.
      * @return the result of the previously invoked action.
      */
-	public String endProtocolInfo(long aAsyncHandle)
+    public String endProtocolInfo(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1987,14 +1987,14 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         String value = Invocation.getOutputString(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Set a delegate to be run when the TransportState state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
      *
-     * @param aTransportStateChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aTransportStateChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyTransportStateChanged(IPropertyChangeListener aTransportStateChanged)
     {
@@ -2014,10 +2014,10 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the Repeat state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
      *
-     * @param aRepeatChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aRepeatChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyRepeatChanged(IPropertyChangeListener aRepeatChanged)
     {
@@ -2037,10 +2037,10 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the Shuffle state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
      *
-     * @param aShuffleChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aShuffleChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyShuffleChanged(IPropertyChangeListener aShuffleChanged)
     {
@@ -2060,10 +2060,10 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the Id state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
      *
-     * @param aIdChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aIdChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyIdChanged(IPropertyChangeListener aIdChanged)
     {
@@ -2083,10 +2083,10 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the IdArray state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
      *
-     * @param aIdArrayChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aIdArrayChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyIdArrayChanged(IPropertyChangeListener aIdArrayChanged)
     {
@@ -2106,10 +2106,10 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the TracksMax state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
      *
-     * @param aTracksMaxChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aTracksMaxChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyTracksMaxChanged(IPropertyChangeListener aTracksMaxChanged)
     {
@@ -2129,10 +2129,10 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the ProtocolInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgPlaylist1 instance will not overlap.
      *
-     * @param aProtocolInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProtocolInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProtocolInfoChanged(IPropertyChangeListener aProtocolInfoChanged)
     {
@@ -2156,7 +2156,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the TransportState property.
+     * @return  value of the TransportState property.
      */
     public String getPropertyTransportState()
     {
@@ -2165,14 +2165,14 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Repeat property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Repeat property.
+     * @return  value of the Repeat property.
      */
     public boolean getPropertyRepeat()
     {
@@ -2181,14 +2181,14 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Shuffle property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Shuffle property.
+     * @return  value of the Shuffle property.
      */
     public boolean getPropertyShuffle()
     {
@@ -2197,14 +2197,14 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Id property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Id property.
+     * @return  value of the Id property.
      */
     public long getPropertyId()
     {
@@ -2213,14 +2213,14 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the IdArray property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the IdArray property.
+     * @return  value of the IdArray property.
      */
     public byte[] getPropertyIdArray()
     {
@@ -2229,14 +2229,14 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the TracksMax property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the TracksMax property.
+     * @return  value of the TracksMax property.
      */
     public long getPropertyTracksMax()
     {
@@ -2245,14 +2245,14 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProtocolInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProtocolInfo property.
+     * @return  value of the ProtocolInfo property.
      */
     public String getPropertyProtocolInfo()
     {
@@ -2261,7 +2261,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

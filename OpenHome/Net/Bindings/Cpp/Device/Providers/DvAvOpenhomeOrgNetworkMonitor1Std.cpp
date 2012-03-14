@@ -116,12 +116,12 @@ void DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::DoName(IDviInvocation& aInvocati
     std::string respName;
     DvInvocationStd invocation(aInvocation);
     Name(invocation, respName);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
     aInvocation.InvocationWriteStringEnd("Name");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::DoPorts(IDviInvocation& aInvocation)
@@ -133,14 +133,14 @@ void DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::DoPorts(IDviInvocation& aInvocat
     uint32_t respResults;
     DvInvocationStd invocation(aInvocation);
     Ports(invocation, respSender, respReceiver, respResults);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterSender(aInvocation, "Sender");
     respWriterSender.Write(respSender);
     DviInvocationResponseUint respWriterReceiver(aInvocation, "Receiver");
     respWriterReceiver.Write(respReceiver);
     DviInvocationResponseUint respWriterResults(aInvocation, "Results");
     respWriterResults.Write(respResults);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::Name(IDvInvocationStd& /*aInvocation*/, std::string& /*aName*/)

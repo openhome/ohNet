@@ -346,7 +346,7 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoManufacturer(IDviInvocation& aInv
     std::string respImageUri;
     DvInvocationStd invocation(aInvocation);
     Manufacturer(invocation, respName, respInfo, respUrl, respImageUri);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
@@ -363,7 +363,7 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoManufacturer(IDviInvocation& aInv
     Brn buf_ImageUri((const TByte*)respImageUri.c_str(), (TUint)respImageUri.length());
     respWriterImageUri.Write(buf_ImageUri);
     aInvocation.InvocationWriteStringEnd("ImageUri");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoModel(IDviInvocation& aInvocation)
@@ -376,7 +376,7 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoModel(IDviInvocation& aInvocation
     std::string respImageUri;
     DvInvocationStd invocation(aInvocation);
     Model(invocation, respName, respInfo, respUrl, respImageUri);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
@@ -393,7 +393,7 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoModel(IDviInvocation& aInvocation
     Brn buf_ImageUri((const TByte*)respImageUri.c_str(), (TUint)respImageUri.length());
     respWriterImageUri.Write(buf_ImageUri);
     aInvocation.InvocationWriteStringEnd("ImageUri");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoProduct(IDviInvocation& aInvocation)
@@ -406,7 +406,7 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoProduct(IDviInvocation& aInvocati
     std::string respImageUri;
     DvInvocationStd invocation(aInvocation);
     Product(invocation, respName, respInfo, respUrl, respImageUri);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
@@ -423,7 +423,7 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoProduct(IDviInvocation& aInvocati
     Brn buf_ImageUri((const TByte*)respImageUri.c_str(), (TUint)respImageUri.length());
     respWriterImageUri.Write(buf_ImageUri);
     aInvocation.InvocationWriteStringEnd("ImageUri");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoAttributes(IDviInvocation& aInvocation)
@@ -433,12 +433,12 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoAttributes(IDviInvocation& aInvoc
     std::string respValue;
     DvInvocationStd invocation(aInvocation);
     Attributes(invocation, respValue);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoQuery(IDviInvocation& aInvocation)
@@ -451,12 +451,12 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoQuery(IDviInvocation& aInvocation
     std::string respResult;
     DvInvocationStd invocation(aInvocation);
     Query(invocation, Request, respResult);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::Manufacturer(IDvInvocationStd& /*aInvocation*/, std::string& /*aName*/, std::string& /*aInfo*/, std::string& /*aUrl*/, std::string& /*aImageUri*/)

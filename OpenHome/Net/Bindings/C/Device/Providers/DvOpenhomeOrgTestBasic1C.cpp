@@ -827,7 +827,7 @@ void DvProviderOpenhomeOrgTestBasic1C::DoShutdown(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderOpenhomeOrgTestBasic1Create(DvDeviceC aDevice)
 {
-	return new DvProviderOpenhomeOrgTestBasic1C(aDevice);
+    return new DvProviderOpenhomeOrgTestBasic1C(aDevice);
 }
 
 void STDCALL DvProviderOpenhomeOrgTestBasic1Destroy(THandle aProvider)

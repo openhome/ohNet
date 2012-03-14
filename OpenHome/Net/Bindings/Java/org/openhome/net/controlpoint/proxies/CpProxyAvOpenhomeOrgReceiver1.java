@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyAvOpenhomeOrgReceiver1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyAvOpenhomeOrgReceiver1 extends ICpProxy
 {
     public void syncPlay();
@@ -49,7 +49,7 @@ class SyncPlayAvOpenhomeOrgReceiver1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endPlay(aAsyncHandle);
-		
+        
     }
 }
 
@@ -64,7 +64,7 @@ class SyncStopAvOpenhomeOrgReceiver1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endStop(aAsyncHandle);
-		
+        
     }
 }
 
@@ -79,7 +79,7 @@ class SyncSetSenderAvOpenhomeOrgReceiver1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetSender(aAsyncHandle);
-		
+        
     }
 }
 
@@ -104,7 +104,7 @@ class SyncSenderAvOpenhomeOrgReceiver1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Sender result = iService.endSender(aAsyncHandle);
-		
+        
         iUri = result.getUri();
         iMetadata = result.getMetadata();
     }
@@ -126,7 +126,7 @@ class SyncProtocolInfoAvOpenhomeOrgReceiver1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endProtocolInfo(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -147,7 +147,7 @@ class SyncTransportStateAvOpenhomeOrgReceiver1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endTransportState(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -201,7 +201,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyAvOpenhomeOrgReceiver1(CpDevice aDevice)
@@ -216,19 +216,19 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 
         iActionSetSender = new Action("SetSender");
         param = new ParameterString("Uri", allowedValues);
-		iActionSetSender.addInputParameter(param);
+        iActionSetSender.addInputParameter(param);
         param = new ParameterString("Metadata", allowedValues);
-		iActionSetSender.addInputParameter(param);
+        iActionSetSender.addInputParameter(param);
 
         iActionSender = new Action("Sender");
         param = new ParameterString("Uri", allowedValues);
-		iActionSender.addOutputParameter(param);
+        iActionSender.addOutputParameter(param);
         param = new ParameterString("Metadata", allowedValues);
-		iActionSender.addOutputParameter(param);
+        iActionSender.addOutputParameter(param);
 
         iActionProtocolInfo = new Action("ProtocolInfo");
         param = new ParameterString("Value", allowedValues);
-		iActionProtocolInfo.addOutputParameter(param);
+        iActionProtocolInfo.addOutputParameter(param);
 
         iActionTransportState = new Action("TransportState");
         allowedValues.add("Stopped");
@@ -236,21 +236,21 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         allowedValues.add("Waiting");
         allowedValues.add("Buffering");
         param = new ParameterString("Value", allowedValues);
-		iActionTransportState.addOutputParameter(param);
+        iActionTransportState.addOutputParameter(param);
         allowedValues.clear();
 
         iUriChanged = new PropertyChangeListener();
         iUri = new PropertyString("Uri", iUriChanged);
-		addProperty(iUri);
+        addProperty(iUri);
         iMetadataChanged = new PropertyChangeListener();
         iMetadata = new PropertyString("Metadata", iMetadataChanged);
-		addProperty(iMetadata);
+        addProperty(iMetadata);
         iTransportStateChanged = new PropertyChangeListener();
         iTransportState = new PropertyString("TransportState", iTransportStateChanged);
-		addProperty(iTransportState);
+        addProperty(iTransportState);
         iProtocolInfoChanged = new PropertyChangeListener();
         iProtocolInfo = new PropertyString("ProtocolInfo", iProtocolInfoChanged);
-		addProperty(iProtocolInfo);
+        addProperty(iProtocolInfo);
         iPropertyLock = new Object();
     }
     /**
@@ -258,115 +258,115 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncPlay()
-	{
-	    SyncPlayAvOpenhomeOrgReceiver1 sync = new SyncPlayAvOpenhomeOrgReceiver1(this);
-	    beginPlay(sync.getListener());
-	    sync.waitToComplete();
+    public void syncPlay()
+    {
+        SyncPlayAvOpenhomeOrgReceiver1 sync = new SyncPlayAvOpenhomeOrgReceiver1(this);
+        beginPlay(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPlay}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPlay(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPlay}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPlay(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPlay, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPlay} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPlay} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPlay} method.
      */
-	public void endPlay(long aAsyncHandle)
+    public void endPlay(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncStop()
-	{
-	    SyncStopAvOpenhomeOrgReceiver1 sync = new SyncStopAvOpenhomeOrgReceiver1(this);
-	    beginStop(sync.getListener());
-	    sync.waitToComplete();
+    public void syncStop()
+    {
+        SyncStopAvOpenhomeOrgReceiver1 sync = new SyncStopAvOpenhomeOrgReceiver1(this);
+        beginStop(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endStop}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginStop(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endStop}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginStop(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionStop, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginStop} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginStop} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginStop} method.
      */
-	public void endStop(long aAsyncHandle)
+    public void endStop(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetSender(String aUri, String aMetadata)
-	{
-	    SyncSetSenderAvOpenhomeOrgReceiver1 sync = new SyncSetSenderAvOpenhomeOrgReceiver1(this);
-	    beginSetSender(aUri, aMetadata, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetSender(String aUri, String aMetadata)
+    {
+        SyncSetSenderAvOpenhomeOrgReceiver1 sync = new SyncSetSenderAvOpenhomeOrgReceiver1(this);
+        beginSetSender(aUri, aMetadata, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetSender}.
-	 * 
-	 * @param aUri
-	 * @param aMetadata
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetSender(String aUri, String aMetadata, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetSender}.
+     * 
+     * @param aUri
+     * @param aMetadata
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetSender(String aUri, String aMetadata, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetSender, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionSetSender.getInputParameter(inIndex++), aUri));
@@ -374,22 +374,22 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetSender} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetSender} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetSender} method.
      */
-	public void endSetSender(long aAsyncHandle)
+    public void endSetSender(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -397,30 +397,30 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public Sender syncSender()
-	{
-	    SyncSenderAvOpenhomeOrgReceiver1 sync = new SyncSenderAvOpenhomeOrgReceiver1(this);
-	    beginSender(sync.getListener());
-	    sync.waitToComplete();
+    public Sender syncSender()
+    {
+        SyncSenderAvOpenhomeOrgReceiver1 sync = new SyncSenderAvOpenhomeOrgReceiver1(this);
+        beginSender(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Sender(
             sync.getUri(),
             sync.getMetadata()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSender}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSender(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSender}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSender(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSender, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionSender.getOutputParameter(outIndex++)));
@@ -428,16 +428,16 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSender} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSender} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSender} method.
      * @return the result of the previously invoked action.
      */
-	public Sender endSender(long aAsyncHandle)
+    public Sender endSender(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -449,9 +449,9 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         return new Sender(
             uri,
             metadata
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -459,43 +459,43 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public String syncProtocolInfo()
-	{
-	    SyncProtocolInfoAvOpenhomeOrgReceiver1 sync = new SyncProtocolInfoAvOpenhomeOrgReceiver1(this);
-	    beginProtocolInfo(sync.getListener());
-	    sync.waitToComplete();
+    public String syncProtocolInfo()
+    {
+        SyncProtocolInfoAvOpenhomeOrgReceiver1 sync = new SyncProtocolInfoAvOpenhomeOrgReceiver1(this);
+        beginProtocolInfo(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endProtocolInfo}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginProtocolInfo(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endProtocolInfo}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginProtocolInfo(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionProtocolInfo, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionProtocolInfo.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginProtocolInfo} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginProtocolInfo} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginProtocolInfo} method.
      * @return the result of the previously invoked action.
      */
-	public String endProtocolInfo(long aAsyncHandle)
+    public String endProtocolInfo(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -505,7 +505,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         String value = Invocation.getOutputString(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -513,43 +513,43 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      *
      * @return the result of the invoked action.
      */
-	public String syncTransportState()
-	{
-	    SyncTransportStateAvOpenhomeOrgReceiver1 sync = new SyncTransportStateAvOpenhomeOrgReceiver1(this);
-	    beginTransportState(sync.getListener());
-	    sync.waitToComplete();
+    public String syncTransportState()
+    {
+        SyncTransportStateAvOpenhomeOrgReceiver1 sync = new SyncTransportStateAvOpenhomeOrgReceiver1(this);
+        beginTransportState(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endTransportState}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginTransportState(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endTransportState}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginTransportState(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionTransportState, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionTransportState.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginTransportState} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginTransportState} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginTransportState} method.
      * @return the result of the previously invoked action.
      */
-	public String endTransportState(long aAsyncHandle)
+    public String endTransportState(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -559,14 +559,14 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         String value = Invocation.getOutputString(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Set a delegate to be run when the Uri state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgReceiver1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgReceiver1 instance will not overlap.
      *
-     * @param aUriChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aUriChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyUriChanged(IPropertyChangeListener aUriChanged)
     {
@@ -586,10 +586,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the Metadata state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgReceiver1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgReceiver1 instance will not overlap.
      *
-     * @param aMetadataChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aMetadataChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyMetadataChanged(IPropertyChangeListener aMetadataChanged)
     {
@@ -609,10 +609,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the TransportState state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgReceiver1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgReceiver1 instance will not overlap.
      *
-     * @param aTransportStateChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aTransportStateChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyTransportStateChanged(IPropertyChangeListener aTransportStateChanged)
     {
@@ -632,10 +632,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
     /**
      * Set a delegate to be run when the ProtocolInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgReceiver1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgReceiver1 instance will not overlap.
      *
-     * @param aProtocolInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProtocolInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProtocolInfoChanged(IPropertyChangeListener aProtocolInfoChanged)
     {
@@ -659,7 +659,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Uri property.
+     * @return  value of the Uri property.
      */
     public String getPropertyUri()
     {
@@ -668,14 +668,14 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Metadata property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Metadata property.
+     * @return  value of the Metadata property.
      */
     public String getPropertyMetadata()
     {
@@ -684,14 +684,14 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the TransportState property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the TransportState property.
+     * @return  value of the TransportState property.
      */
     public String getPropertyTransportState()
     {
@@ -700,14 +700,14 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProtocolInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProtocolInfo property.
+     * @return  value of the ProtocolInfo property.
      */
     public String getPropertyProtocolInfo()
     {
@@ -716,7 +716,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

@@ -12,8 +12,8 @@ interface IDvProviderUpnpOrgDimming1
     /**
      * Set the value of the LoadLevelStatus property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyLoadLevelStatus(long aValue);
@@ -28,8 +28,8 @@ interface IDvProviderUpnpOrgDimming1
     /**
      * Set the value of the StepDelta property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyStepDelta(long aValue);
@@ -44,8 +44,8 @@ interface IDvProviderUpnpOrgDimming1
     /**
      * Set the value of the RampRate property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyRampRate(long aValue);
@@ -60,8 +60,8 @@ interface IDvProviderUpnpOrgDimming1
     /**
      * Set the value of the IsRamping property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyIsRamping(boolean aValue);
@@ -76,8 +76,8 @@ interface IDvProviderUpnpOrgDimming1
     /**
      * Set the value of the RampPaused property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyRampPaused(boolean aValue);
@@ -150,11 +150,11 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderUpnpOrgDimming1(DvDevice aDevice)
     {
-	    super(aDevice, "upnp.org", "Dimming", 1);
+        super(aDevice, "upnp.org", "Dimming", 1);
     }
 
     /**
@@ -205,7 +205,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Set the value of the LoadLevelStatus property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -217,7 +217,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Get a copy of the value of the LoadLevelStatus property
      *
-     * @return	value of the LoadLevelStatus property.
+     * @return  value of the LoadLevelStatus property.
      */
     public long getPropertyLoadLevelStatus()
     {
@@ -227,7 +227,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Set the value of the StepDelta property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -239,7 +239,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Get a copy of the value of the StepDelta property
      *
-     * @return	value of the StepDelta property.
+     * @return  value of the StepDelta property.
      */
     public long getPropertyStepDelta()
     {
@@ -249,7 +249,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Set the value of the RampRate property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -261,7 +261,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Get a copy of the value of the RampRate property
      *
-     * @return	value of the RampRate property.
+     * @return  value of the RampRate property.
      */
     public long getPropertyRampRate()
     {
@@ -271,7 +271,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Set the value of the IsRamping property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -283,7 +283,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Get a copy of the value of the IsRamping property
      *
-     * @return	value of the IsRamping property.
+     * @return  value of the IsRamping property.
      */
     public boolean getPropertyIsRamping()
     {
@@ -293,7 +293,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Set the value of the RampPaused property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -305,7 +305,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
     /**
      * Get a copy of the value of the RampPaused property
      *
-     * @return	value of the RampPaused property.
+     * @return  value of the RampPaused property.
      */
     public boolean getPropertyRampPaused()
     {
@@ -317,7 +317,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetLoadLevelTarget must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetLoadLevelTarget()
     {
         Action action = new Action("SetLoadLevelTarget");
@@ -331,7 +331,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetLoadLevelTarget must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetLoadLevelTarget()
     {
         Action action = new Action("GetLoadLevelTarget");
@@ -345,7 +345,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetLoadLevelStatus must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetLoadLevelStatus()
     {
         Action action = new Action("GetLoadLevelStatus");
@@ -359,7 +359,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetOnEffectLevel must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetOnEffectLevel()
     {
         Action action = new Action("SetOnEffectLevel");
@@ -373,7 +373,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetOnEffect must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetOnEffect()
     {
         Action action = new Action("SetOnEffect");        List<String> allowedValues = new LinkedList<String>();
@@ -391,7 +391,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetOnEffectParameters must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetOnEffectParameters()
     {
         Action action = new Action("GetOnEffectParameters");        List<String> allowedValues = new LinkedList<String>();
@@ -410,7 +410,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * StepUp must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStepUp()
     {
         Action action = new Action("StepUp");
@@ -423,7 +423,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * StepDown must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStepDown()
     {
         Action action = new Action("StepDown");
@@ -436,7 +436,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * StartRampUp must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStartRampUp()
     {
         Action action = new Action("StartRampUp");
@@ -449,7 +449,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * StartRampDown must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStartRampDown()
     {
         Action action = new Action("StartRampDown");
@@ -462,7 +462,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * StopRamp must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStopRamp()
     {
         Action action = new Action("StopRamp");
@@ -475,7 +475,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * StartRampToLevel must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStartRampToLevel()
     {
         Action action = new Action("StartRampToLevel");
@@ -490,7 +490,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetStepDelta must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetStepDelta()
     {
         Action action = new Action("SetStepDelta");
@@ -504,7 +504,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetStepDelta must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetStepDelta()
     {
         Action action = new Action("GetStepDelta");
@@ -518,7 +518,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetRampRate must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetRampRate()
     {
         Action action = new Action("SetRampRate");
@@ -532,7 +532,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetRampRate must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetRampRate()
     {
         Action action = new Action("GetRampRate");
@@ -546,7 +546,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PauseRamp must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPauseRamp()
     {
         Action action = new Action("PauseRamp");
@@ -559,7 +559,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ResumeRamp must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionResumeRamp()
     {
         Action action = new Action("ResumeRamp");
@@ -572,7 +572,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetIsRamping must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetIsRamping()
     {
         Action action = new Action("GetIsRamping");
@@ -586,7 +586,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetRampPaused must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetRampPaused()
     {
         Action action = new Action("GetRampPaused");
@@ -600,7 +600,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetRampTime must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetRampTime()
     {
         Action action = new Action("GetRampTime");
@@ -617,7 +617,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetLoadLevelTarget} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewLoadlevelTarget
      */
     protected void setLoadLevelTarget(IDvInvocation aInvocation, long anewLoadlevelTarget)
@@ -633,7 +633,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetLoadLevelTarget} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long getLoadLevelTarget(IDvInvocation aInvocation)
     {
@@ -648,7 +648,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetLoadLevelStatus} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long getLoadLevelStatus(IDvInvocation aInvocation)
     {
@@ -663,7 +663,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetOnEffectLevel} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewOnEffectLevel
      */
     protected void setOnEffectLevel(IDvInvocation aInvocation, long anewOnEffectLevel)
@@ -679,7 +679,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetOnEffect} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewOnEffect
      */
     protected void setOnEffect(IDvInvocation aInvocation, String anewOnEffect)
@@ -695,7 +695,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetOnEffectParameters} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected GetOnEffectParameters getOnEffectParameters(IDvInvocation aInvocation)
     {
@@ -710,7 +710,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStepUp} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void stepUp(IDvInvocation aInvocation)
     {
@@ -725,7 +725,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStepDown} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void stepDown(IDvInvocation aInvocation)
     {
@@ -740,7 +740,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStartRampUp} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void startRampUp(IDvInvocation aInvocation)
     {
@@ -755,7 +755,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStartRampDown} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void startRampDown(IDvInvocation aInvocation)
     {
@@ -770,7 +770,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStopRamp} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void stopRamp(IDvInvocation aInvocation)
     {
@@ -785,7 +785,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionStartRampToLevel} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewLoadLevelTarget
      * @param anewRampTime
      */
@@ -802,7 +802,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetStepDelta} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewStepDelta
      */
     protected void setStepDelta(IDvInvocation aInvocation, long anewStepDelta)
@@ -818,7 +818,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetStepDelta} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long getStepDelta(IDvInvocation aInvocation)
     {
@@ -833,7 +833,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionSetRampRate} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewRampRate
      */
     protected void setRampRate(IDvInvocation aInvocation, long anewRampRate)
@@ -849,7 +849,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetRampRate} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long getRampRate(IDvInvocation aInvocation)
     {
@@ -864,7 +864,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionPauseRamp} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void pauseRamp(IDvInvocation aInvocation)
     {
@@ -879,7 +879,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionResumeRamp} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void resumeRamp(IDvInvocation aInvocation)
     {
@@ -894,7 +894,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetIsRamping} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected boolean getIsRamping(IDvInvocation aInvocation)
     {
@@ -909,7 +909,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetRampPaused} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected boolean getRampPaused(IDvInvocation aInvocation)
     {
@@ -924,7 +924,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      *
      * <p>Must be implemented iff {@link #enableActionGetRampTime} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long getRampTime(IDvInvocation aInvocation)
     {
@@ -994,7 +994,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetLoadLevelTarget implements IDvInvocationListener
     {
@@ -1042,7 +1042,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetLoadLevelStatus implements IDvInvocationListener
     {
@@ -1090,7 +1090,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetOnEffectLevel implements IDvInvocationListener
     {
@@ -1138,7 +1138,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetOnEffect implements IDvInvocationListener
     {
@@ -1186,7 +1186,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetOnEffectParameters implements IDvInvocationListener
     {
@@ -1239,7 +1239,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStepUp implements IDvInvocationListener
     {
@@ -1285,7 +1285,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStepDown implements IDvInvocationListener
     {
@@ -1331,7 +1331,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStartRampUp implements IDvInvocationListener
     {
@@ -1377,7 +1377,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStartRampDown implements IDvInvocationListener
     {
@@ -1423,7 +1423,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStopRamp implements IDvInvocationListener
     {
@@ -1469,7 +1469,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStartRampToLevel implements IDvInvocationListener
     {
@@ -1519,7 +1519,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetStepDelta implements IDvInvocationListener
     {
@@ -1567,7 +1567,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetStepDelta implements IDvInvocationListener
     {
@@ -1615,7 +1615,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetRampRate implements IDvInvocationListener
     {
@@ -1663,7 +1663,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetRampRate implements IDvInvocationListener
     {
@@ -1711,7 +1711,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPauseRamp implements IDvInvocationListener
     {
@@ -1757,7 +1757,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoResumeRamp implements IDvInvocationListener
     {
@@ -1803,7 +1803,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetIsRamping implements IDvInvocationListener
     {
@@ -1851,7 +1851,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetRampPaused implements IDvInvocationListener
     {
@@ -1899,7 +1899,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetRampTime implements IDvInvocationListener
     {
@@ -1947,6 +1947,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

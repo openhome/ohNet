@@ -199,7 +199,7 @@ void DvProviderOpenhomeOrgSubscriptionLongPoll1C::DoGetPropertyUpdates(IDviInvoc
 
 THandle STDCALL DvProviderOpenhomeOrgSubscriptionLongPoll1Create(DvDeviceC aDevice)
 {
-	return new DvProviderOpenhomeOrgSubscriptionLongPoll1C(aDevice);
+    return new DvProviderOpenhomeOrgSubscriptionLongPoll1C(aDevice);
 }
 
 void STDCALL DvProviderOpenhomeOrgSubscriptionLongPoll1Destroy(THandle aProvider)

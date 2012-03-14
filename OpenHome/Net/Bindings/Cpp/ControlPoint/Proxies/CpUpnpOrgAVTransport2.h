@@ -721,7 +721,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aLastChange
      */
@@ -731,7 +731,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aDRMState
      */

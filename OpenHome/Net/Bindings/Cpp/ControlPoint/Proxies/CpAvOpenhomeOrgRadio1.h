@@ -535,7 +535,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aUri
      */
@@ -545,7 +545,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aMetadata
      */
@@ -555,7 +555,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aTransportState
      */
@@ -565,7 +565,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aId
      */
@@ -575,7 +575,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aIdArray
      */
@@ -585,7 +585,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aChannelsMax
      */
@@ -595,7 +595,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aProtocolInfo
      */

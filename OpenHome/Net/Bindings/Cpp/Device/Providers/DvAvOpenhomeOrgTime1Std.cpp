@@ -89,14 +89,14 @@ void DvProviderAvOpenhomeOrgTime1Cpp::DoTime(IDviInvocation& aInvocation)
     uint32_t respSeconds;
     DvInvocationStd invocation(aInvocation);
     Time(invocation, respTrackCount, respDuration, respSeconds);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterTrackCount(aInvocation, "TrackCount");
     respWriterTrackCount.Write(respTrackCount);
     DviInvocationResponseUint respWriterDuration(aInvocation, "Duration");
     respWriterDuration.Write(respDuration);
     DviInvocationResponseUint respWriterSeconds(aInvocation, "Seconds");
     respWriterSeconds.Write(respSeconds);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgTime1Cpp::Time(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aTrackCount*/, uint32_t& /*aDuration*/, uint32_t& /*aSeconds*/)

@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgRadio1
     /**
      * Set the value of the Uri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyUri(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgRadio1
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetadata(String aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgRadio1
     /**
      * Set the value of the TransportState property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTransportState(String aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgRadio1
     /**
      * Set the value of the Id property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyId(long aValue);
@@ -76,8 +76,8 @@ interface IDvProviderAvOpenhomeOrgRadio1
     /**
      * Set the value of the IdArray property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyIdArray(byte[] aValue);
@@ -92,8 +92,8 @@ interface IDvProviderAvOpenhomeOrgRadio1
     /**
      * Set the value of the ChannelsMax property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyChannelsMax(long aValue);
@@ -108,8 +108,8 @@ interface IDvProviderAvOpenhomeOrgRadio1
     /**
      * Set the value of the ProtocolInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProtocolInfo(String aValue);
@@ -202,11 +202,11 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgRadio1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "Radio", 1);
+        super(aDevice, "av.openhome.org", "Radio", 1);
     }
 
     /**
@@ -284,7 +284,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Set the value of the Uri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -296,7 +296,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the Uri property
      *
-     * @return	value of the Uri property.
+     * @return  value of the Uri property.
      */
     public String getPropertyUri()
     {
@@ -306,7 +306,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -318,7 +318,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the Metadata property
      *
-     * @return	value of the Metadata property.
+     * @return  value of the Metadata property.
      */
     public String getPropertyMetadata()
     {
@@ -328,7 +328,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Set the value of the TransportState property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -340,7 +340,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the TransportState property
      *
-     * @return	value of the TransportState property.
+     * @return  value of the TransportState property.
      */
     public String getPropertyTransportState()
     {
@@ -350,7 +350,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Set the value of the Id property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -362,7 +362,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the Id property
      *
-     * @return	value of the Id property.
+     * @return  value of the Id property.
      */
     public long getPropertyId()
     {
@@ -372,7 +372,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Set the value of the IdArray property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -384,7 +384,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the IdArray property
      *
-     * @return	value of the IdArray property.
+     * @return  value of the IdArray property.
      */
     public byte[] getPropertyIdArray()
     {
@@ -394,7 +394,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Set the value of the ChannelsMax property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -406,7 +406,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the ChannelsMax property
      *
-     * @return	value of the ChannelsMax property.
+     * @return  value of the ChannelsMax property.
      */
     public long getPropertyChannelsMax()
     {
@@ -416,7 +416,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Set the value of the ProtocolInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -428,7 +428,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the ProtocolInfo property
      *
-     * @return	value of the ProtocolInfo property.
+     * @return  value of the ProtocolInfo property.
      */
     public String getPropertyProtocolInfo()
     {
@@ -440,7 +440,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Play must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlay()
     {
         Action action = new Action("Play");
@@ -453,7 +453,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Pause must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPause()
     {
         Action action = new Action("Pause");
@@ -466,7 +466,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Stop must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStop()
     {
         Action action = new Action("Stop");
@@ -479,7 +479,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SeekSecondAbsolute must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSeekSecondAbsolute()
     {
         Action action = new Action("SeekSecondAbsolute");
@@ -493,7 +493,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SeekSecondRelative must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSeekSecondRelative()
     {
         Action action = new Action("SeekSecondRelative");
@@ -507,7 +507,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Channel must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionChannel()
     {
         Action action = new Action("Channel");
@@ -522,7 +522,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetChannel must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetChannel()
     {
         Action action = new Action("SetChannel");
@@ -537,7 +537,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * TransportState must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionTransportState()
     {
         Action action = new Action("TransportState");
@@ -551,7 +551,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Id must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionId()
     {
         Action action = new Action("Id");
@@ -565,7 +565,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetId must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetId()
     {
         Action action = new Action("SetId");
@@ -580,7 +580,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Read must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionRead()
     {
         Action action = new Action("Read");
@@ -595,7 +595,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ReadList must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionReadList()
     {
         Action action = new Action("ReadList");        List<String> allowedValues = new LinkedList<String>();
@@ -610,7 +610,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * IdArray must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionIdArray()
     {
         Action action = new Action("IdArray");
@@ -625,7 +625,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * IdArrayChanged must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionIdArrayChanged()
     {
         Action action = new Action("IdArrayChanged");
@@ -640,7 +640,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ChannelsMax must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionChannelsMax()
     {
         Action action = new Action("ChannelsMax");
@@ -654,7 +654,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ProtocolInfo must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionProtocolInfo()
     {
         Action action = new Action("ProtocolInfo");
@@ -671,7 +671,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPlay} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void play(IDvInvocation aInvocation)
     {
@@ -686,7 +686,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPause} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void pause(IDvInvocation aInvocation)
     {
@@ -701,7 +701,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionStop} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void stop(IDvInvocation aInvocation)
     {
@@ -716,7 +716,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSeekSecondAbsolute} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void seekSecondAbsolute(IDvInvocation aInvocation, long aValue)
@@ -732,7 +732,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSeekSecondRelative} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void seekSecondRelative(IDvInvocation aInvocation, int aValue)
@@ -748,7 +748,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionChannel} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Channel channel(IDvInvocation aInvocation)
     {
@@ -763,7 +763,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetChannel} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aUri
      * @param aMetadata
      */
@@ -780,7 +780,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionTransportState} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String transportState(IDvInvocation aInvocation)
     {
@@ -795,7 +795,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionId} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long id(IDvInvocation aInvocation)
     {
@@ -810,7 +810,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetId} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      * @param aUri
      */
@@ -827,7 +827,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionRead} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      */
     protected String read(IDvInvocation aInvocation, long aId)
@@ -843,7 +843,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionReadList} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIdList
      */
     protected String readList(IDvInvocation aInvocation, String aIdList)
@@ -859,7 +859,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionIdArray} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected IdArray idArray(IDvInvocation aInvocation)
     {
@@ -874,7 +874,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionIdArrayChanged} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aToken
      */
     protected boolean idArrayChanged(IDvInvocation aInvocation, long aToken)
@@ -890,7 +890,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionChannelsMax} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long channelsMax(IDvInvocation aInvocation)
     {
@@ -905,7 +905,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionProtocolInfo} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String protocolInfo(IDvInvocation aInvocation)
     {
@@ -973,7 +973,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPause implements IDvInvocationListener
     {
@@ -1019,7 +1019,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStop implements IDvInvocationListener
     {
@@ -1065,7 +1065,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSeekSecondAbsolute implements IDvInvocationListener
     {
@@ -1113,7 +1113,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSeekSecondRelative implements IDvInvocationListener
     {
@@ -1161,7 +1161,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoChannel implements IDvInvocationListener
     {
@@ -1214,7 +1214,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetChannel implements IDvInvocationListener
     {
@@ -1264,7 +1264,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoTransportState implements IDvInvocationListener
     {
@@ -1312,7 +1312,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoId implements IDvInvocationListener
     {
@@ -1360,7 +1360,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetId implements IDvInvocationListener
     {
@@ -1410,7 +1410,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoRead implements IDvInvocationListener
     {
@@ -1460,7 +1460,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoReadList implements IDvInvocationListener
     {
@@ -1510,7 +1510,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoIdArray implements IDvInvocationListener
     {
@@ -1563,7 +1563,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoIdArrayChanged implements IDvInvocationListener
     {
@@ -1613,7 +1613,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoChannelsMax implements IDvInvocationListener
     {
@@ -1661,7 +1661,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoProtocolInfo implements IDvInvocationListener
     {
@@ -1709,6 +1709,6 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

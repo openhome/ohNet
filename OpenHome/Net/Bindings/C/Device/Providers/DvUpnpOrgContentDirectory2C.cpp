@@ -851,7 +851,7 @@ void DvProviderUpnpOrgContentDirectory2C::DoCreateReference(IDviInvocation& aInv
 
 THandle STDCALL DvProviderUpnpOrgContentDirectory2Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgContentDirectory2C(aDevice);
+    return new DvProviderUpnpOrgContentDirectory2C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgContentDirectory2Destroy(THandle aProvider)

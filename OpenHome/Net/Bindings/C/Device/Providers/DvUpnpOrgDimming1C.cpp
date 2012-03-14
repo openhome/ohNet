@@ -867,7 +867,7 @@ void DvProviderUpnpOrgDimming1C::DoGetRampTime(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderUpnpOrgDimming1Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgDimming1C(aDevice);
+    return new DvProviderUpnpOrgDimming1C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgDimming1Destroy(THandle aProvider)

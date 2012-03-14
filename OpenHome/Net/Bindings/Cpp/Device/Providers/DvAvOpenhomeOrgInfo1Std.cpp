@@ -298,14 +298,14 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoCounters(IDviInvocation& aInvocation)
     uint32_t respMetatextCount;
     DvInvocationStd invocation(aInvocation);
     Counters(invocation, respTrackCount, respDetailsCount, respMetatextCount);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterTrackCount(aInvocation, "TrackCount");
     respWriterTrackCount.Write(respTrackCount);
     DviInvocationResponseUint respWriterDetailsCount(aInvocation, "DetailsCount");
     respWriterDetailsCount.Write(respDetailsCount);
     DviInvocationResponseUint respWriterMetatextCount(aInvocation, "MetatextCount");
     respWriterMetatextCount.Write(respMetatextCount);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::DoTrack(IDviInvocation& aInvocation)
@@ -316,7 +316,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoTrack(IDviInvocation& aInvocation)
     std::string respMetadata;
     DvInvocationStd invocation(aInvocation);
     Track(invocation, respUri, respMetadata);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterUri(aInvocation, "Uri");
     Brn buf_Uri((const TByte*)respUri.c_str(), (TUint)respUri.length());
     respWriterUri.Write(buf_Uri);
@@ -325,7 +325,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoTrack(IDviInvocation& aInvocation)
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
     aInvocation.InvocationWriteStringEnd("Metadata");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::DoDetails(IDviInvocation& aInvocation)
@@ -340,7 +340,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoDetails(IDviInvocation& aInvocation)
     std::string respCodecName;
     DvInvocationStd invocation(aInvocation);
     Details(invocation, respDuration, respBitRate, respBitDepth, respSampleRate, respLossless, respCodecName);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterDuration(aInvocation, "Duration");
     respWriterDuration.Write(respDuration);
     DviInvocationResponseUint respWriterBitRate(aInvocation, "BitRate");
@@ -355,7 +355,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoDetails(IDviInvocation& aInvocation)
     Brn buf_CodecName((const TByte*)respCodecName.c_str(), (TUint)respCodecName.length());
     respWriterCodecName.Write(buf_CodecName);
     aInvocation.InvocationWriteStringEnd("CodecName");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::DoMetatext(IDviInvocation& aInvocation)
@@ -365,12 +365,12 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::DoMetatext(IDviInvocation& aInvocation)
     std::string respValue;
     DvInvocationStd invocation(aInvocation);
     Metatext(invocation, respValue);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::Counters(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aTrackCount*/, uint32_t& /*aDetailsCount*/, uint32_t& /*aMetatextCount*/)

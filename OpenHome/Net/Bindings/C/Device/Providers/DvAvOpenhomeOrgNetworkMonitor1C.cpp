@@ -204,7 +204,7 @@ void DvProviderAvOpenhomeOrgNetworkMonitor1C::DoPorts(IDviInvocation& aInvocatio
 
 THandle STDCALL DvProviderAvOpenhomeOrgNetworkMonitor1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgNetworkMonitor1C(aDevice);
+    return new DvProviderAvOpenhomeOrgNetworkMonitor1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgNetworkMonitor1Destroy(THandle aProvider)

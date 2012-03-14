@@ -5,22 +5,24 @@
 * @module ohnet
 * @class Time
 */
-	
-var CpProxyAvOpenhomeOrgTime1 = function(udn){	
+    
+var CpProxyAvOpenhomeOrgTime1 = function(udn){ 
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/av.openhome.org-Time-1/control";  // upnp control url
-	this.domain = "av-openhome-org";
-	this.type = "Time";
-	this.version = "1";
-	this.serviceName = "av.openhome.org-Time-1";
-	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
-	this.udn = udn;   // device name
-	
-	// Collection of service properties
-	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new ohnet.serviceproperty("TrackCount","int");
-	this.serviceProperties["Duration"] = new ohnet.serviceproperty("Duration","int");
-	this.serviceProperties["Seconds"] = new ohnet.serviceproperty("Seconds","int");
+    this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/av.openhome.org-Time-1/control";  // upnp control url
+    this.domain = "av-openhome-org";
+    this.type = "Time";
+    this.version = "1";
+    this.serviceName = "av.openhome.org-Time-1";
+    this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+    this.udn = udn;   // device name
+    
+    // Collection of service properties
+    this.serviceProperties = {};
+    this.serviceProperties["TrackCount"] = new ohnet.serviceproperty("TrackCount","int");
+    this.serviceProperties["Duration"] = new ohnet.serviceproperty("Duration","int");
+    this.serviceProperties["Seconds"] = new ohnet.serviceproperty("Seconds","int");
+
+                      
 }
 
 
@@ -44,7 +46,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.unsubscribe = function () {
 }
 
 
-	
+    
 
 /**
 * Adds a listener to handle "TrackCount" property change events
@@ -53,11 +55,11 @@ CpProxyAvOpenhomeOrgTime1.prototype.unsubscribe = function () {
 */
 CpProxyAvOpenhomeOrgTime1.prototype.TrackCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.TrackCount.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "Duration" property change events
@@ -66,11 +68,11 @@ CpProxyAvOpenhomeOrgTime1.prototype.TrackCount_Changed = function (stateChangedF
 */
 CpProxyAvOpenhomeOrgTime1.prototype.Duration_Changed = function (stateChangedFunction) {
     this.serviceProperties.Duration.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "Seconds" property change events
@@ -79,9 +81,9 @@ CpProxyAvOpenhomeOrgTime1.prototype.Duration_Changed = function (stateChangedFun
 */
 CpProxyAvOpenhomeOrgTime1.prototype.Seconds_Changed = function (stateChangedFunction) {
     this.serviceProperties.Seconds.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
 
 
@@ -91,19 +93,19 @@ CpProxyAvOpenhomeOrgTime1.prototype.Seconds_Changed = function (stateChangedFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgTime1.prototype.Time = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Time", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgTime1.prototype.Time = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Time", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["TrackCount"] = ohnet.soaprequest.readIntParameter(result["TrackCount"]);	
-		result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]);	
-		result["Seconds"] = ohnet.soaprequest.readIntParameter(result["Seconds"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["TrackCount"] = ohnet.soaprequest.readIntParameter(result["TrackCount"]); 
+        result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]); 
+        result["Seconds"] = ohnet.soaprequest.readIntParameter(result["Seconds"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 

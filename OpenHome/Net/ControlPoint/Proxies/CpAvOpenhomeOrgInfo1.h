@@ -278,7 +278,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aTrackCount
      */
@@ -288,7 +288,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aDetailsCount
      */
@@ -298,7 +298,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aMetatextCount
      */
@@ -308,7 +308,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aUri
      */
@@ -318,7 +318,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aMetadata
      */
@@ -328,7 +328,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aDuration
      */
@@ -338,7 +338,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aBitRate
      */
@@ -348,7 +348,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aBitDepth
      */
@@ -358,7 +358,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aSampleRate
      */
@@ -368,7 +368,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aLossless
      */
@@ -378,7 +378,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aCodecName
      */
@@ -388,7 +388,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aMetatext
      */

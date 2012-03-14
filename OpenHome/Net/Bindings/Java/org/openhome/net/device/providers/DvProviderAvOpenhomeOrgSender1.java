@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgSender1
     /**
      * Set the value of the PresentationUrl property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyPresentationUrl(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgSender1
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetadata(String aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgSender1
     /**
      * Set the value of the Audio property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyAudio(boolean aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgSender1
     /**
      * Set the value of the Status property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyStatus(String aValue);
@@ -76,8 +76,8 @@ interface IDvProviderAvOpenhomeOrgSender1
     /**
      * Set the value of the Attributes property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyAttributes(String aValue);
@@ -111,11 +111,11 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgSender1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "Sender", 1);
+        super(aDevice, "av.openhome.org", "Sender", 1);
     }
 
     /**
@@ -174,7 +174,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Set the value of the PresentationUrl property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -186,7 +186,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the PresentationUrl property
      *
-     * @return	value of the PresentationUrl property.
+     * @return  value of the PresentationUrl property.
      */
     public String getPropertyPresentationUrl()
     {
@@ -196,7 +196,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -208,7 +208,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the Metadata property
      *
-     * @return	value of the Metadata property.
+     * @return  value of the Metadata property.
      */
     public String getPropertyMetadata()
     {
@@ -218,7 +218,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Set the value of the Audio property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -230,7 +230,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the Audio property
      *
-     * @return	value of the Audio property.
+     * @return  value of the Audio property.
      */
     public boolean getPropertyAudio()
     {
@@ -240,7 +240,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Set the value of the Status property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -252,7 +252,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the Status property
      *
-     * @return	value of the Status property.
+     * @return  value of the Status property.
      */
     public String getPropertyStatus()
     {
@@ -262,7 +262,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Set the value of the Attributes property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -274,7 +274,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the Attributes property
      *
-     * @return	value of the Attributes property.
+     * @return  value of the Attributes property.
      */
     public String getPropertyAttributes()
     {
@@ -286,7 +286,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PresentationUrl must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPresentationUrl()
     {
         Action action = new Action("PresentationUrl");
@@ -300,7 +300,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Metadata must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionMetadata()
     {
         Action action = new Action("Metadata");
@@ -314,7 +314,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Audio must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionAudio()
     {
         Action action = new Action("Audio");
@@ -328,7 +328,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Status must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStatus()
     {
         Action action = new Action("Status");
@@ -342,7 +342,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Attributes must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionAttributes()
     {
         Action action = new Action("Attributes");
@@ -359,7 +359,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionPresentationUrl} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String presentationUrl(IDvInvocation aInvocation)
     {
@@ -374,7 +374,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionMetadata} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String metadata(IDvInvocation aInvocation)
     {
@@ -389,7 +389,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionAudio} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected boolean audio(IDvInvocation aInvocation)
     {
@@ -404,7 +404,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionStatus} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String status(IDvInvocation aInvocation)
     {
@@ -419,7 +419,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionAttributes} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String attributes(IDvInvocation aInvocation)
     {
@@ -489,7 +489,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoMetadata implements IDvInvocationListener
     {
@@ -537,7 +537,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoAudio implements IDvInvocationListener
     {
@@ -585,7 +585,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStatus implements IDvInvocationListener
     {
@@ -633,7 +633,7 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoAttributes implements IDvInvocationListener
     {
@@ -681,6 +681,6 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

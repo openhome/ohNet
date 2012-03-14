@@ -785,7 +785,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoProtocolInfo(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderAvOpenhomeOrgRadio1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgRadio1C(aDevice);
+    return new DvProviderAvOpenhomeOrgRadio1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgRadio1Destroy(THandle aProvider)

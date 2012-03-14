@@ -11,12 +11,12 @@
 
     try
     {
-	   version = Convert.ToUInt32(TemplateArgument("version"));
-	}
-	catch (FormatException)
-	{
+       version = Convert.ToUInt32(TemplateArgument("version"));
+    }
+    catch (FormatException)
+    {
         throw (new ArgumentException("Invalid version number specified"));
-	}
+    }
     catch (OverflowException)
     {
         throw (new ArgumentException("Invalid version number specified"));
@@ -293,7 +293,7 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation)
 
 THandle STDCALL <#=className#>Create(DvDeviceC aDevice)
 {
-	return new <#=className#>C(aDevice);
+    return new <#=className#>C(aDevice);
 }
 
 void STDCALL <#=className#>Destroy(THandle aProvider)
@@ -669,34 +669,34 @@ bool RelatedVariableIsEvented(Argument arg, Document u)
 
 string TemplateArgument(string aName)
 {
-	string[] args =  System.Environment.GetCommandLineArgs();
-		
-	bool isarg = false;
-	
-	foreach (string arg in args)
-	{
-		if (isarg)
-		{
-			string[] parts = arg.Split(new char[] {':'});
-			
-			if (parts.Length == 2)
-			{
-				if (parts[0] == aName)
-				{
-					return (parts[1]);
-				}
-			}
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
 
-			isarg = false;
-			continue;
-		}
-		
-		if (arg == "-a")
-		{
-			isarg = true;
-		}
-	}
-	
-	throw (new ArgumentException(aName + " not specified"));
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
 }
 #>

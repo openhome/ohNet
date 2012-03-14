@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the TrackCount property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTrackCount(long aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the DetailsCount property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyDetailsCount(long aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the MetatextCount property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetatextCount(long aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the Uri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyUri(String aValue);
@@ -76,8 +76,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetadata(String aValue);
@@ -92,8 +92,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the Duration property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyDuration(long aValue);
@@ -108,8 +108,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the BitRate property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyBitRate(long aValue);
@@ -124,8 +124,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the BitDepth property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyBitDepth(long aValue);
@@ -140,8 +140,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the SampleRate property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySampleRate(long aValue);
@@ -156,8 +156,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the Lossless property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyLossless(boolean aValue);
@@ -172,8 +172,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the CodecName property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyCodecName(String aValue);
@@ -188,8 +188,8 @@ interface IDvProviderAvOpenhomeOrgInfo1
     /**
      * Set the value of the Metatext property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetatext(String aValue);
@@ -333,11 +333,11 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgInfo1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "Info", 1);
+        super(aDevice, "av.openhome.org", "Info", 1);
     }
 
     /**
@@ -455,7 +455,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the TrackCount property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -467,7 +467,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the TrackCount property
      *
-     * @return	value of the TrackCount property.
+     * @return  value of the TrackCount property.
      */
     public long getPropertyTrackCount()
     {
@@ -477,7 +477,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the DetailsCount property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -489,7 +489,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the DetailsCount property
      *
-     * @return	value of the DetailsCount property.
+     * @return  value of the DetailsCount property.
      */
     public long getPropertyDetailsCount()
     {
@@ -499,7 +499,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the MetatextCount property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -511,7 +511,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the MetatextCount property
      *
-     * @return	value of the MetatextCount property.
+     * @return  value of the MetatextCount property.
      */
     public long getPropertyMetatextCount()
     {
@@ -521,7 +521,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the Uri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -533,7 +533,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the Uri property
      *
-     * @return	value of the Uri property.
+     * @return  value of the Uri property.
      */
     public String getPropertyUri()
     {
@@ -543,7 +543,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -555,7 +555,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the Metadata property
      *
-     * @return	value of the Metadata property.
+     * @return  value of the Metadata property.
      */
     public String getPropertyMetadata()
     {
@@ -565,7 +565,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the Duration property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -577,7 +577,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the Duration property
      *
-     * @return	value of the Duration property.
+     * @return  value of the Duration property.
      */
     public long getPropertyDuration()
     {
@@ -587,7 +587,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the BitRate property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -599,7 +599,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the BitRate property
      *
-     * @return	value of the BitRate property.
+     * @return  value of the BitRate property.
      */
     public long getPropertyBitRate()
     {
@@ -609,7 +609,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the BitDepth property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -621,7 +621,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the BitDepth property
      *
-     * @return	value of the BitDepth property.
+     * @return  value of the BitDepth property.
      */
     public long getPropertyBitDepth()
     {
@@ -631,7 +631,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the SampleRate property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -643,7 +643,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the SampleRate property
      *
-     * @return	value of the SampleRate property.
+     * @return  value of the SampleRate property.
      */
     public long getPropertySampleRate()
     {
@@ -653,7 +653,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the Lossless property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -665,7 +665,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the Lossless property
      *
-     * @return	value of the Lossless property.
+     * @return  value of the Lossless property.
      */
     public boolean getPropertyLossless()
     {
@@ -675,7 +675,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the CodecName property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -687,7 +687,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the CodecName property
      *
-     * @return	value of the CodecName property.
+     * @return  value of the CodecName property.
      */
     public String getPropertyCodecName()
     {
@@ -697,7 +697,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the Metatext property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -709,7 +709,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the Metatext property
      *
-     * @return	value of the Metatext property.
+     * @return  value of the Metatext property.
      */
     public String getPropertyMetatext()
     {
@@ -721,7 +721,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Counters must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionCounters()
     {
         Action action = new Action("Counters");
@@ -737,7 +737,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Track must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionTrack()
     {
         Action action = new Action("Track");
@@ -752,7 +752,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Details must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDetails()
     {
         Action action = new Action("Details");
@@ -771,7 +771,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Metatext must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionMetatext()
     {
         Action action = new Action("Metatext");
@@ -788,7 +788,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionCounters} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Counters counters(IDvInvocation aInvocation)
     {
@@ -803,7 +803,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionTrack} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Track track(IDvInvocation aInvocation)
     {
@@ -818,7 +818,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionDetails} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Details details(IDvInvocation aInvocation)
     {
@@ -833,7 +833,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionMetatext} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String metatext(IDvInvocation aInvocation)
     {
@@ -911,7 +911,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoTrack implements IDvInvocationListener
     {
@@ -964,7 +964,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDetails implements IDvInvocationListener
     {
@@ -1029,7 +1029,7 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoMetatext implements IDvInvocationListener
     {
@@ -1077,6 +1077,6 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

@@ -954,7 +954,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteAll(IDviInvocation& aInvo
 
 THandle STDCALL DvProviderAvOpenhomeOrgPlaylistManager1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgPlaylistManager1C(aDevice);
+    return new DvProviderAvOpenhomeOrgPlaylistManager1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1Destroy(THandle aProvider)

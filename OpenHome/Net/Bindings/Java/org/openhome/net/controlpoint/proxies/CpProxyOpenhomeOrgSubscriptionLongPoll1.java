@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyOpenhomeOrgSubscriptionLongPoll1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyOpenhomeOrgSubscriptionLongPoll1 extends ICpProxy
 {
     public Subscribe syncSubscribe(String aClientId, String aUdn, String aService, long aRequestedDuration);
@@ -45,7 +45,7 @@ class SyncSubscribeOpenhomeOrgSubscriptionLongPoll1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Subscribe result = iService.endSubscribe(aAsyncHandle);
-		
+        
         iSid = result.getSid();
         iDuration = result.getDuration();
     }
@@ -62,7 +62,7 @@ class SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endUnsubscribe(aAsyncHandle);
-		
+        
     }
 }
 
@@ -82,7 +82,7 @@ class SyncRenewOpenhomeOrgSubscriptionLongPoll1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endRenew(aAsyncHandle);
-		
+        
         iDuration = result;
     }
 }
@@ -103,7 +103,7 @@ class SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1 extends SyncProxyAc
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetPropertyUpdates(aAsyncHandle);
-		
+        
         iUpdates = result;
     }
 }
@@ -146,7 +146,7 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyOpenhomeOrgSubscriptionLongPoll1(CpDevice aDevice)
@@ -157,35 +157,35 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
 
         iActionSubscribe = new Action("Subscribe");
         param = new ParameterString("ClientId", allowedValues);
-		iActionSubscribe.addInputParameter(param);
+        iActionSubscribe.addInputParameter(param);
         param = new ParameterString("Udn", allowedValues);
-		iActionSubscribe.addInputParameter(param);
+        iActionSubscribe.addInputParameter(param);
         param = new ParameterString("Service", allowedValues);
-		iActionSubscribe.addInputParameter(param);
+        iActionSubscribe.addInputParameter(param);
         param = new ParameterUint("RequestedDuration");
-		iActionSubscribe.addInputParameter(param);
+        iActionSubscribe.addInputParameter(param);
         param = new ParameterString("Sid", allowedValues);
-		iActionSubscribe.addOutputParameter(param);
+        iActionSubscribe.addOutputParameter(param);
         param = new ParameterUint("Duration");
-		iActionSubscribe.addOutputParameter(param);
+        iActionSubscribe.addOutputParameter(param);
 
         iActionUnsubscribe = new Action("Unsubscribe");
         param = new ParameterString("Sid", allowedValues);
-		iActionUnsubscribe.addInputParameter(param);
+        iActionUnsubscribe.addInputParameter(param);
 
         iActionRenew = new Action("Renew");
         param = new ParameterString("Sid", allowedValues);
-		iActionRenew.addInputParameter(param);
+        iActionRenew.addInputParameter(param);
         param = new ParameterUint("RequestedDuration");
-		iActionRenew.addInputParameter(param);
+        iActionRenew.addInputParameter(param);
         param = new ParameterUint("Duration");
-		iActionRenew.addOutputParameter(param);
+        iActionRenew.addOutputParameter(param);
 
         iActionGetPropertyUpdates = new Action("GetPropertyUpdates");
         param = new ParameterString("ClientId", allowedValues);
-		iActionGetPropertyUpdates.addInputParameter(param);
+        iActionGetPropertyUpdates.addInputParameter(param);
         param = new ParameterString("Updates", allowedValues);
-		iActionGetPropertyUpdates.addOutputParameter(param);
+        iActionGetPropertyUpdates.addOutputParameter(param);
     }
     /**
      * Invoke the action synchronously.
@@ -194,34 +194,34 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      *
      * @return the result of the invoked action.
      */
-	public Subscribe syncSubscribe(String aClientId, String aUdn, String aService, long aRequestedDuration)
-	{
-	    SyncSubscribeOpenhomeOrgSubscriptionLongPoll1 sync = new SyncSubscribeOpenhomeOrgSubscriptionLongPoll1(this);
-	    beginSubscribe(aClientId, aUdn, aService, aRequestedDuration, sync.getListener());
-	    sync.waitToComplete();
+    public Subscribe syncSubscribe(String aClientId, String aUdn, String aService, long aRequestedDuration)
+    {
+        SyncSubscribeOpenhomeOrgSubscriptionLongPoll1 sync = new SyncSubscribeOpenhomeOrgSubscriptionLongPoll1(this);
+        beginSubscribe(aClientId, aUdn, aService, aRequestedDuration, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Subscribe(
             sync.getSid(),
             sync.getDuration()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSubscribe}.
-	 * 
-	 * @param aClientId
-	 * @param aUdn
-	 * @param aService
-	 * @param aRequestedDuration
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSubscribe(String aClientId, String aUdn, String aService, long aRequestedDuration, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSubscribe}.
+     * 
+     * @param aClientId
+     * @param aUdn
+     * @param aService
+     * @param aRequestedDuration
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSubscribe(String aClientId, String aUdn, String aService, long aRequestedDuration, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSubscribe, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionSubscribe.getInputParameter(inIndex++), aClientId));
@@ -234,16 +234,16 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSubscribe} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSubscribe} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSubscribe} method.
      * @return the result of the previously invoked action.
      */
-	public Subscribe endSubscribe(long aAsyncHandle)
+    public Subscribe endSubscribe(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -255,56 +255,56 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
         return new Subscribe(
             sid,
             duration
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncUnsubscribe(String aSid)
-	{
-	    SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1 sync = new SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1(this);
-	    beginUnsubscribe(aSid, sync.getListener());
-	    sync.waitToComplete();
+    public void syncUnsubscribe(String aSid)
+    {
+        SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1 sync = new SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1(this);
+        beginUnsubscribe(aSid, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endUnsubscribe}.
-	 * 
-	 * @param aSid
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginUnsubscribe(String aSid, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endUnsubscribe}.
+     * 
+     * @param aSid
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginUnsubscribe(String aSid, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionUnsubscribe, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionUnsubscribe.getInputParameter(inIndex++), aSid));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginUnsubscribe} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginUnsubscribe} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginUnsubscribe} method.
      */
-	public void endUnsubscribe(long aAsyncHandle)
+    public void endUnsubscribe(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -312,29 +312,29 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      *
      * @return the result of the invoked action.
      */
-	public long syncRenew(String aSid, long aRequestedDuration)
-	{
-	    SyncRenewOpenhomeOrgSubscriptionLongPoll1 sync = new SyncRenewOpenhomeOrgSubscriptionLongPoll1(this);
-	    beginRenew(aSid, aRequestedDuration, sync.getListener());
-	    sync.waitToComplete();
+    public long syncRenew(String aSid, long aRequestedDuration)
+    {
+        SyncRenewOpenhomeOrgSubscriptionLongPoll1 sync = new SyncRenewOpenhomeOrgSubscriptionLongPoll1(this);
+        beginRenew(aSid, aRequestedDuration, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getDuration();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endRenew}.
-	 * 
-	 * @param aSid
-	 * @param aRequestedDuration
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginRenew(String aSid, long aRequestedDuration, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endRenew}.
+     * 
+     * @param aSid
+     * @param aRequestedDuration
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginRenew(String aSid, long aRequestedDuration, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionRenew, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionRenew.getInputParameter(inIndex++), aSid));
@@ -344,16 +344,16 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginRenew} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginRenew} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginRenew} method.
      * @return the result of the previously invoked action.
      */
-	public long endRenew(long aAsyncHandle)
+    public long endRenew(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -363,7 +363,7 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
         long duration = Invocation.getOutputUint(aAsyncHandle, index++);
         return duration;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -371,28 +371,28 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      *
      * @return the result of the invoked action.
      */
-	public String syncGetPropertyUpdates(String aClientId)
-	{
-	    SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1 sync = new SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1(this);
-	    beginGetPropertyUpdates(aClientId, sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetPropertyUpdates(String aClientId)
+    {
+        SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1 sync = new SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1(this);
+        beginGetPropertyUpdates(aClientId, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getUpdates();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetPropertyUpdates}.
-	 * 
-	 * @param aClientId
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetPropertyUpdates(String aClientId, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetPropertyUpdates}.
+     * 
+     * @param aClientId
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetPropertyUpdates(String aClientId, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetPropertyUpdates, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionGetPropertyUpdates.getInputParameter(inIndex++), aClientId));
@@ -401,16 +401,16 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetPropertyUpdates} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetPropertyUpdates} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetPropertyUpdates} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetPropertyUpdates(long aAsyncHandle)
+    public String endGetPropertyUpdates(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -420,7 +420,7 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
         String updates = Invocation.getOutputString(aAsyncHandle, index++);
         return updates;
     }
-		
+        
 
     /**
      * Dispose of this control point proxy.

@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyAvOpenhomeOrgInfo1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyAvOpenhomeOrgInfo1 extends ICpProxy
 {
     public Counters syncCounters();
@@ -74,7 +74,7 @@ class SyncCountersAvOpenhomeOrgInfo1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Counters result = iService.endCounters(aAsyncHandle);
-		
+        
         iTrackCount = result.getTrackCount();
         iDetailsCount = result.getDetailsCount();
         iMetatextCount = result.getMetatextCount();
@@ -102,7 +102,7 @@ class SyncTrackAvOpenhomeOrgInfo1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Track result = iService.endTrack(aAsyncHandle);
-		
+        
         iUri = result.getUri();
         iMetadata = result.getMetadata();
     }
@@ -149,7 +149,7 @@ class SyncDetailsAvOpenhomeOrgInfo1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Details result = iService.endDetails(aAsyncHandle);
-		
+        
         iDuration = result.getDuration();
         iBitRate = result.getBitRate();
         iBitDepth = result.getBitDepth();
@@ -175,7 +175,7 @@ class SyncMetatextAvOpenhomeOrgInfo1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endMetatext(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -324,7 +324,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyAvOpenhomeOrgInfo1(CpDevice aDevice)
@@ -335,72 +335,72 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 
         iActionCounters = new Action("Counters");
         param = new ParameterUint("TrackCount");
-		iActionCounters.addOutputParameter(param);
+        iActionCounters.addOutputParameter(param);
         param = new ParameterUint("DetailsCount");
-		iActionCounters.addOutputParameter(param);
+        iActionCounters.addOutputParameter(param);
         param = new ParameterUint("MetatextCount");
-		iActionCounters.addOutputParameter(param);
+        iActionCounters.addOutputParameter(param);
 
         iActionTrack = new Action("Track");
         param = new ParameterString("Uri", allowedValues);
-		iActionTrack.addOutputParameter(param);
+        iActionTrack.addOutputParameter(param);
         param = new ParameterString("Metadata", allowedValues);
-		iActionTrack.addOutputParameter(param);
+        iActionTrack.addOutputParameter(param);
 
         iActionDetails = new Action("Details");
         param = new ParameterUint("Duration");
-		iActionDetails.addOutputParameter(param);
+        iActionDetails.addOutputParameter(param);
         param = new ParameterUint("BitRate");
-		iActionDetails.addOutputParameter(param);
+        iActionDetails.addOutputParameter(param);
         param = new ParameterUint("BitDepth");
-		iActionDetails.addOutputParameter(param);
+        iActionDetails.addOutputParameter(param);
         param = new ParameterUint("SampleRate");
-		iActionDetails.addOutputParameter(param);
+        iActionDetails.addOutputParameter(param);
         param = new ParameterBool("Lossless");
-		iActionDetails.addOutputParameter(param);
+        iActionDetails.addOutputParameter(param);
         param = new ParameterString("CodecName", allowedValues);
-		iActionDetails.addOutputParameter(param);
+        iActionDetails.addOutputParameter(param);
 
         iActionMetatext = new Action("Metatext");
         param = new ParameterString("Value", allowedValues);
-		iActionMetatext.addOutputParameter(param);
+        iActionMetatext.addOutputParameter(param);
 
         iTrackCountChanged = new PropertyChangeListener();
         iTrackCount = new PropertyUint("TrackCount", iTrackCountChanged);
-		addProperty(iTrackCount);
+        addProperty(iTrackCount);
         iDetailsCountChanged = new PropertyChangeListener();
         iDetailsCount = new PropertyUint("DetailsCount", iDetailsCountChanged);
-		addProperty(iDetailsCount);
+        addProperty(iDetailsCount);
         iMetatextCountChanged = new PropertyChangeListener();
         iMetatextCount = new PropertyUint("MetatextCount", iMetatextCountChanged);
-		addProperty(iMetatextCount);
+        addProperty(iMetatextCount);
         iUriChanged = new PropertyChangeListener();
         iUri = new PropertyString("Uri", iUriChanged);
-		addProperty(iUri);
+        addProperty(iUri);
         iMetadataChanged = new PropertyChangeListener();
         iMetadata = new PropertyString("Metadata", iMetadataChanged);
-		addProperty(iMetadata);
+        addProperty(iMetadata);
         iDurationChanged = new PropertyChangeListener();
         iDuration = new PropertyUint("Duration", iDurationChanged);
-		addProperty(iDuration);
+        addProperty(iDuration);
         iBitRateChanged = new PropertyChangeListener();
         iBitRate = new PropertyUint("BitRate", iBitRateChanged);
-		addProperty(iBitRate);
+        addProperty(iBitRate);
         iBitDepthChanged = new PropertyChangeListener();
         iBitDepth = new PropertyUint("BitDepth", iBitDepthChanged);
-		addProperty(iBitDepth);
+        addProperty(iBitDepth);
         iSampleRateChanged = new PropertyChangeListener();
         iSampleRate = new PropertyUint("SampleRate", iSampleRateChanged);
-		addProperty(iSampleRate);
+        addProperty(iSampleRate);
         iLosslessChanged = new PropertyChangeListener();
         iLossless = new PropertyBool("Lossless", iLosslessChanged);
-		addProperty(iLossless);
+        addProperty(iLossless);
         iCodecNameChanged = new PropertyChangeListener();
         iCodecName = new PropertyString("CodecName", iCodecNameChanged);
-		addProperty(iCodecName);
+        addProperty(iCodecName);
         iMetatextChanged = new PropertyChangeListener();
         iMetatext = new PropertyString("Metatext", iMetatextChanged);
-		addProperty(iMetatext);
+        addProperty(iMetatext);
         iPropertyLock = new Object();
     }
     /**
@@ -410,31 +410,31 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      *
      * @return the result of the invoked action.
      */
-	public Counters syncCounters()
-	{
-	    SyncCountersAvOpenhomeOrgInfo1 sync = new SyncCountersAvOpenhomeOrgInfo1(this);
-	    beginCounters(sync.getListener());
-	    sync.waitToComplete();
+    public Counters syncCounters()
+    {
+        SyncCountersAvOpenhomeOrgInfo1 sync = new SyncCountersAvOpenhomeOrgInfo1(this);
+        beginCounters(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Counters(
             sync.getTrackCount(),
             sync.getDetailsCount(),
             sync.getMetatextCount()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endCounters}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginCounters(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endCounters}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginCounters(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionCounters, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionCounters.getOutputParameter(outIndex++)));
@@ -443,16 +443,16 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginCounters} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginCounters} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginCounters} method.
      * @return the result of the previously invoked action.
      */
-	public Counters endCounters(long aAsyncHandle)
+    public Counters endCounters(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -466,9 +466,9 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
             trackCount,
             detailsCount,
             metatextCount
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -476,30 +476,30 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      *
      * @return the result of the invoked action.
      */
-	public Track syncTrack()
-	{
-	    SyncTrackAvOpenhomeOrgInfo1 sync = new SyncTrackAvOpenhomeOrgInfo1(this);
-	    beginTrack(sync.getListener());
-	    sync.waitToComplete();
+    public Track syncTrack()
+    {
+        SyncTrackAvOpenhomeOrgInfo1 sync = new SyncTrackAvOpenhomeOrgInfo1(this);
+        beginTrack(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Track(
             sync.getUri(),
             sync.getMetadata()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endTrack}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginTrack(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endTrack}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginTrack(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionTrack, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionTrack.getOutputParameter(outIndex++)));
@@ -507,16 +507,16 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginTrack} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginTrack} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginTrack} method.
      * @return the result of the previously invoked action.
      */
-	public Track endTrack(long aAsyncHandle)
+    public Track endTrack(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -528,9 +528,9 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         return new Track(
             uri,
             metadata
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -538,11 +538,11 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      *
      * @return the result of the invoked action.
      */
-	public Details syncDetails()
-	{
-	    SyncDetailsAvOpenhomeOrgInfo1 sync = new SyncDetailsAvOpenhomeOrgInfo1(this);
-	    beginDetails(sync.getListener());
-	    sync.waitToComplete();
+    public Details syncDetails()
+    {
+        SyncDetailsAvOpenhomeOrgInfo1 sync = new SyncDetailsAvOpenhomeOrgInfo1(this);
+        beginDetails(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Details(
@@ -552,20 +552,20 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
             sync.getSampleRate(),
             sync.getLossless(),
             sync.getCodecName()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDetails}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDetails(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDetails}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDetails(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDetails, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionDetails.getOutputParameter(outIndex++)));
@@ -577,16 +577,16 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDetails} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDetails} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDetails} method.
      * @return the result of the previously invoked action.
      */
-	public Details endDetails(long aAsyncHandle)
+    public Details endDetails(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -606,9 +606,9 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
             sampleRate,
             lossless,
             codecName
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -616,43 +616,43 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      *
      * @return the result of the invoked action.
      */
-	public String syncMetatext()
-	{
-	    SyncMetatextAvOpenhomeOrgInfo1 sync = new SyncMetatextAvOpenhomeOrgInfo1(this);
-	    beginMetatext(sync.getListener());
-	    sync.waitToComplete();
+    public String syncMetatext()
+    {
+        SyncMetatextAvOpenhomeOrgInfo1 sync = new SyncMetatextAvOpenhomeOrgInfo1(this);
+        beginMetatext(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endMetatext}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginMetatext(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endMetatext}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginMetatext(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionMetatext, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionMetatext.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginMetatext} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginMetatext} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginMetatext} method.
      * @return the result of the previously invoked action.
      */
-	public String endMetatext(long aAsyncHandle)
+    public String endMetatext(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -662,14 +662,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         String value = Invocation.getOutputString(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Set a delegate to be run when the TrackCount state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aTrackCountChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aTrackCountChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyTrackCountChanged(IPropertyChangeListener aTrackCountChanged)
     {
@@ -689,10 +689,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the DetailsCount state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aDetailsCountChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aDetailsCountChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyDetailsCountChanged(IPropertyChangeListener aDetailsCountChanged)
     {
@@ -712,10 +712,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the MetatextCount state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aMetatextCountChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aMetatextCountChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyMetatextCountChanged(IPropertyChangeListener aMetatextCountChanged)
     {
@@ -735,10 +735,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the Uri state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aUriChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aUriChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyUriChanged(IPropertyChangeListener aUriChanged)
     {
@@ -758,10 +758,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the Metadata state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aMetadataChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aMetadataChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyMetadataChanged(IPropertyChangeListener aMetadataChanged)
     {
@@ -781,10 +781,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the Duration state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aDurationChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aDurationChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyDurationChanged(IPropertyChangeListener aDurationChanged)
     {
@@ -804,10 +804,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the BitRate state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aBitRateChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aBitRateChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyBitRateChanged(IPropertyChangeListener aBitRateChanged)
     {
@@ -827,10 +827,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the BitDepth state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aBitDepthChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aBitDepthChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyBitDepthChanged(IPropertyChangeListener aBitDepthChanged)
     {
@@ -850,10 +850,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the SampleRate state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aSampleRateChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSampleRateChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySampleRateChanged(IPropertyChangeListener aSampleRateChanged)
     {
@@ -873,10 +873,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the Lossless state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aLosslessChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aLosslessChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyLosslessChanged(IPropertyChangeListener aLosslessChanged)
     {
@@ -896,10 +896,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the CodecName state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aCodecNameChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aCodecNameChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyCodecNameChanged(IPropertyChangeListener aCodecNameChanged)
     {
@@ -919,10 +919,10 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the Metatext state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgInfo1 instance will not overlap.
      *
-     * @param aMetatextChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aMetatextChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyMetatextChanged(IPropertyChangeListener aMetatextChanged)
     {
@@ -946,7 +946,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the TrackCount property.
+     * @return  value of the TrackCount property.
      */
     public long getPropertyTrackCount()
     {
@@ -955,14 +955,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the DetailsCount property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the DetailsCount property.
+     * @return  value of the DetailsCount property.
      */
     public long getPropertyDetailsCount()
     {
@@ -971,14 +971,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the MetatextCount property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the MetatextCount property.
+     * @return  value of the MetatextCount property.
      */
     public long getPropertyMetatextCount()
     {
@@ -987,14 +987,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Uri property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Uri property.
+     * @return  value of the Uri property.
      */
     public String getPropertyUri()
     {
@@ -1003,14 +1003,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Metadata property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Metadata property.
+     * @return  value of the Metadata property.
      */
     public String getPropertyMetadata()
     {
@@ -1019,14 +1019,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Duration property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Duration property.
+     * @return  value of the Duration property.
      */
     public long getPropertyDuration()
     {
@@ -1035,14 +1035,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the BitRate property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the BitRate property.
+     * @return  value of the BitRate property.
      */
     public long getPropertyBitRate()
     {
@@ -1051,14 +1051,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the BitDepth property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the BitDepth property.
+     * @return  value of the BitDepth property.
      */
     public long getPropertyBitDepth()
     {
@@ -1067,14 +1067,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the SampleRate property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the SampleRate property.
+     * @return  value of the SampleRate property.
      */
     public long getPropertySampleRate()
     {
@@ -1083,14 +1083,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Lossless property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Lossless property.
+     * @return  value of the Lossless property.
      */
     public boolean getPropertyLossless()
     {
@@ -1099,14 +1099,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the CodecName property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the CodecName property.
+     * @return  value of the CodecName property.
      */
     public String getPropertyCodecName()
     {
@@ -1115,14 +1115,14 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Metatext property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Metatext property.
+     * @return  value of the Metatext property.
      */
     public String getPropertyMetatext()
     {
@@ -1131,7 +1131,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

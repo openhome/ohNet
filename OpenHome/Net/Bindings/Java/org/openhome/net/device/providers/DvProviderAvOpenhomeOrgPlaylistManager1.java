@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetadata(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
     /**
      * Set the value of the ImagesXml property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyImagesXml(String aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
     /**
      * Set the value of the IdArray property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyIdArray(byte[] aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
     /**
      * Set the value of the TokenArray property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTokenArray(byte[] aValue);
@@ -76,8 +76,8 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
     /**
      * Set the value of the PlaylistsMax property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyPlaylistsMax(long aValue);
@@ -92,8 +92,8 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
     /**
      * Set the value of the TracksMax property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTracksMax(long aValue);
@@ -203,11 +203,11 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgPlaylistManager1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "PlaylistManager", 1);
+        super(aDevice, "av.openhome.org", "PlaylistManager", 1);
     }
 
     /**
@@ -269,7 +269,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -281,7 +281,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Get a copy of the value of the Metadata property
      *
-     * @return	value of the Metadata property.
+     * @return  value of the Metadata property.
      */
     public String getPropertyMetadata()
     {
@@ -291,7 +291,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Set the value of the ImagesXml property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -303,7 +303,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Get a copy of the value of the ImagesXml property
      *
-     * @return	value of the ImagesXml property.
+     * @return  value of the ImagesXml property.
      */
     public String getPropertyImagesXml()
     {
@@ -313,7 +313,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Set the value of the IdArray property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -325,7 +325,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Get a copy of the value of the IdArray property
      *
-     * @return	value of the IdArray property.
+     * @return  value of the IdArray property.
      */
     public byte[] getPropertyIdArray()
     {
@@ -335,7 +335,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Set the value of the TokenArray property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -347,7 +347,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Get a copy of the value of the TokenArray property
      *
-     * @return	value of the TokenArray property.
+     * @return  value of the TokenArray property.
      */
     public byte[] getPropertyTokenArray()
     {
@@ -357,7 +357,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Set the value of the PlaylistsMax property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -369,7 +369,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Get a copy of the value of the PlaylistsMax property
      *
-     * @return	value of the PlaylistsMax property.
+     * @return  value of the PlaylistsMax property.
      */
     public long getPropertyPlaylistsMax()
     {
@@ -379,7 +379,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Set the value of the TracksMax property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -391,7 +391,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     /**
      * Get a copy of the value of the TracksMax property
      *
-     * @return	value of the TracksMax property.
+     * @return  value of the TracksMax property.
      */
     public long getPropertyTracksMax()
     {
@@ -403,7 +403,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Metadata must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionMetadata()
     {
         Action action = new Action("Metadata");
@@ -417,7 +417,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ImagesXml must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionImagesXml()
     {
         Action action = new Action("ImagesXml");
@@ -431,7 +431,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistReadArray must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistReadArray()
     {
         Action action = new Action("PlaylistReadArray");
@@ -446,7 +446,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistReadList must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistReadList()
     {
         Action action = new Action("PlaylistReadList");        List<String> allowedValues = new LinkedList<String>();
@@ -461,7 +461,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistRead must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistRead()
     {
         Action action = new Action("PlaylistRead");        List<String> allowedValues = new LinkedList<String>();
@@ -478,7 +478,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistSetName must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistSetName()
     {
         Action action = new Action("PlaylistSetName");        List<String> allowedValues = new LinkedList<String>();
@@ -493,7 +493,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistSetDescription must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistSetDescription()
     {
         Action action = new Action("PlaylistSetDescription");        List<String> allowedValues = new LinkedList<String>();
@@ -508,7 +508,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistSetImageId must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistSetImageId()
     {
         Action action = new Action("PlaylistSetImageId");
@@ -523,7 +523,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistInsert must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistInsert()
     {
         Action action = new Action("PlaylistInsert");        List<String> allowedValues = new LinkedList<String>();
@@ -541,7 +541,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistDeleteId must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistDeleteId()
     {
         Action action = new Action("PlaylistDeleteId");
@@ -555,7 +555,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistMove must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistMove()
     {
         Action action = new Action("PlaylistMove");
@@ -570,7 +570,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistsMax must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistsMax()
     {
         Action action = new Action("PlaylistsMax");
@@ -584,7 +584,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * TracksMax must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionTracksMax()
     {
         Action action = new Action("TracksMax");
@@ -598,7 +598,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistArrays must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistArrays()
     {
         Action action = new Action("PlaylistArrays");
@@ -614,7 +614,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PlaylistArraysChanged must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlaylistArraysChanged()
     {
         Action action = new Action("PlaylistArraysChanged");
@@ -629,7 +629,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Read must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionRead()
     {
         Action action = new Action("Read");
@@ -645,7 +645,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ReadList must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionReadList()
     {
         Action action = new Action("ReadList");        List<String> allowedValues = new LinkedList<String>();
@@ -661,7 +661,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Insert must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionInsert()
     {
         Action action = new Action("Insert");
@@ -678,7 +678,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * DeleteId must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDeleteId()
     {
         Action action = new Action("DeleteId");
@@ -693,7 +693,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>The action's availability will be published in the device's service.xml.
      * DeleteAll must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDeleteAll()
     {
         Action action = new Action("DeleteAll");
@@ -710,7 +710,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionMetadata} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String metadata(IDvInvocation aInvocation)
     {
@@ -725,7 +725,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionImagesXml} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String imagesXml(IDvInvocation aInvocation)
     {
@@ -740,7 +740,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistReadArray} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      */
     protected byte[] playlistReadArray(IDvInvocation aInvocation, long aId)
@@ -756,7 +756,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistReadList} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIdList
      */
     protected String playlistReadList(IDvInvocation aInvocation, String aIdList)
@@ -772,7 +772,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistRead} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      */
     protected PlaylistRead playlistRead(IDvInvocation aInvocation, long aId)
@@ -788,7 +788,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistSetName} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      * @param aName
      */
@@ -805,7 +805,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistSetDescription} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      * @param aDescription
      */
@@ -822,7 +822,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistSetImageId} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      * @param aImageId
      */
@@ -839,7 +839,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistInsert} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aAfterId
      * @param aName
      * @param aDescription
@@ -858,7 +858,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistDeleteId} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void playlistDeleteId(IDvInvocation aInvocation, long aValue)
@@ -874,7 +874,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistMove} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      * @param aAfterId
      */
@@ -891,7 +891,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistsMax} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long playlistsMax(IDvInvocation aInvocation)
     {
@@ -906,7 +906,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionTracksMax} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long tracksMax(IDvInvocation aInvocation)
     {
@@ -921,7 +921,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistArrays} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected PlaylistArrays playlistArrays(IDvInvocation aInvocation)
     {
@@ -936,7 +936,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionPlaylistArraysChanged} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aToken
      */
     protected boolean playlistArraysChanged(IDvInvocation aInvocation, long aToken)
@@ -952,7 +952,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionRead} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      * @param aTrackId
      */
@@ -969,7 +969,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionReadList} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      * @param aTrackIdList
      */
@@ -986,7 +986,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionInsert} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      * @param aAfterTrackId
      * @param aMetadata
@@ -1004,7 +1004,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionDeleteId} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      * @param aTrackId
      */
@@ -1021,7 +1021,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      *
      * <p>Must be implemented iff {@link #enableActionDeleteAll} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aId
      */
     protected void deleteAll(IDvInvocation aInvocation, long aId)
@@ -1092,7 +1092,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoImagesXml implements IDvInvocationListener
     {
@@ -1140,7 +1140,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistReadArray implements IDvInvocationListener
     {
@@ -1190,7 +1190,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistReadList implements IDvInvocationListener
     {
@@ -1240,7 +1240,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistRead implements IDvInvocationListener
     {
@@ -1298,7 +1298,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistSetName implements IDvInvocationListener
     {
@@ -1348,7 +1348,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistSetDescription implements IDvInvocationListener
     {
@@ -1398,7 +1398,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistSetImageId implements IDvInvocationListener
     {
@@ -1448,7 +1448,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistInsert implements IDvInvocationListener
     {
@@ -1504,7 +1504,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistDeleteId implements IDvInvocationListener
     {
@@ -1552,7 +1552,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistMove implements IDvInvocationListener
     {
@@ -1602,7 +1602,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistsMax implements IDvInvocationListener
     {
@@ -1650,7 +1650,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoTracksMax implements IDvInvocationListener
     {
@@ -1698,7 +1698,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistArrays implements IDvInvocationListener
     {
@@ -1754,7 +1754,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlaylistArraysChanged implements IDvInvocationListener
     {
@@ -1804,7 +1804,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoRead implements IDvInvocationListener
     {
@@ -1856,7 +1856,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoReadList implements IDvInvocationListener
     {
@@ -1908,7 +1908,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoInsert implements IDvInvocationListener
     {
@@ -1962,7 +1962,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDeleteId implements IDvInvocationListener
     {
@@ -2012,7 +2012,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDeleteAll implements IDvInvocationListener
     {
@@ -2060,6 +2060,6 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

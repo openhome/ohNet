@@ -143,7 +143,7 @@ void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderAvOpenhomeOrgTime1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgTime1C(aDevice);
+    return new DvProviderAvOpenhomeOrgTime1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgTime1Destroy(THandle aProvider)

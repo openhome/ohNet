@@ -12,8 +12,8 @@ interface IDvProviderUpnpOrgContentDirectory1
     /**
      * Set the value of the TransferIDs property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTransferIDs(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderUpnpOrgContentDirectory1
     /**
      * Set the value of the SystemUpdateID property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySystemUpdateID(long aValue);
@@ -44,8 +44,8 @@ interface IDvProviderUpnpOrgContentDirectory1
     /**
      * Set the value of the ContainerUpdateIDs property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyContainerUpdateIDs(String aValue);
@@ -213,11 +213,11 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderUpnpOrgContentDirectory1(DvDevice aDevice)
     {
-	    super(aDevice, "upnp.org", "ContentDirectory", 1);
+        super(aDevice, "upnp.org", "ContentDirectory", 1);
     }
 
     /**
@@ -252,7 +252,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
     /**
      * Set the value of the TransferIDs property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -264,7 +264,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
     /**
      * Get a copy of the value of the TransferIDs property
      *
-     * @return	value of the TransferIDs property.
+     * @return  value of the TransferIDs property.
      */
     public String getPropertyTransferIDs()
     {
@@ -274,7 +274,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
     /**
      * Set the value of the SystemUpdateID property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -286,7 +286,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
     /**
      * Get a copy of the value of the SystemUpdateID property
      *
-     * @return	value of the SystemUpdateID property.
+     * @return  value of the SystemUpdateID property.
      */
     public long getPropertySystemUpdateID()
     {
@@ -296,7 +296,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
     /**
      * Set the value of the ContainerUpdateIDs property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -308,7 +308,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
     /**
      * Get a copy of the value of the ContainerUpdateIDs property
      *
-     * @return	value of the ContainerUpdateIDs property.
+     * @return  value of the ContainerUpdateIDs property.
      */
     public String getPropertyContainerUpdateIDs()
     {
@@ -320,7 +320,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetSearchCapabilities must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetSearchCapabilities()
     {
         Action action = new Action("GetSearchCapabilities");        List<String> allowedValues = new LinkedList<String>();
@@ -334,7 +334,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetSortCapabilities must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetSortCapabilities()
     {
         Action action = new Action("GetSortCapabilities");        List<String> allowedValues = new LinkedList<String>();
@@ -348,7 +348,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetSystemUpdateID must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetSystemUpdateID()
     {
         Action action = new Action("GetSystemUpdateID");
@@ -362,7 +362,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Browse must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionBrowse()
     {
         Action action = new Action("Browse");        List<String> allowedValues = new LinkedList<String>();
@@ -388,7 +388,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Search must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSearch()
     {
         Action action = new Action("Search");        List<String> allowedValues = new LinkedList<String>();
@@ -411,7 +411,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * CreateObject must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionCreateObject()
     {
         Action action = new Action("CreateObject");        List<String> allowedValues = new LinkedList<String>();
@@ -428,7 +428,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * DestroyObject must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDestroyObject()
     {
         Action action = new Action("DestroyObject");        List<String> allowedValues = new LinkedList<String>();
@@ -442,7 +442,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * UpdateObject must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionUpdateObject()
     {
         Action action = new Action("UpdateObject");        List<String> allowedValues = new LinkedList<String>();
@@ -458,7 +458,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ImportResource must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionImportResource()
     {
         Action action = new Action("ImportResource");        List<String> allowedValues = new LinkedList<String>();
@@ -474,7 +474,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ExportResource must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionExportResource()
     {
         Action action = new Action("ExportResource");        List<String> allowedValues = new LinkedList<String>();
@@ -490,7 +490,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * StopTransferResource must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStopTransferResource()
     {
         Action action = new Action("StopTransferResource");
@@ -504,7 +504,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetTransferProgress must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetTransferProgress()
     {
         Action action = new Action("GetTransferProgress");        List<String> allowedValues = new LinkedList<String>();
@@ -526,7 +526,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * DeleteResource must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDeleteResource()
     {
         Action action = new Action("DeleteResource");        List<String> allowedValues = new LinkedList<String>();
@@ -540,7 +540,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>The action's availability will be published in the device's service.xml.
      * CreateReference must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionCreateReference()
     {
         Action action = new Action("CreateReference");        List<String> allowedValues = new LinkedList<String>();
@@ -559,7 +559,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetSearchCapabilities} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String getSearchCapabilities(IDvInvocation aInvocation)
     {
@@ -574,7 +574,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetSortCapabilities} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String getSortCapabilities(IDvInvocation aInvocation)
     {
@@ -589,7 +589,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetSystemUpdateID} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long getSystemUpdateID(IDvInvocation aInvocation)
     {
@@ -604,7 +604,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionBrowse} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aObjectID
      * @param aBrowseFlag
      * @param aFilter
@@ -625,7 +625,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionSearch} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aContainerID
      * @param aSearchCriteria
      * @param aFilter
@@ -646,7 +646,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionCreateObject} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aContainerID
      * @param aElements
      */
@@ -663,7 +663,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionDestroyObject} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aObjectID
      */
     protected void destroyObject(IDvInvocation aInvocation, String aObjectID)
@@ -679,7 +679,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionUpdateObject} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aObjectID
      * @param aCurrentTagValue
      * @param aNewTagValue
@@ -697,7 +697,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionImportResource} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aSourceURI
      * @param aDestinationURI
      */
@@ -714,7 +714,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionExportResource} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aSourceURI
      * @param aDestinationURI
      */
@@ -731,7 +731,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionStopTransferResource} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aTransferID
      */
     protected void stopTransferResource(IDvInvocation aInvocation, long aTransferID)
@@ -747,7 +747,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionGetTransferProgress} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aTransferID
      */
     protected GetTransferProgress getTransferProgress(IDvInvocation aInvocation, long aTransferID)
@@ -763,7 +763,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionDeleteResource} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aResourceURI
      */
     protected void deleteResource(IDvInvocation aInvocation, String aResourceURI)
@@ -779,7 +779,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
      *
      * <p>Must be implemented iff {@link #enableActionCreateReference} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aContainerID
      * @param aObjectID
      */
@@ -851,7 +851,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetSortCapabilities implements IDvInvocationListener
     {
@@ -899,7 +899,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetSystemUpdateID implements IDvInvocationListener
     {
@@ -947,7 +947,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoBrowse implements IDvInvocationListener
     {
@@ -1018,7 +1018,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSearch implements IDvInvocationListener
     {
@@ -1089,7 +1089,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoCreateObject implements IDvInvocationListener
     {
@@ -1146,7 +1146,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDestroyObject implements IDvInvocationListener
     {
@@ -1194,7 +1194,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoUpdateObject implements IDvInvocationListener
     {
@@ -1246,7 +1246,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoImportResource implements IDvInvocationListener
     {
@@ -1298,7 +1298,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoExportResource implements IDvInvocationListener
     {
@@ -1350,7 +1350,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStopTransferResource implements IDvInvocationListener
     {
@@ -1398,7 +1398,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetTransferProgress implements IDvInvocationListener
     {
@@ -1456,7 +1456,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDeleteResource implements IDvInvocationListener
     {
@@ -1504,7 +1504,7 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoCreateReference implements IDvInvocationListener
     {
@@ -1556,6 +1556,6 @@ public class DvProviderUpnpOrgContentDirectory1 extends DvProvider implements ID
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

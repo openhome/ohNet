@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgAVTransport1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyUpnpOrgAVTransport1 extends ICpProxy
 {
     public void syncSetAVTransportURI(long aInstanceID, String aCurrentURI, String aCurrentURIMetaData);
@@ -76,7 +76,7 @@ class SyncSetAVTransportURIUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetAVTransportURI(aAsyncHandle);
-		
+        
     }
 }
 
@@ -91,7 +91,7 @@ class SyncSetNextAVTransportURIUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetNextAVTransportURI(aAsyncHandle);
-		
+        
     }
 }
 
@@ -151,7 +151,7 @@ class SyncGetMediaInfoUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetMediaInfo result = iService.endGetMediaInfo(aAsyncHandle);
-		
+        
         iNrTracks = result.getNrTracks();
         iMediaDuration = result.getMediaDuration();
         iCurrentURI = result.getCurrentURI();
@@ -190,7 +190,7 @@ class SyncGetTransportInfoUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetTransportInfo result = iService.endGetTransportInfo(aAsyncHandle);
-		
+        
         iCurrentTransportState = result.getCurrentTransportState();
         iCurrentTransportStatus = result.getCurrentTransportStatus();
         iCurrentSpeed = result.getCurrentSpeed();
@@ -248,7 +248,7 @@ class SyncGetPositionInfoUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetPositionInfo result = iService.endGetPositionInfo(aAsyncHandle);
-		
+        
         iTrack = result.getTrack();
         iTrackDuration = result.getTrackDuration();
         iTrackMetaData = result.getTrackMetaData();
@@ -286,7 +286,7 @@ class SyncGetDeviceCapabilitiesUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetDeviceCapabilities result = iService.endGetDeviceCapabilities(aAsyncHandle);
-		
+        
         iPlayMedia = result.getPlayMedia();
         iRecMedia = result.getRecMedia();
         iRecQualityModes = result.getRecQualityModes();
@@ -314,7 +314,7 @@ class SyncGetTransportSettingsUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetTransportSettings result = iService.endGetTransportSettings(aAsyncHandle);
-		
+        
         iPlayMode = result.getPlayMode();
         iRecQualityMode = result.getRecQualityMode();
     }
@@ -331,7 +331,7 @@ class SyncStopUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endStop(aAsyncHandle);
-		
+        
     }
 }
 
@@ -346,7 +346,7 @@ class SyncPlayUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endPlay(aAsyncHandle);
-		
+        
     }
 }
 
@@ -361,7 +361,7 @@ class SyncPauseUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endPause(aAsyncHandle);
-		
+        
     }
 }
 
@@ -376,7 +376,7 @@ class SyncRecordUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endRecord(aAsyncHandle);
-		
+        
     }
 }
 
@@ -391,7 +391,7 @@ class SyncSeekUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSeek(aAsyncHandle);
-		
+        
     }
 }
 
@@ -406,7 +406,7 @@ class SyncNextUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endNext(aAsyncHandle);
-		
+        
     }
 }
 
@@ -421,7 +421,7 @@ class SyncPreviousUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endPrevious(aAsyncHandle);
-		
+        
     }
 }
 
@@ -436,7 +436,7 @@ class SyncSetPlayModeUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetPlayMode(aAsyncHandle);
-		
+        
     }
 }
 
@@ -451,7 +451,7 @@ class SyncSetRecordQualityModeUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetRecordQualityMode(aAsyncHandle);
-		
+        
     }
 }
 
@@ -471,7 +471,7 @@ class SyncGetCurrentTransportActionsUpnpOrgAVTransport1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetCurrentTransportActions(aAsyncHandle);
-		
+        
         iActions = result;
     }
 }
@@ -727,7 +727,7 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyUpnpOrgAVTransport1(CpDevice aDevice)
@@ -738,161 +738,161 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 
         iActionSetAVTransportURI = new Action("SetAVTransportURI");
         param = new ParameterUint("InstanceID");
-		iActionSetAVTransportURI.addInputParameter(param);
+        iActionSetAVTransportURI.addInputParameter(param);
         param = new ParameterString("CurrentURI", allowedValues);
-		iActionSetAVTransportURI.addInputParameter(param);
+        iActionSetAVTransportURI.addInputParameter(param);
         param = new ParameterString("CurrentURIMetaData", allowedValues);
-		iActionSetAVTransportURI.addInputParameter(param);
+        iActionSetAVTransportURI.addInputParameter(param);
 
         iActionSetNextAVTransportURI = new Action("SetNextAVTransportURI");
         param = new ParameterUint("InstanceID");
-		iActionSetNextAVTransportURI.addInputParameter(param);
+        iActionSetNextAVTransportURI.addInputParameter(param);
         param = new ParameterString("NextURI", allowedValues);
-		iActionSetNextAVTransportURI.addInputParameter(param);
+        iActionSetNextAVTransportURI.addInputParameter(param);
         param = new ParameterString("NextURIMetaData", allowedValues);
-		iActionSetNextAVTransportURI.addInputParameter(param);
+        iActionSetNextAVTransportURI.addInputParameter(param);
 
         iActionGetMediaInfo = new Action("GetMediaInfo");
         param = new ParameterUint("InstanceID");
-		iActionGetMediaInfo.addInputParameter(param);
+        iActionGetMediaInfo.addInputParameter(param);
         param = new ParameterUint("NrTracks", 0, 2147483647);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("MediaDuration", allowedValues);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("CurrentURI", allowedValues);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("CurrentURIMetaData", allowedValues);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("NextURI", allowedValues);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("NextURIMetaData", allowedValues);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("PlayMedium", allowedValues);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("RecordMedium", allowedValues);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("WriteStatus", allowedValues);
-		iActionGetMediaInfo.addOutputParameter(param);
+        iActionGetMediaInfo.addOutputParameter(param);
 
         iActionGetTransportInfo = new Action("GetTransportInfo");
         param = new ParameterUint("InstanceID");
-		iActionGetTransportInfo.addInputParameter(param);
+        iActionGetTransportInfo.addInputParameter(param);
         allowedValues.add("STOPPED");
         allowedValues.add("PLAYING");
         param = new ParameterString("CurrentTransportState", allowedValues);
-		iActionGetTransportInfo.addOutputParameter(param);
+        iActionGetTransportInfo.addOutputParameter(param);
         allowedValues.clear();
         allowedValues.add("OK");
         allowedValues.add("ERROR_OCCURRED");
         param = new ParameterString("CurrentTransportStatus", allowedValues);
-		iActionGetTransportInfo.addOutputParameter(param);
+        iActionGetTransportInfo.addOutputParameter(param);
         allowedValues.clear();
         allowedValues.add("1");
         param = new ParameterString("CurrentSpeed", allowedValues);
-		iActionGetTransportInfo.addOutputParameter(param);
+        iActionGetTransportInfo.addOutputParameter(param);
         allowedValues.clear();
 
         iActionGetPositionInfo = new Action("GetPositionInfo");
         param = new ParameterUint("InstanceID");
-		iActionGetPositionInfo.addInputParameter(param);
+        iActionGetPositionInfo.addInputParameter(param);
         param = new ParameterUint("Track", 0, 2147483647, 1);
-		iActionGetPositionInfo.addOutputParameter(param);
+        iActionGetPositionInfo.addOutputParameter(param);
         param = new ParameterString("TrackDuration", allowedValues);
-		iActionGetPositionInfo.addOutputParameter(param);
+        iActionGetPositionInfo.addOutputParameter(param);
         param = new ParameterString("TrackMetaData", allowedValues);
-		iActionGetPositionInfo.addOutputParameter(param);
+        iActionGetPositionInfo.addOutputParameter(param);
         param = new ParameterString("TrackURI", allowedValues);
-		iActionGetPositionInfo.addOutputParameter(param);
+        iActionGetPositionInfo.addOutputParameter(param);
         param = new ParameterString("RelTime", allowedValues);
-		iActionGetPositionInfo.addOutputParameter(param);
+        iActionGetPositionInfo.addOutputParameter(param);
         param = new ParameterString("AbsTime", allowedValues);
-		iActionGetPositionInfo.addOutputParameter(param);
+        iActionGetPositionInfo.addOutputParameter(param);
         param = new ParameterInt("RelCount");
-		iActionGetPositionInfo.addOutputParameter(param);
+        iActionGetPositionInfo.addOutputParameter(param);
         param = new ParameterInt("AbsCount");
-		iActionGetPositionInfo.addOutputParameter(param);
+        iActionGetPositionInfo.addOutputParameter(param);
 
         iActionGetDeviceCapabilities = new Action("GetDeviceCapabilities");
         param = new ParameterUint("InstanceID");
-		iActionGetDeviceCapabilities.addInputParameter(param);
+        iActionGetDeviceCapabilities.addInputParameter(param);
         param = new ParameterString("PlayMedia", allowedValues);
-		iActionGetDeviceCapabilities.addOutputParameter(param);
+        iActionGetDeviceCapabilities.addOutputParameter(param);
         param = new ParameterString("RecMedia", allowedValues);
-		iActionGetDeviceCapabilities.addOutputParameter(param);
+        iActionGetDeviceCapabilities.addOutputParameter(param);
         param = new ParameterString("RecQualityModes", allowedValues);
-		iActionGetDeviceCapabilities.addOutputParameter(param);
+        iActionGetDeviceCapabilities.addOutputParameter(param);
 
         iActionGetTransportSettings = new Action("GetTransportSettings");
         param = new ParameterUint("InstanceID");
-		iActionGetTransportSettings.addInputParameter(param);
+        iActionGetTransportSettings.addInputParameter(param);
         allowedValues.add("NORMAL");
         param = new ParameterString("PlayMode", allowedValues);
-		iActionGetTransportSettings.addOutputParameter(param);
+        iActionGetTransportSettings.addOutputParameter(param);
         allowedValues.clear();
         param = new ParameterString("RecQualityMode", allowedValues);
-		iActionGetTransportSettings.addOutputParameter(param);
+        iActionGetTransportSettings.addOutputParameter(param);
 
         iActionStop = new Action("Stop");
         param = new ParameterUint("InstanceID");
-		iActionStop.addInputParameter(param);
+        iActionStop.addInputParameter(param);
 
         iActionPlay = new Action("Play");
         param = new ParameterUint("InstanceID");
-		iActionPlay.addInputParameter(param);
+        iActionPlay.addInputParameter(param);
         allowedValues.add("1");
         param = new ParameterString("Speed", allowedValues);
-		iActionPlay.addInputParameter(param);
+        iActionPlay.addInputParameter(param);
         allowedValues.clear();
 
         iActionPause = new Action("Pause");
         param = new ParameterUint("InstanceID");
-		iActionPause.addInputParameter(param);
+        iActionPause.addInputParameter(param);
 
         iActionRecord = new Action("Record");
         param = new ParameterUint("InstanceID");
-		iActionRecord.addInputParameter(param);
+        iActionRecord.addInputParameter(param);
 
         iActionSeek = new Action("Seek");
         param = new ParameterUint("InstanceID");
-		iActionSeek.addInputParameter(param);
+        iActionSeek.addInputParameter(param);
         allowedValues.add("TRACK_NR");
         param = new ParameterString("Unit", allowedValues);
-		iActionSeek.addInputParameter(param);
+        iActionSeek.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterString("Target", allowedValues);
-		iActionSeek.addInputParameter(param);
+        iActionSeek.addInputParameter(param);
 
         iActionNext = new Action("Next");
         param = new ParameterUint("InstanceID");
-		iActionNext.addInputParameter(param);
+        iActionNext.addInputParameter(param);
 
         iActionPrevious = new Action("Previous");
         param = new ParameterUint("InstanceID");
-		iActionPrevious.addInputParameter(param);
+        iActionPrevious.addInputParameter(param);
 
         iActionSetPlayMode = new Action("SetPlayMode");
         param = new ParameterUint("InstanceID");
-		iActionSetPlayMode.addInputParameter(param);
+        iActionSetPlayMode.addInputParameter(param);
         allowedValues.add("NORMAL");
         param = new ParameterString("NewPlayMode", allowedValues);
-		iActionSetPlayMode.addInputParameter(param);
+        iActionSetPlayMode.addInputParameter(param);
         allowedValues.clear();
 
         iActionSetRecordQualityMode = new Action("SetRecordQualityMode");
         param = new ParameterUint("InstanceID");
-		iActionSetRecordQualityMode.addInputParameter(param);
+        iActionSetRecordQualityMode.addInputParameter(param);
         param = new ParameterString("NewRecordQualityMode", allowedValues);
-		iActionSetRecordQualityMode.addInputParameter(param);
+        iActionSetRecordQualityMode.addInputParameter(param);
 
         iActionGetCurrentTransportActions = new Action("GetCurrentTransportActions");
         param = new ParameterUint("InstanceID");
-		iActionGetCurrentTransportActions.addInputParameter(param);
+        iActionGetCurrentTransportActions.addInputParameter(param);
         param = new ParameterString("Actions", allowedValues);
-		iActionGetCurrentTransportActions.addOutputParameter(param);
+        iActionGetCurrentTransportActions.addOutputParameter(param);
 
         iLastChangeChanged = new PropertyChangeListener();
         iLastChange = new PropertyString("LastChange", iLastChangeChanged);
-		addProperty(iLastChange);
+        addProperty(iLastChange);
         iPropertyLock = new Object();
     }
     /**
@@ -900,28 +900,28 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetAVTransportURI(long aInstanceID, String aCurrentURI, String aCurrentURIMetaData)
-	{
-	    SyncSetAVTransportURIUpnpOrgAVTransport1 sync = new SyncSetAVTransportURIUpnpOrgAVTransport1(this);
-	    beginSetAVTransportURI(aInstanceID, aCurrentURI, aCurrentURIMetaData, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetAVTransportURI(long aInstanceID, String aCurrentURI, String aCurrentURIMetaData)
+    {
+        SyncSetAVTransportURIUpnpOrgAVTransport1 sync = new SyncSetAVTransportURIUpnpOrgAVTransport1(this);
+        beginSetAVTransportURI(aInstanceID, aCurrentURI, aCurrentURIMetaData, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetAVTransportURI}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCurrentURI
-	 * @param aCurrentURIMetaData
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetAVTransportURI(long aInstanceID, String aCurrentURI, String aCurrentURIMetaData, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetAVTransportURI}.
+     * 
+     * @param aInstanceID
+     * @param aCurrentURI
+     * @param aCurrentURIMetaData
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetAVTransportURI(long aInstanceID, String aCurrentURI, String aCurrentURIMetaData, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetAVTransportURI, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetAVTransportURI.getInputParameter(inIndex++), aInstanceID));
@@ -930,49 +930,49 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetAVTransportURI} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetAVTransportURI} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetAVTransportURI} method.
      */
-	public void endSetAVTransportURI(long aAsyncHandle)
+    public void endSetAVTransportURI(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetNextAVTransportURI(long aInstanceID, String aNextURI, String aNextURIMetaData)
-	{
-	    SyncSetNextAVTransportURIUpnpOrgAVTransport1 sync = new SyncSetNextAVTransportURIUpnpOrgAVTransport1(this);
-	    beginSetNextAVTransportURI(aInstanceID, aNextURI, aNextURIMetaData, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetNextAVTransportURI(long aInstanceID, String aNextURI, String aNextURIMetaData)
+    {
+        SyncSetNextAVTransportURIUpnpOrgAVTransport1 sync = new SyncSetNextAVTransportURIUpnpOrgAVTransport1(this);
+        beginSetNextAVTransportURI(aInstanceID, aNextURI, aNextURIMetaData, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetNextAVTransportURI}.
-	 * 
-	 * @param aInstanceID
-	 * @param aNextURI
-	 * @param aNextURIMetaData
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetNextAVTransportURI(long aInstanceID, String aNextURI, String aNextURIMetaData, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetNextAVTransportURI}.
+     * 
+     * @param aInstanceID
+     * @param aNextURI
+     * @param aNextURIMetaData
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetNextAVTransportURI(long aInstanceID, String aNextURI, String aNextURIMetaData, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetNextAVTransportURI, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetNextAVTransportURI.getInputParameter(inIndex++), aInstanceID));
@@ -981,22 +981,22 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetNextAVTransportURI} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetNextAVTransportURI} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetNextAVTransportURI} method.
      */
-	public void endSetNextAVTransportURI(long aAsyncHandle)
+    public void endSetNextAVTransportURI(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1004,11 +1004,11 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      *
      * @return the result of the invoked action.
      */
-	public GetMediaInfo syncGetMediaInfo(long aInstanceID)
-	{
-	    SyncGetMediaInfoUpnpOrgAVTransport1 sync = new SyncGetMediaInfoUpnpOrgAVTransport1(this);
-	    beginGetMediaInfo(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public GetMediaInfo syncGetMediaInfo(long aInstanceID)
+    {
+        SyncGetMediaInfoUpnpOrgAVTransport1 sync = new SyncGetMediaInfoUpnpOrgAVTransport1(this);
+        beginGetMediaInfo(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetMediaInfo(
@@ -1021,21 +1021,21 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
             sync.getPlayMedium(),
             sync.getRecordMedium(),
             sync.getWriteStatus()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetMediaInfo}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetMediaInfo(long aInstanceID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetMediaInfo}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetMediaInfo(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetMediaInfo, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetMediaInfo.getInputParameter(inIndex++), aInstanceID));
@@ -1052,16 +1052,16 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetMediaInfo} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetMediaInfo} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetMediaInfo} method.
      * @return the result of the previously invoked action.
      */
-	public GetMediaInfo endGetMediaInfo(long aAsyncHandle)
+    public GetMediaInfo endGetMediaInfo(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1087,9 +1087,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
             playMedium,
             recordMedium,
             writeStatus
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1097,32 +1097,32 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      *
      * @return the result of the invoked action.
      */
-	public GetTransportInfo syncGetTransportInfo(long aInstanceID)
-	{
-	    SyncGetTransportInfoUpnpOrgAVTransport1 sync = new SyncGetTransportInfoUpnpOrgAVTransport1(this);
-	    beginGetTransportInfo(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public GetTransportInfo syncGetTransportInfo(long aInstanceID)
+    {
+        SyncGetTransportInfoUpnpOrgAVTransport1 sync = new SyncGetTransportInfoUpnpOrgAVTransport1(this);
+        beginGetTransportInfo(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetTransportInfo(
             sync.getCurrentTransportState(),
             sync.getCurrentTransportStatus(),
             sync.getCurrentSpeed()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetTransportInfo}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetTransportInfo(long aInstanceID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetTransportInfo}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetTransportInfo(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetTransportInfo, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetTransportInfo.getInputParameter(inIndex++), aInstanceID));
@@ -1133,16 +1133,16 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetTransportInfo} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetTransportInfo} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetTransportInfo} method.
      * @return the result of the previously invoked action.
      */
-	public GetTransportInfo endGetTransportInfo(long aAsyncHandle)
+    public GetTransportInfo endGetTransportInfo(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1156,9 +1156,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
             currentTransportState,
             currentTransportStatus,
             currentSpeed
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1166,11 +1166,11 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      *
      * @return the result of the invoked action.
      */
-	public GetPositionInfo syncGetPositionInfo(long aInstanceID)
-	{
-	    SyncGetPositionInfoUpnpOrgAVTransport1 sync = new SyncGetPositionInfoUpnpOrgAVTransport1(this);
-	    beginGetPositionInfo(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public GetPositionInfo syncGetPositionInfo(long aInstanceID)
+    {
+        SyncGetPositionInfoUpnpOrgAVTransport1 sync = new SyncGetPositionInfoUpnpOrgAVTransport1(this);
+        beginGetPositionInfo(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetPositionInfo(
@@ -1182,21 +1182,21 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
             sync.getAbsTime(),
             sync.getRelCount(),
             sync.getAbsCount()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetPositionInfo}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetPositionInfo(long aInstanceID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetPositionInfo}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetPositionInfo(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetPositionInfo, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetPositionInfo.getInputParameter(inIndex++), aInstanceID));
@@ -1212,16 +1212,16 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetPositionInfo} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetPositionInfo} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetPositionInfo} method.
      * @return the result of the previously invoked action.
      */
-	public GetPositionInfo endGetPositionInfo(long aAsyncHandle)
+    public GetPositionInfo endGetPositionInfo(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1245,9 +1245,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
             absTime,
             relCount,
             absCount
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1255,32 +1255,32 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      *
      * @return the result of the invoked action.
      */
-	public GetDeviceCapabilities syncGetDeviceCapabilities(long aInstanceID)
-	{
-	    SyncGetDeviceCapabilitiesUpnpOrgAVTransport1 sync = new SyncGetDeviceCapabilitiesUpnpOrgAVTransport1(this);
-	    beginGetDeviceCapabilities(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public GetDeviceCapabilities syncGetDeviceCapabilities(long aInstanceID)
+    {
+        SyncGetDeviceCapabilitiesUpnpOrgAVTransport1 sync = new SyncGetDeviceCapabilitiesUpnpOrgAVTransport1(this);
+        beginGetDeviceCapabilities(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetDeviceCapabilities(
             sync.getPlayMedia(),
             sync.getRecMedia(),
             sync.getRecQualityModes()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetDeviceCapabilities}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetDeviceCapabilities(long aInstanceID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetDeviceCapabilities}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetDeviceCapabilities(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetDeviceCapabilities, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetDeviceCapabilities.getInputParameter(inIndex++), aInstanceID));
@@ -1291,16 +1291,16 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetDeviceCapabilities} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetDeviceCapabilities} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetDeviceCapabilities} method.
      * @return the result of the previously invoked action.
      */
-	public GetDeviceCapabilities endGetDeviceCapabilities(long aAsyncHandle)
+    public GetDeviceCapabilities endGetDeviceCapabilities(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1314,9 +1314,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
             playMedia,
             recMedia,
             recQualityModes
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1324,31 +1324,31 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      *
      * @return the result of the invoked action.
      */
-	public GetTransportSettings syncGetTransportSettings(long aInstanceID)
-	{
-	    SyncGetTransportSettingsUpnpOrgAVTransport1 sync = new SyncGetTransportSettingsUpnpOrgAVTransport1(this);
-	    beginGetTransportSettings(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public GetTransportSettings syncGetTransportSettings(long aInstanceID)
+    {
+        SyncGetTransportSettingsUpnpOrgAVTransport1 sync = new SyncGetTransportSettingsUpnpOrgAVTransport1(this);
+        beginGetTransportSettings(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetTransportSettings(
             sync.getPlayMode(),
             sync.getRecQualityMode()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetTransportSettings}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetTransportSettings(long aInstanceID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetTransportSettings}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetTransportSettings(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetTransportSettings, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetTransportSettings.getInputParameter(inIndex++), aInstanceID));
@@ -1358,16 +1358,16 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetTransportSettings} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetTransportSettings} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetTransportSettings} method.
      * @return the result of the previously invoked action.
      */
-	public GetTransportSettings endGetTransportSettings(long aAsyncHandle)
+    public GetTransportSettings endGetTransportSettings(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1379,82 +1379,82 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         return new GetTransportSettings(
             playMode,
             recQualityMode
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncStop(long aInstanceID)
-	{
-	    SyncStopUpnpOrgAVTransport1 sync = new SyncStopUpnpOrgAVTransport1(this);
-	    beginStop(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncStop(long aInstanceID)
+    {
+        SyncStopUpnpOrgAVTransport1 sync = new SyncStopUpnpOrgAVTransport1(this);
+        beginStop(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endStop}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginStop(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endStop}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginStop(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionStop, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionStop.getInputParameter(inIndex++), aInstanceID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginStop} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginStop} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginStop} method.
      */
-	public void endStop(long aAsyncHandle)
+    public void endStop(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncPlay(long aInstanceID, String aSpeed)
-	{
-	    SyncPlayUpnpOrgAVTransport1 sync = new SyncPlayUpnpOrgAVTransport1(this);
-	    beginPlay(aInstanceID, aSpeed, sync.getListener());
-	    sync.waitToComplete();
+    public void syncPlay(long aInstanceID, String aSpeed)
+    {
+        SyncPlayUpnpOrgAVTransport1 sync = new SyncPlayUpnpOrgAVTransport1(this);
+        beginPlay(aInstanceID, aSpeed, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPlay}.
-	 * 
-	 * @param aInstanceID
-	 * @param aSpeed
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPlay(long aInstanceID, String aSpeed, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPlay}.
+     * 
+     * @param aInstanceID
+     * @param aSpeed
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPlay(long aInstanceID, String aSpeed, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPlay, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionPlay.getInputParameter(inIndex++), aInstanceID));
@@ -1462,143 +1462,143 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPlay} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPlay} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPlay} method.
      */
-	public void endPlay(long aAsyncHandle)
+    public void endPlay(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncPause(long aInstanceID)
-	{
-	    SyncPauseUpnpOrgAVTransport1 sync = new SyncPauseUpnpOrgAVTransport1(this);
-	    beginPause(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncPause(long aInstanceID)
+    {
+        SyncPauseUpnpOrgAVTransport1 sync = new SyncPauseUpnpOrgAVTransport1(this);
+        beginPause(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPause}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPause(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPause}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPause(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPause, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionPause.getInputParameter(inIndex++), aInstanceID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPause} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPause} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPause} method.
      */
-	public void endPause(long aAsyncHandle)
+    public void endPause(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncRecord(long aInstanceID)
-	{
-	    SyncRecordUpnpOrgAVTransport1 sync = new SyncRecordUpnpOrgAVTransport1(this);
-	    beginRecord(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncRecord(long aInstanceID)
+    {
+        SyncRecordUpnpOrgAVTransport1 sync = new SyncRecordUpnpOrgAVTransport1(this);
+        beginRecord(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endRecord}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginRecord(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endRecord}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginRecord(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionRecord, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionRecord.getInputParameter(inIndex++), aInstanceID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginRecord} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginRecord} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginRecord} method.
      */
-	public void endRecord(long aAsyncHandle)
+    public void endRecord(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSeek(long aInstanceID, String aUnit, String aTarget)
-	{
-	    SyncSeekUpnpOrgAVTransport1 sync = new SyncSeekUpnpOrgAVTransport1(this);
-	    beginSeek(aInstanceID, aUnit, aTarget, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSeek(long aInstanceID, String aUnit, String aTarget)
+    {
+        SyncSeekUpnpOrgAVTransport1 sync = new SyncSeekUpnpOrgAVTransport1(this);
+        beginSeek(aInstanceID, aUnit, aTarget, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSeek}.
-	 * 
-	 * @param aInstanceID
-	 * @param aUnit
-	 * @param aTarget
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSeek(long aInstanceID, String aUnit, String aTarget, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSeek}.
+     * 
+     * @param aInstanceID
+     * @param aUnit
+     * @param aTarget
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSeek(long aInstanceID, String aUnit, String aTarget, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSeek, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSeek.getInputParameter(inIndex++), aInstanceID));
@@ -1607,142 +1607,142 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSeek} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSeek} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSeek} method.
      */
-	public void endSeek(long aAsyncHandle)
+    public void endSeek(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncNext(long aInstanceID)
-	{
-	    SyncNextUpnpOrgAVTransport1 sync = new SyncNextUpnpOrgAVTransport1(this);
-	    beginNext(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncNext(long aInstanceID)
+    {
+        SyncNextUpnpOrgAVTransport1 sync = new SyncNextUpnpOrgAVTransport1(this);
+        beginNext(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endNext}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginNext(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endNext}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginNext(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionNext, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionNext.getInputParameter(inIndex++), aInstanceID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginNext} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginNext} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginNext} method.
      */
-	public void endNext(long aAsyncHandle)
+    public void endNext(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncPrevious(long aInstanceID)
-	{
-	    SyncPreviousUpnpOrgAVTransport1 sync = new SyncPreviousUpnpOrgAVTransport1(this);
-	    beginPrevious(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncPrevious(long aInstanceID)
+    {
+        SyncPreviousUpnpOrgAVTransport1 sync = new SyncPreviousUpnpOrgAVTransport1(this);
+        beginPrevious(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPrevious}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPrevious(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPrevious}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPrevious(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPrevious, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionPrevious.getInputParameter(inIndex++), aInstanceID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPrevious} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPrevious} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPrevious} method.
      */
-	public void endPrevious(long aAsyncHandle)
+    public void endPrevious(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetPlayMode(long aInstanceID, String aNewPlayMode)
-	{
-	    SyncSetPlayModeUpnpOrgAVTransport1 sync = new SyncSetPlayModeUpnpOrgAVTransport1(this);
-	    beginSetPlayMode(aInstanceID, aNewPlayMode, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetPlayMode(long aInstanceID, String aNewPlayMode)
+    {
+        SyncSetPlayModeUpnpOrgAVTransport1 sync = new SyncSetPlayModeUpnpOrgAVTransport1(this);
+        beginSetPlayMode(aInstanceID, aNewPlayMode, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetPlayMode}.
-	 * 
-	 * @param aInstanceID
-	 * @param aNewPlayMode
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetPlayMode(long aInstanceID, String aNewPlayMode, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetPlayMode}.
+     * 
+     * @param aInstanceID
+     * @param aNewPlayMode
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetPlayMode(long aInstanceID, String aNewPlayMode, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetPlayMode, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetPlayMode.getInputParameter(inIndex++), aInstanceID));
@@ -1750,48 +1750,48 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetPlayMode} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetPlayMode} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetPlayMode} method.
      */
-	public void endSetPlayMode(long aAsyncHandle)
+    public void endSetPlayMode(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetRecordQualityMode(long aInstanceID, String aNewRecordQualityMode)
-	{
-	    SyncSetRecordQualityModeUpnpOrgAVTransport1 sync = new SyncSetRecordQualityModeUpnpOrgAVTransport1(this);
-	    beginSetRecordQualityMode(aInstanceID, aNewRecordQualityMode, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetRecordQualityMode(long aInstanceID, String aNewRecordQualityMode)
+    {
+        SyncSetRecordQualityModeUpnpOrgAVTransport1 sync = new SyncSetRecordQualityModeUpnpOrgAVTransport1(this);
+        beginSetRecordQualityMode(aInstanceID, aNewRecordQualityMode, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetRecordQualityMode}.
-	 * 
-	 * @param aInstanceID
-	 * @param aNewRecordQualityMode
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetRecordQualityMode(long aInstanceID, String aNewRecordQualityMode, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetRecordQualityMode}.
+     * 
+     * @param aInstanceID
+     * @param aNewRecordQualityMode
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetRecordQualityMode(long aInstanceID, String aNewRecordQualityMode, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetRecordQualityMode, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetRecordQualityMode.getInputParameter(inIndex++), aInstanceID));
@@ -1799,22 +1799,22 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetRecordQualityMode} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetRecordQualityMode} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetRecordQualityMode} method.
      */
-	public void endSetRecordQualityMode(long aAsyncHandle)
+    public void endSetRecordQualityMode(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1822,28 +1822,28 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      *
      * @return the result of the invoked action.
      */
-	public String syncGetCurrentTransportActions(long aInstanceID)
-	{
-	    SyncGetCurrentTransportActionsUpnpOrgAVTransport1 sync = new SyncGetCurrentTransportActionsUpnpOrgAVTransport1(this);
-	    beginGetCurrentTransportActions(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetCurrentTransportActions(long aInstanceID)
+    {
+        SyncGetCurrentTransportActionsUpnpOrgAVTransport1 sync = new SyncGetCurrentTransportActionsUpnpOrgAVTransport1(this);
+        beginGetCurrentTransportActions(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getActions();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetCurrentTransportActions}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetCurrentTransportActions(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetCurrentTransportActions}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetCurrentTransportActions(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetCurrentTransportActions, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetCurrentTransportActions.getInputParameter(inIndex++), aInstanceID));
@@ -1852,16 +1852,16 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetCurrentTransportActions} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetCurrentTransportActions} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetCurrentTransportActions} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetCurrentTransportActions(long aAsyncHandle)
+    public String endGetCurrentTransportActions(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1871,14 +1871,14 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         String actions = Invocation.getOutputString(aAsyncHandle, index++);
         return actions;
     }
-		
+        
     /**
      * Set a delegate to be run when the LastChange state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgAVTransport1 instance will not overlap.
+     * CpProxyUpnpOrgAVTransport1 instance will not overlap.
      *
-     * @param aLastChangeChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aLastChangeChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyLastChangeChanged(IPropertyChangeListener aLastChangeChanged)
     {
@@ -1902,7 +1902,7 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the LastChange property.
+     * @return  value of the LastChange property.
      */
     public String getPropertyLastChange()
     {
@@ -1911,7 +1911,7 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

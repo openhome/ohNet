@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgTime1
     /**
      * Set the value of the TrackCount property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTrackCount(long aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgTime1
     /**
      * Set the value of the Duration property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyDuration(long aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgTime1
     /**
      * Set the value of the Seconds property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySeconds(long aValue);
@@ -103,11 +103,11 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgTime1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "Time", 1);
+        super(aDevice, "av.openhome.org", "Time", 1);
     }
 
     /**
@@ -140,7 +140,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the TrackCount property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -152,7 +152,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the TrackCount property
      *
-     * @return	value of the TrackCount property.
+     * @return  value of the TrackCount property.
      */
     public long getPropertyTrackCount()
     {
@@ -162,7 +162,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the Duration property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -174,7 +174,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the Duration property
      *
-     * @return	value of the Duration property.
+     * @return  value of the Duration property.
      */
     public long getPropertyDuration()
     {
@@ -184,7 +184,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
     /**
      * Set the value of the Seconds property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -196,7 +196,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
     /**
      * Get a copy of the value of the Seconds property
      *
-     * @return	value of the Seconds property.
+     * @return  value of the Seconds property.
      */
     public long getPropertySeconds()
     {
@@ -208,7 +208,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Time must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionTime()
     {
         Action action = new Action("Time");
@@ -227,7 +227,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
      *
      * <p>Must be implemented iff {@link #enableActionTime} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Time time(IDvInvocation aInvocation)
     {
@@ -305,6 +305,6 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

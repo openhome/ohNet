@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgContentDirectory2.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyUpnpOrgContentDirectory2 extends ICpProxy
 {
     public String syncGetSearchCapabilities();
@@ -85,7 +85,7 @@ class SyncGetSearchCapabilitiesUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetSearchCapabilities(aAsyncHandle);
-		
+        
         iSearchCaps = result;
     }
 }
@@ -106,7 +106,7 @@ class SyncGetSortCapabilitiesUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetSortCapabilities(aAsyncHandle);
-		
+        
         iSortCaps = result;
     }
 }
@@ -127,7 +127,7 @@ class SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2 extends SyncProxy
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetSortExtensionCapabilities(aAsyncHandle);
-		
+        
         iSortExtensionCaps = result;
     }
 }
@@ -148,7 +148,7 @@ class SyncGetFeatureListUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetFeatureList(aAsyncHandle);
-		
+        
         iFeatureList = result;
     }
 }
@@ -169,7 +169,7 @@ class SyncGetSystemUpdateIDUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetSystemUpdateID(aAsyncHandle);
-		
+        
         iId = result;
     }
 }
@@ -205,7 +205,7 @@ class SyncBrowseUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Browse result = iService.endBrowse(aAsyncHandle);
-		
+        
         iResult = result.getResult();
         iNumberReturned = result.getNumberReturned();
         iTotalMatches = result.getTotalMatches();
@@ -244,7 +244,7 @@ class SyncSearchUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Search result = iService.endSearch(aAsyncHandle);
-		
+        
         iResult = result.getResult();
         iNumberReturned = result.getNumberReturned();
         iTotalMatches = result.getTotalMatches();
@@ -273,7 +273,7 @@ class SyncCreateObjectUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         CreateObject result = iService.endCreateObject(aAsyncHandle);
-		
+        
         iObjectID = result.getObjectID();
         iResult = result.getResult();
     }
@@ -290,7 +290,7 @@ class SyncDestroyObjectUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endDestroyObject(aAsyncHandle);
-		
+        
     }
 }
 
@@ -305,7 +305,7 @@ class SyncUpdateObjectUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endUpdateObject(aAsyncHandle);
-		
+        
     }
 }
 
@@ -325,7 +325,7 @@ class SyncMoveObjectUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endMoveObject(aAsyncHandle);
-		
+        
         iNewObjectID = result;
     }
 }
@@ -346,7 +346,7 @@ class SyncImportResourceUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endImportResource(aAsyncHandle);
-		
+        
         iTransferID = result;
     }
 }
@@ -367,7 +367,7 @@ class SyncExportResourceUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endExportResource(aAsyncHandle);
-		
+        
         iTransferID = result;
     }
 }
@@ -383,7 +383,7 @@ class SyncDeleteResourceUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endDeleteResource(aAsyncHandle);
-		
+        
     }
 }
 
@@ -398,7 +398,7 @@ class SyncStopTransferResourceUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endStopTransferResource(aAsyncHandle);
-		
+        
     }
 }
 
@@ -428,7 +428,7 @@ class SyncGetTransferProgressUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetTransferProgress result = iService.endGetTransferProgress(aAsyncHandle);
-		
+        
         iTransferStatus = result.getTransferStatus();
         iTransferLength = result.getTransferLength();
         iTransferTotal = result.getTransferTotal();
@@ -451,7 +451,7 @@ class SyncCreateReferenceUpnpOrgContentDirectory2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endCreateReference(aAsyncHandle);
-		
+        
         iNewID = result;
     }
 }
@@ -618,7 +618,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyUpnpOrgContentDirectory2(CpDevice aDevice)
@@ -629,157 +629,157 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
 
         iActionGetSearchCapabilities = new Action("GetSearchCapabilities");
         param = new ParameterString("SearchCaps", allowedValues);
-		iActionGetSearchCapabilities.addOutputParameter(param);
+        iActionGetSearchCapabilities.addOutputParameter(param);
 
         iActionGetSortCapabilities = new Action("GetSortCapabilities");
         param = new ParameterString("SortCaps", allowedValues);
-		iActionGetSortCapabilities.addOutputParameter(param);
+        iActionGetSortCapabilities.addOutputParameter(param);
 
         iActionGetSortExtensionCapabilities = new Action("GetSortExtensionCapabilities");
         param = new ParameterString("SortExtensionCaps", allowedValues);
-		iActionGetSortExtensionCapabilities.addOutputParameter(param);
+        iActionGetSortExtensionCapabilities.addOutputParameter(param);
 
         iActionGetFeatureList = new Action("GetFeatureList");
         param = new ParameterString("FeatureList", allowedValues);
-		iActionGetFeatureList.addOutputParameter(param);
+        iActionGetFeatureList.addOutputParameter(param);
 
         iActionGetSystemUpdateID = new Action("GetSystemUpdateID");
         param = new ParameterUint("Id");
-		iActionGetSystemUpdateID.addOutputParameter(param);
+        iActionGetSystemUpdateID.addOutputParameter(param);
 
         iActionBrowse = new Action("Browse");
         param = new ParameterString("ObjectID", allowedValues);
-		iActionBrowse.addInputParameter(param);
+        iActionBrowse.addInputParameter(param);
         allowedValues.add("BrowseMetadata");
         allowedValues.add("BrowseDirectChildren");
         param = new ParameterString("BrowseFlag", allowedValues);
-		iActionBrowse.addInputParameter(param);
+        iActionBrowse.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterString("Filter", allowedValues);
-		iActionBrowse.addInputParameter(param);
+        iActionBrowse.addInputParameter(param);
         param = new ParameterUint("StartingIndex");
-		iActionBrowse.addInputParameter(param);
+        iActionBrowse.addInputParameter(param);
         param = new ParameterUint("RequestedCount");
-		iActionBrowse.addInputParameter(param);
+        iActionBrowse.addInputParameter(param);
         param = new ParameterString("SortCriteria", allowedValues);
-		iActionBrowse.addInputParameter(param);
+        iActionBrowse.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionBrowse.addOutputParameter(param);
+        iActionBrowse.addOutputParameter(param);
         param = new ParameterUint("NumberReturned");
-		iActionBrowse.addOutputParameter(param);
+        iActionBrowse.addOutputParameter(param);
         param = new ParameterUint("TotalMatches");
-		iActionBrowse.addOutputParameter(param);
+        iActionBrowse.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionBrowse.addOutputParameter(param);
+        iActionBrowse.addOutputParameter(param);
 
         iActionSearch = new Action("Search");
         param = new ParameterString("ContainerID", allowedValues);
-		iActionSearch.addInputParameter(param);
+        iActionSearch.addInputParameter(param);
         param = new ParameterString("SearchCriteria", allowedValues);
-		iActionSearch.addInputParameter(param);
+        iActionSearch.addInputParameter(param);
         param = new ParameterString("Filter", allowedValues);
-		iActionSearch.addInputParameter(param);
+        iActionSearch.addInputParameter(param);
         param = new ParameterUint("StartingIndex");
-		iActionSearch.addInputParameter(param);
+        iActionSearch.addInputParameter(param);
         param = new ParameterUint("RequestedCount");
-		iActionSearch.addInputParameter(param);
+        iActionSearch.addInputParameter(param);
         param = new ParameterString("SortCriteria", allowedValues);
-		iActionSearch.addInputParameter(param);
+        iActionSearch.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionSearch.addOutputParameter(param);
+        iActionSearch.addOutputParameter(param);
         param = new ParameterUint("NumberReturned");
-		iActionSearch.addOutputParameter(param);
+        iActionSearch.addOutputParameter(param);
         param = new ParameterUint("TotalMatches");
-		iActionSearch.addOutputParameter(param);
+        iActionSearch.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionSearch.addOutputParameter(param);
+        iActionSearch.addOutputParameter(param);
 
         iActionCreateObject = new Action("CreateObject");
         param = new ParameterString("ContainerID", allowedValues);
-		iActionCreateObject.addInputParameter(param);
+        iActionCreateObject.addInputParameter(param);
         param = new ParameterString("Elements", allowedValues);
-		iActionCreateObject.addInputParameter(param);
+        iActionCreateObject.addInputParameter(param);
         param = new ParameterString("ObjectID", allowedValues);
-		iActionCreateObject.addOutputParameter(param);
+        iActionCreateObject.addOutputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionCreateObject.addOutputParameter(param);
+        iActionCreateObject.addOutputParameter(param);
 
         iActionDestroyObject = new Action("DestroyObject");
         param = new ParameterString("ObjectID", allowedValues);
-		iActionDestroyObject.addInputParameter(param);
+        iActionDestroyObject.addInputParameter(param);
 
         iActionUpdateObject = new Action("UpdateObject");
         param = new ParameterString("ObjectID", allowedValues);
-		iActionUpdateObject.addInputParameter(param);
+        iActionUpdateObject.addInputParameter(param);
         param = new ParameterString("CurrentTagValue", allowedValues);
-		iActionUpdateObject.addInputParameter(param);
+        iActionUpdateObject.addInputParameter(param);
         param = new ParameterString("NewTagValue", allowedValues);
-		iActionUpdateObject.addInputParameter(param);
+        iActionUpdateObject.addInputParameter(param);
 
         iActionMoveObject = new Action("MoveObject");
         param = new ParameterString("ObjectID", allowedValues);
-		iActionMoveObject.addInputParameter(param);
+        iActionMoveObject.addInputParameter(param);
         param = new ParameterString("NewParentID", allowedValues);
-		iActionMoveObject.addInputParameter(param);
+        iActionMoveObject.addInputParameter(param);
         param = new ParameterString("NewObjectID", allowedValues);
-		iActionMoveObject.addOutputParameter(param);
+        iActionMoveObject.addOutputParameter(param);
 
         iActionImportResource = new Action("ImportResource");
         param = new ParameterString("SourceURI", allowedValues);
-		iActionImportResource.addInputParameter(param);
+        iActionImportResource.addInputParameter(param);
         param = new ParameterString("DestinationURI", allowedValues);
-		iActionImportResource.addInputParameter(param);
+        iActionImportResource.addInputParameter(param);
         param = new ParameterUint("TransferID");
-		iActionImportResource.addOutputParameter(param);
+        iActionImportResource.addOutputParameter(param);
 
         iActionExportResource = new Action("ExportResource");
         param = new ParameterString("SourceURI", allowedValues);
-		iActionExportResource.addInputParameter(param);
+        iActionExportResource.addInputParameter(param);
         param = new ParameterString("DestinationURI", allowedValues);
-		iActionExportResource.addInputParameter(param);
+        iActionExportResource.addInputParameter(param);
         param = new ParameterUint("TransferID");
-		iActionExportResource.addOutputParameter(param);
+        iActionExportResource.addOutputParameter(param);
 
         iActionDeleteResource = new Action("DeleteResource");
         param = new ParameterString("ResourceURI", allowedValues);
-		iActionDeleteResource.addInputParameter(param);
+        iActionDeleteResource.addInputParameter(param);
 
         iActionStopTransferResource = new Action("StopTransferResource");
         param = new ParameterUint("TransferID");
-		iActionStopTransferResource.addInputParameter(param);
+        iActionStopTransferResource.addInputParameter(param);
 
         iActionGetTransferProgress = new Action("GetTransferProgress");
         param = new ParameterUint("TransferID");
-		iActionGetTransferProgress.addInputParameter(param);
+        iActionGetTransferProgress.addInputParameter(param);
         allowedValues.add("COMPLETED");
         allowedValues.add("ERROR");
         allowedValues.add("IN_PROGRESS");
         allowedValues.add("STOPPED");
         param = new ParameterString("TransferStatus", allowedValues);
-		iActionGetTransferProgress.addOutputParameter(param);
+        iActionGetTransferProgress.addOutputParameter(param);
         allowedValues.clear();
         param = new ParameterString("TransferLength", allowedValues);
-		iActionGetTransferProgress.addOutputParameter(param);
+        iActionGetTransferProgress.addOutputParameter(param);
         param = new ParameterString("TransferTotal", allowedValues);
-		iActionGetTransferProgress.addOutputParameter(param);
+        iActionGetTransferProgress.addOutputParameter(param);
 
         iActionCreateReference = new Action("CreateReference");
         param = new ParameterString("ContainerID", allowedValues);
-		iActionCreateReference.addInputParameter(param);
+        iActionCreateReference.addInputParameter(param);
         param = new ParameterString("ObjectID", allowedValues);
-		iActionCreateReference.addInputParameter(param);
+        iActionCreateReference.addInputParameter(param);
         param = new ParameterString("NewID", allowedValues);
-		iActionCreateReference.addOutputParameter(param);
+        iActionCreateReference.addOutputParameter(param);
 
         iSystemUpdateIDChanged = new PropertyChangeListener();
         iSystemUpdateID = new PropertyUint("SystemUpdateID", iSystemUpdateIDChanged);
-		addProperty(iSystemUpdateID);
+        addProperty(iSystemUpdateID);
         iContainerUpdateIDsChanged = new PropertyChangeListener();
         iContainerUpdateIDs = new PropertyString("ContainerUpdateIDs", iContainerUpdateIDsChanged);
-		addProperty(iContainerUpdateIDs);
+        addProperty(iContainerUpdateIDs);
         iTransferIDsChanged = new PropertyChangeListener();
         iTransferIDs = new PropertyString("TransferIDs", iTransferIDsChanged);
-		addProperty(iTransferIDs);
+        addProperty(iTransferIDs);
         iPropertyLock = new Object();
     }
     /**
@@ -789,43 +789,43 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncGetSearchCapabilities()
-	{
-	    SyncGetSearchCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSearchCapabilitiesUpnpOrgContentDirectory2(this);
-	    beginGetSearchCapabilities(sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetSearchCapabilities()
+    {
+        SyncGetSearchCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSearchCapabilitiesUpnpOrgContentDirectory2(this);
+        beginGetSearchCapabilities(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getSearchCaps();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetSearchCapabilities}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetSearchCapabilities(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetSearchCapabilities}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetSearchCapabilities(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetSearchCapabilities, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionGetSearchCapabilities.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetSearchCapabilities} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetSearchCapabilities} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetSearchCapabilities} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetSearchCapabilities(long aAsyncHandle)
+    public String endGetSearchCapabilities(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -835,7 +835,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         String searchCaps = Invocation.getOutputString(aAsyncHandle, index++);
         return searchCaps;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -843,43 +843,43 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncGetSortCapabilities()
-	{
-	    SyncGetSortCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSortCapabilitiesUpnpOrgContentDirectory2(this);
-	    beginGetSortCapabilities(sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetSortCapabilities()
+    {
+        SyncGetSortCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSortCapabilitiesUpnpOrgContentDirectory2(this);
+        beginGetSortCapabilities(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getSortCaps();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetSortCapabilities}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetSortCapabilities(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetSortCapabilities}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetSortCapabilities(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetSortCapabilities, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionGetSortCapabilities.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetSortCapabilities} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetSortCapabilities} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetSortCapabilities} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetSortCapabilities(long aAsyncHandle)
+    public String endGetSortCapabilities(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -889,7 +889,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         String sortCaps = Invocation.getOutputString(aAsyncHandle, index++);
         return sortCaps;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -897,43 +897,43 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncGetSortExtensionCapabilities()
-	{
-	    SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2(this);
-	    beginGetSortExtensionCapabilities(sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetSortExtensionCapabilities()
+    {
+        SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2 sync = new SyncGetSortExtensionCapabilitiesUpnpOrgContentDirectory2(this);
+        beginGetSortExtensionCapabilities(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getSortExtensionCaps();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetSortExtensionCapabilities}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetSortExtensionCapabilities(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetSortExtensionCapabilities}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetSortExtensionCapabilities(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetSortExtensionCapabilities, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionGetSortExtensionCapabilities.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetSortExtensionCapabilities} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetSortExtensionCapabilities} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetSortExtensionCapabilities} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetSortExtensionCapabilities(long aAsyncHandle)
+    public String endGetSortExtensionCapabilities(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -943,7 +943,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         String sortExtensionCaps = Invocation.getOutputString(aAsyncHandle, index++);
         return sortExtensionCaps;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -951,43 +951,43 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncGetFeatureList()
-	{
-	    SyncGetFeatureListUpnpOrgContentDirectory2 sync = new SyncGetFeatureListUpnpOrgContentDirectory2(this);
-	    beginGetFeatureList(sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetFeatureList()
+    {
+        SyncGetFeatureListUpnpOrgContentDirectory2 sync = new SyncGetFeatureListUpnpOrgContentDirectory2(this);
+        beginGetFeatureList(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getFeatureList();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetFeatureList}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetFeatureList(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetFeatureList}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetFeatureList(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetFeatureList, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionGetFeatureList.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetFeatureList} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetFeatureList} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetFeatureList} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetFeatureList(long aAsyncHandle)
+    public String endGetFeatureList(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -997,7 +997,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         String featureList = Invocation.getOutputString(aAsyncHandle, index++);
         return featureList;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1005,43 +1005,43 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetSystemUpdateID()
-	{
-	    SyncGetSystemUpdateIDUpnpOrgContentDirectory2 sync = new SyncGetSystemUpdateIDUpnpOrgContentDirectory2(this);
-	    beginGetSystemUpdateID(sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetSystemUpdateID()
+    {
+        SyncGetSystemUpdateIDUpnpOrgContentDirectory2 sync = new SyncGetSystemUpdateIDUpnpOrgContentDirectory2(this);
+        beginGetSystemUpdateID(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getId();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetSystemUpdateID}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetSystemUpdateID(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetSystemUpdateID}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetSystemUpdateID(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetSystemUpdateID, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionGetSystemUpdateID.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetSystemUpdateID} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetSystemUpdateID} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetSystemUpdateID} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetSystemUpdateID(long aAsyncHandle)
+    public long endGetSystemUpdateID(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1051,7 +1051,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         long id = Invocation.getOutputUint(aAsyncHandle, index++);
         return id;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1059,11 +1059,11 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public Browse syncBrowse(String aObjectID, String aBrowseFlag, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
-	{
-	    SyncBrowseUpnpOrgContentDirectory2 sync = new SyncBrowseUpnpOrgContentDirectory2(this);
-	    beginBrowse(aObjectID, aBrowseFlag, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
-	    sync.waitToComplete();
+    public Browse syncBrowse(String aObjectID, String aBrowseFlag, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
+    {
+        SyncBrowseUpnpOrgContentDirectory2 sync = new SyncBrowseUpnpOrgContentDirectory2(this);
+        beginBrowse(aObjectID, aBrowseFlag, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Browse(
@@ -1071,26 +1071,26 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
             sync.getNumberReturned(),
             sync.getTotalMatches(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endBrowse}.
-	 * 
-	 * @param aObjectID
-	 * @param aBrowseFlag
-	 * @param aFilter
-	 * @param aStartingIndex
-	 * @param aRequestedCount
-	 * @param aSortCriteria
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginBrowse(String aObjectID, String aBrowseFlag, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endBrowse}.
+     * 
+     * @param aObjectID
+     * @param aBrowseFlag
+     * @param aFilter
+     * @param aStartingIndex
+     * @param aRequestedCount
+     * @param aSortCriteria
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginBrowse(String aObjectID, String aBrowseFlag, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionBrowse, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionBrowse.getInputParameter(inIndex++), aObjectID));
@@ -1107,16 +1107,16 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginBrowse} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginBrowse} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginBrowse} method.
      * @return the result of the previously invoked action.
      */
-	public Browse endBrowse(long aAsyncHandle)
+    public Browse endBrowse(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1132,9 +1132,9 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
             numberReturned,
             totalMatches,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1142,11 +1142,11 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public Search syncSearch(String aContainerID, String aSearchCriteria, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
-	{
-	    SyncSearchUpnpOrgContentDirectory2 sync = new SyncSearchUpnpOrgContentDirectory2(this);
-	    beginSearch(aContainerID, aSearchCriteria, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
-	    sync.waitToComplete();
+    public Search syncSearch(String aContainerID, String aSearchCriteria, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
+    {
+        SyncSearchUpnpOrgContentDirectory2 sync = new SyncSearchUpnpOrgContentDirectory2(this);
+        beginSearch(aContainerID, aSearchCriteria, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Search(
@@ -1154,26 +1154,26 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
             sync.getNumberReturned(),
             sync.getTotalMatches(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSearch}.
-	 * 
-	 * @param aContainerID
-	 * @param aSearchCriteria
-	 * @param aFilter
-	 * @param aStartingIndex
-	 * @param aRequestedCount
-	 * @param aSortCriteria
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSearch(String aContainerID, String aSearchCriteria, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSearch}.
+     * 
+     * @param aContainerID
+     * @param aSearchCriteria
+     * @param aFilter
+     * @param aStartingIndex
+     * @param aRequestedCount
+     * @param aSortCriteria
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSearch(String aContainerID, String aSearchCriteria, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSearch, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionSearch.getInputParameter(inIndex++), aContainerID));
@@ -1190,16 +1190,16 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSearch} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSearch} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSearch} method.
      * @return the result of the previously invoked action.
      */
-	public Search endSearch(long aAsyncHandle)
+    public Search endSearch(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1215,9 +1215,9 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
             numberReturned,
             totalMatches,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1225,32 +1225,32 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public CreateObject syncCreateObject(String aContainerID, String aElements)
-	{
-	    SyncCreateObjectUpnpOrgContentDirectory2 sync = new SyncCreateObjectUpnpOrgContentDirectory2(this);
-	    beginCreateObject(aContainerID, aElements, sync.getListener());
-	    sync.waitToComplete();
+    public CreateObject syncCreateObject(String aContainerID, String aElements)
+    {
+        SyncCreateObjectUpnpOrgContentDirectory2 sync = new SyncCreateObjectUpnpOrgContentDirectory2(this);
+        beginCreateObject(aContainerID, aElements, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new CreateObject(
             sync.getObjectID(),
             sync.getResult()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endCreateObject}.
-	 * 
-	 * @param aContainerID
-	 * @param aElements
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginCreateObject(String aContainerID, String aElements, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endCreateObject}.
+     * 
+     * @param aContainerID
+     * @param aElements
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginCreateObject(String aContainerID, String aElements, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionCreateObject, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionCreateObject.getInputParameter(inIndex++), aContainerID));
@@ -1261,16 +1261,16 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginCreateObject} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginCreateObject} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginCreateObject} method.
      * @return the result of the previously invoked action.
      */
-	public CreateObject endCreateObject(long aAsyncHandle)
+    public CreateObject endCreateObject(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1282,83 +1282,83 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         return new CreateObject(
             objectID,
             result
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDestroyObject(String aObjectID)
-	{
-	    SyncDestroyObjectUpnpOrgContentDirectory2 sync = new SyncDestroyObjectUpnpOrgContentDirectory2(this);
-	    beginDestroyObject(aObjectID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncDestroyObject(String aObjectID)
+    {
+        SyncDestroyObjectUpnpOrgContentDirectory2 sync = new SyncDestroyObjectUpnpOrgContentDirectory2(this);
+        beginDestroyObject(aObjectID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDestroyObject}.
-	 * 
-	 * @param aObjectID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDestroyObject(String aObjectID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDestroyObject}.
+     * 
+     * @param aObjectID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDestroyObject(String aObjectID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDestroyObject, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionDestroyObject.getInputParameter(inIndex++), aObjectID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDestroyObject} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDestroyObject} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDestroyObject} method.
      */
-	public void endDestroyObject(long aAsyncHandle)
+    public void endDestroyObject(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue)
-	{
-	    SyncUpdateObjectUpnpOrgContentDirectory2 sync = new SyncUpdateObjectUpnpOrgContentDirectory2(this);
-	    beginUpdateObject(aObjectID, aCurrentTagValue, aNewTagValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue)
+    {
+        SyncUpdateObjectUpnpOrgContentDirectory2 sync = new SyncUpdateObjectUpnpOrgContentDirectory2(this);
+        beginUpdateObject(aObjectID, aCurrentTagValue, aNewTagValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endUpdateObject}.
-	 * 
-	 * @param aObjectID
-	 * @param aCurrentTagValue
-	 * @param aNewTagValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endUpdateObject}.
+     * 
+     * @param aObjectID
+     * @param aCurrentTagValue
+     * @param aNewTagValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionUpdateObject, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionUpdateObject.getInputParameter(inIndex++), aObjectID));
@@ -1367,22 +1367,22 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginUpdateObject} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginUpdateObject} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginUpdateObject} method.
      */
-	public void endUpdateObject(long aAsyncHandle)
+    public void endUpdateObject(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1390,29 +1390,29 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncMoveObject(String aObjectID, String aNewParentID)
-	{
-	    SyncMoveObjectUpnpOrgContentDirectory2 sync = new SyncMoveObjectUpnpOrgContentDirectory2(this);
-	    beginMoveObject(aObjectID, aNewParentID, sync.getListener());
-	    sync.waitToComplete();
+    public String syncMoveObject(String aObjectID, String aNewParentID)
+    {
+        SyncMoveObjectUpnpOrgContentDirectory2 sync = new SyncMoveObjectUpnpOrgContentDirectory2(this);
+        beginMoveObject(aObjectID, aNewParentID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getNewObjectID();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endMoveObject}.
-	 * 
-	 * @param aObjectID
-	 * @param aNewParentID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginMoveObject(String aObjectID, String aNewParentID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endMoveObject}.
+     * 
+     * @param aObjectID
+     * @param aNewParentID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginMoveObject(String aObjectID, String aNewParentID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionMoveObject, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionMoveObject.getInputParameter(inIndex++), aObjectID));
@@ -1422,16 +1422,16 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginMoveObject} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginMoveObject} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginMoveObject} method.
      * @return the result of the previously invoked action.
      */
-	public String endMoveObject(long aAsyncHandle)
+    public String endMoveObject(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1441,7 +1441,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         String newObjectID = Invocation.getOutputString(aAsyncHandle, index++);
         return newObjectID;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1449,29 +1449,29 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncImportResource(String aSourceURI, String aDestinationURI)
-	{
-	    SyncImportResourceUpnpOrgContentDirectory2 sync = new SyncImportResourceUpnpOrgContentDirectory2(this);
-	    beginImportResource(aSourceURI, aDestinationURI, sync.getListener());
-	    sync.waitToComplete();
+    public long syncImportResource(String aSourceURI, String aDestinationURI)
+    {
+        SyncImportResourceUpnpOrgContentDirectory2 sync = new SyncImportResourceUpnpOrgContentDirectory2(this);
+        beginImportResource(aSourceURI, aDestinationURI, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getTransferID();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endImportResource}.
-	 * 
-	 * @param aSourceURI
-	 * @param aDestinationURI
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginImportResource(String aSourceURI, String aDestinationURI, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endImportResource}.
+     * 
+     * @param aSourceURI
+     * @param aDestinationURI
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginImportResource(String aSourceURI, String aDestinationURI, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionImportResource, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionImportResource.getInputParameter(inIndex++), aSourceURI));
@@ -1481,16 +1481,16 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginImportResource} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginImportResource} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginImportResource} method.
      * @return the result of the previously invoked action.
      */
-	public long endImportResource(long aAsyncHandle)
+    public long endImportResource(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1500,7 +1500,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         long transferID = Invocation.getOutputUint(aAsyncHandle, index++);
         return transferID;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1508,29 +1508,29 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncExportResource(String aSourceURI, String aDestinationURI)
-	{
-	    SyncExportResourceUpnpOrgContentDirectory2 sync = new SyncExportResourceUpnpOrgContentDirectory2(this);
-	    beginExportResource(aSourceURI, aDestinationURI, sync.getListener());
-	    sync.waitToComplete();
+    public long syncExportResource(String aSourceURI, String aDestinationURI)
+    {
+        SyncExportResourceUpnpOrgContentDirectory2 sync = new SyncExportResourceUpnpOrgContentDirectory2(this);
+        beginExportResource(aSourceURI, aDestinationURI, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getTransferID();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endExportResource}.
-	 * 
-	 * @param aSourceURI
-	 * @param aDestinationURI
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginExportResource(String aSourceURI, String aDestinationURI, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endExportResource}.
+     * 
+     * @param aSourceURI
+     * @param aDestinationURI
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginExportResource(String aSourceURI, String aDestinationURI, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionExportResource, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionExportResource.getInputParameter(inIndex++), aSourceURI));
@@ -1540,16 +1540,16 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginExportResource} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginExportResource} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginExportResource} method.
      * @return the result of the previously invoked action.
      */
-	public long endExportResource(long aAsyncHandle)
+    public long endExportResource(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1559,101 +1559,101 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         long transferID = Invocation.getOutputUint(aAsyncHandle, index++);
         return transferID;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDeleteResource(String aResourceURI)
-	{
-	    SyncDeleteResourceUpnpOrgContentDirectory2 sync = new SyncDeleteResourceUpnpOrgContentDirectory2(this);
-	    beginDeleteResource(aResourceURI, sync.getListener());
-	    sync.waitToComplete();
+    public void syncDeleteResource(String aResourceURI)
+    {
+        SyncDeleteResourceUpnpOrgContentDirectory2 sync = new SyncDeleteResourceUpnpOrgContentDirectory2(this);
+        beginDeleteResource(aResourceURI, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDeleteResource}.
-	 * 
-	 * @param aResourceURI
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDeleteResource(String aResourceURI, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDeleteResource}.
+     * 
+     * @param aResourceURI
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDeleteResource(String aResourceURI, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDeleteResource, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionDeleteResource.getInputParameter(inIndex++), aResourceURI));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDeleteResource} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDeleteResource} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDeleteResource} method.
      */
-	public void endDeleteResource(long aAsyncHandle)
+    public void endDeleteResource(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncStopTransferResource(long aTransferID)
-	{
-	    SyncStopTransferResourceUpnpOrgContentDirectory2 sync = new SyncStopTransferResourceUpnpOrgContentDirectory2(this);
-	    beginStopTransferResource(aTransferID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncStopTransferResource(long aTransferID)
+    {
+        SyncStopTransferResourceUpnpOrgContentDirectory2 sync = new SyncStopTransferResourceUpnpOrgContentDirectory2(this);
+        beginStopTransferResource(aTransferID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endStopTransferResource}.
-	 * 
-	 * @param aTransferID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginStopTransferResource(long aTransferID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endStopTransferResource}.
+     * 
+     * @param aTransferID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginStopTransferResource(long aTransferID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionStopTransferResource, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionStopTransferResource.getInputParameter(inIndex++), aTransferID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginStopTransferResource} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginStopTransferResource} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginStopTransferResource} method.
      */
-	public void endStopTransferResource(long aAsyncHandle)
+    public void endStopTransferResource(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1661,32 +1661,32 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public GetTransferProgress syncGetTransferProgress(long aTransferID)
-	{
-	    SyncGetTransferProgressUpnpOrgContentDirectory2 sync = new SyncGetTransferProgressUpnpOrgContentDirectory2(this);
-	    beginGetTransferProgress(aTransferID, sync.getListener());
-	    sync.waitToComplete();
+    public GetTransferProgress syncGetTransferProgress(long aTransferID)
+    {
+        SyncGetTransferProgressUpnpOrgContentDirectory2 sync = new SyncGetTransferProgressUpnpOrgContentDirectory2(this);
+        beginGetTransferProgress(aTransferID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetTransferProgress(
             sync.getTransferStatus(),
             sync.getTransferLength(),
             sync.getTransferTotal()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetTransferProgress}.
-	 * 
-	 * @param aTransferID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetTransferProgress(long aTransferID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetTransferProgress}.
+     * 
+     * @param aTransferID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetTransferProgress(long aTransferID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetTransferProgress, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetTransferProgress.getInputParameter(inIndex++), aTransferID));
@@ -1697,16 +1697,16 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetTransferProgress} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetTransferProgress} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetTransferProgress} method.
      * @return the result of the previously invoked action.
      */
-	public GetTransferProgress endGetTransferProgress(long aAsyncHandle)
+    public GetTransferProgress endGetTransferProgress(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1720,9 +1720,9 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
             transferStatus,
             transferLength,
             transferTotal
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1730,29 +1730,29 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncCreateReference(String aContainerID, String aObjectID)
-	{
-	    SyncCreateReferenceUpnpOrgContentDirectory2 sync = new SyncCreateReferenceUpnpOrgContentDirectory2(this);
-	    beginCreateReference(aContainerID, aObjectID, sync.getListener());
-	    sync.waitToComplete();
+    public String syncCreateReference(String aContainerID, String aObjectID)
+    {
+        SyncCreateReferenceUpnpOrgContentDirectory2 sync = new SyncCreateReferenceUpnpOrgContentDirectory2(this);
+        beginCreateReference(aContainerID, aObjectID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getNewID();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endCreateReference}.
-	 * 
-	 * @param aContainerID
-	 * @param aObjectID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginCreateReference(String aContainerID, String aObjectID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endCreateReference}.
+     * 
+     * @param aContainerID
+     * @param aObjectID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginCreateReference(String aContainerID, String aObjectID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionCreateReference, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionCreateReference.getInputParameter(inIndex++), aContainerID));
@@ -1762,16 +1762,16 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginCreateReference} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginCreateReference} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginCreateReference} method.
      * @return the result of the previously invoked action.
      */
-	public String endCreateReference(long aAsyncHandle)
+    public String endCreateReference(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1781,14 +1781,14 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         String newID = Invocation.getOutputString(aAsyncHandle, index++);
         return newID;
     }
-		
+        
     /**
      * Set a delegate to be run when the SystemUpdateID state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgContentDirectory2 instance will not overlap.
+     * CpProxyUpnpOrgContentDirectory2 instance will not overlap.
      *
-     * @param aSystemUpdateIDChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSystemUpdateIDChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySystemUpdateIDChanged(IPropertyChangeListener aSystemUpdateIDChanged)
     {
@@ -1808,10 +1808,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
     /**
      * Set a delegate to be run when the ContainerUpdateIDs state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgContentDirectory2 instance will not overlap.
+     * CpProxyUpnpOrgContentDirectory2 instance will not overlap.
      *
-     * @param aContainerUpdateIDsChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aContainerUpdateIDsChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyContainerUpdateIDsChanged(IPropertyChangeListener aContainerUpdateIDsChanged)
     {
@@ -1831,10 +1831,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
     /**
      * Set a delegate to be run when the TransferIDs state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgContentDirectory2 instance will not overlap.
+     * CpProxyUpnpOrgContentDirectory2 instance will not overlap.
      *
-     * @param aTransferIDsChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aTransferIDsChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyTransferIDsChanged(IPropertyChangeListener aTransferIDsChanged)
     {
@@ -1858,7 +1858,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the SystemUpdateID property.
+     * @return  value of the SystemUpdateID property.
      */
     public long getPropertySystemUpdateID()
     {
@@ -1867,14 +1867,14 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ContainerUpdateIDs property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ContainerUpdateIDs property.
+     * @return  value of the ContainerUpdateIDs property.
      */
     public String getPropertyContainerUpdateIDs()
     {
@@ -1883,14 +1883,14 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the TransferIDs property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the TransferIDs property.
+     * @return  value of the TransferIDs property.
      */
     public String getPropertyTransferIDs()
     {
@@ -1899,7 +1899,7 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

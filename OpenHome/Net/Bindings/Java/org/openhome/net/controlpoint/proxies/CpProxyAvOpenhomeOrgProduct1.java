@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyAvOpenhomeOrgProduct1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyAvOpenhomeOrgProduct1 extends ICpProxy
 {
     public Manufacturer syncManufacturer();
@@ -118,7 +118,7 @@ class SyncManufacturerAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Manufacturer result = iService.endManufacturer(aAsyncHandle);
-		
+        
         iName = result.getName();
         iInfo = result.getInfo();
         iUrl = result.getUrl();
@@ -157,7 +157,7 @@ class SyncModelAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Model result = iService.endModel(aAsyncHandle);
-		
+        
         iName = result.getName();
         iInfo = result.getInfo();
         iUrl = result.getUrl();
@@ -201,7 +201,7 @@ class SyncProductAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Product result = iService.endProduct(aAsyncHandle);
-		
+        
         iRoom = result.getRoom();
         iName = result.getName();
         iInfo = result.getInfo();
@@ -226,7 +226,7 @@ class SyncStandbyAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endStandby(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -242,7 +242,7 @@ class SyncSetStandbyAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetStandby(aAsyncHandle);
-		
+        
     }
 }
 
@@ -262,7 +262,7 @@ class SyncSourceCountAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endSourceCount(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -283,7 +283,7 @@ class SyncSourceXmlAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endSourceXml(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -304,7 +304,7 @@ class SyncSourceIndexAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endSourceIndex(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -320,7 +320,7 @@ class SyncSetSourceIndexAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetSourceIndex(aAsyncHandle);
-		
+        
     }
 }
 
@@ -335,7 +335,7 @@ class SyncSetSourceIndexByNameAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetSourceIndexByName(aAsyncHandle);
-		
+        
     }
 }
 
@@ -370,7 +370,7 @@ class SyncSourceAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Source result = iService.endSource(aAsyncHandle);
-		
+        
         iSystemName = result.getSystemName();
         iType = result.getType();
         iName = result.getName();
@@ -394,7 +394,7 @@ class SyncAttributesAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endAttributes(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -415,7 +415,7 @@ class SyncSourceXmlChangeCountAvOpenhomeOrgProduct1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endSourceXmlChangeCount(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -636,7 +636,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyAvOpenhomeOrgProduct1(CpDevice aDevice)
@@ -647,138 +647,138 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 
         iActionManufacturer = new Action("Manufacturer");
         param = new ParameterString("Name", allowedValues);
-		iActionManufacturer.addOutputParameter(param);
+        iActionManufacturer.addOutputParameter(param);
         param = new ParameterString("Info", allowedValues);
-		iActionManufacturer.addOutputParameter(param);
+        iActionManufacturer.addOutputParameter(param);
         param = new ParameterString("Url", allowedValues);
-		iActionManufacturer.addOutputParameter(param);
+        iActionManufacturer.addOutputParameter(param);
         param = new ParameterString("ImageUri", allowedValues);
-		iActionManufacturer.addOutputParameter(param);
+        iActionManufacturer.addOutputParameter(param);
 
         iActionModel = new Action("Model");
         param = new ParameterString("Name", allowedValues);
-		iActionModel.addOutputParameter(param);
+        iActionModel.addOutputParameter(param);
         param = new ParameterString("Info", allowedValues);
-		iActionModel.addOutputParameter(param);
+        iActionModel.addOutputParameter(param);
         param = new ParameterString("Url", allowedValues);
-		iActionModel.addOutputParameter(param);
+        iActionModel.addOutputParameter(param);
         param = new ParameterString("ImageUri", allowedValues);
-		iActionModel.addOutputParameter(param);
+        iActionModel.addOutputParameter(param);
 
         iActionProduct = new Action("Product");
         param = new ParameterString("Room", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
         param = new ParameterString("Name", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
         param = new ParameterString("Info", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
         param = new ParameterString("Url", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
         param = new ParameterString("ImageUri", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
 
         iActionStandby = new Action("Standby");
         param = new ParameterBool("Value");
-		iActionStandby.addOutputParameter(param);
+        iActionStandby.addOutputParameter(param);
 
         iActionSetStandby = new Action("SetStandby");
         param = new ParameterBool("Value");
-		iActionSetStandby.addInputParameter(param);
+        iActionSetStandby.addInputParameter(param);
 
         iActionSourceCount = new Action("SourceCount");
         param = new ParameterUint("Value");
-		iActionSourceCount.addOutputParameter(param);
+        iActionSourceCount.addOutputParameter(param);
 
         iActionSourceXml = new Action("SourceXml");
         param = new ParameterString("Value", allowedValues);
-		iActionSourceXml.addOutputParameter(param);
+        iActionSourceXml.addOutputParameter(param);
 
         iActionSourceIndex = new Action("SourceIndex");
         param = new ParameterUint("Value");
-		iActionSourceIndex.addOutputParameter(param);
+        iActionSourceIndex.addOutputParameter(param);
 
         iActionSetSourceIndex = new Action("SetSourceIndex");
         param = new ParameterUint("Value");
-		iActionSetSourceIndex.addInputParameter(param);
+        iActionSetSourceIndex.addInputParameter(param);
 
         iActionSetSourceIndexByName = new Action("SetSourceIndexByName");
         param = new ParameterString("Value", allowedValues);
-		iActionSetSourceIndexByName.addInputParameter(param);
+        iActionSetSourceIndexByName.addInputParameter(param);
 
         iActionSource = new Action("Source");
         param = new ParameterUint("Index");
-		iActionSource.addInputParameter(param);
+        iActionSource.addInputParameter(param);
         param = new ParameterString("SystemName", allowedValues);
-		iActionSource.addOutputParameter(param);
+        iActionSource.addOutputParameter(param);
         param = new ParameterString("Type", allowedValues);
-		iActionSource.addOutputParameter(param);
+        iActionSource.addOutputParameter(param);
         param = new ParameterString("Name", allowedValues);
-		iActionSource.addOutputParameter(param);
+        iActionSource.addOutputParameter(param);
         param = new ParameterBool("Visible");
-		iActionSource.addOutputParameter(param);
+        iActionSource.addOutputParameter(param);
 
         iActionAttributes = new Action("Attributes");
         param = new ParameterString("Value", allowedValues);
-		iActionAttributes.addOutputParameter(param);
+        iActionAttributes.addOutputParameter(param);
 
         iActionSourceXmlChangeCount = new Action("SourceXmlChangeCount");
         param = new ParameterUint("Value");
-		iActionSourceXmlChangeCount.addOutputParameter(param);
+        iActionSourceXmlChangeCount.addOutputParameter(param);
 
         iManufacturerNameChanged = new PropertyChangeListener();
         iManufacturerName = new PropertyString("ManufacturerName", iManufacturerNameChanged);
-		addProperty(iManufacturerName);
+        addProperty(iManufacturerName);
         iManufacturerInfoChanged = new PropertyChangeListener();
         iManufacturerInfo = new PropertyString("ManufacturerInfo", iManufacturerInfoChanged);
-		addProperty(iManufacturerInfo);
+        addProperty(iManufacturerInfo);
         iManufacturerUrlChanged = new PropertyChangeListener();
         iManufacturerUrl = new PropertyString("ManufacturerUrl", iManufacturerUrlChanged);
-		addProperty(iManufacturerUrl);
+        addProperty(iManufacturerUrl);
         iManufacturerImageUriChanged = new PropertyChangeListener();
         iManufacturerImageUri = new PropertyString("ManufacturerImageUri", iManufacturerImageUriChanged);
-		addProperty(iManufacturerImageUri);
+        addProperty(iManufacturerImageUri);
         iModelNameChanged = new PropertyChangeListener();
         iModelName = new PropertyString("ModelName", iModelNameChanged);
-		addProperty(iModelName);
+        addProperty(iModelName);
         iModelInfoChanged = new PropertyChangeListener();
         iModelInfo = new PropertyString("ModelInfo", iModelInfoChanged);
-		addProperty(iModelInfo);
+        addProperty(iModelInfo);
         iModelUrlChanged = new PropertyChangeListener();
         iModelUrl = new PropertyString("ModelUrl", iModelUrlChanged);
-		addProperty(iModelUrl);
+        addProperty(iModelUrl);
         iModelImageUriChanged = new PropertyChangeListener();
         iModelImageUri = new PropertyString("ModelImageUri", iModelImageUriChanged);
-		addProperty(iModelImageUri);
+        addProperty(iModelImageUri);
         iProductRoomChanged = new PropertyChangeListener();
         iProductRoom = new PropertyString("ProductRoom", iProductRoomChanged);
-		addProperty(iProductRoom);
+        addProperty(iProductRoom);
         iProductNameChanged = new PropertyChangeListener();
         iProductName = new PropertyString("ProductName", iProductNameChanged);
-		addProperty(iProductName);
+        addProperty(iProductName);
         iProductInfoChanged = new PropertyChangeListener();
         iProductInfo = new PropertyString("ProductInfo", iProductInfoChanged);
-		addProperty(iProductInfo);
+        addProperty(iProductInfo);
         iProductUrlChanged = new PropertyChangeListener();
         iProductUrl = new PropertyString("ProductUrl", iProductUrlChanged);
-		addProperty(iProductUrl);
+        addProperty(iProductUrl);
         iProductImageUriChanged = new PropertyChangeListener();
         iProductImageUri = new PropertyString("ProductImageUri", iProductImageUriChanged);
-		addProperty(iProductImageUri);
+        addProperty(iProductImageUri);
         iStandbyChanged = new PropertyChangeListener();
         iStandby = new PropertyBool("Standby", iStandbyChanged);
-		addProperty(iStandby);
+        addProperty(iStandby);
         iSourceIndexChanged = new PropertyChangeListener();
         iSourceIndex = new PropertyUint("SourceIndex", iSourceIndexChanged);
-		addProperty(iSourceIndex);
+        addProperty(iSourceIndex);
         iSourceCountChanged = new PropertyChangeListener();
         iSourceCount = new PropertyUint("SourceCount", iSourceCountChanged);
-		addProperty(iSourceCount);
+        addProperty(iSourceCount);
         iSourceXmlChanged = new PropertyChangeListener();
         iSourceXml = new PropertyString("SourceXml", iSourceXmlChanged);
-		addProperty(iSourceXml);
+        addProperty(iSourceXml);
         iAttributesChanged = new PropertyChangeListener();
         iAttributes = new PropertyString("Attributes", iAttributesChanged);
-		addProperty(iAttributes);
+        addProperty(iAttributes);
         iPropertyLock = new Object();
     }
     /**
@@ -788,11 +788,11 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public Manufacturer syncManufacturer()
-	{
-	    SyncManufacturerAvOpenhomeOrgProduct1 sync = new SyncManufacturerAvOpenhomeOrgProduct1(this);
-	    beginManufacturer(sync.getListener());
-	    sync.waitToComplete();
+    public Manufacturer syncManufacturer()
+    {
+        SyncManufacturerAvOpenhomeOrgProduct1 sync = new SyncManufacturerAvOpenhomeOrgProduct1(this);
+        beginManufacturer(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Manufacturer(
@@ -800,20 +800,20 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
             sync.getInfo(),
             sync.getUrl(),
             sync.getImageUri()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endManufacturer}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginManufacturer(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endManufacturer}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginManufacturer(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionManufacturer, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionManufacturer.getOutputParameter(outIndex++)));
@@ -823,16 +823,16 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginManufacturer} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginManufacturer} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginManufacturer} method.
      * @return the result of the previously invoked action.
      */
-	public Manufacturer endManufacturer(long aAsyncHandle)
+    public Manufacturer endManufacturer(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -848,9 +848,9 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
             info,
             url,
             imageUri
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -858,11 +858,11 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public Model syncModel()
-	{
-	    SyncModelAvOpenhomeOrgProduct1 sync = new SyncModelAvOpenhomeOrgProduct1(this);
-	    beginModel(sync.getListener());
-	    sync.waitToComplete();
+    public Model syncModel()
+    {
+        SyncModelAvOpenhomeOrgProduct1 sync = new SyncModelAvOpenhomeOrgProduct1(this);
+        beginModel(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Model(
@@ -870,20 +870,20 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
             sync.getInfo(),
             sync.getUrl(),
             sync.getImageUri()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endModel}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginModel(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endModel}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginModel(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionModel, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionModel.getOutputParameter(outIndex++)));
@@ -893,16 +893,16 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginModel} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginModel} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginModel} method.
      * @return the result of the previously invoked action.
      */
-	public Model endModel(long aAsyncHandle)
+    public Model endModel(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -918,9 +918,9 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
             info,
             url,
             imageUri
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -928,11 +928,11 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public Product syncProduct()
-	{
-	    SyncProductAvOpenhomeOrgProduct1 sync = new SyncProductAvOpenhomeOrgProduct1(this);
-	    beginProduct(sync.getListener());
-	    sync.waitToComplete();
+    public Product syncProduct()
+    {
+        SyncProductAvOpenhomeOrgProduct1 sync = new SyncProductAvOpenhomeOrgProduct1(this);
+        beginProduct(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Product(
@@ -941,20 +941,20 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
             sync.getInfo(),
             sync.getUrl(),
             sync.getImageUri()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endProduct}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginProduct(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endProduct}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginProduct(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionProduct, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionProduct.getOutputParameter(outIndex++)));
@@ -965,16 +965,16 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginProduct} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginProduct} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginProduct} method.
      * @return the result of the previously invoked action.
      */
-	public Product endProduct(long aAsyncHandle)
+    public Product endProduct(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -992,9 +992,9 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
             info,
             url,
             imageUri
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1002,43 +1002,43 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public boolean syncStandby()
-	{
-	    SyncStandbyAvOpenhomeOrgProduct1 sync = new SyncStandbyAvOpenhomeOrgProduct1(this);
-	    beginStandby(sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncStandby()
+    {
+        SyncStandbyAvOpenhomeOrgProduct1 sync = new SyncStandbyAvOpenhomeOrgProduct1(this);
+        beginStandby(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endStandby}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginStandby(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endStandby}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginStandby(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionStandby, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentBool((ParameterBool)iActionStandby.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginStandby} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginStandby} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginStandby} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endStandby(long aAsyncHandle)
+    public boolean endStandby(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1048,54 +1048,54 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetStandby(boolean aValue)
-	{
-	    SyncSetStandbyAvOpenhomeOrgProduct1 sync = new SyncSetStandbyAvOpenhomeOrgProduct1(this);
-	    beginSetStandby(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetStandby(boolean aValue)
+    {
+        SyncSetStandbyAvOpenhomeOrgProduct1 sync = new SyncSetStandbyAvOpenhomeOrgProduct1(this);
+        beginSetStandby(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetStandby}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetStandby(boolean aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetStandby}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetStandby(boolean aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetStandby, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentBool((ParameterBool)iActionSetStandby.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetStandby} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetStandby} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetStandby} method.
      */
-	public void endSetStandby(long aAsyncHandle)
+    public void endSetStandby(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1103,43 +1103,43 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public long syncSourceCount()
-	{
-	    SyncSourceCountAvOpenhomeOrgProduct1 sync = new SyncSourceCountAvOpenhomeOrgProduct1(this);
-	    beginSourceCount(sync.getListener());
-	    sync.waitToComplete();
+    public long syncSourceCount()
+    {
+        SyncSourceCountAvOpenhomeOrgProduct1 sync = new SyncSourceCountAvOpenhomeOrgProduct1(this);
+        beginSourceCount(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSourceCount}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSourceCount(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSourceCount}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSourceCount(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSourceCount, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionSourceCount.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSourceCount} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSourceCount} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSourceCount} method.
      * @return the result of the previously invoked action.
      */
-	public long endSourceCount(long aAsyncHandle)
+    public long endSourceCount(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1149,7 +1149,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1157,43 +1157,43 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public String syncSourceXml()
-	{
-	    SyncSourceXmlAvOpenhomeOrgProduct1 sync = new SyncSourceXmlAvOpenhomeOrgProduct1(this);
-	    beginSourceXml(sync.getListener());
-	    sync.waitToComplete();
+    public String syncSourceXml()
+    {
+        SyncSourceXmlAvOpenhomeOrgProduct1 sync = new SyncSourceXmlAvOpenhomeOrgProduct1(this);
+        beginSourceXml(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSourceXml}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSourceXml(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSourceXml}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSourceXml(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSourceXml, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionSourceXml.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSourceXml} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSourceXml} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSourceXml} method.
      * @return the result of the previously invoked action.
      */
-	public String endSourceXml(long aAsyncHandle)
+    public String endSourceXml(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1203,7 +1203,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         String value = Invocation.getOutputString(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1211,43 +1211,43 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public long syncSourceIndex()
-	{
-	    SyncSourceIndexAvOpenhomeOrgProduct1 sync = new SyncSourceIndexAvOpenhomeOrgProduct1(this);
-	    beginSourceIndex(sync.getListener());
-	    sync.waitToComplete();
+    public long syncSourceIndex()
+    {
+        SyncSourceIndexAvOpenhomeOrgProduct1 sync = new SyncSourceIndexAvOpenhomeOrgProduct1(this);
+        beginSourceIndex(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSourceIndex}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSourceIndex(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSourceIndex}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSourceIndex(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSourceIndex, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionSourceIndex.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSourceIndex} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSourceIndex} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSourceIndex} method.
      * @return the result of the previously invoked action.
      */
-	public long endSourceIndex(long aAsyncHandle)
+    public long endSourceIndex(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1257,101 +1257,101 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetSourceIndex(long aValue)
-	{
-	    SyncSetSourceIndexAvOpenhomeOrgProduct1 sync = new SyncSetSourceIndexAvOpenhomeOrgProduct1(this);
-	    beginSetSourceIndex(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetSourceIndex(long aValue)
+    {
+        SyncSetSourceIndexAvOpenhomeOrgProduct1 sync = new SyncSetSourceIndexAvOpenhomeOrgProduct1(this);
+        beginSetSourceIndex(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetSourceIndex}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetSourceIndex(long aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetSourceIndex}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetSourceIndex(long aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetSourceIndex, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetSourceIndex.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetSourceIndex} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetSourceIndex} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetSourceIndex} method.
      */
-	public void endSetSourceIndex(long aAsyncHandle)
+    public void endSetSourceIndex(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetSourceIndexByName(String aValue)
-	{
-	    SyncSetSourceIndexByNameAvOpenhomeOrgProduct1 sync = new SyncSetSourceIndexByNameAvOpenhomeOrgProduct1(this);
-	    beginSetSourceIndexByName(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetSourceIndexByName(String aValue)
+    {
+        SyncSetSourceIndexByNameAvOpenhomeOrgProduct1 sync = new SyncSetSourceIndexByNameAvOpenhomeOrgProduct1(this);
+        beginSetSourceIndexByName(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetSourceIndexByName}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetSourceIndexByName(String aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetSourceIndexByName}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetSourceIndexByName(String aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetSourceIndexByName, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionSetSourceIndexByName.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetSourceIndexByName} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetSourceIndexByName} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetSourceIndexByName} method.
      */
-	public void endSetSourceIndexByName(long aAsyncHandle)
+    public void endSetSourceIndexByName(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1359,11 +1359,11 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public Source syncSource(long aIndex)
-	{
-	    SyncSourceAvOpenhomeOrgProduct1 sync = new SyncSourceAvOpenhomeOrgProduct1(this);
-	    beginSource(aIndex, sync.getListener());
-	    sync.waitToComplete();
+    public Source syncSource(long aIndex)
+    {
+        SyncSourceAvOpenhomeOrgProduct1 sync = new SyncSourceAvOpenhomeOrgProduct1(this);
+        beginSource(aIndex, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Source(
@@ -1371,21 +1371,21 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
             sync.getType(),
             sync.getName(),
             sync.getVisible()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSource}.
-	 * 
-	 * @param aIndex
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSource(long aIndex, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSource}.
+     * 
+     * @param aIndex
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSource(long aIndex, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSource, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSource.getInputParameter(inIndex++), aIndex));
@@ -1397,16 +1397,16 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSource} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSource} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSource} method.
      * @return the result of the previously invoked action.
      */
-	public Source endSource(long aAsyncHandle)
+    public Source endSource(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1422,9 +1422,9 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
             type,
             name,
             visible
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1432,43 +1432,43 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public String syncAttributes()
-	{
-	    SyncAttributesAvOpenhomeOrgProduct1 sync = new SyncAttributesAvOpenhomeOrgProduct1(this);
-	    beginAttributes(sync.getListener());
-	    sync.waitToComplete();
+    public String syncAttributes()
+    {
+        SyncAttributesAvOpenhomeOrgProduct1 sync = new SyncAttributesAvOpenhomeOrgProduct1(this);
+        beginAttributes(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endAttributes}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginAttributes(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endAttributes}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginAttributes(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionAttributes, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionAttributes.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginAttributes} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginAttributes} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginAttributes} method.
      * @return the result of the previously invoked action.
      */
-	public String endAttributes(long aAsyncHandle)
+    public String endAttributes(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1478,7 +1478,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         String value = Invocation.getOutputString(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1486,43 +1486,43 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      *
      * @return the result of the invoked action.
      */
-	public long syncSourceXmlChangeCount()
-	{
-	    SyncSourceXmlChangeCountAvOpenhomeOrgProduct1 sync = new SyncSourceXmlChangeCountAvOpenhomeOrgProduct1(this);
-	    beginSourceXmlChangeCount(sync.getListener());
-	    sync.waitToComplete();
+    public long syncSourceXmlChangeCount()
+    {
+        SyncSourceXmlChangeCountAvOpenhomeOrgProduct1 sync = new SyncSourceXmlChangeCountAvOpenhomeOrgProduct1(this);
+        beginSourceXmlChangeCount(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSourceXmlChangeCount}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSourceXmlChangeCount(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSourceXmlChangeCount}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSourceXmlChangeCount(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSourceXmlChangeCount, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionSourceXmlChangeCount.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSourceXmlChangeCount} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSourceXmlChangeCount} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSourceXmlChangeCount} method.
      * @return the result of the previously invoked action.
      */
-	public long endSourceXmlChangeCount(long aAsyncHandle)
+    public long endSourceXmlChangeCount(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1532,14 +1532,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Set a delegate to be run when the ManufacturerName state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aManufacturerNameChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aManufacturerNameChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyManufacturerNameChanged(IPropertyChangeListener aManufacturerNameChanged)
     {
@@ -1559,10 +1559,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ManufacturerInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aManufacturerInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aManufacturerInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyManufacturerInfoChanged(IPropertyChangeListener aManufacturerInfoChanged)
     {
@@ -1582,10 +1582,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ManufacturerUrl state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aManufacturerUrlChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aManufacturerUrlChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyManufacturerUrlChanged(IPropertyChangeListener aManufacturerUrlChanged)
     {
@@ -1605,10 +1605,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ManufacturerImageUri state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aManufacturerImageUriChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aManufacturerImageUriChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyManufacturerImageUriChanged(IPropertyChangeListener aManufacturerImageUriChanged)
     {
@@ -1628,10 +1628,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ModelName state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aModelNameChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aModelNameChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyModelNameChanged(IPropertyChangeListener aModelNameChanged)
     {
@@ -1651,10 +1651,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ModelInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aModelInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aModelInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyModelInfoChanged(IPropertyChangeListener aModelInfoChanged)
     {
@@ -1674,10 +1674,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ModelUrl state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aModelUrlChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aModelUrlChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyModelUrlChanged(IPropertyChangeListener aModelUrlChanged)
     {
@@ -1697,10 +1697,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ModelImageUri state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aModelImageUriChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aModelImageUriChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyModelImageUriChanged(IPropertyChangeListener aModelImageUriChanged)
     {
@@ -1720,10 +1720,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ProductRoom state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aProductRoomChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductRoomChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductRoomChanged(IPropertyChangeListener aProductRoomChanged)
     {
@@ -1743,10 +1743,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ProductName state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aProductNameChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductNameChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductNameChanged(IPropertyChangeListener aProductNameChanged)
     {
@@ -1766,10 +1766,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ProductInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aProductInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductInfoChanged(IPropertyChangeListener aProductInfoChanged)
     {
@@ -1789,10 +1789,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ProductUrl state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aProductUrlChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductUrlChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductUrlChanged(IPropertyChangeListener aProductUrlChanged)
     {
@@ -1812,10 +1812,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the ProductImageUri state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aProductImageUriChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductImageUriChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductImageUriChanged(IPropertyChangeListener aProductImageUriChanged)
     {
@@ -1835,10 +1835,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the Standby state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aStandbyChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aStandbyChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyStandbyChanged(IPropertyChangeListener aStandbyChanged)
     {
@@ -1858,10 +1858,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the SourceIndex state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aSourceIndexChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSourceIndexChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySourceIndexChanged(IPropertyChangeListener aSourceIndexChanged)
     {
@@ -1881,10 +1881,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the SourceCount state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aSourceCountChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSourceCountChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySourceCountChanged(IPropertyChangeListener aSourceCountChanged)
     {
@@ -1904,10 +1904,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the SourceXml state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aSourceXmlChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSourceXmlChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySourceXmlChanged(IPropertyChangeListener aSourceXmlChanged)
     {
@@ -1927,10 +1927,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
     /**
      * Set a delegate to be run when the Attributes state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgProduct1 instance will not overlap.
      *
-     * @param aAttributesChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aAttributesChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyAttributesChanged(IPropertyChangeListener aAttributesChanged)
     {
@@ -1954,7 +1954,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ManufacturerName property.
+     * @return  value of the ManufacturerName property.
      */
     public String getPropertyManufacturerName()
     {
@@ -1963,14 +1963,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ManufacturerInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ManufacturerInfo property.
+     * @return  value of the ManufacturerInfo property.
      */
     public String getPropertyManufacturerInfo()
     {
@@ -1979,14 +1979,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ManufacturerUrl property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ManufacturerUrl property.
+     * @return  value of the ManufacturerUrl property.
      */
     public String getPropertyManufacturerUrl()
     {
@@ -1995,14 +1995,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ManufacturerImageUri property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ManufacturerImageUri property.
+     * @return  value of the ManufacturerImageUri property.
      */
     public String getPropertyManufacturerImageUri()
     {
@@ -2011,14 +2011,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ModelName property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ModelName property.
+     * @return  value of the ModelName property.
      */
     public String getPropertyModelName()
     {
@@ -2027,14 +2027,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ModelInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ModelInfo property.
+     * @return  value of the ModelInfo property.
      */
     public String getPropertyModelInfo()
     {
@@ -2043,14 +2043,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ModelUrl property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ModelUrl property.
+     * @return  value of the ModelUrl property.
      */
     public String getPropertyModelUrl()
     {
@@ -2059,14 +2059,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ModelImageUri property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ModelImageUri property.
+     * @return  value of the ModelImageUri property.
      */
     public String getPropertyModelImageUri()
     {
@@ -2075,14 +2075,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductRoom property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductRoom property.
+     * @return  value of the ProductRoom property.
      */
     public String getPropertyProductRoom()
     {
@@ -2091,14 +2091,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductName property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductName property.
+     * @return  value of the ProductName property.
      */
     public String getPropertyProductName()
     {
@@ -2107,14 +2107,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductInfo property.
+     * @return  value of the ProductInfo property.
      */
     public String getPropertyProductInfo()
     {
@@ -2123,14 +2123,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductUrl property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductUrl property.
+     * @return  value of the ProductUrl property.
      */
     public String getPropertyProductUrl()
     {
@@ -2139,14 +2139,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductImageUri property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductImageUri property.
+     * @return  value of the ProductImageUri property.
      */
     public String getPropertyProductImageUri()
     {
@@ -2155,14 +2155,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Standby property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Standby property.
+     * @return  value of the Standby property.
      */
     public boolean getPropertyStandby()
     {
@@ -2171,14 +2171,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the SourceIndex property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the SourceIndex property.
+     * @return  value of the SourceIndex property.
      */
     public long getPropertySourceIndex()
     {
@@ -2187,14 +2187,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the SourceCount property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the SourceCount property.
+     * @return  value of the SourceCount property.
      */
     public long getPropertySourceCount()
     {
@@ -2203,14 +2203,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the SourceXml property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the SourceXml property.
+     * @return  value of the SourceXml property.
      */
     public String getPropertySourceXml()
     {
@@ -2219,14 +2219,14 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Attributes property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Attributes property.
+     * @return  value of the Attributes property.
      */
     public String getPropertyAttributes()
     {
@@ -2235,7 +2235,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

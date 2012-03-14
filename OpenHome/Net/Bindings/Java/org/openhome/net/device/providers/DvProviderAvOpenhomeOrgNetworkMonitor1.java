@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgNetworkMonitor1
     /**
      * Set the value of the Name property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyName(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgNetworkMonitor1
     /**
      * Set the value of the Sender property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySender(long aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgNetworkMonitor1
     /**
      * Set the value of the Receiver property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyReceiver(long aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgNetworkMonitor1
     /**
      * Set the value of the Results property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyResults(long aValue);
@@ -121,11 +121,11 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgNetworkMonitor1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "NetworkMonitor", 1);
+        super(aDevice, "av.openhome.org", "NetworkMonitor", 1);
     }
 
     /**
@@ -168,7 +168,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Set the value of the Name property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -180,7 +180,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Get a copy of the value of the Name property
      *
-     * @return	value of the Name property.
+     * @return  value of the Name property.
      */
     public String getPropertyName()
     {
@@ -190,7 +190,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Set the value of the Sender property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -202,7 +202,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Get a copy of the value of the Sender property
      *
-     * @return	value of the Sender property.
+     * @return  value of the Sender property.
      */
     public long getPropertySender()
     {
@@ -212,7 +212,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Set the value of the Receiver property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -224,7 +224,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Get a copy of the value of the Receiver property
      *
-     * @return	value of the Receiver property.
+     * @return  value of the Receiver property.
      */
     public long getPropertyReceiver()
     {
@@ -234,7 +234,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Set the value of the Results property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -246,7 +246,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
     /**
      * Get a copy of the value of the Results property
      *
-     * @return	value of the Results property.
+     * @return  value of the Results property.
      */
     public long getPropertyResults()
     {
@@ -258,7 +258,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Name must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionName()
     {
         Action action = new Action("Name");
@@ -272,7 +272,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Ports must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPorts()
     {
         Action action = new Action("Ports");
@@ -291,7 +291,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
      *
      * <p>Must be implemented iff {@link #enableActionName} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String name(IDvInvocation aInvocation)
     {
@@ -306,7 +306,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
      *
      * <p>Must be implemented iff {@link #enableActionPorts} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Ports ports(IDvInvocation aInvocation)
     {
@@ -376,7 +376,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPorts implements IDvInvocationListener
     {
@@ -432,6 +432,6 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

@@ -4,7 +4,7 @@
 <#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
-	Document u = new Document(TemplateArgument("xml"));
+    Document u = new Document(TemplateArgument("xml"));
 #>
 # Auto-generated file.  DO NOT EDIT DIRECTLY
 # Update CpUpnpMakeProxies.tt and run
@@ -52,15 +52,15 @@ proxy_java_classes_with_path = \
 
 
 proxies : ohNetCore $(objects_proxies)
-	$(ar)$(libprefix)ohNetProxies.$(libext) $(objects_proxies)
+    $(ar)$(libprefix)ohNetProxies.$(libext) $(objects_proxies)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
 $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
+    $(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
 $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
+    $(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
 $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
+    $(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
 <#  } #>
 
 proxy_dlls = \
@@ -75,7 +75,7 @@ CpProxyDlls: $(proxy_dlls)
 <#  { #>
 Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: $(objdir)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext)
 $(objdir)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) : ZappUpnpDll $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
+    $(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
 <#  } #>
 
 # Proxy assemblies for .NET:
@@ -85,10 +85,10 @@ CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 <# foreach (Service s in u.iServices) #>
 <# { #>
 $(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
-		/reference:$(objdir)ohNet.net.dll \
-		$(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
+    $(csharp) /unsafe /t:library \
+        /out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+        /reference:$(objdir)ohNet.net.dll \
+        $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
 <# } #>
 
 # Proxy classes for Java:
@@ -98,7 +98,7 @@ CpProxyJavaClasses: $(proxy_java_classes_with_path)
 <# foreach (Service s in u.iServices) #>
 <# { #>
 $(objdir)org/openhome/net/controlpoint/proxies/CpProxy<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.jar $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
-	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
+    $(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
 <# } #>
 
 
@@ -125,34 +125,34 @@ string FilePrefix(Service s)
 
 string TemplateArgument(string aName)
 {
-	string[] args =  System.Environment.GetCommandLineArgs();
-		
-	bool isarg = false;
-	
-	foreach (string arg in args)
-	{
-		if (isarg)
-		{
-			string[] parts = arg.Split(new char[] {':'});
-			
-			if (parts.Length == 2)
-			{
-				if (parts[0] == aName)
-				{
-					return (parts[1]);
-				}
-			}
-			
-			isarg = false;
-			continue;
-		}
-		
-		if (arg == "-a")
-		{
-			isarg = true;
-		}
-	}
-	
-	throw (new ArgumentException(aName + " not specified"));
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
+            
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
 }
 #>

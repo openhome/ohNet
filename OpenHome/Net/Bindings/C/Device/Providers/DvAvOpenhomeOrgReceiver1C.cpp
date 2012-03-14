@@ -351,7 +351,7 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoTransportState(IDviInvocation& aInvoca
 
 THandle STDCALL DvProviderAvOpenhomeOrgReceiver1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgReceiver1C(aDevice);
+    return new DvProviderAvOpenhomeOrgReceiver1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgReceiver1Destroy(THandle aProvider)

@@ -1410,7 +1410,7 @@ void DvProviderUpnpOrgRenderingControl1C::DoSetLoudness(IDviInvocation& aInvocat
 
 THandle STDCALL DvProviderUpnpOrgRenderingControl1Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgRenderingControl1C(aDevice);
+    return new DvProviderUpnpOrgRenderingControl1C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgRenderingControl1Destroy(THandle aProvider)

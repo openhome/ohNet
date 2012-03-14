@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ManufacturerName property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerName(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ManufacturerInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerInfo(String aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ManufacturerUrl property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerUrl(String aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ManufacturerImageUri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerImageUri(String aValue);
@@ -76,8 +76,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ModelName property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelName(String aValue);
@@ -92,8 +92,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ModelInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelInfo(String aValue);
@@ -108,8 +108,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ModelUrl property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelUrl(String aValue);
@@ -124,8 +124,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ModelImageUri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelImageUri(String aValue);
@@ -140,8 +140,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ProductRoom property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductRoom(String aValue);
@@ -156,8 +156,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ProductName property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductName(String aValue);
@@ -172,8 +172,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ProductInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductInfo(String aValue);
@@ -188,8 +188,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ProductUrl property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductUrl(String aValue);
@@ -204,8 +204,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the ProductImageUri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductImageUri(String aValue);
@@ -220,8 +220,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the Standby property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyStandby(boolean aValue);
@@ -236,8 +236,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the SourceIndex property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySourceIndex(long aValue);
@@ -252,8 +252,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the SourceCount property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySourceCount(long aValue);
@@ -268,8 +268,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the SourceXml property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySourceXml(String aValue);
@@ -284,8 +284,8 @@ interface IDvProviderAvOpenhomeOrgProduct1
     /**
      * Set the value of the Attributes property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyAttributes(String aValue);
@@ -495,11 +495,11 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgProduct1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "Product", 1);
+        super(aDevice, "av.openhome.org", "Product", 1);
     }
 
     /**
@@ -682,7 +682,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ManufacturerName property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -694,7 +694,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ManufacturerName property
      *
-     * @return	value of the ManufacturerName property.
+     * @return  value of the ManufacturerName property.
      */
     public String getPropertyManufacturerName()
     {
@@ -704,7 +704,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ManufacturerInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -716,7 +716,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ManufacturerInfo property
      *
-     * @return	value of the ManufacturerInfo property.
+     * @return  value of the ManufacturerInfo property.
      */
     public String getPropertyManufacturerInfo()
     {
@@ -726,7 +726,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ManufacturerUrl property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -738,7 +738,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ManufacturerUrl property
      *
-     * @return	value of the ManufacturerUrl property.
+     * @return  value of the ManufacturerUrl property.
      */
     public String getPropertyManufacturerUrl()
     {
@@ -748,7 +748,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ManufacturerImageUri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -760,7 +760,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ManufacturerImageUri property
      *
-     * @return	value of the ManufacturerImageUri property.
+     * @return  value of the ManufacturerImageUri property.
      */
     public String getPropertyManufacturerImageUri()
     {
@@ -770,7 +770,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ModelName property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -782,7 +782,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ModelName property
      *
-     * @return	value of the ModelName property.
+     * @return  value of the ModelName property.
      */
     public String getPropertyModelName()
     {
@@ -792,7 +792,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ModelInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -804,7 +804,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ModelInfo property
      *
-     * @return	value of the ModelInfo property.
+     * @return  value of the ModelInfo property.
      */
     public String getPropertyModelInfo()
     {
@@ -814,7 +814,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ModelUrl property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -826,7 +826,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ModelUrl property
      *
-     * @return	value of the ModelUrl property.
+     * @return  value of the ModelUrl property.
      */
     public String getPropertyModelUrl()
     {
@@ -836,7 +836,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ModelImageUri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -848,7 +848,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ModelImageUri property
      *
-     * @return	value of the ModelImageUri property.
+     * @return  value of the ModelImageUri property.
      */
     public String getPropertyModelImageUri()
     {
@@ -858,7 +858,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ProductRoom property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -870,7 +870,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ProductRoom property
      *
-     * @return	value of the ProductRoom property.
+     * @return  value of the ProductRoom property.
      */
     public String getPropertyProductRoom()
     {
@@ -880,7 +880,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ProductName property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -892,7 +892,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ProductName property
      *
-     * @return	value of the ProductName property.
+     * @return  value of the ProductName property.
      */
     public String getPropertyProductName()
     {
@@ -902,7 +902,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ProductInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -914,7 +914,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ProductInfo property
      *
-     * @return	value of the ProductInfo property.
+     * @return  value of the ProductInfo property.
      */
     public String getPropertyProductInfo()
     {
@@ -924,7 +924,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ProductUrl property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -936,7 +936,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ProductUrl property
      *
-     * @return	value of the ProductUrl property.
+     * @return  value of the ProductUrl property.
      */
     public String getPropertyProductUrl()
     {
@@ -946,7 +946,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the ProductImageUri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -958,7 +958,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the ProductImageUri property
      *
-     * @return	value of the ProductImageUri property.
+     * @return  value of the ProductImageUri property.
      */
     public String getPropertyProductImageUri()
     {
@@ -968,7 +968,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the Standby property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -980,7 +980,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the Standby property
      *
-     * @return	value of the Standby property.
+     * @return  value of the Standby property.
      */
     public boolean getPropertyStandby()
     {
@@ -990,7 +990,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the SourceIndex property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -1002,7 +1002,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the SourceIndex property
      *
-     * @return	value of the SourceIndex property.
+     * @return  value of the SourceIndex property.
      */
     public long getPropertySourceIndex()
     {
@@ -1012,7 +1012,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the SourceCount property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -1024,7 +1024,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the SourceCount property
      *
-     * @return	value of the SourceCount property.
+     * @return  value of the SourceCount property.
      */
     public long getPropertySourceCount()
     {
@@ -1034,7 +1034,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the SourceXml property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -1046,7 +1046,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the SourceXml property
      *
-     * @return	value of the SourceXml property.
+     * @return  value of the SourceXml property.
      */
     public String getPropertySourceXml()
     {
@@ -1056,7 +1056,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Set the value of the Attributes property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -1068,7 +1068,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
     /**
      * Get a copy of the value of the Attributes property
      *
-     * @return	value of the Attributes property.
+     * @return  value of the Attributes property.
      */
     public String getPropertyAttributes()
     {
@@ -1080,7 +1080,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Manufacturer must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionManufacturer()
     {
         Action action = new Action("Manufacturer");
@@ -1097,7 +1097,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Model must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionModel()
     {
         Action action = new Action("Model");
@@ -1114,7 +1114,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Product must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionProduct()
     {
         Action action = new Action("Product");
@@ -1132,7 +1132,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Standby must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStandby()
     {
         Action action = new Action("Standby");
@@ -1146,7 +1146,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetStandby must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetStandby()
     {
         Action action = new Action("SetStandby");
@@ -1160,7 +1160,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SourceCount must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSourceCount()
     {
         Action action = new Action("SourceCount");
@@ -1174,7 +1174,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SourceXml must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSourceXml()
     {
         Action action = new Action("SourceXml");
@@ -1188,7 +1188,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SourceIndex must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSourceIndex()
     {
         Action action = new Action("SourceIndex");
@@ -1202,7 +1202,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetSourceIndex must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetSourceIndex()
     {
         Action action = new Action("SetSourceIndex");
@@ -1216,7 +1216,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetSourceIndexByName must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetSourceIndexByName()
     {
         Action action = new Action("SetSourceIndexByName");        List<String> allowedValues = new LinkedList<String>();
@@ -1230,7 +1230,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Source must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSource()
     {
         Action action = new Action("Source");        List<String> allowedValues = new LinkedList<String>();
@@ -1248,7 +1248,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Attributes must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionAttributes()
     {
         Action action = new Action("Attributes");
@@ -1262,7 +1262,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SourceXmlChangeCount must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSourceXmlChangeCount()
     {
         Action action = new Action("SourceXmlChangeCount");
@@ -1279,7 +1279,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionManufacturer} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Manufacturer manufacturer(IDvInvocation aInvocation)
     {
@@ -1294,7 +1294,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionModel} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Model model(IDvInvocation aInvocation)
     {
@@ -1309,7 +1309,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionProduct} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Product product(IDvInvocation aInvocation)
     {
@@ -1324,7 +1324,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionStandby} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected boolean standby(IDvInvocation aInvocation)
     {
@@ -1339,7 +1339,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetStandby} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void setStandby(IDvInvocation aInvocation, boolean aValue)
@@ -1355,7 +1355,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSourceCount} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long sourceCount(IDvInvocation aInvocation)
     {
@@ -1370,7 +1370,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSourceXml} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String sourceXml(IDvInvocation aInvocation)
     {
@@ -1385,7 +1385,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSourceIndex} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long sourceIndex(IDvInvocation aInvocation)
     {
@@ -1400,7 +1400,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetSourceIndex} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void setSourceIndex(IDvInvocation aInvocation, long aValue)
@@ -1416,7 +1416,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSetSourceIndexByName} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void setSourceIndexByName(IDvInvocation aInvocation, String aValue)
@@ -1432,7 +1432,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSource} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
     protected Source source(IDvInvocation aInvocation, long aIndex)
@@ -1448,7 +1448,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionAttributes} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String attributes(IDvInvocation aInvocation)
     {
@@ -1463,7 +1463,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * <p>Must be implemented iff {@link #enableActionSourceXmlChangeCount} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long sourceXmlChangeCount(IDvInvocation aInvocation)
     {
@@ -1544,7 +1544,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoModel implements IDvInvocationListener
     {
@@ -1603,7 +1603,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoProduct implements IDvInvocationListener
     {
@@ -1665,7 +1665,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStandby implements IDvInvocationListener
     {
@@ -1713,7 +1713,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetStandby implements IDvInvocationListener
     {
@@ -1761,7 +1761,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSourceCount implements IDvInvocationListener
     {
@@ -1809,7 +1809,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSourceXml implements IDvInvocationListener
     {
@@ -1857,7 +1857,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSourceIndex implements IDvInvocationListener
     {
@@ -1905,7 +1905,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetSourceIndex implements IDvInvocationListener
     {
@@ -1953,7 +1953,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetSourceIndexByName implements IDvInvocationListener
     {
@@ -2001,7 +2001,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSource implements IDvInvocationListener
     {
@@ -2062,7 +2062,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoAttributes implements IDvInvocationListener
     {
@@ -2110,7 +2110,7 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSourceXmlChangeCount implements IDvInvocationListener
     {
@@ -2158,6 +2158,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

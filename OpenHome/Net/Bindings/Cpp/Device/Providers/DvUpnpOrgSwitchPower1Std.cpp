@@ -63,8 +63,8 @@ void DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetTarget(invocation, newTargetValue);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDviInvocation& aInvocation)
@@ -74,10 +74,10 @@ void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDviInvocation& aInvocation)
     bool respRetTargetValue;
     DvInvocationStd invocation(aInvocation);
     GetTarget(invocation, respRetTargetValue);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterRetTargetValue(aInvocation, "RetTargetValue");
     respWriterRetTargetValue.Write(respRetTargetValue);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus(IDviInvocation& aInvocation)
@@ -87,10 +87,10 @@ void DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus(IDviInvocation& aInvocation)
     bool respResultStatus;
     DvInvocationStd invocation(aInvocation);
     GetStatus(invocation, respResultStatus);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterResultStatus(aInvocation, "ResultStatus");
     respWriterResultStatus.Write(respResultStatus);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgSwitchPower1Cpp::SetTarget(IDvInvocationStd& /*aInvocation*/, bool /*anewTargetValue*/)

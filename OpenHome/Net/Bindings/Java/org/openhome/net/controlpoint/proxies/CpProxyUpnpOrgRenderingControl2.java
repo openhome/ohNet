@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgRenderingControl2.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyUpnpOrgRenderingControl2 extends ICpProxy
 {
     public String syncListPresets(long aInstanceID);
@@ -141,7 +141,7 @@ class SyncListPresetsUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endListPresets(aAsyncHandle);
-		
+        
         iCurrentPresetNameList = result;
     }
 }
@@ -157,7 +157,7 @@ class SyncSelectPresetUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSelectPreset(aAsyncHandle);
-		
+        
     }
 }
 
@@ -177,7 +177,7 @@ class SyncGetBrightnessUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetBrightness(aAsyncHandle);
-		
+        
         iCurrentBrightness = result;
     }
 }
@@ -193,7 +193,7 @@ class SyncSetBrightnessUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetBrightness(aAsyncHandle);
-		
+        
     }
 }
 
@@ -213,7 +213,7 @@ class SyncGetContrastUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetContrast(aAsyncHandle);
-		
+        
         iCurrentContrast = result;
     }
 }
@@ -229,7 +229,7 @@ class SyncSetContrastUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetContrast(aAsyncHandle);
-		
+        
     }
 }
 
@@ -249,7 +249,7 @@ class SyncGetSharpnessUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetSharpness(aAsyncHandle);
-		
+        
         iCurrentSharpness = result;
     }
 }
@@ -265,7 +265,7 @@ class SyncSetSharpnessUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetSharpness(aAsyncHandle);
-		
+        
     }
 }
 
@@ -285,7 +285,7 @@ class SyncGetRedVideoGainUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetRedVideoGain(aAsyncHandle);
-		
+        
         iCurrentRedVideoGain = result;
     }
 }
@@ -301,7 +301,7 @@ class SyncSetRedVideoGainUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetRedVideoGain(aAsyncHandle);
-		
+        
     }
 }
 
@@ -321,7 +321,7 @@ class SyncGetGreenVideoGainUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetGreenVideoGain(aAsyncHandle);
-		
+        
         iCurrentGreenVideoGain = result;
     }
 }
@@ -337,7 +337,7 @@ class SyncSetGreenVideoGainUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetGreenVideoGain(aAsyncHandle);
-		
+        
     }
 }
 
@@ -357,7 +357,7 @@ class SyncGetBlueVideoGainUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetBlueVideoGain(aAsyncHandle);
-		
+        
         iCurrentBlueVideoGain = result;
     }
 }
@@ -373,7 +373,7 @@ class SyncSetBlueVideoGainUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetBlueVideoGain(aAsyncHandle);
-		
+        
     }
 }
 
@@ -393,7 +393,7 @@ class SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetRedVideoBlackLevel(aAsyncHandle);
-		
+        
         iCurrentRedVideoBlackLevel = result;
     }
 }
@@ -409,7 +409,7 @@ class SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetRedVideoBlackLevel(aAsyncHandle);
-		
+        
     }
 }
 
@@ -429,7 +429,7 @@ class SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2 extends SyncProxyActio
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetGreenVideoBlackLevel(aAsyncHandle);
-		
+        
         iCurrentGreenVideoBlackLevel = result;
     }
 }
@@ -445,7 +445,7 @@ class SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2 extends SyncProxyActio
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetGreenVideoBlackLevel(aAsyncHandle);
-		
+        
     }
 }
 
@@ -465,7 +465,7 @@ class SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetBlueVideoBlackLevel(aAsyncHandle);
-		
+        
         iCurrentBlueVideoBlackLevel = result;
     }
 }
@@ -481,7 +481,7 @@ class SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetBlueVideoBlackLevel(aAsyncHandle);
-		
+        
     }
 }
 
@@ -501,7 +501,7 @@ class SyncGetColorTemperatureUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetColorTemperature(aAsyncHandle);
-		
+        
         iCurrentColorTemperature = result;
     }
 }
@@ -517,7 +517,7 @@ class SyncSetColorTemperatureUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetColorTemperature(aAsyncHandle);
-		
+        
     }
 }
 
@@ -537,7 +537,7 @@ class SyncGetHorizontalKeystoneUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         int result = iService.endGetHorizontalKeystone(aAsyncHandle);
-		
+        
         iCurrentHorizontalKeystone = result;
     }
 }
@@ -553,7 +553,7 @@ class SyncSetHorizontalKeystoneUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetHorizontalKeystone(aAsyncHandle);
-		
+        
     }
 }
 
@@ -573,7 +573,7 @@ class SyncGetVerticalKeystoneUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         int result = iService.endGetVerticalKeystone(aAsyncHandle);
-		
+        
         iCurrentVerticalKeystone = result;
     }
 }
@@ -589,7 +589,7 @@ class SyncSetVerticalKeystoneUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetVerticalKeystone(aAsyncHandle);
-		
+        
     }
 }
 
@@ -609,7 +609,7 @@ class SyncGetMuteUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endGetMute(aAsyncHandle);
-		
+        
         iCurrentMute = result;
     }
 }
@@ -625,7 +625,7 @@ class SyncSetMuteUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetMute(aAsyncHandle);
-		
+        
     }
 }
 
@@ -645,7 +645,7 @@ class SyncGetVolumeUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetVolume(aAsyncHandle);
-		
+        
         iCurrentVolume = result;
     }
 }
@@ -661,7 +661,7 @@ class SyncSetVolumeUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetVolume(aAsyncHandle);
-		
+        
     }
 }
 
@@ -681,7 +681,7 @@ class SyncGetVolumeDBUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         int result = iService.endGetVolumeDB(aAsyncHandle);
-		
+        
         iCurrentVolume = result;
     }
 }
@@ -697,7 +697,7 @@ class SyncSetVolumeDBUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetVolumeDB(aAsyncHandle);
-		
+        
     }
 }
 
@@ -722,7 +722,7 @@ class SyncGetVolumeDBRangeUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetVolumeDBRange result = iService.endGetVolumeDBRange(aAsyncHandle);
-		
+        
         iMinValue = result.getMinValue();
         iMaxValue = result.getMaxValue();
     }
@@ -744,7 +744,7 @@ class SyncGetLoudnessUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endGetLoudness(aAsyncHandle);
-		
+        
         iCurrentLoudness = result;
     }
 }
@@ -760,7 +760,7 @@ class SyncSetLoudnessUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetLoudness(aAsyncHandle);
-		
+        
     }
 }
 
@@ -780,7 +780,7 @@ class SyncGetStateVariablesUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetStateVariables(aAsyncHandle);
-		
+        
         iStateVariableValuePairs = result;
     }
 }
@@ -801,7 +801,7 @@ class SyncSetStateVariablesUpnpOrgRenderingControl2 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endSetStateVariables(aAsyncHandle);
-		
+        
         iStateVariableList = result;
     }
 }
@@ -880,7 +880,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyUpnpOrgRenderingControl2(CpDevice aDevice)
@@ -891,279 +891,279 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 
         iActionListPresets = new Action("ListPresets");
         param = new ParameterUint("InstanceID");
-		iActionListPresets.addInputParameter(param);
+        iActionListPresets.addInputParameter(param);
         param = new ParameterString("CurrentPresetNameList", allowedValues);
-		iActionListPresets.addOutputParameter(param);
+        iActionListPresets.addOutputParameter(param);
 
         iActionSelectPreset = new Action("SelectPreset");
         param = new ParameterUint("InstanceID");
-		iActionSelectPreset.addInputParameter(param);
+        iActionSelectPreset.addInputParameter(param);
         allowedValues.add("FactoryDefaults");
         param = new ParameterString("PresetName", allowedValues);
-		iActionSelectPreset.addInputParameter(param);
+        iActionSelectPreset.addInputParameter(param);
         allowedValues.clear();
 
         iActionGetBrightness = new Action("GetBrightness");
         param = new ParameterUint("InstanceID");
-		iActionGetBrightness.addInputParameter(param);
+        iActionGetBrightness.addInputParameter(param);
         param = new ParameterUint("CurrentBrightness", 0, 2147483647, 1);
-		iActionGetBrightness.addOutputParameter(param);
+        iActionGetBrightness.addOutputParameter(param);
 
         iActionSetBrightness = new Action("SetBrightness");
         param = new ParameterUint("InstanceID");
-		iActionSetBrightness.addInputParameter(param);
+        iActionSetBrightness.addInputParameter(param);
         param = new ParameterUint("DesiredBrightness", 0, 2147483647, 1);
-		iActionSetBrightness.addInputParameter(param);
+        iActionSetBrightness.addInputParameter(param);
 
         iActionGetContrast = new Action("GetContrast");
         param = new ParameterUint("InstanceID");
-		iActionGetContrast.addInputParameter(param);
+        iActionGetContrast.addInputParameter(param);
         param = new ParameterUint("CurrentContrast", 0, 2147483647, 1);
-		iActionGetContrast.addOutputParameter(param);
+        iActionGetContrast.addOutputParameter(param);
 
         iActionSetContrast = new Action("SetContrast");
         param = new ParameterUint("InstanceID");
-		iActionSetContrast.addInputParameter(param);
+        iActionSetContrast.addInputParameter(param);
         param = new ParameterUint("DesiredContrast", 0, 2147483647, 1);
-		iActionSetContrast.addInputParameter(param);
+        iActionSetContrast.addInputParameter(param);
 
         iActionGetSharpness = new Action("GetSharpness");
         param = new ParameterUint("InstanceID");
-		iActionGetSharpness.addInputParameter(param);
+        iActionGetSharpness.addInputParameter(param);
         param = new ParameterUint("CurrentSharpness", 0, 2147483647, 1);
-		iActionGetSharpness.addOutputParameter(param);
+        iActionGetSharpness.addOutputParameter(param);
 
         iActionSetSharpness = new Action("SetSharpness");
         param = new ParameterUint("InstanceID");
-		iActionSetSharpness.addInputParameter(param);
+        iActionSetSharpness.addInputParameter(param);
         param = new ParameterUint("DesiredSharpness", 0, 2147483647, 1);
-		iActionSetSharpness.addInputParameter(param);
+        iActionSetSharpness.addInputParameter(param);
 
         iActionGetRedVideoGain = new Action("GetRedVideoGain");
         param = new ParameterUint("InstanceID");
-		iActionGetRedVideoGain.addInputParameter(param);
+        iActionGetRedVideoGain.addInputParameter(param);
         param = new ParameterUint("CurrentRedVideoGain", 0, 2147483647, 1);
-		iActionGetRedVideoGain.addOutputParameter(param);
+        iActionGetRedVideoGain.addOutputParameter(param);
 
         iActionSetRedVideoGain = new Action("SetRedVideoGain");
         param = new ParameterUint("InstanceID");
-		iActionSetRedVideoGain.addInputParameter(param);
+        iActionSetRedVideoGain.addInputParameter(param);
         param = new ParameterUint("DesiredRedVideoGain", 0, 2147483647, 1);
-		iActionSetRedVideoGain.addInputParameter(param);
+        iActionSetRedVideoGain.addInputParameter(param);
 
         iActionGetGreenVideoGain = new Action("GetGreenVideoGain");
         param = new ParameterUint("InstanceID");
-		iActionGetGreenVideoGain.addInputParameter(param);
+        iActionGetGreenVideoGain.addInputParameter(param);
         param = new ParameterUint("CurrentGreenVideoGain", 0, 2147483647, 1);
-		iActionGetGreenVideoGain.addOutputParameter(param);
+        iActionGetGreenVideoGain.addOutputParameter(param);
 
         iActionSetGreenVideoGain = new Action("SetGreenVideoGain");
         param = new ParameterUint("InstanceID");
-		iActionSetGreenVideoGain.addInputParameter(param);
+        iActionSetGreenVideoGain.addInputParameter(param);
         param = new ParameterUint("DesiredGreenVideoGain", 0, 2147483647, 1);
-		iActionSetGreenVideoGain.addInputParameter(param);
+        iActionSetGreenVideoGain.addInputParameter(param);
 
         iActionGetBlueVideoGain = new Action("GetBlueVideoGain");
         param = new ParameterUint("InstanceID");
-		iActionGetBlueVideoGain.addInputParameter(param);
+        iActionGetBlueVideoGain.addInputParameter(param);
         param = new ParameterUint("CurrentBlueVideoGain", 0, 2147483647, 1);
-		iActionGetBlueVideoGain.addOutputParameter(param);
+        iActionGetBlueVideoGain.addOutputParameter(param);
 
         iActionSetBlueVideoGain = new Action("SetBlueVideoGain");
         param = new ParameterUint("InstanceID");
-		iActionSetBlueVideoGain.addInputParameter(param);
+        iActionSetBlueVideoGain.addInputParameter(param);
         param = new ParameterUint("DesiredBlueVideoGain", 0, 2147483647, 1);
-		iActionSetBlueVideoGain.addInputParameter(param);
+        iActionSetBlueVideoGain.addInputParameter(param);
 
         iActionGetRedVideoBlackLevel = new Action("GetRedVideoBlackLevel");
         param = new ParameterUint("InstanceID");
-		iActionGetRedVideoBlackLevel.addInputParameter(param);
+        iActionGetRedVideoBlackLevel.addInputParameter(param);
         param = new ParameterUint("CurrentRedVideoBlackLevel", 0, 2147483647, 1);
-		iActionGetRedVideoBlackLevel.addOutputParameter(param);
+        iActionGetRedVideoBlackLevel.addOutputParameter(param);
 
         iActionSetRedVideoBlackLevel = new Action("SetRedVideoBlackLevel");
         param = new ParameterUint("InstanceID");
-		iActionSetRedVideoBlackLevel.addInputParameter(param);
+        iActionSetRedVideoBlackLevel.addInputParameter(param);
         param = new ParameterUint("DesiredRedVideoBlackLevel", 0, 2147483647, 1);
-		iActionSetRedVideoBlackLevel.addInputParameter(param);
+        iActionSetRedVideoBlackLevel.addInputParameter(param);
 
         iActionGetGreenVideoBlackLevel = new Action("GetGreenVideoBlackLevel");
         param = new ParameterUint("InstanceID");
-		iActionGetGreenVideoBlackLevel.addInputParameter(param);
+        iActionGetGreenVideoBlackLevel.addInputParameter(param);
         param = new ParameterUint("CurrentGreenVideoBlackLevel", 0, 2147483647, 1);
-		iActionGetGreenVideoBlackLevel.addOutputParameter(param);
+        iActionGetGreenVideoBlackLevel.addOutputParameter(param);
 
         iActionSetGreenVideoBlackLevel = new Action("SetGreenVideoBlackLevel");
         param = new ParameterUint("InstanceID");
-		iActionSetGreenVideoBlackLevel.addInputParameter(param);
+        iActionSetGreenVideoBlackLevel.addInputParameter(param);
         param = new ParameterUint("DesiredGreenVideoBlackLevel", 0, 2147483647, 1);
-		iActionSetGreenVideoBlackLevel.addInputParameter(param);
+        iActionSetGreenVideoBlackLevel.addInputParameter(param);
 
         iActionGetBlueVideoBlackLevel = new Action("GetBlueVideoBlackLevel");
         param = new ParameterUint("InstanceID");
-		iActionGetBlueVideoBlackLevel.addInputParameter(param);
+        iActionGetBlueVideoBlackLevel.addInputParameter(param);
         param = new ParameterUint("CurrentBlueVideoBlackLevel", 0, 2147483647, 1);
-		iActionGetBlueVideoBlackLevel.addOutputParameter(param);
+        iActionGetBlueVideoBlackLevel.addOutputParameter(param);
 
         iActionSetBlueVideoBlackLevel = new Action("SetBlueVideoBlackLevel");
         param = new ParameterUint("InstanceID");
-		iActionSetBlueVideoBlackLevel.addInputParameter(param);
+        iActionSetBlueVideoBlackLevel.addInputParameter(param);
         param = new ParameterUint("DesiredBlueVideoBlackLevel", 0, 2147483647, 1);
-		iActionSetBlueVideoBlackLevel.addInputParameter(param);
+        iActionSetBlueVideoBlackLevel.addInputParameter(param);
 
         iActionGetColorTemperature = new Action("GetColorTemperature");
         param = new ParameterUint("InstanceID");
-		iActionGetColorTemperature.addInputParameter(param);
+        iActionGetColorTemperature.addInputParameter(param);
         param = new ParameterUint("CurrentColorTemperature", 0, 2147483647, 1);
-		iActionGetColorTemperature.addOutputParameter(param);
+        iActionGetColorTemperature.addOutputParameter(param);
 
         iActionSetColorTemperature = new Action("SetColorTemperature");
         param = new ParameterUint("InstanceID");
-		iActionSetColorTemperature.addInputParameter(param);
+        iActionSetColorTemperature.addInputParameter(param);
         param = new ParameterUint("DesiredColorTemperature", 0, 2147483647, 1);
-		iActionSetColorTemperature.addInputParameter(param);
+        iActionSetColorTemperature.addInputParameter(param);
 
         iActionGetHorizontalKeystone = new Action("GetHorizontalKeystone");
         param = new ParameterUint("InstanceID");
-		iActionGetHorizontalKeystone.addInputParameter(param);
+        iActionGetHorizontalKeystone.addInputParameter(param);
         param = new ParameterInt("CurrentHorizontalKeystone");
-		iActionGetHorizontalKeystone.addOutputParameter(param);
+        iActionGetHorizontalKeystone.addOutputParameter(param);
 
         iActionSetHorizontalKeystone = new Action("SetHorizontalKeystone");
         param = new ParameterUint("InstanceID");
-		iActionSetHorizontalKeystone.addInputParameter(param);
+        iActionSetHorizontalKeystone.addInputParameter(param);
         param = new ParameterInt("DesiredHorizontalKeystone");
-		iActionSetHorizontalKeystone.addInputParameter(param);
+        iActionSetHorizontalKeystone.addInputParameter(param);
 
         iActionGetVerticalKeystone = new Action("GetVerticalKeystone");
         param = new ParameterUint("InstanceID");
-		iActionGetVerticalKeystone.addInputParameter(param);
+        iActionGetVerticalKeystone.addInputParameter(param);
         param = new ParameterInt("CurrentVerticalKeystone");
-		iActionGetVerticalKeystone.addOutputParameter(param);
+        iActionGetVerticalKeystone.addOutputParameter(param);
 
         iActionSetVerticalKeystone = new Action("SetVerticalKeystone");
         param = new ParameterUint("InstanceID");
-		iActionSetVerticalKeystone.addInputParameter(param);
+        iActionSetVerticalKeystone.addInputParameter(param);
         param = new ParameterInt("DesiredVerticalKeystone");
-		iActionSetVerticalKeystone.addInputParameter(param);
+        iActionSetVerticalKeystone.addInputParameter(param);
 
         iActionGetMute = new Action("GetMute");
         param = new ParameterUint("InstanceID");
-		iActionGetMute.addInputParameter(param);
+        iActionGetMute.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionGetMute.addInputParameter(param);
+        iActionGetMute.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterBool("CurrentMute");
-		iActionGetMute.addOutputParameter(param);
+        iActionGetMute.addOutputParameter(param);
 
         iActionSetMute = new Action("SetMute");
         param = new ParameterUint("InstanceID");
-		iActionSetMute.addInputParameter(param);
+        iActionSetMute.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionSetMute.addInputParameter(param);
+        iActionSetMute.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterBool("DesiredMute");
-		iActionSetMute.addInputParameter(param);
+        iActionSetMute.addInputParameter(param);
 
         iActionGetVolume = new Action("GetVolume");
         param = new ParameterUint("InstanceID");
-		iActionGetVolume.addInputParameter(param);
+        iActionGetVolume.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionGetVolume.addInputParameter(param);
+        iActionGetVolume.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterUint("CurrentVolume", 0, 2147483647, 1);
-		iActionGetVolume.addOutputParameter(param);
+        iActionGetVolume.addOutputParameter(param);
 
         iActionSetVolume = new Action("SetVolume");
         param = new ParameterUint("InstanceID");
-		iActionSetVolume.addInputParameter(param);
+        iActionSetVolume.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionSetVolume.addInputParameter(param);
+        iActionSetVolume.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterUint("DesiredVolume", 0, 2147483647, 1);
-		iActionSetVolume.addInputParameter(param);
+        iActionSetVolume.addInputParameter(param);
 
         iActionGetVolumeDB = new Action("GetVolumeDB");
         param = new ParameterUint("InstanceID");
-		iActionGetVolumeDB.addInputParameter(param);
+        iActionGetVolumeDB.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionGetVolumeDB.addInputParameter(param);
+        iActionGetVolumeDB.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterInt("CurrentVolume");
-		iActionGetVolumeDB.addOutputParameter(param);
+        iActionGetVolumeDB.addOutputParameter(param);
 
         iActionSetVolumeDB = new Action("SetVolumeDB");
         param = new ParameterUint("InstanceID");
-		iActionSetVolumeDB.addInputParameter(param);
+        iActionSetVolumeDB.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionSetVolumeDB.addInputParameter(param);
+        iActionSetVolumeDB.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterInt("DesiredVolume");
-		iActionSetVolumeDB.addInputParameter(param);
+        iActionSetVolumeDB.addInputParameter(param);
 
         iActionGetVolumeDBRange = new Action("GetVolumeDBRange");
         param = new ParameterUint("InstanceID");
-		iActionGetVolumeDBRange.addInputParameter(param);
+        iActionGetVolumeDBRange.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionGetVolumeDBRange.addInputParameter(param);
+        iActionGetVolumeDBRange.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterInt("MinValue");
-		iActionGetVolumeDBRange.addOutputParameter(param);
+        iActionGetVolumeDBRange.addOutputParameter(param);
         param = new ParameterInt("MaxValue");
-		iActionGetVolumeDBRange.addOutputParameter(param);
+        iActionGetVolumeDBRange.addOutputParameter(param);
 
         iActionGetLoudness = new Action("GetLoudness");
         param = new ParameterUint("InstanceID");
-		iActionGetLoudness.addInputParameter(param);
+        iActionGetLoudness.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionGetLoudness.addInputParameter(param);
+        iActionGetLoudness.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterBool("CurrentLoudness");
-		iActionGetLoudness.addOutputParameter(param);
+        iActionGetLoudness.addOutputParameter(param);
 
         iActionSetLoudness = new Action("SetLoudness");
         param = new ParameterUint("InstanceID");
-		iActionSetLoudness.addInputParameter(param);
+        iActionSetLoudness.addInputParameter(param);
         allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
-		iActionSetLoudness.addInputParameter(param);
+        iActionSetLoudness.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterBool("DesiredLoudness");
-		iActionSetLoudness.addInputParameter(param);
+        iActionSetLoudness.addInputParameter(param);
 
         iActionGetStateVariables = new Action("GetStateVariables");
         param = new ParameterUint("InstanceID");
-		iActionGetStateVariables.addInputParameter(param);
+        iActionGetStateVariables.addInputParameter(param);
         param = new ParameterString("StateVariableList", allowedValues);
-		iActionGetStateVariables.addInputParameter(param);
+        iActionGetStateVariables.addInputParameter(param);
         param = new ParameterString("StateVariableValuePairs", allowedValues);
-		iActionGetStateVariables.addOutputParameter(param);
+        iActionGetStateVariables.addOutputParameter(param);
 
         iActionSetStateVariables = new Action("SetStateVariables");
         param = new ParameterUint("InstanceID");
-		iActionSetStateVariables.addInputParameter(param);
+        iActionSetStateVariables.addInputParameter(param);
         param = new ParameterString("RenderingControlUDN", allowedValues);
-		iActionSetStateVariables.addInputParameter(param);
+        iActionSetStateVariables.addInputParameter(param);
         param = new ParameterString("ServiceType", allowedValues);
-		iActionSetStateVariables.addInputParameter(param);
+        iActionSetStateVariables.addInputParameter(param);
         param = new ParameterString("ServiceId", allowedValues);
-		iActionSetStateVariables.addInputParameter(param);
+        iActionSetStateVariables.addInputParameter(param);
         param = new ParameterString("StateVariableValuePairs", allowedValues);
-		iActionSetStateVariables.addInputParameter(param);
+        iActionSetStateVariables.addInputParameter(param);
         param = new ParameterString("StateVariableList", allowedValues);
-		iActionSetStateVariables.addOutputParameter(param);
+        iActionSetStateVariables.addOutputParameter(param);
 
         iLastChangeChanged = new PropertyChangeListener();
         iLastChange = new PropertyString("LastChange", iLastChangeChanged);
-		addProperty(iLastChange);
+        addProperty(iLastChange);
         iPropertyLock = new Object();
     }
     /**
@@ -1173,28 +1173,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncListPresets(long aInstanceID)
-	{
-	    SyncListPresetsUpnpOrgRenderingControl2 sync = new SyncListPresetsUpnpOrgRenderingControl2(this);
-	    beginListPresets(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public String syncListPresets(long aInstanceID)
+    {
+        SyncListPresetsUpnpOrgRenderingControl2 sync = new SyncListPresetsUpnpOrgRenderingControl2(this);
+        beginListPresets(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentPresetNameList();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endListPresets}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginListPresets(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endListPresets}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginListPresets(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionListPresets, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionListPresets.getInputParameter(inIndex++), aInstanceID));
@@ -1203,16 +1203,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginListPresets} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginListPresets} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginListPresets} method.
      * @return the result of the previously invoked action.
      */
-	public String endListPresets(long aAsyncHandle)
+    public String endListPresets(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1222,33 +1222,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         String currentPresetNameList = Invocation.getOutputString(aAsyncHandle, index++);
         return currentPresetNameList;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSelectPreset(long aInstanceID, String aPresetName)
-	{
-	    SyncSelectPresetUpnpOrgRenderingControl2 sync = new SyncSelectPresetUpnpOrgRenderingControl2(this);
-	    beginSelectPreset(aInstanceID, aPresetName, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSelectPreset(long aInstanceID, String aPresetName)
+    {
+        SyncSelectPresetUpnpOrgRenderingControl2 sync = new SyncSelectPresetUpnpOrgRenderingControl2(this);
+        beginSelectPreset(aInstanceID, aPresetName, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSelectPreset}.
-	 * 
-	 * @param aInstanceID
-	 * @param aPresetName
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSelectPreset(long aInstanceID, String aPresetName, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSelectPreset}.
+     * 
+     * @param aInstanceID
+     * @param aPresetName
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSelectPreset(long aInstanceID, String aPresetName, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSelectPreset, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSelectPreset.getInputParameter(inIndex++), aInstanceID));
@@ -1256,22 +1256,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSelectPreset} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSelectPreset} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSelectPreset} method.
      */
-	public void endSelectPreset(long aAsyncHandle)
+    public void endSelectPreset(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1279,28 +1279,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetBrightness(long aInstanceID)
-	{
-	    SyncGetBrightnessUpnpOrgRenderingControl2 sync = new SyncGetBrightnessUpnpOrgRenderingControl2(this);
-	    beginGetBrightness(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetBrightness(long aInstanceID)
+    {
+        SyncGetBrightnessUpnpOrgRenderingControl2 sync = new SyncGetBrightnessUpnpOrgRenderingControl2(this);
+        beginGetBrightness(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentBrightness();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetBrightness}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetBrightness(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetBrightness}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetBrightness(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetBrightness, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetBrightness.getInputParameter(inIndex++), aInstanceID));
@@ -1309,16 +1309,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetBrightness} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetBrightness} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetBrightness} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetBrightness(long aAsyncHandle)
+    public long endGetBrightness(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1328,33 +1328,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentBrightness = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentBrightness;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetBrightness(long aInstanceID, long aDesiredBrightness)
-	{
-	    SyncSetBrightnessUpnpOrgRenderingControl2 sync = new SyncSetBrightnessUpnpOrgRenderingControl2(this);
-	    beginSetBrightness(aInstanceID, aDesiredBrightness, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetBrightness(long aInstanceID, long aDesiredBrightness)
+    {
+        SyncSetBrightnessUpnpOrgRenderingControl2 sync = new SyncSetBrightnessUpnpOrgRenderingControl2(this);
+        beginSetBrightness(aInstanceID, aDesiredBrightness, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetBrightness}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredBrightness
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetBrightness(long aInstanceID, long aDesiredBrightness, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetBrightness}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredBrightness
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetBrightness(long aInstanceID, long aDesiredBrightness, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetBrightness, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetBrightness.getInputParameter(inIndex++), aInstanceID));
@@ -1362,22 +1362,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetBrightness} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetBrightness} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetBrightness} method.
      */
-	public void endSetBrightness(long aAsyncHandle)
+    public void endSetBrightness(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1385,28 +1385,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetContrast(long aInstanceID)
-	{
-	    SyncGetContrastUpnpOrgRenderingControl2 sync = new SyncGetContrastUpnpOrgRenderingControl2(this);
-	    beginGetContrast(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetContrast(long aInstanceID)
+    {
+        SyncGetContrastUpnpOrgRenderingControl2 sync = new SyncGetContrastUpnpOrgRenderingControl2(this);
+        beginGetContrast(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentContrast();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetContrast}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetContrast(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetContrast}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetContrast(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetContrast, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetContrast.getInputParameter(inIndex++), aInstanceID));
@@ -1415,16 +1415,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetContrast} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetContrast} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetContrast} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetContrast(long aAsyncHandle)
+    public long endGetContrast(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1434,33 +1434,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentContrast = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentContrast;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetContrast(long aInstanceID, long aDesiredContrast)
-	{
-	    SyncSetContrastUpnpOrgRenderingControl2 sync = new SyncSetContrastUpnpOrgRenderingControl2(this);
-	    beginSetContrast(aInstanceID, aDesiredContrast, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetContrast(long aInstanceID, long aDesiredContrast)
+    {
+        SyncSetContrastUpnpOrgRenderingControl2 sync = new SyncSetContrastUpnpOrgRenderingControl2(this);
+        beginSetContrast(aInstanceID, aDesiredContrast, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetContrast}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredContrast
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetContrast(long aInstanceID, long aDesiredContrast, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetContrast}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredContrast
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetContrast(long aInstanceID, long aDesiredContrast, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetContrast, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetContrast.getInputParameter(inIndex++), aInstanceID));
@@ -1468,22 +1468,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetContrast} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetContrast} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetContrast} method.
      */
-	public void endSetContrast(long aAsyncHandle)
+    public void endSetContrast(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1491,28 +1491,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetSharpness(long aInstanceID)
-	{
-	    SyncGetSharpnessUpnpOrgRenderingControl2 sync = new SyncGetSharpnessUpnpOrgRenderingControl2(this);
-	    beginGetSharpness(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetSharpness(long aInstanceID)
+    {
+        SyncGetSharpnessUpnpOrgRenderingControl2 sync = new SyncGetSharpnessUpnpOrgRenderingControl2(this);
+        beginGetSharpness(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentSharpness();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetSharpness}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetSharpness(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetSharpness}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetSharpness(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetSharpness, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetSharpness.getInputParameter(inIndex++), aInstanceID));
@@ -1521,16 +1521,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetSharpness} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetSharpness} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetSharpness} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetSharpness(long aAsyncHandle)
+    public long endGetSharpness(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1540,33 +1540,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentSharpness = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentSharpness;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetSharpness(long aInstanceID, long aDesiredSharpness)
-	{
-	    SyncSetSharpnessUpnpOrgRenderingControl2 sync = new SyncSetSharpnessUpnpOrgRenderingControl2(this);
-	    beginSetSharpness(aInstanceID, aDesiredSharpness, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetSharpness(long aInstanceID, long aDesiredSharpness)
+    {
+        SyncSetSharpnessUpnpOrgRenderingControl2 sync = new SyncSetSharpnessUpnpOrgRenderingControl2(this);
+        beginSetSharpness(aInstanceID, aDesiredSharpness, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetSharpness}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredSharpness
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetSharpness(long aInstanceID, long aDesiredSharpness, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetSharpness}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredSharpness
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetSharpness(long aInstanceID, long aDesiredSharpness, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetSharpness, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetSharpness.getInputParameter(inIndex++), aInstanceID));
@@ -1574,22 +1574,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetSharpness} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetSharpness} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetSharpness} method.
      */
-	public void endSetSharpness(long aAsyncHandle)
+    public void endSetSharpness(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1597,28 +1597,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetRedVideoGain(long aInstanceID)
-	{
-	    SyncGetRedVideoGainUpnpOrgRenderingControl2 sync = new SyncGetRedVideoGainUpnpOrgRenderingControl2(this);
-	    beginGetRedVideoGain(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetRedVideoGain(long aInstanceID)
+    {
+        SyncGetRedVideoGainUpnpOrgRenderingControl2 sync = new SyncGetRedVideoGainUpnpOrgRenderingControl2(this);
+        beginGetRedVideoGain(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentRedVideoGain();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetRedVideoGain}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetRedVideoGain(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetRedVideoGain}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetRedVideoGain(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetRedVideoGain, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetRedVideoGain.getInputParameter(inIndex++), aInstanceID));
@@ -1627,16 +1627,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetRedVideoGain} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetRedVideoGain} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetRedVideoGain} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetRedVideoGain(long aAsyncHandle)
+    public long endGetRedVideoGain(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1646,33 +1646,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentRedVideoGain = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentRedVideoGain;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetRedVideoGain(long aInstanceID, long aDesiredRedVideoGain)
-	{
-	    SyncSetRedVideoGainUpnpOrgRenderingControl2 sync = new SyncSetRedVideoGainUpnpOrgRenderingControl2(this);
-	    beginSetRedVideoGain(aInstanceID, aDesiredRedVideoGain, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetRedVideoGain(long aInstanceID, long aDesiredRedVideoGain)
+    {
+        SyncSetRedVideoGainUpnpOrgRenderingControl2 sync = new SyncSetRedVideoGainUpnpOrgRenderingControl2(this);
+        beginSetRedVideoGain(aInstanceID, aDesiredRedVideoGain, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetRedVideoGain}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredRedVideoGain
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetRedVideoGain(long aInstanceID, long aDesiredRedVideoGain, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetRedVideoGain}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredRedVideoGain
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetRedVideoGain(long aInstanceID, long aDesiredRedVideoGain, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetRedVideoGain, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetRedVideoGain.getInputParameter(inIndex++), aInstanceID));
@@ -1680,22 +1680,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetRedVideoGain} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetRedVideoGain} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetRedVideoGain} method.
      */
-	public void endSetRedVideoGain(long aAsyncHandle)
+    public void endSetRedVideoGain(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1703,28 +1703,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetGreenVideoGain(long aInstanceID)
-	{
-	    SyncGetGreenVideoGainUpnpOrgRenderingControl2 sync = new SyncGetGreenVideoGainUpnpOrgRenderingControl2(this);
-	    beginGetGreenVideoGain(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetGreenVideoGain(long aInstanceID)
+    {
+        SyncGetGreenVideoGainUpnpOrgRenderingControl2 sync = new SyncGetGreenVideoGainUpnpOrgRenderingControl2(this);
+        beginGetGreenVideoGain(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentGreenVideoGain();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetGreenVideoGain}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetGreenVideoGain(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetGreenVideoGain}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetGreenVideoGain(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetGreenVideoGain, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetGreenVideoGain.getInputParameter(inIndex++), aInstanceID));
@@ -1733,16 +1733,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetGreenVideoGain} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetGreenVideoGain} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetGreenVideoGain} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetGreenVideoGain(long aAsyncHandle)
+    public long endGetGreenVideoGain(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1752,33 +1752,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentGreenVideoGain = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentGreenVideoGain;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetGreenVideoGain(long aInstanceID, long aDesiredGreenVideoGain)
-	{
-	    SyncSetGreenVideoGainUpnpOrgRenderingControl2 sync = new SyncSetGreenVideoGainUpnpOrgRenderingControl2(this);
-	    beginSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetGreenVideoGain(long aInstanceID, long aDesiredGreenVideoGain)
+    {
+        SyncSetGreenVideoGainUpnpOrgRenderingControl2 sync = new SyncSetGreenVideoGainUpnpOrgRenderingControl2(this);
+        beginSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetGreenVideoGain}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredGreenVideoGain
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetGreenVideoGain(long aInstanceID, long aDesiredGreenVideoGain, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetGreenVideoGain}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredGreenVideoGain
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetGreenVideoGain(long aInstanceID, long aDesiredGreenVideoGain, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetGreenVideoGain, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetGreenVideoGain.getInputParameter(inIndex++), aInstanceID));
@@ -1786,22 +1786,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetGreenVideoGain} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetGreenVideoGain} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetGreenVideoGain} method.
      */
-	public void endSetGreenVideoGain(long aAsyncHandle)
+    public void endSetGreenVideoGain(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1809,28 +1809,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetBlueVideoGain(long aInstanceID)
-	{
-	    SyncGetBlueVideoGainUpnpOrgRenderingControl2 sync = new SyncGetBlueVideoGainUpnpOrgRenderingControl2(this);
-	    beginGetBlueVideoGain(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetBlueVideoGain(long aInstanceID)
+    {
+        SyncGetBlueVideoGainUpnpOrgRenderingControl2 sync = new SyncGetBlueVideoGainUpnpOrgRenderingControl2(this);
+        beginGetBlueVideoGain(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentBlueVideoGain();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetBlueVideoGain}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetBlueVideoGain(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetBlueVideoGain}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetBlueVideoGain(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetBlueVideoGain, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetBlueVideoGain.getInputParameter(inIndex++), aInstanceID));
@@ -1839,16 +1839,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetBlueVideoGain} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetBlueVideoGain} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetBlueVideoGain} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetBlueVideoGain(long aAsyncHandle)
+    public long endGetBlueVideoGain(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1858,33 +1858,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentBlueVideoGain = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentBlueVideoGain;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetBlueVideoGain(long aInstanceID, long aDesiredBlueVideoGain)
-	{
-	    SyncSetBlueVideoGainUpnpOrgRenderingControl2 sync = new SyncSetBlueVideoGainUpnpOrgRenderingControl2(this);
-	    beginSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetBlueVideoGain(long aInstanceID, long aDesiredBlueVideoGain)
+    {
+        SyncSetBlueVideoGainUpnpOrgRenderingControl2 sync = new SyncSetBlueVideoGainUpnpOrgRenderingControl2(this);
+        beginSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetBlueVideoGain}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredBlueVideoGain
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetBlueVideoGain(long aInstanceID, long aDesiredBlueVideoGain, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetBlueVideoGain}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredBlueVideoGain
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetBlueVideoGain(long aInstanceID, long aDesiredBlueVideoGain, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetBlueVideoGain, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetBlueVideoGain.getInputParameter(inIndex++), aInstanceID));
@@ -1892,22 +1892,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetBlueVideoGain} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetBlueVideoGain} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetBlueVideoGain} method.
      */
-	public void endSetBlueVideoGain(long aAsyncHandle)
+    public void endSetBlueVideoGain(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1915,28 +1915,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetRedVideoBlackLevel(long aInstanceID)
-	{
-	    SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2(this);
-	    beginGetRedVideoBlackLevel(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetRedVideoBlackLevel(long aInstanceID)
+    {
+        SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2(this);
+        beginGetRedVideoBlackLevel(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentRedVideoBlackLevel();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetRedVideoBlackLevel}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetRedVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetRedVideoBlackLevel}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetRedVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetRedVideoBlackLevel, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetRedVideoBlackLevel.getInputParameter(inIndex++), aInstanceID));
@@ -1945,16 +1945,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetRedVideoBlackLevel} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetRedVideoBlackLevel} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetRedVideoBlackLevel} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetRedVideoBlackLevel(long aAsyncHandle)
+    public long endGetRedVideoBlackLevel(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1964,33 +1964,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentRedVideoBlackLevel = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentRedVideoBlackLevel;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetRedVideoBlackLevel(long aInstanceID, long aDesiredRedVideoBlackLevel)
-	{
-	    SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2(this);
-	    beginSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetRedVideoBlackLevel(long aInstanceID, long aDesiredRedVideoBlackLevel)
+    {
+        SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2(this);
+        beginSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetRedVideoBlackLevel}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredRedVideoBlackLevel
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetRedVideoBlackLevel(long aInstanceID, long aDesiredRedVideoBlackLevel, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetRedVideoBlackLevel}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredRedVideoBlackLevel
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetRedVideoBlackLevel(long aInstanceID, long aDesiredRedVideoBlackLevel, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetRedVideoBlackLevel, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetRedVideoBlackLevel.getInputParameter(inIndex++), aInstanceID));
@@ -1998,22 +1998,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetRedVideoBlackLevel} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetRedVideoBlackLevel} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetRedVideoBlackLevel} method.
      */
-	public void endSetRedVideoBlackLevel(long aAsyncHandle)
+    public void endSetRedVideoBlackLevel(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2021,28 +2021,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetGreenVideoBlackLevel(long aInstanceID)
-	{
-	    SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2(this);
-	    beginGetGreenVideoBlackLevel(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetGreenVideoBlackLevel(long aInstanceID)
+    {
+        SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2(this);
+        beginGetGreenVideoBlackLevel(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentGreenVideoBlackLevel();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetGreenVideoBlackLevel}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetGreenVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetGreenVideoBlackLevel}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetGreenVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetGreenVideoBlackLevel, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetGreenVideoBlackLevel.getInputParameter(inIndex++), aInstanceID));
@@ -2051,16 +2051,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetGreenVideoBlackLevel} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetGreenVideoBlackLevel} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetGreenVideoBlackLevel} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetGreenVideoBlackLevel(long aAsyncHandle)
+    public long endGetGreenVideoBlackLevel(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2070,33 +2070,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentGreenVideoBlackLevel = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentGreenVideoBlackLevel;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetGreenVideoBlackLevel(long aInstanceID, long aDesiredGreenVideoBlackLevel)
-	{
-	    SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2(this);
-	    beginSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetGreenVideoBlackLevel(long aInstanceID, long aDesiredGreenVideoBlackLevel)
+    {
+        SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2(this);
+        beginSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetGreenVideoBlackLevel}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredGreenVideoBlackLevel
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetGreenVideoBlackLevel(long aInstanceID, long aDesiredGreenVideoBlackLevel, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetGreenVideoBlackLevel}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredGreenVideoBlackLevel
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetGreenVideoBlackLevel(long aInstanceID, long aDesiredGreenVideoBlackLevel, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetGreenVideoBlackLevel, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetGreenVideoBlackLevel.getInputParameter(inIndex++), aInstanceID));
@@ -2104,22 +2104,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetGreenVideoBlackLevel} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetGreenVideoBlackLevel} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetGreenVideoBlackLevel} method.
      */
-	public void endSetGreenVideoBlackLevel(long aAsyncHandle)
+    public void endSetGreenVideoBlackLevel(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2127,28 +2127,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetBlueVideoBlackLevel(long aInstanceID)
-	{
-	    SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2(this);
-	    beginGetBlueVideoBlackLevel(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetBlueVideoBlackLevel(long aInstanceID)
+    {
+        SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2(this);
+        beginGetBlueVideoBlackLevel(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentBlueVideoBlackLevel();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetBlueVideoBlackLevel}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetBlueVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetBlueVideoBlackLevel}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetBlueVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetBlueVideoBlackLevel, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetBlueVideoBlackLevel.getInputParameter(inIndex++), aInstanceID));
@@ -2157,16 +2157,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetBlueVideoBlackLevel} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetBlueVideoBlackLevel} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetBlueVideoBlackLevel} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetBlueVideoBlackLevel(long aAsyncHandle)
+    public long endGetBlueVideoBlackLevel(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2176,33 +2176,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentBlueVideoBlackLevel = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentBlueVideoBlackLevel;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetBlueVideoBlackLevel(long aInstanceID, long aDesiredBlueVideoBlackLevel)
-	{
-	    SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2(this);
-	    beginSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetBlueVideoBlackLevel(long aInstanceID, long aDesiredBlueVideoBlackLevel)
+    {
+        SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2(this);
+        beginSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetBlueVideoBlackLevel}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredBlueVideoBlackLevel
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetBlueVideoBlackLevel(long aInstanceID, long aDesiredBlueVideoBlackLevel, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetBlueVideoBlackLevel}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredBlueVideoBlackLevel
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetBlueVideoBlackLevel(long aInstanceID, long aDesiredBlueVideoBlackLevel, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetBlueVideoBlackLevel, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetBlueVideoBlackLevel.getInputParameter(inIndex++), aInstanceID));
@@ -2210,22 +2210,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetBlueVideoBlackLevel} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetBlueVideoBlackLevel} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetBlueVideoBlackLevel} method.
      */
-	public void endSetBlueVideoBlackLevel(long aAsyncHandle)
+    public void endSetBlueVideoBlackLevel(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2233,28 +2233,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetColorTemperature(long aInstanceID)
-	{
-	    SyncGetColorTemperatureUpnpOrgRenderingControl2 sync = new SyncGetColorTemperatureUpnpOrgRenderingControl2(this);
-	    beginGetColorTemperature(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetColorTemperature(long aInstanceID)
+    {
+        SyncGetColorTemperatureUpnpOrgRenderingControl2 sync = new SyncGetColorTemperatureUpnpOrgRenderingControl2(this);
+        beginGetColorTemperature(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentColorTemperature();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetColorTemperature}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetColorTemperature(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetColorTemperature}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetColorTemperature(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetColorTemperature, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetColorTemperature.getInputParameter(inIndex++), aInstanceID));
@@ -2263,16 +2263,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetColorTemperature} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetColorTemperature} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetColorTemperature} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetColorTemperature(long aAsyncHandle)
+    public long endGetColorTemperature(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2282,33 +2282,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentColorTemperature = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentColorTemperature;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetColorTemperature(long aInstanceID, long aDesiredColorTemperature)
-	{
-	    SyncSetColorTemperatureUpnpOrgRenderingControl2 sync = new SyncSetColorTemperatureUpnpOrgRenderingControl2(this);
-	    beginSetColorTemperature(aInstanceID, aDesiredColorTemperature, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetColorTemperature(long aInstanceID, long aDesiredColorTemperature)
+    {
+        SyncSetColorTemperatureUpnpOrgRenderingControl2 sync = new SyncSetColorTemperatureUpnpOrgRenderingControl2(this);
+        beginSetColorTemperature(aInstanceID, aDesiredColorTemperature, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetColorTemperature}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredColorTemperature
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetColorTemperature(long aInstanceID, long aDesiredColorTemperature, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetColorTemperature}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredColorTemperature
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetColorTemperature(long aInstanceID, long aDesiredColorTemperature, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetColorTemperature, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetColorTemperature.getInputParameter(inIndex++), aInstanceID));
@@ -2316,22 +2316,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetColorTemperature} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetColorTemperature} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetColorTemperature} method.
      */
-	public void endSetColorTemperature(long aAsyncHandle)
+    public void endSetColorTemperature(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2339,28 +2339,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public int syncGetHorizontalKeystone(long aInstanceID)
-	{
-	    SyncGetHorizontalKeystoneUpnpOrgRenderingControl2 sync = new SyncGetHorizontalKeystoneUpnpOrgRenderingControl2(this);
-	    beginGetHorizontalKeystone(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public int syncGetHorizontalKeystone(long aInstanceID)
+    {
+        SyncGetHorizontalKeystoneUpnpOrgRenderingControl2 sync = new SyncGetHorizontalKeystoneUpnpOrgRenderingControl2(this);
+        beginGetHorizontalKeystone(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentHorizontalKeystone();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetHorizontalKeystone}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetHorizontalKeystone(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetHorizontalKeystone}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetHorizontalKeystone(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetHorizontalKeystone, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetHorizontalKeystone.getInputParameter(inIndex++), aInstanceID));
@@ -2369,16 +2369,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetHorizontalKeystone} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetHorizontalKeystone} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetHorizontalKeystone} method.
      * @return the result of the previously invoked action.
      */
-	public int endGetHorizontalKeystone(long aAsyncHandle)
+    public int endGetHorizontalKeystone(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2388,33 +2388,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         int currentHorizontalKeystone = Invocation.getOutputInt(aAsyncHandle, index++);
         return currentHorizontalKeystone;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetHorizontalKeystone(long aInstanceID, int aDesiredHorizontalKeystone)
-	{
-	    SyncSetHorizontalKeystoneUpnpOrgRenderingControl2 sync = new SyncSetHorizontalKeystoneUpnpOrgRenderingControl2(this);
-	    beginSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetHorizontalKeystone(long aInstanceID, int aDesiredHorizontalKeystone)
+    {
+        SyncSetHorizontalKeystoneUpnpOrgRenderingControl2 sync = new SyncSetHorizontalKeystoneUpnpOrgRenderingControl2(this);
+        beginSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetHorizontalKeystone}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredHorizontalKeystone
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetHorizontalKeystone(long aInstanceID, int aDesiredHorizontalKeystone, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetHorizontalKeystone}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredHorizontalKeystone
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetHorizontalKeystone(long aInstanceID, int aDesiredHorizontalKeystone, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetHorizontalKeystone, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetHorizontalKeystone.getInputParameter(inIndex++), aInstanceID));
@@ -2422,22 +2422,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetHorizontalKeystone} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetHorizontalKeystone} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetHorizontalKeystone} method.
      */
-	public void endSetHorizontalKeystone(long aAsyncHandle)
+    public void endSetHorizontalKeystone(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2445,28 +2445,28 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public int syncGetVerticalKeystone(long aInstanceID)
-	{
-	    SyncGetVerticalKeystoneUpnpOrgRenderingControl2 sync = new SyncGetVerticalKeystoneUpnpOrgRenderingControl2(this);
-	    beginGetVerticalKeystone(aInstanceID, sync.getListener());
-	    sync.waitToComplete();
+    public int syncGetVerticalKeystone(long aInstanceID)
+    {
+        SyncGetVerticalKeystoneUpnpOrgRenderingControl2 sync = new SyncGetVerticalKeystoneUpnpOrgRenderingControl2(this);
+        beginGetVerticalKeystone(aInstanceID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentVerticalKeystone();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetVerticalKeystone}.
-	 * 
-	 * @param aInstanceID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetVerticalKeystone(long aInstanceID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetVerticalKeystone}.
+     * 
+     * @param aInstanceID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetVerticalKeystone(long aInstanceID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetVerticalKeystone, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetVerticalKeystone.getInputParameter(inIndex++), aInstanceID));
@@ -2475,16 +2475,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetVerticalKeystone} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetVerticalKeystone} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetVerticalKeystone} method.
      * @return the result of the previously invoked action.
      */
-	public int endGetVerticalKeystone(long aAsyncHandle)
+    public int endGetVerticalKeystone(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2494,33 +2494,33 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         int currentVerticalKeystone = Invocation.getOutputInt(aAsyncHandle, index++);
         return currentVerticalKeystone;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetVerticalKeystone(long aInstanceID, int aDesiredVerticalKeystone)
-	{
-	    SyncSetVerticalKeystoneUpnpOrgRenderingControl2 sync = new SyncSetVerticalKeystoneUpnpOrgRenderingControl2(this);
-	    beginSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetVerticalKeystone(long aInstanceID, int aDesiredVerticalKeystone)
+    {
+        SyncSetVerticalKeystoneUpnpOrgRenderingControl2 sync = new SyncSetVerticalKeystoneUpnpOrgRenderingControl2(this);
+        beginSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetVerticalKeystone}.
-	 * 
-	 * @param aInstanceID
-	 * @param aDesiredVerticalKeystone
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetVerticalKeystone(long aInstanceID, int aDesiredVerticalKeystone, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetVerticalKeystone}.
+     * 
+     * @param aInstanceID
+     * @param aDesiredVerticalKeystone
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetVerticalKeystone(long aInstanceID, int aDesiredVerticalKeystone, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetVerticalKeystone, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetVerticalKeystone.getInputParameter(inIndex++), aInstanceID));
@@ -2528,22 +2528,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetVerticalKeystone} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetVerticalKeystone} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetVerticalKeystone} method.
      */
-	public void endSetVerticalKeystone(long aAsyncHandle)
+    public void endSetVerticalKeystone(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2551,29 +2551,29 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public boolean syncGetMute(long aInstanceID, String aChannel)
-	{
-	    SyncGetMuteUpnpOrgRenderingControl2 sync = new SyncGetMuteUpnpOrgRenderingControl2(this);
-	    beginGetMute(aInstanceID, aChannel, sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncGetMute(long aInstanceID, String aChannel)
+    {
+        SyncGetMuteUpnpOrgRenderingControl2 sync = new SyncGetMuteUpnpOrgRenderingControl2(this);
+        beginGetMute(aInstanceID, aChannel, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentMute();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetMute}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetMute(long aInstanceID, String aChannel, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetMute}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetMute(long aInstanceID, String aChannel, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetMute, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetMute.getInputParameter(inIndex++), aInstanceID));
@@ -2583,16 +2583,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetMute} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetMute} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetMute} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endGetMute(long aAsyncHandle)
+    public boolean endGetMute(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2602,34 +2602,34 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         boolean currentMute = Invocation.getOutputBool(aAsyncHandle, index++);
         return currentMute;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetMute(long aInstanceID, String aChannel, boolean aDesiredMute)
-	{
-	    SyncSetMuteUpnpOrgRenderingControl2 sync = new SyncSetMuteUpnpOrgRenderingControl2(this);
-	    beginSetMute(aInstanceID, aChannel, aDesiredMute, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetMute(long aInstanceID, String aChannel, boolean aDesiredMute)
+    {
+        SyncSetMuteUpnpOrgRenderingControl2 sync = new SyncSetMuteUpnpOrgRenderingControl2(this);
+        beginSetMute(aInstanceID, aChannel, aDesiredMute, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetMute}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aDesiredMute
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetMute(long aInstanceID, String aChannel, boolean aDesiredMute, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetMute}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aDesiredMute
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetMute(long aInstanceID, String aChannel, boolean aDesiredMute, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetMute, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetMute.getInputParameter(inIndex++), aInstanceID));
@@ -2638,22 +2638,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetMute} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetMute} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetMute} method.
      */
-	public void endSetMute(long aAsyncHandle)
+    public void endSetMute(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2661,29 +2661,29 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public long syncGetVolume(long aInstanceID, String aChannel)
-	{
-	    SyncGetVolumeUpnpOrgRenderingControl2 sync = new SyncGetVolumeUpnpOrgRenderingControl2(this);
-	    beginGetVolume(aInstanceID, aChannel, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetVolume(long aInstanceID, String aChannel)
+    {
+        SyncGetVolumeUpnpOrgRenderingControl2 sync = new SyncGetVolumeUpnpOrgRenderingControl2(this);
+        beginGetVolume(aInstanceID, aChannel, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentVolume();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetVolume}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetVolume(long aInstanceID, String aChannel, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetVolume}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetVolume(long aInstanceID, String aChannel, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetVolume, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetVolume.getInputParameter(inIndex++), aInstanceID));
@@ -2693,16 +2693,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetVolume} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetVolume} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetVolume} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetVolume(long aAsyncHandle)
+    public long endGetVolume(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2712,34 +2712,34 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         long currentVolume = Invocation.getOutputUint(aAsyncHandle, index++);
         return currentVolume;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetVolume(long aInstanceID, String aChannel, long aDesiredVolume)
-	{
-	    SyncSetVolumeUpnpOrgRenderingControl2 sync = new SyncSetVolumeUpnpOrgRenderingControl2(this);
-	    beginSetVolume(aInstanceID, aChannel, aDesiredVolume, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetVolume(long aInstanceID, String aChannel, long aDesiredVolume)
+    {
+        SyncSetVolumeUpnpOrgRenderingControl2 sync = new SyncSetVolumeUpnpOrgRenderingControl2(this);
+        beginSetVolume(aInstanceID, aChannel, aDesiredVolume, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetVolume}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aDesiredVolume
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetVolume(long aInstanceID, String aChannel, long aDesiredVolume, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetVolume}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aDesiredVolume
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetVolume(long aInstanceID, String aChannel, long aDesiredVolume, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetVolume, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetVolume.getInputParameter(inIndex++), aInstanceID));
@@ -2748,22 +2748,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetVolume} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetVolume} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetVolume} method.
      */
-	public void endSetVolume(long aAsyncHandle)
+    public void endSetVolume(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2771,29 +2771,29 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public int syncGetVolumeDB(long aInstanceID, String aChannel)
-	{
-	    SyncGetVolumeDBUpnpOrgRenderingControl2 sync = new SyncGetVolumeDBUpnpOrgRenderingControl2(this);
-	    beginGetVolumeDB(aInstanceID, aChannel, sync.getListener());
-	    sync.waitToComplete();
+    public int syncGetVolumeDB(long aInstanceID, String aChannel)
+    {
+        SyncGetVolumeDBUpnpOrgRenderingControl2 sync = new SyncGetVolumeDBUpnpOrgRenderingControl2(this);
+        beginGetVolumeDB(aInstanceID, aChannel, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentVolume();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetVolumeDB}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetVolumeDB(long aInstanceID, String aChannel, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetVolumeDB}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetVolumeDB(long aInstanceID, String aChannel, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetVolumeDB, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetVolumeDB.getInputParameter(inIndex++), aInstanceID));
@@ -2803,16 +2803,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetVolumeDB} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetVolumeDB} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetVolumeDB} method.
      * @return the result of the previously invoked action.
      */
-	public int endGetVolumeDB(long aAsyncHandle)
+    public int endGetVolumeDB(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2822,34 +2822,34 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         int currentVolume = Invocation.getOutputInt(aAsyncHandle, index++);
         return currentVolume;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetVolumeDB(long aInstanceID, String aChannel, int aDesiredVolume)
-	{
-	    SyncSetVolumeDBUpnpOrgRenderingControl2 sync = new SyncSetVolumeDBUpnpOrgRenderingControl2(this);
-	    beginSetVolumeDB(aInstanceID, aChannel, aDesiredVolume, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetVolumeDB(long aInstanceID, String aChannel, int aDesiredVolume)
+    {
+        SyncSetVolumeDBUpnpOrgRenderingControl2 sync = new SyncSetVolumeDBUpnpOrgRenderingControl2(this);
+        beginSetVolumeDB(aInstanceID, aChannel, aDesiredVolume, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetVolumeDB}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aDesiredVolume
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetVolumeDB(long aInstanceID, String aChannel, int aDesiredVolume, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetVolumeDB}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aDesiredVolume
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetVolumeDB(long aInstanceID, String aChannel, int aDesiredVolume, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetVolumeDB, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetVolumeDB.getInputParameter(inIndex++), aInstanceID));
@@ -2858,22 +2858,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetVolumeDB} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetVolumeDB} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetVolumeDB} method.
      */
-	public void endSetVolumeDB(long aAsyncHandle)
+    public void endSetVolumeDB(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2881,32 +2881,32 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public GetVolumeDBRange syncGetVolumeDBRange(long aInstanceID, String aChannel)
-	{
-	    SyncGetVolumeDBRangeUpnpOrgRenderingControl2 sync = new SyncGetVolumeDBRangeUpnpOrgRenderingControl2(this);
-	    beginGetVolumeDBRange(aInstanceID, aChannel, sync.getListener());
-	    sync.waitToComplete();
+    public GetVolumeDBRange syncGetVolumeDBRange(long aInstanceID, String aChannel)
+    {
+        SyncGetVolumeDBRangeUpnpOrgRenderingControl2 sync = new SyncGetVolumeDBRangeUpnpOrgRenderingControl2(this);
+        beginGetVolumeDBRange(aInstanceID, aChannel, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetVolumeDBRange(
             sync.getMinValue(),
             sync.getMaxValue()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetVolumeDBRange}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetVolumeDBRange(long aInstanceID, String aChannel, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetVolumeDBRange}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetVolumeDBRange(long aInstanceID, String aChannel, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetVolumeDBRange, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetVolumeDBRange.getInputParameter(inIndex++), aInstanceID));
@@ -2917,16 +2917,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetVolumeDBRange} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetVolumeDBRange} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetVolumeDBRange} method.
      * @return the result of the previously invoked action.
      */
-	public GetVolumeDBRange endGetVolumeDBRange(long aAsyncHandle)
+    public GetVolumeDBRange endGetVolumeDBRange(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2938,9 +2938,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         return new GetVolumeDBRange(
             minValue,
             maxValue
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -2948,29 +2948,29 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public boolean syncGetLoudness(long aInstanceID, String aChannel)
-	{
-	    SyncGetLoudnessUpnpOrgRenderingControl2 sync = new SyncGetLoudnessUpnpOrgRenderingControl2(this);
-	    beginGetLoudness(aInstanceID, aChannel, sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncGetLoudness(long aInstanceID, String aChannel)
+    {
+        SyncGetLoudnessUpnpOrgRenderingControl2 sync = new SyncGetLoudnessUpnpOrgRenderingControl2(this);
+        beginGetLoudness(aInstanceID, aChannel, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCurrentLoudness();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetLoudness}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetLoudness(long aInstanceID, String aChannel, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetLoudness}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetLoudness(long aInstanceID, String aChannel, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetLoudness, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetLoudness.getInputParameter(inIndex++), aInstanceID));
@@ -2980,16 +2980,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetLoudness} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetLoudness} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetLoudness} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endGetLoudness(long aAsyncHandle)
+    public boolean endGetLoudness(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -2999,34 +2999,34 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         boolean currentLoudness = Invocation.getOutputBool(aAsyncHandle, index++);
         return currentLoudness;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetLoudness(long aInstanceID, String aChannel, boolean aDesiredLoudness)
-	{
-	    SyncSetLoudnessUpnpOrgRenderingControl2 sync = new SyncSetLoudnessUpnpOrgRenderingControl2(this);
-	    beginSetLoudness(aInstanceID, aChannel, aDesiredLoudness, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetLoudness(long aInstanceID, String aChannel, boolean aDesiredLoudness)
+    {
+        SyncSetLoudnessUpnpOrgRenderingControl2 sync = new SyncSetLoudnessUpnpOrgRenderingControl2(this);
+        beginSetLoudness(aInstanceID, aChannel, aDesiredLoudness, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetLoudness}.
-	 * 
-	 * @param aInstanceID
-	 * @param aChannel
-	 * @param aDesiredLoudness
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetLoudness(long aInstanceID, String aChannel, boolean aDesiredLoudness, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetLoudness}.
+     * 
+     * @param aInstanceID
+     * @param aChannel
+     * @param aDesiredLoudness
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetLoudness(long aInstanceID, String aChannel, boolean aDesiredLoudness, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetLoudness, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetLoudness.getInputParameter(inIndex++), aInstanceID));
@@ -3035,22 +3035,22 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetLoudness} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetLoudness} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetLoudness} method.
      */
-	public void endSetLoudness(long aAsyncHandle)
+    public void endSetLoudness(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -3058,29 +3058,29 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncGetStateVariables(long aInstanceID, String aStateVariableList)
-	{
-	    SyncGetStateVariablesUpnpOrgRenderingControl2 sync = new SyncGetStateVariablesUpnpOrgRenderingControl2(this);
-	    beginGetStateVariables(aInstanceID, aStateVariableList, sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetStateVariables(long aInstanceID, String aStateVariableList)
+    {
+        SyncGetStateVariablesUpnpOrgRenderingControl2 sync = new SyncGetStateVariablesUpnpOrgRenderingControl2(this);
+        beginGetStateVariables(aInstanceID, aStateVariableList, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getStateVariableValuePairs();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetStateVariables}.
-	 * 
-	 * @param aInstanceID
-	 * @param aStateVariableList
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetStateVariables(long aInstanceID, String aStateVariableList, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetStateVariables}.
+     * 
+     * @param aInstanceID
+     * @param aStateVariableList
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetStateVariables(long aInstanceID, String aStateVariableList, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetStateVariables, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetStateVariables.getInputParameter(inIndex++), aInstanceID));
@@ -3090,16 +3090,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetStateVariables} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetStateVariables} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetStateVariables} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetStateVariables(long aAsyncHandle)
+    public String endGetStateVariables(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -3109,7 +3109,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         String stateVariableValuePairs = Invocation.getOutputString(aAsyncHandle, index++);
         return stateVariableValuePairs;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -3117,32 +3117,32 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      *
      * @return the result of the invoked action.
      */
-	public String syncSetStateVariables(long aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs)
-	{
-	    SyncSetStateVariablesUpnpOrgRenderingControl2 sync = new SyncSetStateVariablesUpnpOrgRenderingControl2(this);
-	    beginSetStateVariables(aInstanceID, aRenderingControlUDN, aServiceType, aServiceId, aStateVariableValuePairs, sync.getListener());
-	    sync.waitToComplete();
+    public String syncSetStateVariables(long aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs)
+    {
+        SyncSetStateVariablesUpnpOrgRenderingControl2 sync = new SyncSetStateVariablesUpnpOrgRenderingControl2(this);
+        beginSetStateVariables(aInstanceID, aRenderingControlUDN, aServiceType, aServiceId, aStateVariableValuePairs, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getStateVariableList();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetStateVariables}.
-	 * 
-	 * @param aInstanceID
-	 * @param aRenderingControlUDN
-	 * @param aServiceType
-	 * @param aServiceId
-	 * @param aStateVariableValuePairs
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetStateVariables(long aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetStateVariables}.
+     * 
+     * @param aInstanceID
+     * @param aRenderingControlUDN
+     * @param aServiceType
+     * @param aServiceId
+     * @param aStateVariableValuePairs
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetStateVariables(long aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetStateVariables, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetStateVariables.getInputParameter(inIndex++), aInstanceID));
@@ -3155,16 +3155,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetStateVariables} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetStateVariables} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetStateVariables} method.
      * @return the result of the previously invoked action.
      */
-	public String endSetStateVariables(long aAsyncHandle)
+    public String endSetStateVariables(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -3174,14 +3174,14 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         String stateVariableList = Invocation.getOutputString(aAsyncHandle, index++);
         return stateVariableList;
     }
-		
+        
     /**
      * Set a delegate to be run when the LastChange state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgRenderingControl2 instance will not overlap.
+     * CpProxyUpnpOrgRenderingControl2 instance will not overlap.
      *
-     * @param aLastChangeChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aLastChangeChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyLastChangeChanged(IPropertyChangeListener aLastChangeChanged)
     {
@@ -3205,7 +3205,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the LastChange property.
+     * @return  value of the LastChange property.
      */
     public String getPropertyLastChange()
     {
@@ -3214,7 +3214,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

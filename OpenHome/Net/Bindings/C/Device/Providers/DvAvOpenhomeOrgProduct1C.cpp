@@ -1003,7 +1003,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSourceXmlChangeCount(IDviInvocation& aI
 
 THandle STDCALL DvProviderAvOpenhomeOrgProduct1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgProduct1C(aDevice);
+    return new DvProviderAvOpenhomeOrgProduct1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgProduct1Destroy(THandle aProvider)

@@ -450,12 +450,12 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoListPresets(IDviInvocation& aInvoc
     std::string respCurrentPresetNameList;
     DvInvocationStd invocation(aInvocation);
     ListPresets(invocation, InstanceID, respCurrentPresetNameList);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterCurrentPresetNameList(aInvocation, "CurrentPresetNameList");
     Brn buf_CurrentPresetNameList((const TByte*)respCurrentPresetNameList.c_str(), (TUint)respCurrentPresetNameList.length());
     respWriterCurrentPresetNameList.Write(buf_CurrentPresetNameList);
     aInvocation.InvocationWriteStringEnd("CurrentPresetNameList");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSelectPreset(IDviInvocation& aInvocation)
@@ -468,8 +468,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSelectPreset(IDviInvocation& aInvo
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SelectPreset(invocation, InstanceID, PresetName);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBrightness(IDviInvocation& aInvocation)
@@ -480,10 +480,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBrightness(IDviInvocation& aInv
     uint32_t respCurrentBrightness;
     DvInvocationStd invocation(aInvocation);
     GetBrightness(invocation, InstanceID, respCurrentBrightness);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentBrightness(aInvocation, "CurrentBrightness");
     respWriterCurrentBrightness.Write(respCurrentBrightness);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBrightness(IDviInvocation& aInvocation)
@@ -494,8 +494,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBrightness(IDviInvocation& aInv
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetBrightness(invocation, InstanceID, DesiredBrightness);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetContrast(IDviInvocation& aInvocation)
@@ -506,10 +506,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetContrast(IDviInvocation& aInvoc
     uint32_t respCurrentContrast;
     DvInvocationStd invocation(aInvocation);
     GetContrast(invocation, InstanceID, respCurrentContrast);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentContrast(aInvocation, "CurrentContrast");
     respWriterCurrentContrast.Write(respCurrentContrast);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetContrast(IDviInvocation& aInvocation)
@@ -520,8 +520,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetContrast(IDviInvocation& aInvoc
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetContrast(invocation, InstanceID, DesiredContrast);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetSharpness(IDviInvocation& aInvocation)
@@ -532,10 +532,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetSharpness(IDviInvocation& aInvo
     uint32_t respCurrentSharpness;
     DvInvocationStd invocation(aInvocation);
     GetSharpness(invocation, InstanceID, respCurrentSharpness);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentSharpness(aInvocation, "CurrentSharpness");
     respWriterCurrentSharpness.Write(respCurrentSharpness);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetSharpness(IDviInvocation& aInvocation)
@@ -546,8 +546,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetSharpness(IDviInvocation& aInvo
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetSharpness(invocation, InstanceID, DesiredSharpness);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain(IDviInvocation& aInvocation)
@@ -558,10 +558,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain(IDviInvocation& aI
     uint32_t respCurrentRedVideoGain;
     DvInvocationStd invocation(aInvocation);
     GetRedVideoGain(invocation, InstanceID, respCurrentRedVideoGain);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentRedVideoGain(aInvocation, "CurrentRedVideoGain");
     respWriterCurrentRedVideoGain.Write(respCurrentRedVideoGain);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain(IDviInvocation& aInvocation)
@@ -572,8 +572,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain(IDviInvocation& aI
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetRedVideoGain(invocation, InstanceID, DesiredRedVideoGain);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain(IDviInvocation& aInvocation)
@@ -584,10 +584,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain(IDviInvocation& 
     uint32_t respCurrentGreenVideoGain;
     DvInvocationStd invocation(aInvocation);
     GetGreenVideoGain(invocation, InstanceID, respCurrentGreenVideoGain);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentGreenVideoGain(aInvocation, "CurrentGreenVideoGain");
     respWriterCurrentGreenVideoGain.Write(respCurrentGreenVideoGain);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain(IDviInvocation& aInvocation)
@@ -598,8 +598,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain(IDviInvocation& 
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetGreenVideoGain(invocation, InstanceID, DesiredGreenVideoGain);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain(IDviInvocation& aInvocation)
@@ -610,10 +610,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain(IDviInvocation& a
     uint32_t respCurrentBlueVideoGain;
     DvInvocationStd invocation(aInvocation);
     GetBlueVideoGain(invocation, InstanceID, respCurrentBlueVideoGain);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentBlueVideoGain(aInvocation, "CurrentBlueVideoGain");
     respWriterCurrentBlueVideoGain.Write(respCurrentBlueVideoGain);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain(IDviInvocation& aInvocation)
@@ -624,8 +624,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain(IDviInvocation& a
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetBlueVideoGain(invocation, InstanceID, DesiredBlueVideoGain);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation)
@@ -636,10 +636,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel(IDviInvocati
     uint32_t respCurrentRedVideoBlackLevel;
     DvInvocationStd invocation(aInvocation);
     GetRedVideoBlackLevel(invocation, InstanceID, respCurrentRedVideoBlackLevel);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentRedVideoBlackLevel(aInvocation, "CurrentRedVideoBlackLevel");
     respWriterCurrentRedVideoBlackLevel.Write(respCurrentRedVideoBlackLevel);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation)
@@ -650,8 +650,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel(IDviInvocati
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetRedVideoBlackLevel(invocation, InstanceID, DesiredRedVideoBlackLevel);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation)
@@ -662,10 +662,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel(IDviInvoca
     uint32_t respCurrentGreenVideoBlackLevel;
     DvInvocationStd invocation(aInvocation);
     GetGreenVideoBlackLevel(invocation, InstanceID, respCurrentGreenVideoBlackLevel);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentGreenVideoBlackLevel(aInvocation, "CurrentGreenVideoBlackLevel");
     respWriterCurrentGreenVideoBlackLevel.Write(respCurrentGreenVideoBlackLevel);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation)
@@ -676,8 +676,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel(IDviInvoca
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetGreenVideoBlackLevel(invocation, InstanceID, DesiredGreenVideoBlackLevel);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation)
@@ -688,10 +688,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel(IDviInvocat
     uint32_t respCurrentBlueVideoBlackLevel;
     DvInvocationStd invocation(aInvocation);
     GetBlueVideoBlackLevel(invocation, InstanceID, respCurrentBlueVideoBlackLevel);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentBlueVideoBlackLevel(aInvocation, "CurrentBlueVideoBlackLevel");
     respWriterCurrentBlueVideoBlackLevel.Write(respCurrentBlueVideoBlackLevel);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation)
@@ -702,8 +702,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel(IDviInvocat
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetBlueVideoBlackLevel(invocation, InstanceID, DesiredBlueVideoBlackLevel);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetColorTemperature(IDviInvocation& aInvocation)
@@ -714,10 +714,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetColorTemperature(IDviInvocation
     uint32_t respCurrentColorTemperature;
     DvInvocationStd invocation(aInvocation);
     GetColorTemperature(invocation, InstanceID, respCurrentColorTemperature);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentColorTemperature(aInvocation, "CurrentColorTemperature");
     respWriterCurrentColorTemperature.Write(respCurrentColorTemperature);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetColorTemperature(IDviInvocation& aInvocation)
@@ -728,8 +728,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetColorTemperature(IDviInvocation
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetColorTemperature(invocation, InstanceID, DesiredColorTemperature);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone(IDviInvocation& aInvocation)
@@ -740,10 +740,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone(IDviInvocati
     int32_t respCurrentHorizontalKeystone;
     DvInvocationStd invocation(aInvocation);
     GetHorizontalKeystone(invocation, InstanceID, respCurrentHorizontalKeystone);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterCurrentHorizontalKeystone(aInvocation, "CurrentHorizontalKeystone");
     respWriterCurrentHorizontalKeystone.Write(respCurrentHorizontalKeystone);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone(IDviInvocation& aInvocation)
@@ -754,8 +754,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone(IDviInvocati
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetHorizontalKeystone(invocation, InstanceID, DesiredHorizontalKeystone);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone(IDviInvocation& aInvocation)
@@ -766,10 +766,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone(IDviInvocation
     int32_t respCurrentVerticalKeystone;
     DvInvocationStd invocation(aInvocation);
     GetVerticalKeystone(invocation, InstanceID, respCurrentVerticalKeystone);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterCurrentVerticalKeystone(aInvocation, "CurrentVerticalKeystone");
     respWriterCurrentVerticalKeystone.Write(respCurrentVerticalKeystone);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone(IDviInvocation& aInvocation)
@@ -780,8 +780,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone(IDviInvocation
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetVerticalKeystone(invocation, InstanceID, DesiredVerticalKeystone);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetMute(IDviInvocation& aInvocation)
@@ -795,10 +795,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetMute(IDviInvocation& aInvocatio
     bool respCurrentMute;
     DvInvocationStd invocation(aInvocation);
     GetMute(invocation, InstanceID, Channel, respCurrentMute);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterCurrentMute(aInvocation, "CurrentMute");
     respWriterCurrentMute.Write(respCurrentMute);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetMute(IDviInvocation& aInvocation)
@@ -812,8 +812,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetMute(IDviInvocation& aInvocatio
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetMute(invocation, InstanceID, Channel, DesiredMute);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolume(IDviInvocation& aInvocation)
@@ -827,10 +827,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolume(IDviInvocation& aInvocat
     uint32_t respCurrentVolume;
     DvInvocationStd invocation(aInvocation);
     GetVolume(invocation, InstanceID, Channel, respCurrentVolume);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterCurrentVolume(aInvocation, "CurrentVolume");
     respWriterCurrentVolume.Write(respCurrentVolume);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolume(IDviInvocation& aInvocation)
@@ -844,8 +844,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolume(IDviInvocation& aInvocat
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetVolume(invocation, InstanceID, Channel, DesiredVolume);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDB(IDviInvocation& aInvocation)
@@ -859,10 +859,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDB(IDviInvocation& aInvoc
     int32_t respCurrentVolume;
     DvInvocationStd invocation(aInvocation);
     GetVolumeDB(invocation, InstanceID, Channel, respCurrentVolume);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterCurrentVolume(aInvocation, "CurrentVolume");
     respWriterCurrentVolume.Write(respCurrentVolume);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolumeDB(IDviInvocation& aInvocation)
@@ -876,8 +876,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolumeDB(IDviInvocation& aInvoc
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetVolumeDB(invocation, InstanceID, Channel, DesiredVolume);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange(IDviInvocation& aInvocation)
@@ -892,12 +892,12 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange(IDviInvocation& a
     int32_t respMaxValue;
     DvInvocationStd invocation(aInvocation);
     GetVolumeDBRange(invocation, InstanceID, Channel, respMinValue, respMaxValue);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterMinValue(aInvocation, "MinValue");
     respWriterMinValue.Write(respMinValue);
     DviInvocationResponseInt respWriterMaxValue(aInvocation, "MaxValue");
     respWriterMaxValue.Write(respMaxValue);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetLoudness(IDviInvocation& aInvocation)
@@ -911,10 +911,10 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetLoudness(IDviInvocation& aInvoc
     bool respCurrentLoudness;
     DvInvocationStd invocation(aInvocation);
     GetLoudness(invocation, InstanceID, Channel, respCurrentLoudness);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterCurrentLoudness(aInvocation, "CurrentLoudness");
     respWriterCurrentLoudness.Write(respCurrentLoudness);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetLoudness(IDviInvocation& aInvocation)
@@ -928,8 +928,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetLoudness(IDviInvocation& aInvoc
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetLoudness(invocation, InstanceID, Channel, DesiredLoudness);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDviInvocation& aInvocation)
@@ -943,12 +943,12 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDviInvocation& 
     std::string respStateVariableValuePairs;
     DvInvocationStd invocation(aInvocation);
     GetStateVariables(invocation, InstanceID, StateVariableList, respStateVariableValuePairs);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
     Brn buf_StateVariableValuePairs((const TByte*)respStateVariableValuePairs.c_str(), (TUint)respStateVariableValuePairs.length());
     respWriterStateVariableValuePairs.Write(buf_StateVariableValuePairs);
     aInvocation.InvocationWriteStringEnd("StateVariableValuePairs");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::DoSetStateVariables(IDviInvocation& aInvocation)
@@ -971,12 +971,12 @@ void DvProviderUpnpOrgRenderingControl2Cpp::DoSetStateVariables(IDviInvocation& 
     std::string respStateVariableList;
     DvInvocationStd invocation(aInvocation);
     SetStateVariables(invocation, InstanceID, RenderingControlUDN, ServiceType, ServiceId, StateVariableValuePairs, respStateVariableList);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterStateVariableList(aInvocation, "StateVariableList");
     Brn buf_StateVariableList((const TByte*)respStateVariableList.c_str(), (TUint)respStateVariableList.length());
     respWriterStateVariableList.Write(buf_StateVariableList);
     aInvocation.InvocationWriteStringEnd("StateVariableList");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgRenderingControl2Cpp::ListPresets(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentPresetNameList*/)

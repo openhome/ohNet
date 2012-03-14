@@ -586,7 +586,7 @@ void DvProviderAvOpenhomeOrgMediaServer1C::DoQuery(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderAvOpenhomeOrgMediaServer1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgMediaServer1C(aDevice);
+    return new DvProviderAvOpenhomeOrgMediaServer1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgMediaServer1Destroy(THandle aProvider)

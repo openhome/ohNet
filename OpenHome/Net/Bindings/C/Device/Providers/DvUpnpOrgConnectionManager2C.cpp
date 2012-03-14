@@ -365,7 +365,7 @@ void DvProviderUpnpOrgConnectionManager2C::DoGetCurrentConnectionInfo(IDviInvoca
 
 THandle STDCALL DvProviderUpnpOrgConnectionManager2Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgConnectionManager2C(aDevice);
+    return new DvProviderUpnpOrgConnectionManager2C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgConnectionManager2Destroy(THandle aProvider)

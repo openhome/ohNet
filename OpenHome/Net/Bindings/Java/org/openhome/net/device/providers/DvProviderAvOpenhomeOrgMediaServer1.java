@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ManufacturerName property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerName(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ManufacturerInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerInfo(String aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ManufacturerUrl property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerUrl(String aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ManufacturerImageUri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerImageUri(String aValue);
@@ -76,8 +76,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ModelName property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelName(String aValue);
@@ -92,8 +92,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ModelInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelInfo(String aValue);
@@ -108,8 +108,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ModelUrl property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelUrl(String aValue);
@@ -124,8 +124,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ModelImageUri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelImageUri(String aValue);
@@ -140,8 +140,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ProductName property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductName(String aValue);
@@ -156,8 +156,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ProductInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductInfo(String aValue);
@@ -172,8 +172,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ProductUrl property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductUrl(String aValue);
@@ -188,8 +188,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the ProductImageUri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductImageUri(String aValue);
@@ -204,8 +204,8 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
     /**
      * Set the value of the Attributes property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyAttributes(String aValue);
@@ -358,11 +358,11 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgMediaServer1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "MediaServer", 1);
+        super(aDevice, "av.openhome.org", "MediaServer", 1);
     }
 
     /**
@@ -498,7 +498,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ManufacturerName property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -510,7 +510,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ManufacturerName property
      *
-     * @return	value of the ManufacturerName property.
+     * @return  value of the ManufacturerName property.
      */
     public String getPropertyManufacturerName()
     {
@@ -520,7 +520,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ManufacturerInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -532,7 +532,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ManufacturerInfo property
      *
-     * @return	value of the ManufacturerInfo property.
+     * @return  value of the ManufacturerInfo property.
      */
     public String getPropertyManufacturerInfo()
     {
@@ -542,7 +542,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ManufacturerUrl property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -554,7 +554,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ManufacturerUrl property
      *
-     * @return	value of the ManufacturerUrl property.
+     * @return  value of the ManufacturerUrl property.
      */
     public String getPropertyManufacturerUrl()
     {
@@ -564,7 +564,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ManufacturerImageUri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -576,7 +576,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ManufacturerImageUri property
      *
-     * @return	value of the ManufacturerImageUri property.
+     * @return  value of the ManufacturerImageUri property.
      */
     public String getPropertyManufacturerImageUri()
     {
@@ -586,7 +586,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ModelName property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -598,7 +598,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ModelName property
      *
-     * @return	value of the ModelName property.
+     * @return  value of the ModelName property.
      */
     public String getPropertyModelName()
     {
@@ -608,7 +608,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ModelInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -620,7 +620,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ModelInfo property
      *
-     * @return	value of the ModelInfo property.
+     * @return  value of the ModelInfo property.
      */
     public String getPropertyModelInfo()
     {
@@ -630,7 +630,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ModelUrl property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -642,7 +642,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ModelUrl property
      *
-     * @return	value of the ModelUrl property.
+     * @return  value of the ModelUrl property.
      */
     public String getPropertyModelUrl()
     {
@@ -652,7 +652,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ModelImageUri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -664,7 +664,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ModelImageUri property
      *
-     * @return	value of the ModelImageUri property.
+     * @return  value of the ModelImageUri property.
      */
     public String getPropertyModelImageUri()
     {
@@ -674,7 +674,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ProductName property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -686,7 +686,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ProductName property
      *
-     * @return	value of the ProductName property.
+     * @return  value of the ProductName property.
      */
     public String getPropertyProductName()
     {
@@ -696,7 +696,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ProductInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -708,7 +708,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ProductInfo property
      *
-     * @return	value of the ProductInfo property.
+     * @return  value of the ProductInfo property.
      */
     public String getPropertyProductInfo()
     {
@@ -718,7 +718,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ProductUrl property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -730,7 +730,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ProductUrl property
      *
-     * @return	value of the ProductUrl property.
+     * @return  value of the ProductUrl property.
      */
     public String getPropertyProductUrl()
     {
@@ -740,7 +740,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the ProductImageUri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -752,7 +752,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the ProductImageUri property
      *
-     * @return	value of the ProductImageUri property.
+     * @return  value of the ProductImageUri property.
      */
     public String getPropertyProductImageUri()
     {
@@ -762,7 +762,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Set the value of the Attributes property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -774,7 +774,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     /**
      * Get a copy of the value of the Attributes property
      *
-     * @return	value of the Attributes property.
+     * @return  value of the Attributes property.
      */
     public String getPropertyAttributes()
     {
@@ -786,7 +786,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Manufacturer must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionManufacturer()
     {
         Action action = new Action("Manufacturer");
@@ -803,7 +803,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Model must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionModel()
     {
         Action action = new Action("Model");
@@ -820,7 +820,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Product must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionProduct()
     {
         Action action = new Action("Product");
@@ -837,7 +837,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Attributes must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionAttributes()
     {
         Action action = new Action("Attributes");
@@ -851,7 +851,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Query must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionQuery()
     {
         Action action = new Action("Query");        List<String> allowedValues = new LinkedList<String>();
@@ -869,7 +869,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionManufacturer} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Manufacturer manufacturer(IDvInvocation aInvocation)
     {
@@ -884,7 +884,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionModel} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Model model(IDvInvocation aInvocation)
     {
@@ -899,7 +899,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionProduct} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Product product(IDvInvocation aInvocation)
     {
@@ -914,7 +914,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionAttributes} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String attributes(IDvInvocation aInvocation)
     {
@@ -929,7 +929,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionQuery} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRequest
      */
     protected String query(IDvInvocation aInvocation, String aRequest)
@@ -1011,7 +1011,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoModel implements IDvInvocationListener
     {
@@ -1070,7 +1070,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoProduct implements IDvInvocationListener
     {
@@ -1129,7 +1129,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoAttributes implements IDvInvocationListener
     {
@@ -1177,7 +1177,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoQuery implements IDvInvocationListener
     {
@@ -1227,6 +1227,6 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

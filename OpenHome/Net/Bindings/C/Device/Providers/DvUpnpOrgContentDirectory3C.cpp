@@ -1000,7 +1000,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetFreeFormQueryCapabilities(IDviInv
 
 THandle STDCALL DvProviderUpnpOrgContentDirectory3Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgContentDirectory3C(aDevice);
+    return new DvProviderUpnpOrgContentDirectory3C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgContentDirectory3Destroy(THandle aProvider)

@@ -1505,7 +1505,7 @@ void DvProviderUpnpOrgRenderingControl2C::DoSetStateVariables(IDviInvocation& aI
 
 THandle STDCALL DvProviderUpnpOrgRenderingControl2Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgRenderingControl2C(aDevice);
+    return new DvProviderUpnpOrgRenderingControl2C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgRenderingControl2Destroy(THandle aProvider)

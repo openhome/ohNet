@@ -13,27 +13,27 @@
 
 <#
 // Initialise parameters
-	string xmlArg = TemplateArgument("xml");
-	string domainArg = TemplateArgument("domain");
-	string typeArg = TemplateArgument("type");
-	string versionArg = TemplateArgument("version");
-	
-	string xml = xmlArg;
-	string domain = domainArg;
-	string formattedDomain = domain;
-	string type = typeArg;
-	string className = "";
-	
-	if( domain.Equals("upnp.org") ) 
-	{
-	 	formattedDomain = "schemas-upnp-org"; 
-	} 
-	else 
-	{ 
-		formattedDomain = domain.Replace(".","-");
-	} 
-	
- 	if (String.IsNullOrEmpty(xml))
+    string xmlArg = TemplateArgument("xml");
+    string domainArg = TemplateArgument("domain");
+    string typeArg = TemplateArgument("type");
+    string versionArg = TemplateArgument("version");
+    
+    string xml = xmlArg;
+    string domain = domainArg;
+    string formattedDomain = domain;
+    string type = typeArg;
+    string className = "";
+    
+    if( domain.Equals("upnp.org") ) 
+    {
+        formattedDomain = "schemas-upnp-org"; 
+    } 
+    else 
+    { 
+        formattedDomain = domain.Replace(".","-");
+    } 
+    
+    if (String.IsNullOrEmpty(xml))
     {
         throw (new ArgumentException("Xml file not specified"));
     }
@@ -50,19 +50,19 @@
     
     uint version;
     
-	if (String.IsNullOrEmpty(versionArg))
+    if (String.IsNullOrEmpty(versionArg))
     {
         throw (new ArgumentException("Service Version not specified"));
     }
-	
+    
     try
     {
-	   version = Convert.ToUInt32(versionArg);
-	}
-	catch (FormatException)
-	{
+       version = Convert.ToUInt32(versionArg);
+    }
+    catch (FormatException)
+    {
         throw (new ArgumentException("Invalid version number specified"));
-	}
+    }
     catch (OverflowException)
     {
         throw (new ArgumentException("Invalid version number specified"));
@@ -77,9 +77,9 @@
 
     Initialise();
 
-	Document u = new Document(xml);
-	
-	className = ConvertToPascalCase("CpProxy-"+formattedDomain+type+version);
+    Document u = new Document(xml);
+    
+    className = ConvertToPascalCase("CpProxy-"+formattedDomain+type+version);
 
 #>
 /**
@@ -87,22 +87,22 @@
 * @module ohnet
 * @class <#=type#>
 */
-	
-var <#=className#> = function(udn){	
+    
+var <#=className#> = function(udn){ 
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/<#=domain#>-<#=type#>-<#=version#>/control";  // upnp control url
-	this.domain = "<#=formattedDomain#>";
-	this.type = "<#=type#>";
-	this.version = "<#=version.ToString()#>";
-	this.serviceName = "<#=domain#>-<#=type#>-<#=version#>";
-	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
-	this.udn = udn;   // device name
-	
-	// Collection of service properties
-	this.serviceProperties = {};
+    this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/<#=domain#>-<#=type#>-<#=version#>/control";  // upnp control url
+    this.domain = "<#=formattedDomain#>";
+    this.type = "<#=type#>";
+    this.version = "<#=version.ToString()#>";
+    this.serviceName = "<#=domain#>-<#=type#>-<#=version#>";
+    this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+    this.udn = udn;   // device name
+    
+    // Collection of service properties
+    this.serviceProperties = {};
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-	this.serviceProperties["<#=s.prettyname#>"] = new ohnet.serviceproperty("<#=s.prettyname#>","<#=svtype[s.type].ToLower()#>");
+    this.serviceProperties["<#=s.prettyname#>"] = new ohnet.serviceproperty("<#=s.prettyname#>","<#=svtype[s.type].ToLower()#>");
 <#  } #>
 
     <#  foreach (Variable s in u.evented) #>
@@ -141,7 +141,7 @@ var <#=className#> = function(udn){
 
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-	
+    
 
 /**
 * Adds a listener to handle "<#=s.prettyname#>" property change events
@@ -150,9 +150,9 @@ var <#=className#> = function(udn){
 */
 <#=className#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
     this.serviceProperties.<#=s.prettyname#>.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.read<#=svtype[s.type]#>Parameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.read<#=svtype[s.type]#>Parameter(state)); 
+    });
 }
 <#  } #>
 
@@ -169,8 +169,8 @@ var <#=className#> = function(udn){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-<#=className#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
-	var request = new ohnet.soaprequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
+<#=className#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){ 
+    var request = new ohnet.soaprequest("<#=a.name#>", this.url, this.domain, this.type, this.version);     
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
     request.write<#=svtype[i.variable.type]#>Parameter("<#=i.name#>", <#=i.name#>);
@@ -178,14 +178,14 @@ var <#=className#> = function(udn){
     request.send(function(result){
 <#          foreach (Argument o in a.outargs) #>
 <#          { #>
-		result["<#=o.name#>"] = ohnet.soaprequest.read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
-<#          } #>	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["<#=o.name#>"] = ohnet.soaprequest.read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]); 
+<#          } #>    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 <#  } #>
@@ -221,9 +221,9 @@ void Initialise()
     svtype.Add("i4", "Int");
     svtype.Add("bin.base64", "Binary");
     svtype.Add("uri", "String");
-	
-	comtype.Add("string", "String");
-	comtype.Add("ui1", "Int");
+    
+    comtype.Add("string", "String");
+    comtype.Add("ui1", "Int");
     comtype.Add("ui2", "Int");
     comtype.Add("ui4", "Int");
     comtype.Add("boolean", "Boolean");
@@ -248,15 +248,15 @@ string FormatValue(string aValue)
         
         if (x >= 'A' && x <= 'Z')
         {
-        	if (uppercase || uppertrigger)
-        	{
-            	result += x;
-            	uppercase = false;
-            	uppertrigger = false;
+            if (uppercase || uppertrigger)
+            {
+                result += x;
+                uppercase = false;
+                uppertrigger = false;
             }
             else
             {
-            	result += Char.ToLower(x);
+                result += Char.ToLower(x);
             }
             
             continue;
@@ -264,23 +264,23 @@ string FormatValue(string aValue)
         
         if (x >= 'a' && x <= 'z')
         {
-        	if (uppercase)
-        	{
-            	result += Char.ToUpper(x);
-            	uppercase = false;
+            if (uppercase)
+            {
+                result += Char.ToUpper(x);
+                uppercase = false;
             }
             else
             {
-            	result += x;
-            	
-	            uppertrigger = true;
+                result += x;
+                
+                uppertrigger = true;
             }
             
             continue;
         }
         
-      	uppercase = true;
-      	
+        uppercase = true;
+        
         if (x >= '0' && x <= '9')
         {
             result += x;
@@ -289,32 +289,32 @@ string FormatValue(string aValue)
         
         if (x == '+')
         {
-        	result += "Plus";
-        	continue;
+            result += "Plus";
+            continue;
         }
         
         if (x == '&')
         {
-        	result += "And";
-        	continue;
+            result += "And";
+            continue;
         }
         
         if (x == '#')
         {
-        	result += "Hash";
-        	continue;
+            result += "Hash";
+            continue;
         }
         
         if (x == '$')
         {
-        	result += "Dollar";
-        	continue;
+            result += "Dollar";
+            continue;
         }
         
         if (x == '*')
         {
-        	result += "Star";
-        	continue;
+            result += "Star";
+            continue;
         }
     }
     
@@ -354,42 +354,42 @@ string ArgString(Method a)
 
 string TemplateArgument(string aName)
 {
-	string[] args =  System.Environment.GetCommandLineArgs();
-		
-	bool isarg = false;
-	
-	foreach (string arg in args)
-	{
-		if (isarg)
-		{
-			string[] parts = arg.Split(new char[] {':'});
-			
-			if (parts.Length == 2)
-			{
-				if (parts[0] == aName)
-				{
-					return (parts[1]);
-				}
-			}
-			
-			isarg = false;
-			continue;
-		}
-		
-		if (arg == "-a")
-		{
-			isarg = true;
-		}
-	}
-	
-	throw (new ArgumentException(aName + " not specified"));
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
+            
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
 }
 
 string ConvertToPascalCase(string str)
 {
     if (str == null) throw new ArgumentNullException("str", "Null text cannot be converted to Pascal Case");
     if (str.Length == 0) return str;
-	
+    
     //split the provided string into an array of words
     string[] words = str.Split('-');
     

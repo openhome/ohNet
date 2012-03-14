@@ -1123,7 +1123,7 @@ void DvProviderUpnpOrgAVTransport2C::DoSetStateVariables(IDviInvocation& aInvoca
 
 THandle STDCALL DvProviderUpnpOrgAVTransport2Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgAVTransport2C(aDevice);
+    return new DvProviderUpnpOrgAVTransport2C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgAVTransport2Destroy(THandle aProvider)

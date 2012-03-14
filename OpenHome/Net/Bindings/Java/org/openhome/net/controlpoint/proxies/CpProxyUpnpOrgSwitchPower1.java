@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgSwitchPower1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyUpnpOrgSwitchPower1 extends ICpProxy
 {
     public void syncSetTarget(boolean aNewTargetValue);
@@ -34,7 +34,7 @@ class SyncSetTargetUpnpOrgSwitchPower1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetTarget(aAsyncHandle);
-		
+        
     }
 }
 
@@ -54,7 +54,7 @@ class SyncGetTargetUpnpOrgSwitchPower1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endGetTarget(aAsyncHandle);
-		
+        
         iRetTargetValue = result;
     }
 }
@@ -75,7 +75,7 @@ class SyncGetStatusUpnpOrgSwitchPower1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endGetStatus(aAsyncHandle);
-		
+        
         iResultStatus = result;
     }
 }
@@ -97,7 +97,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyUpnpOrgSwitchPower1(CpDevice aDevice)
@@ -108,19 +108,19 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 
         iActionSetTarget = new Action("SetTarget");
         param = new ParameterBool("newTargetValue");
-		iActionSetTarget.addInputParameter(param);
+        iActionSetTarget.addInputParameter(param);
 
         iActionGetTarget = new Action("GetTarget");
         param = new ParameterBool("RetTargetValue");
-		iActionGetTarget.addOutputParameter(param);
+        iActionGetTarget.addOutputParameter(param);
 
         iActionGetStatus = new Action("GetStatus");
         param = new ParameterBool("ResultStatus");
-		iActionGetStatus.addOutputParameter(param);
+        iActionGetStatus.addOutputParameter(param);
 
         iStatusChanged = new PropertyChangeListener();
         iStatus = new PropertyBool("Status", iStatusChanged);
-		addProperty(iStatus);
+        addProperty(iStatus);
         iPropertyLock = new Object();
     }
     /**
@@ -128,48 +128,48 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetTarget(boolean aNewTargetValue)
-	{
-	    SyncSetTargetUpnpOrgSwitchPower1 sync = new SyncSetTargetUpnpOrgSwitchPower1(this);
-	    beginSetTarget(aNewTargetValue, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetTarget(boolean aNewTargetValue)
+    {
+        SyncSetTargetUpnpOrgSwitchPower1 sync = new SyncSetTargetUpnpOrgSwitchPower1(this);
+        beginSetTarget(aNewTargetValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetTarget}.
-	 * 
-	 * @param aNewTargetValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetTarget(boolean aNewTargetValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetTarget}.
+     * 
+     * @param aNewTargetValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetTarget(boolean aNewTargetValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetTarget, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentBool((ParameterBool)iActionSetTarget.getInputParameter(inIndex++), aNewTargetValue));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetTarget} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetTarget} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetTarget} method.
      */
-	public void endSetTarget(long aAsyncHandle)
+    public void endSetTarget(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -177,43 +177,43 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
      *
      * @return the result of the invoked action.
      */
-	public boolean syncGetTarget()
-	{
-	    SyncGetTargetUpnpOrgSwitchPower1 sync = new SyncGetTargetUpnpOrgSwitchPower1(this);
-	    beginGetTarget(sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncGetTarget()
+    {
+        SyncGetTargetUpnpOrgSwitchPower1 sync = new SyncGetTargetUpnpOrgSwitchPower1(this);
+        beginGetTarget(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getRetTargetValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetTarget}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetTarget(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetTarget}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetTarget(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetTarget, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentBool((ParameterBool)iActionGetTarget.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetTarget} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetTarget} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetTarget} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endGetTarget(long aAsyncHandle)
+    public boolean endGetTarget(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -223,7 +223,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
         boolean retTargetValue = Invocation.getOutputBool(aAsyncHandle, index++);
         return retTargetValue;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -231,43 +231,43 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
      *
      * @return the result of the invoked action.
      */
-	public boolean syncGetStatus()
-	{
-	    SyncGetStatusUpnpOrgSwitchPower1 sync = new SyncGetStatusUpnpOrgSwitchPower1(this);
-	    beginGetStatus(sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncGetStatus()
+    {
+        SyncGetStatusUpnpOrgSwitchPower1 sync = new SyncGetStatusUpnpOrgSwitchPower1(this);
+        beginGetStatus(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getResultStatus();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetStatus}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetStatus(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetStatus}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetStatus(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetStatus, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentBool((ParameterBool)iActionGetStatus.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetStatus} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetStatus} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetStatus} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endGetStatus(long aAsyncHandle)
+    public boolean endGetStatus(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -277,14 +277,14 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
         boolean resultStatus = Invocation.getOutputBool(aAsyncHandle, index++);
         return resultStatus;
     }
-		
+        
     /**
      * Set a delegate to be run when the Status state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgSwitchPower1 instance will not overlap.
+     * CpProxyUpnpOrgSwitchPower1 instance will not overlap.
      *
-     * @param aStatusChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aStatusChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyStatusChanged(IPropertyChangeListener aStatusChanged)
     {
@@ -308,7 +308,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Status property.
+     * @return  value of the Status property.
      */
     public boolean getPropertyStatus()
     {
@@ -317,7 +317,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

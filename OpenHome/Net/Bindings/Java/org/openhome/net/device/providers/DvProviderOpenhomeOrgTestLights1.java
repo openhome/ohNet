@@ -95,11 +95,11 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderOpenhomeOrgTestLights1(DvDevice aDevice)
     {
-	    super(aDevice, "openhome.org", "TestLights", 1);
+        super(aDevice, "openhome.org", "TestLights", 1);
     }
 
     /**
@@ -107,7 +107,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetCount must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetCount()
     {
         Action action = new Action("GetCount");
@@ -121,7 +121,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetRoom must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetRoom()
     {
         Action action = new Action("GetRoom");        List<String> allowedValues = new LinkedList<String>();
@@ -136,7 +136,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetName must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetName()
     {
         Action action = new Action("GetName");        List<String> allowedValues = new LinkedList<String>();
@@ -151,7 +151,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetPosition must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetPosition()
     {
         Action action = new Action("GetPosition");
@@ -168,7 +168,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetColor must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetColor()
     {
         Action action = new Action("SetColor");
@@ -183,7 +183,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetColor must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetColor()
     {
         Action action = new Action("GetColor");
@@ -198,7 +198,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetColorComponents must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetColorComponents()
     {
         Action action = new Action("GetColorComponents");
@@ -219,7 +219,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetCount} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long getCount(IDvInvocation aInvocation)
     {
@@ -234,7 +234,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetRoom} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
     protected String getRoom(IDvInvocation aInvocation, long aIndex)
@@ -250,7 +250,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetName} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
     protected String getName(IDvInvocation aInvocation, long aIndex)
@@ -266,7 +266,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetPosition} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
     protected GetPosition getPosition(IDvInvocation aInvocation, long aIndex)
@@ -282,7 +282,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSetColor} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      * @param aColor
      */
@@ -299,7 +299,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetColor} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aIndex
      */
     protected long getColor(IDvInvocation aInvocation, long aIndex)
@@ -315,7 +315,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionGetColorComponents} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aColor
      */
     protected GetColorComponents getColorComponents(IDvInvocation aInvocation, long aColor)
@@ -386,7 +386,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetRoom implements IDvInvocationListener
     {
@@ -436,7 +436,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetName implements IDvInvocationListener
     {
@@ -486,7 +486,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetPosition implements IDvInvocationListener
     {
@@ -544,7 +544,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetColor implements IDvInvocationListener
     {
@@ -594,7 +594,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetColor implements IDvInvocationListener
     {
@@ -644,7 +644,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetColorComponents implements IDvInvocationListener
     {
@@ -705,6 +705,6 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

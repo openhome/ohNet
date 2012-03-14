@@ -5,19 +5,21 @@
 * @module ohnet
 * @class SubscriptionLongPoll
 */
-	
-var CpProxyOpenhomeOrgSubscriptionLongPoll1 = function(udn){	
+    
+var CpProxyOpenhomeOrgSubscriptionLongPoll1 = function(udn){ 
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/openhome.org-SubscriptionLongPoll-1/control";  // upnp control url
-	this.domain = "openhome-org";
-	this.type = "SubscriptionLongPoll";
-	this.version = "1";
-	this.serviceName = "openhome.org-SubscriptionLongPoll-1";
-	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
-	this.udn = udn;   // device name
-	
-	// Collection of service properties
-	this.serviceProperties = {};
+    this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/openhome.org-SubscriptionLongPoll-1/control";  // upnp control url
+    this.domain = "openhome-org";
+    this.type = "SubscriptionLongPoll";
+    this.version = "1";
+    this.serviceName = "openhome.org-SubscriptionLongPoll-1";
+    this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+    this.udn = udn;   // device name
+    
+    // Collection of service properties
+    this.serviceProperties = {};
+
+    
 }
 
 
@@ -53,22 +55,22 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.unsubscribe = function () {
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Subscribe = function(ClientId, Udn, Service, RequestedDuration, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Subscribe", this.url, this.domain, this.type, this.version);		
+CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Subscribe = function(ClientId, Udn, Service, RequestedDuration, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Subscribe", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("ClientId", ClientId);
     request.writeStringParameter("Udn", Udn);
     request.writeStringParameter("Service", Service);
     request.writeIntParameter("RequestedDuration", RequestedDuration);
     request.send(function(result){
-		result["Sid"] = ohnet.soaprequest.readStringParameter(result["Sid"]);	
-		result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Sid"] = ohnet.soaprequest.readStringParameter(result["Sid"]); 
+        result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -79,17 +81,17 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Subscribe = function(ClientId,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Unsubscribe = function(Sid, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Unsubscribe", this.url, this.domain, this.type, this.version);		
+CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Unsubscribe = function(Sid, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Unsubscribe", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("Sid", Sid);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -101,19 +103,19 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Unsubscribe = function(Sid, su
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Renew = function(Sid, RequestedDuration, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Renew", this.url, this.domain, this.type, this.version);		
+CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Renew = function(Sid, RequestedDuration, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Renew", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("Sid", Sid);
     request.writeIntParameter("RequestedDuration", RequestedDuration);
     request.send(function(result){
-		result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Duration"] = ohnet.soaprequest.readIntParameter(result["Duration"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -124,18 +126,18 @@ CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.Renew = function(Sid, Requeste
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.GetPropertyUpdates = function(ClientId, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetPropertyUpdates", this.url, this.domain, this.type, this.version);		
+CpProxyOpenhomeOrgSubscriptionLongPoll1.prototype.GetPropertyUpdates = function(ClientId, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetPropertyUpdates", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("ClientId", ClientId);
     request.send(function(result){
-		result["Updates"] = ohnet.soaprequest.readStringParameter(result["Updates"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Updates"] = ohnet.soaprequest.readStringParameter(result["Updates"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
