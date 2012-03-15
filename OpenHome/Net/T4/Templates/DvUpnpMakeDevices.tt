@@ -45,15 +45,15 @@ device_java_classes_with_path = \
 <#  } #>
 
 devices : ohNetCore $(objects_devices)
-    $(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
+	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
 $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_device) OpenHome/Net/Device/Providers/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-    $(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
 $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-    $(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
 $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-    $(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
 <#  } #>
 
 device_dlls = \
@@ -67,7 +67,7 @@ DvDeviceDlls: $(device_dlls)
 <#  { #>
 Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: $(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) 
 $(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) : ZappUpnpDll $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
-    $(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
 <#  } #>
 
 
@@ -78,7 +78,7 @@ DvDeviceDotNetAssemblies: $(device_dotnet_assemblies_with_path)
 <# foreach (Service s in u.iServices) #>
 <# { #>
 $(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
-    $(csharp) /unsafe /t:library \
+	$(csharp) /unsafe /t:library \
         /out:$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
@@ -91,7 +91,7 @@ DvDeviceJavaClasses: $(device_java_classes_with_path)
 <# foreach (Service s in u.iServices) #>
 <# { #>
 $(objdir)org/openhome/net/device/providers/DvProvider<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.jar $(deviceJava)DvProvider<#=FilePrefixTypeAndVersion(s)#>.java
-    $(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProvider<#=FilePrefixTypeAndVersion(s)#>.java
+	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProvider<#=FilePrefixTypeAndVersion(s)#>.java
 <# } #>
 
 
