@@ -114,8 +114,8 @@ TBool Stack::IsInitialised()
 
 void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
 {
-	aMajor = kVersionMajor;
-	aMinor = kVersionMinor;
+    aMajor = kVersionMajor;
+    aMinor = kVersionMinor;
 }
 
 OpenHome::TimerManager& Stack::TimerManager()

@@ -114,7 +114,7 @@ void Endpoint::AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress)
 
 void Endpoint::AppendAddress(Bwx& aAddress) const
 {
-	AppendAddress(aAddress, iAddress);
+    AppendAddress(aAddress, iAddress);
 }
 
 void Endpoint::AppendEndpoint(Bwx& aEndpoint) const

@@ -10,33 +10,33 @@ using namespace OpenHome::Net;
 
 DviDeviceC::DviDeviceC(const char* aUdn)
 {
-	Brn udn(aUdn);
-	iDevice = new DvDevice(udn);
-	iResourceManager = NULL;
-	iCallbackArg = NULL;
+    Brn udn(aUdn);
+    iDevice = new DvDevice(udn);
+    iResourceManager = NULL;
+    iCallbackArg = NULL;
 }
 
 DviDeviceC::DviDeviceC()
 {
-	iResourceManager = NULL;
-	iCallbackArg = NULL;
+    iResourceManager = NULL;
+    iCallbackArg = NULL;
 }
 
 DviDeviceC::~DviDeviceC()
 {
-	delete iDevice;
+    delete iDevice;
 }
 
 DvDevice* DviDeviceC::Device()
 {
-	return iDevice;
+    return iDevice;
 }
 
 void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
-	ASSERT(iResourceManager != NULL);
-	Brhz uriTail(aUriTail);
-	int32_t err = iResourceManager(iCallbackArg, uriTail.CString(), aInterface, &aLanguageList, &aResourceWriter, WriteResourceBegin, WriteResource, WriteResourceEnd);
+    ASSERT(iResourceManager != NULL);
+    Brhz uriTail(aUriTail);
+    int32_t err = iResourceManager(iCallbackArg, uriTail.CString(), aInterface, &aLanguageList, &aResourceWriter, WriteResourceBegin, WriteResource, WriteResourceEnd);
     if (err != 0) {
         THROW(WriterError);
     }
@@ -44,9 +44,9 @@ void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::
 
 int32_t STDCALL DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType)
 { // static
-	IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
+    IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
     try {
-	    writer->WriteResourceBegin(aTotalBytes, aMimeType);
+        writer->WriteResourceBegin(aTotalBytes, aMimeType);
     }
     catch (...) {
         return -1;
@@ -56,9 +56,9 @@ int32_t STDCALL DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes,
 
 int32_t STDCALL DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes)
 { // static
-	IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
+    IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
     try {
-    	writer->WriteResource(aData, aBytes);
+        writer->WriteResource(aData, aBytes);
     }
     catch (...) {
         return -1;
@@ -68,9 +68,9 @@ int32_t STDCALL DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint
 
 int32_t STDCALL DviDeviceC::WriteResourceEnd(void* aPtr)
 { // static
-	IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
+    IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
     try {
-    	writer->WriteResourceEnd();
+        writer->WriteResourceEnd();
     }
     catch (...) {
         return -1;
@@ -83,16 +83,16 @@ int32_t STDCALL DviDeviceC::WriteResourceEnd(void* aPtr)
 
 DviDeviceStandardC::DviDeviceStandardC(const char* aUdn)
 {
-	Brn udn(aUdn);
-	iDevice = new DvDeviceStandard(udn);
+    Brn udn(aUdn);
+    iDevice = new DvDeviceStandard(udn);
 }
 
 DviDeviceStandardC::DviDeviceStandardC(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr)
 {
-	Brn udn(aUdn);
-	iDevice = new DvDeviceStandard(udn, *this);
-	iResourceManager = aResourceManager;
-	iCallbackArg = aPtr;
+    Brn udn(aUdn);
+    iDevice = new DvDeviceStandard(udn, *this);
+    iResourceManager = aResourceManager;
+    iCallbackArg = aPtr;
 }
 
 
@@ -100,18 +100,18 @@ DviDeviceStandardC::DviDeviceStandardC(const char* aUdn, OhNetCallbackResourceMa
 
 DvDeviceC STDCALL DvDeviceCreate(const char* aUdn)
 {
-	DviDeviceC* wrapper = new DviDeviceC(aUdn);
-	return (DvDeviceC)wrapper;
+    DviDeviceC* wrapper = new DviDeviceC(aUdn);
+    return (DvDeviceC)wrapper;
 }
 
 void STDCALL DvDeviceDestroy(DvDeviceC aDevice)
 {
-	delete (DviDeviceC*)aDevice;
+    delete (DviDeviceC*)aDevice;
 }
 
 const char* STDCALL DvDeviceUdn(DvDeviceC aDevice)
 {
-	return (const char*)DviDeviceC::DeviceFromHandle(aDevice)->Udn().Ptr();
+    return (const char*)DviDeviceC::DeviceFromHandle(aDevice)->Udn().Ptr();
 }
 
 void STDCALL DvDeviceGetUdn(DvDeviceC aDevice, const char** aUdn, uint32_t* aLen)
@@ -129,34 +129,34 @@ void STDCALL DvDeviceGetUdn(DvDeviceC aDevice, const char** aUdn, uint32_t* aLen
 
 int32_t STDCALL DvDeviceEnabled(DvDeviceC aDevice)
 {
-	return (DviDeviceC::DeviceFromHandle(aDevice)->Enabled()? 1 : 0);
+    return (DviDeviceC::DeviceFromHandle(aDevice)->Enabled()? 1 : 0);
 }
 
 void STDCALL DvDeviceSetEnabled(DvDeviceC aDevice)
 {
-	DviDeviceC::DeviceFromHandle(aDevice)->SetEnabled();
+    DviDeviceC::DeviceFromHandle(aDevice)->SetEnabled();
 }
 
 void STDCALL DvDeviceSetDisabled(DvDeviceC aDevice, OhNetCallback aCompleted, void* aPtr)
 {
-	Functor completed = MakeFunctor(aPtr, aCompleted);
-	DviDeviceC::DeviceFromHandle(aDevice)->SetDisabled(completed);
+    Functor completed = MakeFunctor(aPtr, aCompleted);
+    DviDeviceC::DeviceFromHandle(aDevice)->SetDisabled(completed);
 }
 
 void STDCALL DvDeviceGetAttribute(DvDeviceC aDevice, const char* aKey, const char** aValue)
 {
-	DviDeviceC::DeviceFromHandle(aDevice)->GetAttribute(aKey, aValue);
+    DviDeviceC::DeviceFromHandle(aDevice)->GetAttribute(aKey, aValue);
 }
 
 void STDCALL DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const char* aValue)
 {
-	DviDeviceC::DeviceFromHandle(aDevice)->SetAttribute(aKey, aValue);
+    DviDeviceC::DeviceFromHandle(aDevice)->SetAttribute(aKey, aValue);
 }
 
 DvDeviceC STDCALL DvDeviceStandardCreateNoResources(const char* aUdn)
 {
-	DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn);
-	return (DvDeviceC)wrapper;
+    DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn);
+    return (DvDeviceC)wrapper;
 }
 
 char* STDCALL DvDeviceStandardResourceManagerUri(DvDeviceC aDevice, THandle aAdapter)
@@ -192,8 +192,8 @@ void STDCALL DvDeviceStandardGetResourceManagerUri(DvDeviceC aDevice, THandle aA
 
 DvDeviceC STDCALL DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr)
 {
-	DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn, aResourceManager, aPtr);
-	return (DvDeviceC)wrapper;
+    DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn, aResourceManager, aPtr);
+    return (DvDeviceC)wrapper;
 }
 
 uint32_t STDCALL DvResourceWriterLanguageCount(THandle aLanguageList)

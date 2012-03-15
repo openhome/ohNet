@@ -156,7 +156,7 @@ Brhz::Brhz(const TChar* aPtr)
 
 void Brhz::Set(const TByte* aPtr, TUint aBytes)
 {
-	const TByte kZero = 0;
+    const TByte kZero = 0;
     free((void*)iPtr);
     iPtr = (TByte*)malloc(aBytes + 1);
     memcpy((void*)iPtr, aPtr, aBytes);
@@ -171,8 +171,8 @@ void Brhz::Set(const TChar* aPtr)
 
 void Brhz::Shrink(TUint aBytes)
 {
-	const TByte kZero = 0;
-	ASSERT(aBytes <= iBytes);
+    const TByte kZero = 0;
+    ASSERT(aBytes <= iBytes);
     memcpy((void*)(iPtr + aBytes), &kZero, 1);
     iBytes = aBytes;
 }
