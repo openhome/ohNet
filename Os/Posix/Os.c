@@ -250,9 +250,9 @@ void OsConsoleWrite(const char* aStr)
 
 void OsGetPlatformNameAndVersion(char** aName, uint32_t* aMajor, uint32_t* aMinor)
 {
-	*aName = "Posix";
-	*aMajor = _POSIX_VERSION;
-	*aMinor = 0;
+    *aName = "Posix";
+    *aMajor = _POSIX_VERSION;
+    *aMinor = 0;
 }
 
 static void getAbsTimespec(struct timespec* aTime, uint32_t aMsecs)

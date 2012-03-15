@@ -30,41 +30,41 @@ public:
     virtual CpDevice& CurrentSourceDevice() const;
     virtual void SetSourceIndex(TUint aIndex);
     virtual TBool HasVolumeControl() const;
-	virtual CpDevice& VolumeDevice() const;
-	virtual void SetUserData(void* aValue);
+    virtual CpDevice& VolumeDevice() const;
+    virtual void SetUserData(void* aValue);
     virtual void* UserData() const;
     ~CpTopologyRoom();
 
 private:
     CpTopology3Room& iRoom;
-	TUint iRefCount;
+    TUint iRefCount;
     void* iUserData;
 };
 
 CpTopologyRoom::CpTopologyRoom(CpTopology3Room& aRoom)
     : iRoom(aRoom)
-	, iRefCount(1)
-	, iUserData(0)
+    , iRefCount(1)
+    , iUserData(0)
 {
-	iRoom.AddRef();
+    iRoom.AddRef();
 }
 
 void CpTopologyRoom::AddRef()
 {
-	iRefCount++;
+    iRefCount++;
 }
 
 void CpTopologyRoom::RemoveRef()
 {
-	if (--iRefCount == 0) {
-		delete (this);
-	}
+    if (--iRefCount == 0) {
+        delete (this);
+    }
 }
 
 
 CpTopologyRoom::~CpTopologyRoom()
 {
-	iRoom.RemoveRef();
+    iRoom.RemoveRef();
 }
 
 IRoom::EStandby CpTopologyRoom::Standby() const
@@ -193,16 +193,16 @@ private:
 CpTopology::CpTopology(IHouseHandler& aHandler)
     : iHandler(aHandler)
 {
-	LOG(kTopology, "CpTopology::CpTopology\n");
+    LOG(kTopology, "CpTopology::CpTopology\n");
     iTopology = new CpTopology3(*this);
-	LOG(kTopology, "CpTopology::CpTopology created layer 3\n");
+    LOG(kTopology, "CpTopology::CpTopology created layer 3\n");
 }
 
 CpTopology::~CpTopology()
 {
     delete iTopology;
 
-	LOG(kTopology, "CpTopology::~CpTopology deleted layer 3\n");
+    LOG(kTopology, "CpTopology::~CpTopology deleted layer 3\n");
 }
 
 void CpTopology::Refresh()
@@ -226,7 +226,7 @@ void CpTopology::RoomRemoved(CpTopology3Room& aRoom)
 {
     CpTopologyRoom* room = (CpTopologyRoom*)aRoom.UserData();
     iHandler.RoomRemoved(*room);
-	room->RemoveRef();
+    room->RemoveRef();
 }
 
 void CpTopology::RoomStandbyChanged(CpTopology3Room& aRoom)

@@ -11,32 +11,32 @@ using namespace OpenHome::Net;
 // CpTopology2Source
 
 CpTopology2Source::CpTopology2Source(const Brx& aName, const Brx& aType, TBool aVisible)
-	: iName(aName)
-	, iType(aType)
-	, iVisible(aVisible)
+    : iName(aName)
+    , iType(aType)
+    , iVisible(aVisible)
 {
 }
 
 const Brx& CpTopology2Source::Name() const
 {
-	return (iName);
+    return (iName);
 }
 
 const Brx& CpTopology2Source::Type() const
 {
-	return (iType);
+    return (iType);
 }
 
 TBool CpTopology2Source::Visible() const
 {
-	return (iVisible);
+    return (iVisible);
 }
     
 void CpTopology2Source::Update(const Brx& aName, const Brx& aType, TBool aVisible)
 {
-	iName.Replace(aName);
-	iType.Replace(aType);
-	iVisible = aVisible;
+    iName.Replace(aName);
+    iType.Replace(aType);
+    iVisible = aVisible;
 }
 
 // CpTopology2Group
@@ -52,18 +52,18 @@ CpTopology2Group::CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& 
     , iUserData(0)
     , iRefCount(1)
 {
-	if (&iDevice != 0) {  // device with zero address used by test code
-		iDevice.AddRef();
-	}
+    if (&iDevice != 0) {  // device with zero address used by test code
+        iDevice.AddRef();
+    }
 }
 
 CpTopology2Group::~CpTopology2Group()
 {
-	if (&iDevice != 0) { // device with zero address used by test code
-		iDevice.RemoveRef();
-	}
+    if (&iDevice != 0) { // device with zero address used by test code
+        iDevice.RemoveRef();
+    }
 
-	for (size_t i=0; i<iSourceList.size(); i++) {
+    for (size_t i=0; i<iSourceList.size(); i++) {
         delete iSourceList[i];
     }
     iSourceList.clear();
@@ -71,32 +71,32 @@ CpTopology2Group::~CpTopology2Group()
 
 void CpTopology2Group::AddSource(const Brx& aName, const Brx& aType, TBool aVisible)
 {
-	iSourceList.push_back(new CpTopology2Source(aName, aType, aVisible));
+    iSourceList.push_back(new CpTopology2Source(aName, aType, aVisible));
 }
 
 void CpTopology2Group::UpdateRoom(const Brx& aValue)
 {
-	iRoom.Replace(aValue);
+    iRoom.Replace(aValue);
 }
 
 void CpTopology2Group::UpdateName(const Brx& aValue)
 {
-	iName.Replace(aValue);
+    iName.Replace(aValue);
 }
 
 void CpTopology2Group::UpdateSourceIndex(TUint aValue)
 {
-	iSourceIndex = aValue;
+    iSourceIndex = aValue;
 }
 
 void CpTopology2Group::UpdateStandby(TBool aValue)
 {
-	iStandby = aValue;
+    iStandby = aValue;
 }
 
 void CpTopology2Group::UpdateSource(TUint aIndex, const Brx& aName, const Brx& aType, TBool aVisible)
 {
-	iSourceList[aIndex]->Update(aName, aType, aVisible);
+    iSourceList[aIndex]->Update(aName, aType, aVisible);
 }
 
 void CpTopology2Group::AddRef()
@@ -106,7 +106,7 @@ void CpTopology2Group::AddRef()
 
 void CpTopology2Group::RemoveRef()
 {
-	if (--iRefCount == 0) {
+    if (--iRefCount == 0) {
         delete this;
     }
 }
@@ -118,68 +118,68 @@ CpDevice& CpTopology2Group::Device() const
 
 TUint CpTopology2Group::SourceCount() const
 {
-	return ((TUint)iSourceList.size());
+    return ((TUint)iSourceList.size());
 }
 
 TUint CpTopology2Group::SourceIndex() const
 {
-	return (iSourceIndex);
+    return (iSourceIndex);
 }
 
 TBool CpTopology2Group::Standby() const
 {
-	return (iStandby);
+    return (iStandby);
 }
 
 void CpTopology2Group::SetSourceIndex(TUint aIndex)
 {
-	ASSERT(aIndex < iSourceList.size());
-	iHandler.SetSourceIndex(aIndex);
+    ASSERT(aIndex < iSourceList.size());
+    iHandler.SetSourceIndex(aIndex);
 }
 
 void CpTopology2Group::SetStandby(TBool aValue)
 {
-	iHandler.SetStandby(aValue);
+    iHandler.SetStandby(aValue);
 }
 
 const Brx& CpTopology2Group::Room() const
 {
-	return (iRoom);
+    return (iRoom);
 }
 
 const Brx& CpTopology2Group::Name() const
 {
-	return (iName);
+    return (iName);
 }
 
 const Brx& CpTopology2Group::SourceName(TUint aIndex) const
 {
-	return (iSourceList[aIndex]->Name());
+    return (iSourceList[aIndex]->Name());
 }
 
 const Brx& CpTopology2Group::SourceType(TUint aIndex) const
 {
-	return (iSourceList[aIndex]->Type());
+    return (iSourceList[aIndex]->Type());
 }
 
 TBool CpTopology2Group::SourceVisible(TUint aIndex) const
 {
-	return (iSourceList[aIndex]->Visible());
+    return (iSourceList[aIndex]->Visible());
 }
 
 TBool CpTopology2Group::HasVolumeControl() const
 {
-	return (iHasVolumeControl);
+    return (iHasVolumeControl);
 }
 
 void CpTopology2Group::SetUserData(void* aValue)
 {
-	iUserData = aValue;
+    iUserData = aValue;
 }
 
 void* CpTopology2Group::UserData() const
 {
-	return (iUserData);
+    return (iUserData);
 }
 
 // CpTopology2Device
@@ -189,17 +189,17 @@ CpTopology2Device::CpTopology2Device(CpDevice& aDevice)
 {
     iDevice.AddRef();
 }
-	
+    
 TBool CpTopology2Device::IsAttachedTo(CpDevice& aDevice)
 {
-	return (iDevice.Udn() == aDevice.Udn());
+    return (iDevice.Udn() == aDevice.Udn());
 }
 
 CpTopology2Device::~CpTopology2Device()
 {
     iDevice.RemoveRef();
 }
-	
+    
 // CpTopology2Product
 
 CpTopology2Product::CpTopology2Product(CpDevice& aDevice, ICpTopology2Handler& aHandler)
@@ -211,25 +211,25 @@ CpTopology2Product::CpTopology2Product(CpDevice& aDevice, ICpTopology2Handler& a
     iFunctorSetSourceIndex = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetSourceIndex);
     iFunctorSetStandby = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetStandby);
 
-	iServiceProduct = new CpProxyAvOpenhomeOrgProduct1(iDevice);
+    iServiceProduct = new CpProxyAvOpenhomeOrgProduct1(iDevice);
 
-	Functor functorInitial = MakeFunctor(*this, &CpTopology2Product::EventProductInitialEvent);
+    Functor functorInitial = MakeFunctor(*this, &CpTopology2Product::EventProductInitialEvent);
 
     iServiceProduct->SetPropertyInitialEvent(functorInitial);
 
-	iServiceProduct->Subscribe();
+    iServiceProduct->Subscribe();
 }
 
 CpTopology2Product::~CpTopology2Product()
 {
     LOG(kTopology, "CpTopology2Product::~CpTopology2Product\n");
 
-	delete (iServiceProduct);
-	
-	if (iGroup != 0) {
-		iHandler.GroupRemoved(*iGroup);
-		iGroup->RemoveRef();
-	}
+    delete (iServiceProduct);
+    
+    if (iGroup != 0) {
+        iHandler.GroupRemoved(*iGroup);
+        iGroup->RemoveRef();
+    }
 }
 
 void CpTopology2Product::EventProductInitialEvent()
@@ -246,11 +246,11 @@ void CpTopology2Product::EventProductInitialEvent()
     iServiceProduct->SetPropertySourceIndexChanged(functorSourceIndex); 
     iServiceProduct->SetPropertySourceXmlChanged(functorSourceXml);
       
-	TBool hasVolumeControl = false;
+    TBool hasVolumeControl = false;
 
-	Brhz attributes;
+    Brhz attributes;
 
-	iServiceProduct->PropertyAttributes(attributes);
+    iServiceProduct->PropertyAttributes(attributes);
 
     Parser parser(attributes);
     
@@ -262,84 +262,84 @@ void CpTopology2Product::EventProductInitialEvent()
         }
         
         if (attribute == Brn("Volume")) {
-			hasVolumeControl = true;
+            hasVolumeControl = true;
             break;
         }
     }
     
-	Brhz room;
-	Brhz name;
-	TUint sourceIndex;
-	TBool standby;
-	Brhz xml;
-	
-	iServiceProduct->PropertyProductRoom(room);
-	iServiceProduct->PropertyProductName(name);
-	iServiceProduct->PropertySourceIndex(sourceIndex);
-	iServiceProduct->PropertyStandby(standby);
-	iServiceProduct->PropertySourceXml(xml);
-	
-	iGroup = new CpTopology2Group(iDevice, *this, standby, room, name, sourceIndex, hasVolumeControl);
-	
-	ProcessSourceXml(xml, true);
-	
-	iHandler.GroupAdded(*iGroup);
+    Brhz room;
+    Brhz name;
+    TUint sourceIndex;
+    TBool standby;
+    Brhz xml;
+    
+    iServiceProduct->PropertyProductRoom(room);
+    iServiceProduct->PropertyProductName(name);
+    iServiceProduct->PropertySourceIndex(sourceIndex);
+    iServiceProduct->PropertyStandby(standby);
+    iServiceProduct->PropertySourceXml(xml);
+    
+    iGroup = new CpTopology2Group(iDevice, *this, standby, room, name, sourceIndex, hasVolumeControl);
+    
+    ProcessSourceXml(xml, true);
+    
+    iHandler.GroupAdded(*iGroup);
 }
 
 /*  Example source xml
 
-	<SourceList>
-		<Source>
-			<Name>Playlist</Name>
-			<Type>Playlist</Type>
-			<Visible>1</Visible>
-		</Source>
-		<Source>
-			<Name>Radio</Name>
-			<Type>Radio</Type>
-			<Visible>1</Visible>
-		</Source>
-	</SourceList>
+    <SourceList>
+        <Source>
+            <Name>Playlist</Name>
+            <Type>Playlist</Type>
+            <Visible>1</Visible>
+        </Source>
+        <Source>
+            <Name>Radio</Name>
+            <Type>Radio</Type>
+            <Visible>1</Visible>
+        </Source>
+    </SourceList>
 */
 
 void CpTopology2Product::ProcessSourceXml(const Brx& aXml, TBool aInitial)
 {
-	TUint count = 0;
+    TUint count = 0;
 
-	TBool updated = false;
-	
-	try {
-	    Brn sourceList = XmlParserBasic::Find("SourceList", aXml);
+    TBool updated = false;
+    
+    try {
+        Brn sourceList = XmlParserBasic::Find("SourceList", aXml);
 
-		for (;;) {
-			Brn source = XmlParserBasic::Find("Source", sourceList, sourceList);
-			Brn name = XmlParserBasic::Find("Name", source);
-			Brn type = XmlParserBasic::Find("Type", source);
-			Brn visible = XmlParserBasic::Find("Visible", source);
-			
-			TBool vis = false;
-			
-			if (visible == Brn("true")) {
-				vis = true;
-			}
-			
-			if (aInitial) {
-				iGroup->AddSource(name, type, vis);
-			}
-			else {
-				iGroup->UpdateSource(count, name, type, vis);
-				updated = true;
-			}
+        for (;;) {
+            Brn source = XmlParserBasic::Find("Source", sourceList, sourceList);
+            Brn name = XmlParserBasic::Find("Name", source);
+            Brn type = XmlParserBasic::Find("Type", source);
+            Brn visible = XmlParserBasic::Find("Visible", source);
+            
+            TBool vis = false;
+            
+            if (visible == Brn("true")) {
+                vis = true;
+            }
+            
+            if (aInitial) {
+                iGroup->AddSource(name, type, vis);
+            }
+            else {
+                iGroup->UpdateSource(count, name, type, vis);
+                updated = true;
+            }
 
-			count++;
-		}
-	}
-	catch (XmlError) {
-	}
-	
-	if (updated) {
-		iHandler.GroupSourceListChanged(*iGroup);
-	}
+            count++;
+        }
+    }
+    catch (XmlError) {
+    }
+    
+    if (updated) {
+        iHandler.GroupSourceListChanged(*iGroup);
+    }
 }
 
 void CpTopology2Product::EventProductRoomChanged()
@@ -350,14 +350,14 @@ void CpTopology2Product::EventProductRoomChanged()
     LOG(kTopology, iGroup->Name());
     LOG(kTopology, "\n");
 
-	Brhz room;
-	iServiceProduct->PropertyProductRoom(room);
-	
-	iHandler.GroupRemoved(*iGroup);
-	iGroup->UpdateRoom(room);
-	iHandler.GroupAdded(*iGroup);
+    Brhz room;
+    iServiceProduct->PropertyProductRoom(room);
+    
+    iHandler.GroupRemoved(*iGroup);
+    iGroup->UpdateRoom(room);
+    iHandler.GroupAdded(*iGroup);
 }
-	
+    
 void CpTopology2Product::EventProductNameChanged()
 {
     LOG(kTopology, "CpTopology2::EventProductNameChanged ");
@@ -366,12 +366,12 @@ void CpTopology2Product::EventProductNameChanged()
     LOG(kTopology, iGroup->Name());
     LOG(kTopology, "\n");
 
-	Brhz name;
-	iServiceProduct->PropertyProductName(name);
-	
-	iHandler.GroupRemoved(*iGroup);
-	iGroup->UpdateName(name);
-	iHandler.GroupAdded(*iGroup);
+    Brhz name;
+    iServiceProduct->PropertyProductName(name);
+    
+    iHandler.GroupRemoved(*iGroup);
+    iGroup->UpdateName(name);
+    iHandler.GroupAdded(*iGroup);
 }
 
 void CpTopology2Product::EventProductStandbyChanged()
@@ -382,13 +382,13 @@ void CpTopology2Product::EventProductStandbyChanged()
     LOG(kTopology, iGroup->Name());
     LOG(kTopology, "\n");
 
-	TBool standby;
-	iServiceProduct->PropertyStandby(standby);
-	
-	iGroup->UpdateStandby(standby);
-	iHandler.GroupStandbyChanged(*iGroup);
+    TBool standby;
+    iServiceProduct->PropertyStandby(standby);
+    
+    iGroup->UpdateStandby(standby);
+    iHandler.GroupStandbyChanged(*iGroup);
 }
-	
+    
 void CpTopology2Product::EventProductSourceIndexChanged()
 {
     LOG(kTopology, "CpTopology2::EventProductSourceIndexChanged ");
@@ -397,13 +397,13 @@ void CpTopology2Product::EventProductSourceIndexChanged()
     LOG(kTopology, iGroup->Name());
     LOG(kTopology, "\n");
 
-	TUint sourceIndex;
-	iServiceProduct->PropertySourceIndex(sourceIndex);
-	
-	iGroup->UpdateSourceIndex(sourceIndex);
-	iHandler.GroupSourceIndexChanged(*iGroup);
+    TUint sourceIndex;
+    iServiceProduct->PropertySourceIndex(sourceIndex);
+    
+    iGroup->UpdateSourceIndex(sourceIndex);
+    iHandler.GroupSourceIndexChanged(*iGroup);
 }
-	
+    
 void CpTopology2Product::EventProductSourceXmlChanged()
 {
     LOG(kTopology, "CpTopology2::EventProductSourceXmlChanged ");
@@ -412,81 +412,81 @@ void CpTopology2Product::EventProductSourceXmlChanged()
     LOG(kTopology, iGroup->Name());
     LOG(kTopology, "\n");
 
-	Brhz xml;
-	
-	iServiceProduct->PropertySourceXml(xml);
+    Brhz xml;
+    
+    iServiceProduct->PropertySourceXml(xml);
 
-	ProcessSourceXml(xml, false);	
-}	
+    ProcessSourceXml(xml, false);   
+}   
 
 void CpTopology2Product::SetSourceIndex(TUint aIndex)
 {
-	iServiceProduct->BeginSetSourceIndex(aIndex, iFunctorSetSourceIndex);
+    iServiceProduct->BeginSetSourceIndex(aIndex, iFunctorSetSourceIndex);
 }
 
 void CpTopology2Product::CallbackSetSourceIndex(IAsync& aAsync)
 {
-	iServiceProduct->EndSetSourceIndex(aAsync);
+    iServiceProduct->EndSetSourceIndex(aAsync);
 }
-	
+    
 void CpTopology2Product::SetStandby(TBool aValue)
 {
-	iServiceProduct->BeginSetStandby(aValue, iFunctorSetStandby);
+    iServiceProduct->BeginSetStandby(aValue, iFunctorSetStandby);
 }
 
 void CpTopology2Product::CallbackSetStandby(IAsync& aAsync)
 {
-	iServiceProduct->EndSetStandby(aAsync);
+    iServiceProduct->EndSetStandby(aAsync);
 }
 
 // CpTopology2Job
 
 CpTopology2Job::CpTopology2Job(ICpTopology2Handler& aHandler)
 {
-	iHandler = &aHandler;
-	iGroup = 0;
+    iHandler = &aHandler;
+    iGroup = 0;
 }
-	
+    
 void CpTopology2Job::Set(CpTopology2Group& aGroup, ICpTopology2HandlerFunction aFunction)
 {
-	iGroup = &aGroup;
-	iFunction = aFunction;
-	iGroup->AddRef();
+    iGroup = &aGroup;
+    iFunction = aFunction;
+    iGroup->AddRef();
 }
 
 void CpTopology2Job::Execute()
 {
-	if (iGroup) {
-		(iHandler->*iFunction)(*iGroup);
-		iGroup->RemoveRef();
-		iGroup = 0;
-	}
-	else {
-		THROW(ThreadKill);
-	}
+    if (iGroup) {
+        (iHandler->*iFunction)(*iGroup);
+        iGroup->RemoveRef();
+        iGroup = 0;
+    }
+    else {
+        THROW(ThreadKill);
+    }
 }
 
 // CpTopology2
 
 CpTopology2::CpTopology2(ICpTopology2Handler& aHandler)
-	: iFree(kMaxJobCount)
-	, iReady(kMaxJobCount)
+    : iFree(kMaxJobCount)
+    , iReady(kMaxJobCount)
 {
-	for (TUint i = 0; i < kMaxJobCount; i++) {
-		iFree.Write(new CpTopology2Job(aHandler));
-	}
-	
-	iTopology1 = new CpTopology1(*this);
-	
-	iThread = new ThreadFunctor("TOP2", MakeFunctor(*this, &CpTopology2::Run));
-	iThread->Start();
+    for (TUint i = 0; i < kMaxJobCount; i++) {
+        iFree.Write(new CpTopology2Job(aHandler));
+    }
+    
+    iTopology1 = new CpTopology1(*this);
+    
+    iThread = new ThreadFunctor("TOP2", MakeFunctor(*this, &CpTopology2::Run));
+    iThread->Start();
 }
 
 CpTopology2::~CpTopology2()
 {
     LOG(kTopology, "CpTopology2::~CpTopology2\n");
 
-	delete (iTopology1);
+    delete (iTopology1);
     
     LOG(kTopology, "CpTopology2::~CpTopology2 deleted layer 1\n");
 
@@ -499,22 +499,22 @@ CpTopology2::~CpTopology2()
 
     LOG(kTopology, "CpTopology2::~CpTopology2 deleted devices\n");
 
-	iReady.Write(iFree.Read()); // this null job causes the thread to complete
+    iReady.Write(iFree.Read()); // this null job causes the thread to complete
 
-	delete (iThread);
-	
+    delete (iThread);
+    
     LOG(kTopology, "CpTopology2::~CpTopology2 deleted thread\n");
 
-	for (TUint i = 0; i < kMaxJobCount; i++) {
-		delete (iFree.Read());
-	}
+    for (TUint i = 0; i < kMaxJobCount; i++) {
+        delete (iFree.Read());
+    }
 
     LOG(kTopology, "CpTopology2::~CpTopology2 deleted jobs\n");
 }
     
 void CpTopology2::Refresh()
 {
-	iTopology1->Refresh();
+    iTopology1->Refresh();
 }
 
 // ICpTopology1Handler
@@ -554,9 +554,9 @@ void CpTopology2::GroupAdded(CpTopology2Group& aGroup)
     LOG(kTopology, aGroup.Name());
     LOG(kTopology, "\n");
 
-	CpTopology2Job* job = iFree.Read();
-	job->Set(aGroup, &ICpTopology2Handler::GroupAdded);
-	iReady.Write(job);
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupAdded);
+    iReady.Write(job);
 }
 
 void CpTopology2::GroupStandbyChanged(CpTopology2Group& aGroup)
@@ -567,9 +567,9 @@ void CpTopology2::GroupStandbyChanged(CpTopology2Group& aGroup)
     LOG(kTopology, aGroup.Name());
     LOG(kTopology, "\n");
 
-	CpTopology2Job* job = iFree.Read();
-	job->Set(aGroup, &ICpTopology2Handler::GroupStandbyChanged);
-	iReady.Write(job);
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupStandbyChanged);
+    iReady.Write(job);
 }
 
 void CpTopology2::GroupSourceIndexChanged(CpTopology2Group& aGroup)
@@ -580,9 +580,9 @@ void CpTopology2::GroupSourceIndexChanged(CpTopology2Group& aGroup)
     LOG(kTopology, aGroup.Name());
     LOG(kTopology, "\n");
 
-	CpTopology2Job* job = iFree.Read();
-	job->Set(aGroup, &ICpTopology2Handler::GroupSourceIndexChanged);
-	iReady.Write(job);
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupSourceIndexChanged);
+    iReady.Write(job);
 }
 
 void CpTopology2::GroupSourceListChanged(CpTopology2Group& aGroup)
@@ -593,9 +593,9 @@ void CpTopology2::GroupSourceListChanged(CpTopology2Group& aGroup)
     LOG(kTopology, aGroup.Name());
     LOG(kTopology, "\n");
 
-	CpTopology2Job* job = iFree.Read();
-	job->Set(aGroup, &ICpTopology2Handler::GroupSourceListChanged);
-	iReady.Write(job);
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupSourceListChanged);
+    iReady.Write(job);
 }
 
 void CpTopology2::GroupRemoved(CpTopology2Group& aGroup)
@@ -606,9 +606,9 @@ void CpTopology2::GroupRemoved(CpTopology2Group& aGroup)
     LOG(kTopology, aGroup.Name());
     LOG(kTopology, "\n");
 
-	CpTopology2Job* job = iFree.Read();
-	job->Set(aGroup, &ICpTopology2Handler::GroupRemoved);
-	iReady.Write(job);
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupRemoved);
+    iReady.Write(job);
 }
 
 void CpTopology2::Run()
@@ -617,21 +617,21 @@ void CpTopology2::Run()
 
     for (;;)
     {
-	    LOG(kTopology, "CpTopology2::Run wait for job\n");
+        LOG(kTopology, "CpTopology2::Run wait for job\n");
 
-    	CpTopology2Job* job = iReady.Read();
-    	
-	    LOG(kTopology, "CpTopology2::Run execute job\n");
+        CpTopology2Job* job = iReady.Read();
+        
+        LOG(kTopology, "CpTopology2::Run execute job\n");
 
-    	try {
-	    	job->Execute();
-	    	iFree.Write(job);
-	    }
-	    catch (ThreadKill)
-	    {
-	    	iFree.Write(job);
-	    	break;
-	    }
+        try {
+            job->Execute();
+            iFree.Write(job);
+        }
+        catch (ThreadKill)
+        {
+            iFree.Write(job);
+            break;
+        }
     }
 
     LOG(kTopology, "CpTopology2::Run Exiting\n");

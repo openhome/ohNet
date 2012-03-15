@@ -69,7 +69,7 @@ void CpiSubscription::Unsubscribe()
 {
     AddRef();
     iLock.Wait();
-	iEventProcessor = NULL;
+    iEventProcessor = NULL;
     if (iInterruptHandler != NULL) {
         iInterruptHandler->Interrupt();
     }
@@ -277,7 +277,7 @@ void CpiSubscription::DoUnsubscribe()
     iTimer->Cancel();
     if (iSid.Bytes() == 0) {
         LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
-		return;
+        return;
     }
     CpiSubscriptionManager::Remove(*this);
     Brh sid;
@@ -304,25 +304,25 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 
 void CpiSubscription::EventUpdateStart()
 {
-	iLock.Wait();
-	if (iEventProcessor != NULL) {
-		iEventProcessor->EventUpdateStart();
-	}
+    iLock.Wait();
+    if (iEventProcessor != NULL) {
+        iEventProcessor->EventUpdateStart();
+    }
 }
 
 void CpiSubscription::EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor)
 {
-	if (iEventProcessor != NULL) {
-		iEventProcessor->EventUpdate(aName, aValue, aProcessor);
-	}
+    if (iEventProcessor != NULL) {
+        iEventProcessor->EventUpdate(aName, aValue, aProcessor);
+    }
 }
 
 void CpiSubscription::EventUpdateEnd()
 {
-	if (iEventProcessor != NULL) {
-		iEventProcessor->EventUpdateEnd();
-	}
-	iLock.Signal();
+    if (iEventProcessor != NULL) {
+        iEventProcessor->EventUpdateEnd();
+    }
+    iLock.Signal();
 }
 
 void CpiSubscription::ListObjectDetails() const
@@ -582,7 +582,7 @@ void CpiSubscriptionManager::Schedule(CpiSubscription& aSubscription)
 EventServerUpnp* CpiSubscriptionManager::EventServer()
 {
     CpiSubscriptionManager* self = CpiSubscriptionManager::Self();
-	return self->iEventServer;
+    return self->iEventServer;
 }
 
 CpiSubscriptionManager* CpiSubscriptionManager::Self()

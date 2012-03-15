@@ -17,7 +17,7 @@ using namespace OpenHome::TestFramework;
 class TestCpDevice : public CpDevice
 {
 public:
-	TestCpDevice();
+    TestCpDevice();
 };
 
 class TestDevice : public ICpTopology2GroupHandler
@@ -148,13 +148,13 @@ public:
     TBool CheckComplete();
     
 private:
-	virtual void RoomAdded(CpTopology3Room& aRoom);
+    virtual void RoomAdded(CpTopology3Room& aRoom);
     virtual void RoomChanged(CpTopology3Room& aRoom);
     virtual void RoomRemoved(CpTopology3Room& aRoom);
-	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-	virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-	virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
-	
+    virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
+    virtual void RoomSourceChanged(CpTopology3Room& aRoom);
+    virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
+    
     void Add(const Brx& aType, const Brx& aValue, const Brx& aInfo);
     TBool Check(const Brx& aType, const Brx& aValue, const Brx& aInfo);
     
@@ -273,19 +273,19 @@ void TestTopology3Handler::RoomRemoved(CpTopology3Room& aRoom)
 
 void TestTopology3Handler::RoomStandbyChanged(CpTopology3Room& aRoom)
 {
-	Bws<10> standby;
+    Bws<10> standby;
 
-	switch(aRoom.Standby()) {
-	case CpTopology3Room::eOff:
-		standby.Replace(Brn("Off"));
-		break;
-	case CpTopology3Room::eMixed:
-		standby.Replace(Brn("Mixed"));
-		break;
-	case CpTopology3Room::eOn:
-		standby.Replace(Brn("On"));
-		break;
-	}
+    switch(aRoom.Standby()) {
+    case CpTopology3Room::eOff:
+        standby.Replace(Brn("Off"));
+        break;
+    case CpTopology3Room::eMixed:
+        standby.Replace(Brn("Mixed"));
+        break;
+    case CpTopology3Room::eOn:
+        standby.Replace(Brn("On"));
+        break;
+    }
 
     Add(Brn("Standby"), aRoom.Name(), standby);
 }
@@ -310,9 +310,9 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     TestDevice device;
     TestTopology3Handler handler3;
     
-	ICpTopology2Handler* handler2 = NULL;
+    ICpTopology2Handler* handler2 = NULL;
 
-	CpTopology3* topology3 = new CpTopology3(handler3, &handler2);
+    CpTopology3* topology3 = new CpTopology3(handler3, &handler2);
 
     Print("Test 1\n");
     Print("Add and remove 1\n");
@@ -452,14 +452,14 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     Print("Remove 1\n");
 
     handler2->GroupRemoved(*group1);
-	handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
+    handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room2);
 
     Print("Test 6\n");
     Print("Add 1\n");
 
     handler2->GroupAdded(*group1);
-	handler3.CheckRoomSourceChanged(*room1and2, Brn("Playlist"));
+    handler3.CheckRoomSourceChanged(*room1and2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room1and2);
 
     Print("Test 7\n");
@@ -467,7 +467,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 
     handler2->GroupRemoved(*group1);
     handler2->GroupRemoved(*group2);
-	handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
+    handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room2);
     handler3.CheckRoomRemoved(*room1);
 

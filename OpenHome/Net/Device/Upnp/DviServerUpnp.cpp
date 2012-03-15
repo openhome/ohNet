@@ -112,12 +112,12 @@ void HeaderSoapAction::Process(const Brx& aValue)
 
 const Endpoint& HeaderCallback::Endpoint() const
 {
-	return iEndpoint;
+    return iEndpoint;
 }
 
 const Brx& HeaderCallback::Uri() const
 {
-	return iUri;
+    return iUri;
 }
 
 void HeaderCallback::Log()
@@ -134,7 +134,7 @@ void HeaderCallback::Log()
 
 TBool HeaderCallback::Recognise(const Brx& aHeader)
 {
-	return Ascii::CaseInsensitiveEquals(aHeader, kUpnpHeaderCallback);
+    return Ascii::CaseInsensitiveEquals(aHeader, kUpnpHeaderCallback);
 }
 
 void HeaderCallback::Process(const Brx& aValue)
@@ -186,7 +186,7 @@ std::vector<char*>& HeaderAcceptLanguage::LanguageList()
 
 TBool HeaderAcceptLanguage::Recognise(const Brx& aHeader)
 {
-	return Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderAcceptLanguage);
+    return Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderAcceptLanguage);
 }
 
 void HeaderAcceptLanguage::Process(const Brx& aValue)
@@ -694,7 +694,7 @@ void DviSessionUpnp::Subscribe()
     // respond to subscription request
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
-	WriteServerHeader(*iWriterResponse);
+    WriteServerHeader(*iWriterResponse);
     IWriterAscii& writerSid = iWriterResponse->WriteHeaderField(HeaderSid::kHeaderSid);
     writerSid.Write(HeaderSid::kFieldSidPrefix);
     writerSid.Write(subscription->Sid());
@@ -703,7 +703,7 @@ void DviSessionUpnp::Subscribe()
     writerTimeout.Write(HeaderTimeout::kFieldTimeoutPrefix);
     writerTimeout.WriteUint(duration);
     writerTimeout.WriteFlush();
-   	iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
+    iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
     iResponseEnded = true;
 
@@ -750,7 +750,7 @@ void DviSessionUpnp::Unsubscribe()
     }
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
-   	iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
+    iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
     iResponseEnded = true;
 
@@ -785,7 +785,7 @@ void DviSessionUpnp::Renew()
 
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
-	WriteServerHeader(*iWriterResponse);
+    WriteServerHeader(*iWriterResponse);
     IWriterAscii& writerSid = iWriterResponse->WriteHeaderField(HeaderSid::kHeaderSid);
     writerSid.Write(HeaderSid::kFieldSidPrefix);
     writerSid.Write(iHeaderSid.Sid());
@@ -794,7 +794,7 @@ void DviSessionUpnp::Renew()
     writerTimeout.Write(HeaderTimeout::kFieldTimeoutPrefix);
     writerTimeout.WriteUint(duration);
     writerTimeout.WriteFlush();
-   	iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
+    iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
     iResponseEnded = true;
 
@@ -832,20 +832,20 @@ void DviSessionUpnp::ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, D
 
 void DviSessionUpnp::WriteServerHeader(IWriterHttpHeader& aWriter)
 {
-	IWriterAscii& stream = aWriter.WriteHeaderField(Brn("SERVER"));
-	TUint major, minor;
-	Brn osName = Os::GetPlatformNameAndVersion(major, minor);
-	stream.Write(osName);
-	stream.Write('/');
-	stream.WriteUint(major);
-	stream.Write('.');
-	stream.WriteUint(minor);
-	stream.Write(Brn(" UPnP/1.1 ohNet/"));
-	Stack::GetVersion(major, minor);
-	stream.WriteUint(major);
-	stream.Write('.');
-	stream.WriteUint(minor);
-	stream.WriteFlush();
+    IWriterAscii& stream = aWriter.WriteHeaderField(Brn("SERVER"));
+    TUint major, minor;
+    Brn osName = Os::GetPlatformNameAndVersion(major, minor);
+    stream.Write(osName);
+    stream.Write('/');
+    stream.WriteUint(major);
+    stream.Write('.');
+    stream.WriteUint(minor);
+    stream.Write(Brn(" UPnP/1.1 ohNet/"));
+    Stack::GetVersion(major, minor);
+    stream.WriteUint(major);
+    stream.Write('.');
+    stream.WriteUint(minor);
+    stream.WriteFlush();
 }
 
 void DviSessionUpnp::WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeType)
@@ -861,12 +861,12 @@ void DviSessionUpnp::WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeTyp
     else {
         iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
     }
-	if (aMimeType != NULL) {
-		IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
-		writer.Write(Brn(aMimeType));
-		writer.Write(Brn("; charset=\"utf-8\""));
-		writer.WriteFlush();
-	}
+    if (aMimeType != NULL) {
+        IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
+        writer.Write(Brn(aMimeType));
+        writer.Write(Brn("; charset=\"utf-8\""));
+        writer.WriteFlush();
+    }
     Http::WriteHeaderConnectionClose(*iWriterResponse);
     iWriterResponse->WriteFlush();
     if (aTotalBytes == 0) {
@@ -877,9 +877,9 @@ void DviSessionUpnp::WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeTyp
 
 void DviSessionUpnp::WriteResource(const TByte* aData, TUint aBytes)
 {
-	if (iResourceWriterHeadersOnly) {
-		return;
-	}
+    if (iResourceWriterHeadersOnly) {
+        return;
+    }
     Brn buf(aData, aBytes);
 #if 0
     Log::Print("Writing resource...\n");
@@ -971,14 +971,14 @@ TBool DviSessionUpnp::InvocationReadBool(const TChar* aName)
 void DviSessionUpnp::InvocationReadString(const TChar* aName, Brhz& aString)
 {
     try {
-		Brn value = XmlParserBasic::Find(aName, iSoapRequest);
-		Bwh writable(value.Bytes()+1);
-		if (value.Bytes()) {
-			writable.Append(value);
-			Converter::FromXmlEscaped(writable);
-		}
-		writable.PtrZ();
-		writable.TransferTo(aString);
+        Brn value = XmlParserBasic::Find(aName, iSoapRequest);
+        Bwh writable(value.Bytes()+1);
+        if (value.Bytes()) {
+            writable.Append(value);
+            Converter::FromXmlEscaped(writable);
+        }
+        writable.PtrZ();
+        writable.TransferTo(aString);
     }
     catch (XmlError&) {
         InvocationReportError(501, Brn("Invalid XML"));
@@ -1023,7 +1023,7 @@ void DviSessionUpnp::InvocationReadBinary(const TChar* aName, Brh& aData)
         Brn value = XmlParserBasic::Find(aName, iSoapRequest);
         if (value.Bytes()) {
             Bwh writable(value.Bytes()+1);
-			writable.Append(value);
+            writable.Append(value);
             Converter::FromBase64(writable);
             writable.TransferTo(aData);
         }
@@ -1048,7 +1048,7 @@ void DviSessionUpnp::InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescr
     iWriterResponse->WriteStatus(HttpStatus::kInternalServerError, Http::eHttp11);
     iWriterResponse->WriteHeader(kUpnpHeaderExt, Brx::Empty());
     iWriterResponse->WriteHeader(Http::kHeaderContentType, Brn("text/xml; charset=\"utf-8\""));
-	WriteServerHeader(*iWriterResponse);
+    WriteServerHeader(*iWriterResponse);
     iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
@@ -1081,7 +1081,7 @@ void DviSessionUpnp::InvocationWriteStart()
     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
     iWriterResponse->WriteHeader(kUpnpHeaderExt, Brx::Empty());
     iWriterResponse->WriteHeader(Http::kHeaderContentType, Brn("text/xml; charset=\"utf-8\""));
-	WriteServerHeader(*iWriterResponse);
+    WriteServerHeader(*iWriterResponse);
     iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
@@ -1226,7 +1226,7 @@ SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer("DSVU", iPort, aNif.Address());
     TChar thName[5];
-	const TUint numWsThreads = Stack::InitParams().DvNumServerThreads();
+    const TUint numWsThreads = Stack::InitParams().DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "DS%2lu", (unsigned long)i);
         server->Add(&thName[0], new DviSessionUpnp(aNif.Address(), server->Port(), *this));

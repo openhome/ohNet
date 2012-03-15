@@ -71,22 +71,22 @@ void TopologyLogger::GroupRemoved(CpTopology2Group& aGroup)
 
 void TopologyLogger::PrintSourceInfo(const CpTopology2Group& aGroup)
 {
-	TUint count = aGroup.SourceCount();
+    TUint count = aGroup.SourceCount();
 
-  	Print("===============================================\n");
-	
-	for (TUint i = 0; i < count; i++) {
-    	Print("%u. ", i);
-    	Print(aGroup.SourceName(i));
-    	Print(" ");
-    	Print(aGroup.SourceType(i));
-    	Print(" ");
-    	Print(aGroup.SourceVisible(i) ? "true" : "false");
-    	Print("\n");
-	}
+    Print("===============================================\n");
+    
+    for (TUint i = 0; i < count; i++) {
+        Print("%u. ", i);
+        Print(aGroup.SourceName(i));
+        Print(" ");
+        Print(aGroup.SourceType(i));
+        Print(" ");
+        Print(aGroup.SourceVisible(i) ? "true" : "false");
+        Print("\n");
+    }
 
-  	Print("===============================================\n");
-   	Print("\n");
+    Print("===============================================\n");
+    Print("\n");
 }
 
 void TopologyLogger::PrintGroupInfo(const char* aPrologue, const CpTopology2Group& aGroup)

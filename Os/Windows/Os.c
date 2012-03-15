@@ -199,13 +199,13 @@ void OsConsoleWrite(const char* aStr)
 
 void OsGetPlatformNameAndVersion(char** aName, uint32_t* aMajor, uint32_t* aMinor)
 {
-	OSVERSIONINFO verInfo;
-	memset(&verInfo, 0, sizeof(verInfo));
-	verInfo.dwOSVersionInfoSize = sizeof(verInfo);
-	(void)GetVersionEx(&verInfo);
-	*aName = "Windows";
-	*aMajor = verInfo.dwMajorVersion;
-	*aMinor = verInfo.dwMinorVersion;
+    OSVERSIONINFO verInfo;
+    memset(&verInfo, 0, sizeof(verInfo));
+    verInfo.dwOSVersionInfoSize = sizeof(verInfo);
+    (void)GetVersionEx(&verInfo);
+    *aName = "Windows";
+    *aMajor = verInfo.dwMajorVersion;
+    *aMinor = verInfo.dwMinorVersion;
 }
 
 THandle OsSemaphoreCreate(const char* aName, uint32_t aCount)
@@ -859,19 +859,19 @@ int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopb
         MIB_IFROW* ifRow = NULL;
         OsNetworkAdapter* nif;
         size_t len;
-		DWORD j = 0;
+        DWORD j = 0;
 
-		for (; j< ifTable->dwNumEntries; j++) {
-			MIB_IFROW* tmp = &ifTable->table[j];
-			if (tmp->dwIndex == addrRow->dwIndex) {
-				ifRow = tmp;
-				break;
-			}
-		}
-		if (ifRow == NULL) {
-			fprintf(stderr, "Unable to match ifRow to addrRow\n");
-			continue;
-		}
+        for (; j< ifTable->dwNumEntries; j++) {
+            MIB_IFROW* tmp = &ifTable->table[j];
+            if (tmp->dwIndex == addrRow->dwIndex) {
+                ifRow = tmp;
+                break;
+            }
+        }
+        if (ifRow == NULL) {
+            fprintf(stderr, "Unable to match ifRow to addrRow\n");
+            continue;
+        }
 
         if ((addrRow->dwAddr == loopbackAddr && !includeLoopback) ||
             (addrRow->dwAddr != loopbackAddr && aUseLoopback)) {

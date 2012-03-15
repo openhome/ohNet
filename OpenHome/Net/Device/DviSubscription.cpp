@@ -110,7 +110,7 @@ void DviSubscription::RemoveRef()
 
 void DviSubscription::Renew(TUint& aSeconds)
 {
-	const TUint maxDuration = Stack::InitParams().DvMaxUpdateTimeSecs();
+    const TUint maxDuration = Stack::InitParams().DvMaxUpdateTimeSecs();
     if (aSeconds == 0 || aSeconds > maxDuration) {
         aSeconds = maxDuration;
     }
@@ -123,20 +123,20 @@ void DviSubscription::WriteChanges()
     try {
         writer = CreateWriter();
         if (writer != NULL) {
-			writer->PropertyWriteEnd();
+            writer->PropertyWriteEnd();
             delete writer;
         }
     }
-	catch(NetworkTimeout&) {
+    catch(NetworkTimeout&) {
         // we may block a publisher for a relatively long time failing to connect
         // its reasonable to assume that later attempts are also likely to fail
         // ...so its better if we don't keep blocking and instead remove the subscription
         iService->RemoveSubscription(iSid);
     }
-	catch(NetworkError&) {}
-	catch(HttpError&) {}
-	catch(WriterError&) {}
-	catch(ReaderError&) {}
+    catch(NetworkError&) {}
+    catch(HttpError&) {}
+    catch(WriterError&) {}
+    catch(ReaderError&) {}
 }
 
 IPropertyWriter* DviSubscription::CreateWriter()
@@ -162,29 +162,29 @@ IPropertyWriter* DviSubscription::CreateWriter()
     IPropertyWriter* writer = NULL;
     const DviService::VectorProperties& properties = iService->Properties();
     ASSERT(properties.size() == iPropertySequenceNumbers.size()); // services can't change definition after first advertisement
-	for (TUint i=0; i<properties.size(); i++) {
-		Property* prop = properties[i];
-		TUint seq = prop->SequenceNumber();
-		ASSERT(seq != 0); // => implementor hasn't initialised the property
-		if (seq != iPropertySequenceNumbers[i]) {
-			if (writer == NULL) {
-				writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
+    for (TUint i=0; i<properties.size(); i++) {
+        Property* prop = properties[i];
+        TUint seq = prop->SequenceNumber();
+        ASSERT(seq != 0); // => implementor hasn't initialised the property
+        if (seq != iPropertySequenceNumbers[i]) {
+            if (writer == NULL) {
+                writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
                 if (writer == NULL) {
                     THROW(WriterError);
                 }
-				if (iSequenceNumber == UINT32_MAX) {
-					iSequenceNumber = 1;
-				}
-				else {
-					iSequenceNumber++;
-				}
-			}
-			prop->Write(*writer);
-			iPropertySequenceNumbers[i] = seq;
-		}
-	}
+                if (iSequenceNumber == UINT32_MAX) {
+                    iSequenceNumber = 1;
+                }
+                else {
+                    iSequenceNumber++;
+                }
+            }
+            prop->Write(*writer);
+            iPropertySequenceNumbers[i] = seq;
+        }
+    }
     if (writer == NULL) {
-		LOG(kDvEvent, "Found no changes to publish\n");
+        LOG(kDvEvent, "Found no changes to publish\n");
     }
     return writer;
 }
@@ -200,8 +200,8 @@ TBool DviSubscription::PropertiesInitialised() const
     iLock.Wait();
     if (iService != NULL) {
         const DviService::VectorProperties& properties = iService->Properties();
-	    for (TUint i=0; i<properties.size(); i++) {
-		    if (properties[i] == 0) {
+        for (TUint i=0; i<properties.size(); i++) {
+            if (properties[i] == 0) {
                 initialised = false;
                 break;
             }
@@ -381,7 +381,7 @@ DviSubscriptionManager::DviSubscriptionManager()
     , iLock("DSBM")
     , iFree(Stack::InitParams().DvNumPublisherThreads())
 {
-	const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
+    const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
     TChar thName[5];
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
@@ -403,7 +403,7 @@ DviSubscriptionManager::~DviSubscriptionManager()
     Join();
     iLock.Signal();
 
-	const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
+    const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
     for (TUint i=0; i<numPublisherThreads; i++) {
         delete iPublishers[i];
     }

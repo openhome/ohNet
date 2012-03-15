@@ -26,8 +26,8 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
     , iInterrupt(false)
     , iSubscription(NULL)
 {
-	iDevice.AddRef();
-	Stack::AddObject(this);
+    iDevice.AddRef();
+    Stack::AddObject(this);
 }
 
 CpiService::~CpiService()
@@ -46,8 +46,8 @@ CpiService::~CpiService()
     if (wait) {
         iShutdownSignal.Wait();
     }
-	iDevice.RemoveRef();
-	Stack::RemoveObject(this);
+    iDevice.RemoveRef();
+    Stack::RemoveObject(this);
 }
 
 Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor)
@@ -460,11 +460,11 @@ CpiDevice& OpenHome::Net::Invocation::Device()
 void OpenHome::Net::Invocation::Output(IAsyncOutput& aConsole)
 {
     AutoMutex a(iLock); /* using iLock doesn't prevent logging for multiple invocations overlapping
-						   Using Stack::Mutex() causes problems though as the call to
-						   ServiceType().FullName() below also uses the Stack's mutex and we can't
-						   easily use a different mutex there.
-						   If we later want to prevent overlapped output, it'd be best to add a
-						   shared logging mutex to Stack */
+                           Using Stack::Mutex() causes problems though as the call to
+                           ServiceType().FullName() below also uses the Stack's mutex and we can't
+                           easily use a different mutex there.
+                           If we later want to prevent overlapped output, it'd be best to add a
+                           shared logging mutex to Stack */
     Bws<Ascii::kMaxUintStringBytes+1> buf;
     (void)Ascii::AppendDec(buf, iSequenceNumber);
     buf.PtrZ();
@@ -493,9 +493,9 @@ void OpenHome::Net::Invocation::OutputArgument(IAsyncOutput& aConsole, const TCh
     TChar* bigStr = NULL;
     ASSERT(aArgument.Parameter().Name().Bytes() < kMaxStackBytes-40); // add code to support mega-names if this ever fails
     OpenHome::Net::Parameter::EType paramType = aArgument.Parameter().Type();
-	if (paramType == OpenHome::Net::Parameter::eTypeRelated) {
-		paramType = ((const ParameterRelated&)aArgument.Parameter()).Related().Parameter().Type();
-	}
+    if (paramType == OpenHome::Net::Parameter::eTypeRelated) {
+        paramType = ((const ParameterRelated&)aArgument.Parameter()).Related().Parameter().Type();
+    }
     const Brx& paramName = aArgument.Parameter().Name();
     if (paramType == OpenHome::Net::Parameter::eTypeBinary) {
         (void)sprintf(str, "%s (binary - size %lu)", paramName.Ptr(), (unsigned long)((const ArgumentBinary&)aArgument).Value().Bytes());

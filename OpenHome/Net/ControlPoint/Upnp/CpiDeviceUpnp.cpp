@@ -88,50 +88,50 @@ void CpiDeviceUpnp::InterruptXmlFetch()
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
 {
-	Brn key(aKey);
-	
-	Parser parser(key);
-	
-	if (parser.Next('.') == Brn("Upnp")) {
-		Brn property = parser.Remaining();
+    Brn key(aKey);
+    
+    Parser parser(key);
+    
+    if (parser.Next('.') == Brn("Upnp")) {
+        Brn property = parser.Remaining();
 
-	    if (property == Brn("Location")) {
-	        aValue.Set(iLocation);
-	        return (true);
-	    }
-	    if (property == Brn("DeviceXml")) {
-	        aValue.Set(iXml);
-	        return (true);
-	    }
+        if (property == Brn("Location")) {
+            aValue.Set(iLocation);
+            return (true);
+        }
+        if (property == Brn("DeviceXml")) {
+            aValue.Set(iXml);
+            return (true);
+        }
 
-		const DeviceXml* device = iDeviceXml;
-		
-		if (parser.Next('.') == Brn("Root")) {
-			device = &iDeviceXmlDocument->Root();
-			property.Set(parser.Remaining());
-		}
-		
-	    try {
-		    if (property == Brn("FriendlyName")) {
-		        device->GetFriendlyName(aValue);
-		        return (true);
-		    }
-		    if (property == Brn("PresentationUrl")) {
-		        device->GetPresentationUrl(aValue);
-		        return (true);
-		    }
-		    
-		    Parser parser(property);
-		    
-		    Brn token = parser.Next('.');
-		    
-			if (token == Brn("Service")) {
-				aValue.Set(device->ServiceVersion(parser.Remaining()));
-				return (true);
-			}
-		}
-		catch (XmlError) {
-		}
+        const DeviceXml* device = iDeviceXml;
+        
+        if (parser.Next('.') == Brn("Root")) {
+            device = &iDeviceXmlDocument->Root();
+            property.Set(parser.Remaining());
+        }
+        
+        try {
+            if (property == Brn("FriendlyName")) {
+                device->GetFriendlyName(aValue);
+                return (true);
+            }
+            if (property == Brn("PresentationUrl")) {
+                device->GetPresentationUrl(aValue);
+                return (true);
+            }
+            
+            Parser parser(property);
+            
+            Brn token = parser.Next('.');
+            
+            if (token == Brn("Service")) {
+                aValue.Set(device->ServiceVersion(parser.Remaining()));
+                return (true);
+            }
+        }
+        catch (XmlError) {
+        }
     }
 
     return (false);
@@ -271,10 +271,10 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     }
     try {
         iDeviceXmlDocument = new DeviceXmlDocument(iXml);
-    	iDeviceXml = new DeviceXml(iDeviceXmlDocument->Find(Udn()));
+        iDeviceXml = new DeviceXml(iDeviceXmlDocument->Find(Udn()));
     }
     catch (XmlError&) {
-    	err = true;
+        err = true;
         LOG2(kDevice, kError, "Error within xml for ");
         LOG2(kDevice, kError, Udn());
         LOG2(kDevice, kError, " from ");
