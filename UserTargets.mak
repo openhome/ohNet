@@ -15,7 +15,4 @@ mostlyclean : clean clean-t4
 
 maintainer-clean : mostlyclean
 
-generate-makefiles : Generated$(dirsep)GenerateSourceFiles.mak Generated$(dirsep)Proxies.mak Generated$(dirsep)Devices.mak	
-
-
-
+generate-makefiles : Generated$(dirsep)GenerateSourceFiles.mak Generated$(dirsep)Proxies.mak Generated$(dirsep)Devices.mak
