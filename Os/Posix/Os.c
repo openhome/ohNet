@@ -774,7 +774,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
     handle->iInterrupted = aInterrupt;
     int32_t val = 1;
     if (aInterrupt != 0) {
-        if (write(handle->iPipe[1], &val, sizeof(val)) == -1) {
+        if (TEMP_FAILURE_RETRY(write(handle->iPipe[1], &val, sizeof(val))) == -1) {
             err = -1;
         }
     }
