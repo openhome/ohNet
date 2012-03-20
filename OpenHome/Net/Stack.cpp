@@ -89,6 +89,7 @@ void Stack::Destroy()
 
 Stack::~Stack()
 {
+    Log::Print("> ~Stack\n");
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
     iPublicLock.Wait();
@@ -260,6 +261,10 @@ IStack* Stack::DviStack()
 Stack::MListener::MListener(TIpAddress aInterface)
     : iListener(aInterface)
     , iRefCount(1)
+{
+}
+
+Stack::MListener::~MListener()
 {
 }
 

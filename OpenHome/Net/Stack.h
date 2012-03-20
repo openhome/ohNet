@@ -65,6 +65,7 @@ private:
     {
     public:
         MListener(TIpAddress aInterface);
+        ~MListener();
         SsdpListenerMulticast& Listener();
         TIpAddress Interface() const;
         void AddRef();
