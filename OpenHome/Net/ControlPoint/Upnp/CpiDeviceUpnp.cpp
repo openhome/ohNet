@@ -21,6 +21,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+
 // CpiDeviceUpnp
 
 CpiDeviceUpnp::CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList)
@@ -404,10 +405,12 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
         return false;
     }
     iLock.Wait();
+    Stack::Mutex().Wait();
     if (iRefreshing && iPendingRefreshCount > 1) {
         // we need at most one final msearch once a network card starts working following an adapter change
         iPendingRefreshCount = 1;
     }
+    Stack::Mutex().Signal();
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
@@ -504,12 +507,12 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 void CpiDeviceListUpnp::RefreshTimerComplete()
 {
     RefreshComplete();
-    iLock.Wait();
+    Stack::Mutex().Wait();
     if (iPendingRefreshCount > 0) {
         iNextRefreshTimer->FireIn(Stack::InitParams().MsearchTimeSecs() * 1000);
         iPendingRefreshCount--;
     }
-    iLock.Signal();
+    Stack::Mutex().Signal();
 }
 
 void CpiDeviceListUpnp::NextRefreshDue()
@@ -536,9 +539,9 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
         return;
     }
     iNextRefreshTimer->Cancel();
-    iLock.Wait();
+    Stack::Mutex().Wait();
     iPendingRefreshCount = 0;
-    iLock.Signal();
+    Stack::Mutex().Signal();
     StopListeners();
 
     if (current == NULL) {
@@ -555,9 +558,11 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     
     iLock.Wait();
     iInterface = current->Address();
-    TUint msearchTime = Stack::InitParams().MsearchTimeSecs();
-    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
     iLock.Signal();
+    TUint msearchTime = Stack::InitParams().MsearchTimeSecs();
+    Stack::Mutex().Wait();
+    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
+    Stack::Mutex().Signal();
     current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
     iSsdpLock.Wait();
@@ -575,7 +580,9 @@ void CpiDeviceListUpnp::RemoveAll()
     iNextRefreshTimer->Cancel();
     iLock.Wait();
     CancelRefresh();
+    Stack::Mutex().Wait();
     iPendingRefreshCount = 0;
+    Stack::Mutex().Signal();
     std::vector<CpiDevice*> devices;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
