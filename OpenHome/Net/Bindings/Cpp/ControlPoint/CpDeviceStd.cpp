@@ -119,7 +119,6 @@ void CpDeviceListCpp::Added(CpiDevice& aDevice)
     iMap.insert(std::pair<Brn,CpDeviceCpp*>(udn, device));
     iLock->Signal();
     iAdded(*device);
-    ASSERT(!iExiting);
 }
 
 void CpDeviceListCpp::Removed(CpiDevice& aDevice)
@@ -146,7 +145,7 @@ void CpDeviceListCpp::Removed(CpiDevice& aDevice)
     }
 }
 
-TBool CpDeviceList::LockIfActive()
+TBool CpDeviceListCpp::LockIfActive()
 {
     iLock->Wait();
     if (iActive) {
