@@ -89,7 +89,6 @@ void Stack::Destroy()
 
 Stack::~Stack()
 {
-    Log::Print("> ~Stack\n");
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
     iPublicLock.Wait();
