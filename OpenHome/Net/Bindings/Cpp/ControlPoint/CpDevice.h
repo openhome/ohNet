@@ -8,6 +8,7 @@
 #include <map>
 
 namespace OpenHome {
+class Mutex;
 namespace Net {
 
 class CpiDevice;
@@ -90,7 +91,7 @@ class FunctorCpiDevice;
 class CpDeviceListCpp
 {
 public:
-    ~CpDeviceListCpp();
+    virtual ~CpDeviceListCpp();
     /**
      * Refresh the contents of the list.
      *
@@ -130,6 +131,7 @@ protected:
 private:
     void Added(CpiDevice& aDevice);
     void Removed(CpiDevice& aDevice);
+    TBool LockIfActive();
 protected:
     CpiDeviceList* iList;
 private:
@@ -137,6 +139,8 @@ private:
     Map iMap;
     FunctorCpDeviceCpp iAdded;
     FunctorCpDeviceCpp iRemoved;
+    Mutex* iLock;
+    TBool iActive;
 };
 
 } // namespace Net
