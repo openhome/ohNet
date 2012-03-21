@@ -121,7 +121,7 @@ class JenkinsBuild():
             args.append('amd64')
             os.environ['CS_PLATFORM'] = 'x64'
         if arch == 'arm':
-            os.environ['CROSS_COMPILE'] = 'arm-none-linux-gnueabi-'
+            os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
 
         self.platform_args = args
 
