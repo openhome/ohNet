@@ -74,6 +74,7 @@ CpDeviceListCpp::~CpDeviceListCpp()
     iActive = false;
     iLock->Signal();
     delete iList;
+    delete iLock;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
         it->second->RemoveRef();
