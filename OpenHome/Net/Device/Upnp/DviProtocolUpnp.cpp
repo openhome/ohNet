@@ -14,6 +14,7 @@
 #include <OpenHome/Net/Private/Ssdp.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Private/Debug.h>
 #include <OpenHome/MimeTypes.h>
 
 using namespace OpenHome;
@@ -377,6 +378,7 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     iSubnetDisableCount = (TUint)iAdapters.size();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetDisabled);
     for (i=0; i<iSubnetDisableCount; i++) {
+        LogMulticastNotification("byebye");
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
         iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyByeBye(*this, *this, iAdapters[i]->Interface(),
@@ -475,6 +477,7 @@ void DviProtocolUpnp::SendAliveNotifications()
     if(!iDevice.Enabled()) {
         return;
     }
+    LogMulticastNotification("alive");
     iLock.Wait();
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
@@ -493,6 +496,8 @@ void DviProtocolUpnp::SendAliveNotifications()
 
 void DviProtocolUpnp::SendUpdateNotifications()
 {
+    Stack::Mutex().Wait();
+    LogMulticastNotification("update");
     iLock.Wait();
     iAliveTimer->Cancel();
     iUpdateCount = (TUint)iAdapters.size();
@@ -520,12 +525,31 @@ void DviProtocolUpnp::GetDeviceXml(Brh& aXml, TIpAddress aAdapter)
     writer.TransferTo(aXml);
 }
 
+void DviProtocolUpnp::LogUnicastNotification(const char* aType)
+{
+    Stack::Mutex().Wait();
+    LOG(kDvDevice, "Device ");
+    LOG(kDvDevice, iDevice.Udn());
+    LOG(kDvDevice, " starting response to msearch type \'%s\'\n", aType);
+    Stack::Mutex().Signal();
+}
+
+void DviProtocolUpnp::LogMulticastNotification(const char* aType)
+{
+    Stack::Mutex().Wait();
+    LOG(kDvDevice, "Device ");
+    LOG(kDvDevice, iDevice.Udn());
+    LOG(kDvDevice, " starting to send %s notifications.\n", aType);
+    Stack::Mutex().Signal();
+}
+
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)
 {
     if (iDevice.Enabled()) {
         iLock.Wait();
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
+            LogUnicastNotification("all");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchAll(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
@@ -540,6 +564,7 @@ void DviProtocolUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAd
         iLock.Wait();
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
+            LogUnicastNotification("root");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchRoot(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
@@ -554,6 +579,7 @@ void DviProtocolUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAd
         iLock.Wait();
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
+            LogUnicastNotification("uuid");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchUuid(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
@@ -568,6 +594,7 @@ void DviProtocolUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx,
         iLock.Wait();
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
+            LogUnicastNotification("device");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchDeviceType(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
@@ -586,6 +613,7 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
             if (serviceType.Version() >= aVersion && serviceType.Domain() == aDomain && serviceType.Name() == aType) {
                 TInt index = FindListenerForInterface(aAdapter);
                 if (index != -1) {
+                    LogUnicastNotification("service");
                     Bwh uri;
                     GetUriDeviceXml(uri, iAdapters[index]->UriBase());
                     iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchServiceType(*this, *this, aEndpoint, aMx, serviceType,
