@@ -496,7 +496,6 @@ void DviProtocolUpnp::SendAliveNotifications()
 
 void DviProtocolUpnp::SendUpdateNotifications()
 {
-    Stack::Mutex().Wait();
     LogMulticastNotification("update");
     iLock.Wait();
     iAliveTimer->Cancel();
