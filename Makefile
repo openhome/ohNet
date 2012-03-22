@@ -22,6 +22,7 @@ ifeq ($(MACHINE), Darwin)
     linkopts_ohNet =
 ifeq ($(mac-arm),1)
 	# Darwin, ARM -> iOS
+	platform ?= iOS
 	devroot=/Developer/Platforms/iPhoneOS.platform/Developer
 	sdkroot=$(devroot)/SDKs/iPhoneOS4.3.sdk
 	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
@@ -36,6 +37,7 @@ ifeq ($(mac-arm),1)
 
 else
 	# Darwin, not ARM -> Intel Mac
+	platform ?= IntelMac
 	platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
 	platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
 	osbuilddir = Mac
@@ -102,11 +104,20 @@ link_dll = ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-l
 link_dll_service = ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = dmcs /nologo
 publicjavadir = OpenHome/Net/Bindings/Java/
-includes_jni = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
-link_jvm = $(JAVA_HOME)/jre/lib/i386/server/libjvm.so
+
+ifeq ($(platform), IntelMac)
+	includes_jni = -I/System/Library/Frameworks/JavaVM.framework/Headers -I/usr/include/malloc
+	link_jvm = /System/Library/Frameworks/JavaVM.framework/JavaVM
+	javac = /usr/bin/javac
+	jar = /usr/bin/jar
+else
+	includes_jni = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
+	link_jvm = $(JAVA_HOME)/jre/lib/i386/server/libjvm.so
+	javac = $(JAVA_HOME)/bin/javac
+	jar = $(JAVA_HOME)/bin/jar
+endif
+
 java_cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
-javac = $(JAVA_HOME)/bin/javac
-jar = $(JAVA_HOME)/bin/jar
 jarflags = cf
 dirsep = /
 prefix = /usr/local
