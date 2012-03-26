@@ -374,6 +374,7 @@ CpTopology3Room::CpTopology3Room(const Brx& aName, ICpTopology3Handler& aHandler
     , iStandby(eOff)
     , iRefCount(1)
     , iVolumeDevice(0)
+	, iHasVolumeControl(false)
     , iUserData(0)
 {
 }
@@ -445,6 +446,7 @@ void CpTopology3Room::GroupAdded(CpTopology3Group& aGroup)
         iRootList.push_back(&aGroup);
         if (aGroup.Group().HasVolumeControl()) {
             iVolumeDevice = &aGroup.Group().Device();
+			iHasVolumeControl = true;
         }
         if (aGroup.Group().Standby()) {
             iStandbyCount++;
@@ -452,6 +454,7 @@ void CpTopology3Room::GroupAdded(CpTopology3Group& aGroup)
         }
         iSourceCount = EvaluateSources();
         iHandler.RoomAdded(*this);
+		iHandler.RoomVolumeControlChanged(*this);
         iMutex.Signal();
         return;
     }
@@ -603,17 +606,25 @@ void CpTopology3Room::UpdateCurrentGroup(CpTopology3Group& aGroup)
     CpTopology2Group& root = aGroup.Root().Group();
     CpDevice& device = root.Device();
 
+	LOG(kTopology, "CpTopology3Room::UpdateCurrentGroup(");
+    LOG(kTopology, iName);
+    LOG(kTopology, ":");
+	LOG(kTopology, root.Name());
+	LOG(kTopology, ":");
+	LOG(kTopology, iHasVolumeControl ? Brn("Yes") : Brn("No"));
+	LOG(kTopology, ":");
+    LOG(kTopology, root.HasVolumeControl() ? Brn("Yes") : Brn("No"));
+    LOG(kTopology, ")\n");
+
     if (root.HasVolumeControl()) {
-        if (iVolumeDevice != &device) {
-            iVolumeDevice = &device;
-            iHandler.RoomVolumeControlChanged(*this);
-        }
+        iVolumeDevice = &device;
+		iHasVolumeControl = true;
+        iHandler.RoomVolumeControlChanged(*this);
     }
     else {
-        if (iVolumeDevice != 0) {
-            iVolumeDevice = 0;
-            iHandler.RoomVolumeControlChanged(*this);
-        }
+        iVolumeDevice = 0;
+		iHasVolumeControl = false;
+        iHandler.RoomVolumeControlChanged(*this);
     }
 
     iCurrentGroup = &aGroup;
@@ -793,7 +804,7 @@ CpDevice& CpTopology3Room::CurrentSourceDevice() const
 
 TBool CpTopology3Room::HasVolumeControl() const
 {
-    return (iVolumeDevice != 0);
+    return (iHasVolumeControl);
 }
 
 CpDevice& CpTopology3Room::VolumeDevice() const

@@ -145,6 +145,7 @@ public:
     TBool CheckRoomChanged(const TestRoom& aRoom);
     TBool CheckRoomRemoved(const TestRoom& aRoom);
     TBool CheckRoomSourceChanged(const TestRoom& aRoom, const Brx& aName);
+	TBool CheckVolumeControl(const TestRoom& aRoom, TBool aValue);
     TBool CheckComplete();
     
 private:
@@ -213,6 +214,11 @@ TBool TestTopology3Handler::CheckRoomRemoved(const TestRoom& aRoom)
 TBool TestTopology3Handler::CheckRoomSourceChanged(const TestRoom& aRoom, const Brx& aName)
 {
     return (Check(Brn("Change"), aRoom.Name(), aName));
+}
+
+TBool TestTopology3Handler::CheckVolumeControl(const TestRoom& aRoom, TBool aValue)
+{
+	return (Check(Brn("Volume Control"), aRoom.Name(), aValue ? Brn("Yes") : Brn("No")));
 }
 
 TBool TestTopology3Handler::CheckComplete()
@@ -319,7 +325,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     
     CpDevice* cpdevice = 0;
     
-    CpTopology2Group* group1 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Majik DS-I"), 0, false);
+    CpTopology2Group* group1 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Majik DS-I"), 0, true);
     
     group1->AddSource(Brn("Playlist"), Brn("Playlist"), true);
     group1->AddSource(Brn("Radio"), Brn("Radio"), true);
@@ -356,6 +362,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 
     handler2->GroupAdded(*group1);
     handler3.CheckRoomAdded(*room1);
+	handler3.CheckVolumeControl(*room1, true);
     
     handler2->GroupRemoved(*group1);
     handler3.CheckRoomRemoved(*room1);
@@ -363,7 +370,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     Print("Test 2\n");
     Print("Add 1, add 2\n");
 
-    CpTopology2Group* group2 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Phono"), 0, true);
+    CpTopology2Group* group2 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Phono"), 0, false);
     
     group2->AddSource(Brn("Playlist"), Brn("Playlist"), true);
     group2->AddSource(Brn("Radio"), Brn("Radio"), true);
@@ -434,6 +441,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     handler2->GroupAdded(*group1);
     handler2->GroupAdded(*group2);
     handler3.CheckRoomAdded(*room1);
+	handler3.CheckVolumeControl(*room1, true);
     handler3.CheckRoomChanged(*room1and2);
 
     Print("Test 3\n");
@@ -452,6 +460,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     Print("Remove 1\n");
 
     handler2->GroupRemoved(*group1);
+	handler3.CheckVolumeControl(*room2, false);
     handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room2);
 
@@ -459,6 +468,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     Print("Add 1\n");
 
     handler2->GroupAdded(*group1);
+	handler3.CheckVolumeControl(*room1and2, true);
     handler3.CheckRoomSourceChanged(*room1and2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room1and2);
 
@@ -467,6 +477,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 
     handler2->GroupRemoved(*group1);
     handler2->GroupRemoved(*group2);
+	handler3.CheckVolumeControl(*room1, false);
     handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room2);
     handler3.CheckRoomRemoved(*room1);

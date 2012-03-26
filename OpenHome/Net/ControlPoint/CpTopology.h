@@ -46,7 +46,9 @@ public:
     virtual const Brx& CurrentSourceGroup() const = 0;
     virtual CpDevice& CurrentSourceDevice() const = 0;
     virtual TBool HasVolumeControl() const = 0;
-    virtual CpDevice& VolumeDevice() const = 0;
+	virtual TUint Volume() const = 0;
+	virtual TBool Mute() const = 0;
+	virtual TUint VolumeLimit() const = 0;
     virtual void SetUserData(void* aValue) = 0;
     virtual void* UserData() const = 0;
     virtual ~IRoom() {}
@@ -56,6 +58,10 @@ public:
     virtual void SetStandby(TBool aValue) = 0;
     virtual void SetSourceIndex(TUint aIndex) = 0;
 
+	virtual void SetVolume(TUint aValue) = 0;
+	virtual void VolumeInc() = 0;
+	virtual void VolumeDec() = 0;
+	virtual void SetMute(TBool aValue) = 0;
 };
 
 class IHouseHandler : private INonCopyable
@@ -67,6 +73,9 @@ public:
     virtual void RoomStandbyChanged(IRoom& aRoom) = 0;
     virtual void RoomSourceChanged(IRoom& aRoom) = 0;
     virtual void RoomVolumeControlChanged(IRoom& aRoom) = 0;
+	virtual void RoomVolumeChanged(IRoom& aRoom) = 0;
+	virtual void RoomMuteChanged(IRoom& aRoom) = 0;
+	virtual void RoomVolumeLimitChanged(IRoom& aRoom) = 0;
     virtual ~IHouseHandler() {}
 };
 

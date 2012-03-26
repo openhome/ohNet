@@ -148,6 +148,7 @@ headers =   $(inc_build)/OpenHome/Buffer.h \
             $(inc_build)/OpenHome/Net/Private/CpTopology1.h \
             $(inc_build)/OpenHome/Net/Private/CpTopology2.h \
             $(inc_build)/OpenHome/Net/Private/CpTopology3.h \
+            $(inc_build)/OpenHome/Net/Private/CpTopology4.h \
             $(inc_build)/OpenHome/Net/Private/DeviceXml.h \
             $(inc_build)/OpenHome/Net/Private/Discovery.h \
             $(inc_build)/OpenHome/Net/Private/DviDevice.h \
@@ -531,6 +532,7 @@ objects_topology = $(objdir)CpTopology.$(objext) \
     		       $(objdir)CpTopology1.$(objext) \
     		       $(objdir)CpTopology2.$(objext) \
     		       $(objdir)CpTopology3.$(objext) \
+                       $(objdir)CpTopology4.$(objext) \
 			       $(objdir)CpAvOpenhomeOrgProduct1.$(objext) \
 			       $(objdir)CpAvOpenhomeOrgVolume1.$(objext)
 
@@ -541,7 +543,9 @@ $(objdir)CpTopology1.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology1.
 $(objdir)CpTopology2.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology2.cpp $(headers)
 	$(compiler)CpTopology2.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology2.cpp 
 $(objdir)CpTopology3.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology3.cpp $(headers)
-	$(compiler)CpTopology3.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology3.cpp 
+	$(compiler)CpTopology3.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology3.cpp
+$(objdir)CpTopology4.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology4.cpp $(headers)
+        $(compiler)CpTopology4.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology4.cpp 
 $(objdir)CpTopology.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology.cpp $(headers)
 	$(compiler)CpTopology.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology.cpp 
 
@@ -559,9 +563,15 @@ $(objdir)TestTopology2.$(objext) : OpenHome/Net/ControlPoint/Topology/TestTopolo
 
 TestTopology3: $(objdir)TestTopology3.$(exeext) 
 $(objdir)TestTopology3.$(exeext) :  ohNetCore $(objects_topology) $(objdir)TestTopology3.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestTopology3.$(exeext) $(objdir)TestTopology3.$(objext) $(objects_topology) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+        $(link) $(linkoutput)$(objdir)TestTopology3.$(exeext) $(objdir)TestTopology3.$(objext) $(objects_topology) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestTopology3.$(objext) : OpenHome/Net/ControlPoint/Topology/TestTopology3.cpp $(headers)
-	$(compiler)TestTopology3.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/TestTopology3.cpp
+        $(compiler)TestTopology3.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/TestTopology3.cpp
+
+TestTopology4: $(objdir)TestTopology4.$(exeext)
+$(objdir)TestTopology4.$(exeext) :  ohNetCore $(objects_topology) $(objdir)TestTopology4.$(objext) $(libprefix)TestFramework.$(libext)
+        $(link) $(linkoutput)$(objdir)TestTopology4.$(exeext) $(objdir)TestTopology4.$(objext) $(objects_topology) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestTopology4.$(objext) : OpenHome/Net/ControlPoint/Topology/TestTopology4.cpp $(headers)
+        $(compiler)TestTopology4.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/TestTopology4.cpp
 
 TestTopology: $(objdir)TestTopology.$(exeext) 
 $(objdir)TestTopology.$(exeext) :  ohNetCore $(objects_topology) $(objdir)TestTopology.$(objext) $(libprefix)TestFramework.$(libext)
@@ -661,7 +671,7 @@ $(objdir)TestPerformanceCp.$(exeext) :  ohNetCore $(objdir)TestPerformanceCp.$(o
 $(objdir)TestPerformanceCp.$(objext) : OpenHome/Net/Bindings/Cpp/ControlPoint/Tests/TestPerformanceCp.cpp $(headers)
 	$(compiler)TestPerformanceCp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/Cpp/ControlPoint/Tests/TestPerformanceCp.cpp
 
-TestsNative: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC
+TestsNative: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology4 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC
 
 TestsCs: TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 

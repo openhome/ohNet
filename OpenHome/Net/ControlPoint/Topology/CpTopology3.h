@@ -182,6 +182,7 @@ private:
     EStandby iStandby;
     TUint iRefCount;
     CpDevice* iVolumeDevice;
+	TBool iHasVolumeControl;
     void* iUserData;
 };
 
