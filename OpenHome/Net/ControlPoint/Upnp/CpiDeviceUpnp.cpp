@@ -280,6 +280,8 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
         LOG2(kDevice, kError, Udn());
         LOG2(kDevice, kError, " from ");
         LOG2(kDevice, kError, iLocation);
+        LOG2(kDevice, kError, ".  Xml is ");
+        LOG2(kDevice, kError, iXml);
         LOG2(kDevice, kError, "\n");
     }
     iList->XmlFetchCompleted(*this, err);

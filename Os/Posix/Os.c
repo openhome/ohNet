@@ -20,6 +20,10 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#ifndef PLATFORM_MACOSX_GNU
+# include <linux/netlink.h>
+# include <linux/rtnetlink.h>
+#endif /* !PLATFORM_MACOSX_GNU */
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <fcntl.h>
@@ -51,27 +55,12 @@ __result; }))
 #endif
 
 
-
-#ifdef PLATFORM_MACOSX_GNU
-
-typedef struct InterfaceChangedObserver
-{
-    InterfaceListChanged iCallback;
-    void* iArg;
-    SCDynamicStoreRef iStore;
-    CFRunLoopSourceRef iRunLoopSource;
-
-} InterfaceChangedObserver;
-
-static InterfaceChangedObserver* gInterfaceChangedObserver = NULL;
-
-#endif /* PLATFOTM_MACOSX_GNU */
-
-
-
 static struct timeval gStartTime;
 static THandle gMutex = kHandleNull;
 static pthread_key_t gThreadArgKey;
+
+static void DestroyInterfaceChangedObserver(void);
+
 
 int32_t OsCreate()
 {
@@ -92,21 +81,10 @@ int32_t OsCreate()
 
 void OsDestroy()
 {
+    DestroyInterfaceChangedObserver();
     pthread_key_delete(gThreadArgKey);
     OsMutexDestroy(gMutex);
     gMutex = kHandleNull;
-
-#ifdef PLATFORM_MACOSX_GNU
-    if (NULL != gInterfaceChangedObserver)
-    {
-        CFRunLoopRef runLoop = CFRunLoopGetMain();
-        CFRunLoopRemoveSource(runLoop, gInterfaceChangedObserver->iRunLoopSource, kCFRunLoopCommonModes);
-        CFRelease(gInterfaceChangedObserver->iStore);
-        CFRelease(gInterfaceChangedObserver->iRunLoopSource);
-        free(gInterfaceChangedObserver);
-        gInterfaceChangedObserver = NULL;
-    }
-#endif /* PLATFOTM_MACOSX_GNU */
 }
 
 void OsQuit()
@@ -464,7 +442,7 @@ static void* threadEntrypoint(void* aArg)
     return NULL;
 }
 
-THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
+static THandle DoThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes, int isJoinable, ThreadEntryPoint aEntryPoint, void* aArg)
 {
     ThreadData* data = (ThreadData*)calloc(1, sizeof(ThreadData));
     if (data == NULL) {
@@ -482,7 +460,7 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
 #ifndef __ANDROID__
     (void)pthread_attr_setinheritsched(&attr, PTHREAD_INHERIT_SCHED);
 #endif
-    (void)pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    (void)pthread_attr_setdetachstate(&attr, isJoinable ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED);
     int status = pthread_create(&data->iThread, &attr, threadEntrypoint, data);
     if (status != 0) {
         free(data);
@@ -490,6 +468,11 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
     }
     (void)pthread_attr_destroy(&attr);
     return (THandle)data;
+}
+
+THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
+{
+    return DoThreadCreate(aName, aPriority, aStackBytes, 0, aEntryPoint, aArg);
 }
 
 void* OsThreadTls()
@@ -1037,6 +1020,32 @@ void OsNetworkFreeInterfaces(OsNetworkAdapter* aAdapters)
 }
 
 
+#ifdef PLATFORM_MACOSX_GNU
+
+typedef struct InterfaceChangedObserver
+{
+    InterfaceListChanged iCallback;
+    void* iArg;
+    SCDynamicStoreRef iStore;
+    CFRunLoopSourceRef iRunLoopSource;
+
+} InterfaceChangedObserver;
+
+#else
+
+typedef struct InterfaceChangedObserver
+{
+    OsNetworkHandle *netHnd;
+    InterfaceListChanged iCallback;
+    void* iArg;
+    THandle iThread;
+} InterfaceChangedObserver;
+
+#endif /* PLATFOTM_MACOSX_GNU */
+
+static InterfaceChangedObserver* gInterfaceChangedObserver = NULL;
+
+
 #if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
 
 static void InterfaceChangedDynamicStoreCallback(SCDynamicStoreRef aStore, CFArrayRef aChangedKeys, void* aInfo)
@@ -1048,15 +1057,8 @@ static void InterfaceChangedDynamicStoreCallback(SCDynamicStoreRef aStore, CFArr
     }
 }
 
-#endif /* PLATFOTM_MACOSX_GNU && ! PLATFORM_IOS */
-
-
-void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)
+static void SetInterfaceChangedObserver_MacDesktop(InterfaceListChanged aCallback, void* aArg)
 {
-    // not supported yet on anything other than Mac OS X
-
-#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
-
     SCDynamicStoreContext context = {0, NULL, NULL, NULL, NULL};
     CFStringRef pattern = NULL;
     CFArrayRef patternList = NULL;
@@ -1130,8 +1132,151 @@ Error:
         free(gInterfaceChangedObserver);
         gInterfaceChangedObserver = NULL;
     }
+}
+
+static void DestroyInterfaceChangedObserver_MacDesktop()
+{
+    if (NULL != gInterfaceChangedObserver)
+    {
+        CFRunLoopRef runLoop = CFRunLoopGetMain();
+        CFRunLoopRemoveSource(runLoop, gInterfaceChangedObserver->iRunLoopSource, kCFRunLoopCommonModes);
+        CFRelease(gInterfaceChangedObserver->iStore);
+        CFRelease(gInterfaceChangedObserver->iRunLoopSource);
+        free(gInterfaceChangedObserver);
+        gInterfaceChangedObserver = NULL;
+    }
+}
 
 #endif /* PLATFOTM_MACOSX_GNU && ! PLATFORM_IOS */
+
+#ifndef PLATFORM_MACOSX_GNU
+
+void adapterChangeObserverThread(void* aPtr)
+{
+    InterfaceChangedObserver* observer = (InterfaceChangedObserver*) aPtr;
+    OsNetworkHandle *handle = observer->netHnd;
+    char buffer[4096];
+    struct nlmsghdr *nlh;
+    int32_t len, ret;
+    fd_set rfds,errfds;
+
+    while (1) {
+        if (SocketInterrupted(handle)) {
+            return;
+        }
+
+        FD_ZERO(&rfds);
+        FD_SET(handle->iPipe[0], &rfds);
+        FD_SET(handle->iSocket, &rfds);
+
+        FD_ZERO(&errfds);
+        FD_SET(handle->iSocket, &errfds);
+
+        ret = TEMP_FAILURE_RETRY(select(nfds(handle), &rfds, NULL, &errfds, NULL));
+        if ((ret > 0) && FD_ISSET(handle->iSocket, &rfds)) {
+            nlh = (struct nlmsghdr *) buffer;
+            if ((len = recv(handle->iSocket, nlh, 4096, 0)) > 0) {
+                while (NLMSG_OK(nlh, len) && (nlh->nlmsg_type != NLMSG_DONE)) {
+                    if (nlh->nlmsg_type == RTM_NEWADDR || 
+                        nlh->nlmsg_type == RTM_DELADDR || 
+                        nlh->nlmsg_type == RTM_NEWLINK) {              
+                        observer->iCallback(observer->iArg);
+                    }
+                    nlh = NLMSG_NEXT(nlh, len);
+                }
+            }
+        }
+    }
+}
+
+static int32_t ThreadJoin(THandle aThread)
+{
+    ThreadData* data = (ThreadData*) aThread;
+    int status = pthread_join(data->iThread, NULL);
+    return (status==0 ? 0 : -1);
+}
+
+static void DestroyInterfaceChangedObserver_Linux()
+{
+    if (gInterfaceChangedObserver != NULL) {
+        if (gInterfaceChangedObserver->iThread != NULL) {
+            OsNetworkInterrupt(gInterfaceChangedObserver->netHnd, 1);
+            ThreadJoin(gInterfaceChangedObserver->iThread);
+            OsThreadDestroy(gInterfaceChangedObserver->iThread);
+        }
+                   
+        OsNetworkClose(gInterfaceChangedObserver->netHnd);
+
+        free(gInterfaceChangedObserver);
+        gInterfaceChangedObserver = NULL;
+    }
+}
+
+static void SetInterfaceChangedObserver_Linux(InterfaceListChanged aCallback, void* aArg)
+{
+    struct sockaddr_nl addr;
+    int sock = 0;
+
+    gInterfaceChangedObserver = (InterfaceChangedObserver*) calloc(1, sizeof(InterfaceChangedObserver));
+    if (gInterfaceChangedObserver == NULL) {
+        goto Error;
+    }
+
+    if ((sock = socket(PF_NETLINK, SOCK_RAW, NETLINK_ROUTE)) == -1) {
+        goto Error;
+    }
+
+    memset(&addr, 0, sizeof(addr));
+    addr.nl_family = AF_NETLINK;
+    addr.nl_groups = RTMGRP_LINK | RTMGRP_IPV4_IFADDR;
+    if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+        TEMP_FAILURE_RETRY(close(sock));
+        goto Error;
+    }
+
+    if ((gInterfaceChangedObserver->netHnd = CreateHandle(sock)) == NULL) {
+        TEMP_FAILURE_RETRY(close(sock));
+        goto Error;
+    }
+
+    gInterfaceChangedObserver->iCallback = aCallback;
+    gInterfaceChangedObserver->iArg = aArg;
+    if ((gInterfaceChangedObserver->iThread = DoThreadCreate("AdapterChangeObserverThread",
+                                                        100, 16 * 1024, 1,
+                                                        adapterChangeObserverThread,
+                                                        gInterfaceChangedObserver)) == NULL) {
+        goto Error;
+    }
+    
+    return;
+
+Error:
+    DestroyInterfaceChangedObserver_Linux();
+}
+
+#endif /* !PLATFORM_MACOSX_GNU */
+
+static void DestroyInterfaceChangedObserver()
+{
+#ifdef PLATFORM_MACOSX_GNU
+# ifndef PLATFORM_IOS
+    DestroyInterfaceChangedObserver_MacDesktop();
+# endif /* !PLATFORM_IOS */
+#else /* !PLATFOTM_MACOSX_GNU */
+    DestroyInterfaceChangedObserver_Linux();
+#endif /* PLATFOTM_MACOSX_GNU */
+}
+
+
+void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)
+{
+#ifdef PLATFORM_MACOSX_GNU
+# ifndef PLATFORM_IOS
+    SetInterfaceChangedObserver_MacDesktop(aCallback, aArg);
+# endif /* !PLATFORM_IOS */
+#else /* !PLATFOTM_MACOSX_GNU */
+    SetInterfaceChangedObserver_Linux(aCallback, aArg);
+#endif /* PLATFOTM_MACOSX_GNU */
 }
 
 

@@ -86,6 +86,8 @@ private:
     void SendUpdateNotifications();
     void GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase);
     void GetDeviceXml(Brh& aXml, TIpAddress aAdapter);
+    void LogMulticastNotification(const char* aType);
+    void LogUnicastNotification(const char* aType);
 public: // from IDvProtocol
     void WriteResource(const Brx& aUriTail, TIpAddress aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     const Brx& ProtocolName() const;
