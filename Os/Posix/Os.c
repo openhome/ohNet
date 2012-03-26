@@ -442,7 +442,7 @@ static void* threadEntrypoint(void* aArg)
     return NULL;
 }
 
-THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
+static THandle DoThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes, int isJoinable, ThreadEntryPoint aEntryPoint, void* aArg)
 {
     ThreadData* data = (ThreadData*)calloc(1, sizeof(ThreadData));
     if (data == NULL) {
@@ -460,7 +460,7 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
 #ifndef __ANDROID__
     (void)pthread_attr_setinheritsched(&attr, PTHREAD_INHERIT_SCHED);
 #endif
-    (void)pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    (void)pthread_attr_setdetachstate(&attr, isJoinable ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED);
     int status = pthread_create(&data->iThread, &attr, threadEntrypoint, data);
     if (status != 0) {
         free(data);
@@ -468,6 +468,11 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
     }
     (void)pthread_attr_destroy(&attr);
     return (THandle)data;
+}
+
+THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
+{
+    return DoThreadCreate(aName, aPriority, aStackBytes, 0, aEntryPoint, aArg);
 }
 
 void* OsThreadTls()
@@ -1236,8 +1241,8 @@ static void SetInterfaceChangedObserver_Linux(InterfaceListChanged aCallback, vo
 
     gInterfaceChangedObserver->iCallback = aCallback;
     gInterfaceChangedObserver->iArg = aArg;
-    if ((gInterfaceChangedObserver->iThread = OsThreadCreate("AdapterChangeObserverThread",
-                                                        100, 16 * 1024,
+    if ((gInterfaceChangedObserver->iThread = DoThreadCreate("AdapterChangeObserverThread",
+                                                        100, 16 * 1024, 1,
                                                         adapterChangeObserverThread,
                                                         gInterfaceChangedObserver)) == NULL) {
         goto Error;
