@@ -20,8 +20,10 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <linux/netlink.h>
-#include <linux/rtnetlink.h>
+#ifndef PLATFORM_MACOSX_GNU
+# include <linux/netlink.h>
+# include <linux/rtnetlink.h>
+#endif /* !PLATFORM_MACOSX_GNU */
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <fcntl.h>
@@ -1253,7 +1255,7 @@ static void DestroyInterfaceChangedObserver()
 {
 #ifdef PLATFORM_MACOSX_GNU
 # ifndef PLATFORM_IOS
-    DestroyChangedObserver_MacDesktop();
+    DestroyInterfaceChangedObserver_MacDesktop();
 # endif /* !PLATFORM_IOS */
 #else /* !PLATFOTM_MACOSX_GNU */
     DestroyInterfaceChangedObserver_Linux();
