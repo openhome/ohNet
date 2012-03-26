@@ -93,13 +93,16 @@ objext = o
 libprefix = lib
 libext = a
 sharedlibprefix = lib
-sharedlibext = so
+ifeq ($(MACHINE), Darwin)
+	sharedlibext = dylib
+	dllext = dylib
+else
+	sharedlibext = so
+	dllext = so
+endif
 exeext = elf
-
-
 linkoutput = -o 
 dllprefix = lib
-dllext = so
 link_dll = ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
 link_dll_service = ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = dmcs /nologo
