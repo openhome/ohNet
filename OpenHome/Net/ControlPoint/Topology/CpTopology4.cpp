@@ -10,12 +10,12 @@ using namespace OpenHome::Net;
 CpTopology4Room::CpTopology4Room(CpTopology3Room& aRoom, ICpTopology4Handler& aHandler)
 	: iRoom(aRoom)
     , iHandler(aHandler)
-	, iRefCount(1)
 	, iHasVolumeControl(false)
 	, iVolume(0)
 	, iMute(false)
 	, iVolumeLimit(0)
 	, iServiceVolume(0)
+	, iRefCount(1)
 	, iUserData(0)
 {
 	iRoom.AddRef();
