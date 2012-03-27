@@ -8,263 +8,263 @@ using namespace OpenHome::Net;
 // CpTopology4Room
 
 CpTopology4Room::CpTopology4Room(CpTopology3Room& aRoom, ICpTopology4Handler& aHandler)
-	: iRoom(aRoom)
+    : iRoom(aRoom)
     , iHandler(aHandler)
-	, iHasVolumeControl(false)
-	, iVolume(0)
-	, iMute(false)
-	, iVolumeLimit(0)
-	, iServiceVolume(0)
-	, iRefCount(1)
-	, iUserData(0)
+    , iHasVolumeControl(false)
+    , iServiceVolume(NULL)
+    , iVolume(0)
+    , iMute(false)
+    , iVolumeLimit(0)
+    , iRefCount(1)
+    , iUserData(NULL)
 {
-	iRoom.AddRef();
+    iRoom.AddRef();
 
-	iFunctorSetVolume = MakeFunctorAsync(*this, &CpTopology4Room::CallbackSetVolume);
+    iFunctorSetVolume = MakeFunctorAsync(*this, &CpTopology4Room::CallbackSetVolume);
     iFunctorVolumeInc = MakeFunctorAsync(*this, &CpTopology4Room::CallbackVolumeInc);
-	iFunctorVolumeDec = MakeFunctorAsync(*this, &CpTopology4Room::CallbackVolumeDec);
-	iFunctorSetMute = MakeFunctorAsync(*this, &CpTopology4Room::CallbackSetMute);
+    iFunctorVolumeDec = MakeFunctorAsync(*this, &CpTopology4Room::CallbackVolumeDec);
+    iFunctorSetMute = MakeFunctorAsync(*this, &CpTopology4Room::CallbackSetMute);
 
-	RoomVolumeControlChanged();
+    RoomVolumeControlChanged();
 }
 
 CpTopology4Room::~CpTopology4Room()
 {
-	iRoom.RemoveRef();
+    iRoom.RemoveRef();
 
-	if(iServiceVolume)
-	{
-		delete (iServiceVolume);
-		iServiceVolume = 0;
-	}
+    if(iServiceVolume)
+    {
+        delete (iServiceVolume);
+        iServiceVolume = 0;
+    }
 }
 
 void CpTopology4Room::AddRef()
 {
-	iRefCount++;
+    iRefCount++;
 }
 
 void CpTopology4Room::RemoveRef()
 {
-	if (--iRefCount == 0) {
+    if (--iRefCount == 0) {
         delete this;
     }
 }
 
 const Brx& CpTopology4Room::Name() const
 {
-	return iRoom.Name();
+    return iRoom.Name();
 }
 
 TUint CpTopology4Room::SourceCount() const
 {
-	return iRoom.SourceCount();
+    return iRoom.SourceCount();
 }
 
 const Brx& CpTopology4Room::SourceName(TUint aIndex) const
 {
-	return iRoom.SourceName(aIndex);
+    return iRoom.SourceName(aIndex);
 }
 
 const Brx& CpTopology4Room::SourceType(TUint aIndex) const
 {
-	return iRoom.SourceType(aIndex);
+    return iRoom.SourceType(aIndex);
 }
 
 const Brx& CpTopology4Room::SourceGroup(TUint aIndex) const
 {
-	return iRoom.SourceGroup(aIndex);
+    return iRoom.SourceGroup(aIndex);
 }
 
 CpDevice& CpTopology4Room::SourceDevice(TUint aIndex) const
 {
-	return iRoom.SourceDevice(aIndex);
+    return iRoom.SourceDevice(aIndex);
 }
 
 const Brx& CpTopology4Room::CurrentSourceName() const
 {
-	return iRoom.CurrentSourceName();
+    return iRoom.CurrentSourceName();
 }
 
 const Brx& CpTopology4Room::CurrentSourceType() const
 {
-	return iRoom.CurrentSourceType();
+    return iRoom.CurrentSourceType();
 }
 
 const Brx& CpTopology4Room::CurrentSourceGroup() const
 {
-	return iRoom.CurrentSourceGroup();
+    return iRoom.CurrentSourceGroup();
 }
 
 CpDevice& CpTopology4Room::CurrentSourceDevice() const
 {
-	return iRoom.CurrentSourceDevice();
+    return iRoom.CurrentSourceDevice();
 }
 
 TBool CpTopology4Room::HasVolumeControl() const
 {
-	return iHasVolumeControl;
+    return iHasVolumeControl;
 }
 
 void CpTopology4Room::SetVolume(TUint aValue)
 {
-	if(iServiceVolume)
-	{
-		iServiceVolume->BeginSetVolume(aValue, iFunctorSetVolume);
-	}
+    if(iServiceVolume)
+    {
+        iServiceVolume->BeginSetVolume(aValue, iFunctorSetVolume);
+    }
 }
 
 void CpTopology4Room::VolumeInc()
 {
-	if(iServiceVolume)
-	{
-		iServiceVolume->BeginVolumeInc(iFunctorVolumeInc);
-	}
+    if(iServiceVolume)
+    {
+        iServiceVolume->BeginVolumeInc(iFunctorVolumeInc);
+    }
 }
 
 void CpTopology4Room::VolumeDec()
 {
-	if(iServiceVolume)
-	{
-		iServiceVolume->BeginVolumeDec(iFunctorVolumeDec);
-	}
+    if(iServiceVolume)
+    {
+        iServiceVolume->BeginVolumeDec(iFunctorVolumeDec);
+    }
 }
 
 void CpTopology4Room::SetMute(TBool aValue)
 {
-	if(iServiceVolume)
-	{
-		iServiceVolume->BeginSetMute(aValue, iFunctorSetMute);
-	}
+    if(iServiceVolume)
+    {
+        iServiceVolume->BeginSetMute(aValue, iFunctorSetMute);
+    }
 }
 
 CpTopology4Room::EStandby CpTopology4Room::Standby() const
 {
-	return ((CpTopology4Room::EStandby)iRoom.Standby());
+    return ((CpTopology4Room::EStandby)iRoom.Standby());
 }
 
 TUint CpTopology4Room::Volume() const
 {
-	return iVolume;
+    return iVolume;
 }
 
 TBool CpTopology4Room::Mute() const
 {
-	return iMute;
+    return iMute;
 }
 
 TUint CpTopology4Room::VolumeLimit() const
 {
-	return iVolumeLimit;
+    return iVolumeLimit;
 }
 
 void CpTopology4Room::SetUserData(void* aValue)
 {
-	iUserData = aValue;
+    iUserData = aValue;
 }
 
 void* CpTopology4Room::UserData() const
 {
-	return iUserData;
+    return iUserData;
 }
 
 void CpTopology4Room::SetStandby(TBool aValue)
 {
-	iRoom.SetStandby(aValue);
+    iRoom.SetStandby(aValue);
 }
 
 void CpTopology4Room::SetSourceIndex(TUint aIndex)
 {
-	iRoom.SetSourceIndex(aIndex);
+    iRoom.SetSourceIndex(aIndex);
 }
 
 void CpTopology4Room::RoomAdded()
 {
-	iHandler.RoomAdded(*this);
+    iHandler.RoomAdded(*this);
 }
 
 void CpTopology4Room::RoomChanged()
 {
-	iHandler.RoomChanged(*this);
+    iHandler.RoomChanged(*this);
 }
 
 void CpTopology4Room::RoomRemoved()
 {
-	iHandler.RoomRemoved(*this);
-	RemoveRef();
+    iHandler.RoomRemoved(*this);
+    RemoveRef();
 }
 
 void CpTopology4Room::RoomStandbyChanged()
 {
-	iHandler.RoomStandbyChanged(*this);
+    iHandler.RoomStandbyChanged(*this);
 }
 
 void CpTopology4Room::RoomSourceChanged()
 {
-	iHandler.RoomSourceChanged(*this);
+    iHandler.RoomSourceChanged(*this);
 }
 
 void CpTopology4Room::RoomVolumeControlChanged()
 {
-	if(iServiceVolume)
-	{
-		delete iServiceVolume;
-		iServiceVolume = 0;
-	}
+    if(iServiceVolume)
+    {
+        delete iServiceVolume;
+        iServiceVolume = 0;
+    }
 
-	iHasVolumeControl = false;
+    iHasVolumeControl = false;
 
-	iHandler.RoomVolumeControlChanged(*this);
+    iHandler.RoomVolumeControlChanged(*this);
 
-	if(iRoom.HasVolumeControl())
-	{
-		iServiceVolume = new CpProxyAvOpenhomeOrgVolume1(iRoom.VolumeDevice());
+    if(iRoom.HasVolumeControl())
+    {
+        iServiceVolume = new CpProxyAvOpenhomeOrgVolume1(iRoom.VolumeDevice());
 
-		Functor functorInitial = MakeFunctor(*this, &CpTopology4Room::EventInitialEvent);
+        Functor functorInitial = MakeFunctor(*this, &CpTopology4Room::EventInitialEvent);
 
-		iServiceVolume->SetPropertyInitialEvent(functorInitial);
+        iServiceVolume->SetPropertyInitialEvent(functorInitial);
 
-		iServiceVolume->Subscribe();
-	}
+        iServiceVolume->Subscribe();
+    }
 }
 
 void CpTopology4Room::RoomVolumeChanged()
 {
-	iHandler.RoomVolumeChanged(*this);
+    iHandler.RoomVolumeChanged(*this);
 }
 
 void CpTopology4Room::RoomMuteChanged()
 {
-	iHandler.RoomMuteChanged(*this);
+    iHandler.RoomMuteChanged(*this);
 }
 
 void CpTopology4Room::RoomVolumeLimitChanged()
 {
-	iHandler.RoomVolumeLimitChanged(*this);
+    iHandler.RoomVolumeLimitChanged(*this);
 }
 
 void CpTopology4Room::EventInitialEvent()
 {
-	iHasVolumeControl = true;
+    iHasVolumeControl = true;
 
-	Functor functorVolume = MakeFunctor(*this, &CpTopology4Room::EventVolumeChanged);
-	Functor functorMute = MakeFunctor(*this, &CpTopology4Room::EventMuteChanged);
-	Functor functorVolumeLimit = MakeFunctor(*this, &CpTopology4Room::EventVolumeLimitChanged);
+    Functor functorVolume = MakeFunctor(*this, &CpTopology4Room::EventVolumeChanged);
+    Functor functorMute = MakeFunctor(*this, &CpTopology4Room::EventMuteChanged);
+    Functor functorVolumeLimit = MakeFunctor(*this, &CpTopology4Room::EventVolumeLimitChanged);
 
-	iServiceVolume->SetPropertyVolumeChanged(functorVolume);
-	iServiceVolume->SetPropertyMuteChanged(functorMute);
-	iServiceVolume->SetPropertyVolumeLimitChanged(functorVolumeLimit);
+    iServiceVolume->SetPropertyVolumeChanged(functorVolume);
+    iServiceVolume->SetPropertyMuteChanged(functorMute);
+    iServiceVolume->SetPropertyVolumeLimitChanged(functorVolumeLimit);
 
-	iServiceVolume->PropertyVolume(iVolume);
-	iServiceVolume->PropertyMute(iMute);
-	iServiceVolume->PropertyVolumeLimit(iVolumeLimit);
+    iServiceVolume->PropertyVolume(iVolume);
+    iServiceVolume->PropertyMute(iMute);
+    iServiceVolume->PropertyVolumeLimit(iVolumeLimit);
 
-	iHandler.RoomVolumeControlChanged(*this);
+    iHandler.RoomVolumeControlChanged(*this);
 }
 
 void CpTopology4Room::EventVolumeChanged()
 {
-	LOG(kTopology, "CpTopology4Room::EventVolumeChanged ");
+    LOG(kTopology, "CpTopology4Room::EventVolumeChanged ");
     LOG(kTopology, Name());
     LOG(kTopology, "\n");
 
@@ -275,7 +275,7 @@ void CpTopology4Room::EventVolumeChanged()
 
 void CpTopology4Room::EventMuteChanged()
 {
-	LOG(kTopology, "CpTopology4Room::EventMuteChanged ");
+    LOG(kTopology, "CpTopology4Room::EventMuteChanged ");
     LOG(kTopology, Name());
     LOG(kTopology, "\n");
 
@@ -286,7 +286,7 @@ void CpTopology4Room::EventMuteChanged()
 
 void CpTopology4Room::EventVolumeLimitChanged()
 {
-	LOG(kTopology, "CpTopology4Room::EventVolumeLimitChanged ");
+    LOG(kTopology, "CpTopology4Room::EventVolumeLimitChanged ");
     LOG(kTopology, Name());
     LOG(kTopology, "\n");
 
@@ -341,16 +341,16 @@ void CpTopology4Job::Execute()
 // CpTopology4
 
 CpTopology4::CpTopology4(ICpTopology4Handler& aHandler)
-	: iFree(kMaxJobCount)
+    : iFree(kMaxJobCount)
     , iReady(kMaxJobCount)
 {
-	for (TUint i = 0; i < kMaxJobCount; i++) {
+    for (TUint i = 0; i < kMaxJobCount; i++) {
         iFree.Write(new CpTopology4Job(aHandler));
     }
 
     iTopology3 = new CpTopology3(*this);
 
-	iThread = new ThreadFunctor("TOP4", MakeFunctor(*this, &CpTopology4::Run));
+    iThread = new ThreadFunctor("TOP4", MakeFunctor(*this, &CpTopology4::Run));
     iThread->Start();
 }
 
@@ -361,9 +361,9 @@ CpTopology4::~CpTopology4()
     LOG(kTopology, "CpTopology4::~CpTopology4 deleted layer 3\n");
     ASSERT(iRoomList.size() == 0);
 
-	iReady.Write(iFree.Read()); // this null job causes the thread to complete
+    iReady.Write(iFree.Read()); // this null job causes the thread to complete
 
-	delete (iThread);
+    delete (iThread);
     
     LOG(kTopology, "CpTopology4::~CpTopology4 deleted thread\n");
 
@@ -384,40 +384,40 @@ void CpTopology4::Refresh()
 
 void CpTopology4::RoomAdded(CpTopology3Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomAdded\n");
+    LOG(kTopology, "CpTopology4::RoomAdded\n");
 
-	CpTopology4Room* room = new CpTopology4Room(aRoom, *this);
-	aRoom.SetUserData(room);
-	room->RoomAdded();
+    CpTopology4Room* room = new CpTopology4Room(aRoom, *this);
+    aRoom.SetUserData(room);
+    room->RoomAdded();
 }
 
 void CpTopology4::RoomChanged(CpTopology3Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomChanged\n");
+    LOG(kTopology, "CpTopology4::RoomChanged\n");
     ((CpTopology4Room*)aRoom.UserData())->RoomChanged();
 }
 
 void CpTopology4::RoomRemoved(CpTopology3Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomRemoved\n");
+    LOG(kTopology, "CpTopology4::RoomRemoved\n");
     ((CpTopology4Room*)aRoom.UserData())->RoomRemoved();
 }
 
 void CpTopology4::RoomStandbyChanged(CpTopology3Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomStandbyChanged\n");
+    LOG(kTopology, "CpTopology4::RoomStandbyChanged\n");
     ((CpTopology4Room*)aRoom.UserData())->RoomStandbyChanged();
 }
 
 void CpTopology4::RoomSourceChanged(CpTopology3Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomSourceChanged\n");
+    LOG(kTopology, "CpTopology4::RoomSourceChanged\n");
     ((CpTopology4Room*)aRoom.UserData())->RoomSourceChanged();
 }
 
 void CpTopology4::RoomVolumeControlChanged(CpTopology3Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomVolumeControlChanged\n");
+    LOG(kTopology, "CpTopology4::RoomVolumeControlChanged\n");
     ((CpTopology4Room*)aRoom.UserData())->RoomVolumeControlChanged();
 }
 
@@ -425,11 +425,11 @@ void CpTopology4::RoomVolumeControlChanged(CpTopology3Room& aRoom)
 
 void CpTopology4::RoomAdded(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomAdded ");
+    LOG(kTopology, "CpTopology4::RoomAdded ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
-	iRoomList.push_back(&aRoom);
+    iRoomList.push_back(&aRoom);
 
     CpTopology4Job* job = iFree.Read();
     job->Set(aRoom, &ICpTopology4Handler::RoomAdded);
@@ -438,7 +438,7 @@ void CpTopology4::RoomAdded(CpTopology4Room& aRoom)
 
 void CpTopology4::RoomChanged(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomChanged ");
+    LOG(kTopology, "CpTopology4::RoomChanged ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
@@ -449,30 +449,30 @@ void CpTopology4::RoomChanged(CpTopology4Room& aRoom)
 
 void CpTopology4::RoomRemoved(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomRemoved ");
+    LOG(kTopology, "CpTopology4::RoomRemoved ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
-	std::list<CpTopology4Room*>::iterator it = iRoomList.begin();
+    std::list<CpTopology4Room*>::iterator it = iRoomList.begin();
     
     while (it != iRoomList.end()) {
         if (*it == &aRoom) {
             iRoomList.erase(it);
 
-			CpTopology4Job* job = iFree.Read();
-			job->Set(aRoom, &ICpTopology4Handler::RoomRemoved);
-			iReady.Write(job);
-			return;
-		}
-		it++;
-	}
+            CpTopology4Job* job = iFree.Read();
+            job->Set(aRoom, &ICpTopology4Handler::RoomRemoved);
+            iReady.Write(job);
+            return;
+        }
+        it++;
+    }
 
-	ASSERTS();
+    ASSERTS();
 }
 
 void CpTopology4::RoomStandbyChanged(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomStandbyChanged ");
+    LOG(kTopology, "CpTopology4::RoomStandbyChanged ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
@@ -483,7 +483,7 @@ void CpTopology4::RoomStandbyChanged(CpTopology4Room& aRoom)
 
 void CpTopology4::RoomSourceChanged(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomSourceChanged ");
+    LOG(kTopology, "CpTopology4::RoomSourceChanged ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
@@ -494,7 +494,7 @@ void CpTopology4::RoomSourceChanged(CpTopology4Room& aRoom)
 
 void CpTopology4::RoomVolumeControlChanged(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomVolumeControlChanged ");
+    LOG(kTopology, "CpTopology4::RoomVolumeControlChanged ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
@@ -505,7 +505,7 @@ void CpTopology4::RoomVolumeControlChanged(CpTopology4Room& aRoom)
 
 void CpTopology4::RoomVolumeChanged(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomVolumeChanged ");
+    LOG(kTopology, "CpTopology4::RoomVolumeChanged ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
@@ -516,7 +516,7 @@ void CpTopology4::RoomVolumeChanged(CpTopology4Room& aRoom)
 
 void CpTopology4::RoomMuteChanged(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomMuteChanged ");
+    LOG(kTopology, "CpTopology4::RoomMuteChanged ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
@@ -527,7 +527,7 @@ void CpTopology4::RoomMuteChanged(CpTopology4Room& aRoom)
 
 void CpTopology4::RoomVolumeLimitChanged(CpTopology4Room& aRoom)
 {
-	LOG(kTopology, "CpTopology4::RoomVolumeLimitChanged ");
+    LOG(kTopology, "CpTopology4::RoomVolumeLimitChanged ");
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
@@ -538,7 +538,7 @@ void CpTopology4::RoomVolumeLimitChanged(CpTopology4Room& aRoom)
 
 void CpTopology4::Run()
 {
-	LOG(kTopology, "CpTopology4::Run Started\n");
+    LOG(kTopology, "CpTopology4::Run Started\n");
 
     for (;;)
     {
@@ -555,5 +555,5 @@ void CpTopology4::Run()
         }
     }
 
-	LOG(kTopology, "CpTopology4::Run Exiting\n");
+    LOG(kTopology, "CpTopology4::Run Exiting\n");
 }
