@@ -12,6 +12,9 @@ CpTopology4Room::CpTopology4Room(CpTopology3Room& aRoom, ICpTopology4Handler& aH
     , iHandler(aHandler)
 	, iRefCount(1)
 	, iHasVolumeControl(false)
+	, iVolume(0)
+	, iMute(false)
+	, iVolumeLimit(0)
 	, iServiceVolume(0)
 	, iUserData(0)
 {
@@ -32,6 +35,7 @@ CpTopology4Room::~CpTopology4Room()
 	if(iServiceVolume)
 	{
 		delete (iServiceVolume);
+		iServiceVolume = 0;
 	}
 }
 
@@ -176,7 +180,7 @@ void CpTopology4Room::SetSourceIndex(TUint aIndex)
 
 void CpTopology4Room::RoomAdded()
 {
-	iHandler.RoomChanged(*this);
+	iHandler.RoomAdded(*this);
 }
 
 void CpTopology4Room::RoomChanged()
@@ -204,7 +208,8 @@ void CpTopology4Room::RoomVolumeControlChanged()
 {
 	if(iServiceVolume)
 	{
-		iServiceVolume->Unsubscribe();
+		delete iServiceVolume;
+		iServiceVolume = 0;
 	}
 
 	iHasVolumeControl = false;
@@ -424,6 +429,8 @@ void CpTopology4::RoomAdded(CpTopology4Room& aRoom)
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
+	iRoomList.push_back(&aRoom);
+
     CpTopology4Job* job = iFree.Read();
     job->Set(aRoom, &ICpTopology4Handler::RoomAdded);
     iReady.Write(job);
@@ -446,9 +453,21 @@ void CpTopology4::RoomRemoved(CpTopology4Room& aRoom)
     LOG(kTopology, aRoom.Name());
     LOG(kTopology, "\n");
 
-    CpTopology4Job* job = iFree.Read();
-    job->Set(aRoom, &ICpTopology4Handler::RoomRemoved);
-    iReady.Write(job);
+	std::list<CpTopology4Room*>::iterator it = iRoomList.begin();
+    
+    while (it != iRoomList.end()) {
+        if (*it == &aRoom) {
+            iRoomList.erase(it);
+
+			CpTopology4Job* job = iFree.Read();
+			job->Set(aRoom, &ICpTopology4Handler::RoomRemoved);
+			iReady.Write(job);
+			return;
+		}
+		it++;
+	}
+
+	ASSERTS();
 }
 
 void CpTopology4::RoomStandbyChanged(CpTopology4Room& aRoom)
