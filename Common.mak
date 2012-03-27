@@ -545,7 +545,7 @@ $(objdir)CpTopology2.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology2.
 $(objdir)CpTopology3.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology3.cpp $(headers)
 	$(compiler)CpTopology3.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology3.cpp
 $(objdir)CpTopology4.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology4.cpp $(headers)
-        $(compiler)CpTopology4.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology4.cpp 
+	$(compiler)CpTopology4.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology4.cpp 
 $(objdir)CpTopology.$(objext) : OpenHome/Net/ControlPoint/Topology/CpTopology.cpp $(headers)
 	$(compiler)CpTopology.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/CpTopology.cpp 
 
