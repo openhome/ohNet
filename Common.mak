@@ -563,15 +563,15 @@ $(objdir)TestTopology2.$(objext) : OpenHome/Net/ControlPoint/Topology/TestTopolo
 
 TestTopology3: $(objdir)TestTopology3.$(exeext) 
 $(objdir)TestTopology3.$(exeext) :  ohNetCore $(objects_topology) $(objdir)TestTopology3.$(objext) $(libprefix)TestFramework.$(libext)
-        $(link) $(linkoutput)$(objdir)TestTopology3.$(exeext) $(objdir)TestTopology3.$(objext) $(objects_topology) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology3.$(exeext) $(objdir)TestTopology3.$(objext) $(objects_topology) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestTopology3.$(objext) : OpenHome/Net/ControlPoint/Topology/TestTopology3.cpp $(headers)
-        $(compiler)TestTopology3.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/TestTopology3.cpp
+	$(compiler)TestTopology3.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/TestTopology3.cpp
 
 TestTopology4: $(objdir)TestTopology4.$(exeext)
 $(objdir)TestTopology4.$(exeext) :  ohNetCore $(objects_topology) $(objdir)TestTopology4.$(objext) $(libprefix)TestFramework.$(libext)
-        $(link) $(linkoutput)$(objdir)TestTopology4.$(exeext) $(objdir)TestTopology4.$(objext) $(objects_topology) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology4.$(exeext) $(objdir)TestTopology4.$(objext) $(objects_topology) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestTopology4.$(objext) : OpenHome/Net/ControlPoint/Topology/TestTopology4.cpp $(headers)
-        $(compiler)TestTopology4.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/TestTopology4.cpp
+	$(compiler)TestTopology4.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Topology/TestTopology4.cpp
 
 TestTopology: $(objdir)TestTopology.$(exeext) 
 $(objdir)TestTopology.$(exeext) :  ohNetCore $(objects_topology) $(objdir)TestTopology.$(objext) $(libprefix)TestFramework.$(libext)
