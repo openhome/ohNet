@@ -48,7 +48,7 @@ CpProxy::~CpProxy()
     delete iPropertyReadLock;
     delete iPropertyWriteLock;
     delete iInitialEventLock;
-	PropertyMap::iterator it = iProperties.begin();
+    PropertyMap::iterator it = iProperties.begin();
     while (it != iProperties.end()) {
         delete it->second;
         it++;
@@ -131,7 +131,7 @@ void CpProxy::EventUpdateEnd()
     PropertyMap::iterator it = iProperties.begin();
     while (it != iProperties.end()) {
         changed = changed | it->second->ReportChanged();
-		it++;
+        it++;
     }
     if (changed || !iInitialEventDelivered) {
         iLock->Wait();

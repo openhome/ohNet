@@ -203,8 +203,8 @@ private:
 protected:
     OpenHome::Net::Parameter* iParameter;
     Functor iFunctor;
-	TBool iChanged;
-	TUint iSequenceNumber;
+    TBool iChanged;
+    TUint iSequenceNumber;
 };
 
 /**

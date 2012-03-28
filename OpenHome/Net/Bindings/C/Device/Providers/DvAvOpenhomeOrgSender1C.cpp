@@ -340,7 +340,7 @@ void DvProviderAvOpenhomeOrgSender1C::DoAttributes(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderAvOpenhomeOrgSender1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgSender1C(aDevice);
+    return new DvProviderAvOpenhomeOrgSender1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgSender1Destroy(THandle aProvider)

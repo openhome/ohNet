@@ -107,7 +107,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aTrackCount
      */
@@ -117,7 +117,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aDuration
      */
@@ -127,7 +127,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aSeconds
      */

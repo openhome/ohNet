@@ -7,19 +7,19 @@
 
 typedef struct
 {
-	JavaVM *vm;
-	jweak callbackObj;
+    JavaVM *vm;
+    jweak callbackObj;
 }  JniObjRef;
 
 typedef struct callback
 {
-	JniObjRef *ref;
-	struct callback *next;
+    JniObjRef *ref;
+    struct callback *next;
 } JniCallback;
 
 typedef struct
 {
-	JniCallback *head;
+    JniCallback *head;
 } JniCallbackList;
 
 /**

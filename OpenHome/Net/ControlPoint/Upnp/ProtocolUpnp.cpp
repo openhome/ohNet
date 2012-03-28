@@ -452,9 +452,9 @@ void EventUpnp::WriteHeaderTimeout(WriterHttpRequest& aWriterRequest, TUint aSec
 
 void OutputProcessorUpnp::ProcessString(const Brx& aBuffer, Brhz& aVal)
 {
-	// Constructs Bwn over the Brhz in order to save copying twice
-	aVal.Set(aBuffer);
-	Bwn writeable(aVal.Ptr(), aVal.Bytes(), aVal.Bytes());
+    // Constructs Bwn over the Brhz in order to save copying twice
+    aVal.Set(aBuffer);
+    Bwn writeable(aVal.Ptr(), aVal.Bytes(), aVal.Bytes());
     Converter::FromXmlEscaped(writeable);
     aVal.Shrink(writeable.Bytes());
 }
@@ -537,7 +537,7 @@ void HeaderSeq::Process(const Brx& aValue)
 {
     try {
         iSeq = Ascii::Uint(aValue);
-	    SetReceived();
+        SetReceived();
     }
     catch(AsciiError&) {
         THROW(HttpError);

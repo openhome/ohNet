@@ -326,12 +326,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoMetadata(IDviInvocation& aInv
     std::string respMetadata;
     DvInvocationStd invocation(aInvocation);
     Metadata(invocation, respMetadata);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
     aInvocation.InvocationWriteStringEnd("Metadata");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoImagesXml(IDviInvocation& aInvocation)
@@ -341,12 +341,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoImagesXml(IDviInvocation& aIn
     std::string respImagesXml;
     DvInvocationStd invocation(aInvocation);
     ImagesXml(invocation, respImagesXml);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterImagesXml(aInvocation, "ImagesXml");
     Brn buf_ImagesXml((const TByte*)respImagesXml.c_str(), (TUint)respImagesXml.length());
     respWriterImagesXml.Write(buf_ImagesXml);
     aInvocation.InvocationWriteStringEnd("ImagesXml");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistReadArray(IDviInvocation& aInvocation)
@@ -357,12 +357,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistReadArray(IDviInvocat
     std::string respArray;
     DvInvocationStd invocation(aInvocation);
     PlaylistReadArray(invocation, Id, respArray);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseBinary respWriterArray(aInvocation, "Array");
     Brn buf_Array((const TByte*)respArray.c_str(), (TUint)respArray.length());
     respWriterArray.Write(buf_Array);
     aInvocation.InvocationWriteBinaryEnd("Array");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistReadList(IDviInvocation& aInvocation)
@@ -375,12 +375,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistReadList(IDviInvocati
     std::string respPlaylistList;
     DvInvocationStd invocation(aInvocation);
     PlaylistReadList(invocation, IdList, respPlaylistList);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterPlaylistList(aInvocation, "PlaylistList");
     Brn buf_PlaylistList((const TByte*)respPlaylistList.c_str(), (TUint)respPlaylistList.length());
     respWriterPlaylistList.Write(buf_PlaylistList);
     aInvocation.InvocationWriteStringEnd("PlaylistList");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistRead(IDviInvocation& aInvocation)
@@ -393,7 +393,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistRead(IDviInvocation& 
     uint32_t respImageId;
     DvInvocationStd invocation(aInvocation);
     PlaylistRead(invocation, Id, respName, respDescription, respImageId);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
@@ -404,7 +404,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistRead(IDviInvocation& 
     aInvocation.InvocationWriteStringEnd("Description");
     DviInvocationResponseUint respWriterImageId(aInvocation, "ImageId");
     respWriterImageId.Write(respImageId);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistSetName(IDviInvocation& aInvocation)
@@ -417,8 +417,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistSetName(IDviInvocatio
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     PlaylistSetName(invocation, Id, Name);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistSetDescription(IDviInvocation& aInvocation)
@@ -431,8 +431,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistSetDescription(IDviIn
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     PlaylistSetDescription(invocation, Id, Description);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistSetImageId(IDviInvocation& aInvocation)
@@ -443,8 +443,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistSetImageId(IDviInvoca
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     PlaylistSetImageId(invocation, Id, ImageId);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistInsert(IDviInvocation& aInvocation)
@@ -462,10 +462,10 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistInsert(IDviInvocation
     uint32_t respNewId;
     DvInvocationStd invocation(aInvocation);
     PlaylistInsert(invocation, AfterId, Name, Description, ImageId, respNewId);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterNewId(aInvocation, "NewId");
     respWriterNewId.Write(respNewId);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistDeleteId(IDviInvocation& aInvocation)
@@ -475,8 +475,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistDeleteId(IDviInvocati
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     PlaylistDeleteId(invocation, Value);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistMove(IDviInvocation& aInvocation)
@@ -487,8 +487,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistMove(IDviInvocation& 
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     PlaylistMove(invocation, Id, AfterId);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistsMax(IDviInvocation& aInvocation)
@@ -498,10 +498,10 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistsMax(IDviInvocation& 
     uint32_t respValue;
     DvInvocationStd invocation(aInvocation);
     PlaylistsMax(invocation, respValue);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoTracksMax(IDviInvocation& aInvocation)
@@ -511,10 +511,10 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoTracksMax(IDviInvocation& aIn
     uint32_t respValue;
     DvInvocationStd invocation(aInvocation);
     TracksMax(invocation, respValue);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistArrays(IDviInvocation& aInvocation)
@@ -526,7 +526,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistArrays(IDviInvocation
     std::string respTokenArray;
     DvInvocationStd invocation(aInvocation);
     PlaylistArrays(invocation, respToken, respIdArray, respTokenArray);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterToken(aInvocation, "Token");
     respWriterToken.Write(respToken);
     DviInvocationResponseBinary respWriterIdArray(aInvocation, "IdArray");
@@ -537,7 +537,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistArrays(IDviInvocation
     Brn buf_TokenArray((const TByte*)respTokenArray.c_str(), (TUint)respTokenArray.length());
     respWriterTokenArray.Write(buf_TokenArray);
     aInvocation.InvocationWriteBinaryEnd("TokenArray");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistArraysChanged(IDviInvocation& aInvocation)
@@ -548,10 +548,10 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoPlaylistArraysChanged(IDviInv
     bool respValue;
     DvInvocationStd invocation(aInvocation);
     PlaylistArraysChanged(invocation, Token, respValue);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoRead(IDviInvocation& aInvocation)
@@ -563,12 +563,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoRead(IDviInvocation& aInvocat
     std::string respMetadata;
     DvInvocationStd invocation(aInvocation);
     Read(invocation, Id, TrackId, respMetadata);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
     aInvocation.InvocationWriteStringEnd("Metadata");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoReadList(IDviInvocation& aInvocation)
@@ -582,12 +582,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoReadList(IDviInvocation& aInv
     std::string respTrackList;
     DvInvocationStd invocation(aInvocation);
     ReadList(invocation, Id, TrackIdList, respTrackList);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterTrackList(aInvocation, "TrackList");
     Brn buf_TrackList((const TByte*)respTrackList.c_str(), (TUint)respTrackList.length());
     respWriterTrackList.Write(buf_TrackList);
     aInvocation.InvocationWriteStringEnd("TrackList");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoInsert(IDviInvocation& aInvocation)
@@ -602,10 +602,10 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoInsert(IDviInvocation& aInvoc
     uint32_t respNewTrackId;
     DvInvocationStd invocation(aInvocation);
     Insert(invocation, Id, AfterTrackId, Metadata, respNewTrackId);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterNewTrackId(aInvocation, "NewTrackId");
     respWriterNewTrackId.Write(respNewTrackId);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoDeleteId(IDviInvocation& aInvocation)
@@ -616,8 +616,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoDeleteId(IDviInvocation& aInv
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     DeleteId(invocation, Id, TrackId);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoDeleteAll(IDviInvocation& aInvocation)
@@ -627,8 +627,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoDeleteAll(IDviInvocation& aIn
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     DeleteAll(invocation, Id);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::Metadata(IDvInvocationStd& /*aInvocation*/, std::string& /*aMetadata*/)

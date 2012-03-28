@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyAvOpenhomeOrgTime1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyAvOpenhomeOrgTime1 extends ICpProxy
 {
     public Time syncTime();
@@ -47,7 +47,7 @@ class SyncTimeAvOpenhomeOrgTime1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Time result = iService.endTime(aAsyncHandle);
-		
+        
         iTrackCount = result.getTrackCount();
         iDuration = result.getDuration();
         iSeconds = result.getSeconds();
@@ -103,7 +103,7 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyAvOpenhomeOrgTime1(CpDevice aDevice)
@@ -114,21 +114,21 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
 
         iActionTime = new Action("Time");
         param = new ParameterUint("TrackCount");
-		iActionTime.addOutputParameter(param);
+        iActionTime.addOutputParameter(param);
         param = new ParameterUint("Duration");
-		iActionTime.addOutputParameter(param);
+        iActionTime.addOutputParameter(param);
         param = new ParameterUint("Seconds");
-		iActionTime.addOutputParameter(param);
+        iActionTime.addOutputParameter(param);
 
         iTrackCountChanged = new PropertyChangeListener();
         iTrackCount = new PropertyUint("TrackCount", iTrackCountChanged);
-		addProperty(iTrackCount);
+        addProperty(iTrackCount);
         iDurationChanged = new PropertyChangeListener();
         iDuration = new PropertyUint("Duration", iDurationChanged);
-		addProperty(iDuration);
+        addProperty(iDuration);
         iSecondsChanged = new PropertyChangeListener();
         iSeconds = new PropertyUint("Seconds", iSecondsChanged);
-		addProperty(iSeconds);
+        addProperty(iSeconds);
         iPropertyLock = new Object();
     }
     /**
@@ -138,31 +138,31 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
      *
      * @return the result of the invoked action.
      */
-	public Time syncTime()
-	{
-	    SyncTimeAvOpenhomeOrgTime1 sync = new SyncTimeAvOpenhomeOrgTime1(this);
-	    beginTime(sync.getListener());
-	    sync.waitToComplete();
+    public Time syncTime()
+    {
+        SyncTimeAvOpenhomeOrgTime1 sync = new SyncTimeAvOpenhomeOrgTime1(this);
+        beginTime(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Time(
             sync.getTrackCount(),
             sync.getDuration(),
             sync.getSeconds()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endTime}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginTime(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endTime}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginTime(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionTime, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionTime.getOutputParameter(outIndex++)));
@@ -171,16 +171,16 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginTime} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginTime} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginTime} method.
      * @return the result of the previously invoked action.
      */
-	public Time endTime(long aAsyncHandle)
+    public Time endTime(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -194,16 +194,16 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
             trackCount,
             duration,
             seconds
-		);
+        );
     }
-		
+        
     /**
      * Set a delegate to be run when the TrackCount state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgTime1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgTime1 instance will not overlap.
      *
-     * @param aTrackCountChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aTrackCountChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyTrackCountChanged(IPropertyChangeListener aTrackCountChanged)
     {
@@ -223,10 +223,10 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the Duration state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgTime1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgTime1 instance will not overlap.
      *
-     * @param aDurationChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aDurationChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyDurationChanged(IPropertyChangeListener aDurationChanged)
     {
@@ -246,10 +246,10 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
     /**
      * Set a delegate to be run when the Seconds state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgTime1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgTime1 instance will not overlap.
      *
-     * @param aSecondsChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSecondsChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySecondsChanged(IPropertyChangeListener aSecondsChanged)
     {
@@ -273,7 +273,7 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the TrackCount property.
+     * @return  value of the TrackCount property.
      */
     public long getPropertyTrackCount()
     {
@@ -282,14 +282,14 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Duration property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Duration property.
+     * @return  value of the Duration property.
      */
     public long getPropertyDuration()
     {
@@ -298,14 +298,14 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Seconds property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Seconds property.
+     * @return  value of the Seconds property.
      */
     public long getPropertySeconds()
     {
@@ -314,7 +314,7 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

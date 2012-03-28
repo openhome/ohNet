@@ -832,7 +832,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoVolumeLimit(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderAvOpenhomeOrgVolume1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgVolume1C(aDevice);
+    return new DvProviderAvOpenhomeOrgVolume1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgVolume1Destroy(THandle aProvider)

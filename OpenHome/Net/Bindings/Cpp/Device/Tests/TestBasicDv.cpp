@@ -47,7 +47,7 @@ ProviderTestBasic::ProviderTestBasic(DvDeviceStd& aDevice)
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
     SetPropertyVarBool(false);
-	std::string empty;
+    std::string empty;
     SetPropertyVarStr(empty);
     SetPropertyVarBin(empty);
 

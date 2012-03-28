@@ -176,28 +176,28 @@ void XmlFetch::Read(SocketTcpClient& aSocket)
     else {
         TUint remaining = headerContentLength.ContentLength();
         if (remaining == 0) { // no content length - read until connection closed by server
-         	try {
-        		for (;;) {
-		            Brn buf = readBuffer.Read(kRwBufferLength);
-		            iXml.Grow(iXml.Bytes() + kRwBufferLength);
-		            iXml.Append(buf);
-        		}
-        	}
-        	catch (ReaderError&) {
-	        	Brn snaffle = readBuffer.Snaffle();
-	            iXml.Grow(iXml.Bytes() + snaffle.Bytes());
-	            iXml.Append(snaffle);
-        	}
+            try {
+                for (;;) {
+                    Brn buf = readBuffer.Read(kRwBufferLength);
+                    iXml.Grow(iXml.Bytes() + kRwBufferLength);
+                    iXml.Append(buf);
+                }
+            }
+            catch (ReaderError&) {
+                Brn snaffle = readBuffer.Snaffle();
+                iXml.Grow(iXml.Bytes() + snaffle.Bytes());
+                iXml.Append(snaffle);
+            }
         }
         else {
-	        while (remaining > 0) {
-	            TInt readBytes = (remaining > kRwBufferLength ? kRwBufferLength : remaining);
-	            Brn buf = readBuffer.Read(readBytes);
-	            iXml.Grow(iXml.Bytes() + readBytes);
-	            iXml.Append(buf);
-	            remaining -= readBytes;
-	        }
-	    }
+            while (remaining > 0) {
+                TInt readBytes = (remaining > kRwBufferLength ? kRwBufferLength : remaining);
+                Brn buf = readBuffer.Read(readBytes);
+                iXml.Grow(iXml.Bytes() + readBytes);
+                iXml.Append(buf);
+                remaining -= readBytes;
+            }
+        }
     }
 }
 

@@ -128,11 +128,11 @@ void DviDevice::SetEnabled()
     iLock.Signal();
     for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
         iProtocols[i]->Enable();
-		// queue updates for all service properties
-		// nothing may have changed but individual subscriptions will spot this and skip any update message
-		for (TUint j=0; j<iServices.size(); j++) {
-			iServices[j]->PublishPropertyUpdates();
-		}
+        // queue updates for all service properties
+        // nothing may have changed but individual subscriptions will spot this and skip any update message
+        for (TUint j=0; j<iServices.size(); j++) {
+            iServices[j]->PublishPropertyUpdates();
+        }
     }
 }
 
@@ -522,8 +522,8 @@ AttributeMap::Attribute::Attribute(const TChar* aKey, const TChar* aValue)
 
 Brn AttributeMap::Attribute::Key() const
 {
-	Brn buf(iKey);
-	return buf;
+    Brn buf(iKey);
+    return buf;
 }
 
 const TChar* AttributeMap::Attribute::Value() const

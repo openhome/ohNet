@@ -9,10 +9,10 @@ namespace Net {
 class DviDeviceC : protected IResourceManager
 {
 public:
-	DviDeviceC(const char* aUdn);
-	~DviDeviceC();
-	DllExport DvDevice* Device();
-	static inline DvDevice* DeviceFromHandle(DvDeviceC aHandle);
+    DviDeviceC(const char* aUdn);
+    ~DviDeviceC();
+    DllExport DvDevice* Device();
+    static inline DvDevice* DeviceFromHandle(DvDeviceC aHandle);
 protected:
     DviDeviceC();
 private:
@@ -22,20 +22,20 @@ private:
     static int32_t STDCALL WriteResourceEnd(void* aPtr);
 protected:
     DvDevice* iDevice;
-	OhNetCallbackResourceManager iResourceManager;
-	void* iCallbackArg;
+    OhNetCallbackResourceManager iResourceManager;
+    void* iCallbackArg;
 };
 
 class DviDeviceStandardC : public DviDeviceC
 {
 public:
-	DviDeviceStandardC(const char* aUdn);
-	DviDeviceStandardC(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr);
+    DviDeviceStandardC(const char* aUdn);
+    DviDeviceStandardC(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr);
 };
 
 inline DvDevice* DviDeviceC::DeviceFromHandle(DvDeviceC aHandle)
 {
-	return reinterpret_cast<DviDeviceC*>(aHandle)->Device();
+    return reinterpret_cast<DviDeviceC*>(aHandle)->Device();
 }
 
 } // namespace Net

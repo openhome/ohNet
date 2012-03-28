@@ -12,8 +12,8 @@ interface IDvProviderUpnpOrgAVTransport2
     /**
      * Set the value of the LastChange property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyLastChange(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderUpnpOrgAVTransport2
     /**
      * Set the value of the DRMState property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyDRMState(String aValue);
@@ -375,11 +375,11 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderUpnpOrgAVTransport2(DvDevice aDevice)
     {
-	    super(aDevice, "upnp.org", "AVTransport", 2);
+        super(aDevice, "upnp.org", "AVTransport", 2);
     }
 
     /**
@@ -407,7 +407,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     /**
      * Set the value of the LastChange property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -419,7 +419,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the LastChange property
      *
-     * @return	value of the LastChange property.
+     * @return  value of the LastChange property.
      */
     public String getPropertyLastChange()
     {
@@ -429,7 +429,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     /**
      * Set the value of the DRMState property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -441,7 +441,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the DRMState property
      *
-     * @return	value of the DRMState property.
+     * @return  value of the DRMState property.
      */
     public String getPropertyDRMState()
     {
@@ -453,7 +453,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetAVTransportURI must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetAVTransportURI()
     {
         Action action = new Action("SetAVTransportURI");        List<String> allowedValues = new LinkedList<String>();
@@ -469,7 +469,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetNextAVTransportURI must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetNextAVTransportURI()
     {
         Action action = new Action("SetNextAVTransportURI");        List<String> allowedValues = new LinkedList<String>();
@@ -485,7 +485,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetMediaInfo must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetMediaInfo()
     {
         Action action = new Action("GetMediaInfo");        List<String> allowedValues = new LinkedList<String>();
@@ -508,7 +508,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetMediaInfo_Ext must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetMediaInfo_Ext()
     {
         Action action = new Action("GetMediaInfo_Ext");        List<String> allowedValues = new LinkedList<String>();
@@ -536,7 +536,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetTransportInfo must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetTransportInfo()
     {
         Action action = new Action("GetTransportInfo");        List<String> allowedValues = new LinkedList<String>();
@@ -561,7 +561,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetPositionInfo must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetPositionInfo()
     {
         Action action = new Action("GetPositionInfo");        List<String> allowedValues = new LinkedList<String>();
@@ -583,7 +583,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetDeviceCapabilities must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetDeviceCapabilities()
     {
         Action action = new Action("GetDeviceCapabilities");        List<String> allowedValues = new LinkedList<String>();
@@ -600,7 +600,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetTransportSettings must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetTransportSettings()
     {
         Action action = new Action("GetTransportSettings");        List<String> allowedValues = new LinkedList<String>();
@@ -618,7 +618,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Stop must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStop()
     {
         Action action = new Action("Stop");
@@ -632,7 +632,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Play must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlay()
     {
         Action action = new Action("Play");        List<String> allowedValues = new LinkedList<String>();
@@ -649,7 +649,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Pause must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPause()
     {
         Action action = new Action("Pause");
@@ -663,7 +663,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Record must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionRecord()
     {
         Action action = new Action("Record");
@@ -677,7 +677,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Seek must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSeek()
     {
         Action action = new Action("Seek");        List<String> allowedValues = new LinkedList<String>();
@@ -695,7 +695,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Next must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionNext()
     {
         Action action = new Action("Next");
@@ -709,7 +709,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Previous must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPrevious()
     {
         Action action = new Action("Previous");
@@ -723,7 +723,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetPlayMode must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetPlayMode()
     {
         Action action = new Action("SetPlayMode");        List<String> allowedValues = new LinkedList<String>();
@@ -740,7 +740,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetRecordQualityMode must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetRecordQualityMode()
     {
         Action action = new Action("SetRecordQualityMode");        List<String> allowedValues = new LinkedList<String>();
@@ -755,7 +755,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetCurrentTransportActions must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetCurrentTransportActions()
     {
         Action action = new Action("GetCurrentTransportActions");        List<String> allowedValues = new LinkedList<String>();
@@ -770,7 +770,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetDRMState must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetDRMState()
     {
         Action action = new Action("GetDRMState");
@@ -785,7 +785,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetStateVariables must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetStateVariables()
     {
         Action action = new Action("GetStateVariables");        List<String> allowedValues = new LinkedList<String>();
@@ -801,7 +801,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetStateVariables must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetStateVariables()
     {
         Action action = new Action("SetStateVariables");        List<String> allowedValues = new LinkedList<String>();
@@ -823,7 +823,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetAVTransportURI} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aCurrentURI
      * @param aCurrentURIMetaData
@@ -841,7 +841,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetNextAVTransportURI} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aNextURI
      * @param aNextURIMetaData
@@ -859,7 +859,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetMediaInfo} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected GetMediaInfo getMediaInfo(IDvInvocation aInvocation, long aInstanceID)
@@ -875,7 +875,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetMediaInfo_Ext} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected GetMediaInfo_Ext getMediaInfo_Ext(IDvInvocation aInvocation, long aInstanceID)
@@ -891,7 +891,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetTransportInfo} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected GetTransportInfo getTransportInfo(IDvInvocation aInvocation, long aInstanceID)
@@ -907,7 +907,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetPositionInfo} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected GetPositionInfo getPositionInfo(IDvInvocation aInvocation, long aInstanceID)
@@ -923,7 +923,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetDeviceCapabilities} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected GetDeviceCapabilities getDeviceCapabilities(IDvInvocation aInvocation, long aInstanceID)
@@ -939,7 +939,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetTransportSettings} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected GetTransportSettings getTransportSettings(IDvInvocation aInvocation, long aInstanceID)
@@ -955,7 +955,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionStop} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected void stop(IDvInvocation aInvocation, long aInstanceID)
@@ -971,7 +971,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPlay} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aSpeed
      */
@@ -988,7 +988,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPause} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected void pause(IDvInvocation aInvocation, long aInstanceID)
@@ -1004,7 +1004,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionRecord} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected void record(IDvInvocation aInvocation, long aInstanceID)
@@ -1020,7 +1020,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSeek} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aUnit
      * @param aTarget
@@ -1038,7 +1038,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionNext} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected void next(IDvInvocation aInvocation, long aInstanceID)
@@ -1054,7 +1054,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionPrevious} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected void previous(IDvInvocation aInvocation, long aInstanceID)
@@ -1070,7 +1070,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetPlayMode} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aNewPlayMode
      */
@@ -1087,7 +1087,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetRecordQualityMode} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aNewRecordQualityMode
      */
@@ -1104,7 +1104,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetCurrentTransportActions} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected String getCurrentTransportActions(IDvInvocation aInvocation, long aInstanceID)
@@ -1120,7 +1120,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetDRMState} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      */
     protected String getDRMState(IDvInvocation aInvocation, long aInstanceID)
@@ -1136,7 +1136,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetStateVariables} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aStateVariableList
      */
@@ -1153,7 +1153,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetStateVariables} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aInstanceID
      * @param aAVTransportUDN
      * @param aServiceType
@@ -1232,7 +1232,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetNextAVTransportURI implements IDvInvocationListener
     {
@@ -1284,7 +1284,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetMediaInfo implements IDvInvocationListener
     {
@@ -1360,7 +1360,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetMediaInfo_Ext implements IDvInvocationListener
     {
@@ -1439,7 +1439,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetTransportInfo implements IDvInvocationListener
     {
@@ -1497,7 +1497,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetPositionInfo implements IDvInvocationListener
     {
@@ -1570,7 +1570,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetDeviceCapabilities implements IDvInvocationListener
     {
@@ -1628,7 +1628,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetTransportSettings implements IDvInvocationListener
     {
@@ -1683,7 +1683,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStop implements IDvInvocationListener
     {
@@ -1731,7 +1731,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPlay implements IDvInvocationListener
     {
@@ -1781,7 +1781,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPause implements IDvInvocationListener
     {
@@ -1829,7 +1829,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoRecord implements IDvInvocationListener
     {
@@ -1877,7 +1877,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSeek implements IDvInvocationListener
     {
@@ -1929,7 +1929,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoNext implements IDvInvocationListener
     {
@@ -1977,7 +1977,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPrevious implements IDvInvocationListener
     {
@@ -2025,7 +2025,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetPlayMode implements IDvInvocationListener
     {
@@ -2075,7 +2075,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetRecordQualityMode implements IDvInvocationListener
     {
@@ -2125,7 +2125,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetCurrentTransportActions implements IDvInvocationListener
     {
@@ -2175,7 +2175,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetDRMState implements IDvInvocationListener
     {
@@ -2225,7 +2225,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetStateVariables implements IDvInvocationListener
     {
@@ -2277,7 +2277,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetStateVariables implements IDvInvocationListener
     {
@@ -2335,6 +2335,6 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

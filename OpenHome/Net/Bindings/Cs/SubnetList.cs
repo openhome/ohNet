@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 namespace OpenHome.Net.Core
@@ -6,8 +6,8 @@ namespace OpenHome.Net.Core
     /// <summary>
     /// A subnet list.
     /// </summary>
-	public class SubnetList : IDisposable
-	{
+    public class SubnetList : IDisposable
+    {
         [DllImport("ohNet")]
         static extern IntPtr OhNetSubnetListCreate();
         [DllImport("ohNet")]
@@ -78,5 +78,5 @@ namespace OpenHome.Net.Core
                 iHandle = IntPtr.Zero;
             }
         }
-	}
+    }
 }

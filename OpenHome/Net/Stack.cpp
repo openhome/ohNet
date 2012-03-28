@@ -17,7 +17,7 @@ using namespace OpenHome::Net;
 
 const char kOhNetMimeTypeCss[]  = "text/css";
 const char kOhNetMimeTypeHtml[] = "text/html";
-const char kOhNetMimeTypeJs[]   = "application/x-javascript";
+const char kOhNetMimeTypeJs[]   = "application/javascript";
 const char kOhNetMimeTypeXml[]  = "application/xml";
 const char kOhNetMimeTypeBmp[]  = "image/bmp";
 const char kOhNetMimeTypeGif[]  = "image/gif";
@@ -114,8 +114,8 @@ TBool Stack::IsInitialised()
 
 void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
 {
-	aMajor = kVersionMajor;
-	aMinor = kVersionMinor;
+    aMajor = kVersionMajor;
+    aMinor = kVersionMinor;
 }
 
 OpenHome::TimerManager& Stack::TimerManager()
@@ -260,6 +260,10 @@ IStack* Stack::DviStack()
 Stack::MListener::MListener(TIpAddress aInterface)
     : iListener(aInterface)
     , iRefCount(1)
+{
+}
+
+Stack::MListener::~MListener()
 {
 }
 

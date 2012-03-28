@@ -355,7 +355,7 @@ void NetworkAdapterList::RunCallbacks(Map& aMap)
 
 void NetworkAdapterList::RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdapter& aAdapter)
 {
-	iListenerLock.Wait();
+    iListenerLock.Wait();
     MapNetworkAdapter::iterator it = aMap.begin();
     while (it != aMap.end()) {
         it->second(aAdapter);

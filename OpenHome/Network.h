@@ -49,7 +49,7 @@ public:
     void AppendAddress(Bwx& aAddress) const;
     void AppendEndpoint(Bwx& aEndpoint) const;
     void GetAddressOctets(TByte (&aOctets)[4]) const;
-	static void AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress);
+    static void AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress);
 private:
     TIpAddress iAddress;
     TUint16 iPort;
@@ -180,8 +180,8 @@ public:
                     TUint aSessionStackBytes = Thread::kDefaultStackBytes, TUint aSlots = 10);
     // Add is not thread safe, but why would you want that?
     void Add(const TChar* aName, SocketTcpSession* aSession, TInt aPriorityOffset = 0);
-	TUint Port() const { return iPort; }
-	TIpAddress Interface() const { return iInterface; }
+    TUint Port() const { return iPort; }
+    TIpAddress Interface() const { return iInterface; }
     ~SocketTcpServer(); // Closes the server
 private:
     TBool Terminating();            // indicates server is in process of being destroyed

@@ -490,6 +490,7 @@ void SsdpListenerUnicast::Run()
                                     }
                                 }
                             }
+                            break;
                         default:
                             LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected target - %u\n", iHeaderSt.Target());
                             break;

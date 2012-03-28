@@ -28,7 +28,7 @@ public:
     inline static TUint TimeInMs();
     inline static TUint64 TimeInUs();
     inline static void ConsoleWrite(const TChar* aStr);
-	static Brn GetPlatformNameAndVersion(TUint& aMajor, TUint& aMinor);
+    static Brn GetPlatformNameAndVersion(TUint& aMajor, TUint& aMinor);
     inline static THandle SemaphoreCreate(const TChar* aName, TUint aCount);
     inline static void SemaphoreDestroy(THandle aSem);
     inline static void SemaphoreWait(THandle aSem);

@@ -160,7 +160,7 @@ void DvProviderUpnpOrgConnectionManager1Cpp::DoGetProtocolInfo(IDviInvocation& a
     std::string respSink;
     DvInvocationStd invocation(aInvocation);
     GetProtocolInfo(invocation, respSource, respSink);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterSource(aInvocation, "Source");
     Brn buf_Source((const TByte*)respSource.c_str(), (TUint)respSource.length());
     respWriterSource.Write(buf_Source);
@@ -169,7 +169,7 @@ void DvProviderUpnpOrgConnectionManager1Cpp::DoGetProtocolInfo(IDviInvocation& a
     Brn buf_Sink((const TByte*)respSink.c_str(), (TUint)respSink.length());
     respWriterSink.Write(buf_Sink);
     aInvocation.InvocationWriteStringEnd("Sink");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgConnectionManager1Cpp::DoPrepareForConnection(IDviInvocation& aInvocation)
@@ -191,14 +191,14 @@ void DvProviderUpnpOrgConnectionManager1Cpp::DoPrepareForConnection(IDviInvocati
     int32_t respRcsID;
     DvInvocationStd invocation(aInvocation);
     PrepareForConnection(invocation, RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, respConnectionID, respAVTransportID, respRcsID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterConnectionID(aInvocation, "ConnectionID");
     respWriterConnectionID.Write(respConnectionID);
     DviInvocationResponseInt respWriterAVTransportID(aInvocation, "AVTransportID");
     respWriterAVTransportID.Write(respAVTransportID);
     DviInvocationResponseInt respWriterRcsID(aInvocation, "RcsID");
     respWriterRcsID.Write(respRcsID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgConnectionManager1Cpp::DoConnectionComplete(IDviInvocation& aInvocation)
@@ -208,8 +208,8 @@ void DvProviderUpnpOrgConnectionManager1Cpp::DoConnectionComplete(IDviInvocation
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     ConnectionComplete(invocation, ConnectionID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgConnectionManager1Cpp::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation)
@@ -219,12 +219,12 @@ void DvProviderUpnpOrgConnectionManager1Cpp::DoGetCurrentConnectionIDs(IDviInvoc
     std::string respConnectionIDs;
     DvInvocationStd invocation(aInvocation);
     GetCurrentConnectionIDs(invocation, respConnectionIDs);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterConnectionIDs(aInvocation, "ConnectionIDs");
     Brn buf_ConnectionIDs((const TByte*)respConnectionIDs.c_str(), (TUint)respConnectionIDs.length());
     respWriterConnectionIDs.Write(buf_ConnectionIDs);
     aInvocation.InvocationWriteStringEnd("ConnectionIDs");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgConnectionManager1Cpp::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation)
@@ -241,7 +241,7 @@ void DvProviderUpnpOrgConnectionManager1Cpp::DoGetCurrentConnectionInfo(IDviInvo
     std::string respStatus;
     DvInvocationStd invocation(aInvocation);
     GetCurrentConnectionInfo(invocation, ConnectionID, respRcsID, respAVTransportID, respProtocolInfo, respPeerConnectionManager, respPeerConnectionID, respDirection, respStatus);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterRcsID(aInvocation, "RcsID");
     respWriterRcsID.Write(respRcsID);
     DviInvocationResponseInt respWriterAVTransportID(aInvocation, "AVTransportID");
@@ -264,7 +264,7 @@ void DvProviderUpnpOrgConnectionManager1Cpp::DoGetCurrentConnectionInfo(IDviInvo
     Brn buf_Status((const TByte*)respStatus.c_str(), (TUint)respStatus.length());
     respWriterStatus.Write(buf_Status);
     aInvocation.InvocationWriteStringEnd("Status");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgConnectionManager1Cpp::GetProtocolInfo(IDvInvocationStd& /*aInvocation*/, std::string& /*aSource*/, std::string& /*aSink*/)

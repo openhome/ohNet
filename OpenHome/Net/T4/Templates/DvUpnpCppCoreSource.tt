@@ -11,12 +11,12 @@
 
     try
     {
-	   version = Convert.ToUInt32(TemplateArgument("version"));
-	}
-	catch (FormatException)
-	{
+       version = Convert.ToUInt32(TemplateArgument("version"));
+    }
+    catch (FormatException)
+    {
         throw (new ArgumentException("Invalid version number specified"));
-	}
+    }
     catch (OverflowException)
     {
         throw (new ArgumentException("Invalid version number specified"));
@@ -426,34 +426,34 @@ bool RelatedVariableIsEvented(Argument arg, Document u)
 
 string TemplateArgument(string aName)
 {
-	string[] args =  System.Environment.GetCommandLineArgs();
-		
-	bool isarg = false;
-	
-	foreach (string arg in args)
-	{
-		if (isarg)
-		{
-			string[] parts = arg.Split(new char[] {':'});
-			
-			if (parts.Length == 2)
-			{
-				if (parts[0] == aName)
-				{
-					return (parts[1]);
-				}
-			}
-			
-			isarg = false;
-			continue;
-		}
-		
-		if (arg == "-a")
-		{
-			isarg = true;
-		}
-	}
-	
-	throw (new ArgumentException(aName + " not specified"));
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
+            
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
 }
 #>

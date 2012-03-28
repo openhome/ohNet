@@ -14,6 +14,7 @@
 #include <OpenHome/Net/Private/Ssdp.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Private/Debug.h>
 #include <OpenHome/MimeTypes.h>
 
 using namespace OpenHome;
@@ -161,7 +162,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
     }
 
     TBool update = false;
-	std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
+    std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
     iLock.Wait();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
     NetworkAdapter* current = adapterList.CurrentAdapter("DviProtocolUpnp::HandleInterfaceChange");
@@ -170,11 +171,11 @@ void DviProtocolUpnp::HandleInterfaceChange()
         // remove listeners whose interface is no longer available
         while (i<iAdapters.size()) {
             if (iAdapters[i]->Interface() == current->Address()) {
-			    i++;
-		    }
-		    else {
-			    iAdapters[i]->SetPendingDelete();
-			    pendingDelete.push_back(iAdapters[i]);
+                i++;
+            }
+            else {
+                iAdapters[i]->SetPendingDelete();
+                pendingDelete.push_back(iAdapters[i]);
                 iAdapters.erase(iAdapters.begin() + i);
             }
             // add listener if 'current' is a new subnet
@@ -191,11 +192,11 @@ void DviProtocolUpnp::HandleInterfaceChange()
         // remove listeners whose interface is no longer available
         while (i<iAdapters.size()) {
             if (FindAdapter(iAdapters[i]->Interface(), adapters) != -1) {
-			    i++;
-		    }
-		    else {
-			    iAdapters[i]->SetPendingDelete();
-			    pendingDelete.push_back(iAdapters[i]);
+                i++;
+            }
+            else {
+                iAdapters[i]->SetPendingDelete();
+                pendingDelete.push_back(iAdapters[i]);
                 iAdapters.erase(iAdapters.begin() + i);
             }
         }
@@ -211,19 +212,19 @@ void DviProtocolUpnp::HandleInterfaceChange()
         NetworkAdapterList::DestroySubnetList(subnetList);
     }
 
-	if (update) {
-		// halt any ssdp broadcasts/responses that are currently in progress
-		// (in case they're for a subnet that's no longer valid)
-		// they'll be advertised again by the SendUpdateNotifications() call below
-		for (i=0; i<iMsgSchedulers.size(); i++) {
-			iMsgSchedulers[i]->Stop();
-		}
-	}
+    if (update) {
+        // halt any ssdp broadcasts/responses that are currently in progress
+        // (in case they're for a subnet that's no longer valid)
+        // they'll be advertised again by the SendUpdateNotifications() call below
+        for (i=0; i<iMsgSchedulers.size(); i++) {
+            iMsgSchedulers[i]->Stop();
+        }
+    }
 
     iLock.Signal();
-	for (i=0; i<pendingDelete.size(); i++) {
-		delete pendingDelete[i];
-	}
+    for (i=0; i<pendingDelete.size(); i++) {
+        delete pendingDelete[i];
+    }
 
     if (update) {
         SendUpdateNotifications();
@@ -377,6 +378,7 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     iSubnetDisableCount = (TUint)iAdapters.size();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetDisabled);
     for (i=0; i<iSubnetDisableCount; i++) {
+        LogMulticastNotification("byebye");
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
         iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyByeBye(*this, *this, iAdapters[i]->Interface(),
@@ -475,6 +477,7 @@ void DviProtocolUpnp::SendAliveNotifications()
     if(!iDevice.Enabled()) {
         return;
     }
+    LogMulticastNotification("alive");
     iLock.Wait();
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
@@ -493,6 +496,7 @@ void DviProtocolUpnp::SendAliveNotifications()
 
 void DviProtocolUpnp::SendUpdateNotifications()
 {
+    LogMulticastNotification("update");
     iLock.Wait();
     iAliveTimer->Cancel();
     iUpdateCount = (TUint)iAdapters.size();
@@ -520,12 +524,31 @@ void DviProtocolUpnp::GetDeviceXml(Brh& aXml, TIpAddress aAdapter)
     writer.TransferTo(aXml);
 }
 
+void DviProtocolUpnp::LogUnicastNotification(const char* aType)
+{
+    Stack::Mutex().Wait();
+    LOG(kDvDevice, "Device ");
+    LOG(kDvDevice, iDevice.Udn());
+    LOG(kDvDevice, " starting response to msearch type \'%s\'\n", aType);
+    Stack::Mutex().Signal();
+}
+
+void DviProtocolUpnp::LogMulticastNotification(const char* aType)
+{
+    Stack::Mutex().Wait();
+    LOG(kDvDevice, "Device ");
+    LOG(kDvDevice, iDevice.Udn());
+    LOG(kDvDevice, " starting to send %s notifications.\n", aType);
+    Stack::Mutex().Signal();
+}
+
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)
 {
     if (iDevice.Enabled()) {
         iLock.Wait();
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
+            LogUnicastNotification("all");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchAll(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
@@ -540,6 +563,7 @@ void DviProtocolUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAd
         iLock.Wait();
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
+            LogUnicastNotification("root");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchRoot(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
@@ -554,6 +578,7 @@ void DviProtocolUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAd
         iLock.Wait();
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
+            LogUnicastNotification("uuid");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchUuid(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
@@ -568,6 +593,7 @@ void DviProtocolUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx,
         iLock.Wait();
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
+            LogUnicastNotification("device");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchDeviceType(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
@@ -586,6 +612,7 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
             if (serviceType.Version() >= aVersion && serviceType.Domain() == aDomain && serviceType.Name() == aType) {
                 TInt index = FindListenerForInterface(aAdapter);
                 if (index != -1) {
+                    LogUnicastNotification("service");
                     Bwh uri;
                     GetUriDeviceXml(uri, iAdapters[index]->UriBase());
                     iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchServiceType(*this, *this, aEndpoint, aMx, serviceType,
@@ -672,9 +699,9 @@ void DviProtocolUpnpAdapterSpecificData::ClearDeviceXml()
 
 void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
 {
-	Stack::Mutex().Wait();
-	iMsearchHandler = 0;
-	Stack::Mutex().Signal();
+    Stack::Mutex().Wait();
+    iMsearchHandler = 0;
+    Stack::Mutex().Signal();
 }
 
 void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
@@ -710,50 +737,50 @@ void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
 
 IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 {
-	Stack::Mutex().Wait();
-	IUpnpMsearchHandler* device = iMsearchHandler;
-	Stack::Mutex().Signal();
-	return device;
+    Stack::Mutex().Wait();
+    IUpnpMsearchHandler* device = iMsearchHandler;
+    Stack::Mutex().Signal();
+    return device;
 }
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
 {
-	IUpnpMsearchHandler* handler = Handler();
-	if (handler != 0) {
-		handler->SsdpSearchAll(aEndpoint, aMx, iListener->Interface());
-	}
+    IUpnpMsearchHandler* handler = Handler();
+    if (handler != 0) {
+        handler->SsdpSearchAll(aEndpoint, aMx, iListener->Interface());
+    }
 }
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx)
 {
-	IUpnpMsearchHandler* handler = Handler();
-	if (handler != 0) {
-		handler->SsdpSearchRoot(aEndpoint, aMx, iListener->Interface());
-	}
+    IUpnpMsearchHandler* handler = Handler();
+    if (handler != 0) {
+        handler->SsdpSearchRoot(aEndpoint, aMx, iListener->Interface());
+    }
 }
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid)
 {
-	IUpnpMsearchHandler* handler = Handler();
-	if (handler != 0) {
-		handler->SsdpSearchUuid(aEndpoint, aMx, iListener->Interface(), aUuid);
-	}
+    IUpnpMsearchHandler* handler = Handler();
+    if (handler != 0) {
+        handler->SsdpSearchUuid(aEndpoint, aMx, iListener->Interface(), aUuid);
+    }
 }
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
-	IUpnpMsearchHandler* handler = Handler();
-	if (handler != 0) {
-		handler->SsdpSearchDeviceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
-	}
+    IUpnpMsearchHandler* handler = Handler();
+    if (handler != 0) {
+        handler->SsdpSearchDeviceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
+    }
 }
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
-	IUpnpMsearchHandler* handler = Handler();
-	if (handler != 0) {
-		handler->SsdpSearchServiceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
-	}
+    IUpnpMsearchHandler* handler = Handler();
+    if (handler != 0) {
+        handler->SsdpSearchServiceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
+    }
 }
 
 
@@ -1258,10 +1285,10 @@ DviMsgScheduler::~DviMsgScheduler()
 
 void DviMsgScheduler::Stop()
 {
-	/* No use of mutex for iStop.  Its a signal for a scheduler to exit early and it
-	   doesn't really matter if we just miss the stop signal in NextMsg - we'll either
-	   get it for the next message or the scheduler will stop itself in this case */
-	iStop = true;
+    /* No use of mutex for iStop.  Its a signal for a scheduler to exit early and it
+       doesn't really matter if we just miss the stop signal in NextMsg - we'll either
+       get it for the next message or the scheduler will stop itself in this case */
+    iStop = true;
 }
 
 DviMsgScheduler::DviMsgScheduler(IUpnpMsgListener& aListener, TUint aMx)
@@ -1294,7 +1321,7 @@ void DviMsgScheduler::SetDuration(TUint aDuration)
 
 void DviMsgScheduler::NextMsg()
 {
-	TUint remaining = 0;
+    TUint remaining = 0;
     TBool stop = true;
     try {
         stop = (iStop || (remaining = iMsg->NextMsg()) == 0);
@@ -1366,7 +1393,7 @@ TUint DviMsg::NextMsg()
 DviMsg::DviMsg(IUpnpAnnouncementData& aAnnouncementData, Bwh& aUri)
     : iAnnouncementData(aAnnouncementData)
     , iNotifier(NULL)
-	, iStop(false)
+    , iStop(false)
 {
     iIndex = (iAnnouncementData.IsRoot()? 0 : 1);
     aUri.TransferTo(iUri);

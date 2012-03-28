@@ -114,7 +114,7 @@ void Endpoint::AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress)
 
 void Endpoint::AppendAddress(Bwx& aAddress) const
 {
-	AppendAddress(aAddress, iAddress);
+    AppendAddress(aAddress, iAddress);
 }
 
 void Endpoint::AppendEndpoint(Bwx& aEndpoint) const
@@ -172,7 +172,7 @@ void Socket::Interrupt(TBool aInterrupt)
     LOGF(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
     TInt err = OpenHome::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
-        LOG2F(kNetwork, kError, "Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
+        /*LOG2F(kNetwork, kError, */Log::Print("Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
     }
 }
 

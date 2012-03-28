@@ -294,8 +294,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoSetLoadLevelTarget(IDviInvocation& aInvocat
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetLoadLevelTarget(invocation, newLoadlevelTarget);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelTarget(IDviInvocation& aInvocation)
@@ -305,10 +305,10 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelTarget(IDviInvocation& aInvocat
     uint32_t respGetLoadlevelTarget;
     DvInvocationStd invocation(aInvocation);
     GetLoadLevelTarget(invocation, respGetLoadlevelTarget);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterGetLoadlevelTarget(aInvocation, "GetLoadlevelTarget");
     respWriterGetLoadlevelTarget.Write(respGetLoadlevelTarget);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelStatus(IDviInvocation& aInvocation)
@@ -318,10 +318,10 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelStatus(IDviInvocation& aInvocat
     uint32_t respretLoadlevelStatus;
     DvInvocationStd invocation(aInvocation);
     GetLoadLevelStatus(invocation, respretLoadlevelStatus);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterretLoadlevelStatus(aInvocation, "retLoadlevelStatus");
     respWriterretLoadlevelStatus.Write(respretLoadlevelStatus);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoSetOnEffectLevel(IDviInvocation& aInvocation)
@@ -331,8 +331,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoSetOnEffectLevel(IDviInvocation& aInvocatio
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetOnEffectLevel(invocation, newOnEffectLevel);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoSetOnEffect(IDviInvocation& aInvocation)
@@ -344,8 +344,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoSetOnEffect(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetOnEffect(invocation, newOnEffect);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoGetOnEffectParameters(IDviInvocation& aInvocation)
@@ -356,14 +356,14 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetOnEffectParameters(IDviInvocation& aInvo
     uint32_t respretOnEffectLevel;
     DvInvocationStd invocation(aInvocation);
     GetOnEffectParameters(invocation, respretOnEffect, respretOnEffectLevel);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterretOnEffect(aInvocation, "retOnEffect");
     Brn buf_retOnEffect((const TByte*)respretOnEffect.c_str(), (TUint)respretOnEffect.length());
     respWriterretOnEffect.Write(buf_retOnEffect);
     aInvocation.InvocationWriteStringEnd("retOnEffect");
     DviInvocationResponseUint respWriterretOnEffectLevel(aInvocation, "retOnEffectLevel");
     respWriterretOnEffectLevel.Write(respretOnEffectLevel);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoStepUp(IDviInvocation& aInvocation)
@@ -372,8 +372,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoStepUp(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     StepUp(invocation);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoStepDown(IDviInvocation& aInvocation)
@@ -382,8 +382,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoStepDown(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     StepDown(invocation);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoStartRampUp(IDviInvocation& aInvocation)
@@ -392,8 +392,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoStartRampUp(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     StartRampUp(invocation);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoStartRampDown(IDviInvocation& aInvocation)
@@ -402,8 +402,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoStartRampDown(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     StartRampDown(invocation);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoStopRamp(IDviInvocation& aInvocation)
@@ -412,8 +412,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoStopRamp(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     StopRamp(invocation);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoStartRampToLevel(IDviInvocation& aInvocation)
@@ -424,8 +424,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoStartRampToLevel(IDviInvocation& aInvocatio
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     StartRampToLevel(invocation, newLoadLevelTarget, newRampTime);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoSetStepDelta(IDviInvocation& aInvocation)
@@ -435,8 +435,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoSetStepDelta(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetStepDelta(invocation, newStepDelta);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoGetStepDelta(IDviInvocation& aInvocation)
@@ -446,10 +446,10 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetStepDelta(IDviInvocation& aInvocation)
     uint32_t respretStepDelta;
     DvInvocationStd invocation(aInvocation);
     GetStepDelta(invocation, respretStepDelta);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterretStepDelta(aInvocation, "retStepDelta");
     respWriterretStepDelta.Write(respretStepDelta);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoSetRampRate(IDviInvocation& aInvocation)
@@ -459,8 +459,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoSetRampRate(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetRampRate(invocation, newRampRate);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoGetRampRate(IDviInvocation& aInvocation)
@@ -470,10 +470,10 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetRampRate(IDviInvocation& aInvocation)
     uint32_t respretRampRate;
     DvInvocationStd invocation(aInvocation);
     GetRampRate(invocation, respretRampRate);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterretRampRate(aInvocation, "retRampRate");
     respWriterretRampRate.Write(respretRampRate);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoPauseRamp(IDviInvocation& aInvocation)
@@ -482,8 +482,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoPauseRamp(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     PauseRamp(invocation);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoResumeRamp(IDviInvocation& aInvocation)
@@ -492,8 +492,8 @@ void DvProviderUpnpOrgDimming1Cpp::DoResumeRamp(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     ResumeRamp(invocation);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoGetIsRamping(IDviInvocation& aInvocation)
@@ -503,10 +503,10 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetIsRamping(IDviInvocation& aInvocation)
     bool respretIsRamping;
     DvInvocationStd invocation(aInvocation);
     GetIsRamping(invocation, respretIsRamping);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterretIsRamping(aInvocation, "retIsRamping");
     respWriterretIsRamping.Write(respretIsRamping);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoGetRampPaused(IDviInvocation& aInvocation)
@@ -516,10 +516,10 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetRampPaused(IDviInvocation& aInvocation)
     bool respretRampPaused;
     DvInvocationStd invocation(aInvocation);
     GetRampPaused(invocation, respretRampPaused);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterretRampPaused(aInvocation, "retRampPaused");
     respWriterretRampPaused.Write(respretRampPaused);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::DoGetRampTime(IDviInvocation& aInvocation)
@@ -529,10 +529,10 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetRampTime(IDviInvocation& aInvocation)
     uint32_t respretRampTime;
     DvInvocationStd invocation(aInvocation);
     GetRampTime(invocation, respretRampTime);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterretRampTime(aInvocation, "retRampTime");
     respWriterretRampTime.Write(respretRampTime);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgDimming1Cpp::SetLoadLevelTarget(IDvInvocationStd& /*aInvocation*/, uint32_t /*anewLoadlevelTarget*/)

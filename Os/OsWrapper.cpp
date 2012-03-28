@@ -22,10 +22,10 @@ THandle Os::StackTraceCopy(THandle aStackTrace)
 
 Brn Os::GetPlatformNameAndVersion(TUint& aMajor, TUint& aMinor)
 {
-	char* name;
-	OsGetPlatformNameAndVersion(&name, &aMajor, &aMinor);
-	Brn nameBuf(name);
-	return nameBuf;
+    char* name;
+    OsGetPlatformNameAndVersion(&name, &aMajor, &aMinor);
+    Brn nameBuf(name);
+    return nameBuf;
 }
 
 THandle Os::NetworkCreate(ESocketType aSocketType)
@@ -39,14 +39,14 @@ THandle Os::NetworkCreate(ESocketType aSocketType)
 
 TInt Os::NetworkBind(THandle aHandle, const Endpoint& aEndpoint)
 {
-	TInt ret = OsNetworkBind(aHandle, aEndpoint.Address(), aEndpoint.Port());
-	return ret;
+    TInt ret = OsNetworkBind(aHandle, aEndpoint.Address(), aEndpoint.Port());
+    return ret;
 }
 
 TInt Os::NetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, const Endpoint& aMulticast)
 {
-	TInt ret = OsNetworkBindMulticast(aHandle, aAdapter, aMulticast.Address(), aMulticast.Port());
-	return ret;
+    TInt ret = OsNetworkBindMulticast(aHandle, aAdapter, aMulticast.Address(), aMulticast.Port());
+    return ret;
 }
 
 TInt Os::NetworkPort(THandle aHandle, TUint& aPort)

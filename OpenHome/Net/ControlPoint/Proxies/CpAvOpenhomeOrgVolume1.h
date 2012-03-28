@@ -557,7 +557,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aVolume
      */
@@ -567,7 +567,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aMute
      */
@@ -577,7 +577,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aBalance
      */
@@ -587,7 +587,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aFade
      */
@@ -597,7 +597,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aVolumeLimit
      */
@@ -607,7 +607,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aVolumeMax
      */
@@ -617,7 +617,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aVolumeUnity
      */
@@ -627,7 +627,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aVolumeSteps
      */
@@ -637,7 +637,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aVolumeMilliDbPerStep
      */
@@ -647,7 +647,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aBalanceMax
      */
@@ -657,7 +657,7 @@ public:
      *
      * This function is threadsafe and can only be called if Subscribe() has been
      * called and a first eventing callback received more recently than any call
-	 * to Unsubscribe().
+     * to Unsubscribe().
      *
      * @param[out] aFadeMax
      */

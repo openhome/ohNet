@@ -194,7 +194,7 @@ SsdpMsearchResponder::SsdpMsearchResponder(TUint aConfigId)
 
 void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint)
 {
-	iRemote.Replace(aEndpoint);
+    iRemote.Replace(aEndpoint);
 }
 
 void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)

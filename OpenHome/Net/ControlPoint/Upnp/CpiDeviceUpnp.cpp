@@ -21,6 +21,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+
 // CpiDeviceUpnp
 
 CpiDeviceUpnp::CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList)
@@ -88,50 +89,50 @@ void CpiDeviceUpnp::InterruptXmlFetch()
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
 {
-	Brn key(aKey);
-	
-	Parser parser(key);
-	
-	if (parser.Next('.') == Brn("Upnp")) {
-		Brn property = parser.Remaining();
+    Brn key(aKey);
+    
+    Parser parser(key);
+    
+    if (parser.Next('.') == Brn("Upnp")) {
+        Brn property = parser.Remaining();
 
-	    if (property == Brn("Location")) {
-	        aValue.Set(iLocation);
-	        return (true);
-	    }
-	    if (property == Brn("DeviceXml")) {
-	        aValue.Set(iXml);
-	        return (true);
-	    }
+        if (property == Brn("Location")) {
+            aValue.Set(iLocation);
+            return (true);
+        }
+        if (property == Brn("DeviceXml")) {
+            aValue.Set(iXml);
+            return (true);
+        }
 
-		const DeviceXml* device = iDeviceXml;
-		
-		if (parser.Next('.') == Brn("Root")) {
-			device = &iDeviceXmlDocument->Root();
-			property.Set(parser.Remaining());
-		}
-		
-	    try {
-		    if (property == Brn("FriendlyName")) {
-		        device->GetFriendlyName(aValue);
-		        return (true);
-		    }
-		    if (property == Brn("PresentationUrl")) {
-		        device->GetPresentationUrl(aValue);
-		        return (true);
-		    }
-		    
-		    Parser parser(property);
-		    
-		    Brn token = parser.Next('.');
-		    
-			if (token == Brn("Service")) {
-				aValue.Set(device->ServiceVersion(parser.Remaining()));
-				return (true);
-			}
-		}
-		catch (XmlError) {
-		}
+        const DeviceXml* device = iDeviceXml;
+        
+        if (parser.Next('.') == Brn("Root")) {
+            device = &iDeviceXmlDocument->Root();
+            property.Set(parser.Remaining());
+        }
+        
+        try {
+            if (property == Brn("FriendlyName")) {
+                device->GetFriendlyName(aValue);
+                return (true);
+            }
+            if (property == Brn("PresentationUrl")) {
+                device->GetPresentationUrl(aValue);
+                return (true);
+            }
+            
+            Parser parser(property);
+            
+            Brn token = parser.Next('.');
+            
+            if (token == Brn("Service")) {
+                aValue.Set(device->ServiceVersion(parser.Remaining()));
+                return (true);
+            }
+        }
+        catch (XmlError) {
+        }
     }
 
     return (false);
@@ -271,14 +272,16 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     }
     try {
         iDeviceXmlDocument = new DeviceXmlDocument(iXml);
-    	iDeviceXml = new DeviceXml(iDeviceXmlDocument->Find(Udn()));
+        iDeviceXml = new DeviceXml(iDeviceXmlDocument->Find(Udn()));
     }
     catch (XmlError&) {
-    	err = true;
+        err = true;
         LOG2(kDevice, kError, "Error within xml for ");
         LOG2(kDevice, kError, Udn());
         LOG2(kDevice, kError, " from ");
         LOG2(kDevice, kError, iLocation);
+        LOG2(kDevice, kError, ".  Xml is ");
+        LOG2(kDevice, kError, iXml);
         LOG2(kDevice, kError, "\n");
     }
     iList->XmlFetchCompleted(*this, err);
@@ -404,10 +407,12 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
         return false;
     }
     iLock.Wait();
+    Stack::Mutex().Wait();
     if (iRefreshing && iPendingRefreshCount > 1) {
         // we need at most one final msearch once a network card starts working following an adapter change
         iPendingRefreshCount = 1;
     }
+    Stack::Mutex().Signal();
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
@@ -504,12 +509,12 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 void CpiDeviceListUpnp::RefreshTimerComplete()
 {
     RefreshComplete();
-    iLock.Wait();
+    Stack::Mutex().Wait();
     if (iPendingRefreshCount > 0) {
         iNextRefreshTimer->FireIn(Stack::InitParams().MsearchTimeSecs() * 1000);
         iPendingRefreshCount--;
     }
-    iLock.Signal();
+    Stack::Mutex().Signal();
 }
 
 void CpiDeviceListUpnp::NextRefreshDue()
@@ -536,9 +541,9 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
         return;
     }
     iNextRefreshTimer->Cancel();
-    iLock.Wait();
+    Stack::Mutex().Wait();
     iPendingRefreshCount = 0;
-    iLock.Signal();
+    Stack::Mutex().Signal();
     StopListeners();
 
     if (current == NULL) {
@@ -555,9 +560,11 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     
     iLock.Wait();
     iInterface = current->Address();
-    TUint msearchTime = Stack::InitParams().MsearchTimeSecs();
-    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
     iLock.Signal();
+    TUint msearchTime = Stack::InitParams().MsearchTimeSecs();
+    Stack::Mutex().Wait();
+    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
+    Stack::Mutex().Signal();
     current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
     iSsdpLock.Wait();
@@ -575,7 +582,9 @@ void CpiDeviceListUpnp::RemoveAll()
     iNextRefreshTimer->Cancel();
     iLock.Wait();
     CancelRefresh();
+    Stack::Mutex().Wait();
     iPendingRefreshCount = 0;
+    Stack::Mutex().Signal();
     std::vector<CpiDevice*> devices;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {

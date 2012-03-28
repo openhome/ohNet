@@ -12,8 +12,8 @@ interface IDvProviderUpnpOrgSwitchPower1
     /**
      * Set the value of the Status property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyStatus(boolean aValue);
@@ -41,11 +41,11 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderUpnpOrgSwitchPower1(DvDevice aDevice)
     {
-	    super(aDevice, "upnp.org", "SwitchPower", 1);
+        super(aDevice, "upnp.org", "SwitchPower", 1);
     }
 
     /**
@@ -60,7 +60,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
     /**
      * Set the value of the Status property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -72,7 +72,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
     /**
      * Get a copy of the value of the Status property
      *
-     * @return	value of the Status property.
+     * @return  value of the Status property.
      */
     public boolean getPropertyStatus()
     {
@@ -84,7 +84,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetTarget must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetTarget()
     {
         Action action = new Action("SetTarget");
@@ -98,7 +98,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetTarget must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetTarget()
     {
         Action action = new Action("GetTarget");
@@ -112,7 +112,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetStatus must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetStatus()
     {
         Action action = new Action("GetStatus");
@@ -129,7 +129,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionSetTarget} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param anewTargetValue
      */
     protected void setTarget(IDvInvocation aInvocation, boolean anewTargetValue)
@@ -145,7 +145,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetTarget} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected boolean getTarget(IDvInvocation aInvocation)
     {
@@ -160,7 +160,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      *
      * <p>Must be implemented iff {@link #enableActionGetStatus} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected boolean getStatus(IDvInvocation aInvocation)
     {
@@ -230,7 +230,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetTarget implements IDvInvocationListener
     {
@@ -278,7 +278,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetStatus implements IDvInvocationListener
     {
@@ -326,6 +326,6 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

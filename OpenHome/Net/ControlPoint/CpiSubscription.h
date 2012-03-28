@@ -68,11 +68,11 @@ public:
     
     /**
      * Schedule an unsubscribe operation which will happen later in a Subscriber thread.
-	 * No property update events will be delivered once this returns.
+     * No property update events will be delivered once this returns.
      * Clients who call this should also release their reference.
      * Clients are not informed about any failure to unsubscribe.
      */
-	void Unsubscribe();
+    void Unsubscribe();
 
     /**
      * Set the handler for interrupting a subscribe/renew/unsubscribe operation

@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyAvOpenhomeOrgNetworkMonitor1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyAvOpenhomeOrgNetworkMonitor1 extends ICpProxy
 {
     public String syncName();
@@ -42,7 +42,7 @@ class SyncNameAvOpenhomeOrgNetworkMonitor1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endName(aAsyncHandle);
-		
+        
         iName = result;
     }
 }
@@ -73,7 +73,7 @@ class SyncPortsAvOpenhomeOrgNetworkMonitor1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Ports result = iService.endPorts(aAsyncHandle);
-		
+        
         iSender = result.getSender();
         iReceiver = result.getReceiver();
         iResults = result.getResults();
@@ -132,7 +132,7 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyAvOpenhomeOrgNetworkMonitor1(CpDevice aDevice)
@@ -143,28 +143,28 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
 
         iActionName = new Action("Name");
         param = new ParameterString("Name", allowedValues);
-		iActionName.addOutputParameter(param);
+        iActionName.addOutputParameter(param);
 
         iActionPorts = new Action("Ports");
         param = new ParameterUint("Sender");
-		iActionPorts.addOutputParameter(param);
+        iActionPorts.addOutputParameter(param);
         param = new ParameterUint("Receiver");
-		iActionPorts.addOutputParameter(param);
+        iActionPorts.addOutputParameter(param);
         param = new ParameterUint("Results");
-		iActionPorts.addOutputParameter(param);
+        iActionPorts.addOutputParameter(param);
 
         iNameChanged = new PropertyChangeListener();
         iName = new PropertyString("Name", iNameChanged);
-		addProperty(iName);
+        addProperty(iName);
         iSenderChanged = new PropertyChangeListener();
         iSender = new PropertyUint("Sender", iSenderChanged);
-		addProperty(iSender);
+        addProperty(iSender);
         iReceiverChanged = new PropertyChangeListener();
         iReceiver = new PropertyUint("Receiver", iReceiverChanged);
-		addProperty(iReceiver);
+        addProperty(iReceiver);
         iResultsChanged = new PropertyChangeListener();
         iResults = new PropertyUint("Results", iResultsChanged);
-		addProperty(iResults);
+        addProperty(iResults);
         iPropertyLock = new Object();
     }
     /**
@@ -174,43 +174,43 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
      *
      * @return the result of the invoked action.
      */
-	public String syncName()
-	{
-	    SyncNameAvOpenhomeOrgNetworkMonitor1 sync = new SyncNameAvOpenhomeOrgNetworkMonitor1(this);
-	    beginName(sync.getListener());
-	    sync.waitToComplete();
+    public String syncName()
+    {
+        SyncNameAvOpenhomeOrgNetworkMonitor1 sync = new SyncNameAvOpenhomeOrgNetworkMonitor1(this);
+        beginName(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getName();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endName}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginName(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endName}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginName(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionName, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionName.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginName} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginName} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginName} method.
      * @return the result of the previously invoked action.
      */
-	public String endName(long aAsyncHandle)
+    public String endName(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -220,7 +220,7 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
         String name = Invocation.getOutputString(aAsyncHandle, index++);
         return name;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -228,31 +228,31 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
      *
      * @return the result of the invoked action.
      */
-	public Ports syncPorts()
-	{
-	    SyncPortsAvOpenhomeOrgNetworkMonitor1 sync = new SyncPortsAvOpenhomeOrgNetworkMonitor1(this);
-	    beginPorts(sync.getListener());
-	    sync.waitToComplete();
+    public Ports syncPorts()
+    {
+        SyncPortsAvOpenhomeOrgNetworkMonitor1 sync = new SyncPortsAvOpenhomeOrgNetworkMonitor1(this);
+        beginPorts(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Ports(
             sync.getSender(),
             sync.getReceiver(),
             sync.getResults()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPorts}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPorts(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPorts}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPorts(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPorts, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionPorts.getOutputParameter(outIndex++)));
@@ -261,16 +261,16 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPorts} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPorts} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPorts} method.
      * @return the result of the previously invoked action.
      */
-	public Ports endPorts(long aAsyncHandle)
+    public Ports endPorts(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -284,16 +284,16 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
             sender,
             receiver,
             results
-		);
+        );
     }
-		
+        
     /**
      * Set a delegate to be run when the Name state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgNetworkMonitor1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgNetworkMonitor1 instance will not overlap.
      *
-     * @param aNameChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aNameChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyNameChanged(IPropertyChangeListener aNameChanged)
     {
@@ -313,10 +313,10 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
     /**
      * Set a delegate to be run when the Sender state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgNetworkMonitor1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgNetworkMonitor1 instance will not overlap.
      *
-     * @param aSenderChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSenderChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySenderChanged(IPropertyChangeListener aSenderChanged)
     {
@@ -336,10 +336,10 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
     /**
      * Set a delegate to be run when the Receiver state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgNetworkMonitor1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgNetworkMonitor1 instance will not overlap.
      *
-     * @param aReceiverChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aReceiverChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyReceiverChanged(IPropertyChangeListener aReceiverChanged)
     {
@@ -359,10 +359,10 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
     /**
      * Set a delegate to be run when the Results state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgNetworkMonitor1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgNetworkMonitor1 instance will not overlap.
      *
-     * @param aResultsChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aResultsChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyResultsChanged(IPropertyChangeListener aResultsChanged)
     {
@@ -386,7 +386,7 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Name property.
+     * @return  value of the Name property.
      */
     public String getPropertyName()
     {
@@ -395,14 +395,14 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Sender property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Sender property.
+     * @return  value of the Sender property.
      */
     public long getPropertySender()
     {
@@ -411,14 +411,14 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Receiver property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Receiver property.
+     * @return  value of the Receiver property.
      */
     public long getPropertyReceiver()
     {
@@ -427,14 +427,14 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Results property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Results property.
+     * @return  value of the Results property.
      */
     public long getPropertyResults()
     {
@@ -443,7 +443,7 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

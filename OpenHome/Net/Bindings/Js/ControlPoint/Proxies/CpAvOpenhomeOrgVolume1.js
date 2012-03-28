@@ -5,30 +5,32 @@
 * @module ohnet
 * @class Volume
 */
-	
-var CpProxyAvOpenhomeOrgVolume1 = function(udn){	
+    
+var CpProxyAvOpenhomeOrgVolume1 = function(udn){ 
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/av.openhome.org-Volume-1/control";  // upnp control url
-	this.domain = "av-openhome-org";
-	this.type = "Volume";
-	this.version = "1";
-	this.serviceName = "av.openhome.org-Volume-1";
-	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
-	this.udn = udn;   // device name
-	
-	// Collection of service properties
-	this.serviceProperties = {};
-	this.serviceProperties["Volume"] = new ohnet.serviceproperty("Volume","int");
-	this.serviceProperties["Mute"] = new ohnet.serviceproperty("Mute","bool");
-	this.serviceProperties["Balance"] = new ohnet.serviceproperty("Balance","int");
-	this.serviceProperties["Fade"] = new ohnet.serviceproperty("Fade","int");
-	this.serviceProperties["VolumeLimit"] = new ohnet.serviceproperty("VolumeLimit","int");
-	this.serviceProperties["VolumeMax"] = new ohnet.serviceproperty("VolumeMax","int");
-	this.serviceProperties["VolumeUnity"] = new ohnet.serviceproperty("VolumeUnity","int");
-	this.serviceProperties["VolumeSteps"] = new ohnet.serviceproperty("VolumeSteps","int");
-	this.serviceProperties["VolumeMilliDbPerStep"] = new ohnet.serviceproperty("VolumeMilliDbPerStep","int");
-	this.serviceProperties["BalanceMax"] = new ohnet.serviceproperty("BalanceMax","int");
-	this.serviceProperties["FadeMax"] = new ohnet.serviceproperty("FadeMax","int");
+    this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/av.openhome.org-Volume-1/control";  // upnp control url
+    this.domain = "av-openhome-org";
+    this.type = "Volume";
+    this.version = "1";
+    this.serviceName = "av.openhome.org-Volume-1";
+    this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+    this.udn = udn;   // device name
+    
+    // Collection of service properties
+    this.serviceProperties = {};
+    this.serviceProperties["Volume"] = new ohnet.serviceproperty("Volume","int");
+    this.serviceProperties["Mute"] = new ohnet.serviceproperty("Mute","bool");
+    this.serviceProperties["Balance"] = new ohnet.serviceproperty("Balance","int");
+    this.serviceProperties["Fade"] = new ohnet.serviceproperty("Fade","int");
+    this.serviceProperties["VolumeLimit"] = new ohnet.serviceproperty("VolumeLimit","int");
+    this.serviceProperties["VolumeMax"] = new ohnet.serviceproperty("VolumeMax","int");
+    this.serviceProperties["VolumeUnity"] = new ohnet.serviceproperty("VolumeUnity","int");
+    this.serviceProperties["VolumeSteps"] = new ohnet.serviceproperty("VolumeSteps","int");
+    this.serviceProperties["VolumeMilliDbPerStep"] = new ohnet.serviceproperty("VolumeMilliDbPerStep","int");
+    this.serviceProperties["BalanceMax"] = new ohnet.serviceproperty("BalanceMax","int");
+    this.serviceProperties["FadeMax"] = new ohnet.serviceproperty("FadeMax","int");
+
+                                                                      
 }
 
 
@@ -52,7 +54,7 @@ CpProxyAvOpenhomeOrgVolume1.prototype.unsubscribe = function () {
 }
 
 
-	
+    
 
 /**
 * Adds a listener to handle "Volume" property change events
@@ -61,11 +63,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.unsubscribe = function () {
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Volume_Changed = function (stateChangedFunction) {
     this.serviceProperties.Volume.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "Mute" property change events
@@ -74,11 +76,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Volume_Changed = function (stateChangedFun
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Mute_Changed = function (stateChangedFunction) {
     this.serviceProperties.Mute.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "Balance" property change events
@@ -87,11 +89,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Mute_Changed = function (stateChangedFunct
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Balance_Changed = function (stateChangedFunction) {
     this.serviceProperties.Balance.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "Fade" property change events
@@ -100,11 +102,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Balance_Changed = function (stateChangedFu
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.Fade_Changed = function (stateChangedFunction) {
     this.serviceProperties.Fade.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "VolumeLimit" property change events
@@ -113,11 +115,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Fade_Changed = function (stateChangedFunct
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeLimit_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeLimit.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "VolumeMax" property change events
@@ -126,11 +128,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeLimit_Changed = function (stateChang
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeMax_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeMax.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "VolumeUnity" property change events
@@ -139,11 +141,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeMax_Changed = function (stateChanged
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeUnity_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeUnity.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "VolumeSteps" property change events
@@ -152,11 +154,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeUnity_Changed = function (stateChang
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeSteps_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeSteps.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "VolumeMilliDbPerStep" property change events
@@ -165,11 +167,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeSteps_Changed = function (stateChang
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.VolumeMilliDbPerStep_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeMilliDbPerStep.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "BalanceMax" property change events
@@ -178,11 +180,11 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeMilliDbPerStep_Changed = function (s
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.BalanceMax_Changed = function (stateChangedFunction) {
     this.serviceProperties.BalanceMax.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "FadeMax" property change events
@@ -191,9 +193,9 @@ CpProxyAvOpenhomeOrgVolume1.prototype.BalanceMax_Changed = function (stateChange
 */
 CpProxyAvOpenhomeOrgVolume1.prototype.FadeMax_Changed = function (stateChangedFunction) {
     this.serviceProperties.FadeMax.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
 
 
@@ -203,22 +205,22 @@ CpProxyAvOpenhomeOrgVolume1.prototype.FadeMax_Changed = function (stateChangedFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.Characteristics = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Characteristics", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.Characteristics = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Characteristics", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["VolumeMax"] = ohnet.soaprequest.readIntParameter(result["VolumeMax"]);	
-		result["VolumeUnity"] = ohnet.soaprequest.readIntParameter(result["VolumeUnity"]);	
-		result["VolumeSteps"] = ohnet.soaprequest.readIntParameter(result["VolumeSteps"]);	
-		result["VolumeMilliDbPerStep"] = ohnet.soaprequest.readIntParameter(result["VolumeMilliDbPerStep"]);	
-		result["BalanceMax"] = ohnet.soaprequest.readIntParameter(result["BalanceMax"]);	
-		result["FadeMax"] = ohnet.soaprequest.readIntParameter(result["FadeMax"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["VolumeMax"] = ohnet.soaprequest.readIntParameter(result["VolumeMax"]); 
+        result["VolumeUnity"] = ohnet.soaprequest.readIntParameter(result["VolumeUnity"]); 
+        result["VolumeSteps"] = ohnet.soaprequest.readIntParameter(result["VolumeSteps"]); 
+        result["VolumeMilliDbPerStep"] = ohnet.soaprequest.readIntParameter(result["VolumeMilliDbPerStep"]); 
+        result["BalanceMax"] = ohnet.soaprequest.readIntParameter(result["BalanceMax"]); 
+        result["FadeMax"] = ohnet.soaprequest.readIntParameter(result["FadeMax"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -229,17 +231,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Characteristics = function(successFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.SetVolume = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SetVolume", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.SetVolume = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SetVolume", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -249,16 +251,16 @@ CpProxyAvOpenhomeOrgVolume1.prototype.SetVolume = function(Value, successFunctio
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.VolumeInc = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("VolumeInc", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.VolumeInc = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("VolumeInc", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -268,16 +270,16 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeInc = function(successFunction, erro
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.VolumeDec = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("VolumeDec", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.VolumeDec = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("VolumeDec", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -287,17 +289,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.VolumeDec = function(successFunction, erro
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.Volume = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Volume", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.Volume = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Volume", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -308,17 +310,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Volume = function(successFunction, errorFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.SetBalance = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SetBalance", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.SetBalance = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SetBalance", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -328,16 +330,16 @@ CpProxyAvOpenhomeOrgVolume1.prototype.SetBalance = function(Value, successFuncti
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.BalanceInc = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("BalanceInc", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.BalanceInc = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("BalanceInc", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -347,16 +349,16 @@ CpProxyAvOpenhomeOrgVolume1.prototype.BalanceInc = function(successFunction, err
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.BalanceDec = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("BalanceDec", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.BalanceDec = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("BalanceDec", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -366,17 +368,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.BalanceDec = function(successFunction, err
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.Balance = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Balance", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.Balance = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Balance", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -387,17 +389,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Balance = function(successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.SetFade = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SetFade", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.SetFade = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SetFade", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -407,16 +409,16 @@ CpProxyAvOpenhomeOrgVolume1.prototype.SetFade = function(Value, successFunction,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.FadeInc = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("FadeInc", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.FadeInc = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("FadeInc", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -426,16 +428,16 @@ CpProxyAvOpenhomeOrgVolume1.prototype.FadeInc = function(successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.FadeDec = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("FadeDec", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.FadeDec = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("FadeDec", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -445,17 +447,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.FadeDec = function(successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.Fade = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Fade", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.Fade = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Fade", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -466,17 +468,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Fade = function(successFunction, errorFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.SetMute = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SetMute", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.SetMute = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SetMute", this.url, this.domain, this.type, this.version);     
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -486,17 +488,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.SetMute = function(Value, successFunction,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.Mute = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Mute", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.Mute = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Mute", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -506,17 +508,17 @@ CpProxyAvOpenhomeOrgVolume1.prototype.Mute = function(successFunction, errorFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgVolume1.prototype.VolumeLimit = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("VolumeLimit", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgVolume1.prototype.VolumeLimit = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("VolumeLimit", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 

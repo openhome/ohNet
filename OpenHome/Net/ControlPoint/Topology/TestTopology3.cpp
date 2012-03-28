@@ -18,12 +18,12 @@ class TopologyLogger : public ICpTopology3Handler
 {
 public:
     TopologyLogger();
-	virtual void RoomAdded(CpTopology3Room& aRoom);
+    virtual void RoomAdded(CpTopology3Room& aRoom);
     virtual void RoomChanged(CpTopology3Room& aRoom);
     virtual void RoomRemoved(CpTopology3Room& aRoom);
-	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-	virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-	virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
+    virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
+    virtual void RoomSourceChanged(CpTopology3Room& aRoom);
+    virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
 private:
     void PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom);
     void PrintSourceInfo(const CpTopology3Room& aRoom);
@@ -58,17 +58,17 @@ void TopologyLogger::RoomRemoved(CpTopology3Room& aRoom)
 void TopologyLogger::RoomStandbyChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Standby Changed     ", aRoom);
-	switch (aRoom.Standby()) {
-	case CpTopology3Room::eOn:
-		Print("On");
-		break;
-	case CpTopology3Room::eMixed:
-		Print("Mixed");
-		break;
-	case CpTopology3Room::eOff:
-		Print("Off");
-		break;
-	}
+    switch (aRoom.Standby()) {
+    case CpTopology3Room::eOn:
+        Print("On");
+        break;
+    case CpTopology3Room::eMixed:
+        Print("Mixed");
+        break;
+    case CpTopology3Room::eOff:
+        Print("Off");
+        break;
+    }
     Print("\n");
 }
 
@@ -82,25 +82,25 @@ void TopologyLogger::RoomSourceChanged(CpTopology3Room& aRoom)
 void TopologyLogger::RoomVolumeControlChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Vol Control Changed ", aRoom);
-	aRoom.HasVolumeControl() ? printf("Yes\n") : printf("No\n");
+    aRoom.HasVolumeControl() ? printf("Yes\n") : printf("No\n");
 }
 
 void TopologyLogger::PrintSourceInfo(const CpTopology3Room& aRoom)
 {
-	TUint count = aRoom.SourceCount();
+    TUint count = aRoom.SourceCount();
 
-  	Print("===============================================\n");
-	
-	for (TUint i = 0; i < count; i++) {
-    	Print("%u. ", i);
-    	Print(aRoom.SourceName(i));
-    	Print(" ");
-    	Print(aRoom.SourceType(i));
-    	Print("\n");
-	}
+    Print("===============================================\n");
+    
+    for (TUint i = 0; i < count; i++) {
+        Print("%u. ", i);
+        Print(aRoom.SourceName(i));
+        Print(" ");
+        Print(aRoom.SourceType(i));
+        Print("\n");
+    }
 
-  	Print("===============================================\n");
-   	Print("\n");
+    Print("===============================================\n");
+    Print("\n");
 }
 
 void TopologyLogger::PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom)

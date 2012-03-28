@@ -36,7 +36,7 @@ public:
     Stack(InitialisationParams* aInitParams);
     static void Destroy();
     static TBool IsInitialised();
-	static void GetVersion(TUint& aMajor, TUint& aMinor);
+    static void GetVersion(TUint& aMajor, TUint& aMinor);
     static OpenHome::TimerManager& TimerManager();
     /**
      * Intended for /very/ short operations only
@@ -65,6 +65,7 @@ private:
     {
     public:
         MListener(TIpAddress aInterface);
+        ~MListener();
         SsdpListenerMulticast& Listener();
         TIpAddress Interface() const;
         void AddRef();

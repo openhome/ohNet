@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the Volume property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolume(long aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the Mute property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMute(boolean aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the Balance property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyBalance(int aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the Fade property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyFade(int aValue);
@@ -76,8 +76,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the VolumeLimit property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeLimit(long aValue);
@@ -92,8 +92,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the VolumeMax property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeMax(long aValue);
@@ -108,8 +108,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the VolumeUnity property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeUnity(long aValue);
@@ -124,8 +124,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the VolumeSteps property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeSteps(long aValue);
@@ -140,8 +140,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the VolumeMilliDbPerStep property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeMilliDbPerStep(long aValue);
@@ -156,8 +156,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the BalanceMax property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyBalanceMax(long aValue);
@@ -172,8 +172,8 @@ interface IDvProviderAvOpenhomeOrgVolume1
     /**
      * Set the value of the FadeMax property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyFadeMax(long aValue);
@@ -275,11 +275,11 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgVolume1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "Volume", 1);
+        super(aDevice, "av.openhome.org", "Volume", 1);
     }
 
     /**
@@ -384,7 +384,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the Volume property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -396,7 +396,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the Volume property
      *
-     * @return	value of the Volume property.
+     * @return  value of the Volume property.
      */
     public long getPropertyVolume()
     {
@@ -406,7 +406,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the Mute property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -418,7 +418,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the Mute property
      *
-     * @return	value of the Mute property.
+     * @return  value of the Mute property.
      */
     public boolean getPropertyMute()
     {
@@ -428,7 +428,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the Balance property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -440,7 +440,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the Balance property
      *
-     * @return	value of the Balance property.
+     * @return  value of the Balance property.
      */
     public int getPropertyBalance()
     {
@@ -450,7 +450,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the Fade property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -462,7 +462,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the Fade property
      *
-     * @return	value of the Fade property.
+     * @return  value of the Fade property.
      */
     public int getPropertyFade()
     {
@@ -472,7 +472,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the VolumeLimit property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -484,7 +484,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the VolumeLimit property
      *
-     * @return	value of the VolumeLimit property.
+     * @return  value of the VolumeLimit property.
      */
     public long getPropertyVolumeLimit()
     {
@@ -494,7 +494,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the VolumeMax property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -506,7 +506,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the VolumeMax property
      *
-     * @return	value of the VolumeMax property.
+     * @return  value of the VolumeMax property.
      */
     public long getPropertyVolumeMax()
     {
@@ -516,7 +516,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the VolumeUnity property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -528,7 +528,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the VolumeUnity property
      *
-     * @return	value of the VolumeUnity property.
+     * @return  value of the VolumeUnity property.
      */
     public long getPropertyVolumeUnity()
     {
@@ -538,7 +538,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the VolumeSteps property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -550,7 +550,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the VolumeSteps property
      *
-     * @return	value of the VolumeSteps property.
+     * @return  value of the VolumeSteps property.
      */
     public long getPropertyVolumeSteps()
     {
@@ -560,7 +560,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the VolumeMilliDbPerStep property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -572,7 +572,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the VolumeMilliDbPerStep property
      *
-     * @return	value of the VolumeMilliDbPerStep property.
+     * @return  value of the VolumeMilliDbPerStep property.
      */
     public long getPropertyVolumeMilliDbPerStep()
     {
@@ -582,7 +582,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the BalanceMax property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -594,7 +594,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the BalanceMax property
      *
-     * @return	value of the BalanceMax property.
+     * @return  value of the BalanceMax property.
      */
     public long getPropertyBalanceMax()
     {
@@ -604,7 +604,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Set the value of the FadeMax property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -616,7 +616,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
     /**
      * Get a copy of the value of the FadeMax property
      *
-     * @return	value of the FadeMax property.
+     * @return  value of the FadeMax property.
      */
     public long getPropertyFadeMax()
     {
@@ -628,7 +628,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Characteristics must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionCharacteristics()
     {
         Action action = new Action("Characteristics");
@@ -647,7 +647,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetVolume must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetVolume()
     {
         Action action = new Action("SetVolume");
@@ -661,7 +661,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * VolumeInc must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionVolumeInc()
     {
         Action action = new Action("VolumeInc");
@@ -674,7 +674,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * VolumeDec must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionVolumeDec()
     {
         Action action = new Action("VolumeDec");
@@ -687,7 +687,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Volume must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionVolume()
     {
         Action action = new Action("Volume");
@@ -701,7 +701,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetBalance must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetBalance()
     {
         Action action = new Action("SetBalance");
@@ -715,7 +715,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * BalanceInc must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionBalanceInc()
     {
         Action action = new Action("BalanceInc");
@@ -728,7 +728,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * BalanceDec must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionBalanceDec()
     {
         Action action = new Action("BalanceDec");
@@ -741,7 +741,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Balance must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionBalance()
     {
         Action action = new Action("Balance");
@@ -755,7 +755,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetFade must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetFade()
     {
         Action action = new Action("SetFade");
@@ -769,7 +769,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * FadeInc must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionFadeInc()
     {
         Action action = new Action("FadeInc");
@@ -782,7 +782,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * FadeDec must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionFadeDec()
     {
         Action action = new Action("FadeDec");
@@ -795,7 +795,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Fade must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionFade()
     {
         Action action = new Action("Fade");
@@ -809,7 +809,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetMute must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetMute()
     {
         Action action = new Action("SetMute");
@@ -823,7 +823,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Mute must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionMute()
     {
         Action action = new Action("Mute");
@@ -837,7 +837,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>The action's availability will be published in the device's service.xml.
      * VolumeLimit must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionVolumeLimit()
     {
         Action action = new Action("VolumeLimit");
@@ -854,7 +854,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionCharacteristics} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Characteristics characteristics(IDvInvocation aInvocation)
     {
@@ -869,7 +869,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionSetVolume} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void setVolume(IDvInvocation aInvocation, long aValue)
@@ -885,7 +885,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionVolumeInc} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void volumeInc(IDvInvocation aInvocation)
     {
@@ -900,7 +900,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionVolumeDec} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void volumeDec(IDvInvocation aInvocation)
     {
@@ -915,7 +915,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionVolume} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long volume(IDvInvocation aInvocation)
     {
@@ -930,7 +930,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionSetBalance} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void setBalance(IDvInvocation aInvocation, int aValue)
@@ -946,7 +946,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionBalanceInc} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void balanceInc(IDvInvocation aInvocation)
     {
@@ -961,7 +961,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionBalanceDec} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void balanceDec(IDvInvocation aInvocation)
     {
@@ -976,7 +976,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionBalance} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected int balance(IDvInvocation aInvocation)
     {
@@ -991,7 +991,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionSetFade} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void setFade(IDvInvocation aInvocation, int aValue)
@@ -1007,7 +1007,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionFadeInc} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void fadeInc(IDvInvocation aInvocation)
     {
@@ -1022,7 +1022,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionFadeDec} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void fadeDec(IDvInvocation aInvocation)
     {
@@ -1037,7 +1037,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionFade} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected int fade(IDvInvocation aInvocation)
     {
@@ -1052,7 +1052,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionSetMute} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aValue
      */
     protected void setMute(IDvInvocation aInvocation, boolean aValue)
@@ -1068,7 +1068,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionMute} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected boolean mute(IDvInvocation aInvocation)
     {
@@ -1083,7 +1083,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      *
      * <p>Must be implemented iff {@link #enableActionVolumeLimit} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long volumeLimit(IDvInvocation aInvocation)
     {
@@ -1170,7 +1170,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetVolume implements IDvInvocationListener
     {
@@ -1218,7 +1218,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoVolumeInc implements IDvInvocationListener
     {
@@ -1264,7 +1264,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoVolumeDec implements IDvInvocationListener
     {
@@ -1310,7 +1310,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoVolume implements IDvInvocationListener
     {
@@ -1358,7 +1358,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetBalance implements IDvInvocationListener
     {
@@ -1406,7 +1406,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoBalanceInc implements IDvInvocationListener
     {
@@ -1452,7 +1452,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoBalanceDec implements IDvInvocationListener
     {
@@ -1498,7 +1498,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoBalance implements IDvInvocationListener
     {
@@ -1546,7 +1546,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetFade implements IDvInvocationListener
     {
@@ -1594,7 +1594,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoFadeInc implements IDvInvocationListener
     {
@@ -1640,7 +1640,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoFadeDec implements IDvInvocationListener
     {
@@ -1686,7 +1686,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoFade implements IDvInvocationListener
     {
@@ -1734,7 +1734,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetMute implements IDvInvocationListener
     {
@@ -1782,7 +1782,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoMute implements IDvInvocationListener
     {
@@ -1830,7 +1830,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoVolumeLimit implements IDvInvocationListener
     {
@@ -1878,6 +1878,6 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

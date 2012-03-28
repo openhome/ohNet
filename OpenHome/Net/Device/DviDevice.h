@@ -124,7 +124,7 @@ private:
     public:
         Attribute(const TChar* aKey, const TChar* aValue);
         Brn Key() const;
-		const TChar* Value() const;
+        const TChar* Value() const;
         void UpdateValue(const TChar* aValue);
     private:
         Brh  iKey;

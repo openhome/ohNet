@@ -852,7 +852,7 @@ void DvProviderUpnpOrgAVTransport1C::DoGetCurrentTransportActions(IDviInvocation
 
 THandle STDCALL DvProviderUpnpOrgAVTransport1Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgAVTransport1C(aDevice);
+    return new DvProviderUpnpOrgAVTransport1C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgAVTransport1Destroy(THandle aProvider)

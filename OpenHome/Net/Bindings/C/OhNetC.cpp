@@ -204,37 +204,37 @@ void STDCALL OhNetInitParamsSetDvMaxUpdateTime(OhNetHandleInitParams aParams, ui
 void STDCALL OhNetInitParamsSetDvNumServerThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	ip->SetDvNumServerThreads(aNumThreads);
+    ip->SetDvNumServerThreads(aNumThreads);
 }
 
 void STDCALL OhNetInitParamsSetDvNumPublisherThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	ip->SetDvNumPublisherThreads(aNumThreads);
+    ip->SetDvNumPublisherThreads(aNumThreads);
 }
 
 void STDCALL OhNetInitParamsSetDvNumWebSocketThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	ip->SetDvNumWebSocketThreads(aNumThreads);
+    ip->SetDvNumWebSocketThreads(aNumThreads);
 }
 
 void STDCALL OhNetInitParamsSetCpUpnpEventServerPort(OhNetHandleInitParams aParams, TUint aPort)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	ip->SetCpUpnpEventServerPort(aPort);
+    ip->SetCpUpnpEventServerPort(aPort);
 }
 
 void STDCALL OhNetInitParamsSetDvUpnpServerPort(OhNetHandleInitParams aParams, TUint aPort)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	ip->SetDvUpnpServerPort(aPort);
+    ip->SetDvUpnpServerPort(aPort);
 }
 
 void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams aParams, uint32_t aPort)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	ip->SetDvWebSocketPort(aPort);
+    ip->SetDvWebSocketPort(aPort);
 }
 
 void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams)
@@ -312,43 +312,43 @@ uint32_t STDCALL OhNetInitParamsDvMaxUpdateTimeSecs(OhNetHandleInitParams aParam
 uint32_t STDCALL OhNetInitParamsDvNumServerThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	return ip->DvNumServerThreads();
+    return ip->DvNumServerThreads();
 }
 
 uint32_t STDCALL OhNetInitParamsDvNumPublisherThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	return ip->DvNumPublisherThreads();
+    return ip->DvNumPublisherThreads();
 }
 
 uint32_t STDCALL OhNetInitParamsDvNumWebSocketThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	return ip->DvNumWebSocketThreads();
+    return ip->DvNumWebSocketThreads();
 }
 
 uint32_t STDCALL OhNetInitParamsCpUpnpEventServerPort(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	return ip->CpUpnpEventServerPort();
+    return ip->CpUpnpEventServerPort();
 }
 
 uint32_t STDCALL OhNetInitParamsDvUpnpServerPort(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	return ip->DvUpnpServerPort();
+    return ip->DvUpnpServerPort();
 }
 
 uint32_t STDCALL OhNetInitParamsDvWebSocketPort(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	return ip->DvWebSocketPort();
+    return ip->DvWebSocketPort();
 }
 
 uint32_t STDCALL OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-	return (ip->DvIsBonjourEnabled()? 1 : 0);
+    return (ip->DvIsBonjourEnabled()? 1 : 0);
 }
 
 TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif)
@@ -430,11 +430,11 @@ OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter(const char* aCookie)
 
 void STDCALL OhNetFreeExternal(void* aPtr)
 {
-	OhNetCallbackFreeExternal cb = Stack::InitParams().FreeExternal();
-	if (cb != NULL) {
-		cb(aPtr);
-	}
-	else {
-		free(aPtr);
-	}
+    OhNetCallbackFreeExternal cb = Stack::InitParams().FreeExternal();
+    if (cb != NULL) {
+        cb(aPtr);
+    }
+    else {
+        free(aPtr);
+    }
 }

@@ -5,20 +5,22 @@
 * @module ohnet
 * @class SwitchPower
 */
-	
-var CpProxySchemasUpnpOrgSwitchPower1 = function(udn){	
+    
+var CpProxySchemasUpnpOrgSwitchPower1 = function(udn){ 
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-SwitchPower-1/control";  // upnp control url
-	this.domain = "schemas-upnp-org";
-	this.type = "SwitchPower";
-	this.version = "1";
-	this.serviceName = "upnp.org-SwitchPower-1";
-	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
-	this.udn = udn;   // device name
-	
-	// Collection of service properties
-	this.serviceProperties = {};
-	this.serviceProperties["Status"] = new ohnet.serviceproperty("Status","bool");
+    this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-SwitchPower-1/control";  // upnp control url
+    this.domain = "schemas-upnp-org";
+    this.type = "SwitchPower";
+    this.version = "1";
+    this.serviceName = "upnp.org-SwitchPower-1";
+    this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+    this.udn = udn;   // device name
+    
+    // Collection of service properties
+    this.serviceProperties = {};
+    this.serviceProperties["Status"] = new ohnet.serviceproperty("Status","bool");
+
+          
 }
 
 
@@ -42,7 +44,7 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.unsubscribe = function () {
 }
 
 
-	
+    
 
 /**
 * Adds a listener to handle "Status" property change events
@@ -51,9 +53,9 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.unsubscribe = function () {
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.Status_Changed = function (stateChangedFunction) {
     this.serviceProperties.Status.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
+    });
 }
 
 
@@ -64,17 +66,17 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.Status_Changed = function (stateChan
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgSwitchPower1.prototype.SetTarget = function(newTargetValue, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SetTarget", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgSwitchPower1.prototype.SetTarget = function(newTargetValue, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SetTarget", this.url, this.domain, this.type, this.version);     
     request.writeBoolParameter("newTargetValue", newTargetValue);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -84,17 +86,17 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.SetTarget = function(newTargetValue,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgSwitchPower1.prototype.GetTarget = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetTarget", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgSwitchPower1.prototype.GetTarget = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetTarget", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["RetTargetValue"] = ohnet.soaprequest.readBoolParameter(result["RetTargetValue"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["RetTargetValue"] = ohnet.soaprequest.readBoolParameter(result["RetTargetValue"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -104,17 +106,17 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.GetTarget = function(successFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgSwitchPower1.prototype.GetStatus = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetStatus", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgSwitchPower1.prototype.GetStatus = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetStatus", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["ResultStatus"] = ohnet.soaprequest.readBoolParameter(result["ResultStatus"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["ResultStatus"] = ohnet.soaprequest.readBoolParameter(result["ResultStatus"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 

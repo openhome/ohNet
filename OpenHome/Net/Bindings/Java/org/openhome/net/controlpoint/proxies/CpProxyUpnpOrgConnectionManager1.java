@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgConnectionManager1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyUpnpOrgConnectionManager1 extends ICpProxy
 {
     public GetProtocolInfo syncGetProtocolInfo();
@@ -54,7 +54,7 @@ class SyncGetProtocolInfoUpnpOrgConnectionManager1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetProtocolInfo result = iService.endGetProtocolInfo(aAsyncHandle);
-		
+        
         iSource = result.getSource();
         iSink = result.getSink();
     }
@@ -86,7 +86,7 @@ class SyncPrepareForConnectionUpnpOrgConnectionManager1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         PrepareForConnection result = iService.endPrepareForConnection(aAsyncHandle);
-		
+        
         iConnectionID = result.getConnectionID();
         iAVTransportID = result.getAVTransportID();
         iRcsID = result.getRcsID();
@@ -104,7 +104,7 @@ class SyncConnectionCompleteUpnpOrgConnectionManager1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endConnectionComplete(aAsyncHandle);
-		
+        
     }
 }
 
@@ -124,7 +124,7 @@ class SyncGetCurrentConnectionIDsUpnpOrgConnectionManager1 extends SyncProxyActi
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetCurrentConnectionIDs(aAsyncHandle);
-		
+        
         iConnectionIDs = result;
     }
 }
@@ -175,7 +175,7 @@ class SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1 extends SyncProxyAct
     protected void completeRequest(long aAsyncHandle)
     {
         GetCurrentConnectionInfo result = iService.endGetCurrentConnectionInfo(aAsyncHandle);
-		
+        
         iRcsID = result.getRcsID();
         iAVTransportID = result.getAVTransportID();
         iProtocolInfo = result.getProtocolInfo();
@@ -320,7 +320,7 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyUpnpOrgConnectionManager1(CpDevice aDevice)
@@ -331,54 +331,54 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
 
         iActionGetProtocolInfo = new Action("GetProtocolInfo");
         param = new ParameterString("Source", allowedValues);
-		iActionGetProtocolInfo.addOutputParameter(param);
+        iActionGetProtocolInfo.addOutputParameter(param);
         param = new ParameterString("Sink", allowedValues);
-		iActionGetProtocolInfo.addOutputParameter(param);
+        iActionGetProtocolInfo.addOutputParameter(param);
 
         iActionPrepareForConnection = new Action("PrepareForConnection");
         param = new ParameterString("RemoteProtocolInfo", allowedValues);
-		iActionPrepareForConnection.addInputParameter(param);
+        iActionPrepareForConnection.addInputParameter(param);
         param = new ParameterString("PeerConnectionManager", allowedValues);
-		iActionPrepareForConnection.addInputParameter(param);
+        iActionPrepareForConnection.addInputParameter(param);
         param = new ParameterInt("PeerConnectionID");
-		iActionPrepareForConnection.addInputParameter(param);
+        iActionPrepareForConnection.addInputParameter(param);
         allowedValues.add("Input");
         allowedValues.add("Output");
         param = new ParameterString("Direction", allowedValues);
-		iActionPrepareForConnection.addInputParameter(param);
+        iActionPrepareForConnection.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterInt("ConnectionID");
-		iActionPrepareForConnection.addOutputParameter(param);
+        iActionPrepareForConnection.addOutputParameter(param);
         param = new ParameterInt("AVTransportID");
-		iActionPrepareForConnection.addOutputParameter(param);
+        iActionPrepareForConnection.addOutputParameter(param);
         param = new ParameterInt("RcsID");
-		iActionPrepareForConnection.addOutputParameter(param);
+        iActionPrepareForConnection.addOutputParameter(param);
 
         iActionConnectionComplete = new Action("ConnectionComplete");
         param = new ParameterInt("ConnectionID");
-		iActionConnectionComplete.addInputParameter(param);
+        iActionConnectionComplete.addInputParameter(param);
 
         iActionGetCurrentConnectionIDs = new Action("GetCurrentConnectionIDs");
         param = new ParameterString("ConnectionIDs", allowedValues);
-		iActionGetCurrentConnectionIDs.addOutputParameter(param);
+        iActionGetCurrentConnectionIDs.addOutputParameter(param);
 
         iActionGetCurrentConnectionInfo = new Action("GetCurrentConnectionInfo");
         param = new ParameterInt("ConnectionID");
-		iActionGetCurrentConnectionInfo.addInputParameter(param);
+        iActionGetCurrentConnectionInfo.addInputParameter(param);
         param = new ParameterInt("RcsID");
-		iActionGetCurrentConnectionInfo.addOutputParameter(param);
+        iActionGetCurrentConnectionInfo.addOutputParameter(param);
         param = new ParameterInt("AVTransportID");
-		iActionGetCurrentConnectionInfo.addOutputParameter(param);
+        iActionGetCurrentConnectionInfo.addOutputParameter(param);
         param = new ParameterString("ProtocolInfo", allowedValues);
-		iActionGetCurrentConnectionInfo.addOutputParameter(param);
+        iActionGetCurrentConnectionInfo.addOutputParameter(param);
         param = new ParameterString("PeerConnectionManager", allowedValues);
-		iActionGetCurrentConnectionInfo.addOutputParameter(param);
+        iActionGetCurrentConnectionInfo.addOutputParameter(param);
         param = new ParameterInt("PeerConnectionID");
-		iActionGetCurrentConnectionInfo.addOutputParameter(param);
+        iActionGetCurrentConnectionInfo.addOutputParameter(param);
         allowedValues.add("Input");
         allowedValues.add("Output");
         param = new ParameterString("Direction", allowedValues);
-		iActionGetCurrentConnectionInfo.addOutputParameter(param);
+        iActionGetCurrentConnectionInfo.addOutputParameter(param);
         allowedValues.clear();
         allowedValues.add("OK");
         allowedValues.add("ContentFormatMismatch");
@@ -386,18 +386,18 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         allowedValues.add("UnreliableChannel");
         allowedValues.add("Unknown");
         param = new ParameterString("Status", allowedValues);
-		iActionGetCurrentConnectionInfo.addOutputParameter(param);
+        iActionGetCurrentConnectionInfo.addOutputParameter(param);
         allowedValues.clear();
 
         iSourceProtocolInfoChanged = new PropertyChangeListener();
         iSourceProtocolInfo = new PropertyString("SourceProtocolInfo", iSourceProtocolInfoChanged);
-		addProperty(iSourceProtocolInfo);
+        addProperty(iSourceProtocolInfo);
         iSinkProtocolInfoChanged = new PropertyChangeListener();
         iSinkProtocolInfo = new PropertyString("SinkProtocolInfo", iSinkProtocolInfoChanged);
-		addProperty(iSinkProtocolInfo);
+        addProperty(iSinkProtocolInfo);
         iCurrentConnectionIDsChanged = new PropertyChangeListener();
         iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs", iCurrentConnectionIDsChanged);
-		addProperty(iCurrentConnectionIDs);
+        addProperty(iCurrentConnectionIDs);
         iPropertyLock = new Object();
     }
     /**
@@ -407,30 +407,30 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public GetProtocolInfo syncGetProtocolInfo()
-	{
-	    SyncGetProtocolInfoUpnpOrgConnectionManager1 sync = new SyncGetProtocolInfoUpnpOrgConnectionManager1(this);
-	    beginGetProtocolInfo(sync.getListener());
-	    sync.waitToComplete();
+    public GetProtocolInfo syncGetProtocolInfo()
+    {
+        SyncGetProtocolInfoUpnpOrgConnectionManager1 sync = new SyncGetProtocolInfoUpnpOrgConnectionManager1(this);
+        beginGetProtocolInfo(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetProtocolInfo(
             sync.getSource(),
             sync.getSink()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetProtocolInfo}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetProtocolInfo(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetProtocolInfo}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetProtocolInfo(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetProtocolInfo, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionGetProtocolInfo.getOutputParameter(outIndex++)));
@@ -438,16 +438,16 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetProtocolInfo} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetProtocolInfo} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetProtocolInfo} method.
      * @return the result of the previously invoked action.
      */
-	public GetProtocolInfo endGetProtocolInfo(long aAsyncHandle)
+    public GetProtocolInfo endGetProtocolInfo(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -459,9 +459,9 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         return new GetProtocolInfo(
             source,
             sink
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -469,35 +469,35 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public PrepareForConnection syncPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection)
-	{
-	    SyncPrepareForConnectionUpnpOrgConnectionManager1 sync = new SyncPrepareForConnectionUpnpOrgConnectionManager1(this);
-	    beginPrepareForConnection(aRemoteProtocolInfo, aPeerConnectionManager, aPeerConnectionID, aDirection, sync.getListener());
-	    sync.waitToComplete();
+    public PrepareForConnection syncPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection)
+    {
+        SyncPrepareForConnectionUpnpOrgConnectionManager1 sync = new SyncPrepareForConnectionUpnpOrgConnectionManager1(this);
+        beginPrepareForConnection(aRemoteProtocolInfo, aPeerConnectionManager, aPeerConnectionID, aDirection, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new PrepareForConnection(
             sync.getConnectionID(),
             sync.getAVTransportID(),
             sync.getRcsID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPrepareForConnection}.
-	 * 
-	 * @param aRemoteProtocolInfo
-	 * @param aPeerConnectionManager
-	 * @param aPeerConnectionID
-	 * @param aDirection
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endPrepareForConnection}.
+     * 
+     * @param aRemoteProtocolInfo
+     * @param aPeerConnectionManager
+     * @param aPeerConnectionID
+     * @param aDirection
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionPrepareForConnection, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionPrepareForConnection.getInputParameter(inIndex++), aRemoteProtocolInfo));
@@ -511,16 +511,16 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginPrepareForConnection} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPrepareForConnection} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginPrepareForConnection} method.
      * @return the result of the previously invoked action.
      */
-	public PrepareForConnection endPrepareForConnection(long aAsyncHandle)
+    public PrepareForConnection endPrepareForConnection(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -534,56 +534,56 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
             connectionID,
             aVTransportID,
             rcsID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncConnectionComplete(int aConnectionID)
-	{
-	    SyncConnectionCompleteUpnpOrgConnectionManager1 sync = new SyncConnectionCompleteUpnpOrgConnectionManager1(this);
-	    beginConnectionComplete(aConnectionID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncConnectionComplete(int aConnectionID)
+    {
+        SyncConnectionCompleteUpnpOrgConnectionManager1 sync = new SyncConnectionCompleteUpnpOrgConnectionManager1(this);
+        beginConnectionComplete(aConnectionID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endConnectionComplete}.
-	 * 
-	 * @param aConnectionID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginConnectionComplete(int aConnectionID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endConnectionComplete}.
+     * 
+     * @param aConnectionID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginConnectionComplete(int aConnectionID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionConnectionComplete, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentInt((ParameterInt)iActionConnectionComplete.getInputParameter(inIndex++), aConnectionID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginConnectionComplete} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginConnectionComplete} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginConnectionComplete} method.
      */
-	public void endConnectionComplete(long aAsyncHandle)
+    public void endConnectionComplete(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -591,43 +591,43 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public String syncGetCurrentConnectionIDs()
-	{
-	    SyncGetCurrentConnectionIDsUpnpOrgConnectionManager1 sync = new SyncGetCurrentConnectionIDsUpnpOrgConnectionManager1(this);
-	    beginGetCurrentConnectionIDs(sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetCurrentConnectionIDs()
+    {
+        SyncGetCurrentConnectionIDsUpnpOrgConnectionManager1 sync = new SyncGetCurrentConnectionIDsUpnpOrgConnectionManager1(this);
+        beginGetCurrentConnectionIDs(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getConnectionIDs();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetCurrentConnectionIDs}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetCurrentConnectionIDs(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetCurrentConnectionIDs}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetCurrentConnectionIDs(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetCurrentConnectionIDs, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionGetCurrentConnectionIDs.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetCurrentConnectionIDs} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetCurrentConnectionIDs} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetCurrentConnectionIDs} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetCurrentConnectionIDs(long aAsyncHandle)
+    public String endGetCurrentConnectionIDs(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -637,7 +637,7 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         String connectionIDs = Invocation.getOutputString(aAsyncHandle, index++);
         return connectionIDs;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -645,11 +645,11 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public GetCurrentConnectionInfo syncGetCurrentConnectionInfo(int aConnectionID)
-	{
-	    SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1 sync = new SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1(this);
-	    beginGetCurrentConnectionInfo(aConnectionID, sync.getListener());
-	    sync.waitToComplete();
+    public GetCurrentConnectionInfo syncGetCurrentConnectionInfo(int aConnectionID)
+    {
+        SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1 sync = new SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1(this);
+        beginGetCurrentConnectionInfo(aConnectionID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetCurrentConnectionInfo(
@@ -660,21 +660,21 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
             sync.getPeerConnectionID(),
             sync.getDirection(),
             sync.getStatus()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetCurrentConnectionInfo}.
-	 * 
-	 * @param aConnectionID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetCurrentConnectionInfo(int aConnectionID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetCurrentConnectionInfo}.
+     * 
+     * @param aConnectionID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetCurrentConnectionInfo(int aConnectionID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetCurrentConnectionInfo, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentInt((ParameterInt)iActionGetCurrentConnectionInfo.getInputParameter(inIndex++), aConnectionID));
@@ -689,16 +689,16 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetCurrentConnectionInfo} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetCurrentConnectionInfo} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetCurrentConnectionInfo} method.
      * @return the result of the previously invoked action.
      */
-	public GetCurrentConnectionInfo endGetCurrentConnectionInfo(long aAsyncHandle)
+    public GetCurrentConnectionInfo endGetCurrentConnectionInfo(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -720,16 +720,16 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
             peerConnectionID,
             direction,
             status
-		);
+        );
     }
-		
+        
     /**
      * Set a delegate to be run when the SourceProtocolInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgConnectionManager1 instance will not overlap.
+     * CpProxyUpnpOrgConnectionManager1 instance will not overlap.
      *
-     * @param aSourceProtocolInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSourceProtocolInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySourceProtocolInfoChanged(IPropertyChangeListener aSourceProtocolInfoChanged)
     {
@@ -749,10 +749,10 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the SinkProtocolInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgConnectionManager1 instance will not overlap.
+     * CpProxyUpnpOrgConnectionManager1 instance will not overlap.
      *
-     * @param aSinkProtocolInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aSinkProtocolInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertySinkProtocolInfoChanged(IPropertyChangeListener aSinkProtocolInfoChanged)
     {
@@ -772,10 +772,10 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the CurrentConnectionIDs state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgConnectionManager1 instance will not overlap.
+     * CpProxyUpnpOrgConnectionManager1 instance will not overlap.
      *
-     * @param aCurrentConnectionIDsChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aCurrentConnectionIDsChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyCurrentConnectionIDsChanged(IPropertyChangeListener aCurrentConnectionIDsChanged)
     {
@@ -799,7 +799,7 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the SourceProtocolInfo property.
+     * @return  value of the SourceProtocolInfo property.
      */
     public String getPropertySourceProtocolInfo()
     {
@@ -808,14 +808,14 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the SinkProtocolInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the SinkProtocolInfo property.
+     * @return  value of the SinkProtocolInfo property.
      */
     public String getPropertySinkProtocolInfo()
     {
@@ -824,14 +824,14 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the CurrentConnectionIDs property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the CurrentConnectionIDs property.
+     * @return  value of the CurrentConnectionIDs property.
      */
     public String getPropertyCurrentConnectionIDs()
     {
@@ -840,7 +840,7 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

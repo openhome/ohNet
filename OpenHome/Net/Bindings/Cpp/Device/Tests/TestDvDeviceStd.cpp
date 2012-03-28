@@ -95,7 +95,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::StartCombined(subnet);
-	//Debug::SetLevel(Debug::kEvent | Debug::kDvEvent);
+    //Debug::SetLevel(Debug::kEvent | Debug::kDvEvent);
 
     Print("TestDvDeviceStd - starting\n");
 
@@ -112,13 +112,13 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     sem->Wait(30*1000); // allow up to 30s to find our one device
     delete sem;
     try {
-		deviceList->TestActions();
-		deviceList->TestSubscriptions();
-	}
-	catch (Exception& e) {
-		Print("Exception %s from %s:%u\n", e.Message(), e.File(), e.Line());
-		ASSERTS();
-	}
+        deviceList->TestActions();
+        deviceList->TestSubscriptions();
+    }
+    catch (Exception& e) {
+        Print("Exception %s from %s:%u\n", e.Message(), e.File(), e.Line());
+        ASSERTS();
+    }
     delete list;
     delete deviceList;
     delete device;

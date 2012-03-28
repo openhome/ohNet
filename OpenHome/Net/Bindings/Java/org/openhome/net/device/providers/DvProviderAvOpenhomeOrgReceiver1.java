@@ -12,8 +12,8 @@ interface IDvProviderAvOpenhomeOrgReceiver1
     /**
      * Set the value of the Uri property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyUri(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderAvOpenhomeOrgReceiver1
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetadata(String aValue);
@@ -44,8 +44,8 @@ interface IDvProviderAvOpenhomeOrgReceiver1
     /**
      * Set the value of the TransportState property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTransportState(String aValue);
@@ -60,8 +60,8 @@ interface IDvProviderAvOpenhomeOrgReceiver1
     /**
      * Set the value of the ProtocolInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProtocolInfo(String aValue);
@@ -118,11 +118,11 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderAvOpenhomeOrgReceiver1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "Receiver", 1);
+        super(aDevice, "av.openhome.org", "Receiver", 1);
     }
 
     /**
@@ -173,7 +173,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Set the value of the Uri property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -185,7 +185,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Get a copy of the value of the Uri property
      *
-     * @return	value of the Uri property.
+     * @return  value of the Uri property.
      */
     public String getPropertyUri()
     {
@@ -195,7 +195,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Set the value of the Metadata property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -207,7 +207,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Get a copy of the value of the Metadata property
      *
-     * @return	value of the Metadata property.
+     * @return  value of the Metadata property.
      */
     public String getPropertyMetadata()
     {
@@ -217,7 +217,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Set the value of the TransportState property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -229,7 +229,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Get a copy of the value of the TransportState property
      *
-     * @return	value of the TransportState property.
+     * @return  value of the TransportState property.
      */
     public String getPropertyTransportState()
     {
@@ -239,7 +239,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Set the value of the ProtocolInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -251,7 +251,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
     /**
      * Get a copy of the value of the ProtocolInfo property
      *
-     * @return	value of the ProtocolInfo property.
+     * @return  value of the ProtocolInfo property.
      */
     public String getPropertyProtocolInfo()
     {
@@ -263,7 +263,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Play must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPlay()
     {
         Action action = new Action("Play");
@@ -276,7 +276,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Stop must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionStop()
     {
         Action action = new Action("Stop");
@@ -289,7 +289,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * SetSender must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSetSender()
     {
         Action action = new Action("SetSender");
@@ -304,7 +304,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Sender must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSender()
     {
         Action action = new Action("Sender");
@@ -319,7 +319,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ProtocolInfo must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionProtocolInfo()
     {
         Action action = new Action("ProtocolInfo");
@@ -333,7 +333,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>The action's availability will be published in the device's service.xml.
      * TransportState must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionTransportState()
     {
         Action action = new Action("TransportState");
@@ -350,7 +350,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionPlay} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void play(IDvInvocation aInvocation)
     {
@@ -365,7 +365,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionStop} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void stop(IDvInvocation aInvocation)
     {
@@ -380,7 +380,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSetSender} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aUri
      * @param aMetadata
      */
@@ -397,7 +397,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionSender} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected Sender sender(IDvInvocation aInvocation)
     {
@@ -412,7 +412,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionProtocolInfo} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String protocolInfo(IDvInvocation aInvocation)
     {
@@ -427,7 +427,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      *
      * <p>Must be implemented iff {@link #enableActionTransportState} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String transportState(IDvInvocation aInvocation)
     {
@@ -495,7 +495,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoStop implements IDvInvocationListener
     {
@@ -541,7 +541,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSetSender implements IDvInvocationListener
     {
@@ -591,7 +591,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoSender implements IDvInvocationListener
     {
@@ -644,7 +644,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoProtocolInfo implements IDvInvocationListener
     {
@@ -692,7 +692,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoTransportState implements IDvInvocationListener
     {
@@ -740,6 +740,6 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

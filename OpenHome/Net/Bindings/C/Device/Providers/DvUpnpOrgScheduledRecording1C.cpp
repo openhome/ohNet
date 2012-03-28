@@ -831,7 +831,7 @@ void DvProviderUpnpOrgScheduledRecording1C::DoGetRecordTaskConflicts(IDviInvocat
 
 THandle STDCALL DvProviderUpnpOrgScheduledRecording1Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgScheduledRecording1C(aDevice);
+    return new DvProviderUpnpOrgScheduledRecording1C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgScheduledRecording1Destroy(THandle aProvider)

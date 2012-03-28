@@ -241,12 +241,12 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSearchCapabilities(IDviInvocati
     std::string respSearchCaps;
     DvInvocationStd invocation(aInvocation);
     GetSearchCapabilities(invocation, respSearchCaps);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterSearchCaps(aInvocation, "SearchCaps");
     Brn buf_SearchCaps((const TByte*)respSearchCaps.c_str(), (TUint)respSearchCaps.length());
     respWriterSearchCaps.Write(buf_SearchCaps);
     aInvocation.InvocationWriteStringEnd("SearchCaps");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSortCapabilities(IDviInvocation& aInvocation)
@@ -256,12 +256,12 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSortCapabilities(IDviInvocation
     std::string respSortCaps;
     DvInvocationStd invocation(aInvocation);
     GetSortCapabilities(invocation, respSortCaps);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterSortCaps(aInvocation, "SortCaps");
     Brn buf_SortCaps((const TByte*)respSortCaps.c_str(), (TUint)respSortCaps.length());
     respWriterSortCaps.Write(buf_SortCaps);
     aInvocation.InvocationWriteStringEnd("SortCaps");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSystemUpdateID(IDviInvocation& aInvocation)
@@ -271,10 +271,10 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSystemUpdateID(IDviInvocation& 
     uint32_t respId;
     DvInvocationStd invocation(aInvocation);
     GetSystemUpdateID(invocation, respId);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterId(aInvocation, "Id");
     respWriterId.Write(respId);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation)
@@ -301,7 +301,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     Browse(invocation, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
@@ -312,7 +312,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation
     respWriterTotalMatches.Write(respTotalMatches);
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation)
@@ -339,7 +339,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     Search(invocation, ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
@@ -350,7 +350,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation
     respWriterTotalMatches.Write(respTotalMatches);
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvocation)
@@ -367,7 +367,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvo
     std::string respResult;
     DvInvocationStd invocation(aInvocation);
     CreateObject(invocation, ContainerID, Elements, respObjectID, respResult);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterObjectID(aInvocation, "ObjectID");
     Brn buf_ObjectID((const TByte*)respObjectID.c_str(), (TUint)respObjectID.length());
     respWriterObjectID.Write(buf_ObjectID);
@@ -376,7 +376,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvo
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoDestroyObject(IDviInvocation& aInvocation)
@@ -388,8 +388,8 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoDestroyObject(IDviInvocation& aInv
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     DestroyObject(invocation, ObjectID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoUpdateObject(IDviInvocation& aInvocation)
@@ -407,8 +407,8 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoUpdateObject(IDviInvocation& aInvo
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     UpdateObject(invocation, ObjectID, CurrentTagValue, NewTagValue);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoImportResource(IDviInvocation& aInvocation)
@@ -424,10 +424,10 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoImportResource(IDviInvocation& aIn
     uint32_t respTransferID;
     DvInvocationStd invocation(aInvocation);
     ImportResource(invocation, SourceURI, DestinationURI, respTransferID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
     respWriterTransferID.Write(respTransferID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoExportResource(IDviInvocation& aInvocation)
@@ -443,10 +443,10 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoExportResource(IDviInvocation& aIn
     uint32_t respTransferID;
     DvInvocationStd invocation(aInvocation);
     ExportResource(invocation, SourceURI, DestinationURI, respTransferID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
     respWriterTransferID.Write(respTransferID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoStopTransferResource(IDviInvocation& aInvocation)
@@ -456,8 +456,8 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoStopTransferResource(IDviInvocatio
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     StopTransferResource(invocation, TransferID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation& aInvocation)
@@ -470,7 +470,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation
     std::string respTransferTotal;
     DvInvocationStd invocation(aInvocation);
     GetTransferProgress(invocation, TransferID, respTransferStatus, respTransferLength, respTransferTotal);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterTransferStatus(aInvocation, "TransferStatus");
     Brn buf_TransferStatus((const TByte*)respTransferStatus.c_str(), (TUint)respTransferStatus.length());
     respWriterTransferStatus.Write(buf_TransferStatus);
@@ -483,7 +483,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation
     Brn buf_TransferTotal((const TByte*)respTransferTotal.c_str(), (TUint)respTransferTotal.length());
     respWriterTransferTotal.Write(buf_TransferTotal);
     aInvocation.InvocationWriteStringEnd("TransferTotal");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoDeleteResource(IDviInvocation& aInvocation)
@@ -495,8 +495,8 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoDeleteResource(IDviInvocation& aIn
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     DeleteResource(invocation, ResourceURI);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateReference(IDviInvocation& aInvocation)
@@ -512,12 +512,12 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateReference(IDviInvocation& aI
     std::string respNewID;
     DvInvocationStd invocation(aInvocation);
     CreateReference(invocation, ContainerID, ObjectID, respNewID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterNewID(aInvocation, "NewID");
     Brn buf_NewID((const TByte*)respNewID.c_str(), (TUint)respNewID.length());
     respWriterNewID.Write(buf_NewID);
     aInvocation.InvocationWriteStringEnd("NewID");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgContentDirectory1Cpp::GetSearchCapabilities(IDvInvocationStd& /*aInvocation*/, std::string& /*aSearchCaps*/)

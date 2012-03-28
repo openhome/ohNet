@@ -48,11 +48,11 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderOpenhomeOrgSubscriptionLongPoll1(DvDevice aDevice)
     {
-	    super(aDevice, "openhome.org", "SubscriptionLongPoll", 1);
+        super(aDevice, "openhome.org", "SubscriptionLongPoll", 1);
     }
 
     /**
@@ -60,7 +60,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Subscribe must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionSubscribe()
     {
         Action action = new Action("Subscribe");        List<String> allowedValues = new LinkedList<String>();
@@ -79,7 +79,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Unsubscribe must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionUnsubscribe()
     {
         Action action = new Action("Unsubscribe");        List<String> allowedValues = new LinkedList<String>();
@@ -93,7 +93,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
      *
      * <p>The action's availability will be published in the device's service.xml.
      * Renew must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionRenew()
     {
         Action action = new Action("Renew");        List<String> allowedValues = new LinkedList<String>();
@@ -109,7 +109,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetPropertyUpdates must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetPropertyUpdates()
     {
         Action action = new Action("GetPropertyUpdates");        List<String> allowedValues = new LinkedList<String>();
@@ -127,7 +127,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
      *
      * <p>Must be implemented iff {@link #enableActionSubscribe} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aClientId
      * @param aUdn
      * @param aService
@@ -146,7 +146,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
      *
      * <p>Must be implemented iff {@link #enableActionUnsubscribe} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aSid
      */
     protected void unsubscribe(IDvInvocation aInvocation, String aSid)
@@ -162,7 +162,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
      *
      * <p>Must be implemented iff {@link #enableActionRenew} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aSid
      * @param aRequestedDuration
      */
@@ -179,7 +179,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
      *
      * <p>Must be implemented iff {@link #enableActionGetPropertyUpdates} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aClientId
      */
     protected String getPropertyUpdates(IDvInvocation aInvocation, String aClientId)
@@ -263,7 +263,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoUnsubscribe implements IDvInvocationListener
     {
@@ -311,7 +311,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoRenew implements IDvInvocationListener
     {
@@ -363,7 +363,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetPropertyUpdates implements IDvInvocationListener
     {
@@ -413,6 +413,6 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

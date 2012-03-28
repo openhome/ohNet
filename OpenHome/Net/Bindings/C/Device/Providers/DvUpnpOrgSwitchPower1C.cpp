@@ -157,7 +157,7 @@ void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderUpnpOrgSwitchPower1Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgSwitchPower1C(aDevice);
+    return new DvProviderUpnpOrgSwitchPower1C(aDevice);
 }
 
 void STDCALL DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider)

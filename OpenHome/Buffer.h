@@ -69,8 +69,8 @@ class Brhz;
 
 class DllExportClass Brh : public Brv
 {
-	friend class Bwh;
-	friend class Brhz;
+    friend class Bwh;
+    friend class Brhz;
 public:
     inline explicit Brh();
     DllExport explicit Brh(const Brx& aBrx);
@@ -84,7 +84,7 @@ public:
 
 class DllExportClass Brhz : public Brv
 {
-	friend class Bwh;
+    friend class Bwh;
 public:
     inline explicit Brhz();
     explicit Brhz(const Brx& aBrx);

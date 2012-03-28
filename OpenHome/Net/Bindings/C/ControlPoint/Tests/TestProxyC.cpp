@@ -80,7 +80,7 @@ DeviceList::DeviceList()
     : iLock("DLMX")
     , iStopped(false)
     , iPollStop("SDPS", 0)
-	, iExpectedSink(NULL)
+    , iExpectedSink(NULL)
 {
 }
 

@@ -4,7 +4,7 @@
 <#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
-	Document u = new Document(TemplateArgument("xml"));
+    Document u = new Document(TemplateArgument("xml"));
 #>
 # Auto-generated file.  DO NOT EDIT DIRECTLY
 # Update DvUpnpMakeDevices.tt and run
@@ -79,9 +79,9 @@ DvDeviceDotNetAssemblies: $(device_dotnet_assemblies_with_path)
 <# { #>
 $(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
-		/reference:$(objdir)ohNet.net.dll \
-		$(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
+        /out:$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+        /reference:$(objdir)ohNet.net.dll \
+        $(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
 <# } #>
 
 # Device classes for Java:
@@ -118,34 +118,34 @@ string FilePrefix(Service s)
 
 string TemplateArgument(string aName)
 {
-	string[] args =  System.Environment.GetCommandLineArgs();
-		
-	bool isarg = false;
-	
-	foreach (string arg in args)
-	{
-		if (isarg)
-		{
-			string[] parts = arg.Split(new char[] {':'});
-			
-			if (parts.Length == 2)
-			{
-				if (parts[0] == aName)
-				{
-					return (parts[1]);
-				}
-			}
-			
-			isarg = false;
-			continue;
-		}
-		
-		if (arg == "-a")
-		{
-			isarg = true;
-		}
-	}
-	
-	throw (new ArgumentException(aName + " not specified"));
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
+            
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
 }
 #>

@@ -202,20 +202,20 @@ void Ssdp::WriteSearchTypeAll(IWriterHttpHeader& aWriter)
 
 void Ssdp::WriteServer(IWriterHttpHeader& aWriter)
 {
-	IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderServer);
-	TUint major, minor;
-	Brn osName = Os::GetPlatformNameAndVersion(major, minor);
-	stream.Write(osName);
-	stream.Write('/');
-	stream.WriteUint(major);
-	stream.Write('.');
-	stream.WriteUint(minor);
-	stream.Write(Brn(" UPnP/1.1 ohNet/"));
-	Stack::GetVersion(major, minor);
-	stream.WriteUint(major);
-	stream.Write('.');
-	stream.WriteUint(minor);
-	stream.WriteFlush();
+    IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderServer);
+    TUint major, minor;
+    Brn osName = Os::GetPlatformNameAndVersion(major, minor);
+    stream.Write(osName);
+    stream.Write('/');
+    stream.WriteUint(major);
+    stream.Write('.');
+    stream.WriteUint(minor);
+    stream.Write(Brn(" UPnP/1.1 ohNet/"));
+    Stack::GetVersion(major, minor);
+    stream.WriteUint(major);
+    stream.Write('.');
+    stream.WriteUint(minor);
+    stream.WriteFlush();
 }
 
 void Ssdp::WriteMaxAge(IWriterHttpHeader& aWriter)
@@ -266,7 +266,7 @@ void Ssdp::WriteNotificationTypeRoot(IWriterHttpHeader& aWriter)
 
 void Ssdp::WriteNotificationTypeUuid(IWriterHttpHeader& aWriter, const Brx& aUuid)
 {
-	IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderNt);
+    IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderNt);
     WriteUuid(stream, aUuid);
     stream.WriteFlush();
 }

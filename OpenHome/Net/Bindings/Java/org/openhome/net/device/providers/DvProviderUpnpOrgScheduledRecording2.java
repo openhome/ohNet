@@ -12,8 +12,8 @@ interface IDvProviderUpnpOrgScheduledRecording2
     /**
      * Set the value of the LastChange property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyLastChange(String aValue);
@@ -275,11 +275,11 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderUpnpOrgScheduledRecording2(DvDevice aDevice)
     {
-	    super(aDevice, "upnp.org", "ScheduledRecording", 2);
+        super(aDevice, "upnp.org", "ScheduledRecording", 2);
     }
 
     /**
@@ -295,7 +295,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
     /**
      * Set the value of the LastChange property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -307,7 +307,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
     /**
      * Get a copy of the value of the LastChange property
      *
-     * @return	value of the LastChange property.
+     * @return  value of the LastChange property.
      */
     public String getPropertyLastChange()
     {
@@ -319,7 +319,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetSortCapabilities must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetSortCapabilities()
     {
         Action action = new Action("GetSortCapabilities");        List<String> allowedValues = new LinkedList<String>();
@@ -334,7 +334,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetPropertyList must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetPropertyList()
     {
         Action action = new Action("GetPropertyList");        List<String> allowedValues = new LinkedList<String>();
@@ -353,7 +353,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetAllowedValues must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetAllowedValues()
     {
         Action action = new Action("GetAllowedValues");        List<String> allowedValues = new LinkedList<String>();
@@ -373,7 +373,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetStateUpdateID must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetStateUpdateID()
     {
         Action action = new Action("GetStateUpdateID");
@@ -387,7 +387,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * BrowseRecordSchedules must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionBrowseRecordSchedules()
     {
         Action action = new Action("BrowseRecordSchedules");        List<String> allowedValues = new LinkedList<String>();
@@ -408,7 +408,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * BrowseRecordTasks must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionBrowseRecordTasks()
     {
         Action action = new Action("BrowseRecordTasks");        List<String> allowedValues = new LinkedList<String>();
@@ -430,7 +430,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * CreateRecordSchedule must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionCreateRecordSchedule()
     {
         Action action = new Action("CreateRecordSchedule");        List<String> allowedValues = new LinkedList<String>();
@@ -447,7 +447,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * DeleteRecordSchedule must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDeleteRecordSchedule()
     {
         Action action = new Action("DeleteRecordSchedule");        List<String> allowedValues = new LinkedList<String>();
@@ -461,7 +461,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetRecordSchedule must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetRecordSchedule()
     {
         Action action = new Action("GetRecordSchedule");        List<String> allowedValues = new LinkedList<String>();
@@ -478,7 +478,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * EnableRecordSchedule must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionEnableRecordSchedule()
     {
         Action action = new Action("EnableRecordSchedule");        List<String> allowedValues = new LinkedList<String>();
@@ -492,7 +492,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * DisableRecordSchedule must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDisableRecordSchedule()
     {
         Action action = new Action("DisableRecordSchedule");        List<String> allowedValues = new LinkedList<String>();
@@ -506,7 +506,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * DeleteRecordTask must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDeleteRecordTask()
     {
         Action action = new Action("DeleteRecordTask");        List<String> allowedValues = new LinkedList<String>();
@@ -520,7 +520,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetRecordTask must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetRecordTask()
     {
         Action action = new Action("GetRecordTask");        List<String> allowedValues = new LinkedList<String>();
@@ -537,7 +537,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * EnableRecordTask must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionEnableRecordTask()
     {
         Action action = new Action("EnableRecordTask");        List<String> allowedValues = new LinkedList<String>();
@@ -551,7 +551,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * DisableRecordTask must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionDisableRecordTask()
     {
         Action action = new Action("DisableRecordTask");        List<String> allowedValues = new LinkedList<String>();
@@ -565,7 +565,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ResetRecordTask must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionResetRecordTask()
     {
         Action action = new Action("ResetRecordTask");        List<String> allowedValues = new LinkedList<String>();
@@ -579,7 +579,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetRecordScheduleConflicts must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetRecordScheduleConflicts()
     {
         Action action = new Action("GetRecordScheduleConflicts");        List<String> allowedValues = new LinkedList<String>();
@@ -595,7 +595,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetRecordTaskConflicts must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetRecordTaskConflicts()
     {
         Action action = new Action("GetRecordTaskConflicts");        List<String> allowedValues = new LinkedList<String>();
@@ -614,7 +614,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetSortCapabilities} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected GetSortCapabilities getSortCapabilities(IDvInvocation aInvocation)
     {
@@ -629,7 +629,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetPropertyList} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aDataTypeID
      */
     protected String getPropertyList(IDvInvocation aInvocation, String aDataTypeID)
@@ -645,7 +645,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetAllowedValues} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aDataTypeID
      * @param aFilter
      */
@@ -662,7 +662,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetStateUpdateID} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long getStateUpdateID(IDvInvocation aInvocation)
     {
@@ -677,7 +677,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionBrowseRecordSchedules} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aFilter
      * @param aStartingIndex
      * @param aRequestedCount
@@ -696,7 +696,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionBrowseRecordTasks} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      * @param aFilter
      * @param aStartingIndex
@@ -716,7 +716,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionCreateRecordSchedule} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aElements
      */
     protected CreateRecordSchedule createRecordSchedule(IDvInvocation aInvocation, String aElements)
@@ -732,7 +732,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionDeleteRecordSchedule} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      */
     protected void deleteRecordSchedule(IDvInvocation aInvocation, String aRecordScheduleID)
@@ -748,7 +748,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetRecordSchedule} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      * @param aFilter
      */
@@ -765,7 +765,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionEnableRecordSchedule} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      */
     protected void enableRecordSchedule(IDvInvocation aInvocation, String aRecordScheduleID)
@@ -781,7 +781,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionDisableRecordSchedule} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      */
     protected void disableRecordSchedule(IDvInvocation aInvocation, String aRecordScheduleID)
@@ -797,7 +797,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionDeleteRecordTask} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
     protected void deleteRecordTask(IDvInvocation aInvocation, String aRecordTaskID)
@@ -813,7 +813,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetRecordTask} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      * @param aFilter
      */
@@ -830,7 +830,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionEnableRecordTask} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
     protected void enableRecordTask(IDvInvocation aInvocation, String aRecordTaskID)
@@ -846,7 +846,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionDisableRecordTask} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
     protected void disableRecordTask(IDvInvocation aInvocation, String aRecordTaskID)
@@ -862,7 +862,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionResetRecordTask} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
     protected void resetRecordTask(IDvInvocation aInvocation, String aRecordTaskID)
@@ -878,7 +878,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetRecordScheduleConflicts} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordScheduleID
      */
     protected GetRecordScheduleConflicts getRecordScheduleConflicts(IDvInvocation aInvocation, String aRecordScheduleID)
@@ -894,7 +894,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * <p>Must be implemented iff {@link #enableActionGetRecordTaskConflicts} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRecordTaskID
      */
     protected GetRecordTaskConflicts getRecordTaskConflicts(IDvInvocation aInvocation, String aRecordTaskID)
@@ -970,7 +970,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetPropertyList implements IDvInvocationListener
     {
@@ -1020,7 +1020,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetAllowedValues implements IDvInvocationListener
     {
@@ -1072,7 +1072,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetStateUpdateID implements IDvInvocationListener
     {
@@ -1120,7 +1120,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoBrowseRecordSchedules implements IDvInvocationListener
     {
@@ -1187,7 +1187,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoBrowseRecordTasks implements IDvInvocationListener
     {
@@ -1256,7 +1256,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoCreateRecordSchedule implements IDvInvocationListener
     {
@@ -1314,7 +1314,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDeleteRecordSchedule implements IDvInvocationListener
     {
@@ -1362,7 +1362,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetRecordSchedule implements IDvInvocationListener
     {
@@ -1419,7 +1419,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoEnableRecordSchedule implements IDvInvocationListener
     {
@@ -1467,7 +1467,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDisableRecordSchedule implements IDvInvocationListener
     {
@@ -1515,7 +1515,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDeleteRecordTask implements IDvInvocationListener
     {
@@ -1563,7 +1563,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetRecordTask implements IDvInvocationListener
     {
@@ -1620,7 +1620,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoEnableRecordTask implements IDvInvocationListener
     {
@@ -1668,7 +1668,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoDisableRecordTask implements IDvInvocationListener
     {
@@ -1716,7 +1716,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoResetRecordTask implements IDvInvocationListener
     {
@@ -1764,7 +1764,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetRecordScheduleConflicts implements IDvInvocationListener
     {
@@ -1819,7 +1819,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetRecordTaskConflicts implements IDvInvocationListener
     {
@@ -1874,6 +1874,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

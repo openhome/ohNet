@@ -1,5 +1,7 @@
 #include <OpenHome/Net/Cpp/CpDevice.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -68,7 +70,11 @@ CpDeviceCpp::~CpDeviceCpp()
 
 CpDeviceListCpp::~CpDeviceListCpp()
 {
+    iLock->Wait();
+    iActive = false;
+    iLock->Signal();
     delete iList;
+    delete iLock;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
         it->second->RemoveRef();
@@ -85,7 +91,9 @@ void CpDeviceListCpp::Refresh()
 CpDeviceListCpp::CpDeviceListCpp(FunctorCpDeviceCpp aAdded, FunctorCpDeviceCpp aRemoved)
     : iAdded(aAdded)
     , iRemoved(aRemoved)
+    , iActive(true)
 {
+    iLock = new Mutex("DLCM");
     ASSERT(iAdded);
     ASSERT(iRemoved);
 }
@@ -102,22 +110,48 @@ void CpDeviceListCpp::GetRemovedFunctor(FunctorCpiDevice& aFunctor)
 
 void CpDeviceListCpp::Added(CpiDevice& aDevice)
 {
+    if (!LockIfActive()) {
+        return;
+    }
     CpDeviceCpp* device = new CpDeviceCpp(aDevice);
     /* No mutex used for Added or Removed as we assume the underlying list's
        lock already protects us */
     Brn udn(device->Udn().c_str());
     iMap.insert(std::pair<Brn,CpDeviceCpp*>(udn, device));
+    iLock->Signal();
     iAdded(*device);
 }
 
 void CpDeviceListCpp::Removed(CpiDevice& aDevice)
 {
+    if (!LockIfActive()) {
+        return;
+    }
     Brn udn(aDevice.Udn());
     Map::iterator it = iMap.find(udn);
-    if (it != iMap.end()) {
-        CpDeviceCpp* device = it->second;
-        iRemoved(*device);
-        device->RemoveRef();
-        iMap.erase(it);
+    if (it == iMap.end()) {
+        iLock->Signal();
     }
+    else {
+        CpDeviceCpp* device = it->second;
+        iMap.erase(it);
+        iLock->Signal();
+        try {
+            iRemoved(*device);
+        }
+        catch (...) {
+            ASSERTS();
+        }
+        device->RemoveRef();
+    }
+}
+
+TBool CpDeviceListCpp::LockIfActive()
+{
+    iLock->Wait();
+    if (iActive) {
+        return true;
+    }
+    iLock->Signal();
+    return false;
 }

@@ -5,20 +5,22 @@
 * @module ohnet
 * @class ScheduledRecording
 */
-	
-var CpProxySchemasUpnpOrgScheduledRecording2 = function(udn){	
+    
+var CpProxySchemasUpnpOrgScheduledRecording2 = function(udn){ 
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-ScheduledRecording-2/control";  // upnp control url
-	this.domain = "schemas-upnp-org";
-	this.type = "ScheduledRecording";
-	this.version = "2";
-	this.serviceName = "upnp.org-ScheduledRecording-2";
-	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
-	this.udn = udn;   // device name
-	
-	// Collection of service properties
-	this.serviceProperties = {};
-	this.serviceProperties["LastChange"] = new ohnet.serviceproperty("LastChange","string");
+    this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-ScheduledRecording-2/control";  // upnp control url
+    this.domain = "schemas-upnp-org";
+    this.type = "ScheduledRecording";
+    this.version = "2";
+    this.serviceName = "upnp.org-ScheduledRecording-2";
+    this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+    this.udn = udn;   // device name
+    
+    // Collection of service properties
+    this.serviceProperties = {};
+    this.serviceProperties["LastChange"] = new ohnet.serviceproperty("LastChange","string");
+
+          
 }
 
 
@@ -42,7 +44,7 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.unsubscribe = function () {
 }
 
 
-	
+    
 
 /**
 * Adds a listener to handle "LastChange" property change events
@@ -51,9 +53,9 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.unsubscribe = function () {
 */
 CpProxySchemasUpnpOrgScheduledRecording2.prototype.LastChange_Changed = function (stateChangedFunction) {
     this.serviceProperties.LastChange.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
+    });
 }
 
 
@@ -63,18 +65,18 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.LastChange_Changed = function
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetSortCapabilities = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetSortCapabilities", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetSortCapabilities = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetSortCapabilities", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["SortCaps"] = ohnet.soaprequest.readStringParameter(result["SortCaps"]);	
-		result["SortLevelCap"] = ohnet.soaprequest.readIntParameter(result["SortLevelCap"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["SortCaps"] = ohnet.soaprequest.readStringParameter(result["SortCaps"]); 
+        result["SortLevelCap"] = ohnet.soaprequest.readIntParameter(result["SortLevelCap"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -85,18 +87,18 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetSortCapabilities = functio
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetPropertyList = function(DataTypeID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetPropertyList", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetPropertyList = function(DataTypeID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetPropertyList", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("DataTypeID", DataTypeID);
     request.send(function(result){
-		result["PropertyList"] = ohnet.soaprequest.readStringParameter(result["PropertyList"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["PropertyList"] = ohnet.soaprequest.readStringParameter(result["PropertyList"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -108,19 +110,19 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetPropertyList = function(Da
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetAllowedValues = function(DataTypeID, Filter, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetAllowedValues", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetAllowedValues = function(DataTypeID, Filter, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetAllowedValues", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("DataTypeID", DataTypeID);
     request.writeStringParameter("Filter", Filter);
     request.send(function(result){
-		result["PropertyInfo"] = ohnet.soaprequest.readStringParameter(result["PropertyInfo"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["PropertyInfo"] = ohnet.soaprequest.readStringParameter(result["PropertyInfo"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -130,17 +132,17 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetAllowedValues = function(D
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetStateUpdateID = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetStateUpdateID", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetStateUpdateID = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetStateUpdateID", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Id"] = ohnet.soaprequest.readIntParameter(result["Id"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Id"] = ohnet.soaprequest.readIntParameter(result["Id"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -154,24 +156,24 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetStateUpdateID = function(s
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.BrowseRecordSchedules = function(Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("BrowseRecordSchedules", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.BrowseRecordSchedules = function(Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("BrowseRecordSchedules", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("Filter", Filter);
     request.writeIntParameter("StartingIndex", StartingIndex);
     request.writeIntParameter("RequestedCount", RequestedCount);
     request.writeStringParameter("SortCriteria", SortCriteria);
     request.send(function(result){
-		result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]);	
-		result["NumberReturned"] = ohnet.soaprequest.readIntParameter(result["NumberReturned"]);	
-		result["TotalMatches"] = ohnet.soaprequest.readIntParameter(result["TotalMatches"]);	
-		result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]); 
+        result["NumberReturned"] = ohnet.soaprequest.readIntParameter(result["NumberReturned"]); 
+        result["TotalMatches"] = ohnet.soaprequest.readIntParameter(result["TotalMatches"]); 
+        result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -186,25 +188,25 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.BrowseRecordSchedules = funct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.BrowseRecordTasks = function(RecordScheduleID, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("BrowseRecordTasks", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.BrowseRecordTasks = function(RecordScheduleID, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("BrowseRecordTasks", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.writeStringParameter("Filter", Filter);
     request.writeIntParameter("StartingIndex", StartingIndex);
     request.writeIntParameter("RequestedCount", RequestedCount);
     request.writeStringParameter("SortCriteria", SortCriteria);
     request.send(function(result){
-		result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]);	
-		result["NumberReturned"] = ohnet.soaprequest.readIntParameter(result["NumberReturned"]);	
-		result["TotalMatches"] = ohnet.soaprequest.readIntParameter(result["TotalMatches"]);	
-		result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]); 
+        result["NumberReturned"] = ohnet.soaprequest.readIntParameter(result["NumberReturned"]); 
+        result["TotalMatches"] = ohnet.soaprequest.readIntParameter(result["TotalMatches"]); 
+        result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -215,20 +217,20 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.BrowseRecordTasks = function(
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.CreateRecordSchedule = function(Elements, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("CreateRecordSchedule", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.CreateRecordSchedule = function(Elements, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("CreateRecordSchedule", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("Elements", Elements);
     request.send(function(result){
-		result["RecordScheduleID"] = ohnet.soaprequest.readStringParameter(result["RecordScheduleID"]);	
-		result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]);	
-		result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["RecordScheduleID"] = ohnet.soaprequest.readStringParameter(result["RecordScheduleID"]); 
+        result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]); 
+        result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -239,17 +241,17 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.CreateRecordSchedule = functi
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.DeleteRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("DeleteRecordSchedule", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.DeleteRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("DeleteRecordSchedule", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -261,20 +263,20 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.DeleteRecordSchedule = functi
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordSchedule = function(RecordScheduleID, Filter, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetRecordSchedule", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordSchedule = function(RecordScheduleID, Filter, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetRecordSchedule", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.writeStringParameter("Filter", Filter);
     request.send(function(result){
-		result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]);	
-		result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]); 
+        result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -285,17 +287,17 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordSchedule = function(
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.EnableRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("EnableRecordSchedule", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.EnableRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("EnableRecordSchedule", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -306,17 +308,17 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.EnableRecordSchedule = functi
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.DisableRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("DisableRecordSchedule", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.DisableRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("DisableRecordSchedule", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -327,17 +329,17 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.DisableRecordSchedule = funct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.DeleteRecordTask = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("DeleteRecordTask", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.DeleteRecordTask = function(RecordTaskID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("DeleteRecordTask", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -349,20 +351,20 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.DeleteRecordTask = function(R
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordTask = function(RecordTaskID, Filter, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetRecordTask", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordTask = function(RecordTaskID, Filter, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetRecordTask", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.writeStringParameter("Filter", Filter);
     request.send(function(result){
-		result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]);	
-		result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]); 
+        result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -373,17 +375,17 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordTask = function(Reco
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.EnableRecordTask = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("EnableRecordTask", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.EnableRecordTask = function(RecordTaskID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("EnableRecordTask", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -394,17 +396,17 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.EnableRecordTask = function(R
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.DisableRecordTask = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("DisableRecordTask", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.DisableRecordTask = function(RecordTaskID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("DisableRecordTask", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -415,17 +417,17 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.DisableRecordTask = function(
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.ResetRecordTask = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("ResetRecordTask", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.ResetRecordTask = function(RecordTaskID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("ResetRecordTask", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -436,19 +438,19 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.ResetRecordTask = function(Re
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordScheduleConflicts = function(RecordScheduleID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetRecordScheduleConflicts", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordScheduleConflicts = function(RecordScheduleID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetRecordScheduleConflicts", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.send(function(result){
-		result["RecordScheduleConflictIDList"] = ohnet.soaprequest.readStringParameter(result["RecordScheduleConflictIDList"]);	
-		result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["RecordScheduleConflictIDList"] = ohnet.soaprequest.readStringParameter(result["RecordScheduleConflictIDList"]); 
+        result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -459,19 +461,19 @@ CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordScheduleConflicts = 
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordTaskConflicts = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetRecordTaskConflicts", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgScheduledRecording2.prototype.GetRecordTaskConflicts = function(RecordTaskID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetRecordTaskConflicts", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
-		result["RecordTaskConflictIDList"] = ohnet.soaprequest.readStringParameter(result["RecordTaskConflictIDList"]);	
-		result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["RecordTaskConflictIDList"] = ohnet.soaprequest.readStringParameter(result["RecordTaskConflictIDList"]); 
+        result["UpdateID"] = ohnet.soaprequest.readIntParameter(result["UpdateID"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 

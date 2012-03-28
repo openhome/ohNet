@@ -491,7 +491,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation)
 
 THandle STDCALL DvProviderAvOpenhomeOrgInfo1Create(DvDeviceC aDevice)
 {
-	return new DvProviderAvOpenhomeOrgInfo1C(aDevice);
+    return new DvProviderAvOpenhomeOrgInfo1C(aDevice);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgInfo1Destroy(THandle aProvider)

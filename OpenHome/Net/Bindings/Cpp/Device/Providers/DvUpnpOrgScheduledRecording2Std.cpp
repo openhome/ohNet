@@ -234,14 +234,14 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetSortCapabilities(IDviInvocati
     uint32_t respSortLevelCap;
     DvInvocationStd invocation(aInvocation);
     GetSortCapabilities(invocation, respSortCaps, respSortLevelCap);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterSortCaps(aInvocation, "SortCaps");
     Brn buf_SortCaps((const TByte*)respSortCaps.c_str(), (TUint)respSortCaps.length());
     respWriterSortCaps.Write(buf_SortCaps);
     aInvocation.InvocationWriteStringEnd("SortCaps");
     DviInvocationResponseUint respWriterSortLevelCap(aInvocation, "SortLevelCap");
     respWriterSortLevelCap.Write(respSortLevelCap);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetPropertyList(IDviInvocation& aInvocation)
@@ -254,12 +254,12 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetPropertyList(IDviInvocation& 
     std::string respPropertyList;
     DvInvocationStd invocation(aInvocation);
     GetPropertyList(invocation, DataTypeID, respPropertyList);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterPropertyList(aInvocation, "PropertyList");
     Brn buf_PropertyList((const TByte*)respPropertyList.c_str(), (TUint)respPropertyList.length());
     respWriterPropertyList.Write(buf_PropertyList);
     aInvocation.InvocationWriteStringEnd("PropertyList");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetAllowedValues(IDviInvocation& aInvocation)
@@ -275,12 +275,12 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetAllowedValues(IDviInvocation&
     std::string respPropertyInfo;
     DvInvocationStd invocation(aInvocation);
     GetAllowedValues(invocation, DataTypeID, Filter, respPropertyInfo);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterPropertyInfo(aInvocation, "PropertyInfo");
     Brn buf_PropertyInfo((const TByte*)respPropertyInfo.c_str(), (TUint)respPropertyInfo.length());
     respWriterPropertyInfo.Write(buf_PropertyInfo);
     aInvocation.InvocationWriteStringEnd("PropertyInfo");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetStateUpdateID(IDviInvocation& aInvocation)
@@ -290,10 +290,10 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetStateUpdateID(IDviInvocation&
     uint32_t respId;
     DvInvocationStd invocation(aInvocation);
     GetStateUpdateID(invocation, respId);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterId(aInvocation, "Id");
     respWriterId.Write(respId);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoBrowseRecordSchedules(IDviInvocation& aInvocation)
@@ -314,7 +314,7 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoBrowseRecordSchedules(IDviInvoca
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     BrowseRecordSchedules(invocation, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
@@ -325,7 +325,7 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoBrowseRecordSchedules(IDviInvoca
     respWriterTotalMatches.Write(respTotalMatches);
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoBrowseRecordTasks(IDviInvocation& aInvocation)
@@ -349,7 +349,7 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoBrowseRecordTasks(IDviInvocation
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     BrowseRecordTasks(invocation, RecordScheduleID, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
@@ -360,7 +360,7 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoBrowseRecordTasks(IDviInvocation
     respWriterTotalMatches.Write(respTotalMatches);
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoCreateRecordSchedule(IDviInvocation& aInvocation)
@@ -375,7 +375,7 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoCreateRecordSchedule(IDviInvocat
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     CreateRecordSchedule(invocation, Elements, respRecordScheduleID, respResult, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterRecordScheduleID(aInvocation, "RecordScheduleID");
     Brn buf_RecordScheduleID((const TByte*)respRecordScheduleID.c_str(), (TUint)respRecordScheduleID.length());
     respWriterRecordScheduleID.Write(buf_RecordScheduleID);
@@ -386,7 +386,7 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoCreateRecordSchedule(IDviInvocat
     aInvocation.InvocationWriteStringEnd("Result");
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoDeleteRecordSchedule(IDviInvocation& aInvocation)
@@ -398,8 +398,8 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoDeleteRecordSchedule(IDviInvocat
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     DeleteRecordSchedule(invocation, RecordScheduleID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetRecordSchedule(IDviInvocation& aInvocation)
@@ -416,14 +416,14 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetRecordSchedule(IDviInvocation
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     GetRecordSchedule(invocation, RecordScheduleID, Filter, respResult, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoEnableRecordSchedule(IDviInvocation& aInvocation)
@@ -435,8 +435,8 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoEnableRecordSchedule(IDviInvocat
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     EnableRecordSchedule(invocation, RecordScheduleID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoDisableRecordSchedule(IDviInvocation& aInvocation)
@@ -448,8 +448,8 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoDisableRecordSchedule(IDviInvoca
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     DisableRecordSchedule(invocation, RecordScheduleID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoDeleteRecordTask(IDviInvocation& aInvocation)
@@ -461,8 +461,8 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoDeleteRecordTask(IDviInvocation&
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     DeleteRecordTask(invocation, RecordTaskID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetRecordTask(IDviInvocation& aInvocation)
@@ -479,14 +479,14 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetRecordTask(IDviInvocation& aI
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     GetRecordTask(invocation, RecordTaskID, Filter, respResult, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoEnableRecordTask(IDviInvocation& aInvocation)
@@ -498,8 +498,8 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoEnableRecordTask(IDviInvocation&
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     EnableRecordTask(invocation, RecordTaskID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoDisableRecordTask(IDviInvocation& aInvocation)
@@ -511,8 +511,8 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoDisableRecordTask(IDviInvocation
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     DisableRecordTask(invocation, RecordTaskID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoResetRecordTask(IDviInvocation& aInvocation)
@@ -524,8 +524,8 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoResetRecordTask(IDviInvocation& 
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     ResetRecordTask(invocation, RecordTaskID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation)
@@ -539,14 +539,14 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetRecordScheduleConflicts(IDviI
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     GetRecordScheduleConflicts(invocation, RecordScheduleID, respRecordScheduleConflictIDList, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterRecordScheduleConflictIDList(aInvocation, "RecordScheduleConflictIDList");
     Brn buf_RecordScheduleConflictIDList((const TByte*)respRecordScheduleConflictIDList.c_str(), (TUint)respRecordScheduleConflictIDList.length());
     respWriterRecordScheduleConflictIDList.Write(buf_RecordScheduleConflictIDList);
     aInvocation.InvocationWriteStringEnd("RecordScheduleConflictIDList");
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetRecordTaskConflicts(IDviInvocation& aInvocation)
@@ -560,14 +560,14 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::DoGetRecordTaskConflicts(IDviInvoc
     uint32_t respUpdateID;
     DvInvocationStd invocation(aInvocation);
     GetRecordTaskConflicts(invocation, RecordTaskID, respRecordTaskConflictIDList, respUpdateID);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterRecordTaskConflictIDList(aInvocation, "RecordTaskConflictIDList");
     Brn buf_RecordTaskConflictIDList((const TByte*)respRecordTaskConflictIDList.c_str(), (TUint)respRecordTaskConflictIDList.length());
     respWriterRecordTaskConflictIDList.Write(buf_RecordTaskConflictIDList);
     aInvocation.InvocationWriteStringEnd("RecordTaskConflictIDList");
     DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::GetSortCapabilities(IDvInvocationStd& /*aInvocation*/, std::string& /*aSortCaps*/, uint32_t& /*aSortLevelCap*/)

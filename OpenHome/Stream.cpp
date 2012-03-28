@@ -31,7 +31,7 @@ Brn Srx::Read(TUint aBytes)
 
     if (iBytes - iOffset < aBytes) {  // read not satisfied from data already in the buffer
         if (aBytes > iMaxBytes) { // unable to store the requested number of bytes in the buffer
-		    THROW(ReaderError);
+            THROW(ReaderError);
         }
 
         if (iMaxBytes - iOffset < aBytes) { // unable to fit requested bytes after current offset
@@ -85,7 +85,7 @@ Brn Srx::ReadUntil(TByte aSeparator)
         }
         
         if (iBytes >= iMaxBytes) { // buffer full and no separator
-        	THROW(ReaderError);
+            THROW(ReaderError);
         }
         
         Bwn buffer(ptr + iBytes, iMaxBytes - iBytes); // collect more data from the source
@@ -249,12 +249,12 @@ Swp::~Swp()
 
 ReaderBuffer::ReaderBuffer()
 {
-	Set(Brx::Empty());
+    Set(Brx::Empty());
 }
 
 ReaderBuffer::ReaderBuffer(const Brx& aBuffer)
 {
-	Set(aBuffer);
+    Set(aBuffer);
 }
 
 void ReaderBuffer::Set(const Brx& aBuffer)

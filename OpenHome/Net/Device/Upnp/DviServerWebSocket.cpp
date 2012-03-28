@@ -701,9 +701,9 @@ WsProtocol* DviSessionWebSocket::Handshake76()
     // calculate md5 response
     md5_state_t state;
     md5_byte_t digest[16];
-	md5_init(&state);
-	md5_append(&state, (const md5_byte_t*)buf.Ptr(), 16);
-	md5_finish(&state, digest);
+    md5_init(&state);
+    md5_append(&state, (const md5_byte_t*)buf.Ptr(), 16);
+    md5_finish(&state, digest);
     Bws<16> resp;
     memcpy(const_cast<TByte*>(resp.Ptr()), &digest[0], 16);
     resp.SetBytes(16);
@@ -840,7 +840,7 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     Brh sid;
     device->CreateSid(sid);
     DviSubscription* subscription = new DviSubscription(*device, *this, NULL, sid, timeout);
-	Brn sidBuf(subscription->Sid());
+    Brn sidBuf(subscription->Sid());
 
     try {
         WriteSubscriptionSid(udn, serviceId, sidBuf, timeout);
@@ -990,7 +990,7 @@ SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer("WSSV", Stack::InitParams().DvWebSocketPort(), aNif.Address());
     TChar thName[5];
-	const TUint numWsThreads = Stack::InitParams().DvNumWebSocketThreads();
+    const TUint numWsThreads = Stack::InitParams().DvNumWebSocketThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "WS%2lu", (unsigned long)i);
         server->Add(&thName[0], new DviSessionWebSocket(aNif.Address(), server->Port()));

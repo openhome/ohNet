@@ -247,17 +247,17 @@ TBool Property::ReportChanged()
 {
     if (iChanged) {
         iFunctor();
-		iChanged = false;
+        iChanged = false;
         return true;
-	}
+    }
     return false;
 }
 
 Property::Property(OpenHome::Net::Parameter* aParameter, Functor& aFunctor)
     : iParameter(aParameter)
     , iFunctor(aFunctor)
-	, iChanged(true)
-	, iSequenceNumber(0)
+    , iChanged(true)
+    , iSequenceNumber(0)
 {
     ASSERT(iParameter != NULL);
     ASSERT(iParameter->Type() != OpenHome::Net::Parameter::eTypeRelated);
@@ -265,8 +265,8 @@ Property::Property(OpenHome::Net::Parameter* aParameter, Functor& aFunctor)
 
 Property::Property(OpenHome::Net::Parameter* aParameter)
     : iParameter(aParameter)
-	, iChanged(true)
-	, iSequenceNumber(0)
+    , iChanged(true)
+    , iSequenceNumber(0)
 {
     ASSERT(iParameter != NULL);
     ASSERT(iParameter->Type() != OpenHome::Net::Parameter::eTypeRelated);
@@ -275,8 +275,8 @@ Property::Property(OpenHome::Net::Parameter* aParameter)
 void Property::Construct(OpenHome::Net::Parameter* aParameter)
 {
     iParameter = aParameter;
-	iChanged = true;
-	iSequenceNumber = 0;
+    iChanged = true;
+    iSequenceNumber = 0;
     ASSERT(iParameter != NULL);
     ASSERT(iParameter->Type() != OpenHome::Net::Parameter::eTypeRelated);
 }
@@ -313,10 +313,10 @@ const Brx& PropertyString::Value() const
 void PropertyString::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
     AutoMutex a(Stack::Mutex());
-	Brhz old;
-	iValue.TransferTo(old);
+    Brhz old;
+    iValue.TransferTo(old);
     aProcessor.ProcessString(aBuffer, iValue);
-	if (iSequenceNumber == 0 || old != iValue) {
+    if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
         iSequenceNumber++;
     }
@@ -368,9 +368,9 @@ TInt PropertyInt::Value() const
 void PropertyInt::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
     AutoMutex a(Stack::Mutex());
-	TInt old = iValue;
+    TInt old = iValue;
     aProcessor.ProcessInt(aBuffer, iValue);
-	if (iSequenceNumber == 0 || old != iValue) {
+    if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
         iSequenceNumber++;
     }
@@ -423,8 +423,8 @@ void PropertyUint::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
     AutoMutex a(Stack::Mutex());
     TUint old = iValue;
-	aProcessor.ProcessUint(aBuffer, iValue);
-	if (iSequenceNumber == 0 || old != iValue) {
+    aProcessor.ProcessUint(aBuffer, iValue);
+    if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
         iSequenceNumber++;
     }
@@ -477,8 +477,8 @@ void PropertyBool::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
     AutoMutex a(Stack::Mutex());
     TBool old = iValue;
-	aProcessor.ProcessBool(aBuffer, iValue);
-	if (iSequenceNumber == 0 || old != iValue) {
+    aProcessor.ProcessBool(aBuffer, iValue);
+    if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
         iSequenceNumber++;
     }
@@ -527,9 +527,9 @@ const Brx& PropertyBinary::Value() const
 void PropertyBinary::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
     AutoMutex a(Stack::Mutex());
-	Bwh old(iValue.Ptr(), iValue.Bytes());
+    Bwh old(iValue.Ptr(), iValue.Bytes());
     aProcessor.ProcessBinary(aBuffer, iValue);
-	if (iSequenceNumber == 0 || old != iValue) {
+    if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
         iSequenceNumber++;
     }
@@ -637,8 +637,8 @@ TUint OpenHome::Net::ServiceType::Version() const
 
 const Brx& OpenHome::Net::ServiceType::FullName() const
 {
-	Stack::Mutex().Wait();
-	if (iFullName.Bytes() == 0) {
+    Stack::Mutex().Wait();
+    if (iFullName.Bytes() == 0) {
         const TInt len = kUrn.Bytes() + iDomain.Bytes() + kService.Bytes() +
                              iName.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1;
         iFullName.Grow(len);
@@ -650,13 +650,13 @@ const Brx& OpenHome::Net::ServiceType::FullName() const
         Ascii::AppendDec(iFullName, iVersion);
         iFullName.PtrZ();
     }
-	Stack::Mutex().Signal();
+    Stack::Mutex().Signal();
     return iFullName;
 }
 
 const Brx& OpenHome::Net::ServiceType::FullNameUpnp() const
 {
-	Stack::Mutex().Wait();
+    Stack::Mutex().Wait();
     if (iServiceType.Bytes() == 0) {
         Bwh upnpDomain(iDomain.Bytes() + 10);
         Ssdp::CanonicalDomainToUpnp(iDomain, upnpDomain);
@@ -671,13 +671,13 @@ const Brx& OpenHome::Net::ServiceType::FullNameUpnp() const
         Ascii::AppendDec(iServiceType, iVersion);
         iServiceType.PtrZ();
     }
-	Stack::Mutex().Signal();
+    Stack::Mutex().Signal();
     return iServiceType;
 }
 
 const Brx& OpenHome::Net::ServiceType::PathUpnp() const
 {
-	Stack::Mutex().Wait();
+    Stack::Mutex().Wait();
     if (iPathUpnp.Bytes() == 0) {
         const TInt len = iDomain.Bytes() + 1 + iName.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1;
         iPathUpnp.Grow(len);
@@ -688,13 +688,13 @@ const Brx& OpenHome::Net::ServiceType::PathUpnp() const
         Ascii::AppendDec(iPathUpnp, iVersion);
         iPathUpnp.PtrZ();
     }
-	Stack::Mutex().Signal();
+    Stack::Mutex().Signal();
     return iPathUpnp;
 }
 
 const Brx& OpenHome::Net::ServiceType::ServiceId() const
 {
-	Stack::Mutex().Wait();
+    Stack::Mutex().Wait();
     if (iServiceId.Bytes() == 0) {
         Bwh domain(iDomain);
         for (TUint i=0; i<domain.Bytes(); i++) {
@@ -710,7 +710,7 @@ const Brx& OpenHome::Net::ServiceType::ServiceId() const
         iServiceId.Append(iName);
         iServiceId.PtrZ();
     }
-	Stack::Mutex().Signal();
+    Stack::Mutex().Signal();
     return iServiceId;
 }
 

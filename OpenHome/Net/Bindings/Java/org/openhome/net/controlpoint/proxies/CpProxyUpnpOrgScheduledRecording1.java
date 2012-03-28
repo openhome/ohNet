@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgScheduledRecording1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyUpnpOrgScheduledRecording1 extends ICpProxy
 {
     public GetSortCapabilities syncGetSortCapabilities();
@@ -89,7 +89,7 @@ class SyncGetSortCapabilitiesUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetSortCapabilities result = iService.endGetSortCapabilities(aAsyncHandle);
-		
+        
         iSortCaps = result.getSortCaps();
         iSortLevelCap = result.getSortLevelCap();
     }
@@ -111,7 +111,7 @@ class SyncGetPropertyListUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetPropertyList(aAsyncHandle);
-		
+        
         iPropertyList = result;
     }
 }
@@ -132,7 +132,7 @@ class SyncGetAllowedValuesUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetAllowedValues(aAsyncHandle);
-		
+        
         iPropertyInfo = result;
     }
 }
@@ -153,7 +153,7 @@ class SyncGetStateUpdateIDUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetStateUpdateID(aAsyncHandle);
-		
+        
         iId = result;
     }
 }
@@ -189,7 +189,7 @@ class SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1 extends SyncProxyActio
     protected void completeRequest(long aAsyncHandle)
     {
         BrowseRecordSchedules result = iService.endBrowseRecordSchedules(aAsyncHandle);
-		
+        
         iResult = result.getResult();
         iNumberReturned = result.getNumberReturned();
         iTotalMatches = result.getTotalMatches();
@@ -228,7 +228,7 @@ class SyncBrowseRecordTasksUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         BrowseRecordTasks result = iService.endBrowseRecordTasks(aAsyncHandle);
-		
+        
         iResult = result.getResult();
         iNumberReturned = result.getNumberReturned();
         iTotalMatches = result.getTotalMatches();
@@ -262,7 +262,7 @@ class SyncCreateRecordScheduleUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         CreateRecordSchedule result = iService.endCreateRecordSchedule(aAsyncHandle);
-		
+        
         iRecordScheduleID = result.getRecordScheduleID();
         iResult = result.getResult();
         iUpdateID = result.getUpdateID();
@@ -280,7 +280,7 @@ class SyncDeleteRecordScheduleUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endDeleteRecordSchedule(aAsyncHandle);
-		
+        
     }
 }
 
@@ -305,7 +305,7 @@ class SyncGetRecordScheduleUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetRecordSchedule result = iService.endGetRecordSchedule(aAsyncHandle);
-		
+        
         iResult = result.getResult();
         iUpdateID = result.getUpdateID();
     }
@@ -322,7 +322,7 @@ class SyncEnableRecordScheduleUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endEnableRecordSchedule(aAsyncHandle);
-		
+        
     }
 }
 
@@ -337,7 +337,7 @@ class SyncDisableRecordScheduleUpnpOrgScheduledRecording1 extends SyncProxyActio
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endDisableRecordSchedule(aAsyncHandle);
-		
+        
     }
 }
 
@@ -352,7 +352,7 @@ class SyncDeleteRecordTaskUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endDeleteRecordTask(aAsyncHandle);
-		
+        
     }
 }
 
@@ -377,7 +377,7 @@ class SyncGetRecordTaskUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetRecordTask result = iService.endGetRecordTask(aAsyncHandle);
-		
+        
         iResult = result.getResult();
         iUpdateID = result.getUpdateID();
     }
@@ -394,7 +394,7 @@ class SyncEnableRecordTaskUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endEnableRecordTask(aAsyncHandle);
-		
+        
     }
 }
 
@@ -409,7 +409,7 @@ class SyncDisableRecordTaskUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endDisableRecordTask(aAsyncHandle);
-		
+        
     }
 }
 
@@ -424,7 +424,7 @@ class SyncResetRecordTaskUpnpOrgScheduledRecording1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endResetRecordTask(aAsyncHandle);
-		
+        
     }
 }
 
@@ -449,7 +449,7 @@ class SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1 extends SyncProxy
     protected void completeRequest(long aAsyncHandle)
     {
         GetRecordScheduleConflicts result = iService.endGetRecordScheduleConflicts(aAsyncHandle);
-		
+        
         iRecordScheduleConflictIDList = result.getRecordScheduleConflictIDList();
         iUpdateID = result.getUpdateID();
     }
@@ -476,7 +476,7 @@ class SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1 extends SyncProxyActi
     protected void completeRequest(long aAsyncHandle)
     {
         GetRecordTaskConflicts result = iService.endGetRecordTaskConflicts(aAsyncHandle);
-		
+        
         iRecordTaskConflictIDList = result.getRecordTaskConflictIDList();
         iUpdateID = result.getUpdateID();
     }
@@ -733,7 +733,7 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyUpnpOrgScheduledRecording1(CpDevice aDevice)
@@ -744,151 +744,151 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
 
         iActionGetSortCapabilities = new Action("GetSortCapabilities");
         param = new ParameterString("SortCaps", allowedValues);
-		iActionGetSortCapabilities.addOutputParameter(param);
+        iActionGetSortCapabilities.addOutputParameter(param);
         param = new ParameterUint("SortLevelCap");
-		iActionGetSortCapabilities.addOutputParameter(param);
+        iActionGetSortCapabilities.addOutputParameter(param);
 
         iActionGetPropertyList = new Action("GetPropertyList");
         allowedValues.add("A_ARG_TYPE_RecordSchedule");
         allowedValues.add("A_ARG_TYPE_RecordTask");
         allowedValues.add("A_ARG_TYPE_RecordScheduleParts");
         param = new ParameterString("DataTypeID", allowedValues);
-		iActionGetPropertyList.addInputParameter(param);
+        iActionGetPropertyList.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterString("PropertyList", allowedValues);
-		iActionGetPropertyList.addOutputParameter(param);
+        iActionGetPropertyList.addOutputParameter(param);
 
         iActionGetAllowedValues = new Action("GetAllowedValues");
         allowedValues.add("A_ARG_TYPE_RecordSchedule");
         allowedValues.add("A_ARG_TYPE_RecordTask");
         allowedValues.add("A_ARG_TYPE_RecordScheduleParts");
         param = new ParameterString("DataTypeID", allowedValues);
-		iActionGetAllowedValues.addInputParameter(param);
+        iActionGetAllowedValues.addInputParameter(param);
         allowedValues.clear();
         param = new ParameterString("Filter", allowedValues);
-		iActionGetAllowedValues.addInputParameter(param);
+        iActionGetAllowedValues.addInputParameter(param);
         param = new ParameterString("PropertyInfo", allowedValues);
-		iActionGetAllowedValues.addOutputParameter(param);
+        iActionGetAllowedValues.addOutputParameter(param);
 
         iActionGetStateUpdateID = new Action("GetStateUpdateID");
         param = new ParameterUint("Id");
-		iActionGetStateUpdateID.addOutputParameter(param);
+        iActionGetStateUpdateID.addOutputParameter(param);
 
         iActionBrowseRecordSchedules = new Action("BrowseRecordSchedules");
         param = new ParameterString("Filter", allowedValues);
-		iActionBrowseRecordSchedules.addInputParameter(param);
+        iActionBrowseRecordSchedules.addInputParameter(param);
         param = new ParameterUint("StartingIndex");
-		iActionBrowseRecordSchedules.addInputParameter(param);
+        iActionBrowseRecordSchedules.addInputParameter(param);
         param = new ParameterUint("RequestedCount");
-		iActionBrowseRecordSchedules.addInputParameter(param);
+        iActionBrowseRecordSchedules.addInputParameter(param);
         param = new ParameterString("SortCriteria", allowedValues);
-		iActionBrowseRecordSchedules.addInputParameter(param);
+        iActionBrowseRecordSchedules.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionBrowseRecordSchedules.addOutputParameter(param);
+        iActionBrowseRecordSchedules.addOutputParameter(param);
         param = new ParameterUint("NumberReturned");
-		iActionBrowseRecordSchedules.addOutputParameter(param);
+        iActionBrowseRecordSchedules.addOutputParameter(param);
         param = new ParameterUint("TotalMatches");
-		iActionBrowseRecordSchedules.addOutputParameter(param);
+        iActionBrowseRecordSchedules.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionBrowseRecordSchedules.addOutputParameter(param);
+        iActionBrowseRecordSchedules.addOutputParameter(param);
 
         iActionBrowseRecordTasks = new Action("BrowseRecordTasks");
         param = new ParameterString("RecordScheduleID", allowedValues);
-		iActionBrowseRecordTasks.addInputParameter(param);
+        iActionBrowseRecordTasks.addInputParameter(param);
         param = new ParameterString("Filter", allowedValues);
-		iActionBrowseRecordTasks.addInputParameter(param);
+        iActionBrowseRecordTasks.addInputParameter(param);
         param = new ParameterUint("StartingIndex");
-		iActionBrowseRecordTasks.addInputParameter(param);
+        iActionBrowseRecordTasks.addInputParameter(param);
         param = new ParameterUint("RequestedCount");
-		iActionBrowseRecordTasks.addInputParameter(param);
+        iActionBrowseRecordTasks.addInputParameter(param);
         param = new ParameterString("SortCriteria", allowedValues);
-		iActionBrowseRecordTasks.addInputParameter(param);
+        iActionBrowseRecordTasks.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionBrowseRecordTasks.addOutputParameter(param);
+        iActionBrowseRecordTasks.addOutputParameter(param);
         param = new ParameterUint("NumberReturned");
-		iActionBrowseRecordTasks.addOutputParameter(param);
+        iActionBrowseRecordTasks.addOutputParameter(param);
         param = new ParameterUint("TotalMatches");
-		iActionBrowseRecordTasks.addOutputParameter(param);
+        iActionBrowseRecordTasks.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionBrowseRecordTasks.addOutputParameter(param);
+        iActionBrowseRecordTasks.addOutputParameter(param);
 
         iActionCreateRecordSchedule = new Action("CreateRecordSchedule");
         param = new ParameterString("Elements", allowedValues);
-		iActionCreateRecordSchedule.addInputParameter(param);
+        iActionCreateRecordSchedule.addInputParameter(param);
         param = new ParameterString("RecordScheduleID", allowedValues);
-		iActionCreateRecordSchedule.addOutputParameter(param);
+        iActionCreateRecordSchedule.addOutputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionCreateRecordSchedule.addOutputParameter(param);
+        iActionCreateRecordSchedule.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionCreateRecordSchedule.addOutputParameter(param);
+        iActionCreateRecordSchedule.addOutputParameter(param);
 
         iActionDeleteRecordSchedule = new Action("DeleteRecordSchedule");
         param = new ParameterString("RecordScheduleID", allowedValues);
-		iActionDeleteRecordSchedule.addInputParameter(param);
+        iActionDeleteRecordSchedule.addInputParameter(param);
 
         iActionGetRecordSchedule = new Action("GetRecordSchedule");
         param = new ParameterString("RecordScheduleID", allowedValues);
-		iActionGetRecordSchedule.addInputParameter(param);
+        iActionGetRecordSchedule.addInputParameter(param);
         param = new ParameterString("Filter", allowedValues);
-		iActionGetRecordSchedule.addInputParameter(param);
+        iActionGetRecordSchedule.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionGetRecordSchedule.addOutputParameter(param);
+        iActionGetRecordSchedule.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionGetRecordSchedule.addOutputParameter(param);
+        iActionGetRecordSchedule.addOutputParameter(param);
 
         iActionEnableRecordSchedule = new Action("EnableRecordSchedule");
         param = new ParameterString("RecordScheduleID", allowedValues);
-		iActionEnableRecordSchedule.addInputParameter(param);
+        iActionEnableRecordSchedule.addInputParameter(param);
 
         iActionDisableRecordSchedule = new Action("DisableRecordSchedule");
         param = new ParameterString("RecordScheduleID", allowedValues);
-		iActionDisableRecordSchedule.addInputParameter(param);
+        iActionDisableRecordSchedule.addInputParameter(param);
 
         iActionDeleteRecordTask = new Action("DeleteRecordTask");
         param = new ParameterString("RecordTaskID", allowedValues);
-		iActionDeleteRecordTask.addInputParameter(param);
+        iActionDeleteRecordTask.addInputParameter(param);
 
         iActionGetRecordTask = new Action("GetRecordTask");
         param = new ParameterString("RecordTaskID", allowedValues);
-		iActionGetRecordTask.addInputParameter(param);
+        iActionGetRecordTask.addInputParameter(param);
         param = new ParameterString("Filter", allowedValues);
-		iActionGetRecordTask.addInputParameter(param);
+        iActionGetRecordTask.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionGetRecordTask.addOutputParameter(param);
+        iActionGetRecordTask.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionGetRecordTask.addOutputParameter(param);
+        iActionGetRecordTask.addOutputParameter(param);
 
         iActionEnableRecordTask = new Action("EnableRecordTask");
         param = new ParameterString("RecordTaskID", allowedValues);
-		iActionEnableRecordTask.addInputParameter(param);
+        iActionEnableRecordTask.addInputParameter(param);
 
         iActionDisableRecordTask = new Action("DisableRecordTask");
         param = new ParameterString("RecordTaskID", allowedValues);
-		iActionDisableRecordTask.addInputParameter(param);
+        iActionDisableRecordTask.addInputParameter(param);
 
         iActionResetRecordTask = new Action("ResetRecordTask");
         param = new ParameterString("RecordTaskID", allowedValues);
-		iActionResetRecordTask.addInputParameter(param);
+        iActionResetRecordTask.addInputParameter(param);
 
         iActionGetRecordScheduleConflicts = new Action("GetRecordScheduleConflicts");
         param = new ParameterString("RecordScheduleID", allowedValues);
-		iActionGetRecordScheduleConflicts.addInputParameter(param);
+        iActionGetRecordScheduleConflicts.addInputParameter(param);
         param = new ParameterString("RecordScheduleConflictIDList", allowedValues);
-		iActionGetRecordScheduleConflicts.addOutputParameter(param);
+        iActionGetRecordScheduleConflicts.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionGetRecordScheduleConflicts.addOutputParameter(param);
+        iActionGetRecordScheduleConflicts.addOutputParameter(param);
 
         iActionGetRecordTaskConflicts = new Action("GetRecordTaskConflicts");
         param = new ParameterString("RecordTaskID", allowedValues);
-		iActionGetRecordTaskConflicts.addInputParameter(param);
+        iActionGetRecordTaskConflicts.addInputParameter(param);
         param = new ParameterString("RecordTaskConflictIDList", allowedValues);
-		iActionGetRecordTaskConflicts.addOutputParameter(param);
+        iActionGetRecordTaskConflicts.addOutputParameter(param);
         param = new ParameterUint("UpdateID");
-		iActionGetRecordTaskConflicts.addOutputParameter(param);
+        iActionGetRecordTaskConflicts.addOutputParameter(param);
 
         iLastChangeChanged = new PropertyChangeListener();
         iLastChange = new PropertyString("LastChange", iLastChangeChanged);
-		addProperty(iLastChange);
+        addProperty(iLastChange);
         iPropertyLock = new Object();
     }
     /**
@@ -898,30 +898,30 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public GetSortCapabilities syncGetSortCapabilities()
-	{
-	    SyncGetSortCapabilitiesUpnpOrgScheduledRecording1 sync = new SyncGetSortCapabilitiesUpnpOrgScheduledRecording1(this);
-	    beginGetSortCapabilities(sync.getListener());
-	    sync.waitToComplete();
+    public GetSortCapabilities syncGetSortCapabilities()
+    {
+        SyncGetSortCapabilitiesUpnpOrgScheduledRecording1 sync = new SyncGetSortCapabilitiesUpnpOrgScheduledRecording1(this);
+        beginGetSortCapabilities(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetSortCapabilities(
             sync.getSortCaps(),
             sync.getSortLevelCap()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetSortCapabilities}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetSortCapabilities(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetSortCapabilities}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetSortCapabilities(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetSortCapabilities, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionGetSortCapabilities.getOutputParameter(outIndex++)));
@@ -929,16 +929,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetSortCapabilities} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetSortCapabilities} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetSortCapabilities} method.
      * @return the result of the previously invoked action.
      */
-	public GetSortCapabilities endGetSortCapabilities(long aAsyncHandle)
+    public GetSortCapabilities endGetSortCapabilities(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -950,9 +950,9 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         return new GetSortCapabilities(
             sortCaps,
             sortLevelCap
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -960,28 +960,28 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public String syncGetPropertyList(String aDataTypeID)
-	{
-	    SyncGetPropertyListUpnpOrgScheduledRecording1 sync = new SyncGetPropertyListUpnpOrgScheduledRecording1(this);
-	    beginGetPropertyList(aDataTypeID, sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetPropertyList(String aDataTypeID)
+    {
+        SyncGetPropertyListUpnpOrgScheduledRecording1 sync = new SyncGetPropertyListUpnpOrgScheduledRecording1(this);
+        beginGetPropertyList(aDataTypeID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getPropertyList();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetPropertyList}.
-	 * 
-	 * @param aDataTypeID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetPropertyList(String aDataTypeID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetPropertyList}.
+     * 
+     * @param aDataTypeID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetPropertyList(String aDataTypeID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetPropertyList, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionGetPropertyList.getInputParameter(inIndex++), aDataTypeID));
@@ -990,16 +990,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetPropertyList} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetPropertyList} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetPropertyList} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetPropertyList(long aAsyncHandle)
+    public String endGetPropertyList(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1009,7 +1009,7 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         String propertyList = Invocation.getOutputString(aAsyncHandle, index++);
         return propertyList;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1017,29 +1017,29 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public String syncGetAllowedValues(String aDataTypeID, String aFilter)
-	{
-	    SyncGetAllowedValuesUpnpOrgScheduledRecording1 sync = new SyncGetAllowedValuesUpnpOrgScheduledRecording1(this);
-	    beginGetAllowedValues(aDataTypeID, aFilter, sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetAllowedValues(String aDataTypeID, String aFilter)
+    {
+        SyncGetAllowedValuesUpnpOrgScheduledRecording1 sync = new SyncGetAllowedValuesUpnpOrgScheduledRecording1(this);
+        beginGetAllowedValues(aDataTypeID, aFilter, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getPropertyInfo();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetAllowedValues}.
-	 * 
-	 * @param aDataTypeID
-	 * @param aFilter
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetAllowedValues(String aDataTypeID, String aFilter, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetAllowedValues}.
+     * 
+     * @param aDataTypeID
+     * @param aFilter
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetAllowedValues(String aDataTypeID, String aFilter, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetAllowedValues, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionGetAllowedValues.getInputParameter(inIndex++), aDataTypeID));
@@ -1049,16 +1049,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetAllowedValues} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetAllowedValues} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetAllowedValues} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetAllowedValues(long aAsyncHandle)
+    public String endGetAllowedValues(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1068,7 +1068,7 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         String propertyInfo = Invocation.getOutputString(aAsyncHandle, index++);
         return propertyInfo;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1076,43 +1076,43 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public long syncGetStateUpdateID()
-	{
-	    SyncGetStateUpdateIDUpnpOrgScheduledRecording1 sync = new SyncGetStateUpdateIDUpnpOrgScheduledRecording1(this);
-	    beginGetStateUpdateID(sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetStateUpdateID()
+    {
+        SyncGetStateUpdateIDUpnpOrgScheduledRecording1 sync = new SyncGetStateUpdateIDUpnpOrgScheduledRecording1(this);
+        beginGetStateUpdateID(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getId();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetStateUpdateID}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetStateUpdateID(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetStateUpdateID}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetStateUpdateID(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetStateUpdateID, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionGetStateUpdateID.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetStateUpdateID} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetStateUpdateID} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetStateUpdateID} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetStateUpdateID(long aAsyncHandle)
+    public long endGetStateUpdateID(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1122,7 +1122,7 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         long id = Invocation.getOutputUint(aAsyncHandle, index++);
         return id;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1130,11 +1130,11 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public BrowseRecordSchedules syncBrowseRecordSchedules(String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
-	{
-	    SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1 sync = new SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1(this);
-	    beginBrowseRecordSchedules(aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
-	    sync.waitToComplete();
+    public BrowseRecordSchedules syncBrowseRecordSchedules(String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
+    {
+        SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1 sync = new SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1(this);
+        beginBrowseRecordSchedules(aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new BrowseRecordSchedules(
@@ -1142,24 +1142,24 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
             sync.getNumberReturned(),
             sync.getTotalMatches(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endBrowseRecordSchedules}.
-	 * 
-	 * @param aFilter
-	 * @param aStartingIndex
-	 * @param aRequestedCount
-	 * @param aSortCriteria
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginBrowseRecordSchedules(String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endBrowseRecordSchedules}.
+     * 
+     * @param aFilter
+     * @param aStartingIndex
+     * @param aRequestedCount
+     * @param aSortCriteria
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginBrowseRecordSchedules(String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionBrowseRecordSchedules, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionBrowseRecordSchedules.getInputParameter(inIndex++), aFilter));
@@ -1174,16 +1174,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginBrowseRecordSchedules} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginBrowseRecordSchedules} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginBrowseRecordSchedules} method.
      * @return the result of the previously invoked action.
      */
-	public BrowseRecordSchedules endBrowseRecordSchedules(long aAsyncHandle)
+    public BrowseRecordSchedules endBrowseRecordSchedules(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1199,9 +1199,9 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
             numberReturned,
             totalMatches,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1209,11 +1209,11 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public BrowseRecordTasks syncBrowseRecordTasks(String aRecordScheduleID, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
-	{
-	    SyncBrowseRecordTasksUpnpOrgScheduledRecording1 sync = new SyncBrowseRecordTasksUpnpOrgScheduledRecording1(this);
-	    beginBrowseRecordTasks(aRecordScheduleID, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
-	    sync.waitToComplete();
+    public BrowseRecordTasks syncBrowseRecordTasks(String aRecordScheduleID, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
+    {
+        SyncBrowseRecordTasksUpnpOrgScheduledRecording1 sync = new SyncBrowseRecordTasksUpnpOrgScheduledRecording1(this);
+        beginBrowseRecordTasks(aRecordScheduleID, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new BrowseRecordTasks(
@@ -1221,25 +1221,25 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
             sync.getNumberReturned(),
             sync.getTotalMatches(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endBrowseRecordTasks}.
-	 * 
-	 * @param aRecordScheduleID
-	 * @param aFilter
-	 * @param aStartingIndex
-	 * @param aRequestedCount
-	 * @param aSortCriteria
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginBrowseRecordTasks(String aRecordScheduleID, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endBrowseRecordTasks}.
+     * 
+     * @param aRecordScheduleID
+     * @param aFilter
+     * @param aStartingIndex
+     * @param aRequestedCount
+     * @param aSortCriteria
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginBrowseRecordTasks(String aRecordScheduleID, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionBrowseRecordTasks, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionBrowseRecordTasks.getInputParameter(inIndex++), aRecordScheduleID));
@@ -1255,16 +1255,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginBrowseRecordTasks} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginBrowseRecordTasks} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginBrowseRecordTasks} method.
      * @return the result of the previously invoked action.
      */
-	public BrowseRecordTasks endBrowseRecordTasks(long aAsyncHandle)
+    public BrowseRecordTasks endBrowseRecordTasks(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1280,9 +1280,9 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
             numberReturned,
             totalMatches,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1290,32 +1290,32 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public CreateRecordSchedule syncCreateRecordSchedule(String aElements)
-	{
-	    SyncCreateRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncCreateRecordScheduleUpnpOrgScheduledRecording1(this);
-	    beginCreateRecordSchedule(aElements, sync.getListener());
-	    sync.waitToComplete();
+    public CreateRecordSchedule syncCreateRecordSchedule(String aElements)
+    {
+        SyncCreateRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncCreateRecordScheduleUpnpOrgScheduledRecording1(this);
+        beginCreateRecordSchedule(aElements, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new CreateRecordSchedule(
             sync.getRecordScheduleID(),
             sync.getResult(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endCreateRecordSchedule}.
-	 * 
-	 * @param aElements
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginCreateRecordSchedule(String aElements, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endCreateRecordSchedule}.
+     * 
+     * @param aElements
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginCreateRecordSchedule(String aElements, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionCreateRecordSchedule, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionCreateRecordSchedule.getInputParameter(inIndex++), aElements));
@@ -1326,16 +1326,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginCreateRecordSchedule} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginCreateRecordSchedule} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginCreateRecordSchedule} method.
      * @return the result of the previously invoked action.
      */
-	public CreateRecordSchedule endCreateRecordSchedule(long aAsyncHandle)
+    public CreateRecordSchedule endCreateRecordSchedule(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1349,56 +1349,56 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
             recordScheduleID,
             result,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDeleteRecordSchedule(String aRecordScheduleID)
-	{
-	    SyncDeleteRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncDeleteRecordScheduleUpnpOrgScheduledRecording1(this);
-	    beginDeleteRecordSchedule(aRecordScheduleID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncDeleteRecordSchedule(String aRecordScheduleID)
+    {
+        SyncDeleteRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncDeleteRecordScheduleUpnpOrgScheduledRecording1(this);
+        beginDeleteRecordSchedule(aRecordScheduleID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDeleteRecordSchedule}.
-	 * 
-	 * @param aRecordScheduleID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDeleteRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDeleteRecordSchedule}.
+     * 
+     * @param aRecordScheduleID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDeleteRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDeleteRecordSchedule, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionDeleteRecordSchedule.getInputParameter(inIndex++), aRecordScheduleID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDeleteRecordSchedule} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDeleteRecordSchedule} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDeleteRecordSchedule} method.
      */
-	public void endDeleteRecordSchedule(long aAsyncHandle)
+    public void endDeleteRecordSchedule(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1406,32 +1406,32 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public GetRecordSchedule syncGetRecordSchedule(String aRecordScheduleID, String aFilter)
-	{
-	    SyncGetRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncGetRecordScheduleUpnpOrgScheduledRecording1(this);
-	    beginGetRecordSchedule(aRecordScheduleID, aFilter, sync.getListener());
-	    sync.waitToComplete();
+    public GetRecordSchedule syncGetRecordSchedule(String aRecordScheduleID, String aFilter)
+    {
+        SyncGetRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncGetRecordScheduleUpnpOrgScheduledRecording1(this);
+        beginGetRecordSchedule(aRecordScheduleID, aFilter, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetRecordSchedule(
             sync.getResult(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetRecordSchedule}.
-	 * 
-	 * @param aRecordScheduleID
-	 * @param aFilter
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetRecordSchedule(String aRecordScheduleID, String aFilter, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetRecordSchedule}.
+     * 
+     * @param aRecordScheduleID
+     * @param aFilter
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetRecordSchedule(String aRecordScheduleID, String aFilter, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetRecordSchedule, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionGetRecordSchedule.getInputParameter(inIndex++), aRecordScheduleID));
@@ -1442,16 +1442,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetRecordSchedule} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetRecordSchedule} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetRecordSchedule} method.
      * @return the result of the previously invoked action.
      */
-	public GetRecordSchedule endGetRecordSchedule(long aAsyncHandle)
+    public GetRecordSchedule endGetRecordSchedule(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1463,150 +1463,150 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         return new GetRecordSchedule(
             result,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncEnableRecordSchedule(String aRecordScheduleID)
-	{
-	    SyncEnableRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncEnableRecordScheduleUpnpOrgScheduledRecording1(this);
-	    beginEnableRecordSchedule(aRecordScheduleID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncEnableRecordSchedule(String aRecordScheduleID)
+    {
+        SyncEnableRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncEnableRecordScheduleUpnpOrgScheduledRecording1(this);
+        beginEnableRecordSchedule(aRecordScheduleID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endEnableRecordSchedule}.
-	 * 
-	 * @param aRecordScheduleID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginEnableRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endEnableRecordSchedule}.
+     * 
+     * @param aRecordScheduleID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginEnableRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionEnableRecordSchedule, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionEnableRecordSchedule.getInputParameter(inIndex++), aRecordScheduleID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginEnableRecordSchedule} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginEnableRecordSchedule} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginEnableRecordSchedule} method.
      */
-	public void endEnableRecordSchedule(long aAsyncHandle)
+    public void endEnableRecordSchedule(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDisableRecordSchedule(String aRecordScheduleID)
-	{
-	    SyncDisableRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncDisableRecordScheduleUpnpOrgScheduledRecording1(this);
-	    beginDisableRecordSchedule(aRecordScheduleID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncDisableRecordSchedule(String aRecordScheduleID)
+    {
+        SyncDisableRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncDisableRecordScheduleUpnpOrgScheduledRecording1(this);
+        beginDisableRecordSchedule(aRecordScheduleID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDisableRecordSchedule}.
-	 * 
-	 * @param aRecordScheduleID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDisableRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDisableRecordSchedule}.
+     * 
+     * @param aRecordScheduleID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDisableRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDisableRecordSchedule, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionDisableRecordSchedule.getInputParameter(inIndex++), aRecordScheduleID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDisableRecordSchedule} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDisableRecordSchedule} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDisableRecordSchedule} method.
      */
-	public void endDisableRecordSchedule(long aAsyncHandle)
+    public void endDisableRecordSchedule(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDeleteRecordTask(String aRecordTaskID)
-	{
-	    SyncDeleteRecordTaskUpnpOrgScheduledRecording1 sync = new SyncDeleteRecordTaskUpnpOrgScheduledRecording1(this);
-	    beginDeleteRecordTask(aRecordTaskID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncDeleteRecordTask(String aRecordTaskID)
+    {
+        SyncDeleteRecordTaskUpnpOrgScheduledRecording1 sync = new SyncDeleteRecordTaskUpnpOrgScheduledRecording1(this);
+        beginDeleteRecordTask(aRecordTaskID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDeleteRecordTask}.
-	 * 
-	 * @param aRecordTaskID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDeleteRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDeleteRecordTask}.
+     * 
+     * @param aRecordTaskID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDeleteRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDeleteRecordTask, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionDeleteRecordTask.getInputParameter(inIndex++), aRecordTaskID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDeleteRecordTask} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDeleteRecordTask} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDeleteRecordTask} method.
      */
-	public void endDeleteRecordTask(long aAsyncHandle)
+    public void endDeleteRecordTask(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1614,32 +1614,32 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public GetRecordTask syncGetRecordTask(String aRecordTaskID, String aFilter)
-	{
-	    SyncGetRecordTaskUpnpOrgScheduledRecording1 sync = new SyncGetRecordTaskUpnpOrgScheduledRecording1(this);
-	    beginGetRecordTask(aRecordTaskID, aFilter, sync.getListener());
-	    sync.waitToComplete();
+    public GetRecordTask syncGetRecordTask(String aRecordTaskID, String aFilter)
+    {
+        SyncGetRecordTaskUpnpOrgScheduledRecording1 sync = new SyncGetRecordTaskUpnpOrgScheduledRecording1(this);
+        beginGetRecordTask(aRecordTaskID, aFilter, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetRecordTask(
             sync.getResult(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetRecordTask}.
-	 * 
-	 * @param aRecordTaskID
-	 * @param aFilter
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetRecordTask(String aRecordTaskID, String aFilter, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetRecordTask}.
+     * 
+     * @param aRecordTaskID
+     * @param aFilter
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetRecordTask(String aRecordTaskID, String aFilter, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetRecordTask, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionGetRecordTask.getInputParameter(inIndex++), aRecordTaskID));
@@ -1650,16 +1650,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetRecordTask} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetRecordTask} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetRecordTask} method.
      * @return the result of the previously invoked action.
      */
-	public GetRecordTask endGetRecordTask(long aAsyncHandle)
+    public GetRecordTask endGetRecordTask(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1671,150 +1671,150 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         return new GetRecordTask(
             result,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncEnableRecordTask(String aRecordTaskID)
-	{
-	    SyncEnableRecordTaskUpnpOrgScheduledRecording1 sync = new SyncEnableRecordTaskUpnpOrgScheduledRecording1(this);
-	    beginEnableRecordTask(aRecordTaskID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncEnableRecordTask(String aRecordTaskID)
+    {
+        SyncEnableRecordTaskUpnpOrgScheduledRecording1 sync = new SyncEnableRecordTaskUpnpOrgScheduledRecording1(this);
+        beginEnableRecordTask(aRecordTaskID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endEnableRecordTask}.
-	 * 
-	 * @param aRecordTaskID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginEnableRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endEnableRecordTask}.
+     * 
+     * @param aRecordTaskID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginEnableRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionEnableRecordTask, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionEnableRecordTask.getInputParameter(inIndex++), aRecordTaskID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginEnableRecordTask} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginEnableRecordTask} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginEnableRecordTask} method.
      */
-	public void endEnableRecordTask(long aAsyncHandle)
+    public void endEnableRecordTask(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDisableRecordTask(String aRecordTaskID)
-	{
-	    SyncDisableRecordTaskUpnpOrgScheduledRecording1 sync = new SyncDisableRecordTaskUpnpOrgScheduledRecording1(this);
-	    beginDisableRecordTask(aRecordTaskID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncDisableRecordTask(String aRecordTaskID)
+    {
+        SyncDisableRecordTaskUpnpOrgScheduledRecording1 sync = new SyncDisableRecordTaskUpnpOrgScheduledRecording1(this);
+        beginDisableRecordTask(aRecordTaskID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDisableRecordTask}.
-	 * 
-	 * @param aRecordTaskID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDisableRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDisableRecordTask}.
+     * 
+     * @param aRecordTaskID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDisableRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDisableRecordTask, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionDisableRecordTask.getInputParameter(inIndex++), aRecordTaskID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDisableRecordTask} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDisableRecordTask} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDisableRecordTask} method.
      */
-	public void endDisableRecordTask(long aAsyncHandle)
+    public void endDisableRecordTask(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncResetRecordTask(String aRecordTaskID)
-	{
-	    SyncResetRecordTaskUpnpOrgScheduledRecording1 sync = new SyncResetRecordTaskUpnpOrgScheduledRecording1(this);
-	    beginResetRecordTask(aRecordTaskID, sync.getListener());
-	    sync.waitToComplete();
+    public void syncResetRecordTask(String aRecordTaskID)
+    {
+        SyncResetRecordTaskUpnpOrgScheduledRecording1 sync = new SyncResetRecordTaskUpnpOrgScheduledRecording1(this);
+        beginResetRecordTask(aRecordTaskID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endResetRecordTask}.
-	 * 
-	 * @param aRecordTaskID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginResetRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endResetRecordTask}.
+     * 
+     * @param aRecordTaskID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginResetRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionResetRecordTask, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionResetRecordTask.getInputParameter(inIndex++), aRecordTaskID));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginResetRecordTask} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginResetRecordTask} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginResetRecordTask} method.
      */
-	public void endResetRecordTask(long aAsyncHandle)
+    public void endResetRecordTask(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1822,31 +1822,31 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public GetRecordScheduleConflicts syncGetRecordScheduleConflicts(String aRecordScheduleID)
-	{
-	    SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1 sync = new SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1(this);
-	    beginGetRecordScheduleConflicts(aRecordScheduleID, sync.getListener());
-	    sync.waitToComplete();
+    public GetRecordScheduleConflicts syncGetRecordScheduleConflicts(String aRecordScheduleID)
+    {
+        SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1 sync = new SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1(this);
+        beginGetRecordScheduleConflicts(aRecordScheduleID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetRecordScheduleConflicts(
             sync.getRecordScheduleConflictIDList(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetRecordScheduleConflicts}.
-	 * 
-	 * @param aRecordScheduleID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetRecordScheduleConflicts(String aRecordScheduleID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetRecordScheduleConflicts}.
+     * 
+     * @param aRecordScheduleID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetRecordScheduleConflicts(String aRecordScheduleID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetRecordScheduleConflicts, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionGetRecordScheduleConflicts.getInputParameter(inIndex++), aRecordScheduleID));
@@ -1856,16 +1856,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetRecordScheduleConflicts} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetRecordScheduleConflicts} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetRecordScheduleConflicts} method.
      * @return the result of the previously invoked action.
      */
-	public GetRecordScheduleConflicts endGetRecordScheduleConflicts(long aAsyncHandle)
+    public GetRecordScheduleConflicts endGetRecordScheduleConflicts(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1877,9 +1877,9 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         return new GetRecordScheduleConflicts(
             recordScheduleConflictIDList,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1887,31 +1887,31 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      *
      * @return the result of the invoked action.
      */
-	public GetRecordTaskConflicts syncGetRecordTaskConflicts(String aRecordTaskID)
-	{
-	    SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1 sync = new SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1(this);
-	    beginGetRecordTaskConflicts(aRecordTaskID, sync.getListener());
-	    sync.waitToComplete();
+    public GetRecordTaskConflicts syncGetRecordTaskConflicts(String aRecordTaskID)
+    {
+        SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1 sync = new SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1(this);
+        beginGetRecordTaskConflicts(aRecordTaskID, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetRecordTaskConflicts(
             sync.getRecordTaskConflictIDList(),
             sync.getUpdateID()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetRecordTaskConflicts}.
-	 * 
-	 * @param aRecordTaskID
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetRecordTaskConflicts(String aRecordTaskID, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetRecordTaskConflicts}.
+     * 
+     * @param aRecordTaskID
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetRecordTaskConflicts(String aRecordTaskID, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetRecordTaskConflicts, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionGetRecordTaskConflicts.getInputParameter(inIndex++), aRecordTaskID));
@@ -1921,16 +1921,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetRecordTaskConflicts} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetRecordTaskConflicts} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetRecordTaskConflicts} method.
      * @return the result of the previously invoked action.
      */
-	public GetRecordTaskConflicts endGetRecordTaskConflicts(long aAsyncHandle)
+    public GetRecordTaskConflicts endGetRecordTaskConflicts(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1942,16 +1942,16 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         return new GetRecordTaskConflicts(
             recordTaskConflictIDList,
             updateID
-		);
+        );
     }
-		
+        
     /**
      * Set a delegate to be run when the LastChange state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyUpnpOrgScheduledRecording1 instance will not overlap.
+     * CpProxyUpnpOrgScheduledRecording1 instance will not overlap.
      *
-     * @param aLastChangeChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aLastChangeChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyLastChangeChanged(IPropertyChangeListener aLastChangeChanged)
     {
@@ -1975,7 +1975,7 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the LastChange property.
+     * @return  value of the LastChange property.
      */
     public String getPropertyLastChange()
     {
@@ -1984,7 +1984,7 @@ public class CpProxyUpnpOrgScheduledRecording1 extends CpProxy implements ICpPro
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

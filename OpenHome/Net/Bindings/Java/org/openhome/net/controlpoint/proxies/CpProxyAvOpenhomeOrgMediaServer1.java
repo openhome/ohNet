@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyAvOpenhomeOrgMediaServer1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyAvOpenhomeOrgMediaServer1 extends ICpProxy
 {
     public Manufacturer syncManufacturer();
@@ -84,7 +84,7 @@ class SyncManufacturerAvOpenhomeOrgMediaServer1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Manufacturer result = iService.endManufacturer(aAsyncHandle);
-		
+        
         iName = result.getName();
         iInfo = result.getInfo();
         iUrl = result.getUrl();
@@ -123,7 +123,7 @@ class SyncModelAvOpenhomeOrgMediaServer1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Model result = iService.endModel(aAsyncHandle);
-		
+        
         iName = result.getName();
         iInfo = result.getInfo();
         iUrl = result.getUrl();
@@ -162,7 +162,7 @@ class SyncProductAvOpenhomeOrgMediaServer1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         Product result = iService.endProduct(aAsyncHandle);
-		
+        
         iName = result.getName();
         iInfo = result.getInfo();
         iUrl = result.getUrl();
@@ -186,7 +186,7 @@ class SyncAttributesAvOpenhomeOrgMediaServer1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endAttributes(aAsyncHandle);
-		
+        
         iValue = result;
     }
 }
@@ -207,7 +207,7 @@ class SyncQueryAvOpenhomeOrgMediaServer1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endQuery(aAsyncHandle);
-		
+        
         iResult = result;
     }
 }
@@ -366,7 +366,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyAvOpenhomeOrgMediaServer1(CpDevice aDevice)
@@ -377,83 +377,83 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
 
         iActionManufacturer = new Action("Manufacturer");
         param = new ParameterString("Name", allowedValues);
-		iActionManufacturer.addOutputParameter(param);
+        iActionManufacturer.addOutputParameter(param);
         param = new ParameterString("Info", allowedValues);
-		iActionManufacturer.addOutputParameter(param);
+        iActionManufacturer.addOutputParameter(param);
         param = new ParameterString("Url", allowedValues);
-		iActionManufacturer.addOutputParameter(param);
+        iActionManufacturer.addOutputParameter(param);
         param = new ParameterString("ImageUri", allowedValues);
-		iActionManufacturer.addOutputParameter(param);
+        iActionManufacturer.addOutputParameter(param);
 
         iActionModel = new Action("Model");
         param = new ParameterString("Name", allowedValues);
-		iActionModel.addOutputParameter(param);
+        iActionModel.addOutputParameter(param);
         param = new ParameterString("Info", allowedValues);
-		iActionModel.addOutputParameter(param);
+        iActionModel.addOutputParameter(param);
         param = new ParameterString("Url", allowedValues);
-		iActionModel.addOutputParameter(param);
+        iActionModel.addOutputParameter(param);
         param = new ParameterString("ImageUri", allowedValues);
-		iActionModel.addOutputParameter(param);
+        iActionModel.addOutputParameter(param);
 
         iActionProduct = new Action("Product");
         param = new ParameterString("Name", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
         param = new ParameterString("Info", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
         param = new ParameterString("Url", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
         param = new ParameterString("ImageUri", allowedValues);
-		iActionProduct.addOutputParameter(param);
+        iActionProduct.addOutputParameter(param);
 
         iActionAttributes = new Action("Attributes");
         param = new ParameterString("Value", allowedValues);
-		iActionAttributes.addOutputParameter(param);
+        iActionAttributes.addOutputParameter(param);
 
         iActionQuery = new Action("Query");
         param = new ParameterString("Request", allowedValues);
-		iActionQuery.addInputParameter(param);
+        iActionQuery.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionQuery.addOutputParameter(param);
+        iActionQuery.addOutputParameter(param);
 
         iManufacturerNameChanged = new PropertyChangeListener();
         iManufacturerName = new PropertyString("ManufacturerName", iManufacturerNameChanged);
-		addProperty(iManufacturerName);
+        addProperty(iManufacturerName);
         iManufacturerInfoChanged = new PropertyChangeListener();
         iManufacturerInfo = new PropertyString("ManufacturerInfo", iManufacturerInfoChanged);
-		addProperty(iManufacturerInfo);
+        addProperty(iManufacturerInfo);
         iManufacturerUrlChanged = new PropertyChangeListener();
         iManufacturerUrl = new PropertyString("ManufacturerUrl", iManufacturerUrlChanged);
-		addProperty(iManufacturerUrl);
+        addProperty(iManufacturerUrl);
         iManufacturerImageUriChanged = new PropertyChangeListener();
         iManufacturerImageUri = new PropertyString("ManufacturerImageUri", iManufacturerImageUriChanged);
-		addProperty(iManufacturerImageUri);
+        addProperty(iManufacturerImageUri);
         iModelNameChanged = new PropertyChangeListener();
         iModelName = new PropertyString("ModelName", iModelNameChanged);
-		addProperty(iModelName);
+        addProperty(iModelName);
         iModelInfoChanged = new PropertyChangeListener();
         iModelInfo = new PropertyString("ModelInfo", iModelInfoChanged);
-		addProperty(iModelInfo);
+        addProperty(iModelInfo);
         iModelUrlChanged = new PropertyChangeListener();
         iModelUrl = new PropertyString("ModelUrl", iModelUrlChanged);
-		addProperty(iModelUrl);
+        addProperty(iModelUrl);
         iModelImageUriChanged = new PropertyChangeListener();
         iModelImageUri = new PropertyString("ModelImageUri", iModelImageUriChanged);
-		addProperty(iModelImageUri);
+        addProperty(iModelImageUri);
         iProductNameChanged = new PropertyChangeListener();
         iProductName = new PropertyString("ProductName", iProductNameChanged);
-		addProperty(iProductName);
+        addProperty(iProductName);
         iProductInfoChanged = new PropertyChangeListener();
         iProductInfo = new PropertyString("ProductInfo", iProductInfoChanged);
-		addProperty(iProductInfo);
+        addProperty(iProductInfo);
         iProductUrlChanged = new PropertyChangeListener();
         iProductUrl = new PropertyString("ProductUrl", iProductUrlChanged);
-		addProperty(iProductUrl);
+        addProperty(iProductUrl);
         iProductImageUriChanged = new PropertyChangeListener();
         iProductImageUri = new PropertyString("ProductImageUri", iProductImageUriChanged);
-		addProperty(iProductImageUri);
+        addProperty(iProductImageUri);
         iAttributesChanged = new PropertyChangeListener();
         iAttributes = new PropertyString("Attributes", iAttributesChanged);
-		addProperty(iAttributes);
+        addProperty(iAttributes);
         iPropertyLock = new Object();
     }
     /**
@@ -463,11 +463,11 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public Manufacturer syncManufacturer()
-	{
-	    SyncManufacturerAvOpenhomeOrgMediaServer1 sync = new SyncManufacturerAvOpenhomeOrgMediaServer1(this);
-	    beginManufacturer(sync.getListener());
-	    sync.waitToComplete();
+    public Manufacturer syncManufacturer()
+    {
+        SyncManufacturerAvOpenhomeOrgMediaServer1 sync = new SyncManufacturerAvOpenhomeOrgMediaServer1(this);
+        beginManufacturer(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Manufacturer(
@@ -475,20 +475,20 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             sync.getInfo(),
             sync.getUrl(),
             sync.getImageUri()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endManufacturer}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginManufacturer(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endManufacturer}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginManufacturer(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionManufacturer, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionManufacturer.getOutputParameter(outIndex++)));
@@ -498,16 +498,16 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginManufacturer} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginManufacturer} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginManufacturer} method.
      * @return the result of the previously invoked action.
      */
-	public Manufacturer endManufacturer(long aAsyncHandle)
+    public Manufacturer endManufacturer(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -523,9 +523,9 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             info,
             url,
             imageUri
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -533,11 +533,11 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public Model syncModel()
-	{
-	    SyncModelAvOpenhomeOrgMediaServer1 sync = new SyncModelAvOpenhomeOrgMediaServer1(this);
-	    beginModel(sync.getListener());
-	    sync.waitToComplete();
+    public Model syncModel()
+    {
+        SyncModelAvOpenhomeOrgMediaServer1 sync = new SyncModelAvOpenhomeOrgMediaServer1(this);
+        beginModel(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Model(
@@ -545,20 +545,20 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             sync.getInfo(),
             sync.getUrl(),
             sync.getImageUri()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endModel}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginModel(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endModel}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginModel(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionModel, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionModel.getOutputParameter(outIndex++)));
@@ -568,16 +568,16 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginModel} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginModel} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginModel} method.
      * @return the result of the previously invoked action.
      */
-	public Model endModel(long aAsyncHandle)
+    public Model endModel(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -593,9 +593,9 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             info,
             url,
             imageUri
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -603,11 +603,11 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public Product syncProduct()
-	{
-	    SyncProductAvOpenhomeOrgMediaServer1 sync = new SyncProductAvOpenhomeOrgMediaServer1(this);
-	    beginProduct(sync.getListener());
-	    sync.waitToComplete();
+    public Product syncProduct()
+    {
+        SyncProductAvOpenhomeOrgMediaServer1 sync = new SyncProductAvOpenhomeOrgMediaServer1(this);
+        beginProduct(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new Product(
@@ -615,20 +615,20 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             sync.getInfo(),
             sync.getUrl(),
             sync.getImageUri()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endProduct}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginProduct(ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endProduct}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginProduct(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionProduct, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionProduct.getOutputParameter(outIndex++)));
@@ -638,16 +638,16 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginProduct} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginProduct} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginProduct} method.
      * @return the result of the previously invoked action.
      */
-	public Product endProduct(long aAsyncHandle)
+    public Product endProduct(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -663,9 +663,9 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             info,
             url,
             imageUri
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -673,43 +673,43 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public String syncAttributes()
-	{
-	    SyncAttributesAvOpenhomeOrgMediaServer1 sync = new SyncAttributesAvOpenhomeOrgMediaServer1(this);
-	    beginAttributes(sync.getListener());
-	    sync.waitToComplete();
+    public String syncAttributes()
+    {
+        SyncAttributesAvOpenhomeOrgMediaServer1 sync = new SyncAttributesAvOpenhomeOrgMediaServer1(this);
+        beginAttributes(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValue();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endAttributes}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginAttributes(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endAttributes}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginAttributes(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionAttributes, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionAttributes.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginAttributes} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginAttributes} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginAttributes} method.
      * @return the result of the previously invoked action.
      */
-	public String endAttributes(long aAsyncHandle)
+    public String endAttributes(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -719,7 +719,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         String value = Invocation.getOutputString(aAsyncHandle, index++);
         return value;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -727,28 +727,28 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      *
      * @return the result of the invoked action.
      */
-	public String syncQuery(String aRequest)
-	{
-	    SyncQueryAvOpenhomeOrgMediaServer1 sync = new SyncQueryAvOpenhomeOrgMediaServer1(this);
-	    beginQuery(aRequest, sync.getListener());
-	    sync.waitToComplete();
+    public String syncQuery(String aRequest)
+    {
+        SyncQueryAvOpenhomeOrgMediaServer1 sync = new SyncQueryAvOpenhomeOrgMediaServer1(this);
+        beginQuery(aRequest, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getResult();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endQuery}.
-	 * 
-	 * @param aRequest
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginQuery(String aRequest, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endQuery}.
+     * 
+     * @param aRequest
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginQuery(String aRequest, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionQuery, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionQuery.getInputParameter(inIndex++), aRequest));
@@ -757,16 +757,16 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginQuery} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginQuery} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginQuery} method.
      * @return the result of the previously invoked action.
      */
-	public String endQuery(long aAsyncHandle)
+    public String endQuery(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -776,14 +776,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         String result = Invocation.getOutputString(aAsyncHandle, index++);
         return result;
     }
-		
+        
     /**
      * Set a delegate to be run when the ManufacturerName state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aManufacturerNameChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aManufacturerNameChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyManufacturerNameChanged(IPropertyChangeListener aManufacturerNameChanged)
     {
@@ -803,10 +803,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ManufacturerInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aManufacturerInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aManufacturerInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyManufacturerInfoChanged(IPropertyChangeListener aManufacturerInfoChanged)
     {
@@ -826,10 +826,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ManufacturerUrl state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aManufacturerUrlChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aManufacturerUrlChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyManufacturerUrlChanged(IPropertyChangeListener aManufacturerUrlChanged)
     {
@@ -849,10 +849,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ManufacturerImageUri state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aManufacturerImageUriChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aManufacturerImageUriChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyManufacturerImageUriChanged(IPropertyChangeListener aManufacturerImageUriChanged)
     {
@@ -872,10 +872,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ModelName state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aModelNameChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aModelNameChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyModelNameChanged(IPropertyChangeListener aModelNameChanged)
     {
@@ -895,10 +895,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ModelInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aModelInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aModelInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyModelInfoChanged(IPropertyChangeListener aModelInfoChanged)
     {
@@ -918,10 +918,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ModelUrl state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aModelUrlChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aModelUrlChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyModelUrlChanged(IPropertyChangeListener aModelUrlChanged)
     {
@@ -941,10 +941,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ModelImageUri state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aModelImageUriChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aModelImageUriChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyModelImageUriChanged(IPropertyChangeListener aModelImageUriChanged)
     {
@@ -964,10 +964,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ProductName state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aProductNameChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductNameChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductNameChanged(IPropertyChangeListener aProductNameChanged)
     {
@@ -987,10 +987,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ProductInfo state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aProductInfoChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductInfoChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductInfoChanged(IPropertyChangeListener aProductInfoChanged)
     {
@@ -1010,10 +1010,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ProductUrl state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aProductUrlChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductUrlChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductUrlChanged(IPropertyChangeListener aProductUrlChanged)
     {
@@ -1033,10 +1033,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the ProductImageUri state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aProductImageUriChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aProductImageUriChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyProductImageUriChanged(IPropertyChangeListener aProductImageUriChanged)
     {
@@ -1056,10 +1056,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     /**
      * Set a delegate to be run when the Attributes state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
      *
-     * @param aAttributesChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aAttributesChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyAttributesChanged(IPropertyChangeListener aAttributesChanged)
     {
@@ -1083,7 +1083,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ManufacturerName property.
+     * @return  value of the ManufacturerName property.
      */
     public String getPropertyManufacturerName()
     {
@@ -1092,14 +1092,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ManufacturerInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ManufacturerInfo property.
+     * @return  value of the ManufacturerInfo property.
      */
     public String getPropertyManufacturerInfo()
     {
@@ -1108,14 +1108,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ManufacturerUrl property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ManufacturerUrl property.
+     * @return  value of the ManufacturerUrl property.
      */
     public String getPropertyManufacturerUrl()
     {
@@ -1124,14 +1124,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ManufacturerImageUri property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ManufacturerImageUri property.
+     * @return  value of the ManufacturerImageUri property.
      */
     public String getPropertyManufacturerImageUri()
     {
@@ -1140,14 +1140,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ModelName property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ModelName property.
+     * @return  value of the ModelName property.
      */
     public String getPropertyModelName()
     {
@@ -1156,14 +1156,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ModelInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ModelInfo property.
+     * @return  value of the ModelInfo property.
      */
     public String getPropertyModelInfo()
     {
@@ -1172,14 +1172,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ModelUrl property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ModelUrl property.
+     * @return  value of the ModelUrl property.
      */
     public String getPropertyModelUrl()
     {
@@ -1188,14 +1188,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ModelImageUri property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ModelImageUri property.
+     * @return  value of the ModelImageUri property.
      */
     public String getPropertyModelImageUri()
     {
@@ -1204,14 +1204,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductName property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductName property.
+     * @return  value of the ProductName property.
      */
     public String getPropertyProductName()
     {
@@ -1220,14 +1220,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductInfo property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductInfo property.
+     * @return  value of the ProductInfo property.
      */
     public String getPropertyProductInfo()
     {
@@ -1236,14 +1236,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductUrl property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductUrl property.
+     * @return  value of the ProductUrl property.
      */
     public String getPropertyProductUrl()
     {
@@ -1252,14 +1252,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the ProductImageUri property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the ProductImageUri property.
+     * @return  value of the ProductImageUri property.
      */
     public String getPropertyProductImageUri()
     {
@@ -1268,14 +1268,14 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the Attributes property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the Attributes property.
+     * @return  value of the Attributes property.
      */
     public String getPropertyAttributes()
     {
@@ -1284,7 +1284,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

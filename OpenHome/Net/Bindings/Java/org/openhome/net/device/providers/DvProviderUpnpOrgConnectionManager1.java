@@ -12,8 +12,8 @@ interface IDvProviderUpnpOrgConnectionManager1
     /**
      * Set the value of the SourceProtocolInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySourceProtocolInfo(String aValue);
@@ -28,8 +28,8 @@ interface IDvProviderUpnpOrgConnectionManager1
     /**
      * Set the value of the SinkProtocolInfo property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySinkProtocolInfo(String aValue);
@@ -44,8 +44,8 @@ interface IDvProviderUpnpOrgConnectionManager1
     /**
      * Set the value of the CurrentConnectionIDs property
      *
-     * @param aValue	new value for the property.
-     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyCurrentConnectionIDs(String aValue);
@@ -188,11 +188,11 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
     /**
      * Constructor
      *
-     * @param aDevice	device which owns this provider.
+     * @param aDevice   device which owns this provider.
      */
     protected DvProviderUpnpOrgConnectionManager1(DvDevice aDevice)
     {
-	    super(aDevice, "upnp.org", "ConnectionManager", 1);
+        super(aDevice, "upnp.org", "ConnectionManager", 1);
     }
 
     /**
@@ -228,7 +228,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
     /**
      * Set the value of the SourceProtocolInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -240,7 +240,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
     /**
      * Get a copy of the value of the SourceProtocolInfo property
      *
-     * @return	value of the SourceProtocolInfo property.
+     * @return  value of the SourceProtocolInfo property.
      */
     public String getPropertySourceProtocolInfo()
     {
@@ -250,7 +250,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
     /**
      * Set the value of the SinkProtocolInfo property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -262,7 +262,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
     /**
      * Get a copy of the value of the SinkProtocolInfo property
      *
-     * @return	value of the SinkProtocolInfo property.
+     * @return  value of the SinkProtocolInfo property.
      */
     public String getPropertySinkProtocolInfo()
     {
@@ -272,7 +272,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
     /**
      * Set the value of the CurrentConnectionIDs property
      *
-     * @param aValue	new value for the property.
+     * @param aValue    new value for the property.
      * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
      * if <tt>aValue</tt> was the same as the previous value.
      */
@@ -284,7 +284,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
     /**
      * Get a copy of the value of the CurrentConnectionIDs property
      *
-     * @return	value of the CurrentConnectionIDs property.
+     * @return  value of the CurrentConnectionIDs property.
      */
     public String getPropertyCurrentConnectionIDs()
     {
@@ -296,7 +296,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetProtocolInfo must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetProtocolInfo()
     {
         Action action = new Action("GetProtocolInfo");
@@ -311,7 +311,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * PrepareForConnection must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionPrepareForConnection()
     {
         Action action = new Action("PrepareForConnection");        List<String> allowedValues = new LinkedList<String>();
@@ -334,7 +334,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * ConnectionComplete must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionConnectionComplete()
     {
         Action action = new Action("ConnectionComplete");
@@ -348,7 +348,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetCurrentConnectionIDs must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetCurrentConnectionIDs()
     {
         Action action = new Action("GetCurrentConnectionIDs");
@@ -362,7 +362,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>The action's availability will be published in the device's service.xml.
      * GetCurrentConnectionInfo must be overridden if this is called.
-     */		 
+     */      
     protected void enableActionGetCurrentConnectionInfo()
     {
         Action action = new Action("GetCurrentConnectionInfo");        List<String> allowedValues = new LinkedList<String>();
@@ -395,7 +395,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionGetProtocolInfo} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected GetProtocolInfo getProtocolInfo(IDvInvocation aInvocation)
     {
@@ -410,7 +410,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionPrepareForConnection} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aRemoteProtocolInfo
      * @param aPeerConnectionManager
      * @param aPeerConnectionID
@@ -429,7 +429,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionConnectionComplete} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aConnectionID
      */
     protected void connectionComplete(IDvInvocation aInvocation, int aConnectionID)
@@ -445,7 +445,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionGetCurrentConnectionIDs} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String getCurrentConnectionIDs(IDvInvocation aInvocation)
     {
@@ -460,7 +460,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * <p>Must be implemented iff {@link #enableActionGetCurrentConnectionInfo} was called.</remarks>
      *
-     * @param aInvocation	Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      * @param aConnectionID
      */
     protected GetCurrentConnectionInfo getCurrentConnectionInfo(IDvInvocation aInvocation, int aConnectionID)
@@ -536,7 +536,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoPrepareForConnection implements IDvInvocationListener
     {
@@ -600,7 +600,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoConnectionComplete implements IDvInvocationListener
     {
@@ -648,7 +648,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetCurrentConnectionIDs implements IDvInvocationListener
     {
@@ -696,7 +696,7 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private class DoGetCurrentConnectionInfo implements IDvInvocationListener
     {
@@ -766,6 +766,6 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
                 e.printStackTrace();
             }
         }
-	}
+    }
 }
 

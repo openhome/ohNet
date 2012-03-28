@@ -5,32 +5,36 @@
 * @module ohnet
 * @class Playlist
 */
-	
-var CpProxyAvOpenhomeOrgPlaylist1 = function(udn){	
+    
+var CpProxyAvOpenhomeOrgPlaylist1 = function(udn){ 
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/av.openhome.org-Playlist-1/control";  // upnp control url
-	this.domain = "av-openhome-org";
-	this.type = "Playlist";
-	this.version = "1";
-	this.serviceName = "av.openhome.org-Playlist-1";
-	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
-	this.udn = udn;   // device name
-	
-	// Collection of service properties
-	this.serviceProperties = {};
-	this.serviceProperties["TransportState"] = new ohnet.serviceproperty("TransportState","string");
-	this.serviceProperties["Repeat"] = new ohnet.serviceproperty("Repeat","bool");
-	this.serviceProperties["Shuffle"] = new ohnet.serviceproperty("Shuffle","bool");
-	this.serviceProperties["Id"] = new ohnet.serviceproperty("Id","int");
-	this.serviceProperties["IdArray"] = new ohnet.serviceproperty("IdArray","binary");
-	this.serviceProperties["TracksMax"] = new ohnet.serviceproperty("TracksMax","int");
-	this.serviceProperties["ProtocolInfo"] = new ohnet.serviceproperty("ProtocolInfo","string");
+    this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/av.openhome.org-Playlist-1/control";  // upnp control url
+    this.domain = "av-openhome-org";
+    this.type = "Playlist";
+    this.version = "1";
+    this.serviceName = "av.openhome.org-Playlist-1";
+    this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+    this.udn = udn;   // device name
+    
+    // Collection of service properties
+    this.serviceProperties = {};
+    this.serviceProperties["TransportState"] = new ohnet.serviceproperty("TransportState","string");
+    this.serviceProperties["Repeat"] = new ohnet.serviceproperty("Repeat","bool");
+    this.serviceProperties["Shuffle"] = new ohnet.serviceproperty("Shuffle","bool");
+    this.serviceProperties["Id"] = new ohnet.serviceproperty("Id","int");
+    this.serviceProperties["IdArray"] = new ohnet.serviceproperty("IdArray","binary");
+    this.serviceProperties["TracksMax"] = new ohnet.serviceproperty("TracksMax","int");
+    this.serviceProperties["ProtocolInfo"] = new ohnet.serviceproperty("ProtocolInfo","string");
+
+            
+    this.TransportStateAllowedValues = [];
+    this.TransportStateAllowedValues.push("Playing");
+    this.TransportStateAllowedValues.push("Paused");
+    this.TransportStateAllowedValues.push("Stopped");
+    this.TransportStateAllowedValues.push("Buffering");
+                                    
 }
 
-ServicePlaylist.kTransportStatePlaying = "Playing";
-ServicePlaylist.kTransportStatePaused = "Paused";
-ServicePlaylist.kTransportStateStopped = "Stopped";
-ServicePlaylist.kTransportStateBuffering = "Buffering";
 
 
 /**
@@ -52,7 +56,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.unsubscribe = function () {
 }
 
 
-	
+    
 
 /**
 * Adds a listener to handle "TransportState" property change events
@@ -61,11 +65,11 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.unsubscribe = function () {
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState_Changed = function (stateChangedFunction) {
     this.serviceProperties.TransportState.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "Repeat" property change events
@@ -74,11 +78,11 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState_Changed = function (state
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat_Changed = function (stateChangedFunction) {
     this.serviceProperties.Repeat.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "Shuffle" property change events
@@ -87,11 +91,11 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat_Changed = function (stateChangedF
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle_Changed = function (stateChangedFunction) {
     this.serviceProperties.Shuffle.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readBoolParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "Id" property change events
@@ -100,11 +104,11 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle_Changed = function (stateChanged
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Id_Changed = function (stateChangedFunction) {
     this.serviceProperties.Id.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "IdArray" property change events
@@ -113,11 +117,11 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Id_Changed = function (stateChangedFunct
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray_Changed = function (stateChangedFunction) {
     this.serviceProperties.IdArray.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readBinaryParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readBinaryParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "TracksMax" property change events
@@ -126,11 +130,11 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray_Changed = function (stateChanged
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax_Changed = function (stateChangedFunction) {
     this.serviceProperties.TracksMax.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "ProtocolInfo" property change events
@@ -139,9 +143,9 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax_Changed = function (stateChang
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.ProtocolInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProtocolInfo.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
+    });
 }
 
 
@@ -151,16 +155,16 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.ProtocolInfo_Changed = function (stateCh
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Play = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Play", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Play = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Play", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -170,16 +174,16 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Play = function(successFunction, errorFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Pause = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Pause", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Pause = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Pause", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -189,16 +193,16 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Pause = function(successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Stop = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Stop", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Stop = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Stop", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -208,16 +212,16 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Stop = function(successFunction, errorFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Next = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Next", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Next = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Next", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -227,16 +231,16 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Next = function(successFunction, errorFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Previous = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Previous", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Previous = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Previous", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -247,17 +251,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Previous = function(successFunction, err
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.SetRepeat = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SetRepeat", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.SetRepeat = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SetRepeat", this.url, this.domain, this.type, this.version);     
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -267,17 +271,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SetRepeat = function(Value, successFunct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Repeat", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Repeat", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -288,17 +292,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat = function(successFunction, error
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.SetShuffle = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SetShuffle", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.SetShuffle = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SetShuffle", this.url, this.domain, this.type, this.version);     
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -308,17 +312,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SetShuffle = function(Value, successFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Shuffle", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Shuffle", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -329,17 +333,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle = function(successFunction, erro
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondAbsolute = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SeekSecondAbsolute", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondAbsolute = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SeekSecondAbsolute", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -350,17 +354,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondAbsolute = function(Value, suc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondRelative = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SeekSecondRelative", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondRelative = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SeekSecondRelative", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -371,17 +375,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondRelative = function(Value, suc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekId = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SeekId", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekId = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SeekId", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -392,17 +396,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekId = function(Value, successFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekIndex = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("SeekIndex", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekIndex = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("SeekIndex", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -412,17 +416,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekIndex = function(Value, successFunct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("TransportState", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("TransportState", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -432,17 +436,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState = function(successFunctio
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Id = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Id", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Id = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Id", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -453,19 +457,19 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Id = function(successFunction, errorFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Read = function(Id, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Read", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Read = function(Id, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Read", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Id", Id);
     request.send(function(result){
-		result["Uri"] = ohnet.soaprequest.readStringParameter(result["Uri"]);	
-		result["Metadata"] = ohnet.soaprequest.readStringParameter(result["Metadata"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Uri"] = ohnet.soaprequest.readStringParameter(result["Uri"]); 
+        result["Metadata"] = ohnet.soaprequest.readStringParameter(result["Metadata"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -476,18 +480,18 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Read = function(Id, successFunction, err
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.ReadList = function(IdList, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("ReadList", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.ReadList = function(IdList, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("ReadList", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("IdList", IdList);
     request.send(function(result){
-		result["TrackList"] = ohnet.soaprequest.readStringParameter(result["TrackList"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["TrackList"] = ohnet.soaprequest.readStringParameter(result["TrackList"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -500,20 +504,20 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.ReadList = function(IdList, successFunct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.Insert = function(AfterId, Uri, Metadata, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("Insert", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.Insert = function(AfterId, Uri, Metadata, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("Insert", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("AfterId", AfterId);
     request.writeStringParameter("Uri", Uri);
     request.writeStringParameter("Metadata", Metadata);
     request.send(function(result){
-		result["NewId"] = ohnet.soaprequest.readIntParameter(result["NewId"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["NewId"] = ohnet.soaprequest.readIntParameter(result["NewId"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -524,17 +528,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Insert = function(AfterId, Uri, Metadata
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteId = function(Value, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("DeleteId", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteId = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("DeleteId", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Value", Value);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -544,16 +548,16 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteId = function(Value, successFuncti
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteAll = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("DeleteAll", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteAll = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("DeleteAll", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -563,17 +567,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteAll = function(successFunction, er
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("TracksMax", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("TracksMax", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -583,18 +587,18 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax = function(successFunction, er
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("IdArray", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("IdArray", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Token"] = ohnet.soaprequest.readIntParameter(result["Token"]);	
-		result["Array"] = ohnet.soaprequest.readBinaryParameter(result["Array"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Token"] = ohnet.soaprequest.readIntParameter(result["Token"]); 
+        result["Array"] = ohnet.soaprequest.readBinaryParameter(result["Array"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -605,18 +609,18 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray = function(successFunction, erro
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArrayChanged = function(Token, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("IdArrayChanged", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArrayChanged = function(Token, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("IdArrayChanged", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("Token", Token);
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readBoolParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -626,17 +630,17 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArrayChanged = function(Token, success
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylist1.prototype.ProtocolInfo = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("ProtocolInfo", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylist1.prototype.ProtocolInfo = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("ProtocolInfo", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 

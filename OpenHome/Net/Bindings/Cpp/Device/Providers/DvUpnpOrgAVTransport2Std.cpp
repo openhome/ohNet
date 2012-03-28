@@ -342,8 +342,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetAVTransportURI(IDviInvocation& aInvo
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetAVTransportURI(invocation, InstanceID, CurrentURI, CurrentURIMetaData);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoSetNextAVTransportURI(IDviInvocation& aInvocation)
@@ -359,8 +359,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetNextAVTransportURI(IDviInvocation& a
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetNextAVTransportURI(invocation, InstanceID, NextURI, NextURIMetaData);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocation)
@@ -379,7 +379,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocatio
     std::string respWriteStatus;
     DvInvocationStd invocation(aInvocation);
     GetMediaInfo(invocation, InstanceID, respNrTracks, respMediaDuration, respCurrentURI, respCurrentURIMetaData, respNextURI, respNextURIMetaData, respPlayMedium, respRecordMedium, respWriteStatus);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterNrTracks(aInvocation, "NrTracks");
     respWriterNrTracks.Write(respNrTracks);
     DviInvocationResponseString respWriterMediaDuration(aInvocation, "MediaDuration");
@@ -414,7 +414,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo(IDviInvocation& aInvocatio
     Brn buf_WriteStatus((const TByte*)respWriteStatus.c_str(), (TUint)respWriteStatus.length());
     respWriterWriteStatus.Write(buf_WriteStatus);
     aInvocation.InvocationWriteStringEnd("WriteStatus");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvocation)
@@ -434,7 +434,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvoc
     std::string respWriteStatus;
     DvInvocationStd invocation(aInvocation);
     GetMediaInfo_Ext(invocation, InstanceID, respCurrentType, respNrTracks, respMediaDuration, respCurrentURI, respCurrentURIMetaData, respNextURI, respNextURIMetaData, respPlayMedium, respRecordMedium, respWriteStatus);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterCurrentType(aInvocation, "CurrentType");
     Brn buf_CurrentType((const TByte*)respCurrentType.c_str(), (TUint)respCurrentType.length());
     respWriterCurrentType.Write(buf_CurrentType);
@@ -473,7 +473,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext(IDviInvocation& aInvoc
     Brn buf_WriteStatus((const TByte*)respWriteStatus.c_str(), (TUint)respWriteStatus.length());
     respWriterWriteStatus.Write(buf_WriteStatus);
     aInvocation.InvocationWriteStringEnd("WriteStatus");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvocation)
@@ -486,7 +486,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvoc
     std::string respCurrentSpeed;
     DvInvocationStd invocation(aInvocation);
     GetTransportInfo(invocation, InstanceID, respCurrentTransportState, respCurrentTransportStatus, respCurrentSpeed);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterCurrentTransportState(aInvocation, "CurrentTransportState");
     Brn buf_CurrentTransportState((const TByte*)respCurrentTransportState.c_str(), (TUint)respCurrentTransportState.length());
     respWriterCurrentTransportState.Write(buf_CurrentTransportState);
@@ -499,7 +499,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo(IDviInvocation& aInvoc
     Brn buf_CurrentSpeed((const TByte*)respCurrentSpeed.c_str(), (TUint)respCurrentSpeed.length());
     respWriterCurrentSpeed.Write(buf_CurrentSpeed);
     aInvocation.InvocationWriteStringEnd("CurrentSpeed");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvocation)
@@ -517,7 +517,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvoca
     int32_t respAbsCount;
     DvInvocationStd invocation(aInvocation);
     GetPositionInfo(invocation, InstanceID, respTrack, respTrackDuration, respTrackMetaData, respTrackURI, respRelTime, respAbsTime, respRelCount, respAbsCount);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterTrack(aInvocation, "Track");
     respWriterTrack.Write(respTrack);
     DviInvocationResponseString respWriterTrackDuration(aInvocation, "TrackDuration");
@@ -544,7 +544,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetPositionInfo(IDviInvocation& aInvoca
     respWriterRelCount.Write(respRelCount);
     DviInvocationResponseInt respWriterAbsCount(aInvocation, "AbsCount");
     respWriterAbsCount.Write(respAbsCount);
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& aInvocation)
@@ -557,7 +557,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& a
     std::string respRecQualityModes;
     DvInvocationStd invocation(aInvocation);
     GetDeviceCapabilities(invocation, InstanceID, respPlayMedia, respRecMedia, respRecQualityModes);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterPlayMedia(aInvocation, "PlayMedia");
     Brn buf_PlayMedia((const TByte*)respPlayMedia.c_str(), (TUint)respPlayMedia.length());
     respWriterPlayMedia.Write(buf_PlayMedia);
@@ -570,7 +570,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetDeviceCapabilities(IDviInvocation& a
     Brn buf_RecQualityModes((const TByte*)respRecQualityModes.c_str(), (TUint)respRecQualityModes.length());
     respWriterRecQualityModes.Write(buf_RecQualityModes);
     aInvocation.InvocationWriteStringEnd("RecQualityModes");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings(IDviInvocation& aInvocation)
@@ -582,7 +582,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings(IDviInvocation& aI
     std::string respRecQualityMode;
     DvInvocationStd invocation(aInvocation);
     GetTransportSettings(invocation, InstanceID, respPlayMode, respRecQualityMode);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterPlayMode(aInvocation, "PlayMode");
     Brn buf_PlayMode((const TByte*)respPlayMode.c_str(), (TUint)respPlayMode.length());
     respWriterPlayMode.Write(buf_PlayMode);
@@ -591,7 +591,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings(IDviInvocation& aI
     Brn buf_RecQualityMode((const TByte*)respRecQualityMode.c_str(), (TUint)respRecQualityMode.length());
     respWriterRecQualityMode.Write(buf_RecQualityMode);
     aInvocation.InvocationWriteStringEnd("RecQualityMode");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoStop(IDviInvocation& aInvocation)
@@ -601,8 +601,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoStop(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     Stop(invocation, InstanceID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoPlay(IDviInvocation& aInvocation)
@@ -615,8 +615,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoPlay(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     Play(invocation, InstanceID, Speed);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoPause(IDviInvocation& aInvocation)
@@ -626,8 +626,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoPause(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     Pause(invocation, InstanceID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoRecord(IDviInvocation& aInvocation)
@@ -637,8 +637,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoRecord(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     Record(invocation, InstanceID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoSeek(IDviInvocation& aInvocation)
@@ -654,8 +654,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSeek(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     Seek(invocation, InstanceID, Unit, Target);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoNext(IDviInvocation& aInvocation)
@@ -665,8 +665,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoNext(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     Next(invocation, InstanceID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoPrevious(IDviInvocation& aInvocation)
@@ -676,8 +676,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoPrevious(IDviInvocation& aInvocation)
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     Previous(invocation, InstanceID);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode(IDviInvocation& aInvocation)
@@ -690,8 +690,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode(IDviInvocation& aInvocation
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetPlayMode(invocation, InstanceID, NewPlayMode);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoSetRecordQualityMode(IDviInvocation& aInvocation)
@@ -704,8 +704,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetRecordQualityMode(IDviInvocation& aI
     aInvocation.InvocationReadEnd();
     DvInvocationStd invocation(aInvocation);
     SetRecordQualityMode(invocation, InstanceID, NewRecordQualityMode);
-	aInvocation.InvocationWriteStart();
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetCurrentTransportActions(IDviInvocation& aInvocation)
@@ -716,12 +716,12 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetCurrentTransportActions(IDviInvocati
     std::string respActions;
     DvInvocationStd invocation(aInvocation);
     GetCurrentTransportActions(invocation, InstanceID, respActions);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterActions(aInvocation, "Actions");
     Brn buf_Actions((const TByte*)respActions.c_str(), (TUint)respActions.length());
     respWriterActions.Write(buf_Actions);
     aInvocation.InvocationWriteStringEnd("Actions");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetDRMState(IDviInvocation& aInvocation)
@@ -732,12 +732,12 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetDRMState(IDviInvocation& aInvocation
     std::string respCurrentDRMState;
     DvInvocationStd invocation(aInvocation);
     GetDRMState(invocation, InstanceID, respCurrentDRMState);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterCurrentDRMState(aInvocation, "CurrentDRMState");
     Brn buf_CurrentDRMState((const TByte*)respCurrentDRMState.c_str(), (TUint)respCurrentDRMState.length());
     respWriterCurrentDRMState.Write(buf_CurrentDRMState);
     aInvocation.InvocationWriteStringEnd("CurrentDRMState");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoGetStateVariables(IDviInvocation& aInvocation)
@@ -751,12 +751,12 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoGetStateVariables(IDviInvocation& aInvo
     std::string respStateVariableValuePairs;
     DvInvocationStd invocation(aInvocation);
     GetStateVariables(invocation, InstanceID, StateVariableList, respStateVariableValuePairs);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
     Brn buf_StateVariableValuePairs((const TByte*)respStateVariableValuePairs.c_str(), (TUint)respStateVariableValuePairs.length());
     respWriterStateVariableValuePairs.Write(buf_StateVariableValuePairs);
     aInvocation.InvocationWriteStringEnd("StateVariableValuePairs");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::DoSetStateVariables(IDviInvocation& aInvocation)
@@ -779,12 +779,12 @@ void DvProviderUpnpOrgAVTransport2Cpp::DoSetStateVariables(IDviInvocation& aInvo
     std::string respStateVariableList;
     DvInvocationStd invocation(aInvocation);
     SetStateVariables(invocation, InstanceID, AVTransportUDN, ServiceType, ServiceId, StateVariableValuePairs, respStateVariableList);
-	aInvocation.InvocationWriteStart();
+    aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterStateVariableList(aInvocation, "StateVariableList");
     Brn buf_StateVariableList((const TByte*)respStateVariableList.c_str(), (TUint)respStateVariableList.length());
     respWriterStateVariableList.Write(buf_StateVariableList);
     aInvocation.InvocationWriteStringEnd("StateVariableList");
-	aInvocation.InvocationWriteEnd();
+    aInvocation.InvocationWriteEnd();
 }
 
 void DvProviderUpnpOrgAVTransport2Cpp::SetAVTransportURI(IDvInvocationStd& /*aInvocation*/, uint32_t /*aInstanceID*/, const std::string& /*aCurrentURI*/, const std::string& /*aCurrentURIMetaData*/)

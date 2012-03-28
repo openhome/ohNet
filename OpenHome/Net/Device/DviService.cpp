@@ -195,17 +195,17 @@ TUint DviInvocation::Version() const
 
 void DviInvocation::Error(TInt aCode, const Brx& aReason)
 {
-	iInvocation.InvocationReportError(aCode, aReason);
+    iInvocation.InvocationReportError(aCode, aReason);
 }
 
 void DviInvocation::StartResponse()
 {
-	iInvocation.InvocationWriteStart();
+    iInvocation.InvocationWriteStart();
 }
 
 void DviInvocation::EndResponse()
 {
-	iInvocation.InvocationWriteEnd();
+    iInvocation.InvocationWriteEnd();
 }
 
 TIpAddress DviInvocation::Adapter() const
@@ -229,7 +229,7 @@ DviInvocationResponseBool::DviInvocationResponseBool(IDviInvocation& aInvocation
 
 void DviInvocationResponseBool::Write(TBool aValue)
 {
-	iInvocation.InvocationWriteBool(iName, aValue);
+    iInvocation.InvocationWriteBool(iName, aValue);
 }
 
 
@@ -243,7 +243,7 @@ DviInvocationResponseUint::DviInvocationResponseUint(IDviInvocation& aInvocation
 
 void DviInvocationResponseUint::Write(TUint aValue)
 {
-	iInvocation.InvocationWriteUint(iName, aValue);
+    iInvocation.InvocationWriteUint(iName, aValue);
 }
 
 
@@ -257,7 +257,7 @@ DviInvocationResponseInt::DviInvocationResponseInt(IDviInvocation& aInvocation, 
 
 void DviInvocationResponseInt::Write(TInt aValue)
 {
-	iInvocation.InvocationWriteInt(iName, aValue);
+    iInvocation.InvocationWriteInt(iName, aValue);
 }
 
 
@@ -272,28 +272,28 @@ DviInvocationResponseBinary::DviInvocationResponseBinary(IDviInvocation& aInvoca
 
 void DviInvocationResponseBinary::CheckFirst()
 {
-	if (iFirst) {
-		iInvocation.InvocationWriteBinaryStart(iName);
-		iFirst = false;
-	}
+    if (iFirst) {
+        iInvocation.InvocationWriteBinaryStart(iName);
+        iFirst = false;
+    }
 }
 
 void DviInvocationResponseBinary::Write(TByte aValue)
 {
-	CheckFirst();
-	iInvocation.InvocationWriteBinary(aValue);
+    CheckFirst();
+    iInvocation.InvocationWriteBinary(aValue);
 }
 
 void DviInvocationResponseBinary::Write(const Brx& aValue)
 {
-	CheckFirst();
-	iInvocation.InvocationWriteBinary(aValue);
+    CheckFirst();
+    iInvocation.InvocationWriteBinary(aValue);
 }
 
 void DviInvocationResponseBinary::WriteFlush()
 {
-	CheckFirst();
-	iInvocation.InvocationWriteBinaryEnd(iName);
+    CheckFirst();
+    iInvocation.InvocationWriteBinaryEnd(iName);
 }
 
 
@@ -308,26 +308,26 @@ DviInvocationResponseString::DviInvocationResponseString(IDviInvocation& aInvoca
 
 void DviInvocationResponseString::CheckFirst()
 {
-	if (iFirst) {
-		iInvocation.InvocationWriteStringStart(iName);
-		iFirst = false;
-	}
+    if (iFirst) {
+        iInvocation.InvocationWriteStringStart(iName);
+        iFirst = false;
+    }
 }
 
 void DviInvocationResponseString::Write(TByte aValue)
 {
-	CheckFirst();
-	iInvocation.InvocationWriteString(aValue);
+    CheckFirst();
+    iInvocation.InvocationWriteString(aValue);
 }
 
 void DviInvocationResponseString::Write(const Brx& aValue)
 {
-	CheckFirst();
-	iInvocation.InvocationWriteString(aValue);
+    CheckFirst();
+    iInvocation.InvocationWriteString(aValue);
 }
 
 void DviInvocationResponseString::WriteFlush()
 {
-	CheckFirst();
-	iInvocation.InvocationWriteStringEnd(iName);
+    CheckFirst();
+    iInvocation.InvocationWriteStringEnd(iName);
 }

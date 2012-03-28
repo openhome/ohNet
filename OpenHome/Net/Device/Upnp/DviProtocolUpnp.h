@@ -86,6 +86,8 @@ private:
     void SendUpdateNotifications();
     void GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase);
     void GetDeviceXml(Brh& aXml, TIpAddress aAdapter);
+    void LogMulticastNotification(const char* aType);
+    void LogUnicastNotification(const char* aType);
 public: // from IDvProtocol
     void WriteResource(const Brx& aUriTail, TIpAddress aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     const Brx& ProtocolName() const;
@@ -132,11 +134,11 @@ public:
     const Brx& DeviceXml() const;
     void SetDeviceXml(Brh& aXml);
     void ClearDeviceXml();
-	void SetPendingDelete();
+    void SetPendingDelete();
     void BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir);
     void BonjourDeregister();
 private:
-	IUpnpMsearchHandler* Handler();
+    IUpnpMsearchHandler* Handler();
 private:
     void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx);
     void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx);
@@ -216,7 +218,7 @@ public:
     static DviMsgScheduler* NewNotifyUpdate(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                             TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted);
     ~DviMsgScheduler();
-	void Stop();
+    void Stop();
 private:
     DviMsgScheduler(IUpnpMsgListener& aListener, TUint aMx);
     DviMsgScheduler(IUpnpMsgListener& aListener);
@@ -229,7 +231,7 @@ private:
     Timer* iTimer;
     TUint iEndTimeMs;
     IUpnpMsgListener& iListener;
-	TBool iStop;
+    TBool iStop;
 };
 
 class DviMsg : private INonCopyable
@@ -248,7 +250,7 @@ private:
     TUint iTotal;
     TUint iIndex;
     TUint iEndTimeMs;
-	TBool iStop;
+    TBool iStop;
 };
 
 class DviMsgMsearch : public DviMsg

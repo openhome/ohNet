@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyOpenhomeOrgTestBasic1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyOpenhomeOrgTestBasic1 extends ICpProxy
 {
     public long syncIncrement(long aValue);
@@ -95,7 +95,7 @@ class SyncIncrementOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endIncrement(aAsyncHandle);
-		
+        
         iResult = result;
     }
 }
@@ -116,7 +116,7 @@ class SyncDecrementOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         int result = iService.endDecrement(aAsyncHandle);
-		
+        
         iResult = result;
     }
 }
@@ -137,7 +137,7 @@ class SyncToggleOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endToggle(aAsyncHandle);
-		
+        
         iResult = result;
     }
 }
@@ -158,7 +158,7 @@ class SyncEchoStringOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endEchoString(aAsyncHandle);
-		
+        
         iResult = result;
     }
 }
@@ -179,7 +179,7 @@ class SyncEchoBinaryOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         byte[] result = iService.endEchoBinary(aAsyncHandle);
-		
+        
         iResult = result;
     }
 }
@@ -195,7 +195,7 @@ class SyncSetUintOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetUint(aAsyncHandle);
-		
+        
     }
 }
 
@@ -215,7 +215,7 @@ class SyncGetUintOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetUint(aAsyncHandle);
-		
+        
         iValueUint = result;
     }
 }
@@ -231,7 +231,7 @@ class SyncSetIntOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetInt(aAsyncHandle);
-		
+        
     }
 }
 
@@ -251,7 +251,7 @@ class SyncGetIntOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         int result = iService.endGetInt(aAsyncHandle);
-		
+        
         iValueInt = result;
     }
 }
@@ -267,7 +267,7 @@ class SyncSetBoolOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetBool(aAsyncHandle);
-		
+        
     }
 }
 
@@ -287,7 +287,7 @@ class SyncGetBoolOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         boolean result = iService.endGetBool(aAsyncHandle);
-		
+        
         iValueBool = result;
     }
 }
@@ -303,7 +303,7 @@ class SyncSetMultipleOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetMultiple(aAsyncHandle);
-		
+        
     }
 }
 
@@ -318,7 +318,7 @@ class SyncSetStringOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetString(aAsyncHandle);
-		
+        
     }
 }
 
@@ -338,7 +338,7 @@ class SyncGetStringOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetString(aAsyncHandle);
-		
+        
         iValueStr = result;
     }
 }
@@ -354,7 +354,7 @@ class SyncSetBinaryOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetBinary(aAsyncHandle);
-		
+        
     }
 }
 
@@ -374,7 +374,7 @@ class SyncGetBinaryOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         byte[] result = iService.endGetBinary(aAsyncHandle);
-		
+        
         iValueBin = result;
     }
 }
@@ -390,7 +390,7 @@ class SyncToggleBoolOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endToggleBool(aAsyncHandle);
-		
+        
     }
 }
 
@@ -405,7 +405,7 @@ class SyncWriteFileOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endWriteFile(aAsyncHandle);
-		
+        
     }
 }
 
@@ -420,7 +420,7 @@ class SyncShutdownOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endShutdown(aAsyncHandle);
-		
+        
     }
 }
 
@@ -465,7 +465,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyOpenhomeOrgTestBasic1(CpDevice aDevice)
@@ -476,107 +476,107 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 
         iActionIncrement = new Action("Increment");
         param = new ParameterUint("Value");
-		iActionIncrement.addInputParameter(param);
+        iActionIncrement.addInputParameter(param);
         param = new ParameterUint("Result");
-		iActionIncrement.addOutputParameter(param);
+        iActionIncrement.addOutputParameter(param);
 
         iActionDecrement = new Action("Decrement");
         param = new ParameterInt("Value");
-		iActionDecrement.addInputParameter(param);
+        iActionDecrement.addInputParameter(param);
         param = new ParameterInt("Result");
-		iActionDecrement.addOutputParameter(param);
+        iActionDecrement.addOutputParameter(param);
 
         iActionToggle = new Action("Toggle");
         param = new ParameterBool("Value");
-		iActionToggle.addInputParameter(param);
+        iActionToggle.addInputParameter(param);
         param = new ParameterBool("Result");
-		iActionToggle.addOutputParameter(param);
+        iActionToggle.addOutputParameter(param);
 
         iActionEchoString = new Action("EchoString");
         param = new ParameterString("Value", allowedValues);
-		iActionEchoString.addInputParameter(param);
+        iActionEchoString.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
-		iActionEchoString.addOutputParameter(param);
+        iActionEchoString.addOutputParameter(param);
 
         iActionEchoBinary = new Action("EchoBinary");
         param = new ParameterBinary("Value");
-		iActionEchoBinary.addInputParameter(param);
+        iActionEchoBinary.addInputParameter(param);
         param = new ParameterBinary("Result");
-		iActionEchoBinary.addOutputParameter(param);
+        iActionEchoBinary.addOutputParameter(param);
 
         iActionSetUint = new Action("SetUint");
         param = new ParameterUint("ValueUint");
-		iActionSetUint.addInputParameter(param);
+        iActionSetUint.addInputParameter(param);
 
         iActionGetUint = new Action("GetUint");
         param = new ParameterUint("ValueUint");
-		iActionGetUint.addOutputParameter(param);
+        iActionGetUint.addOutputParameter(param);
 
         iActionSetInt = new Action("SetInt");
         param = new ParameterInt("ValueInt");
-		iActionSetInt.addInputParameter(param);
+        iActionSetInt.addInputParameter(param);
 
         iActionGetInt = new Action("GetInt");
         param = new ParameterInt("ValueInt");
-		iActionGetInt.addOutputParameter(param);
+        iActionGetInt.addOutputParameter(param);
 
         iActionSetBool = new Action("SetBool");
         param = new ParameterBool("ValueBool");
-		iActionSetBool.addInputParameter(param);
+        iActionSetBool.addInputParameter(param);
 
         iActionGetBool = new Action("GetBool");
         param = new ParameterBool("ValueBool");
-		iActionGetBool.addOutputParameter(param);
+        iActionGetBool.addOutputParameter(param);
 
         iActionSetMultiple = new Action("SetMultiple");
         param = new ParameterUint("ValueUint");
-		iActionSetMultiple.addInputParameter(param);
+        iActionSetMultiple.addInputParameter(param);
         param = new ParameterInt("ValueInt");
-		iActionSetMultiple.addInputParameter(param);
+        iActionSetMultiple.addInputParameter(param);
         param = new ParameterBool("ValueBool");
-		iActionSetMultiple.addInputParameter(param);
+        iActionSetMultiple.addInputParameter(param);
 
         iActionSetString = new Action("SetString");
         param = new ParameterString("ValueStr", allowedValues);
-		iActionSetString.addInputParameter(param);
+        iActionSetString.addInputParameter(param);
 
         iActionGetString = new Action("GetString");
         param = new ParameterString("ValueStr", allowedValues);
-		iActionGetString.addOutputParameter(param);
+        iActionGetString.addOutputParameter(param);
 
         iActionSetBinary = new Action("SetBinary");
         param = new ParameterBinary("ValueBin");
-		iActionSetBinary.addInputParameter(param);
+        iActionSetBinary.addInputParameter(param);
 
         iActionGetBinary = new Action("GetBinary");
         param = new ParameterBinary("ValueBin");
-		iActionGetBinary.addOutputParameter(param);
+        iActionGetBinary.addOutputParameter(param);
 
         iActionToggleBool = new Action("ToggleBool");
 
         iActionWriteFile = new Action("WriteFile");
         param = new ParameterString("Data", allowedValues);
-		iActionWriteFile.addInputParameter(param);
+        iActionWriteFile.addInputParameter(param);
         param = new ParameterString("FileFullName", allowedValues);
-		iActionWriteFile.addInputParameter(param);
+        iActionWriteFile.addInputParameter(param);
 
         iActionShutdown = new Action("Shutdown");
 
         iVarUintChanged = new PropertyChangeListener();
         iVarUint = new PropertyUint("VarUint", iVarUintChanged);
-		addProperty(iVarUint);
+        addProperty(iVarUint);
         iVarIntChanged = new PropertyChangeListener();
         iVarInt = new PropertyInt("VarInt", iVarIntChanged);
-		addProperty(iVarInt);
+        addProperty(iVarInt);
         iVarBoolChanged = new PropertyChangeListener();
         iVarBool = new PropertyBool("VarBool", iVarBoolChanged);
-		addProperty(iVarBool);
+        addProperty(iVarBool);
         iVarStrChanged = new PropertyChangeListener();
         iVarStr = new PropertyString("VarStr", iVarStrChanged);
-		addProperty(iVarStr);
+        addProperty(iVarStr);
         iVarBinChanged = new PropertyChangeListener();
         iVarBin = new PropertyBinary("VarBin", iVarBinChanged);
-		addProperty(iVarBin);
+        addProperty(iVarBin);
         iPropertyLock = new Object();
     }
     /**
@@ -586,28 +586,28 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public long syncIncrement(long aValue)
-	{
-	    SyncIncrementOpenhomeOrgTestBasic1 sync = new SyncIncrementOpenhomeOrgTestBasic1(this);
-	    beginIncrement(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public long syncIncrement(long aValue)
+    {
+        SyncIncrementOpenhomeOrgTestBasic1 sync = new SyncIncrementOpenhomeOrgTestBasic1(this);
+        beginIncrement(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getResult();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endIncrement}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginIncrement(long aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endIncrement}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginIncrement(long aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionIncrement, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionIncrement.getInputParameter(inIndex++), aValue));
@@ -616,16 +616,16 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginIncrement} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginIncrement} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginIncrement} method.
      * @return the result of the previously invoked action.
      */
-	public long endIncrement(long aAsyncHandle)
+    public long endIncrement(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -635,7 +635,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         long result = Invocation.getOutputUint(aAsyncHandle, index++);
         return result;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -643,28 +643,28 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public int syncDecrement(int aValue)
-	{
-	    SyncDecrementOpenhomeOrgTestBasic1 sync = new SyncDecrementOpenhomeOrgTestBasic1(this);
-	    beginDecrement(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public int syncDecrement(int aValue)
+    {
+        SyncDecrementOpenhomeOrgTestBasic1 sync = new SyncDecrementOpenhomeOrgTestBasic1(this);
+        beginDecrement(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getResult();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endDecrement}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginDecrement(int aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endDecrement}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginDecrement(int aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionDecrement, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentInt((ParameterInt)iActionDecrement.getInputParameter(inIndex++), aValue));
@@ -673,16 +673,16 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginDecrement} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginDecrement} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginDecrement} method.
      * @return the result of the previously invoked action.
      */
-	public int endDecrement(long aAsyncHandle)
+    public int endDecrement(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -692,7 +692,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         int result = Invocation.getOutputInt(aAsyncHandle, index++);
         return result;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -700,28 +700,28 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public boolean syncToggle(boolean aValue)
-	{
-	    SyncToggleOpenhomeOrgTestBasic1 sync = new SyncToggleOpenhomeOrgTestBasic1(this);
-	    beginToggle(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncToggle(boolean aValue)
+    {
+        SyncToggleOpenhomeOrgTestBasic1 sync = new SyncToggleOpenhomeOrgTestBasic1(this);
+        beginToggle(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getResult();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endToggle}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginToggle(boolean aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endToggle}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginToggle(boolean aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionToggle, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentBool((ParameterBool)iActionToggle.getInputParameter(inIndex++), aValue));
@@ -730,16 +730,16 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginToggle} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginToggle} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginToggle} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endToggle(long aAsyncHandle)
+    public boolean endToggle(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -749,7 +749,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         boolean result = Invocation.getOutputBool(aAsyncHandle, index++);
         return result;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -757,28 +757,28 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public String syncEchoString(String aValue)
-	{
-	    SyncEchoStringOpenhomeOrgTestBasic1 sync = new SyncEchoStringOpenhomeOrgTestBasic1(this);
-	    beginEchoString(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public String syncEchoString(String aValue)
+    {
+        SyncEchoStringOpenhomeOrgTestBasic1 sync = new SyncEchoStringOpenhomeOrgTestBasic1(this);
+        beginEchoString(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getResult();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endEchoString}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginEchoString(String aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endEchoString}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginEchoString(String aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionEchoString, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionEchoString.getInputParameter(inIndex++), aValue));
@@ -787,16 +787,16 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginEchoString} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginEchoString} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginEchoString} method.
      * @return the result of the previously invoked action.
      */
-	public String endEchoString(long aAsyncHandle)
+    public String endEchoString(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -806,7 +806,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         String result = Invocation.getOutputString(aAsyncHandle, index++);
         return result;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -814,28 +814,28 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public byte[] syncEchoBinary(byte[] aValue)
-	{
-	    SyncEchoBinaryOpenhomeOrgTestBasic1 sync = new SyncEchoBinaryOpenhomeOrgTestBasic1(this);
-	    beginEchoBinary(aValue, sync.getListener());
-	    sync.waitToComplete();
+    public byte[] syncEchoBinary(byte[] aValue)
+    {
+        SyncEchoBinaryOpenhomeOrgTestBasic1 sync = new SyncEchoBinaryOpenhomeOrgTestBasic1(this);
+        beginEchoBinary(aValue, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getResult();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endEchoBinary}.
-	 * 
-	 * @param aValue
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginEchoBinary(byte[] aValue, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endEchoBinary}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginEchoBinary(byte[] aValue, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionEchoBinary, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentBinary((ParameterBinary)iActionEchoBinary.getInputParameter(inIndex++), aValue));
@@ -844,16 +844,16 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginEchoBinary} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginEchoBinary} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginEchoBinary} method.
      * @return the result of the previously invoked action.
      */
-	public byte[] endEchoBinary(long aAsyncHandle)
+    public byte[] endEchoBinary(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -863,54 +863,54 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         byte[] result = Invocation.getOutputBinary(aAsyncHandle, index++);
         return result;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetUint(long aValueUint)
-	{
-	    SyncSetUintOpenhomeOrgTestBasic1 sync = new SyncSetUintOpenhomeOrgTestBasic1(this);
-	    beginSetUint(aValueUint, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetUint(long aValueUint)
+    {
+        SyncSetUintOpenhomeOrgTestBasic1 sync = new SyncSetUintOpenhomeOrgTestBasic1(this);
+        beginSetUint(aValueUint, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetUint}.
-	 * 
-	 * @param aValueUint
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetUint(long aValueUint, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetUint}.
+     * 
+     * @param aValueUint
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetUint(long aValueUint, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetUint, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetUint.getInputParameter(inIndex++), aValueUint));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetUint} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetUint} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetUint} method.
      */
-	public void endSetUint(long aAsyncHandle)
+    public void endSetUint(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -918,43 +918,43 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public long syncGetUint()
-	{
-	    SyncGetUintOpenhomeOrgTestBasic1 sync = new SyncGetUintOpenhomeOrgTestBasic1(this);
-	    beginGetUint(sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetUint()
+    {
+        SyncGetUintOpenhomeOrgTestBasic1 sync = new SyncGetUintOpenhomeOrgTestBasic1(this);
+        beginGetUint(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValueUint();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetUint}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetUint(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetUint}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetUint(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetUint, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionGetUint.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetUint} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetUint} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetUint} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetUint(long aAsyncHandle)
+    public long endGetUint(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -964,54 +964,54 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         long valueUint = Invocation.getOutputUint(aAsyncHandle, index++);
         return valueUint;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetInt(int aValueInt)
-	{
-	    SyncSetIntOpenhomeOrgTestBasic1 sync = new SyncSetIntOpenhomeOrgTestBasic1(this);
-	    beginSetInt(aValueInt, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetInt(int aValueInt)
+    {
+        SyncSetIntOpenhomeOrgTestBasic1 sync = new SyncSetIntOpenhomeOrgTestBasic1(this);
+        beginSetInt(aValueInt, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetInt}.
-	 * 
-	 * @param aValueInt
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetInt(int aValueInt, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetInt}.
+     * 
+     * @param aValueInt
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetInt(int aValueInt, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetInt, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentInt((ParameterInt)iActionSetInt.getInputParameter(inIndex++), aValueInt));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetInt} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetInt} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetInt} method.
      */
-	public void endSetInt(long aAsyncHandle)
+    public void endSetInt(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1019,43 +1019,43 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public int syncGetInt()
-	{
-	    SyncGetIntOpenhomeOrgTestBasic1 sync = new SyncGetIntOpenhomeOrgTestBasic1(this);
-	    beginGetInt(sync.getListener());
-	    sync.waitToComplete();
+    public int syncGetInt()
+    {
+        SyncGetIntOpenhomeOrgTestBasic1 sync = new SyncGetIntOpenhomeOrgTestBasic1(this);
+        beginGetInt(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValueInt();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetInt}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetInt(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetInt}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetInt(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetInt, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentInt((ParameterInt)iActionGetInt.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetInt} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetInt} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetInt} method.
      * @return the result of the previously invoked action.
      */
-	public int endGetInt(long aAsyncHandle)
+    public int endGetInt(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1065,54 +1065,54 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         int valueInt = Invocation.getOutputInt(aAsyncHandle, index++);
         return valueInt;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetBool(boolean aValueBool)
-	{
-	    SyncSetBoolOpenhomeOrgTestBasic1 sync = new SyncSetBoolOpenhomeOrgTestBasic1(this);
-	    beginSetBool(aValueBool, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetBool(boolean aValueBool)
+    {
+        SyncSetBoolOpenhomeOrgTestBasic1 sync = new SyncSetBoolOpenhomeOrgTestBasic1(this);
+        beginSetBool(aValueBool, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetBool}.
-	 * 
-	 * @param aValueBool
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetBool(boolean aValueBool, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetBool}.
+     * 
+     * @param aValueBool
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetBool(boolean aValueBool, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetBool, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentBool((ParameterBool)iActionSetBool.getInputParameter(inIndex++), aValueBool));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetBool} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetBool} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetBool} method.
      */
-	public void endSetBool(long aAsyncHandle)
+    public void endSetBool(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1120,43 +1120,43 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public boolean syncGetBool()
-	{
-	    SyncGetBoolOpenhomeOrgTestBasic1 sync = new SyncGetBoolOpenhomeOrgTestBasic1(this);
-	    beginGetBool(sync.getListener());
-	    sync.waitToComplete();
+    public boolean syncGetBool()
+    {
+        SyncGetBoolOpenhomeOrgTestBasic1 sync = new SyncGetBoolOpenhomeOrgTestBasic1(this);
+        beginGetBool(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValueBool();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetBool}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetBool(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetBool}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetBool(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetBool, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentBool((ParameterBool)iActionGetBool.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetBool} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetBool} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetBool} method.
      * @return the result of the previously invoked action.
      */
-	public boolean endGetBool(long aAsyncHandle)
+    public boolean endGetBool(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1166,34 +1166,34 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         boolean valueBool = Invocation.getOutputBool(aAsyncHandle, index++);
         return valueBool;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetMultiple(long aValueUint, int aValueInt, boolean aValueBool)
-	{
-	    SyncSetMultipleOpenhomeOrgTestBasic1 sync = new SyncSetMultipleOpenhomeOrgTestBasic1(this);
-	    beginSetMultiple(aValueUint, aValueInt, aValueBool, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetMultiple(long aValueUint, int aValueInt, boolean aValueBool)
+    {
+        SyncSetMultipleOpenhomeOrgTestBasic1 sync = new SyncSetMultipleOpenhomeOrgTestBasic1(this);
+        beginSetMultiple(aValueUint, aValueInt, aValueBool, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetMultiple}.
-	 * 
-	 * @param aValueUint
-	 * @param aValueInt
-	 * @param aValueBool
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetMultiple(long aValueUint, int aValueInt, boolean aValueBool, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetMultiple}.
+     * 
+     * @param aValueUint
+     * @param aValueInt
+     * @param aValueBool
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetMultiple(long aValueUint, int aValueInt, boolean aValueBool, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetMultiple, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetMultiple.getInputParameter(inIndex++), aValueUint));
@@ -1202,69 +1202,69 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetMultiple} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetMultiple} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetMultiple} method.
      */
-	public void endSetMultiple(long aAsyncHandle)
+    public void endSetMultiple(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetString(String aValueStr)
-	{
-	    SyncSetStringOpenhomeOrgTestBasic1 sync = new SyncSetStringOpenhomeOrgTestBasic1(this);
-	    beginSetString(aValueStr, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetString(String aValueStr)
+    {
+        SyncSetStringOpenhomeOrgTestBasic1 sync = new SyncSetStringOpenhomeOrgTestBasic1(this);
+        beginSetString(aValueStr, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetString}.
-	 * 
-	 * @param aValueStr
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetString(String aValueStr, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetString}.
+     * 
+     * @param aValueStr
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetString(String aValueStr, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetString, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionSetString.getInputParameter(inIndex++), aValueStr));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetString} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetString} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetString} method.
      */
-	public void endSetString(long aAsyncHandle)
+    public void endSetString(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1272,43 +1272,43 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public String syncGetString()
-	{
-	    SyncGetStringOpenhomeOrgTestBasic1 sync = new SyncGetStringOpenhomeOrgTestBasic1(this);
-	    beginGetString(sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetString()
+    {
+        SyncGetStringOpenhomeOrgTestBasic1 sync = new SyncGetStringOpenhomeOrgTestBasic1(this);
+        beginGetString(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValueStr();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetString}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetString(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetString}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetString(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetString, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionGetString.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetString} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetString} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetString} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetString(long aAsyncHandle)
+    public String endGetString(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1318,54 +1318,54 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         String valueStr = Invocation.getOutputString(aAsyncHandle, index++);
         return valueStr;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetBinary(byte[] aValueBin)
-	{
-	    SyncSetBinaryOpenhomeOrgTestBasic1 sync = new SyncSetBinaryOpenhomeOrgTestBasic1(this);
-	    beginSetBinary(aValueBin, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetBinary(byte[] aValueBin)
+    {
+        SyncSetBinaryOpenhomeOrgTestBasic1 sync = new SyncSetBinaryOpenhomeOrgTestBasic1(this);
+        beginSetBinary(aValueBin, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetBinary}.
-	 * 
-	 * @param aValueBin
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetBinary(byte[] aValueBin, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetBinary}.
+     * 
+     * @param aValueBin
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetBinary(byte[] aValueBin, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetBinary, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentBinary((ParameterBinary)iActionSetBinary.getInputParameter(inIndex++), aValueBin));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetBinary} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetBinary} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetBinary} method.
      */
-	public void endSetBinary(long aAsyncHandle)
+    public void endSetBinary(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -1373,43 +1373,43 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      *
      * @return the result of the invoked action.
      */
-	public byte[] syncGetBinary()
-	{
-	    SyncGetBinaryOpenhomeOrgTestBasic1 sync = new SyncGetBinaryOpenhomeOrgTestBasic1(this);
-	    beginGetBinary(sync.getListener());
-	    sync.waitToComplete();
+    public byte[] syncGetBinary()
+    {
+        SyncGetBinaryOpenhomeOrgTestBasic1 sync = new SyncGetBinaryOpenhomeOrgTestBasic1(this);
+        beginGetBinary(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getValueBin();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetBinary}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetBinary(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetBinary}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetBinary(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetBinary, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentBinary((ParameterBinary)iActionGetBinary.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetBinary} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetBinary} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetBinary} method.
      * @return the result of the previously invoked action.
      */
-	public byte[] endGetBinary(long aAsyncHandle)
+    public byte[] endGetBinary(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1419,77 +1419,77 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         byte[] valueBin = Invocation.getOutputBinary(aAsyncHandle, index++);
         return valueBin;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncToggleBool()
-	{
-	    SyncToggleBoolOpenhomeOrgTestBasic1 sync = new SyncToggleBoolOpenhomeOrgTestBasic1(this);
-	    beginToggleBool(sync.getListener());
-	    sync.waitToComplete();
+    public void syncToggleBool()
+    {
+        SyncToggleBoolOpenhomeOrgTestBasic1 sync = new SyncToggleBoolOpenhomeOrgTestBasic1(this);
+        beginToggleBool(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endToggleBool}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginToggleBool(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endToggleBool}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginToggleBool(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionToggleBool, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginToggleBool} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginToggleBool} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginToggleBool} method.
      */
-	public void endToggleBool(long aAsyncHandle)
+    public void endToggleBool(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncWriteFile(String aData, String aFileFullName)
-	{
-	    SyncWriteFileOpenhomeOrgTestBasic1 sync = new SyncWriteFileOpenhomeOrgTestBasic1(this);
-	    beginWriteFile(aData, aFileFullName, sync.getListener());
-	    sync.waitToComplete();
+    public void syncWriteFile(String aData, String aFileFullName)
+    {
+        SyncWriteFileOpenhomeOrgTestBasic1 sync = new SyncWriteFileOpenhomeOrgTestBasic1(this);
+        beginWriteFile(aData, aFileFullName, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endWriteFile}.
-	 * 
-	 * @param aData
-	 * @param aFileFullName
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginWriteFile(String aData, String aFileFullName, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endWriteFile}.
+     * 
+     * @param aData
+     * @param aFileFullName
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginWriteFile(String aData, String aFileFullName, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionWriteFile, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentString((ParameterString)iActionWriteFile.getInputParameter(inIndex++), aData));
@@ -1497,73 +1497,73 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginWriteFile} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginWriteFile} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginWriteFile} method.
      */
-	public void endWriteFile(long aAsyncHandle)
+    public void endWriteFile(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncShutdown()
-	{
-	    SyncShutdownOpenhomeOrgTestBasic1 sync = new SyncShutdownOpenhomeOrgTestBasic1(this);
-	    beginShutdown(sync.getListener());
-	    sync.waitToComplete();
+    public void syncShutdown()
+    {
+        SyncShutdownOpenhomeOrgTestBasic1 sync = new SyncShutdownOpenhomeOrgTestBasic1(this);
+        beginShutdown(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endShutdown}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginShutdown(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endShutdown}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginShutdown(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionShutdown, aCallback);
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginShutdown} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginShutdown} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginShutdown} method.
      */
-	public void endShutdown(long aAsyncHandle)
+    public void endShutdown(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Set a delegate to be run when the VarUint state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
+     * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
      *
-     * @param aVarUintChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aVarUintChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyVarUintChanged(IPropertyChangeListener aVarUintChanged)
     {
@@ -1583,10 +1583,10 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
     /**
      * Set a delegate to be run when the VarInt state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
+     * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
      *
-     * @param aVarIntChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aVarIntChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyVarIntChanged(IPropertyChangeListener aVarIntChanged)
     {
@@ -1606,10 +1606,10 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
     /**
      * Set a delegate to be run when the VarBool state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
+     * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
      *
-     * @param aVarBoolChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aVarBoolChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyVarBoolChanged(IPropertyChangeListener aVarBoolChanged)
     {
@@ -1629,10 +1629,10 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
     /**
      * Set a delegate to be run when the VarStr state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
+     * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
      *
-     * @param aVarStrChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aVarStrChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyVarStrChanged(IPropertyChangeListener aVarStrChanged)
     {
@@ -1652,10 +1652,10 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
     /**
      * Set a delegate to be run when the VarBin state variable changes.
      * Callbacks may be run in different threads but callbacks for a
-	 * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
+     * CpProxyOpenhomeOrgTestBasic1 instance will not overlap.
      *
-     * @param aVarBinChanged	the listener to call back when the state
-	 * 			variable changes.
+     * @param aVarBinChanged   the listener to call back when the state
+     *          variable changes.
      */
     public void setPropertyVarBinChanged(IPropertyChangeListener aVarBinChanged)
     {
@@ -1679,7 +1679,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the VarUint property.
+     * @return  value of the VarUint property.
      */
     public long getPropertyVarUint()
     {
@@ -1688,14 +1688,14 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the VarInt property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the VarInt property.
+     * @return  value of the VarInt property.
      */
     public int getPropertyVarInt()
     {
@@ -1704,14 +1704,14 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the VarBool property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the VarBool property.
+     * @return  value of the VarBool property.
      */
     public boolean getPropertyVarBool()
     {
@@ -1720,14 +1720,14 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the VarStr property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the VarStr property.
+     * @return  value of the VarStr property.
      */
     public String getPropertyVarStr()
     {
@@ -1736,14 +1736,14 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Query the value of the VarBin property.
      * This function is thread-safe and can only be called if {@link 
      * #subscribe} has been called and a first eventing callback received
      * more recently than any call to {@link #unsubscribe}.
      *
-	 * @return	value of the VarBin property.
+     * @return  value of the VarBin property.
      */
     public byte[] getPropertyVarBin()
     {
@@ -1752,7 +1752,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         propertyReadUnlock();
         return val;
     }
-	
+    
     /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.

@@ -5,22 +5,24 @@
 * @module ohnet
 * @class ConnectionManager
 */
-	
-var CpProxySchemasUpnpOrgConnectionManager2 = function(udn){	
+    
+var CpProxySchemasUpnpOrgConnectionManager2 = function(udn){ 
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-ConnectionManager-2/control";  // upnp control url
-	this.domain = "schemas-upnp-org";
-	this.type = "ConnectionManager";
-	this.version = "2";
-	this.serviceName = "upnp.org-ConnectionManager-2";
-	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
-	this.udn = udn;   // device name
-	
-	// Collection of service properties
-	this.serviceProperties = {};
-	this.serviceProperties["SourceProtocolInfo"] = new ohnet.serviceproperty("SourceProtocolInfo","string");
-	this.serviceProperties["SinkProtocolInfo"] = new ohnet.serviceproperty("SinkProtocolInfo","string");
-	this.serviceProperties["CurrentConnectionIDs"] = new ohnet.serviceproperty("CurrentConnectionIDs","string");
+    this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-ConnectionManager-2/control";  // upnp control url
+    this.domain = "schemas-upnp-org";
+    this.type = "ConnectionManager";
+    this.version = "2";
+    this.serviceName = "upnp.org-ConnectionManager-2";
+    this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+    this.udn = udn;   // device name
+    
+    // Collection of service properties
+    this.serviceProperties = {};
+    this.serviceProperties["SourceProtocolInfo"] = new ohnet.serviceproperty("SourceProtocolInfo","string");
+    this.serviceProperties["SinkProtocolInfo"] = new ohnet.serviceproperty("SinkProtocolInfo","string");
+    this.serviceProperties["CurrentConnectionIDs"] = new ohnet.serviceproperty("CurrentConnectionIDs","string");
+
+                      
 }
 
 
@@ -44,7 +46,7 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.unsubscribe = function () {
 }
 
 
-	
+    
 
 /**
 * Adds a listener to handle "SourceProtocolInfo" property change events
@@ -53,11 +55,11 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.unsubscribe = function () {
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.SourceProtocolInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.SourceProtocolInfo.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "SinkProtocolInfo" property change events
@@ -66,11 +68,11 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.SourceProtocolInfo_Changed = f
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.SinkProtocolInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.SinkProtocolInfo.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
+    });
 }
-	
+    
 
 /**
 * Adds a listener to handle "CurrentConnectionIDs" property change events
@@ -79,9 +81,9 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.SinkProtocolInfo_Changed = fun
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.CurrentConnectionIDs_Changed = function (stateChangedFunction) {
     this.serviceProperties.CurrentConnectionIDs.addListener(function (state) 
-	{ 
-		stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
-	});
+    { 
+        stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
+    });
 }
 
 
@@ -91,18 +93,18 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.CurrentConnectionIDs_Changed =
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgConnectionManager2.prototype.GetProtocolInfo = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetProtocolInfo", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgConnectionManager2.prototype.GetProtocolInfo = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetProtocolInfo", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["Source"] = ohnet.soaprequest.readStringParameter(result["Source"]);	
-		result["Sink"] = ohnet.soaprequest.readStringParameter(result["Sink"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["Source"] = ohnet.soaprequest.readStringParameter(result["Source"]); 
+        result["Sink"] = ohnet.soaprequest.readStringParameter(result["Sink"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -116,23 +118,23 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.GetProtocolInfo = function(suc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgConnectionManager2.prototype.PrepareForConnection = function(RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("PrepareForConnection", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgConnectionManager2.prototype.PrepareForConnection = function(RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("PrepareForConnection", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("RemoteProtocolInfo", RemoteProtocolInfo);
     request.writeStringParameter("PeerConnectionManager", PeerConnectionManager);
     request.writeIntParameter("PeerConnectionID", PeerConnectionID);
     request.writeStringParameter("Direction", Direction);
     request.send(function(result){
-		result["ConnectionID"] = ohnet.soaprequest.readIntParameter(result["ConnectionID"]);	
-		result["AVTransportID"] = ohnet.soaprequest.readIntParameter(result["AVTransportID"]);	
-		result["RcsID"] = ohnet.soaprequest.readIntParameter(result["RcsID"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["ConnectionID"] = ohnet.soaprequest.readIntParameter(result["ConnectionID"]); 
+        result["AVTransportID"] = ohnet.soaprequest.readIntParameter(result["AVTransportID"]); 
+        result["RcsID"] = ohnet.soaprequest.readIntParameter(result["RcsID"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -143,17 +145,17 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.PrepareForConnection = functio
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgConnectionManager2.prototype.ConnectionComplete = function(ConnectionID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("ConnectionComplete", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgConnectionManager2.prototype.ConnectionComplete = function(ConnectionID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("ConnectionComplete", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("ConnectionID", ConnectionID);
     request.send(function(result){
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -163,17 +165,17 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.ConnectionComplete = function(
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgConnectionManager2.prototype.GetCurrentConnectionIDs = function(successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetCurrentConnectionIDs", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgConnectionManager2.prototype.GetCurrentConnectionIDs = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetCurrentConnectionIDs", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
-		result["ConnectionIDs"] = ohnet.soaprequest.readStringParameter(result["ConnectionIDs"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["ConnectionIDs"] = ohnet.soaprequest.readStringParameter(result["ConnectionIDs"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 
@@ -184,24 +186,24 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.GetCurrentConnectionIDs = func
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxySchemasUpnpOrgConnectionManager2.prototype.GetCurrentConnectionInfo = function(ConnectionID, successFunction, errorFunction){	
-	var request = new ohnet.soaprequest("GetCurrentConnectionInfo", this.url, this.domain, this.type, this.version);		
+CpProxySchemasUpnpOrgConnectionManager2.prototype.GetCurrentConnectionInfo = function(ConnectionID, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetCurrentConnectionInfo", this.url, this.domain, this.type, this.version);     
     request.writeIntParameter("ConnectionID", ConnectionID);
     request.send(function(result){
-		result["RcsID"] = ohnet.soaprequest.readIntParameter(result["RcsID"]);	
-		result["AVTransportID"] = ohnet.soaprequest.readIntParameter(result["AVTransportID"]);	
-		result["ProtocolInfo"] = ohnet.soaprequest.readStringParameter(result["ProtocolInfo"]);	
-		result["PeerConnectionManager"] = ohnet.soaprequest.readStringParameter(result["PeerConnectionManager"]);	
-		result["PeerConnectionID"] = ohnet.soaprequest.readIntParameter(result["PeerConnectionID"]);	
-		result["Direction"] = ohnet.soaprequest.readStringParameter(result["Direction"]);	
-		result["Status"] = ohnet.soaprequest.readStringParameter(result["Status"]);	
-	
-		if (successFunction){
-			successFunction(result);
-		}
-	}, function(message, transport) {
-		if (errorFunction) {errorFunction(message, transport);}
-	});
+        result["RcsID"] = ohnet.soaprequest.readIntParameter(result["RcsID"]); 
+        result["AVTransportID"] = ohnet.soaprequest.readIntParameter(result["AVTransportID"]); 
+        result["ProtocolInfo"] = ohnet.soaprequest.readStringParameter(result["ProtocolInfo"]); 
+        result["PeerConnectionManager"] = ohnet.soaprequest.readStringParameter(result["PeerConnectionManager"]); 
+        result["PeerConnectionID"] = ohnet.soaprequest.readIntParameter(result["PeerConnectionID"]); 
+        result["Direction"] = ohnet.soaprequest.readStringParameter(result["Direction"]); 
+        result["Status"] = ohnet.soaprequest.readStringParameter(result["Status"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
 }
 
 

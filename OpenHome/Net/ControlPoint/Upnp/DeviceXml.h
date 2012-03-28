@@ -14,14 +14,14 @@ namespace Net {
 class DeviceXml
 {
 public:
-	DeviceXml(const Brx& aXml);
+    DeviceXml(const Brx& aXml);
     Brn Find(const Brx& aUdn);
-	void GetFriendlyName(Brh& aValue) const;
-	void GetPresentationUrl(Brh& aValue) const;
-	Brn ServiceVersion(const Brx& aService) const; // e.g "upnp.org.ContentDirectory"
+    void GetFriendlyName(Brh& aValue) const;
+    void GetPresentationUrl(Brh& aValue) const;
+    Brn ServiceVersion(const Brx& aService) const; // e.g "upnp.org.ContentDirectory"
 private:
-	Brn iXml;
-	Brn iUdn;
+    Brn iXml;
+    Brn iUdn;
 };
 
 class DeviceXmlDocument
@@ -33,8 +33,8 @@ public:
     const Brx& Xml() const;
     const DeviceXml& Root() const;
 private:
-	Brn iXml;
-	DeviceXml* iRoot;
+    Brn iXml;
+    DeviceXml* iRoot;
 };
 
 } // namespace Net

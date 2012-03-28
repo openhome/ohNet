@@ -312,7 +312,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetColorComponents(IDviInvocation& aIn
 
 THandle STDCALL DvProviderOpenhomeOrgTestLights1Create(DvDeviceC aDevice)
 {
-	return new DvProviderOpenhomeOrgTestLights1C(aDevice);
+    return new DvProviderOpenhomeOrgTestLights1C(aDevice);
 }
 
 void STDCALL DvProviderOpenhomeOrgTestLights1Destroy(THandle aProvider)

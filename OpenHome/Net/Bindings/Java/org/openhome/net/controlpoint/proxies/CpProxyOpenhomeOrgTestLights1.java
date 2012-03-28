@@ -7,7 +7,7 @@ import org.openhome.net.controlpoint.*;
 import org.openhome.net.controlpoint.proxies.CpProxyOpenhomeOrgTestLights1.*;
 import org.openhome.net.core.*;
 
-	
+    
 interface ICpProxyOpenhomeOrgTestLights1 extends ICpProxy
 {
     public long syncGetCount();
@@ -49,7 +49,7 @@ class SyncGetCountOpenhomeOrgTestLights1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetCount(aAsyncHandle);
-		
+        
         iCount = result;
     }
 }
@@ -70,7 +70,7 @@ class SyncGetRoomOpenhomeOrgTestLights1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetRoom(aAsyncHandle);
-		
+        
         iRoomName = result;
     }
 }
@@ -91,7 +91,7 @@ class SyncGetNameOpenhomeOrgTestLights1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endGetName(aAsyncHandle);
-		
+        
         iFriendlyName = result;
     }
 }
@@ -122,7 +122,7 @@ class SyncGetPositionOpenhomeOrgTestLights1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetPosition result = iService.endGetPosition(aAsyncHandle);
-		
+        
         iX = result.getX();
         iY = result.getY();
         iZ = result.getZ();
@@ -140,7 +140,7 @@ class SyncSetColorOpenhomeOrgTestLights1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endSetColor(aAsyncHandle);
-		
+        
     }
 }
 
@@ -160,7 +160,7 @@ class SyncGetColorOpenhomeOrgTestLights1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endGetColor(aAsyncHandle);
-		
+        
         iColor = result;
     }
 }
@@ -196,7 +196,7 @@ class SyncGetColorComponentsOpenhomeOrgTestLights1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         GetColorComponents result = iService.endGetColorComponents(aAsyncHandle);
-		
+        
         iBrightness = result.getBrightness();
         iRed = result.getRed();
         iGreen = result.getGreen();
@@ -289,7 +289,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      * Constructor.
      * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
-     * @param aDevice	the device to use.
+     * @param aDevice   the device to use.
      */
 
     public CpProxyOpenhomeOrgTestLights1(CpDevice aDevice)
@@ -300,53 +300,53 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 
         iActionGetCount = new Action("GetCount");
         param = new ParameterUint("Count");
-		iActionGetCount.addOutputParameter(param);
+        iActionGetCount.addOutputParameter(param);
 
         iActionGetRoom = new Action("GetRoom");
         param = new ParameterUint("Index");
-		iActionGetRoom.addInputParameter(param);
+        iActionGetRoom.addInputParameter(param);
         param = new ParameterString("RoomName", allowedValues);
-		iActionGetRoom.addOutputParameter(param);
+        iActionGetRoom.addOutputParameter(param);
 
         iActionGetName = new Action("GetName");
         param = new ParameterUint("Index");
-		iActionGetName.addInputParameter(param);
+        iActionGetName.addInputParameter(param);
         param = new ParameterString("FriendlyName", allowedValues);
-		iActionGetName.addOutputParameter(param);
+        iActionGetName.addOutputParameter(param);
 
         iActionGetPosition = new Action("GetPosition");
         param = new ParameterUint("Index");
-		iActionGetPosition.addInputParameter(param);
+        iActionGetPosition.addInputParameter(param);
         param = new ParameterUint("X");
-		iActionGetPosition.addOutputParameter(param);
+        iActionGetPosition.addOutputParameter(param);
         param = new ParameterUint("Y");
-		iActionGetPosition.addOutputParameter(param);
+        iActionGetPosition.addOutputParameter(param);
         param = new ParameterUint("Z");
-		iActionGetPosition.addOutputParameter(param);
+        iActionGetPosition.addOutputParameter(param);
 
         iActionSetColor = new Action("SetColor");
         param = new ParameterUint("Index");
-		iActionSetColor.addInputParameter(param);
+        iActionSetColor.addInputParameter(param);
         param = new ParameterUint("Color");
-		iActionSetColor.addInputParameter(param);
+        iActionSetColor.addInputParameter(param);
 
         iActionGetColor = new Action("GetColor");
         param = new ParameterUint("Index");
-		iActionGetColor.addInputParameter(param);
+        iActionGetColor.addInputParameter(param);
         param = new ParameterUint("Color");
-		iActionGetColor.addOutputParameter(param);
+        iActionGetColor.addOutputParameter(param);
 
         iActionGetColorComponents = new Action("GetColorComponents");
         param = new ParameterUint("Color");
-		iActionGetColorComponents.addInputParameter(param);
+        iActionGetColorComponents.addInputParameter(param);
         param = new ParameterUint("Brightness");
-		iActionGetColorComponents.addOutputParameter(param);
+        iActionGetColorComponents.addOutputParameter(param);
         param = new ParameterUint("Red");
-		iActionGetColorComponents.addOutputParameter(param);
+        iActionGetColorComponents.addOutputParameter(param);
         param = new ParameterUint("Green");
-		iActionGetColorComponents.addOutputParameter(param);
+        iActionGetColorComponents.addOutputParameter(param);
         param = new ParameterUint("Blue");
-		iActionGetColorComponents.addOutputParameter(param);
+        iActionGetColorComponents.addOutputParameter(param);
     }
     /**
      * Invoke the action synchronously.
@@ -355,43 +355,43 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      *
      * @return the result of the invoked action.
      */
-	public long syncGetCount()
-	{
-	    SyncGetCountOpenhomeOrgTestLights1 sync = new SyncGetCountOpenhomeOrgTestLights1(this);
-	    beginGetCount(sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetCount()
+    {
+        SyncGetCountOpenhomeOrgTestLights1 sync = new SyncGetCountOpenhomeOrgTestLights1(this);
+        beginGetCount(sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getCount();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetCount}.
-	 * 
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetCount(ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetCount}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetCount(ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetCount, aCallback);
         int outIndex = 0;
         invocation.addOutput(new ArgumentUint((ParameterUint)iActionGetCount.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetCount} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetCount} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetCount} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetCount(long aAsyncHandle)
+    public long endGetCount(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -401,7 +401,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         long count = Invocation.getOutputUint(aAsyncHandle, index++);
         return count;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -409,28 +409,28 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      *
      * @return the result of the invoked action.
      */
-	public String syncGetRoom(long aIndex)
-	{
-	    SyncGetRoomOpenhomeOrgTestLights1 sync = new SyncGetRoomOpenhomeOrgTestLights1(this);
-	    beginGetRoom(aIndex, sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetRoom(long aIndex)
+    {
+        SyncGetRoomOpenhomeOrgTestLights1 sync = new SyncGetRoomOpenhomeOrgTestLights1(this);
+        beginGetRoom(aIndex, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getRoomName();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetRoom}.
-	 * 
-	 * @param aIndex
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetRoom(long aIndex, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetRoom}.
+     * 
+     * @param aIndex
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetRoom(long aIndex, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetRoom, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetRoom.getInputParameter(inIndex++), aIndex));
@@ -439,16 +439,16 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetRoom} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetRoom} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetRoom} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetRoom(long aAsyncHandle)
+    public String endGetRoom(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -458,7 +458,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         String roomName = Invocation.getOutputString(aAsyncHandle, index++);
         return roomName;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -466,28 +466,28 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      *
      * @return the result of the invoked action.
      */
-	public String syncGetName(long aIndex)
-	{
-	    SyncGetNameOpenhomeOrgTestLights1 sync = new SyncGetNameOpenhomeOrgTestLights1(this);
-	    beginGetName(aIndex, sync.getListener());
-	    sync.waitToComplete();
+    public String syncGetName(long aIndex)
+    {
+        SyncGetNameOpenhomeOrgTestLights1 sync = new SyncGetNameOpenhomeOrgTestLights1(this);
+        beginGetName(aIndex, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getFriendlyName();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetName}.
-	 * 
-	 * @param aIndex
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetName(long aIndex, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetName}.
+     * 
+     * @param aIndex
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetName(long aIndex, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetName, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetName.getInputParameter(inIndex++), aIndex));
@@ -496,16 +496,16 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetName} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetName} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetName} method.
      * @return the result of the previously invoked action.
      */
-	public String endGetName(long aAsyncHandle)
+    public String endGetName(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -515,7 +515,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         String friendlyName = Invocation.getOutputString(aAsyncHandle, index++);
         return friendlyName;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -523,32 +523,32 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      *
      * @return the result of the invoked action.
      */
-	public GetPosition syncGetPosition(long aIndex)
-	{
-	    SyncGetPositionOpenhomeOrgTestLights1 sync = new SyncGetPositionOpenhomeOrgTestLights1(this);
-	    beginGetPosition(aIndex, sync.getListener());
-	    sync.waitToComplete();
+    public GetPosition syncGetPosition(long aIndex)
+    {
+        SyncGetPositionOpenhomeOrgTestLights1 sync = new SyncGetPositionOpenhomeOrgTestLights1(this);
+        beginGetPosition(aIndex, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetPosition(
             sync.getX(),
             sync.getY(),
             sync.getZ()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetPosition}.
-	 * 
-	 * @param aIndex
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetPosition(long aIndex, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetPosition}.
+     * 
+     * @param aIndex
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetPosition(long aIndex, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetPosition, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetPosition.getInputParameter(inIndex++), aIndex));
@@ -559,16 +559,16 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetPosition} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetPosition} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetPosition} method.
      * @return the result of the previously invoked action.
      */
-	public GetPosition endGetPosition(long aAsyncHandle)
+    public GetPosition endGetPosition(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -582,35 +582,35 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
             x,
             y,
             z
-		);
+        );
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncSetColor(long aIndex, long aColor)
-	{
-	    SyncSetColorOpenhomeOrgTestLights1 sync = new SyncSetColorOpenhomeOrgTestLights1(this);
-	    beginSetColor(aIndex, aColor, sync.getListener());
-	    sync.waitToComplete();
+    public void syncSetColor(long aIndex, long aColor)
+    {
+        SyncSetColorOpenhomeOrgTestLights1 sync = new SyncSetColorOpenhomeOrgTestLights1(this);
+        beginSetColor(aIndex, aColor, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endSetColor}.
-	 * 
-	 * @param aIndex
-	 * @param aColor
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginSetColor(long aIndex, long aColor, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endSetColor}.
+     * 
+     * @param aIndex
+     * @param aColor
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginSetColor(long aIndex, long aColor, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionSetColor, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionSetColor.getInputParameter(inIndex++), aIndex));
@@ -618,22 +618,22 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginSetColor} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginSetColor} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginSetColor} method.
      */
-	public void endSetColor(long aAsyncHandle)
+    public void endSetColor(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -641,28 +641,28 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      *
      * @return the result of the invoked action.
      */
-	public long syncGetColor(long aIndex)
-	{
-	    SyncGetColorOpenhomeOrgTestLights1 sync = new SyncGetColorOpenhomeOrgTestLights1(this);
-	    beginGetColor(aIndex, sync.getListener());
-	    sync.waitToComplete();
+    public long syncGetColor(long aIndex)
+    {
+        SyncGetColorOpenhomeOrgTestLights1 sync = new SyncGetColorOpenhomeOrgTestLights1(this);
+        beginGetColor(aIndex, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return sync.getColor();
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetColor}.
-	 * 
-	 * @param aIndex
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetColor(long aIndex, ICpProxyListener aCallback)
-	{
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetColor}.
+     * 
+     * @param aIndex
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetColor(long aIndex, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetColor, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetColor.getInputParameter(inIndex++), aIndex));
@@ -671,16 +671,16 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetColor} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetColor} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetColor} method.
      * @return the result of the previously invoked action.
      */
-	public long endGetColor(long aAsyncHandle)
+    public long endGetColor(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -690,7 +690,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         long color = Invocation.getOutputUint(aAsyncHandle, index++);
         return color;
     }
-		
+        
     /**
      * Invoke the action synchronously.
      * Blocks until the action has been processed on the device and sets any
@@ -698,11 +698,11 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      *
      * @return the result of the invoked action.
      */
-	public GetColorComponents syncGetColorComponents(long aColor)
-	{
-	    SyncGetColorComponentsOpenhomeOrgTestLights1 sync = new SyncGetColorComponentsOpenhomeOrgTestLights1(this);
-	    beginGetColorComponents(aColor, sync.getListener());
-	    sync.waitToComplete();
+    public GetColorComponents syncGetColorComponents(long aColor)
+    {
+        SyncGetColorComponentsOpenhomeOrgTestLights1 sync = new SyncGetColorComponentsOpenhomeOrgTestLights1(this);
+        beginGetColorComponents(aColor, sync.getListener());
+        sync.waitToComplete();
         sync.reportError();
 
         return new GetColorComponents(
@@ -710,21 +710,21 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
             sync.getRed(),
             sync.getGreen(),
             sync.getBlue()
-		);
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endGetColorComponents}.
-	 * 
-	 * @param aColor
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginGetColorComponents(long aColor, ICpProxyListener aCallback)
-	{
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetColorComponents}.
+     * 
+     * @param aColor
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetColorComponents(long aColor, ICpProxyListener aCallback)
+    {
         Invocation invocation = iService.getInvocation(iActionGetColorComponents, aCallback);
         int inIndex = 0;
         invocation.addInput(new ArgumentUint((ParameterUint)iActionGetColorComponents.getInputParameter(inIndex++), aColor));
@@ -736,16 +736,16 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
         iService.invokeAction(invocation);
     }
 
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
      * {@link #beginGetColorComponents} method.
      *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginGetColorComponents} method.
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetColorComponents} method.
      * @return the result of the previously invoked action.
      */
-	public GetColorComponents endGetColorComponents(long aAsyncHandle)
+    public GetColorComponents endGetColorComponents(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -761,9 +761,9 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
             red,
             green,
             blue
-		);
+        );
     }
-		
+        
 
     /**
      * Dispose of this control point proxy.

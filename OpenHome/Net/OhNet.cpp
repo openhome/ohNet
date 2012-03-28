@@ -278,7 +278,7 @@ void InitialisationParams::SetUseLoopbackNetworkAdapter()
 
 void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
 {
-	iDvMaxUpdateTimeSecs = aSecs;
+    iDvMaxUpdateTimeSecs = aSecs;
 }
 
 void InitialisationParams::SetDvNumServerThreads(uint32_t aNumThreads)
@@ -426,7 +426,7 @@ bool InitialisationParams::UseLoopbackNetworkAdapter() const
 
 uint32_t InitialisationParams::DvMaxUpdateTimeSecs() const
 {
-	return iDvMaxUpdateTimeSecs;
+    return iDvMaxUpdateTimeSecs;
 }
 
 uint32_t InitialisationParams::DvNumServerThreads() const
@@ -436,12 +436,12 @@ uint32_t InitialisationParams::DvNumServerThreads() const
 
 uint32_t InitialisationParams::DvNumPublisherThreads() const
 {
-	return iDvNumPublisherThreads;
+    return iDvNumPublisherThreads;
 }
 
 uint32_t InitialisationParams::DvNumWebSocketThreads() const
 {
-	return iDvNumWebSocketThreads;
+    return iDvNumWebSocketThreads;
 }
 
 uint32_t InitialisationParams::CpUpnpEventServerPort() const
@@ -480,9 +480,9 @@ InitialisationParams::InitialisationParams()
     , iPendingSubscriptionTimeoutMs(2000)
     , iFreeExternal(NULL)
     , iUseLoopbackNetworkAdapter(false)
-	, iDvMaxUpdateTimeSecs(1800)
+    , iDvMaxUpdateTimeSecs(1800)
     , iDvNumServerThreads(4)
-	, iDvNumPublisherThreads(4)
+    , iDvNumPublisherThreads(4)
     , iDvNumWebSocketThreads(0)
     , iCpUpnpEventServerPort(0)
     , iDvUpnpWebServerPort(55178)

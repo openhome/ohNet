@@ -5,7 +5,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 
-#include "CpTopology3.h"
+#include "CpTopology4.h"
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -13,7 +13,7 @@ using namespace OpenHome::Net;
 class CpTopologyRoom : public IRoom
 {
 public:
-    CpTopologyRoom(CpTopology3Room& aRoom);
+    CpTopologyRoom(CpTopology4Room& aRoom);
     virtual void AddRef();
     virtual void RemoveRef();
     virtual IRoom::EStandby Standby() const;
@@ -30,41 +30,47 @@ public:
     virtual CpDevice& CurrentSourceDevice() const;
     virtual void SetSourceIndex(TUint aIndex);
     virtual TBool HasVolumeControl() const;
-	virtual CpDevice& VolumeDevice() const;
-	virtual void SetUserData(void* aValue);
+    virtual TUint Volume() const;
+	virtual void SetVolume(TUint aValue);
+	virtual void VolumeInc();
+	virtual void VolumeDec();
+	virtual TBool Mute() const;
+	virtual void SetMute(TBool aValue);
+	virtual TUint VolumeLimit() const;
+    virtual void SetUserData(void* aValue);
     virtual void* UserData() const;
     ~CpTopologyRoom();
 
 private:
-    CpTopology3Room& iRoom;
-	TUint iRefCount;
+    CpTopology4Room& iRoom;
+    TUint iRefCount;
     void* iUserData;
 };
 
-CpTopologyRoom::CpTopologyRoom(CpTopology3Room& aRoom)
+CpTopologyRoom::CpTopologyRoom(CpTopology4Room& aRoom)
     : iRoom(aRoom)
-	, iRefCount(1)
-	, iUserData(0)
+    , iRefCount(1)
+    , iUserData(0)
 {
-	iRoom.AddRef();
+    iRoom.AddRef();
 }
 
 void CpTopologyRoom::AddRef()
 {
-	iRefCount++;
+    iRefCount++;
 }
 
 void CpTopologyRoom::RemoveRef()
 {
-	if (--iRefCount == 0) {
-		delete (this);
-	}
+    if (--iRefCount == 0) {
+        delete (this);
+    }
 }
 
 
 CpTopologyRoom::~CpTopologyRoom()
 {
-	iRoom.RemoveRef();
+    iRoom.RemoveRef();
 }
 
 IRoom::EStandby CpTopologyRoom::Standby() const
@@ -144,9 +150,39 @@ TBool CpTopologyRoom::HasVolumeControl() const
     return (iRoom.HasVolumeControl());
 }
 
-CpDevice& CpTopologyRoom::VolumeDevice() const
+TUint CpTopologyRoom::Volume() const
 {
-    return (iRoom.VolumeDevice());
+	return iRoom.Volume();
+}
+
+void CpTopologyRoom::SetVolume(TUint aValue)
+{
+	iRoom.SetVolume(aValue);
+}
+
+void  CpTopologyRoom::VolumeInc()
+{
+	iRoom.VolumeInc();
+}
+
+void CpTopologyRoom::VolumeDec()
+{
+	iRoom.VolumeDec();
+}
+
+TBool CpTopologyRoom::Mute() const
+{
+	return iRoom.Mute();
+}
+
+void CpTopologyRoom::SetMute(TBool aValue)
+{
+	iRoom.SetMute(aValue);
+}
+
+TUint CpTopologyRoom::VolumeLimit() const
+{
+	return iRoom.VolumeLimit();
 }
 
 void CpTopologyRoom::SetUserData(void* aValue)
@@ -162,7 +198,7 @@ void* CpTopologyRoom::UserData() const
 
 // CpTopology
 
-class CpTopology : public IHouse, ICpTopology3Handler
+class CpTopology : public IHouse, ICpTopology4Handler
 {
 public:
     CpTopology(IHouseHandler& aHandler);
@@ -171,17 +207,20 @@ private:
     // IHouse
     virtual void Refresh();
     
-    // ICpTopology3Handler
-    virtual void RoomAdded(CpTopology3Room& aRoom);
-    virtual void RoomChanged(CpTopology3Room& aRoom);
-    virtual void RoomRemoved(CpTopology3Room& aRoom);
-    virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-    virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
+    // ICpTopology4Handler
+    virtual void RoomAdded(CpTopology4Room& aRoom);
+    virtual void RoomChanged(CpTopology4Room& aRoom);
+    virtual void RoomRemoved(CpTopology4Room& aRoom);
+    virtual void RoomStandbyChanged(CpTopology4Room& aRoom);
+    virtual void RoomSourceChanged(CpTopology4Room& aRoom);
+    virtual void RoomVolumeControlChanged(CpTopology4Room& aRoom);
+	virtual void RoomVolumeChanged(CpTopology4Room& aRoom);
+	virtual void RoomMuteChanged(CpTopology4Room& aRoom);
+	virtual void RoomVolumeLimitChanged(CpTopology4Room& aRoom);
 
 private:
     IHouseHandler& iHandler;
-    CpTopology3* iTopology;
+    CpTopology4* iTopology;
 };
 
 #ifdef _WIN32
@@ -193,16 +232,16 @@ private:
 CpTopology::CpTopology(IHouseHandler& aHandler)
     : iHandler(aHandler)
 {
-	LOG(kTopology, "CpTopology::CpTopology\n");
-    iTopology = new CpTopology3(*this);
-	LOG(kTopology, "CpTopology::CpTopology created layer 3\n");
+    LOG(kTopology, "CpTopology::CpTopology\n");
+    iTopology = new CpTopology4(*this);
+    LOG(kTopology, "CpTopology::CpTopology created layer 4\n");
 }
 
 CpTopology::~CpTopology()
 {
     delete iTopology;
 
-	LOG(kTopology, "CpTopology::~CpTopology deleted layer 3\n");
+    LOG(kTopology, "CpTopology::~CpTopology deleted layer 4\n");
 }
 
 void CpTopology::Refresh()
@@ -210,38 +249,53 @@ void CpTopology::Refresh()
     iTopology->Refresh();
 }
     
-void CpTopology::RoomAdded(CpTopology3Room& aRoom)
+void CpTopology::RoomAdded(CpTopology4Room& aRoom)
 {
     CpTopologyRoom* room = new CpTopologyRoom(aRoom);
     aRoom.SetUserData(room);
     iHandler.RoomAdded(*room);
 }
 
-void CpTopology::RoomChanged(CpTopology3Room& aRoom)
+void CpTopology::RoomChanged(CpTopology4Room& aRoom)
 {
     iHandler.RoomChanged(*(CpTopologyRoom*)aRoom.UserData());
 }
 
-void CpTopology::RoomRemoved(CpTopology3Room& aRoom)
+void CpTopology::RoomRemoved(CpTopology4Room& aRoom)
 {
     CpTopologyRoom* room = (CpTopologyRoom*)aRoom.UserData();
     iHandler.RoomRemoved(*room);
-	room->RemoveRef();
+    room->RemoveRef();
 }
 
-void CpTopology::RoomStandbyChanged(CpTopology3Room& aRoom)
+void CpTopology::RoomStandbyChanged(CpTopology4Room& aRoom)
 {
     iHandler.RoomStandbyChanged(*(CpTopologyRoom*)aRoom.UserData());
 }
 
-void CpTopology::RoomSourceChanged(CpTopology3Room& aRoom)
+void CpTopology::RoomSourceChanged(CpTopology4Room& aRoom)
 {
     iHandler.RoomSourceChanged(*(CpTopologyRoom*)aRoom.UserData());
 }
 
-void CpTopology::RoomVolumeControlChanged(CpTopology3Room& aRoom)
+void CpTopology::RoomVolumeControlChanged(CpTopology4Room& aRoom)
 {
     iHandler.RoomVolumeControlChanged(*(CpTopologyRoom*)aRoom.UserData());
+}
+
+void CpTopology::RoomVolumeChanged(CpTopology4Room& aRoom)
+{
+    iHandler.RoomVolumeChanged(*(CpTopologyRoom*)aRoom.UserData());
+}
+
+void CpTopology::RoomMuteChanged(CpTopology4Room& aRoom)
+{
+    iHandler.RoomMuteChanged(*(CpTopologyRoom*)aRoom.UserData());
+}
+
+void CpTopology::RoomVolumeLimitChanged(CpTopology4Room& aRoom)
+{
+    iHandler.RoomVolumeLimitChanged(*(CpTopologyRoom*)aRoom.UserData());
 }
 
 // House
