@@ -218,20 +218,25 @@ ohnet.subscriptionmanager = (function() {
 		webSocketLive = false;
 		console.log("onSocketClose");
 		
-
 		if(webSocketOpened) {
-			if(DisconnectedFunction) {
-				DisconnectedFunction();
+			if(webSocketAttempts < WEBSOCKETRETRYATTEMPTS) {
+				setTimeout(function() {
+					webSocketAttempts++;
+					startWebSocket("ws://" + window.location.hostname + ":" + options.port + "/");
+				},1000);
 			}
-		}
-
-		if(webSocketOpened || webSocketAttempts < WEBSOCKETRETRYATTEMPTS) {
-			webSocketAttempts++;
-			startWebSocket("ws://" + window.location.hostname + ":" + options.port + "/");
+			else
+			{
+				if(DisconnectedFunction) {
+					DisconnectedFunction();
+				}
+			}
 		} else {
 			startLongPolling();
 		}
 	};
+	
+	
 	/**
 	 * Long Poll event for when the node is no longer accepting long poll request.
 	 * @method onLongPollClose
@@ -258,11 +263,14 @@ ohnet.subscriptionmanager = (function() {
 			services = {};
 			pendingServices = [];
 			pendingPropertyUpdates = {};
+			running = true;
 			if(StartedFunction)
 				StartedFunction();
-			running = true;
+			
 		}
 	};
+	
+	
 	/**
 	 * Starts the Subscription Manager and opens a Web Socket.
 	 * @method start
@@ -332,9 +340,9 @@ ohnet.subscriptionmanager = (function() {
 			services = {};
 			pendingServices = [];
 			pendingPropertyUpdates = {};
+			running = true;
 			if(StartedFunction)
 				StartedFunction();
-			running = true;
 		}
 		
 		
