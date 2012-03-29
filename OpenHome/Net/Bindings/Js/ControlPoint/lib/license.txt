@@ -1,0 +1,3 @@
+==== ohnet.js license =====
+
+ohnet.base64.js is based on code from php.js.   It is MIT licensed which can be found here - http://phpjs.org/pages/license. 

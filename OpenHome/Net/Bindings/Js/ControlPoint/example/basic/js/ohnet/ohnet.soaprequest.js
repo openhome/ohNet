@@ -240,7 +240,7 @@ ohnet.soaprequest.readStringParameter = function (value) {
 * @return {String} The binary value converted from base64
 */
 ohnet.soaprequest.readBinaryParameter = function (value) {
-    return atob(value);
+	return atob	? atob(value) : ohnet.base64_decode(value);
 }
 
 /**
@@ -280,7 +280,7 @@ ohnet.soaprequest.prototype.writeStringParameter = function (tagName, value) {
 * @param {String} value The xml tag value to be inserted into the SOAP envelope
 */
 ohnet.soaprequest.prototype.writeBinaryParameter = function (tagName, value) {
-    this.writeParameter(tagName, (value ? btoa(value) : ""));
+    this.writeParameter(tagName, (value ? (btoa ? btoa(value) : ohnet.base64_encode(value)) : ""));
 }
 
 

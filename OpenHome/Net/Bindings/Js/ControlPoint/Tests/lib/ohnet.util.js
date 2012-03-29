@@ -15,8 +15,11 @@ if (typeof ohnet == "undefined" || !ohnet) {
     * @static
     */
     var ohnet = {};
+}
+if (typeof ohnet.util == "undefined" || !ohnet.util) {
     ohnet.util = {};
 }
+
 
 
 /**
