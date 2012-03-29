@@ -32,8 +32,6 @@ CpTopology3Group::CpTopology3Group(CpTopology2Group& aGroup, ICpTopology3Handler
 		Functor functorInitial = MakeFunctor(*this, &CpTopology3Group::EventInitialEvent);
 
 		iServiceVolume->SetPropertyInitialEvent(functorInitial);
-
-		iServiceVolume->Subscribe();
 	}
 }
 
@@ -180,6 +178,11 @@ void CpTopology3Group::SetSourceIndex(TUint aIndex)
 void CpTopology3Group::GroupAdded()
 {
 	iHandler.GroupAdded(*this);
+
+	if(iServiceVolume)
+	{
+		iServiceVolume->Subscribe();
+	}
 }
 
 void CpTopology3Group::GroupStandbyChanged()
