@@ -1,1098 +1,514 @@
 #include "CpTopology3.h"
 
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Private/Parser.h>
-#include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Net/Private/XmlParser.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-// CpTopology4Source
+// CpTopology3Room
 
-CpTopology4Source::CpTopology4Source(CpTopology4Group& aGroup, TUint aIndex)
-    : iGroup(aGroup)
-    , iIndex(aIndex)
-{
-}
-
-const Brx& CpTopology4Source::Name() const
-{
-    return (iGroup.Group().SourceName(iIndex));
-}
-
-const Brx& CpTopology4Source::Type() const
-{
-    return (iGroup.Group().SourceType(iIndex));
-}
-
-const Brx& CpTopology4Source::Group() const
-{
-    return (iGroup.Group().Name());
-}
-
-CpDevice& CpTopology4Source::Device() const
-{
-    return (iGroup.Group().Device());
-}
-    
-TUint CpTopology4Source::ChildCount() const
-{
-    return (TUint)iChildList.size();
-}
-
-CpTopology4Group& CpTopology4Source::Child(TUint aIndex) const
-{
-    ASSERT(aIndex < iChildList.size());
-    return (*iChildList[aIndex]);
-}
-    
-void CpTopology4Source::AddChild(CpTopology4Group& aGroup)
-{
-    iChildList.push_back(&aGroup);
-}
-
-void CpTopology4Source::RemoveChild(CpTopology4Group& aGroup)
-{
-    std::vector<CpTopology4Group*>::iterator it = iChildList.begin();
-    
-    while (it != iChildList.end()) {
-        if (*it == &aGroup) {
-            iChildList.erase(it);
-            return;
-        }
-        it++;
-    }
-    
-    ASSERTS();
-}
-
-void CpTopology4Source::ClearChildren()
-{
-    // the reason we don't just iterate normally over the child list is because
-    // the ClearParent function does itself change the child list, which
-    // messes with our iterator
-    
-    while (iChildList.size() != 0) {
-        std::vector<CpTopology4Group*>::iterator it = iChildList.begin();
-        (*it)->ClearParent();
-    }
-}
-
-TUint CpTopology4Source::EvaluateSources(std::vector<CpTopology4Source*>& aVector)
-{
-    iSourceCount = 0;
-    
-    if (iChildList.size() == 0) {
-        if (iGroup.Group().SourceVisible(iIndex)) {
-            iSourceCount = 1;
-            aVector.push_back(this);
-        }
-    }
-    else {
-        std::vector<CpTopology4Group*>::iterator it = iChildList.begin();
-        
-        while (it != iChildList.end()) {
-            iSourceCount += (*it)->EvaluateSources(aVector);
-            it++;
-        }
-    }
-
-    return (iSourceCount);
-}
-
-void CpTopology4Source::Select()
-{
-    iGroup.Group().SetSourceIndex(iIndex);
-}
-
-CpTopology4Group& CpTopology4Source::Owner() const
-{
-    return (iGroup);
-}
-
-TUint CpTopology4Source::SourceCount() const
-{
-    return (iSourceCount);
-}
-
-CpTopology4Source::~CpTopology4Source()
-{
-    ASSERT(iChildList.size() == 0);
-}
-    
-// CpTopology4Group
-
-CpTopology4Group::CpTopology4Group(CpTopology3Group& aGroup, CpTopology4Room& aRoom)
-    : iGroup(aGroup)
-    , iRoom(aRoom)
-    , iParent(0)
-    , iParentSourceIndex(0)
-    , iIsRoot(false)
-{
-    iGroup.AddRef();
-
-    for (TUint i = 0; i < iGroup.SourceCount(); i++) {
-        iSourceList.push_back(new CpTopology4Source(*this, i));
-    }
-}
-
-CpTopology3Group& CpTopology4Group::Group() const
-{
-    return (iGroup);
-}
-
-CpTopology4Room& CpTopology4Group::Room() const
-{
-    return (iRoom);
-}
-
-CpTopology4Group::~CpTopology4Group()
-{
-    std::vector<CpTopology4Source*>::iterator it = iSourceList.begin();
-    
-    while (it != iSourceList.end()) {
-        delete (*it);
-        it++;
-    }
-    
-    iGroup.RemoveRef();
-}
-
-const Brx& CpTopology4Group::Name() const
-{
-    return (iGroup.Name());
-}
-
-TBool CpTopology4Group::HasParent() const
-{
-    return (iParent != NULL);
-}
-
-CpTopology4Group& CpTopology4Group::Parent() const
-{
-    ASSERT(iParent);
-    return (*iParent);
-}
-
-TUint CpTopology4Group::ParentSourceIndex() const
-{
-    ASSERT(iParent);
-    return (iParentSourceIndex);
-}
-
-TBool CpTopology4Group::IsRoot() const
-{
-    return (iIsRoot);
-}
-
-void CpTopology4Group::SetIsRoot(TBool aValue)
-{
-    iIsRoot = aValue;
-}
-
-TUint CpTopology4Group::EvaluateSources(std::vector<CpTopology4Source*>& aVector)
-{
-    iSourceCount = 0;
-
-    std::vector<CpTopology4Source*>::iterator it = iSourceList.begin();
-    
-    while (it != iSourceList.end()) {
-        iSourceCount += (*it)->EvaluateSources(aVector);
-        it++;
-    }
-
-    return (iSourceCount);
-}
-
-TUint CpTopology4Group::SourceCount() const
-{
-    return (iSourceCount);
-}
-
-TBool CpTopology4Group::IsCurrentDescendentOf(CpTopology4Group& aGroup) const
-{
-    const CpTopology4Group* group = this;
-
-    for (;;) {
-        if (group == &aGroup) {
-            return (true);
-        }
-
-        if (group->HasParent()) {
-            TUint index = group->ParentSourceIndex();
-            group = &group->Parent();
-            if (group->Group().SourceIndex() == index) {
-                continue;
-            }
-        }
-
-        return (false);
-    }
-}
-
-TBool CpTopology4Group::IsDescendentOf(CpTopology4Group& aGroup) const
-{
-    const CpTopology4Group* group = this;
-
-    for (;;) {
-        if (group == &aGroup) {
-            return (true);
-        }
-
-        if (!group->HasParent()) {
-            return (false);
-        }
-
-        group = &group->Parent();
-    }
-}
-
-CpTopology4Group&  CpTopology4Group::CurrentDescendent()
-{
-    CpTopology4Group* group = this;
-
-    for (;;) {
-        TUint index = group->Group().SourceIndex();
-        CpTopology4Source& source = group->Source(index);
-        if (source.ChildCount() > 0) {
-            group = &source.Child(0);
-            continue;
-        }
-        return (*group);
-    }
-}
-
-CpTopology4Group&  CpTopology4Group::Root()
-{
-    CpTopology4Group* group = this;
-
-    for (;;) {
-        if (group->HasParent()) {
-            group = &group->Parent();
-            continue;
-        }
-        return (*group);
-    }
-}
-
-CpTopology4Source& CpTopology4Group::Source(TUint aIndex) const
-{
-    ASSERT(aIndex < iSourceList.size());
-    return (*iSourceList[aIndex]);
-}
-
-void CpTopology4Group::ClearChildren()
-{
-    std::vector<CpTopology4Source*>::iterator it = iSourceList.begin();
-    
-    while (it != iSourceList.end()) {
-        (*it)->ClearChildren();
-        it++;
-    }
-}
-
-void CpTopology4Group::ClearParent()
-{
-    ASSERT(iParent != NULL);
-    iParent->RemoveChild(*this, iParentSourceIndex);
-    iParent = NULL;
-}
-
-void CpTopology4Group::SetParent(CpTopology4Group& aGroup, TUint aSourceIndex)
-{
-    ASSERT(iParent == NULL);
-    iParent = &aGroup;
-    iParentSourceIndex = aSourceIndex;
-}
-
-TBool CpTopology4Group::AddIfIsChild(CpTopology4Group& aGroup)
-{
-    const Brx& name = aGroup.Name();
-    
-    TUint count = iGroup.SourceCount();
-    
-    for (TUint i = 0; i < count; i++) {
-        if (iGroup.SourceName(i) == name) {
-            iSourceList[i]->AddChild(aGroup);
-            aGroup.SetParent(*this, i);
-            return (true);      
-        }
-    }
-
-    return (false); 
-}
-
-void CpTopology4Group::AddChild(CpTopology4Group& aGroup, TUint aSourceIndex)
-{
-    ASSERT(aSourceIndex < iSourceList.size());
-    iSourceList[aSourceIndex]->AddChild(aGroup);
-}
-
-void CpTopology4Group::RemoveChild(CpTopology4Group& aGroup, TUint aSourceIndex)
-{
-    ASSERT(aSourceIndex < iSourceList.size());
-    iSourceList[aSourceIndex]->RemoveChild(aGroup);
-}
-
-void CpTopology4Group::GroupStandbyChanged()
-{
-    LOG(kTopology, "CpTopology4Group::GroupStandbyChanged\n");
-    iRoom.GroupStandbyChanged(*this);
-}
-
-void CpTopology4Group::GroupSourceIndexChanged()
-{
-    LOG(kTopology, "CpTopology4Group::GroupSourceIndexChanged\n");
-    iRoom.GroupSourceIndexChanged(*this);
-}
-
-void CpTopology4Group::GroupSourceListChanged()
-{
-    LOG(kTopology, "CpTopology4Group::GroupSourceListChanged\n");
-    iRoom.GroupSourceListChanged(*this);
-}
-
-void CpTopology4Group::GroupRemoved()
-{
-    LOG(kTopology, "CpTopology4Group::GroupRemoved\n");
-    iRoom.GroupRemoved(*this);
-    delete(this);
-}
-
-void CpTopology4Group::GroupVolumeControlChanged()
-{
-	LOG(kTopology, "CpTopology4Group::GroupVolumeControlChanged\n");
-    iRoom.GroupVolumeControlChanged(*this);
-}
-
-void CpTopology4Group::GroupVolumeChanged()
-{
-	LOG(kTopology, "CpTopology4Group::GroupVolumeChanged\n");
-    iRoom.GroupVolumeChanged(*this);
-}
-
-void CpTopology4Group::GroupMuteChanged()
-{
-	LOG(kTopology, "CpTopology4Group::GroupMuteChanged\n");
-    iRoom.GroupMuteChanged(*this);
-}
-
-void CpTopology4Group::GroupVolumeLimitChanged()
-{
-	LOG(kTopology, "CpTopology4Group::GroupVolumeLimitChanged\n");
-    iRoom.GroupVolumeLimitChanged(*this);
-}
-
-
-// CpTopology4Room
-
-CpTopology4Room::CpTopology4Room(const Brx& aName, ICpTopology4Handler& aHandler)
-    : iName(aName)
+CpTopology3Group::CpTopology3Group(CpTopology2Group& aGroup, ICpTopology3Handler& aHandler)
+	: iGroup(aGroup)
     , iHandler(aHandler)
-    , iCurrentGroup(0)
-    , iActive(false)
-    , iMutex("T3RM")
-    , iSourceCount(0)
-    , iStandbyCount(0)
-    , iStandby(eOff)
-    , iRefCount(1)
-    , iUserData(0)
+	, iHasVolumeControl(false)
+	, iServiceVolume(0)
+	, iVolume(0)
+	, iMute(false)
+	, iVolumeLimit(0)
+	, iRefCount(1)
+	, iUserData(0)
 {
+	iGroup.AddRef();
+
+	iFunctorSetVolume = MakeFunctorAsync(*this, &CpTopology3Group::CallbackSetVolume);
+    iFunctorVolumeInc = MakeFunctorAsync(*this, &CpTopology3Group::CallbackVolumeInc);
+	iFunctorVolumeDec = MakeFunctorAsync(*this, &CpTopology3Group::CallbackVolumeDec);
+	iFunctorSetMute = MakeFunctorAsync(*this, &CpTopology3Group::CallbackSetMute);
+
+	if(iGroup.HasVolumeControl())
+	{
+		iServiceVolume = new CpProxyAvOpenhomeOrgVolume1(iGroup.Device());
+
+		Functor functorInitial = MakeFunctor(*this, &CpTopology3Group::EventInitialEvent);
+
+		iServiceVolume->SetPropertyInitialEvent(functorInitial);
+
+		iServiceVolume->Subscribe();
+	}
 }
 
-CpTopology4Room::~CpTopology4Room()
+CpTopology3Group::~CpTopology3Group()
 {
-    ASSERT(iGroupList.size() == 0);
+	iGroup.RemoveRef();
+
+	if(iServiceVolume)
+	{
+		delete (iServiceVolume);
+		iServiceVolume = 0;
+	}
 }
 
-void CpTopology4Room::SetUserData(void* aValue)
+void CpTopology3Group::AddRef()
 {
-    iUserData = aValue;
+	iRefCount++;
 }
 
-void* CpTopology4Room::UserData() const
+void CpTopology3Group::RemoveRef()
 {
-    return (iUserData);
-}
-
-void CpTopology4Room::ReportGroups()
-{
-    std::vector<CpTopology4Group*>::const_iterator it;
-    
-    LOG(kTopology, "=== GROUPS ===\n");
-
-    it = iGroupList.begin();
-
-    while (it != iGroupList.end()) {
-        LOG(kTopology, (*it)->Group().Room());
-        LOG(kTopology, ":");
-        LOG(kTopology, (*it)->Group().Name());
-        LOG(kTopology, "\n");
-        it++;
-    }
-
-    LOG(kTopology, "=== ROOTS  ===\n");
-
-    it = iRootList.begin();
-
-    while (it != iRootList.end()) {
-        LOG(kTopology, (*it)->Group().Room());
-        LOG(kTopology, ":");
-        LOG(kTopology, (*it)->Group().Name());
-        LOG(kTopology, "\n");
-        it++;
-    }
-
-    LOG(kTopology, "==============\n");
-}
-
-// ICpTopology3Handler
-    
-void CpTopology4Room::GroupAdded(CpTopology4Group& aGroup)
-{
-    LOG(kTopology, "CpTopology4Room::GroupAdded(");
-    LOG(kTopology, iName);
-    LOG(kTopology, ":");
-    LOG(kTopology, aGroup.Name());
-    LOG(kTopology, ")\n");
-
-    iMutex.Wait();
-
-    // Check if this is the first group
-
-    if (iCurrentGroup == 0) {
-        iCurrentGroup = &aGroup;
-        aGroup.SetIsRoot(true);
-        iGroupList.push_back(&aGroup);
-        iRootList.push_back(&aGroup);
-        if (aGroup.Group().Standby()) {
-            iStandbyCount++;
-            iStandby = eOn;
-        }
-        iSourceCount = EvaluateSources();
-        iHandler.RoomAdded(*this);
-        iMutex.Signal();
-        return;
-    }
-
-    // evaluate standby
-
-    if (aGroup.Group().Standby()) {
-        iStandbyCount++;
-        EvaluateStandby();
-    }
-
-    std::vector<CpTopology4Group*>::iterator it;
-
-    // Check if this has an existing parent
-    
-    it = iGroupList.begin();
-    
-    while (it != iGroupList.end()) {
-        if ((*it)->AddIfIsChild(aGroup)) {
-            iGroupList.push_back(&aGroup);
-            if (aGroup.IsCurrentDescendentOf(*iCurrentGroup)) {
-                UpdateCurrentGroup(aGroup);
-            }
-            iSourceCount = EvaluateSources();
-            iHandler.RoomChanged(*this);
-            iMutex.Signal();
-            return;
-        }
-        it++;
-    }
-    
-    // Check if this is the parent of an existing root
-    
-    it = iRootList.begin();
-    
-    while (it != iRootList.end()) {
-        CpTopology4Group* group = *it;
-        if (aGroup.AddIfIsChild(*group)) {
-            iRootList.erase(it);
-            group->SetIsRoot(false);
-            if (group == iCurrentGroup) {
-                if (!group->IsCurrentDescendentOf(aGroup)) {
-                    UpdateCurrentGroup(aGroup);
-                }
-            }
-            break;
-        }
-        it++;
-    }
-    
-    aGroup.SetIsRoot(true);
-    iGroupList.push_back(&aGroup);
-    iRootList.push_back(&aGroup);
-    iSourceCount = EvaluateSources();
-    iHandler.RoomChanged(*this);
-    iMutex.Signal();
-}
-
-void CpTopology4Room::GroupRemoved(CpTopology4Group& aGroup)
-{
-    LOG(kTopology, "CpTopology4Room::GroupRemoved(");
-    LOG(kTopology, iName);
-    LOG(kTopology, ":");
-    LOG(kTopology, aGroup.Name());
-    LOG(kTopology, ")\n");
-
-    CpTopology4Group* parent = 0;
-
-    if (aGroup.HasParent()) {
-        parent = &aGroup.Parent();
-    }
-
-    iMutex.Wait();
-
-    std::vector<CpTopology4Group*>::iterator it = iGroupList.begin();
-    
-    while (it != iGroupList.end()) {
-        if (*it == &aGroup) {
-            iGroupList.erase(it);
-            break;
-        }
-        it++;
-    }
-    
-    if (aGroup.IsRoot()) {
-        it = iRootList.begin();
-        while (it != iRootList.end()) {
-            if (*it == &aGroup) {
-                iRootList.erase(it);
-                break;
-            }
-            it++;
-        }
-    }
-    else {
-        aGroup.ClearParent();
-    }
-            
-    aGroup.ClearChildren();
-    
-    // now check orphaned groups
-    // remap them or change them to root groups
-    
-    it = iGroupList.begin();
-    
-    while (it != iGroupList.end()) {
-        if (!(*it)->IsRoot() && !(*it)->HasParent()) { // indicates this group has been orphaned
-            (*it)->SetIsRoot(true);
-            iRootList.push_back(*it);
-        }
-        it++;
-    }
-
-    iSourceCount = EvaluateSources();
-
-    // check for last group in this room
-    
-    if (iGroupList.size() == 0) {
-		iCurrentGroup = 0;
-        iHandler.RoomRemoved(*this);
-        iMutex.Signal();
-        RemoveRef();
-        return;
-    }
-
-    if (aGroup.Group().Standby()) {
-        iStandbyCount--;
-        EvaluateStandby();
-    }
-
-    // if this is the current group, assign a new one
-
-    if (iCurrentGroup == &aGroup) {
-        if (parent == 0) {
-            parent = *iRootList.begin();
-        }
-        UpdateCurrentGroup(parent->CurrentDescendent());
-    }
-
-    iHandler.RoomChanged(*this);
-
-    iMutex.Signal();
-}
-
-void CpTopology4Room::GroupVolumeControlChanged(CpTopology4Group& /*aGroup*/)
-{
-	iHandler.RoomVolumeControlChanged(*this);
-}
-
-void CpTopology4Room::GroupVolumeChanged(CpTopology4Group& /*aGroup*/)
-{
-	iHandler.RoomVolumeChanged(*this);
-}
-
-void CpTopology4Room::GroupMuteChanged(CpTopology4Group& /*aGroup*/)
-{
-	iHandler.RoomMuteChanged(*this);
-}
-
-void CpTopology4Room::GroupVolumeLimitChanged(CpTopology4Group& /*aGroup*/)
-{
-	iHandler.RoomVolumeLimitChanged(*this);
-}
-
-
-// Must be called with iMutex locked
-
-void CpTopology4Room::UpdateCurrentGroup(CpTopology4Group& aGroup)
-{
-    CpTopology3Group& root = aGroup.Root().Group();
-
-	LOG(kTopology, "CpTopology4Room::UpdateCurrentGroup(");
-    LOG(kTopology, iName);
-    LOG(kTopology, ":");
-	LOG(kTopology, root.Name());
-	LOG(kTopology, ":");
-	LOG(kTopology, aGroup.Group().HasVolumeControl() ? Brn("Yes") : Brn("No"));
-	LOG(kTopology, ":");
-    LOG(kTopology, root.HasVolumeControl() ? Brn("Yes") : Brn("No"));
-    LOG(kTopology, ")\n");
-
-    if (&iCurrentGroup->Root().Group() != &root) {
-		if(root.HasVolumeControl() || root.HasVolumeControl() != iCurrentGroup->Group().HasVolumeControl()) {
-			iHandler.RoomVolumeControlChanged(*this);
-		}
-    }
-
-    iCurrentGroup = &aGroup;
-    iHandler.RoomSourceChanged(*this);
-}
-
-void CpTopology4Room::GroupStandbyChanged(CpTopology4Group& aGroup)
-{
-    aGroup.Group().Standby() ? iStandbyCount++ : iStandbyCount--;
-    EvaluateStandby();
-}
-
-void CpTopology4Room::EvaluateStandby()
-{
-    EStandby standby = eOff;
-
-    if (iStandbyCount > 0) {
-        standby = eMixed;
-        if (iStandbyCount == iGroupList.size()) {
-            standby = eOn;
-        }
-    }
-
-    if (iStandby != standby) {
-        iStandby = standby;
-        iHandler.RoomStandbyChanged(*this);
-    }
-}
-
-
-void CpTopology4Room::GroupSourceIndexChanged(CpTopology4Group& aGroup)
-{
-    iMutex.Wait();
-
-    if (iCurrentGroup->IsDescendentOf(aGroup)) {
-        UpdateCurrentGroup(aGroup.CurrentDescendent());
-    }
-
-    iMutex.Signal();
-}
-
-void CpTopology4Room::GroupSourceListChanged(CpTopology4Group& /*aGroup*/)
-{
-    iSourceCount = EvaluateSources();
-    iHandler.RoomChanged(*this);
-}
-
-void CpTopology4Room::AddRef()
-{
-    iRefCount++;
-}
-
-void CpTopology4Room::RemoveRef()
-{
-    if (--iRefCount == 0) {
+	if (--iRefCount == 0) {
         delete this;
     }
 }
 
-TUint CpTopology4Room::SourceCount() const
+CpDevice& CpTopology3Group::Device() const
 {
-    return (iSourceCount);
+	return iGroup.Device();
 }
 
-void CpTopology4Room::SetSourceIndex(TUint aIndex)
+const Brx& CpTopology3Group::Room() const
 {
-    iMutex.Wait();
+	return iGroup.Room();
+}
 
-    if (aIndex >= iSourceCount) {
-        iMutex.Signal();
-        return;
+const Brx& CpTopology3Group::Name() const
+{
+	return iGroup.Name();
+}
+
+TUint CpTopology3Group::SourceIndex() const
+{
+	return iGroup.SourceIndex();
+}
+
+TUint CpTopology3Group::SourceCount() const
+{
+	return iGroup.SourceCount();
+}
+
+const Brx& CpTopology3Group::SourceName(TUint aIndex) const
+{
+	return iGroup.SourceName(aIndex);
+}
+
+const Brx& CpTopology3Group::SourceType(TUint aIndex) const
+{
+	return iGroup.SourceType(aIndex);
+}
+
+TBool CpTopology3Group::SourceVisible(TUint aIndex) const
+{
+	return iGroup.SourceVisible(aIndex);
+}
+
+TBool CpTopology3Group::HasVolumeControl() const
+{
+	return iHasVolumeControl;
+}
+
+void CpTopology3Group::SetVolume(TUint aValue)
+{
+	if(iServiceVolume)
+	{
+		iServiceVolume->BeginSetVolume(aValue, iFunctorSetVolume);
+	}
+}
+
+void CpTopology3Group::VolumeInc()
+{
+	if(iServiceVolume)
+	{
+		iServiceVolume->BeginVolumeInc(iFunctorVolumeInc);
+	}
+}
+
+void CpTopology3Group::VolumeDec()
+{
+	if(iServiceVolume)
+	{
+		iServiceVolume->BeginVolumeDec(iFunctorVolumeDec);
+	}
+}
+
+void CpTopology3Group::SetMute(TBool aValue)
+{
+	if(iServiceVolume)
+	{
+		iServiceVolume->BeginSetMute(aValue, iFunctorSetMute);
+	}
+}
+
+TBool CpTopology3Group::Standby() const
+{
+	return (iGroup.Standby());
+}
+
+TUint CpTopology3Group::Volume() const
+{
+	return iVolume;
+}
+
+TBool CpTopology3Group::Mute() const
+{
+	return iMute;
+}
+
+TUint CpTopology3Group::VolumeLimit() const
+{
+	return iVolumeLimit;
+}
+
+void CpTopology3Group::SetUserData(void* aValue)
+{
+	iUserData = aValue;
+}
+
+void* CpTopology3Group::UserData() const
+{
+	return iUserData;
+}
+
+void CpTopology3Group::SetStandby(TBool aValue)
+{
+	iGroup.SetStandby(aValue);
+}
+
+void CpTopology3Group::SetSourceIndex(TUint aIndex)
+{
+	iGroup.SetSourceIndex(aIndex);
+}
+
+void CpTopology3Group::GroupAdded()
+{
+	iHandler.GroupAdded(*this);
+}
+
+void CpTopology3Group::GroupStandbyChanged()
+{
+	iHandler.GroupStandbyChanged(*this);
+}
+
+void CpTopology3Group::GroupSourceIndexChanged()
+{
+	iHandler.GroupSourceIndexChanged(*this);
+}
+
+void CpTopology3Group::GroupSourceListChanged()
+{
+	iHandler.GroupSourceListChanged(*this);
+}
+
+void CpTopology3Group::GroupRemoved()
+{
+	iHandler.GroupRemoved(*this);
+	RemoveRef();
+}
+
+void CpTopology3Group::EventInitialEvent()
+{
+	iHasVolumeControl = true;
+
+	Functor functorVolume = MakeFunctor(*this, &CpTopology3Group::EventVolumeChanged);
+	Functor functorMute = MakeFunctor(*this, &CpTopology3Group::EventMuteChanged);
+	Functor functorVolumeLimit = MakeFunctor(*this, &CpTopology3Group::EventVolumeLimitChanged);
+
+	iServiceVolume->SetPropertyVolumeChanged(functorVolume);
+	iServiceVolume->SetPropertyMuteChanged(functorMute);
+	iServiceVolume->SetPropertyVolumeLimitChanged(functorVolumeLimit);
+
+	iServiceVolume->PropertyVolume(iVolume);
+	iServiceVolume->PropertyMute(iMute);
+	iServiceVolume->PropertyVolumeLimit(iVolumeLimit);
+
+	iHandler.GroupVolumeControlChanged(*this);
+}
+
+void CpTopology3Group::EventVolumeChanged()
+{
+	LOG(kTopology, "CpTopology3Group::EventVolumeChanged ");
+    LOG(kTopology, Name());
+    LOG(kTopology, "\n");
+
+    iServiceVolume->PropertyVolume(iVolume);
+
+    iHandler.GroupVolumeChanged(*this);
+}
+
+void CpTopology3Group::EventMuteChanged()
+{
+	LOG(kTopology, "CpTopology3Group::EventMuteChanged ");
+    LOG(kTopology, Name());
+    LOG(kTopology, "\n");
+
+    iServiceVolume->PropertyMute(iMute);
+
+    iHandler.GroupMuteChanged(*this);
+}
+
+void CpTopology3Group::EventVolumeLimitChanged()
+{
+	LOG(kTopology, "CpTopology3Group::EventVolumeLimitChanged ");
+    LOG(kTopology, Name());
+    LOG(kTopology, "\n");
+
+    iServiceVolume->PropertyVolumeLimit(iVolumeLimit);
+
+    iHandler.GroupVolumeLimitChanged(*this);
+}
+
+void CpTopology3Group::CallbackSetVolume(IAsync& /*aAsync*/)
+{
+}
+
+void CpTopology3Group::CallbackVolumeInc(IAsync& /*aAsync*/)
+{
+}
+
+void CpTopology3Group::CallbackVolumeDec(IAsync& /*aAsync*/)
+{
+}
+
+void CpTopology3Group::CallbackSetMute(IAsync& /*aAsync*/)
+{
+}
+
+// CpTopology3Job
+
+CpTopology3Job::CpTopology3Job(ICpTopology3Handler& aHandler)
+{
+    iHandler = &aHandler;
+    iGroup = 0;
+}
+    
+void CpTopology3Job::Set(CpTopology3Group& aGroup, ICpTopology3HandlerFunction aFunction)
+{
+    iGroup = &aGroup;
+    iFunction = aFunction;
+    iGroup->AddRef();
+}
+
+void CpTopology3Job::Execute()
+{
+    if (iGroup) {
+        (iHandler->*iFunction)(*iGroup);
+        iGroup->RemoveRef();
+        iGroup = 0;
+    }
+    else {
+        THROW(ThreadKill);
+    }
+}
+
+// CpTopology3
+
+CpTopology3::CpTopology3(ICpTopology3Handler& aHandler)
+	: iFree(kMaxJobCount)
+    , iReady(kMaxJobCount)
+{
+	for (TUint i = 0; i < kMaxJobCount; i++) {
+        iFree.Write(new CpTopology3Job(aHandler));
     }
 
-    CpTopology4Source* source = iSourceList[aIndex];
+    iTopology2 = new CpTopology2(*this);
 
-    source->Select();
+	iThread = new ThreadFunctor("TOP3", MakeFunctor(*this, &CpTopology3::Run));
+    iThread->Start();
+}
 
-    CpTopology4Group* group = &source->Owner();
+CpTopology3::~CpTopology3()
+{
+    LOG(kTopology, "CpTopology3::~CpTopology3\n");
+    delete (iTopology2);
+    LOG(kTopology, "CpTopology3::~CpTopology3 deleted layer 2\n");
+    ASSERT(iGroupList.size() == 0);
 
-    while (group->HasParent()) {
-        TUint index = group->ParentSourceIndex();
-        group = &group->Parent();
-        group->Source(index).Select();
+	iReady.Write(iFree.Read()); // this null job causes the thread to complete
+
+	delete (iThread);
+    
+    LOG(kTopology, "CpTopology3::~CpTopology3 deleted thread\n");
+
+    for (TUint i = 0; i < kMaxJobCount; i++) {
+        delete (iFree.Read());
     }
 
-    iMutex.Signal();
-}
-
-void CpTopology4Room::SetStandby(TBool aValue)
-{
-    iMutex.Wait();
-
-    std::vector<CpTopology4Group*>::iterator it = iGroupList.begin();
-    
-    while (it != iGroupList.end()) {
-        (*it)->Group().SetStandby(aValue);
-        it++;
-    }
-    
-    iMutex.Signal();    
-}
-
-void CpTopology4Room::SetVolume(TUint aValue)
-{
-	iMutex.Wait();
-
-	iCurrentGroup->Root().Group().SetVolume(aValue);
-
-	iMutex.Signal();
-}
-
-void CpTopology4Room::VolumeInc()
-{
-	iMutex.Wait();
-
-	iCurrentGroup->Root().Group().VolumeInc();
-
-	iMutex.Signal();
-}
-
-void CpTopology4Room::VolumeDec()
-{
-	iMutex.Wait();
-
-	iCurrentGroup->Root().Group().VolumeDec();
-
-	iMutex.Signal();
-}
-
-void CpTopology4Room::SetMute(TBool aValue)
-{
-	iMutex.Wait();
-
-	iCurrentGroup->Root().Group().SetMute(aValue);
-
-	iMutex.Signal();
-}
-
-const Brx& CpTopology4Room::Name() const
-{
-    return (iName);
-}
-
-TUint CpTopology4Room::EvaluateSources()
-{
-    iSourceList.clear();
-
-    TUint count = 0;
-    
-    if (iRootList.size() > 0) {
-        std::vector<CpTopology4Group*>::const_iterator it = iRootList.begin();
-        while (it != iRootList.end()) {
-            count += (*it)->EvaluateSources(iSourceList);
-            it++;
-        }
-    }
-    
-    return (count);
-}
-
-
-const Brx& CpTopology4Room::SourceName(TUint aIndex) const
-{
-    ASSERT(aIndex < iSourceCount);
-    return (iSourceList[aIndex]->Name());
-}
-
-const Brx& CpTopology4Room::SourceType(TUint aIndex) const
-{
-    ASSERT(aIndex < iSourceCount);
-    return (iSourceList[aIndex]->Type());
-}
-
-const Brx& CpTopology4Room::SourceGroup(TUint aIndex) const
-{
-    ASSERT(aIndex < iSourceCount);
-    return (iSourceList[aIndex]->Group());
-}
-
-CpDevice& CpTopology4Room::SourceDevice(TUint aIndex) const
-{
-    ASSERT(aIndex < iSourceCount);
-    return (iSourceList[aIndex]->Device());
-}
-
-const Brx& CpTopology4Room::CurrentSourceName() const
-{
-    ASSERT(iCurrentGroup);
-    CpTopology3Group& group = iCurrentGroup->Group();
-    return (group.SourceName(group.SourceIndex()));
-}
-
-const Brx& CpTopology4Room::CurrentSourceType() const
-{
-    ASSERT(iCurrentGroup);
-    CpTopology3Group& group = iCurrentGroup->Group();
-    return (group.SourceType(group.SourceIndex()));
-}
-
-const Brx& CpTopology4Room::CurrentSourceGroup() const
-{
-    ASSERT(iCurrentGroup);
-    CpTopology3Group& group = iCurrentGroup->Group();
-    return (group.Name());
-}
-
-CpDevice& CpTopology4Room::CurrentSourceDevice() const
-{
-    ASSERT(iCurrentGroup);
-    CpTopology3Group& group = iCurrentGroup->Group();
-    return (group.Device());
-}
-
-TBool CpTopology4Room::HasVolumeControl() const
-{
-    return (iCurrentGroup->Root().Group().HasVolumeControl());
-}
-
-TUint CpTopology4Room::Volume() const
-{
-	return (iCurrentGroup->Root().Group().Volume());
-}
-
-TBool CpTopology4Room::Mute() const
-{
-	return (iCurrentGroup->Root().Group().Mute());
-}
-
-TUint CpTopology4Room::VolumeLimit() const
-{
-	return (iCurrentGroup->Root().Group().VolumeLimit());
-}
-
-CpTopology4Room::EStandby CpTopology4Room::Standby() const
-{
-    return (iStandby);
-}
-
-// CpTopology4
-
-CpTopology4::CpTopology4(ICpTopology4Handler& aHandler)
-    : iHandler(aHandler)
-{
-    iTopology3 = new CpTopology3(*this);
-}
-
-CpTopology4::CpTopology4(ICpTopology4Handler& aHandler, ICpTopology3Handler** aTestInterface)
-    : iHandler(aHandler)
-    , iTopology3(0)
-{
-    *aTestInterface = this;
-}
-
-CpTopology4::~CpTopology4()
-{
-    LOG(kTopology, "CpTopology4::~CpTopology4\n");
-    delete (iTopology3);
-    LOG(kTopology, "CpTopology4::~CpTopology4 deleted layer 3\n");
-    ASSERT(iRoomList.size() == 0);
+    LOG(kTopology, "CpTopology3::~CpTopology3 deleted jobs\n");
 }
     
-void CpTopology4::Refresh()
+void CpTopology3::Refresh()
 {
-    ASSERT(iTopology3);
-    iTopology3->Refresh();
+    ASSERT(iTopology2);
+    iTopology2->Refresh();
+}
+
+// ICpTopology2Handler
+
+void CpTopology3::GroupAdded(CpTopology2Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupAdded\n");
+
+	CpTopology3Group* group = new CpTopology3Group(aGroup, *this);
+	aGroup.SetUserData(group);
+	group->GroupAdded();
+}
+
+void CpTopology3::GroupStandbyChanged(CpTopology2Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupStandbyChanged\n");
+    ((CpTopology3Group*)aGroup.UserData())->GroupStandbyChanged();
+}
+
+void CpTopology3::GroupSourceIndexChanged(CpTopology2Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupSourceIndexChanged\n");
+    ((CpTopology3Group*)aGroup.UserData())->GroupSourceIndexChanged();
+}
+
+void CpTopology3::GroupSourceListChanged(CpTopology2Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupSourceListChanged\n");
+    ((CpTopology3Group*)aGroup.UserData())->GroupSourceListChanged();
+}
+
+void CpTopology3::GroupRemoved(CpTopology2Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupRemoved\n");
+    ((CpTopology3Group*)aGroup.UserData())->GroupRemoved();
 }
 
 // ICpTopology3Handler
-    
-void CpTopology4::GroupAdded(CpTopology3Group& aGroup)
-{
-    LOG(kTopology, "CpTopology4::GroupAdded\n");
-    CpTopology4Room* room = 0;
 
-    std::list<CpTopology4Room*>::iterator it = iRoomList.begin();
+void CpTopology3::GroupAdded(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupAdded ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+	iGroupList.push_back(&aGroup);
+
+    CpTopology3Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology3Handler::GroupAdded);
+    iReady.Write(job);
+}
+
+void CpTopology3::GroupStandbyChanged(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupStandbyChanged ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology3Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology3Handler::GroupStandbyChanged);
+    iReady.Write(job);
+}
+
+void CpTopology3::GroupSourceIndexChanged(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupSourceIndexChanged ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology3Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology3Handler::GroupSourceIndexChanged);
+    iReady.Write(job);
+}
+
+void CpTopology3::GroupSourceListChanged(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupSourceListChanged ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology3Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology3Handler::GroupSourceListChanged);
+    iReady.Write(job);
+}
+
+void CpTopology3::GroupRemoved(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupRemoved ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+	std::list<CpTopology3Group*>::iterator it = iGroupList.begin();
     
-    while (it != iRoomList.end()) {
-        if ((*it)->Name() == aGroup.Room()) {
-            room = *it;
+    while (it != iGroupList.end()) {
+        if (*it == &aGroup) {
+            iGroupList.erase(it);
+
+			CpTopology3Job* job = iFree.Read();
+			job->Set(aGroup, &ICpTopology3Handler::GroupRemoved);
+			iReady.Write(job);
+			return;
+		}
+		it++;
+	}
+
+	ASSERTS();
+}
+
+void CpTopology3::GroupVolumeControlChanged(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupVolumeControlChanged ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology3Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology3Handler::GroupVolumeControlChanged);
+    iReady.Write(job);
+}
+
+void CpTopology3::GroupVolumeChanged(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupVolumeChanged ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology3Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology3Handler::GroupVolumeChanged);
+    iReady.Write(job);
+}
+
+void CpTopology3::GroupMuteChanged(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupMuteChanged ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology3Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology3Handler::GroupMuteChanged);
+    iReady.Write(job);
+}
+
+void CpTopology3::GroupVolumeLimitChanged(CpTopology3Group& aGroup)
+{
+	LOG(kTopology, "CpTopology3::GroupVolumeLimitChanged ");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology3Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology3Handler::GroupVolumeLimitChanged);
+    iReady.Write(job);
+}
+
+
+void CpTopology3::Run()
+{
+	LOG(kTopology, "CpTopology3::Run Started\n");
+
+    for (;;)
+    {
+        CpTopology3Job* job = iReady.Read();
+        
+        try {
+            job->Execute();
+            iFree.Write(job);
+        }
+        catch (ThreadKill)
+        {
+            iFree.Write(job);
             break;
         }
-        it++;
     }
 
-    if (room == 0) {
-        room = new CpTopology4Room(aGroup.Room(), *this);
-    }
-
-    CpTopology4Group* group = new CpTopology4Group(aGroup, *room);
-
-    aGroup.SetUserData(group);
-
-    room->GroupAdded(*group);
+	LOG(kTopology, "CpTopology3::Run Exiting\n");
 }
-
-void CpTopology4::GroupStandbyChanged(CpTopology3Group& aGroup)
-{
-    LOG(kTopology, "CpTopology4::GroupStandbyChanged\n");
-    ((CpTopology4Group*)aGroup.UserData())->GroupStandbyChanged();
-}
-
-void CpTopology4::GroupSourceIndexChanged(CpTopology3Group& aGroup)
-{
-    LOG(kTopology, "CpTopology4::GroupSourceIndexChanged\n");
-    ((CpTopology4Group*)aGroup.UserData())->GroupSourceIndexChanged();
-}
-
-void CpTopology4::GroupSourceListChanged(CpTopology3Group& aGroup)
-{
-    LOG(kTopology, "CpTopology4::GroupSourceListChanged\n");
-    ((CpTopology4Group*)aGroup.UserData())->GroupSourceListChanged();
-}
-
-void CpTopology4::GroupRemoved(CpTopology3Group& aGroup)
-{
-    LOG(kTopology, "CpTopology4::GroupRemoved\n");
-    ((CpTopology4Group*)aGroup.UserData())->GroupRemoved();
-}
-
-void CpTopology4::GroupVolumeControlChanged(CpTopology3Group& aGroup)
-{
-	LOG(kTopology, "CpTopology4::GroupVolumeControlChanged\n");
-    ((CpTopology4Group*)aGroup.UserData())->GroupVolumeControlChanged();
-}
-
-void CpTopology4::GroupVolumeChanged(CpTopology3Group& aGroup)
-{
-	LOG(kTopology, "CpTopology4::GroupVolumeChanged\n");
-    ((CpTopology4Group*)aGroup.UserData())->GroupVolumeChanged();
-}
-
-void CpTopology4::GroupMuteChanged(CpTopology3Group& aGroup) 
-{
-	LOG(kTopology, "CpTopology4::GroupMuteChanged\n");
-    ((CpTopology4Group*)aGroup.UserData())->GroupMuteChanged();
-}
-
-void CpTopology4::GroupVolumeLimitChanged(CpTopology3Group& aGroup)
-{
-	LOG(kTopology, "CpTopology4::GroupVolumeLimitChanged\n");
-    ((CpTopology4Group*)aGroup.UserData())->GroupVolumeLimitChanged();
-}
-
-// ICpTopology4Handler
-    
-void CpTopology4::RoomAdded(CpTopology4Room& aRoom)
-{
-    LOG(kTopology, "CpTopology4::RoomAdded ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    iRoomList.push_back(&aRoom);
-        
-    iHandler.RoomAdded(aRoom);
-}
-
-void CpTopology4::RoomChanged(CpTopology4Room& aRoom)
-{
-    LOG(kTopology, "CpTopology4::RoomChanged ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    iHandler.RoomChanged(aRoom);
-}
-
-void CpTopology4::RoomRemoved(CpTopology4Room& aRoom)
-{
-    LOG(kTopology, "CpTopology4::RoomRemoved ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    std::list<CpTopology4Room*>::iterator it = iRoomList.begin();
-    
-    while (it != iRoomList.end()) {
-        if (*it == &aRoom) {
-            iRoomList.erase(it);
-            iHandler.RoomRemoved(aRoom);
-            return;
-        }
-        it++;
-    }
-    
-    ASSERTS();
-}
-
-void CpTopology4::RoomStandbyChanged(CpTopology4Room& aRoom)
-{
-    LOG(kTopology, "CpTopology4::RoomStandbyChanged ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    iHandler.RoomStandbyChanged(aRoom);
-}
-
-void CpTopology4::RoomSourceChanged(CpTopology4Room& aRoom)
-{
-    LOG(kTopology, "CpTopology4::RoomSourceChanged ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    iHandler.RoomSourceChanged(aRoom);
-}
-
-void CpTopology4::RoomVolumeControlChanged(CpTopology4Room& aRoom)
-{
-    LOG(kTopology, "CpTopology4::RoomVolumeControlChanged ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    iHandler.RoomVolumeControlChanged(aRoom);
-}
-
-void CpTopology4::RoomVolumeChanged(CpTopology4Room& aRoom)
-{
-	LOG(kTopology, "CpTopology4::RoomVolumeChanged ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    iHandler.RoomVolumeChanged(aRoom);
-}
-
-void CpTopology4::RoomMuteChanged(CpTopology4Room& aRoom)
-{
-	LOG(kTopology, "CpTopology4::RoomMuteChanged ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    iHandler.RoomMuteChanged(aRoom);
-}
-
-void CpTopology4::RoomVolumeLimitChanged(CpTopology4Room& aRoom)
-{
-	LOG(kTopology, "CpTopology4::RoomVolumeLimitChanged ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-    iHandler.RoomVolumeLimitChanged(aRoom);
-}
-

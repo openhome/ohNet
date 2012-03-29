@@ -1,4 +1,4 @@
-// Manual test program for exercising Topology Layer 4
+// Manual test program for exercising Topology Layer 3
 //
 
 #include <OpenHome/Private/TestFramework.h>
@@ -14,136 +14,127 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-class TopologyLogger : public ICpTopology4Handler
+class TopologyLogger : public ICpTopology3Handler
 {
 public:
     TopologyLogger();
-    virtual void RoomAdded(CpTopology4Room& aRoom);
-    virtual void RoomChanged(CpTopology4Room& aRoom);
-    virtual void RoomRemoved(CpTopology4Room& aRoom);
-    virtual void RoomStandbyChanged(CpTopology4Room& aRoom);
-    virtual void RoomSourceChanged(CpTopology4Room& aRoom);
-    virtual void RoomVolumeControlChanged(CpTopology4Room& aRoom);
-	virtual void RoomVolumeChanged(CpTopology4Room& aRoom);
-	virtual void RoomMuteChanged(CpTopology4Room& aRoom);
-	virtual void RoomVolumeLimitChanged(CpTopology4Room& aRoom);
+    virtual void GroupAdded(CpTopology3Group& aGroup);
+    virtual void GroupStandbyChanged(CpTopology3Group& aGroup);
+    virtual void GroupSourceIndexChanged(CpTopology3Group& aGroup);
+    virtual void GroupSourceListChanged(CpTopology3Group& aGroup);
+    virtual void GroupRemoved(CpTopology3Group& aDevice);
+	virtual void GroupVolumeControlChanged(CpTopology3Group& aDevice);
+	virtual void GroupVolumeChanged(CpTopology3Group& aDevice);
+	virtual void GroupMuteChanged(CpTopology3Group& aDevice);
+	virtual void GroupVolumeLimitChanged(CpTopology3Group& aDevice);
 private:
-    void PrintRoomInfo(const char* aPrologue, const CpTopology4Room& aRoom);
-    void PrintSourceInfo(const CpTopology4Room& aRoom);
+    void PrintGroupInfo(const char* aPrologue, const CpTopology3Group& aGroup);
+    void PrintSourceInfo(const CpTopology3Group& aGroup);
 };
 
 TopologyLogger::TopologyLogger()
 {
 }
 
-void TopologyLogger::RoomAdded(CpTopology4Room& aRoom)
+void TopologyLogger::GroupAdded(CpTopology3Group& aGroup)
 {
     Print("\n");
-    PrintRoomInfo("Room Added         ", aRoom);
+    PrintGroupInfo("Group Added         ", aGroup);
     Print("\n");
-    PrintSourceInfo(aRoom);
+    PrintSourceInfo(aGroup);
 }
 
-void TopologyLogger::RoomChanged(CpTopology4Room& aRoom)
+void TopologyLogger::GroupStandbyChanged(CpTopology3Group& aGroup)
 {
-    Print("\n");
-    PrintRoomInfo("Source List Changed ", aRoom);
-    Print("\n");
-    PrintSourceInfo(aRoom);
-}
-
-void TopologyLogger::RoomRemoved(CpTopology4Room& aRoom)
-{
-    PrintRoomInfo("Room Removed        ", aRoom);
+    PrintGroupInfo("Standby Changed     ", aGroup);
+    Print(aGroup.Standby() ? "true" : "false");
     Print("\n");
 }
 
-void TopologyLogger::RoomStandbyChanged(CpTopology4Room& aRoom)
+void TopologyLogger::GroupSourceIndexChanged(CpTopology3Group& aGroup)
 {
-    PrintRoomInfo("Standby Changed     ", aRoom);
-    switch (aRoom.Standby()) {
-    case CpTopology4Room::eOn:
-        Print("On");
-        break;
-    case CpTopology4Room::eMixed:
-        Print("Mixed");
-        break;
-    case CpTopology4Room::eOff:
-        Print("Off");
-        break;
-    }
+    PrintGroupInfo("Source Index Changed", aGroup);
+    Print("%u\n", aGroup.SourceIndex());
+}
+
+void TopologyLogger::GroupSourceListChanged(CpTopology3Group& aGroup)
+{
+    Print("\n");
+    PrintGroupInfo("Source List Changed ", aGroup);
+    Print("\n");
+    PrintSourceInfo(aGroup);
+}
+
+void TopologyLogger::GroupRemoved(CpTopology3Group& aGroup)
+{
+    PrintGroupInfo("Group Removed       ", aGroup);
     Print("\n");
 }
 
-void TopologyLogger::RoomSourceChanged(CpTopology4Room& aRoom)
+void TopologyLogger::GroupVolumeControlChanged(CpTopology3Group& aGroup)
 {
-    PrintRoomInfo("Source Changed      ", aRoom);
-    Print(aRoom.CurrentSourceName());
-    Print("\n");
-}
-
-void TopologyLogger::RoomVolumeControlChanged(CpTopology4Room& aRoom)
-{
-    PrintRoomInfo("Vol Control Changed ", aRoom);
-    aRoom.HasVolumeControl() ? printf("Yes\n") : printf("No\n");
-	if(aRoom.HasVolumeControl())
+    PrintGroupInfo("Vol Control Changed ", aGroup);
+    aGroup.HasVolumeControl() ? printf("Yes\n") : printf("No\n");
+	if(aGroup.HasVolumeControl())
 	{
 		Print("Vol      ");
 		Bws<Ascii::kMaxUintStringBytes> bufferVol;
-		Ascii::AppendDec(bufferVol, aRoom.Volume());
+		Ascii::AppendDec(bufferVol, aGroup.Volume());
 		Print(bufferVol);
 		Print("\n");
 		Print("Mute      ");
 		Bws<Ascii::kMaxUintStringBytes> bufferMute;
-		Ascii::AppendDec(bufferMute, aRoom.Mute());
+		Ascii::AppendDec(bufferMute, aGroup.Mute());
 		Print(bufferMute);
 		Print("\n");
 		Print("Vol Limit      ");
 		Bws<Ascii::kMaxUintStringBytes> bufferVolLim;
-		Ascii::AppendDec(bufferVolLim, aRoom.VolumeLimit());
+		Ascii::AppendDec(bufferVolLim, aGroup.VolumeLimit());
 		Print(bufferVolLim);
 		Print("\n");
 	}
 }
 
-void TopologyLogger::RoomVolumeChanged(CpTopology4Room& aRoom)
+void TopologyLogger::GroupVolumeChanged(CpTopology3Group& aGroup)
 {
-	PrintRoomInfo("Vol Changed      ", aRoom);
+	PrintGroupInfo("Vol Changed      ", aGroup);
 	Bws<Ascii::kMaxUintStringBytes> buffer;
-	Ascii::AppendDec(buffer, aRoom.Volume());
+	Ascii::AppendDec(buffer, aGroup.Volume());
     Print(buffer);
     Print("\n");
 }
 
-void TopologyLogger::RoomMuteChanged(CpTopology4Room& aRoom)
+void TopologyLogger::GroupMuteChanged(CpTopology3Group& aGroup)
 {
-	PrintRoomInfo("Mute Changed      ", aRoom);
+	PrintGroupInfo("Mute Changed      ", aGroup);
 	Bws<Ascii::kMaxUintStringBytes> buffer;
-	Ascii::AppendDec(buffer, aRoom.Mute());
+	Ascii::AppendDec(buffer, aGroup.Mute());
     Print(buffer);
     Print("\n");
 }
 
-void TopologyLogger::RoomVolumeLimitChanged(CpTopology4Room& aRoom)
+void TopologyLogger::GroupVolumeLimitChanged(CpTopology3Group& aGroup)
 {
-	PrintRoomInfo("Vol Limit Changed      ", aRoom);
+	PrintGroupInfo("Vol Limit Changed      ", aGroup);
     Bws<Ascii::kMaxUintStringBytes> buffer;
-	Ascii::AppendDec(buffer, aRoom.VolumeLimit());
+	Ascii::AppendDec(buffer, aGroup.VolumeLimit());
     Print(buffer);
     Print("\n");
 }
 
-void TopologyLogger::PrintSourceInfo(const CpTopology4Room& aRoom)
+void TopologyLogger::PrintSourceInfo(const CpTopology3Group& aGroup)
 {
-    TUint count = aRoom.SourceCount();
+    TUint count = aGroup.SourceCount();
 
     Print("===============================================\n");
     
     for (TUint i = 0; i < count; i++) {
         Print("%u. ", i);
-        Print(aRoom.SourceName(i));
+        Print(aGroup.SourceName(i));
         Print(" ");
-        Print(aRoom.SourceType(i));
+        Print(aGroup.SourceType(i));
+        Print(" ");
+        Print(aGroup.SourceVisible(i) ? "true" : "false");
         Print("\n");
     }
 
@@ -151,10 +142,12 @@ void TopologyLogger::PrintSourceInfo(const CpTopology4Room& aRoom)
     Print("\n");
 }
 
-void TopologyLogger::PrintRoomInfo(const char* aPrologue, const CpTopology4Room& aRoom)
+void TopologyLogger::PrintGroupInfo(const char* aPrologue, const CpTopology3Group& aGroup)
 {
     Print("%s ", aPrologue);
-    Print(aRoom.Name());
+    Print(aGroup.Room());
+    Print(":");
+    Print(aGroup.Name());
     Print(" ");
 }
 
@@ -174,11 +167,11 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     }
 
     UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false, "TestTopology4");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false, "TestTopology3");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress subnet = (*ifs)[adapter.Value()]->Subnet();
     for (TUint i=0; i<ifs->size(); i++) {
-        (*ifs)[i]->RemoveRef("TestTopology4");
+        (*ifs)[i]->RemoveRef("TestTopology3");
     }
     delete ifs;
     UpnpLibrary::StartCp(subnet);
@@ -193,7 +186,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
 
     TopologyLogger logger;
 
-    CpTopology4* topology = new CpTopology4(logger);
+    CpTopology3* topology = new CpTopology3(logger);
 
     if (topology != NULL) {
         Blocker* blocker = new Blocker;
