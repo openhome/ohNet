@@ -38,10 +38,11 @@ ohnet.subscriptionmanager = (function() {
 	var subscriptionTimeoutSeconds = -1;
 	// The suggested timeout in seconds for each subscription.
 	var clientId = '';
+	var allowWebSockets = true;
 	// A flag to force the subscription manager to always use long polling
-	var StartedFunction, ErrorFunction, DisconnectedFunction, webSocketPort, webSocketLive = false, webSocketAttempts = 0, webSocketOpened = false, ws, lp;
+	var StartedFunction, ErrorFunction, DisconnectedFunction, Debug, webSocketPort, webSocketLive = false, webSocketAttempts = 0, webSocketOpened = false, ws, lp;
 	var services = {}, pendingServices = [], pendingPropertyUpdates = {};
-	var options = {};
+
 	// Public Variables
 	var running = false;
 	// A flag to state if the Subscription Manager is running
@@ -218,25 +219,19 @@ ohnet.subscriptionmanager = (function() {
 		webSocketLive = false;
 		console.log("onSocketClose");
 		
+
 		if(webSocketOpened) {
-			if(webSocketAttempts < WEBSOCKETRETRYATTEMPTS) {
-				setTimeout(function() {
-					webSocketAttempts++;
-					startWebSocket("ws://" + window.location.hostname + ":" + options.port + "/");
-				},1000);
+			if(DisconnectedFunction) {
+				DisconnectedFunction();
 			}
-			else
-			{
-				if(DisconnectedFunction) {
-					DisconnectedFunction();
-				}
-			}
+		}
+
+		if(webSocketOpened || webSocketAttempts < WEBSOCKETRETRYATTEMPTS) {
+			webSocketAttempts++;
 		} else {
 			startLongPolling();
 		}
 	};
-	
-	
 	/**
 	 * Long Poll event for when the node is no longer accepting long poll request.
 	 * @method onLongPollClose
@@ -256,27 +251,19 @@ ohnet.subscriptionmanager = (function() {
 	 */
 	var onSocketOpen = function() {
 		webSocketLive = true;
+		running = true;
 		webSocketOpened = true;
 		console.log("onSocketOpen");
-		if(!running)
-		{
-			services = {};
-			pendingServices = [];
-			pendingPropertyUpdates = {};
-			running = true;
-			if(StartedFunction)
-				StartedFunction();
-			
-		}
+		if(StartedFunction)
+			StartedFunction();
 	};
-	
-	
 	/**
 	 * Starts the Subscription Manager and opens a Web Socket.
 	 * @method start
 	 * @param {Object} options Contains user defined options
 	 */
-	var start = function(opt) {
+	var start = function(options) {
+
 		var defaults = {
 			startedFunction : null,
 			port : 54321,
@@ -287,7 +274,8 @@ ohnet.subscriptionmanager = (function() {
 			allowWebSockets : true,
 			retryInterval : 3000
 		};
-		options = ohnet.util.mergeOptions(defaults, opt);
+		options = ohnet.util.mergeOptions(defaults, options);
+		allowWebSockets = options.allowWebSockets;
 		clientId = ohnet.util.generateGUID();
 		StartedFunction = options.startedFunction;
 		ErrorFunction = options.errorFunction;
@@ -296,14 +284,14 @@ ohnet.subscriptionmanager = (function() {
 		webSocketPort = options.port;
 		RetryInterval = options.retryInterval;
 		subscriptionTimeoutSeconds = options.subscriptionTimeoutSeconds;
-		
+
 		if(Debug) {
 			console.log("*** ohnet.SubscriptionManager ***");
 		}
 
 		if(options.port && options.port != "") {
 			var websocketSupported = ("WebSocket" in window);
-			if(websocketSupported && options.allowWebSockets) {// NON-IE check if Websockets is supported
+			if(websocketSupported && allowWebSockets) {// NON-IE check if Websockets is supported
 				startWebSocket("ws://" + window.location.hostname + ":" + options.port + "/");
 			} else {
 
@@ -335,17 +323,9 @@ ohnet.subscriptionmanager = (function() {
 			onReceiveRenewCompleted : receiveRenewCompleted,
 			onReceiveError : onLongPollClose
 		});
-		if(!running)
-		{
-			services = {};
-			pendingServices = [];
-			pendingPropertyUpdates = {};
-			running = true;
-			if(StartedFunction)
-				StartedFunction();
-		}
-		
-		
+		running = true;
+		if(StartedFunction)
+			StartedFunction();
 	};
 	/**
 	 * Start messaging via websocket
@@ -378,7 +358,7 @@ ohnet.subscriptionmanager = (function() {
 				removeService(key);
 			}
 		}
-		running = false;
+
 		if(webSocketLive) {
 			ws.close();
 		}
