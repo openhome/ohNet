@@ -41,7 +41,7 @@ ohnet.subscriptionmanager = (function() {
 	// A flag to force the subscription manager to always use long polling
 	var StartedFunction, ErrorFunction, DisconnectedFunction, webSocketPort, webSocketLive = false, webSocketAttempts = 0, webSocketOpened = false, ws, lp;
 	var services = {}, pendingServices = [], pendingPropertyUpdates = {};
-	var startOptions = {};
+	var options = {};
 	// Public Variables
 	var running = false;
 	// A flag to state if the Subscription Manager is running
@@ -227,6 +227,7 @@ ohnet.subscriptionmanager = (function() {
 
 		if(webSocketOpened || webSocketAttempts < WEBSOCKETRETRYATTEMPTS) {
 			webSocketAttempts++;
+			startWebSocket("ws://" + window.location.hostname + ":" + options.port + "/");
 		} else {
 			startLongPolling();
 		}
@@ -267,8 +268,7 @@ ohnet.subscriptionmanager = (function() {
 	 * @method start
 	 * @param {Object} options Contains user defined options
 	 */
-	var start = function(options) {
-		startOptions = options;
+	var start = function(opt) {
 		var defaults = {
 			startedFunction : null,
 			port : 54321,
@@ -279,7 +279,7 @@ ohnet.subscriptionmanager = (function() {
 			allowWebSockets : true,
 			retryInterval : 3000
 		};
-		options = ohnet.util.mergeOptions(defaults, options);
+		options = ohnet.util.mergeOptions(defaults, opt);
 		clientId = ohnet.util.generateGUID();
 		StartedFunction = options.startedFunction;
 		ErrorFunction = options.errorFunction;
