@@ -38,11 +38,10 @@ ohnet.subscriptionmanager = (function() {
 	var subscriptionTimeoutSeconds = -1;
 	// The suggested timeout in seconds for each subscription.
 	var clientId = '';
-	var allowWebSockets = true;
 	// A flag to force the subscription manager to always use long polling
-	var StartedFunction, ErrorFunction, DisconnectedFunction, Debug, webSocketPort, webSocketLive = false, webSocketAttempts = 0, webSocketOpened = false, ws, lp;
+	var StartedFunction, ErrorFunction, DisconnectedFunction, webSocketPort, webSocketLive = false, webSocketAttempts = 0, webSocketOpened = false, ws, lp;
 	var services = {}, pendingServices = [], pendingPropertyUpdates = {};
-
+	var startOptions = {};
 	// Public Variables
 	var running = false;
 	// A flag to state if the Subscription Manager is running
@@ -251,11 +250,17 @@ ohnet.subscriptionmanager = (function() {
 	 */
 	var onSocketOpen = function() {
 		webSocketLive = true;
-		running = true;
 		webSocketOpened = true;
 		console.log("onSocketOpen");
-		if(StartedFunction)
-			StartedFunction();
+		if(!running)
+		{
+			services = {};
+			pendingServices = [];
+			pendingPropertyUpdates = {};
+			if(StartedFunction)
+				StartedFunction();
+			running = true;
+		}
 	};
 	/**
 	 * Starts the Subscription Manager and opens a Web Socket.
@@ -263,7 +268,7 @@ ohnet.subscriptionmanager = (function() {
 	 * @param {Object} options Contains user defined options
 	 */
 	var start = function(options) {
-
+		startOptions = options;
 		var defaults = {
 			startedFunction : null,
 			port : 54321,
@@ -275,7 +280,6 @@ ohnet.subscriptionmanager = (function() {
 			retryInterval : 3000
 		};
 		options = ohnet.util.mergeOptions(defaults, options);
-		allowWebSockets = options.allowWebSockets;
 		clientId = ohnet.util.generateGUID();
 		StartedFunction = options.startedFunction;
 		ErrorFunction = options.errorFunction;
@@ -284,14 +288,14 @@ ohnet.subscriptionmanager = (function() {
 		webSocketPort = options.port;
 		RetryInterval = options.retryInterval;
 		subscriptionTimeoutSeconds = options.subscriptionTimeoutSeconds;
-
+		
 		if(Debug) {
 			console.log("*** ohnet.SubscriptionManager ***");
 		}
 
 		if(options.port && options.port != "") {
 			var websocketSupported = ("WebSocket" in window);
-			if(websocketSupported && allowWebSockets) {// NON-IE check if Websockets is supported
+			if(websocketSupported && options.allowWebSockets) {// NON-IE check if Websockets is supported
 				startWebSocket("ws://" + window.location.hostname + ":" + options.port + "/");
 			} else {
 
@@ -323,9 +327,17 @@ ohnet.subscriptionmanager = (function() {
 			onReceiveRenewCompleted : receiveRenewCompleted,
 			onReceiveError : onLongPollClose
 		});
-		running = true;
-		if(StartedFunction)
-			StartedFunction();
+		if(!running)
+		{
+			services = {};
+			pendingServices = [];
+			pendingPropertyUpdates = {};
+			if(StartedFunction)
+				StartedFunction();
+			running = true;
+		}
+		
+		
 	};
 	/**
 	 * Start messaging via websocket
@@ -358,7 +370,7 @@ ohnet.subscriptionmanager = (function() {
 				removeService(key);
 			}
 		}
-
+		running = false;
 		if(webSocketLive) {
 			ws.close();
 		}
