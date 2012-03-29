@@ -1,5 +1,5 @@
-#ifndef HEADER_TOPOLOGY3
-#define HEADER_TOPOLOGY3
+#ifndef HEADER_TOPOLOGY4
+#define HEADER_TOPOLOGY4
 
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/OhNetTypes.h>
@@ -9,80 +9,87 @@
 #include <vector>
 #include <list>
 
-#include "CpTopology2.h"
+#include "CpTopology4.h"
 
 namespace OpenHome {
 namespace Net {
 
-class CpTopology3Room;
+class CpTopology4Room;
 
-class ICpTopology3Handler
+class ICpTopology4Handler
 {
 public:
-    virtual void RoomAdded(CpTopology3Room& aRoom) = 0;
-    virtual void RoomChanged(CpTopology3Room& aRoom) = 0;
-    virtual void RoomRemoved(CpTopology3Room& aRoom) = 0;
-    virtual void RoomStandbyChanged(CpTopology3Room& aRoom) = 0;
-    virtual void RoomSourceChanged(CpTopology3Room& aRoom) = 0;
-    virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom) = 0;
-    ~ICpTopology3Handler() {}
+    virtual void RoomAdded(CpTopology4Room& aRoom) = 0;
+    virtual void RoomChanged(CpTopology4Room& aRoom) = 0;
+    virtual void RoomRemoved(CpTopology4Room& aRoom) = 0;
+    virtual void RoomStandbyChanged(CpTopology4Room& aRoom) = 0;
+    virtual void RoomSourceChanged(CpTopology4Room& aRoom) = 0;
+    virtual void RoomVolumeControlChanged(CpTopology4Room& aRoom) = 0;
+	virtual void RoomVolumeChanged(CpTopology4Room& aRoom) = 0;
+	virtual void RoomMuteChanged(CpTopology4Room& aRoom) = 0;
+	virtual void RoomVolumeLimitChanged(CpTopology4Room& aRoom) = 0;
+    ~ICpTopology4Handler() {}
 };
 
-class CpTopology3Source;
+class CpTopology4Source;
 
-class CpTopology3Room;
+class CpTopology4Room;
 
-class CpTopology3Group : private INonCopyable
+class CpTopology4Group : private INonCopyable
 {
 public:
-    CpTopology3Group(CpTopology2Group& aGroup, CpTopology3Room& aRoom);
+    CpTopology4Group(CpTopology3Group& aGroup, CpTopology4Room& aRoom);
 
-    CpTopology2Group& Group() const;
-    CpTopology3Room& Room() const;
+    CpTopology3Group& Group() const;
+    CpTopology4Room& Room() const;
     const Brx& Name() const;
     TUint SourceCount() const;
 
     TBool HasParent() const;
-    CpTopology3Group& Parent() const;
+    CpTopology4Group& Parent() const;
     TUint ParentSourceIndex() const;
 
     TBool IsRoot() const;
     void SetIsRoot(TBool aValue);
-    TUint EvaluateSources(std::vector<CpTopology3Source*>& aVector);
-    TBool IsDescendentOf(CpTopology3Group& aGroup) const;
-    TBool IsCurrentDescendentOf(CpTopology3Group& aGroup) const;
-    CpTopology3Group& Root();
-    CpTopology3Group& CurrentDescendent();
-    CpTopology3Source& Source(TUint aIndex) const;
+    TUint EvaluateSources(std::vector<CpTopology4Source*>& aVector);
+    TBool IsDescendentOf(CpTopology4Group& aGroup) const;
+    TBool IsCurrentDescendentOf(CpTopology4Group& aGroup) const;
+    CpTopology4Group& Root();
+    CpTopology4Group& CurrentDescendent();
+    CpTopology4Source& Source(TUint aIndex) const;
 
     void GroupStandbyChanged();
     void GroupSourceIndexChanged();
     void GroupSourceListChanged();
     void GroupRemoved();
+	void GroupVolumeControlChanged();
+	void GroupVolumeChanged();
+	void GroupMuteChanged();
+	void GroupVolumeLimitChanged();
 
     void ClearParent();
     void ClearChildren();
-    void SetParent(CpTopology3Group& aGroup, TUint aSourceIndex);
-    TBool AddIfIsChild(CpTopology3Group& aGroup);
-    void AddChild(CpTopology3Group& aGroup, TUint aSourceIndex);
-    void RemoveChild(CpTopology3Group& aGroup, TUint aSourceIndex);
+    void SetParent(CpTopology4Group& aGroup, TUint aSourceIndex);
+    TBool AddIfIsChild(CpTopology4Group& aGroup);
+    void AddChild(CpTopology4Group& aGroup, TUint aSourceIndex);
+    void RemoveChild(CpTopology4Group& aGroup, TUint aSourceIndex);
 
-    ~CpTopology3Group();
+    ~CpTopology4Group();
 
 private:
-    CpTopology2Group& iGroup;
-    CpTopology3Room& iRoom;
-    CpTopology3Group* iParent;
+    CpTopology3Group& iGroup;
+    CpTopology4Room& iRoom;
+    CpTopology4Group* iParent;
     TUint iParentSourceIndex;
     TBool iIsRoot;
-    std::vector<CpTopology3Source*> iSourceList;
+    std::vector<CpTopology4Source*> iSourceList;
     TUint iSourceCount;
 };
 
-class CpTopology3Source : private INonCopyable
+class CpTopology4Source : private INonCopyable
 {
 public:
-    CpTopology3Source(CpTopology3Group& aGroup, TUint aIndex);
+    CpTopology4Source(CpTopology4Group& aGroup, TUint aIndex);
 
     const Brx& Name() const;
     const Brx& Type() const;
@@ -91,30 +98,30 @@ public:
 
     void Select();
 
-    CpTopology3Group& Owner() const;
+    CpTopology4Group& Owner() const;
 
     TUint ChildCount() const;
-    CpTopology3Group& Child(TUint aIndex) const;
+    CpTopology4Group& Child(TUint aIndex) const;
     
-    void AddChild(CpTopology3Group& aGroup);
-    void RemoveChild(CpTopology3Group& aGroup);
+    void AddChild(CpTopology4Group& aGroup);
+    void RemoveChild(CpTopology4Group& aGroup);
     void ClearChildren();
 
-    TUint EvaluateSources(std::vector<CpTopology3Source*>& aVector);
+    TUint EvaluateSources(std::vector<CpTopology4Source*>& aVector);
     TUint SourceCount() const;
 
-    ~CpTopology3Source();
+    ~CpTopology4Source();
     
 private:
-    CpTopology3Group& iGroup;
+    CpTopology4Group& iGroup;
     TUint iIndex;
-    std::vector<CpTopology3Group*> iChildList;
+    std::vector<CpTopology4Group*> iChildList;
     TUint iSourceCount;
 };
 
-class CpTopology3;
+class CpTopology4;
 
-class CpTopology3Room : private INonCopyable
+class CpTopology4Room : private INonCopyable
 {
     static const TUint kMaxNameBytes = 20;
 
@@ -126,10 +133,10 @@ public:
     };
 
 public:
-    CpTopology3Room(const Brx& aName, ICpTopology3Handler& aHandler);
-    ~CpTopology3Room();
+    CpTopology4Room(const Brx& aName, ICpTopology4Handler& aHandler);
+    ~CpTopology4Room();
 
-    // functions which must be called from ICpTopology3Handler callback thread
+    // functions which must be called from ICpTopology4Handler callback thread
 
     void AddRef();
     void RemoveRef();
@@ -144,80 +151,96 @@ public:
     const Brx& CurrentSourceGroup() const;
     CpDevice& CurrentSourceDevice() const;
     TBool HasVolumeControl() const;
-    CpDevice& VolumeDevice() const;
+	TUint Volume() const;
+	TBool Mute() const;
+	TUint VolumeLimit() const;
     EStandby Standby() const;
     void SetUserData(void* aValue);
     void* UserData() const;
 
-    // functions which must NOT be called from ICpTopology3Handler callback thread
+    // functions which must NOT be called from ICpTopology4Handler callback thread
 
     void SetStandby(TBool aValue);
     void SetSourceIndex(TUint aIndex);
 
-    // private calls from CpTopology3Group
+	void SetVolume(TUint aValue);
+	void VolumeInc();
+	void VolumeDec();
+	void SetMute(TBool aValue);
 
-    void GroupAdded(CpTopology3Group& aGroup);
-    void GroupStandbyChanged(CpTopology3Group& aGroup);
-    void GroupSourceIndexChanged(CpTopology3Group& aGroup);
-    void GroupSourceListChanged(CpTopology3Group& aGroup);
-    void GroupRemoved(CpTopology3Group& aGroup);
+    // private calls from CpTopology4Group
+
+    void GroupAdded(CpTopology4Group& aGroup);
+    void GroupStandbyChanged(CpTopology4Group& aGroup);
+    void GroupSourceIndexChanged(CpTopology4Group& aGroup);
+    void GroupSourceListChanged(CpTopology4Group& aGroup);
+    void GroupRemoved(CpTopology4Group& aGroup);
+	void GroupVolumeControlChanged(CpTopology4Group& aGroup);
+	void GroupVolumeChanged(CpTopology4Group& aGroup);
+	void GroupMuteChanged(CpTopology4Group& aGroup);
+	void GroupVolumeLimitChanged(CpTopology4Group& aGroup);
 
 private:
-    void UpdateCurrentGroup(CpTopology3Group& aGroup);
+    void UpdateCurrentGroup(CpTopology4Group& aGroup);
     TUint EvaluateSources();
     void EvaluateStandby();
     void ReportGroups();
 
 private:
     Bws<kMaxNameBytes> iName;
-    ICpTopology3Handler& iHandler;
-    std::vector<CpTopology3Group*> iGroupList;
-    std::vector<CpTopology3Group*> iRootList;
-    std::vector<CpTopology3Source*> iSourceList;
-    CpTopology3Group* iCurrentGroup;
+    ICpTopology4Handler& iHandler;
+    std::vector<CpTopology4Group*> iGroupList;
+    std::vector<CpTopology4Group*> iRootList;
+    std::vector<CpTopology4Source*> iSourceList;
+    CpTopology4Group* iCurrentGroup;
     TBool iActive;
     mutable Mutex iMutex;
     TUint iSourceCount;
     TUint iStandbyCount;
     EStandby iStandby;
     TUint iRefCount;
-    CpDevice* iVolumeDevice;
-	TBool iHasVolumeControl;
     void* iUserData;
 };
 
 
-class CpTopology3 : public ICpTopology2Handler, public ICpTopology3Handler, private INonCopyable
+class CpTopology4 : public ICpTopology3Handler, public ICpTopology4Handler, private INonCopyable
 {
 public:
-    CpTopology3(ICpTopology3Handler& aHandler);
-    CpTopology3(ICpTopology3Handler& aHandler, ICpTopology2Handler** aTestInterface);
+    CpTopology4(ICpTopology4Handler& aHandler);
+    CpTopology4(ICpTopology4Handler& aHandler, ICpTopology3Handler** aTestInterface);
     void Refresh();
-    virtual ~CpTopology3();
+    virtual ~CpTopology4();
     
 private:
-    // ICpTopology2Handler
-    virtual void GroupAdded(CpTopology2Group& aGroup);
-    virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
-    virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
-    virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
-    virtual void GroupRemoved(CpTopology2Group& aGroup);
-
     // ICpTopology3Handler
-    virtual void RoomAdded(CpTopology3Room& aRoom);
-    virtual void RoomChanged(CpTopology3Room& aRoom);
-    virtual void RoomRemoved(CpTopology3Room& aRoom);
-    virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-    virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
+    virtual void GroupAdded(CpTopology3Group& aGroup);
+    virtual void GroupStandbyChanged(CpTopology3Group& aGroup);
+    virtual void GroupSourceIndexChanged(CpTopology3Group& aGroup);
+    virtual void GroupSourceListChanged(CpTopology3Group& aGroup);
+    virtual void GroupRemoved(CpTopology3Group& aGroup);
+	virtual void GroupVolumeControlChanged(CpTopology3Group& aGroup);
+	virtual void GroupVolumeChanged(CpTopology3Group& aGroup);
+	virtual void GroupMuteChanged(CpTopology3Group& aGroup);
+	virtual void GroupVolumeLimitChanged(CpTopology3Group& aGroup);
+
+    // ICpTopology4Handler
+    virtual void RoomAdded(CpTopology4Room& aRoom);
+    virtual void RoomChanged(CpTopology4Room& aRoom);
+    virtual void RoomRemoved(CpTopology4Room& aRoom);
+    virtual void RoomStandbyChanged(CpTopology4Room& aRoom);
+    virtual void RoomSourceChanged(CpTopology4Room& aRoom);
+    virtual void RoomVolumeControlChanged(CpTopology4Room& aRoom);
+	virtual void RoomVolumeChanged(CpTopology4Room& aRoom);
+	virtual void RoomMuteChanged(CpTopology4Room& aRoom);
+	virtual void RoomVolumeLimitChanged(CpTopology4Room& aRoom);
 
 private:
-    ICpTopology3Handler& iHandler;
-    CpTopology2* iTopology2;
-    std::list<CpTopology3Room*> iRoomList;
+    ICpTopology4Handler& iHandler;
+    CpTopology3* iTopology3;
+    std::list<CpTopology4Room*> iRoomList;
 };
 
 } // namespace Net
 } // namespace OpenHome
 
-#endif // HEADER_TOPOLOGY3
+#endif // HEADER_TOPOLOGY4

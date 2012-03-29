@@ -1,4 +1,4 @@
-// Manual test program for exercising Topology Layer 3
+// Manual test program for exercising Topology Layer 4
 //
 
 #include <OpenHome/Private/TestFramework.h>
@@ -14,26 +14,29 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-class TopologyLogger : public ICpTopology3Handler
+class TopologyLogger : public ICpTopology4Handler
 {
 public:
     TopologyLogger();
-    virtual void RoomAdded(CpTopology3Room& aRoom);
-    virtual void RoomChanged(CpTopology3Room& aRoom);
-    virtual void RoomRemoved(CpTopology3Room& aRoom);
-    virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-    virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
+    virtual void RoomAdded(CpTopology4Room& aRoom);
+    virtual void RoomChanged(CpTopology4Room& aRoom);
+    virtual void RoomRemoved(CpTopology4Room& aRoom);
+    virtual void RoomStandbyChanged(CpTopology4Room& aRoom);
+    virtual void RoomSourceChanged(CpTopology4Room& aRoom);
+    virtual void RoomVolumeControlChanged(CpTopology4Room& aRoom);
+	virtual void RoomVolumeChanged(CpTopology4Room& aRoom);
+	virtual void RoomMuteChanged(CpTopology4Room& aRoom);
+	virtual void RoomVolumeLimitChanged(CpTopology4Room& aRoom);
 private:
-    void PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom);
-    void PrintSourceInfo(const CpTopology3Room& aRoom);
+    void PrintRoomInfo(const char* aPrologue, const CpTopology4Room& aRoom);
+    void PrintSourceInfo(const CpTopology4Room& aRoom);
 };
 
 TopologyLogger::TopologyLogger()
 {
 }
 
-void TopologyLogger::RoomAdded(CpTopology3Room& aRoom)
+void TopologyLogger::RoomAdded(CpTopology4Room& aRoom)
 {
     Print("\n");
     PrintRoomInfo("Room Added         ", aRoom);
@@ -41,7 +44,7 @@ void TopologyLogger::RoomAdded(CpTopology3Room& aRoom)
     PrintSourceInfo(aRoom);
 }
 
-void TopologyLogger::RoomChanged(CpTopology3Room& aRoom)
+void TopologyLogger::RoomChanged(CpTopology4Room& aRoom)
 {
     Print("\n");
     PrintRoomInfo("Source List Changed ", aRoom);
@@ -49,43 +52,88 @@ void TopologyLogger::RoomChanged(CpTopology3Room& aRoom)
     PrintSourceInfo(aRoom);
 }
 
-void TopologyLogger::RoomRemoved(CpTopology3Room& aRoom)
+void TopologyLogger::RoomRemoved(CpTopology4Room& aRoom)
 {
     PrintRoomInfo("Room Removed        ", aRoom);
     Print("\n");
 }
 
-void TopologyLogger::RoomStandbyChanged(CpTopology3Room& aRoom)
+void TopologyLogger::RoomStandbyChanged(CpTopology4Room& aRoom)
 {
     PrintRoomInfo("Standby Changed     ", aRoom);
     switch (aRoom.Standby()) {
-    case CpTopology3Room::eOn:
+    case CpTopology4Room::eOn:
         Print("On");
         break;
-    case CpTopology3Room::eMixed:
+    case CpTopology4Room::eMixed:
         Print("Mixed");
         break;
-    case CpTopology3Room::eOff:
+    case CpTopology4Room::eOff:
         Print("Off");
         break;
     }
     Print("\n");
 }
 
-void TopologyLogger::RoomSourceChanged(CpTopology3Room& aRoom)
+void TopologyLogger::RoomSourceChanged(CpTopology4Room& aRoom)
 {
     PrintRoomInfo("Source Changed      ", aRoom);
     Print(aRoom.CurrentSourceName());
     Print("\n");
 }
 
-void TopologyLogger::RoomVolumeControlChanged(CpTopology3Room& aRoom)
+void TopologyLogger::RoomVolumeControlChanged(CpTopology4Room& aRoom)
 {
     PrintRoomInfo("Vol Control Changed ", aRoom);
     aRoom.HasVolumeControl() ? printf("Yes\n") : printf("No\n");
+	if(aRoom.HasVolumeControl())
+	{
+		Print("Vol      ");
+		Bws<Ascii::kMaxUintStringBytes> bufferVol;
+		Ascii::AppendDec(bufferVol, aRoom.Volume());
+		Print(bufferVol);
+		Print("\n");
+		Print("Mute      ");
+		Bws<Ascii::kMaxUintStringBytes> bufferMute;
+		Ascii::AppendDec(bufferMute, aRoom.Mute());
+		Print(bufferMute);
+		Print("\n");
+		Print("Vol Limit      ");
+		Bws<Ascii::kMaxUintStringBytes> bufferVolLim;
+		Ascii::AppendDec(bufferVolLim, aRoom.VolumeLimit());
+		Print(bufferVolLim);
+		Print("\n");
+	}
 }
 
-void TopologyLogger::PrintSourceInfo(const CpTopology3Room& aRoom)
+void TopologyLogger::RoomVolumeChanged(CpTopology4Room& aRoom)
+{
+	PrintRoomInfo("Vol Changed      ", aRoom);
+	Bws<Ascii::kMaxUintStringBytes> buffer;
+	Ascii::AppendDec(buffer, aRoom.Volume());
+    Print(buffer);
+    Print("\n");
+}
+
+void TopologyLogger::RoomMuteChanged(CpTopology4Room& aRoom)
+{
+	PrintRoomInfo("Mute Changed      ", aRoom);
+	Bws<Ascii::kMaxUintStringBytes> buffer;
+	Ascii::AppendDec(buffer, aRoom.Mute());
+    Print(buffer);
+    Print("\n");
+}
+
+void TopologyLogger::RoomVolumeLimitChanged(CpTopology4Room& aRoom)
+{
+	PrintRoomInfo("Vol Limit Changed      ", aRoom);
+    Bws<Ascii::kMaxUintStringBytes> buffer;
+	Ascii::AppendDec(buffer, aRoom.VolumeLimit());
+    Print(buffer);
+    Print("\n");
+}
+
+void TopologyLogger::PrintSourceInfo(const CpTopology4Room& aRoom)
 {
     TUint count = aRoom.SourceCount();
 
@@ -103,7 +151,7 @@ void TopologyLogger::PrintSourceInfo(const CpTopology3Room& aRoom)
     Print("\n");
 }
 
-void TopologyLogger::PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom)
+void TopologyLogger::PrintRoomInfo(const char* aPrologue, const CpTopology4Room& aRoom)
 {
     Print("%s ", aPrologue);
     Print(aRoom.Name());
@@ -126,11 +174,11 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     }
 
     UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false, "TestTopology3");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false, "TestTopology4");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress subnet = (*ifs)[adapter.Value()]->Subnet();
     for (TUint i=0; i<ifs->size(); i++) {
-        (*ifs)[i]->RemoveRef("TestTopology3");
+        (*ifs)[i]->RemoveRef("TestTopology4");
     }
     delete ifs;
     UpnpLibrary::StartCp(subnet);
@@ -145,7 +193,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
 
     TopologyLogger logger;
 
-    CpTopology3* topology = new CpTopology3(logger);
+    CpTopology4* topology = new CpTopology4(logger);
 
     if (topology != NULL) {
         Blocker* blocker = new Blocker;

@@ -5,7 +5,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 
-#include "CpTopology4.h"
+#include "CpTopology3.h"
 
 using namespace OpenHome;
 using namespace OpenHome::Net;

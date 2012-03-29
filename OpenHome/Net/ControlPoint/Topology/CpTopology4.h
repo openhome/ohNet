@@ -1,5 +1,5 @@
-#ifndef HEADER_TOPOLOGY4
-#define HEADER_TOPOLOGY4
+#ifndef HEADER_TOPOLOGY3
+#define HEADER_TOPOLOGY3
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Fifo.h>
@@ -9,64 +9,55 @@
 
 #include <list>
 
-#include "CpTopology3.h"
+#include "CpTopology2.h"
 
 namespace OpenHome {
 namespace Net {
 
-class CpTopology4Room;
+class CpTopology3Group;
 
-class ICpTopology4Handler
+class ICpTopology3Handler
 {
 public:
-    virtual void RoomAdded(CpTopology4Room& aRoom) = 0;
-    virtual void RoomChanged(CpTopology4Room& aRoom) = 0;
-    virtual void RoomRemoved(CpTopology4Room& aRoom) = 0;
-    virtual void RoomStandbyChanged(CpTopology4Room& aRoom) = 0;
-    virtual void RoomSourceChanged(CpTopology4Room& aRoom) = 0;
-    virtual void RoomVolumeControlChanged(CpTopology4Room& aRoom) = 0;
-	virtual void RoomVolumeChanged(CpTopology4Room& aRoom) = 0;
-	virtual void RoomMuteChanged(CpTopology4Room& aRoom) = 0;
-	virtual void RoomVolumeLimitChanged(CpTopology4Room& aRoom) = 0;
-    ~ICpTopology4Handler() {}
+    virtual void GroupAdded(CpTopology3Group& aGroup) = 0;
+    virtual void GroupStandbyChanged(CpTopology3Group& aGroup) = 0;
+    virtual void GroupSourceIndexChanged(CpTopology3Group& aGroup) = 0;
+    virtual void GroupSourceListChanged(CpTopology3Group& aGroup) = 0;
+    virtual void GroupRemoved(CpTopology3Group& aGroup) = 0;
+	virtual void GroupVolumeControlChanged(CpTopology3Group& aGroup) = 0;
+	virtual void GroupVolumeChanged(CpTopology3Group& aGroup) = 0;
+	virtual void GroupMuteChanged(CpTopology3Group& aGroup) = 0;
+	virtual void GroupVolumeLimitChanged(CpTopology3Group& aGroup) = 0;
+    ~ICpTopology3Handler() {}
 };
 
-class CpTopology4Room : private INonCopyable
+class CpTopology3Group : private INonCopyable
 {
 public:
-    enum EStandby {
-        eOn,
-        eMixed,
-        eOff
-    };
+    CpTopology3Group(CpTopology2Group& aGroup, ICpTopology3Handler& aHandler);
+    ~CpTopology3Group();
 
-public:
-    CpTopology4Room(CpTopology3Room& aRoom, ICpTopology4Handler& aHandler);
-    ~CpTopology4Room();
-
-    // functions which must be called from ICpTopology4Handler callback thread
+    // functions which must be called from ICpTopology3Handler callback thread
 
     void AddRef();
     void RemoveRef();
+	CpDevice& Device() const;
+	const Brx& Room() const;
     const Brx& Name() const;
     TUint SourceCount() const;
-    const Brx& SourceName(TUint aIndex) const;
+	TUint SourceIndex() const;
+	const Brx& SourceName(TUint aIndex) const;
     const Brx& SourceType(TUint aIndex) const;
-    const Brx& SourceGroup(TUint aIndex) const;
-    CpDevice& SourceDevice(TUint aIndex) const;
-    const Brx& CurrentSourceName() const;
-    const Brx& CurrentSourceType() const;
-    const Brx& CurrentSourceGroup() const;
-    CpDevice& CurrentSourceDevice() const;
+    TBool SourceVisible(TUint aIndex) const;
     TBool HasVolumeControl() const;
 	TUint Volume() const;
 	TBool Mute() const;
 	TUint VolumeLimit() const;
-    EStandby Standby() const;
+    TBool Standby() const;
     void SetUserData(void* aValue);
     void* UserData() const;
 
-    // functions which must NOT be called from ICpTopology4Handler callback thread
+    // functions which must NOT be called from ICpTopology3Handler callback thread
 
     void SetStandby(TBool aValue);
     void SetSourceIndex(TUint aIndex);
@@ -76,15 +67,11 @@ public:
 	void VolumeDec();
 	void SetMute(TBool aValue);
 
-    void RoomAdded();
-    void RoomChanged();
-    void RoomRemoved();
-    void RoomStandbyChanged();
-    void RoomSourceChanged();
-    void RoomVolumeControlChanged();
-	void RoomVolumeChanged();
-	void RoomMuteChanged();
-	void RoomVolumeLimitChanged();
+    void GroupAdded();
+    void GroupStandbyChanged();
+    void GroupSourceIndexChanged();
+    void GroupSourceListChanged();
+    void GroupRemoved();
 
 	void EventInitialEvent();
 	void EventVolumeChanged();
@@ -97,8 +84,8 @@ public:
     void CallbackSetMute(IAsync& aAsync);
 
 private:
-	CpTopology3Room& iRoom;
-	ICpTopology4Handler& iHandler;
+	CpTopology2Group& iGroup;
+	ICpTopology3Handler& iHandler;
 
 	TBool iHasVolumeControl;
     CpProxyAvOpenhomeOrgVolume1* iServiceVolume;
@@ -117,63 +104,62 @@ private:
 };
 
 
-typedef void (ICpTopology4Handler::*ICpTopology4HandlerFunction)(CpTopology4Room&);
+typedef void (ICpTopology3Handler::*ICpTopology3HandlerFunction)(CpTopology3Group&);
 
-class CpTopology4Job
+class CpTopology3Job
 {
 public:
-    CpTopology4Job(ICpTopology4Handler& aHandler);
-    void Set(CpTopology4Room& aRoom, ICpTopology4HandlerFunction aFunction);
+    CpTopology3Job(ICpTopology3Handler& aHandler);
+    void Set(CpTopology3Group& aGroup, ICpTopology3HandlerFunction aFunction);
     virtual void Execute();
 private:
-    ICpTopology4Handler* iHandler;
-    CpTopology4Room* iRoom;
-    ICpTopology4HandlerFunction iFunction;
+    ICpTopology3Handler* iHandler;
+    CpTopology3Group* iGroup;
+    ICpTopology3HandlerFunction iFunction;
 };
 
 
-class CpTopology4 : public ICpTopology3Handler, public ICpTopology4Handler, private INonCopyable
+class CpTopology3 : public ICpTopology2Handler, public ICpTopology3Handler, private INonCopyable
 {
     static const TUint kMaxJobCount = 20;
     
 public:
-    CpTopology4(ICpTopology4Handler& aHandler);
+    CpTopology3(ICpTopology3Handler& aHandler);
     
     void Refresh();
     
-    ~CpTopology4();
+    ~CpTopology3();
     
 private:
-    // ICpTopology3Handler
-    virtual void RoomAdded(CpTopology3Room& aRoom);
-    virtual void RoomChanged(CpTopology3Room& aRoom);
-    virtual void RoomRemoved(CpTopology3Room& aRoom);
-    virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-    virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
+    // ICpTopology2Handler
+    virtual void GroupAdded(CpTopology2Group& aGroup);
+    virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
+    virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
+    virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
+    virtual void GroupRemoved(CpTopology2Group& aDevice);
 
-	// ICpTopology4Handler
-	virtual void RoomAdded(CpTopology4Room& aRoom);
-    virtual void RoomChanged(CpTopology4Room& aRoom);
-    virtual void RoomRemoved(CpTopology4Room& aRoom);
-    virtual void RoomStandbyChanged(CpTopology4Room& aRoom);
-    virtual void RoomSourceChanged(CpTopology4Room& aRoom);
-    virtual void RoomVolumeControlChanged(CpTopology4Room& aRoom);
-	virtual void RoomVolumeChanged(CpTopology4Room& aRoom);
-	virtual void RoomMuteChanged(CpTopology4Room& aRoom);
-	virtual void RoomVolumeLimitChanged(CpTopology4Room& aRoom);
+	// ICpTopology3Handler
+	virtual void GroupAdded(CpTopology3Group& aGroup);
+    virtual void GroupStandbyChanged(CpTopology3Group& aGroup);
+    virtual void GroupSourceIndexChanged(CpTopology3Group& aGroup);
+    virtual void GroupSourceListChanged(CpTopology3Group& aGroup);
+    virtual void GroupRemoved(CpTopology3Group& aGroup);
+	virtual void GroupVolumeControlChanged(CpTopology3Group& aGroup);
+	virtual void GroupVolumeChanged(CpTopology3Group& aGroup);
+	virtual void GroupMuteChanged(CpTopology3Group& aGroup);
+	virtual void GroupVolumeLimitChanged(CpTopology3Group& aGroup);
 
     void Run();
     
 private:
-    std::list<CpTopology4Room*> iRoomList;
-	CpTopology3* iTopology3;
-    Fifo<CpTopology4Job*> iFree;
-    Fifo<CpTopology4Job*> iReady;
+    std::list<CpTopology3Group*> iGroupList;
+	CpTopology2* iTopology2;
+    Fifo<CpTopology3Job*> iFree;
+    Fifo<CpTopology3Job*> iReady;
     ThreadFunctor* iThread;
 };
 
 } // namespace Net
 } // namespace OpenHome
 
-#endif // HEADER_TOPOLOGY4
+#endif // HEADER_TOPOLOGY3
