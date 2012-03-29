@@ -509,7 +509,9 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     handler4.CheckRoomRemoved(*room1);
 
     delete group1;
+    delete group1x;
     delete group2;
+    delete group2x;
 
     delete room1;
     delete room2;
