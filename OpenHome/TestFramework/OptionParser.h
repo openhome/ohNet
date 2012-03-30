@@ -12,15 +12,13 @@ EXCEPTION(OptionParserError);
 namespace OpenHome {
 namespace TestFramework {
 
-typedef std::vector<TChar*> VectorPosArg;
-
 class Option
 {
 public:
     Option(const TChar* aShortName, const TChar* aLongName, const TChar* aHelpDesc);
     virtual ~Option();
-    TBool Match(const TChar* aName) const;
-    virtual void Process(TInt aArgc, TChar* aArgv[]) = 0;
+    TBool Match(Brn aName) const;
+    virtual void Process(const std::vector<Brn>& aArgs) = 0;
     virtual void Reset() = 0;
     virtual TInt ExpectedArgCount() const = 0;
     const TChar* HelpText() const;
@@ -34,7 +32,7 @@ class OptionString : public Option
 {
 public:
     OptionString(const TChar* aShortName, const TChar* aLongName, const Brx& aDefault, const TChar* aHelpDesc);
-    void Process(TInt aArgc, TChar* aArgv[]);
+    void Process(const std::vector<Brn>& aArgs);
     void Reset();
     TInt ExpectedArgCount() const;
     const Brx& Value() const;
@@ -49,7 +47,7 @@ class OptionInt : public Option
 {
 public:
     OptionInt(const TChar* aShortName, const TChar* aLongName, TInt aDefault, const TChar* aHelpDesc);
-    void Process(TInt aArgc, TChar* aArgv[]);
+    void Process(const std::vector<Brn>& aArgs);
     void Reset();
     TInt ExpectedArgCount() const;
     TInt Value() const;
@@ -63,7 +61,7 @@ class OptionUint : public Option
 {
 public:
     OptionUint(const TChar* aShortName, const TChar* aLongName, TUint aDefault, const TChar* aHelpDesc);
-    void Process(TInt aArgc, TChar* aArgv[]);
+    void Process(const std::vector<Brn>& aArgs);
     void Reset();
     TInt ExpectedArgCount() const;
     TUint Value() const;
@@ -77,7 +75,7 @@ class OptionBool : public Option
 {
 public:
     OptionBool(const TChar* aShortName, const TChar* aLongName, const TChar* aHelpDesc);
-    void Process(TInt aArgc, TChar* aArgv[]);
+    void Process(const std::vector<Brn>& aArgs);
     void Reset();
     TInt ExpectedArgCount() const;
     TBool Value() const;
@@ -93,16 +91,16 @@ public:
     ~OptionParser();
     void AddOption(Option* aOption);
     TBool Parse(TInt aArgc, TChar* aArgv[]); // false => exception, exit
+    TBool Parse(const std::vector<Brn>& aArgs, TBool aIgnoreUnrecognisedOptions = false); // false => exception, exit
     TBool HelpDisplayed();
     void DisplayHelp();
     void SetUsage(const TChar* aUsage);
-    VectorPosArg& PosArgs();
+    static std::vector<Brn> ConvertArgs(TInt aArgc, TChar* aArgv[]);
 private:
-    Option* Find(const TChar* aName);
+    Option* Find(Brn aName);
 private:
     typedef std::vector<Option*> VectorOption;
     VectorOption iOptions;
-    VectorPosArg iPosArgs;
     OptionBool iHelpOption;
     TChar* iUsage;
 };

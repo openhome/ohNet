@@ -219,9 +219,9 @@ void SuiteSocketServer::Test()
     Bws<26> tx("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
     SocketTcpServer server("TSSX", 0, iInterface);
-    Log::Print("Server created\n");
+    Print("Server created\n");
     server.Add("TSS1", new TcpSessionEcho());
-    Log::Print("Session 1 added\n");
+    Print("Session 1 added\n");
 
     // Two clients serially accessing one session
 
@@ -230,12 +230,12 @@ void SuiteSocketServer::Test()
     SocketTcpClient client1;
     client1.Open();
     client1.Connect(endpoint, 1000);
-    Log::Print("Client 1 connected\n");
+    Print("Client 1 connected\n");
 
     SocketTcpClient client2;
     client2.Open();
     client2.Connect(endpoint, 1000);
-    Log::Print("Client 2 connected\n");
+    Print("Client 2 connected\n");
 
     client1.Write(tx);
     client1.Read(rx);
@@ -250,17 +250,17 @@ void SuiteSocketServer::Test()
     // Add second session
     
     server.Add("TSS2", new TcpSessionEcho());
-    Log::Print("Session 2 added\n");
+    Print("Session 2 added\n");
 
     // Two clients accessing two sessions in parallel
     
     client1.Open();
     client1.Connect(endpoint, 1000);
-    Log::Print("Client 1 connected\n");
+    Print("Client 1 connected\n");
 
     client2.Open();
     client2.Connect(endpoint, 1000);
-    Log::Print("Client 2 connected\n");
+    Print("Client 2 connected\n");
 
     client1.Write(tx);
     client2.Write(tx);
@@ -277,7 +277,7 @@ void SuiteSocketServer::Test()
     
     client1.Open();
     client1.Connect(endpoint, 1000);
-    Log::Print("Client 1 connected\n");
+    Print("Client 1 connected\n");
     
     Bwh largetx(1000);
     Bwh largerx(1000);
@@ -296,8 +296,8 @@ void SuiteSocketServer::Test()
     for (TInt i=0; i<10; i++) {
         client1.Write(tx);
         client1.Receive(rx, 25);
-        Log::Print(rx);
-        Log::Print("\n");
+        Print(rx);
+        Print("\n");
         TEST(rx == tx);
     }
     
@@ -305,7 +305,7 @@ void SuiteSocketServer::Test()
 
     tx.SetBytes(25);
     
-    Log::Print("Send 2, then receivd 1\n");
+    Print("Send 2, then receivd 1\n");
     
     client1.Write(tx);
     client1.Write(tx);
@@ -331,7 +331,7 @@ void SuiteSocketServer::Test()
 
     client1.Open();
     client1.Connect(endpoint, 1000);
-    Log::Print("Client 1 connected\n");
+    Print("Client 1 connected\n");
 
     // Send 26 bytes (server then closes the session)
     tx.SetBytes(26);
@@ -348,7 +348,7 @@ void SuiteSocketServer::Test()
 
     client1.Open();
     client1.Connect(endpoint, 1000);
-    Log::Print("Client 1 connected\n");
+    Print("Client 1 connected\n");
 
     // Send 26 bytes (server then closes the session)
     tx.SetBytes(26);
@@ -554,14 +554,14 @@ void SuiteMulticast::Test()
             iSender.Wait(500);
         }
         catch (Timeout&) {
-            Log::Print("SuiteMulticast - message(s) not delivered\n");
+            Print("SuiteMulticast - message(s) not delivered\n");
             TEST(1 == 0);
             return; // temp
         }
 
         if (iSender.Clear()) {
             TEST(1 == 0);
-            Log::Print("SuiteMulticast - sent one message, received more than once\n");
+            Print("SuiteMulticast - sent one message, received more than once\n");
         }
     }
 
@@ -574,7 +574,7 @@ void SuiteMulticast::Test()
         iSender.Wait(500);
     }
     catch (Timeout&) {
-        Log::Print("SuiteMulticast - quit message(s) not delivered\n");
+        Print("SuiteMulticast - quit message(s) not delivered\n");
     }
 }
 
@@ -632,7 +632,7 @@ SuiteUnicast::SuiteUnicast(TIpAddress aInterface)
     iReceiver = new SocketUdp();
     iReceiver->SetRecvBufBytes(kMsgBytes * kTestIterations * 2);
     iEndpoint = Endpoint(iReceiver->Port(), aInterface);
-    Log::Print("Receiver running at port %u\n", iReceiver->Port());
+    Print("Receiver running at port %u\n", iReceiver->Port());
     iSender = new SocketUdp();
     iReceiverThread = new ThreadFunctor("UNIC", MakeFunctor(*this, &SuiteUnicast::Receiver));
     iReceiverThread->Start();
@@ -689,16 +689,16 @@ void SuiteUnicast::Receiver()
     } while (val != kQuit);
 }
 
-class MainTestThread : public Thread
+class MainNetworkTestThread : public Thread
 {
 public:
-    MainTestThread(TIpAddress aInterface) : Thread("MAIN", kPriorityNormal), iInterface(aInterface) {}
+    MainNetworkTestThread(TIpAddress aInterface) : Thread("MAIN", kPriorityNormal), iInterface(aInterface) {}
     void Run();
 private:
     TIpAddress iInterface;
 };
 
-void MainTestThread::Run()
+void MainNetworkTestThread::Run()
 {
     //Debug::SetLevel(Debug::kNetwork);
     Runner runner("Network System");
@@ -714,16 +714,14 @@ void MainTestThread::Run()
     Signal();
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
+void TestNetwork(const std::vector<Brn>& aArgs)
 {
     OptionParser parser;
     OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
     parser.AddOption(&adapter);
-    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+    if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
         return;
     }
-
-    Net::UpnpLibrary::Initialise(aInitParams);
 
     std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(true, "TestNetwork");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
@@ -736,10 +734,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     Endpoint::AddressBuf buf;
     endpt.AppendAddress(buf);
     Print("Using network interface %s\n\n", buf.Ptr());
-    Thread* th = new MainTestThread(addr);
+    Thread* th = new MainNetworkTestThread(addr);
     th->Start();
     th->Wait();
     delete th;
-
-    Net::UpnpLibrary::Close();
 }

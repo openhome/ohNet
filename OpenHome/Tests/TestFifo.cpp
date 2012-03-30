@@ -360,10 +360,8 @@ void SuiteFifoLiteBasic::Test()
     TEST(q2.SlotsUsed() == 0);
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
+void TestFifo()
 {
-    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
-
     Debug::SetLevel(Debug::kNone);
 
     Runner runner("FifoS testing\n");
@@ -371,7 +369,4 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     runner.Add(new SuiteFifoThreadSafety());
     runner.Add(new SuiteFifoLiteBasic());
     runner.Run();
-
-    delete aInitParams;
-    Net::UpnpLibrary::Close();
 }

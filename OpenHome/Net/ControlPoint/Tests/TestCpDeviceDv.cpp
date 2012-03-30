@@ -14,6 +14,9 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
+namespace OpenHome {
+namespace TestCpDeviceDv {
+
 class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
 public:
@@ -48,6 +51,9 @@ private:
     ProviderTestBasic* iTestBasic;
 };
 
+} // namespace OpenHome
+} // namespace TestCpDeviceDv
+using namespace OpenHome::TestCpDeviceDv;
 
 ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     : DvProviderOpenhomeOrgTestBasic1(aDevice)
@@ -417,15 +423,8 @@ static void TestSubscription(CpDevice& aDevice)
     delete proxy; // automatically unsubscribes
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void TestCpDeviceDv()
 {
-    aInitParams->SetUseLoopbackNetworkAdapter();
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCombined(subnet);
-
     Print("TestCpDeviceDv - starting\n");
 
     DeviceBasic* device = new DeviceBasic;
@@ -436,5 +435,4 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     delete device;
 
     Print("TestCpDeviceDv - completed\n");
-    UpnpLibrary::Close();
 }

@@ -711,10 +711,8 @@ void SuiteBufferCmp::Test()
     }
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
+void TestBuffer()
 {
-    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
-
     Runner runner("Binary Buffer Testing");
     runner.Add(new SuiteConstruction());
     runner.Add(new SuiteModification());
@@ -727,7 +725,4 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     runner.Add(new SuiteBrh());
     runner.Add(new SuiteBufferCmp());
     runner.Run();
-
-    delete aInitParams;
-    Net::UpnpLibrary::Close();
 }

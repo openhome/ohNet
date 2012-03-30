@@ -13,7 +13,7 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-class SsdpNotifyLogger : public ISsdpNotifyHandler
+class SsdpNotifyLoggerU : public ISsdpNotifyHandler
 {
 public:
     // ISsdpNotifyHandler
@@ -27,7 +27,7 @@ public:
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 };
 
-void SsdpNotifyLogger::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
+void SsdpNotifyLoggerU::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
     Print("Alive    Root\n    uuid = ");
     Print(aUuid);
@@ -36,7 +36,7 @@ void SsdpNotifyLogger::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocatio
     Print("\n    maxAge = %u\n", aMaxAge);
 }
 
-void SsdpNotifyLogger::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
+void SsdpNotifyLoggerU::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
     Print("Alive    Uuid\n    uuid = ");
     Print(aUuid);
@@ -45,7 +45,7 @@ void SsdpNotifyLogger::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocatio
     Print("\n    maxAge = %u\n", aMaxAge);
 }
 
-void SsdpNotifyLogger::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint aMaxAge)
+void SsdpNotifyLoggerU::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint aMaxAge)
 {
     Print("Alive    Device\n    uuid = ");
     Print(aUuid);
@@ -58,7 +58,7 @@ void SsdpNotifyLogger::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aD
     Print("\n    maxAge = %u\n", aMaxAge);
 }
 
-void SsdpNotifyLogger::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint aMaxAge)
+void SsdpNotifyLoggerU::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint aMaxAge)
 {
     Print("Alive    Service\n    uuid = ");
     Print(aUuid);
@@ -71,21 +71,21 @@ void SsdpNotifyLogger::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& a
     Print("\n    maxAge = %u\n", aMaxAge);
 }
 
-void SsdpNotifyLogger::SsdpNotifyRootByeBye(const Brx& aUuid)
+void SsdpNotifyLoggerU::SsdpNotifyRootByeBye(const Brx& aUuid)
 {
     Print("ByeBye    Root\n    uuid = ");
     Print(aUuid);
     Print("\n");
 }
 
-void SsdpNotifyLogger::SsdpNotifyUuidByeBye(const Brx& aUuid)
+void SsdpNotifyLoggerU::SsdpNotifyUuidByeBye(const Brx& aUuid)
 {
     Print("ByeBye    Uuid\n    uuid = ");
     Print(aUuid);
     Print("\n");
 }
 
-void SsdpNotifyLogger::SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion)
+void SsdpNotifyLoggerU::SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     Print("ByeBye    Device\n    uuid = ");
     Print(aUuid);
@@ -96,7 +96,7 @@ void SsdpNotifyLogger::SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& a
     Print("\n    version = %u\n", aVersion);
 }
 
-void SsdpNotifyLogger::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion)
+void SsdpNotifyLoggerU::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     Print("ByeBye    Service\n    uuid = ");
     Print(aUuid);
@@ -120,7 +120,7 @@ static TIpAddress NetworkIf(TUint aIndex)
     return ifs[aIndex]->Address();
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void TestSsdpUListen(const std::vector<Brn>& aArgs)
 {
     OptionParser parser;
     OptionUint mx("-mx", "--mx", 0, "[1..5] number of second to spread response over");
@@ -136,18 +136,13 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     parser.AddOption(&uuid);
     OptionString urn("-t", "--urn", emptyString, "Search for a device or service of the form [domain:[device|service]:type:ver]");
     parser.AddOption(&urn);
-    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+    if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
         return;
     }
 
-    if (mx.Value() != 0) {
-        aInitParams->SetMsearchTime(mx.Value());
-    }
-    UpnpLibrary::Initialise(aInitParams);
-
     //Debug::SetLevel(Debug::kSsdpMulticast);
     TBool block = true;
-    SsdpNotifyLogger logger;
+    SsdpNotifyLoggerU logger;
     SsdpListenerUnicast* uListener = new SsdpListenerUnicast(logger, NetworkIf(adapter.Value()));
     uListener->Start();
     if (all.Value()) {
@@ -185,10 +180,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
 
     if (block) {
         Blocker* blocker = new Blocker;
-        blocker->Wait(aInitParams->MsearchTimeSecs());
+        blocker->Wait(Stack::InitParams().MsearchTimeSecs());
         delete blocker;
     }
     delete uListener;
-
-    UpnpLibrary::Close();
 }

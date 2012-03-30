@@ -134,14 +134,8 @@ void DeviceList::Removed(CpDevice& aDevice)
 }
 
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void TestSubscription()
 {
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCp(subnet);
-
     Debug::SetLevel(Debug::kNone);
     DeviceList* deviceList = new DeviceList;
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &DeviceList::Added);
@@ -157,7 +151,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(uuid, added, removed);
 #endif
     Blocker* blocker = new Blocker;
-    blocker->Wait(aInitParams->MsearchTimeSecs());
+    blocker->Wait(Stack::InitParams().MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();
 
@@ -170,6 +164,4 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 
     delete list;
     delete deviceList;
-
-    UpnpLibrary::Close();
 }

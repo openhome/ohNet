@@ -322,14 +322,10 @@ void SuiteQueueRemove::Test()
     TEST(queue.IsEmpty());
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
+void TestQueue()
 {
-    Net::UpnpLibrary::Initialise(aInitParams);
-
     Runner runner("Queue testing\n");
     runner.Add(new SuiteQueueBasic());
     runner.Add(new SuiteQueueRemove());
     runner.Run();
-
-    Net::UpnpLibrary::Close();
 }

@@ -173,7 +173,7 @@ protected:
     HttpStatus(TUint aCode, const Brn aReason);
 protected:
     TUint iCode;
-    const Brn iReason;
+    Brn iReason;
 };
 
 class IWriterHttpMethod

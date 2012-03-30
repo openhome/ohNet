@@ -48,7 +48,7 @@ private:
     Semaphore& iSem;
 };
 
-
+#include <OpenHome/Net/Private/Shell.h>
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     Net::UpnpLibrary::Initialise(aInitParams);
@@ -64,12 +64,14 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
         (*ifs)[i]->RemoveRef("TestEcho");
     }
     Print("Using network interface %s\n\n", buf.Ptr());
+    Net::Shell* shell = new Net::Shell();
     Semaphore sem("", 0);
     SocketTcpServer* server = new SocketTcpServer("ECHO", 1025, addr);
     server->Add("ECHO", new EchoSession(sem));
 
     sem.Wait();
     delete ifs;
+    delete shell;
 
     Net::UpnpLibrary::Close();
 }

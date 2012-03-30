@@ -18,6 +18,9 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
+namespace OpenHome {
+namespace TestDvSubscription {
+
 class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
 public:
@@ -46,6 +49,27 @@ private:
     ProviderTestBasic* iTestBasic;
 };
 
+class CpDevices
+{
+public:
+    CpDevices(Semaphore& aAddedSem);
+    ~CpDevices();
+    void Test();
+    void Added(CpDevice& aDevice);
+    void Removed(CpDevice& aDevice);
+private:
+    void UpdatesComplete();
+private:
+    Mutex iLock;
+    std::vector<CpDevice*> iList;
+    Semaphore& iAddedSem;
+    Semaphore iUpdatesComplete;
+};
+
+} // namespace OpenHome
+} // namespace TestDvSubscription
+
+using namespace OpenHome::TestDvSubscription;
 
 ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     : DvProviderOpenhomeOrgTestBasic1(aDevice)
@@ -208,24 +232,6 @@ DeviceBasic::~DeviceBasic()
 
 
 
-
-class CpDevices
-{
-public:
-    CpDevices(Semaphore& aAddedSem);
-    ~CpDevices();
-    void Test();
-    void Added(CpDevice& aDevice);
-    void Removed(CpDevice& aDevice);
-private:
-    void UpdatesComplete();
-private:
-    Mutex iLock;
-    std::vector<CpDevice*> iList;
-    Semaphore& iAddedSem;
-    Semaphore iUpdatesComplete;
-};
-
 CpDevices::CpDevices(Semaphore& aAddedSem)
     : iLock("DLMX")
     , iAddedSem(aAddedSem)
@@ -364,25 +370,11 @@ void CpDevices::UpdatesComplete()
 }
 
 
-void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void TestDvSubscription()
 {
-    OptionParser parser;
-    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
-    parser.AddOption(&loopback);
-    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
-        return;
-    }
-    if (loopback.Value()) {
-        aInitParams->SetUseLoopbackNetworkAdapter();
-    }
-    aInitParams->SetMsearchTime(1);
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCombined(subnet);
-    //Debug::SetLevel(Debug::kError);
-
+    InitialisationParams& initParams = Stack::InitParams();
+    TUint oldMsearchTime = initParams.MsearchTimeSecs();
+    initParams.SetMsearchTime(1);
     Print("TestDvSubscription - starting\n");
 
     Semaphore* sem = new Semaphore("SEM1", 0);
@@ -403,5 +395,5 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     delete device;
 
     Print("TestDvSubscription - completed\n");
-    UpnpLibrary::Close();
+    initParams.SetMsearchTime(oldMsearchTime);
 }

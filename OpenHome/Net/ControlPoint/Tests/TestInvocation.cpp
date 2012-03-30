@@ -24,12 +24,11 @@ const TUint kDevicePollMs = 1000;
 static TUint gActionCount = 0;
 
 
-// very basic example
-class DeviceList
+class DeviceListTI
 {
 public:
-    DeviceList();
-    ~DeviceList();
+    DeviceListTI();
+    ~DeviceListTI();
     void Stop();
     void TestSync();
     void Poll();
@@ -50,14 +49,14 @@ private:
 };
 
 
-DeviceList::DeviceList()
+DeviceListTI::DeviceListTI()
     : iLock("DLMX")
     , iStopped(false)
     , iPollStop("SDPS", 0)
 {
 }
 
-DeviceList::~DeviceList()
+DeviceListTI::~DeviceListTI()
 {
     const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
@@ -66,12 +65,12 @@ DeviceList::~DeviceList()
     }
 }
 
-void DeviceList::Stop()
+void DeviceListTI::Stop()
 {
     iStopped = true;
 }
 
-void DeviceList::TestSync()
+void DeviceListTI::TestSync()
 {
     // trivial validation of the sync wrappers to all APIs
     // single sync call to whichever device happens to be first in our list
@@ -100,10 +99,10 @@ void DeviceList::TestSync()
     delete iConnMgr;
 }
 
-void DeviceList::Poll()
+void DeviceListTI::Poll()
 {
-    Timer timer(MakeFunctor(*this, &DeviceList::TimerExpired));
-    FunctorAsync callback = MakeFunctorAsync(*this, &DeviceList::GetProtocolInfoComplete);
+    Timer timer(MakeFunctor(*this, &DeviceListTI::TimerExpired));
+    FunctorAsync callback = MakeFunctorAsync(*this, &DeviceListTI::GetProtocolInfoComplete);
     Brh tmp;
     const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
@@ -124,22 +123,22 @@ void DeviceList::Poll()
     }
 }
 
-TUint DeviceList::Count() const
+TUint DeviceListTI::Count() const
 {
     return (TUint)iList.size();
 }
 
-void DeviceList::TimerExpired()
+void DeviceListTI::TimerExpired()
 {
     iPollStop.Signal();
 }
 
-void DeviceList::GetProtocolInfoComplete(IAsync& aAsync)
+void DeviceListTI::GetProtocolInfoComplete(IAsync& aAsync)
 {
     if (Os::TimeInMs() > iStopTimeMs) {
         return;
     }
-    FunctorAsync callback = MakeFunctorAsync(*this, &DeviceList::GetProtocolInfoComplete);
+    FunctorAsync callback = MakeFunctorAsync(*this, &DeviceListTI::GetProtocolInfoComplete);
     iConnMgr->BeginGetProtocolInfo(callback);
 
     Brh source;
@@ -161,7 +160,7 @@ void DeviceList::GetProtocolInfoComplete(IAsync& aAsync)
     iLock.Signal();
 }
 
-void DeviceList::Added(CpDevice& aDevice)
+void DeviceListTI::Added(CpDevice& aDevice)
 {
     AutoMutex a(iLock);
     if (!iStopped) {
@@ -172,7 +171,7 @@ void DeviceList::Added(CpDevice& aDevice)
     }
 }
 
-void DeviceList::Removed(CpDevice& aDevice)
+void DeviceListTI::Removed(CpDevice& aDevice)
 {
     if (iStopped) {
         return;
@@ -192,22 +191,17 @@ void DeviceList::Removed(CpDevice& aDevice)
 }
 
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void TestInvocation()
 {
     FunctorAsync dummy;
     /* Set an empty handler for errors to avoid test output being swamped by expected
        errors from invocations we interrupt at the end of each device's 1s timeslice */
-    aInitParams->SetAsyncErrorHandler(dummy);
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCp(subnet);
+    Stack::InitParams().SetAsyncErrorHandler(dummy);
 
     Debug::SetLevel(Debug::kNone);
-    DeviceList* deviceList = new DeviceList;
-    FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &DeviceList::Added);
-    FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &DeviceList::Removed);
+    DeviceListTI* deviceList = new DeviceListTI;
+    FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &DeviceListTI::Added);
+    FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &DeviceListTI::Removed);
     const Brn domainName("upnp.org");
     const Brn serviceType("ConnectionManager");
 #if 1
@@ -219,7 +213,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(uuid, added, removed);
 #endif
     Blocker* blocker = new Blocker;
-    blocker->Wait(aInitParams->MsearchTimeSecs());
+    blocker->Wait(Stack::InitParams().MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();
 
@@ -233,6 +227,4 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 
     delete list;
     delete deviceList;
-
-    UpnpLibrary::Close();
 }

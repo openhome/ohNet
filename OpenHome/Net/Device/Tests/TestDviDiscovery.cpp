@@ -712,24 +712,11 @@ void SuiteMsearch::TestMsearchServiceType()
 }
 
 
-void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void TestDviDiscovery()
 {
-    OptionParser parser;
-    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
-    parser.AddOption(&loopback);
-    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
-        return;
-    }
-    if (loopback.Value()) {
-        aInitParams->SetUseLoopbackNetworkAdapter();
-    }
-    aInitParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::SetCurrentSubnet(subnet);
-    UpnpLibrary::StartDv();
+    InitialisationParams& initParams = Stack::InitParams();
+    TUint oldMsearchTime = initParams.MsearchTimeSecs();
+    initParams.SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
 
     //Debug::SetLevel(Debug::kNetwork);
     Runner runner("SSDP discovery\n");
@@ -737,5 +724,5 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     runner.Add(new SuiteMsearch());
     runner.Run();
 
-    UpnpLibrary::Close();
+    initParams.SetMsearchTime(oldMsearchTime);
 }

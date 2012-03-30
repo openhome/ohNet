@@ -15,6 +15,7 @@ class Log
 {
 public:
     static void RegisterOutput(FunctorMsg& aLogOutput);
+    static FunctorMsg SwapOutput(FunctorMsg& aLogOutput);
     static TInt PrintHex(const Brx& aMessage);
     static TInt Print(const Brx& aMessage);
     static TInt Print(const TChar* aFormat, ...);

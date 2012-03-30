@@ -21,7 +21,7 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-class SsdpNotifyLogger : public ISsdpNotifyHandler
+class SsdpNotifyLoggerM : public ISsdpNotifyHandler
 {
 public:
     // ISsdpNotifyHandler
@@ -47,7 +47,7 @@ public:
 };
 
 
-void SsdpNotifyLogger::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
+void SsdpNotifyLoggerM::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
     Print("Alive    Root\n    uuid = ");
     Print(aUuid);
@@ -56,7 +56,7 @@ void SsdpNotifyLogger::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocatio
     Print("\n    maxAge = %u\n", aMaxAge);
 }
 
-void SsdpNotifyLogger::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
+void SsdpNotifyLoggerM::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
     Print("Alive    Uuid\n    uuid = ");
     Print(aUuid);
@@ -65,7 +65,7 @@ void SsdpNotifyLogger::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocatio
     Print("\n    maxAge = %u\n", aMaxAge);
 }
 
-void SsdpNotifyLogger::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint aMaxAge)
+void SsdpNotifyLoggerM::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint aMaxAge)
 {
     Print("Alive    Device\n    uuid = ");
     Print(aUuid);
@@ -78,7 +78,7 @@ void SsdpNotifyLogger::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aD
     Print("\n    maxAge = %u\n", aMaxAge);
 }
 
-void SsdpNotifyLogger::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint aMaxAge)
+void SsdpNotifyLoggerM::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint aMaxAge)
 {
     Print("Alive    Service\n    uuid = ");
     Print(aUuid);
@@ -91,21 +91,21 @@ void SsdpNotifyLogger::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& a
     Print("\n    maxAge = %u\n", aMaxAge);
 }
 
-void SsdpNotifyLogger::SsdpNotifyRootByeBye(const Brx& aUuid)
+void SsdpNotifyLoggerM::SsdpNotifyRootByeBye(const Brx& aUuid)
 {
     Print("ByeBye    Root\n    uuid = ");
     Print(aUuid);
     Print("\n");
 }
 
-void SsdpNotifyLogger::SsdpNotifyUuidByeBye(const Brx& aUuid)
+void SsdpNotifyLoggerM::SsdpNotifyUuidByeBye(const Brx& aUuid)
 {
     Print("ByeBye    Uuid\n    uuid = ");
     Print(aUuid);
     Print("\n");
 }
 
-void SsdpNotifyLogger::SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion)
+void SsdpNotifyLoggerM::SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     Print("ByeBye    Device\n    uuid = ");
     Print(aUuid);
@@ -116,7 +116,7 @@ void SsdpNotifyLogger::SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& a
     Print("\n    version = %u\n", aVersion);
 }
 
-void SsdpNotifyLogger::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion)
+void SsdpNotifyLoggerM::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     Print("ByeBye    Service\n    uuid = ");
     Print(aUuid);
@@ -226,7 +226,7 @@ TIpAddress SuiteListen::NetworkIf(TUint aIndex)
 void SuiteListen::Test()
 {
 //    Debug::SetLevel(Debug::kSsdpMulticast);
-    SsdpNotifyLogger notifyLogger;
+    SsdpNotifyLoggerM notifyLogger;
     MSearchLogger msearchLogger;
     SsdpListenerMulticast mListener(NetworkIf(iInterfaceIndex));
     TInt notifyId = mListener.AddNotifyHandler(&notifyLogger);
@@ -244,22 +244,18 @@ void SuiteListen::TimerExpired()
 }
 
 
-void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void TestSsdpMListen(const std::vector<Brn>& aArgs)
 {
     OptionParser parser;
     OptionUint duration("-d", "--duration", 30, "Number of seconds to listen for.  Defaults to 30");
     parser.AddOption(&duration);
     OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
     parser.AddOption(&adapter);
-    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+    if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
         return;
     }
-
-    UpnpLibrary::Initialise(aInitParams);
 
     Runner runner("SSDP multicast listener\n");
     runner.Add(new SuiteListen(duration.Value(), adapter.Value()));
     runner.Run();
-
-    UpnpLibrary::Close();
 }

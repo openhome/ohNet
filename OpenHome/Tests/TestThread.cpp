@@ -699,15 +699,10 @@ void MainTestThread::Run()
     Signal();
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
+void TestThread()
 {
-    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
-
     Thread* th = new MainTestThread();
     th->Start();
     th->Wait();
     delete th;
-
-    delete aInitParams;
-    Net::UpnpLibrary::Close();
 }

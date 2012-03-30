@@ -17,8 +17,15 @@ TChar hexChar(TUint8 aNum)
 }
 
 void Log::RegisterOutput(FunctorMsg& aLogOutput)
-{
+{ // static
     gLogger = aLogOutput;
+}
+
+FunctorMsg Log::SwapOutput(FunctorMsg& aLogOutput)
+{ // static
+    FunctorMsg old = gLogger;
+    gLogger = aLogOutput;
+    return old;
 }
 
 #define Min(a, b) ((a)<(b)? (a) : (b))

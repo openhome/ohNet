@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/FunctorMsg.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Thread.h>
@@ -22,6 +23,7 @@ void AssertHandlerTest(const TChar* aFile, TUint aLine);
 TUint TimeStart();
 TUint TimeStop(TUint aStartTime);
 
+void SetPrinter(FunctorMsg& aPrinter);
 TInt PrintHex(const Brx& aB);
 TInt Print(const Brx& aB);
 TInt Print(const TChar* aFormat, ...);
@@ -80,7 +82,7 @@ private:
     const TChar* iDesc;
 };
 
-class Runner // Test
+class Runner
 {
 public:
     static void Main(TInt aArgc, TChar* aArgv[], OpenHome::Net::InitialisationParams* aInitParams);
@@ -89,7 +91,6 @@ public:
     void Run();
     ~Runner();
 private:
-// vector of suites
     Suite* iFirst;
     Suite* iLast;
     const TChar* iDesc;

@@ -197,23 +197,12 @@ void CpDevices::Removed(CpDevice& /*aDevice*/)
 
 
 
-void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void TestDviDeviceList()
 {
-    OptionParser parser;
-    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
-    parser.AddOption(&loopback);
-    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
-        return;
-    }
-    if (loopback.Value()) {
-        aInitParams->SetUseLoopbackNetworkAdapter();
-    }
-    aInitParams->SetMsearchTime(1);
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCombined(subnet);
+    InitialisationParams& initParams = Stack::InitParams();
+    TUint oldMsearchTime = initParams.MsearchTimeSecs();
+    initParams.SetMsearchTime(1);
+
     Debug::SetLevel(Debug::kDevice | Debug::kDvDevice);
 
     Print("TestDviDeviceList - starting\n");
@@ -250,5 +239,5 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     delete devices;
 
     Print("TestDviDeviceList - completed\n");
-    UpnpLibrary::Close();
+    initParams.SetMsearchTime(oldMsearchTime);
 }

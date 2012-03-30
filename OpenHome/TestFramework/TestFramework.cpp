@@ -18,18 +18,6 @@ TUint gPass;
 const TChar* gLastSuccessfulFile;
 TUint gLastSuccessfulLine;
 
-class TestConsole
-{
-public:
-    void Log(const char* aMsg);
-};
-
-void TestConsole::Log(const char* aMsg)
-{
-    Os::ConsoleWrite(aMsg);
-}
-
-
 // AssertHandler
 
 void OpenHome::TestFramework::AssertHandlerTest(const TChar* aFile, TUint aLine)
@@ -153,36 +141,40 @@ TUint OpenHome::TestFramework::TimeStop(TUint aStartTime)
     return time - aStartTime;
 }
 
+void STDCALL defaultPrinter(void* /*aPtr*/, const char* aMsg)
+{
+    Os::ConsoleWrite(aMsg);
+}
+
+static FunctorMsg gPrinter = MakeFunctorMsgC(NULL, defaultPrinter);
+
+void OpenHome::TestFramework::SetPrinter(FunctorMsg& aPrinter)
+{
+    gPrinter = aPrinter;
+}
+
 TInt OpenHome::TestFramework::Print(const TChar* aFormat, ...)
 {
-    TestConsole console;
-    FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
     va_list args;
     va_start(args, aFormat);
-    TInt n = Log::Print(functor, aFormat, args);
+    TInt n = Log::Print(gPrinter, aFormat, args);
     va_end(args);
     return n;
 }
 
 TInt OpenHome::TestFramework::Print(const TChar* aFormat, va_list aArgs)
 {
-    TestConsole console;
-    FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
-    return Log::Print(functor, aFormat, aArgs);
+    return Log::Print(gPrinter, aFormat, aArgs);
 }
 
 TInt OpenHome::TestFramework::Print(const Brx& aB)
 {
-    TestConsole console;
-    FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
-    return Log::Print(functor, aB);
+    return Log::Print(gPrinter, aB);
 }
 
 TInt OpenHome::TestFramework::PrintHex(const Brx& aB)
 {
-    TestConsole console;
-    FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
-    return Log::PrintHex(functor, aB);
+    return Log::PrintHex(gPrinter, aB);
 }
 
 

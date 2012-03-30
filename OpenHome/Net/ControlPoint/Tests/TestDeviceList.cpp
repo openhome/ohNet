@@ -11,6 +11,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
+#include <OpenHome/Net/Private/Stack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -60,7 +61,7 @@ void DeviceListLogger::PrintDeviceInfo(const char* aPrologue, const CpDevice& aD
 }
 
 
-void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void TestDeviceList(const std::vector<Brn>& aArgs)
 {
     OptionParser parser;
     OptionUint mx("-mx", "--mx", 1, "[1..5] number of second to spread response over");
@@ -76,18 +77,9 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     parser.AddOption(&urn);
     OptionBool refresh("-f", "--refresh", "Wait mx secs then refresh list");
     parser.AddOption(&refresh);
-    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+    if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
         return;
     }
-
-    if (mx.Value() != 0) {
-        aInitParams->SetMsearchTime(mx.Value());
-    }
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCp(subnet);
 
 //    Debug::SetLevel(Debug::kDevice);
     DeviceListLogger logger;
@@ -126,15 +118,13 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
 
     Blocker* blocker = new Blocker;
     if (deviceList != NULL) {
-        blocker->Wait(aInitParams->MsearchTimeSecs());
+        blocker->Wait(Stack::InitParams().MsearchTimeSecs());
     }
     if (refresh.Value()) {
         Print("\nRefreshing...\n\n");
         deviceList->Refresh();
-        blocker->Wait(aInitParams->MsearchTimeSecs());
+        blocker->Wait(Stack::InitParams().MsearchTimeSecs());
     }
     delete blocker;
     delete deviceList;
-
-    UpnpLibrary::Close();
 }

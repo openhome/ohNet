@@ -247,14 +247,10 @@ void TimerTestThread::Run()
     Signal();
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
+void TestTimer()
 {
-    Net::UpnpLibrary::Initialise(aInitParams);
-
     Thread* th = new TimerTestThread();
     th->Start();
     th->Wait();
     delete th;
-
-    Net::UpnpLibrary::Close();
 }

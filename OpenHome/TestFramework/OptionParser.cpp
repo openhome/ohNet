@@ -32,9 +32,11 @@ Option::~Option()
     delete[] iHelpText;
 }
 
-TBool Option::Match(const TChar* aName) const
+TBool Option::Match(Brn aName) const
 {
-    return (strcmp(aName, iShortName)==0 || strcmp(aName, iLongName)==0);
+    Brn shortName(iShortName);
+    Brn longName(iLongName);
+    return (aName == shortName || aName == longName);
 }
 
 const TChar* Option::HelpText() const
@@ -50,9 +52,9 @@ OptionString::OptionString(const TChar* aShortName, const TChar* aLongName, cons
 {
 }
 
-void OptionString::Process(TInt /*aArgc*/, TChar* aArgv[])
+void OptionString::Process(const std::vector<Brn>& aArgs)
 {
-    iValue.Set(aArgv[0]);
+    iValue.Set(aArgs[0].Ptr(), aArgs[0].Bytes());
 }
 
 void OptionString::Reset()
@@ -83,9 +85,9 @@ OptionInt::OptionInt(const TChar* aShortName, const TChar* aLongName, TInt aDefa
 {
 }
 
-void OptionInt::Process(TInt /*aArgc*/, TChar* aArgv[])
+void OptionInt::Process(const std::vector<Brn>& aArgs)
 {
-    Bws<Ascii::kMaxIntStringBytes> buf(aArgv[0]);
+    Bws<Ascii::kMaxIntStringBytes> buf(aArgs[0].Ptr(), aArgs[0].Bytes());
     iValue = Ascii::Int(buf);
 }
 
@@ -112,9 +114,9 @@ OptionUint::OptionUint(const TChar* aShortName, const TChar* aLongName, TUint aD
 {
 }
 
-void OptionUint::Process(TInt /*aArgc*/, TChar* aArgv[])
+void OptionUint::Process(const std::vector<Brn>& aArgs)
 {
-    Bws<Ascii::kMaxUintStringBytes> buf(aArgv[0]);
+    Bws<Ascii::kMaxUintStringBytes> buf(aArgs[0]);
     iValue = Ascii::Uint(buf);
 }
 
@@ -141,7 +143,7 @@ OptionBool::OptionBool(const TChar* aShortName, const TChar* aLongName, const TC
 {
 }
 
-void OptionBool::Process(TInt /*aArgc*/, TChar* /*aArgv*/[])
+void OptionBool::Process(const std::vector<Brn>& /*aArgs*/)
 {
     iValue = true;
 }
@@ -184,7 +186,12 @@ void OptionParser::AddOption(Option* aOption)
 
 TBool OptionParser::Parse(TInt aArgc, TChar* aArgv[])
 {
-    iPosArgs.clear();
+    std::vector<Brn> args = ConvertArgs(aArgc, aArgv);
+    return Parse(args);
+}
+
+TBool OptionParser::Parse(const std::vector<Brn>& aArgs, TBool aIgnoreUnrecognisedOptions)
+{
     TUint count = (TUint)iOptions.size();
     for (TUint i = 0; i<count; i++) {
         iOptions[i]->Reset();
@@ -192,39 +199,51 @@ TBool OptionParser::Parse(TInt aArgc, TChar* aArgv[])
 
     try {
         TInt i = 0;
-        while (i < aArgc) {
-            Option* opt = Find(aArgv[i]);
+        while (i < (TInt)aArgs.size()) {
+            Option* opt = Find(aArgs[i]);
             if (opt == NULL) {
                 // this is not an option - positional argument
-                if (aArgv[i][0] == '-') {
-                    // this is an unspecified option
-                    Print("Unrecognised option %s\n", (const char*)aArgv[i]);
-                    THROW(OptionParserError);
+                if (aArgs[i][0] == '-') {
+                    if (!aIgnoreUnrecognisedOptions) {
+                        // this is an unspecified option
+                        Print("Unrecognised option ");
+                        Print(aArgs[i]);
+                        Print("\n");
+                        THROW(OptionParserError);
+                    }
                 }
-                iPosArgs.push_back(aArgv[i]);
                 i++;
             }
             else {
                 TInt numOptArgs = opt->ExpectedArgCount();
-                if (numOptArgs+i+1 > aArgc) {
-                    Print("Option %s has insufficient arguments\n", (const char*)aArgv[i]);
+                if (numOptArgs+i+1 > (TInt)aArgs.size()) {
+                    Print("Option ");
+                    Print(aArgs[i]);
+                    Print(" has insufficient arguments\n");
                     THROW(OptionParserError);
                 }
                 // check that we won't be passing a high level "-" option to the option processor
                 // this'd imply an incorrect argument list
                 for (TInt j=0; j<numOptArgs; j++) {
-                    if (Find(aArgv[i+1+j]) != NULL) {
-                        Print("Option %s has incorrect arguments\n", (const char*)aArgv[i]);
+                    if (Find(aArgs[i+1+j]) != NULL) {
+                        Print("Option ");
+                        Print(aArgs[i]);
+                        Print(" has incorrect arguments\n");
                         THROW(OptionParserError);
                     }
                 }
-                opt->Process(numOptArgs, &aArgv[i+1]);
+                std::vector<Brn> optArgs;
+                for (TInt k=0; k<numOptArgs; k++) {
+                    optArgs.push_back(aArgs[i+1+k]);
+                }
+                opt->Process(optArgs);
                 i += 1 + numOptArgs;
             }
         }
     }
     catch (...) {
-        iHelpOption.Process(0, NULL);
+        std::vector<Brn> empty;
+        iHelpOption.Process(empty);
         DisplayHelp();
         return false;
     }
@@ -237,6 +256,7 @@ TBool OptionParser::Parse(TInt aArgc, TChar* aArgv[])
 
     return true;
 }
+
 
 TBool OptionParser::HelpDisplayed()
 {
@@ -266,12 +286,16 @@ void OptionParser::SetUsage(const TChar* aUsage)
     (void)strcpy(iUsage, aUsage);
 }
 
-VectorPosArg& OptionParser::PosArgs()
-{
-    return iPosArgs;
+std::vector<Brn> OptionParser::ConvertArgs(TInt aArgc, TChar* aArgv[])
+{ // static
+    std::vector<Brn> args;
+    for (TInt i=0; i<aArgc; i++) {
+        args.push_back(Brn(aArgv[i]));
+    }
+    return args;
 }
 
-Option* OptionParser::Find(const TChar* aName)
+Option* OptionParser::Find(Brn aName)
 {
     TUint count = (TUint)iOptions.size();
     for (TUint i = 0; i < count; i++) {

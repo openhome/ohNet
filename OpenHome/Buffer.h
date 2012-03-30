@@ -31,8 +31,6 @@ protected:
     explicit inline Brx(TUint aBytes);
     explicit inline Brx(const Brx& aBrx);
     TUint iBytes;
-private:
-    Brx& operator=(const Brx& aBrx);
 };
 
 class DllExportClass Brn : public Brx
@@ -49,8 +47,6 @@ public:
     virtual const TByte* Ptr() const;
 protected:
     const TByte* iPtr;
-private:
-    Brn& operator=(const Brn& aBrn);
 };
 
 class DllExportClass Brv : public Brx, public INonCopyable
@@ -99,7 +95,7 @@ public:
     DllExport TChar* Transfer();
 };
 
-class DllExportClass Bwx : public Brx
+class DllExportClass Bwx : public Brx, public INonCopyable
 {
 public:
     void Replace(const Brx& aBuf);
