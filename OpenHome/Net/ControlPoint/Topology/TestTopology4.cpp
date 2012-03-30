@@ -1,4 +1,4 @@
-// Manual test program for exercising Topology Layer 3
+// Manual test program for exercising Topology Layer 4
 //
 
 #include <OpenHome/Private/TestFramework.h>
@@ -62,13 +62,13 @@ void TopologyLogger::RoomStandbyChanged(CpTopology4Room& aRoom)
 {
     PrintRoomInfo("Standby Changed     ", aRoom);
     switch (aRoom.Standby()) {
-    case CpTopology3Room::eOn:
+    case CpTopology4Room::eOn:
         Print("On");
         break;
-    case CpTopology3Room::eMixed:
+    case CpTopology4Room::eMixed:
         Print("Mixed");
         break;
-    case CpTopology3Room::eOff:
+    case CpTopology4Room::eOff:
         Print("Off");
         break;
     }
@@ -86,6 +86,24 @@ void TopologyLogger::RoomVolumeControlChanged(CpTopology4Room& aRoom)
 {
     PrintRoomInfo("Vol Control Changed ", aRoom);
     aRoom.HasVolumeControl() ? printf("Yes\n") : printf("No\n");
+	if(aRoom.HasVolumeControl())
+	{
+		Print("Vol      ");
+		Bws<Ascii::kMaxUintStringBytes> bufferVol;
+		Ascii::AppendDec(bufferVol, aRoom.Volume());
+		Print(bufferVol);
+		Print("\n");
+		Print("Mute      ");
+		Bws<Ascii::kMaxUintStringBytes> bufferMute;
+		Ascii::AppendDec(bufferMute, aRoom.Mute());
+		Print(bufferMute);
+		Print("\n");
+		Print("Vol Limit      ");
+		Bws<Ascii::kMaxUintStringBytes> bufferVolLim;
+		Ascii::AppendDec(bufferVolLim, aRoom.VolumeLimit());
+		Print(bufferVolLim);
+		Print("\n");
+	}
 }
 
 void TopologyLogger::RoomVolumeChanged(CpTopology4Room& aRoom)

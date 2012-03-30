@@ -203,7 +203,7 @@ void TestDviDeviceList()
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(1);
 
-    Debug::SetLevel(Debug::kDevice | Debug::kDvDevice);
+    Debug::SetLevel(Debug::kDevice | Debug::kDvDevice | Debug::kXmlFetch);
 
     Print("TestDviDeviceList - starting\n");
 

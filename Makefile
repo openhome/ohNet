@@ -19,10 +19,10 @@ endif
 
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
-    linkopts_ohNet =
 ifeq ($(mac-arm),1)
 	# Darwin, ARM -> iOS
 	platform ?= iOS
+	linkopts_ohNet =
 	devroot=/Developer/Platforms/iPhoneOS.platform/Developer
 	sdkroot=$(devroot)/SDKs/iPhoneOS4.3.sdk
 	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
@@ -38,6 +38,7 @@ ifeq ($(mac-arm),1)
 else
 	# Darwin, not ARM -> Intel Mac
 	platform ?= IntelMac
+	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
 	platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
 	platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
 	osbuilddir = Mac
