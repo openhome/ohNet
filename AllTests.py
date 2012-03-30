@@ -241,7 +241,7 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestTopology1', ['-mx', '3', '-f'], True)
              ,TestCase('TestTopology2', ['-d', '10'], True)
              ,TestCase('TestTopology3', ['-d', '10'], True)
-             ,TestCase('TestTopology4', [], True)
+             ,TestCase('TestTopology4', ['-d', '10'], True)
              ,TestCase('TestTopology', [], True)
             ]
 gJavaTests = [ TestCase('org.openhome.net.controlpoint.tests.TestProxy', [], False, False)
