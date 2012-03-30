@@ -135,7 +135,7 @@ void Shell::AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHand
     if (iCommands.find(command) != iCommands.end()) {
         THROW(ShellCommandAlreadyRegistered);
     }
-    iCommands.insert(std::pair<Brn, IShellCommandHandler&>(command, aHandler));
+    iCommands.insert(std::pair<Brn, IShellCommandHandler*>(command, &aHandler));
     iLock.Signal();
 }
 
@@ -163,6 +163,6 @@ void Shell::HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWri
         // Holding iLock for the duration of the following call is poor practice
         // We get away with it here by assuming that command handlers are registered on
         // startup, before commands are likely to run.
-        it->second.HandleShellCommand(aCommand, aArgs, aResponse);
+        it->second->HandleShellCommand(aCommand, aArgs, aResponse);
     }
 }
