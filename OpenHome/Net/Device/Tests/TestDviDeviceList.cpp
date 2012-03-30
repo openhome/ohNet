@@ -214,7 +214,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::StartCombined(subnet);
-    Debug::SetLevel(Debug::kDevice | Debug::kDvDevice);
+    Debug::SetLevel(Debug::kDevice | Debug::kDvDevice | Debug::kXmlFetch);
 
     Print("TestDviDeviceList - starting\n");
 
