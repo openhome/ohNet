@@ -100,10 +100,17 @@ namespace OpenHome.Net
             ControlPoint.CpDevice device = iDeviceList[0];
             Console.Write("\n\nSync call to device " + device.Udn() + "\n");
             ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1 connMgr = new ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1(device);
-            string source;
-            string sink;
-            connMgr.SyncGetProtocolInfo(out source, out sink);
-            Console.Write("source is " + source + "\nsink is " + sink + "\n");
+            try
+            {
+                string source;
+                string sink;
+                connMgr.SyncGetProtocolInfo(out source, out sink);
+                Console.Write("source is " + source + "\nsink is " + sink + "\n");
+            }
+            catch (ControlPoint.ProxyError)
+            {
+                Console.WriteLine("...failed.  (This may be expected but shouldn't be easily reproducible.)");
+            }
             connMgr.Dispose();
         }
         
