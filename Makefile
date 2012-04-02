@@ -135,7 +135,9 @@ uset4 = no
 default : all
 
 # Include the rules to prepare the template engine and the macros to use it.
+ifeq ($(uset4), yes)
 include T4Linux.mak
+endif
 
 # Actual building of code is shared between platforms
 include Common.mak
