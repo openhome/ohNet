@@ -805,6 +805,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncManufacturer(THandle aHandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aName = NULL;
+        *aInfo = NULL;
+        *aUrl = NULL;
+        *aImageUri = NULL;
     }
     return err;
 }
@@ -863,6 +867,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncModel(THandle aHandle, char*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aName = NULL;
+        *aInfo = NULL;
+        *aUrl = NULL;
+        *aImageUri = NULL;
     }
     return err;
 }
@@ -921,6 +929,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncProduct(THandle aHandle, cha
     }
     catch (ProxyError& ) {
         err = -1;
+        *aName = NULL;
+        *aInfo = NULL;
+        *aUrl = NULL;
+        *aImageUri = NULL;
     }
     return err;
 }
@@ -973,6 +985,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncAttributes(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }
@@ -1017,6 +1030,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncQuery(THandle aHandle, const
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
     }
     return err;
 }

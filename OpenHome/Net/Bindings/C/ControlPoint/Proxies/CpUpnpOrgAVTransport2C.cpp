@@ -1786,6 +1786,15 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(THandle aHandle, uint
     }
     catch (ProxyError& ) {
         err = -1;
+        *aNrTracks = 0;
+        *aMediaDuration = NULL;
+        *aCurrentURI = NULL;
+        *aCurrentURIMetaData = NULL;
+        *aNextURI = NULL;
+        *aNextURIMetaData = NULL;
+        *aPlayMedium = NULL;
+        *aRecordMedium = NULL;
+        *aWriteStatus = NULL;
     }
     return err;
 }
@@ -1866,6 +1875,16 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentType = NULL;
+        *aNrTracks = 0;
+        *aMediaDuration = NULL;
+        *aCurrentURI = NULL;
+        *aCurrentURIMetaData = NULL;
+        *aNextURI = NULL;
+        *aNextURIMetaData = NULL;
+        *aPlayMedium = NULL;
+        *aRecordMedium = NULL;
+        *aWriteStatus = NULL;
     }
     return err;
 }
@@ -1937,6 +1956,9 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentTransportState = NULL;
+        *aCurrentTransportStatus = NULL;
+        *aCurrentSpeed = NULL;
     }
     return err;
 }
@@ -1994,6 +2016,14 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(THandle aHandle, u
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTrack = 0;
+        *aTrackDuration = NULL;
+        *aTrackMetaData = NULL;
+        *aTrackURI = NULL;
+        *aRelTime = NULL;
+        *aAbsTime = NULL;
+        *aRelCount = 0;
+        *aAbsCount = 0;
     }
     return err;
 }
@@ -2053,6 +2083,9 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(THandle aHan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aPlayMedia = NULL;
+        *aRecMedia = NULL;
+        *aRecQualityModes = NULL;
     }
     return err;
 }
@@ -2104,6 +2137,8 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(THandle aHand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aPlayMode = NULL;
+        *aRecQualityMode = NULL;
     }
     return err;
 }
@@ -2502,6 +2537,7 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aActions = NULL;
     }
     return err;
 }
@@ -2545,6 +2581,7 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetDRMState(THandle aHandle, uint3
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentDRMState = NULL;
     }
     return err;
 }
@@ -2589,6 +2626,7 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncGetStateVariables(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aStateVariableValuePairs = NULL;
     }
     return err;
 }
@@ -2637,6 +2675,7 @@ int32_t STDCALL CpProxyUpnpOrgAVTransport2SyncSetStateVariables(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aStateVariableList = NULL;
     }
     return err;
 }

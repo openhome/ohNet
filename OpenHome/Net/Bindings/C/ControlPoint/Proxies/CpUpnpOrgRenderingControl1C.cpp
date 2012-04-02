@@ -2412,6 +2412,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncListPresets(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentPresetNameList = NULL;
     }
     return err;
 }
@@ -2493,6 +2494,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBrightness(THandle aHandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentBrightness = 0;
     }
     return err;
 }
@@ -2569,6 +2571,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetContrast(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentContrast = 0;
     }
     return err;
 }
@@ -2645,6 +2648,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetSharpness(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentSharpness = 0;
     }
     return err;
 }
@@ -2721,6 +2725,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetRedVideoGain(THandle aHand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentRedVideoGain = 0;
     }
     return err;
 }
@@ -2797,6 +2802,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoGain(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentGreenVideoGain = 0;
     }
     return err;
 }
@@ -2873,6 +2879,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoGain(THandle aHan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentBlueVideoGain = 0;
     }
     return err;
 }
@@ -2949,6 +2956,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetRedVideoBlackLevel(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentRedVideoBlackLevel = 0;
     }
     return err;
 }
@@ -3025,6 +3033,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoBlackLevel(THand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentGreenVideoBlackLevel = 0;
     }
     return err;
 }
@@ -3101,6 +3110,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoBlackLevel(THandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentBlueVideoBlackLevel = 0;
     }
     return err;
 }
@@ -3177,6 +3187,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetColorTemperature(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentColorTemperature = 0;
     }
     return err;
 }
@@ -3253,6 +3264,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetHorizontalKeystone(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentHorizontalKeystone = 0;
     }
     return err;
 }
@@ -3329,6 +3341,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVerticalKeystone(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentVerticalKeystone = 0;
     }
     return err;
 }
@@ -3407,6 +3420,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentMute = false;
     }
     return err;
 }
@@ -3488,6 +3502,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolume(THandle aHandle, ui
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentVolume = 0;
     }
     return err;
 }
@@ -3568,6 +3583,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolumeDB(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentVolume = 0;
     }
     return err;
 }
@@ -3648,6 +3664,8 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolumeDBRange(THandle aHan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aMinValue = 0;
+        *aMaxValue = 0;
     }
     return err;
 }
@@ -3689,6 +3707,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentLoudness = false;
     }
     return err;
 }

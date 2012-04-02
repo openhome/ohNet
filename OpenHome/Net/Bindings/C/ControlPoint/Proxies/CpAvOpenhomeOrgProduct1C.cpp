@@ -1453,6 +1453,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, ch
     }
     catch (ProxyError& ) {
         err = -1;
+        *aName = NULL;
+        *aInfo = NULL;
+        *aUrl = NULL;
+        *aImageUri = NULL;
     }
     return err;
 }
@@ -1511,6 +1515,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aN
     }
     catch (ProxyError& ) {
         err = -1;
+        *aName = NULL;
+        *aInfo = NULL;
+        *aUrl = NULL;
+        *aImageUri = NULL;
     }
     return err;
 }
@@ -1571,6 +1579,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aRoom = NULL;
+        *aName = NULL;
+        *aInfo = NULL;
+        *aUrl = NULL;
+        *aImageUri = NULL;
     }
     return err;
 }
@@ -1625,6 +1638,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = false;
     }
     return err;
 }
@@ -1702,6 +1716,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uin
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -1742,6 +1757,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }
@@ -1783,6 +1799,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uin
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -1906,6 +1923,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSystemName = NULL;
+        *aType = NULL;
+        *aName = NULL;
+        *aVisible = false;
     }
     return err;
 }
@@ -1956,6 +1977,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }
@@ -1997,6 +2019,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }

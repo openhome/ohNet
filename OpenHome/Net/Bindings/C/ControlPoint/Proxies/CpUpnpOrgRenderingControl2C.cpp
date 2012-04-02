@@ -2561,6 +2561,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncListPresets(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentPresetNameList = NULL;
     }
     return err;
 }
@@ -2642,6 +2643,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetBrightness(THandle aHandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentBrightness = 0;
     }
     return err;
 }
@@ -2718,6 +2720,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetContrast(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentContrast = 0;
     }
     return err;
 }
@@ -2794,6 +2797,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetSharpness(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentSharpness = 0;
     }
     return err;
 }
@@ -2870,6 +2874,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(THandle aHand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentRedVideoGain = 0;
     }
     return err;
 }
@@ -2946,6 +2951,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentGreenVideoGain = 0;
     }
     return err;
 }
@@ -3022,6 +3028,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(THandle aHan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentBlueVideoGain = 0;
     }
     return err;
 }
@@ -3098,6 +3105,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentRedVideoBlackLevel = 0;
     }
     return err;
 }
@@ -3174,6 +3182,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(THand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentGreenVideoBlackLevel = 0;
     }
     return err;
 }
@@ -3250,6 +3259,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(THandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentBlueVideoBlackLevel = 0;
     }
     return err;
 }
@@ -3326,6 +3336,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentColorTemperature = 0;
     }
     return err;
 }
@@ -3402,6 +3413,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentHorizontalKeystone = 0;
     }
     return err;
 }
@@ -3478,6 +3490,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentVerticalKeystone = 0;
     }
     return err;
 }
@@ -3556,6 +3569,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetMute(THandle aHandle, uint
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentMute = false;
     }
     return err;
 }
@@ -3637,6 +3651,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetVolume(THandle aHandle, ui
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentVolume = 0;
     }
     return err;
 }
@@ -3717,6 +3732,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetVolumeDB(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentVolume = 0;
     }
     return err;
 }
@@ -3797,6 +3813,8 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(THandle aHan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aMinValue = 0;
+        *aMaxValue = 0;
     }
     return err;
 }
@@ -3838,6 +3856,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetLoudness(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCurrentLoudness = false;
     }
     return err;
 }
@@ -3921,6 +3940,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aStateVariableValuePairs = NULL;
     }
     return err;
 }
@@ -3969,6 +3989,7 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aStateVariableList = NULL;
     }
     return err;
 }

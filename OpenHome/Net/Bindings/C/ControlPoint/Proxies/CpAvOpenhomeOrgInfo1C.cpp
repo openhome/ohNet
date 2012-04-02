@@ -696,6 +696,9 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTrackCount = 0;
+        *aDetailsCount = 0;
+        *aMetatextCount = 0;
     }
     return err;
 }
@@ -738,6 +741,8 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aUri = NULL;
+        *aMetadata = NULL;
     }
     return err;
 }
@@ -785,6 +790,12 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aDuration = 0;
+        *aBitRate = 0;
+        *aBitDepth = 0;
+        *aSampleRate = 0;
+        *aLossless = false;
+        *aCodecName = NULL;
     }
     return err;
 }
@@ -829,6 +840,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aV
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }

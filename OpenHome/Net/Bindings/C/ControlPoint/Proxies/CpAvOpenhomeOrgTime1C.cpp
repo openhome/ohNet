@@ -222,6 +222,9 @@ int32_t STDCALL CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTr
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTrackCount = 0;
+        *aDuration = 0;
+        *aSeconds = 0;
     }
     return err;
 }

@@ -551,6 +551,8 @@ int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSource = NULL;
+        *aSink = NULL;
     }
     return err;
 }
@@ -598,6 +600,9 @@ int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aConnectionID = 0;
+        *aAVTransportID = 0;
+        *aRcsID = 0;
     }
     return err;
 }
@@ -679,6 +684,7 @@ int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aConnectionIDs = NULL;
     }
     return err;
 }
@@ -728,6 +734,13 @@ int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aRcsID = 0;
+        *aAVTransportID = 0;
+        *aProtocolInfo = NULL;
+        *aPeerConnectionManager = NULL;
+        *aPeerConnectionID = 0;
+        *aDirection = NULL;
+        *aStatus = NULL;
     }
     return err;
 }

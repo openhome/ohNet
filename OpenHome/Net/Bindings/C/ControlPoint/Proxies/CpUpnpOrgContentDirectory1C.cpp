@@ -1153,6 +1153,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSearchCapabilities(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSearchCaps = NULL;
     }
     return err;
 }
@@ -1196,6 +1197,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSortCapabilities(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSortCaps = NULL;
     }
     return err;
 }
@@ -1237,6 +1239,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetSystemUpdateID(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aId = 0;
     }
     return err;
 }
@@ -1281,6 +1284,10 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncBrowse(THandle aHandle, const
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
+        *aNumberReturned = 0;
+        *aTotalMatches = 0;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -1332,6 +1339,10 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncSearch(THandle aHandle, const
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
+        *aNumberReturned = 0;
+        *aTotalMatches = 0;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -1383,6 +1394,8 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateObject(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aObjectID = NULL;
+        *aResult = NULL;
     }
     return err;
 }
@@ -1515,6 +1528,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncImportResource(THandle aHandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTransferID = 0;
     }
     return err;
 }
@@ -1557,6 +1571,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncExportResource(THandle aHandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTransferID = 0;
     }
     return err;
 }
@@ -1641,6 +1656,9 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncGetTransferProgress(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTransferStatus = NULL;
+        *aTransferLength = NULL;
+        *aTransferTotal = NULL;
     }
     return err;
 }
@@ -1732,6 +1750,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory1SyncCreateReference(THandle aHand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aNewID = NULL;
     }
     return err;
 }

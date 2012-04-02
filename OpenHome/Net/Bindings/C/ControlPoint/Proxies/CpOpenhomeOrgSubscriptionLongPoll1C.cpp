@@ -344,6 +344,8 @@ int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncSubscribe(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSid = NULL;
+        *aDuration = 0;
     }
     return err;
 }
@@ -429,6 +431,7 @@ int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncRenew(THandle aHandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aDuration = 0;
     }
     return err;
 }
@@ -471,6 +474,7 @@ int32_t STDCALL CpProxyOpenhomeOrgSubscriptionLongPoll1SyncGetPropertyUpdates(TH
     }
     catch (ProxyError& ) {
         err = -1;
+        *aUpdates = NULL;
     }
     return err;
 }

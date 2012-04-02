@@ -1445,6 +1445,8 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncChannel(THandle aHandle, char** aU
     }
     catch (ProxyError& ) {
         err = -1;
+        *aUri = NULL;
+        *aMetadata = NULL;
     }
     return err;
 }
@@ -1533,6 +1535,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncTransportState(THandle aHandle, ch
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }
@@ -1574,6 +1577,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncId(THandle aHandle, uint32_t* aVal
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -1654,6 +1658,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncRead(THandle aHandle, uint32_t aId
     }
     catch (ProxyError& ) {
         err = -1;
+        *aMetadata = NULL;
     }
     return err;
 }
@@ -1698,6 +1703,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncReadList(THandle aHandle, const ch
     }
     catch (ProxyError& ) {
         err = -1;
+        *aChannelList = NULL;
     }
     return err;
 }
@@ -1743,6 +1749,9 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncIdArray(THandle aHandle, uint32_t*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aToken = 0;
+        *aArrayLen = 0;
+        *aArray = NULL;
     }
     return err;
 }
@@ -1787,6 +1796,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncIdArrayChanged(THandle aHandle, ui
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = false;
     }
     return err;
 }
@@ -1826,6 +1836,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncChannelsMax(THandle aHandle, uint3
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -1866,6 +1877,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncProtocolInfo(THandle aHandle, char
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }

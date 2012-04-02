@@ -1480,6 +1480,7 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(THandle aHandle, ui
     }
     catch (ProxyError& ) {
         err = -1;
+        *aGetLoadlevelTarget = 0;
     }
     return err;
 }
@@ -1518,6 +1519,7 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(THandle aHandle, ui
     }
     catch (ProxyError& ) {
         err = -1;
+        *aretLoadlevelStatus = 0;
     }
     return err;
 }
@@ -1636,6 +1638,8 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aretOnEffect = NULL;
+        *aretOnEffectLevel = 0;
     }
     return err;
 }
@@ -1943,6 +1947,7 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetStepDelta(THandle aHandle, uint32_t
     }
     catch (ProxyError& ) {
         err = -1;
+        *aretStepDelta = 0;
     }
     return err;
 }
@@ -2019,6 +2024,7 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetRampRate(THandle aHandle, uint32_t*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aretRampRate = 0;
     }
     return err;
 }
@@ -2134,6 +2140,7 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t
     }
     catch (ProxyError& ) {
         err = -1;
+        *aretIsRamping = false;
     }
     return err;
 }
@@ -2174,6 +2181,7 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_
     }
     catch (ProxyError& ) {
         err = -1;
+        *aretRampPaused = false;
     }
     return err;
 }
@@ -2213,6 +2221,7 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetRampTime(THandle aHandle, uint32_t*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aretRampTime = 0;
     }
     return err;
 }

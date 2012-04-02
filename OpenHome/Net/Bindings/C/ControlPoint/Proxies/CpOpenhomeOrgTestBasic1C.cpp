@@ -1370,6 +1370,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncIncrement(THandle aHandle, uint3
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = 0;
     }
     return err;
 }
@@ -1408,6 +1409,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncDecrement(THandle aHandle, int32
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = 0;
     }
     return err;
 }
@@ -1447,6 +1449,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncToggle(THandle aHandle, uint32_t
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = false;
     }
     return err;
 }
@@ -1489,6 +1492,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoString(THandle aHandle, cons
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
     }
     return err;
 }
@@ -1536,6 +1540,8 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoBinary(THandle aHandle, cons
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResultLen = 0;
+        *aResult = NULL;
     }
     return err;
 }
@@ -1619,6 +1625,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetUint(THandle aHandle, uint32_
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValueUint = 0;
     }
     return err;
 }
@@ -1695,6 +1702,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetInt(THandle aHandle, int32_t*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValueInt = 0;
     }
     return err;
 }
@@ -1772,6 +1780,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBool(THandle aHandle, uint32_
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValueBool = false;
     }
     return err;
 }
@@ -1891,6 +1900,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetString(THandle aHandle, char*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValueStr = NULL;
     }
     return err;
 }
@@ -1977,6 +1987,8 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBinary(THandle aHandle, char*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValueBinLen = 0;
+        *aValueBin = NULL;
     }
     return err;
 }

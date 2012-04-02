@@ -371,6 +371,25 @@ int32_t STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
     }
     catch (ProxyError& ) {
         err = -1;
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.type == "boolean") #>
+<#          { #>
+        *a<#=o.name#> = false;
+<#          } #>
+<#          else if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#          { #>
+<#              if (o.variable.type == "bin.base64") #>
+<#              { #>
+        *a<#=o.name#>Len = 0;
+<#              } #>
+        *a<#=o.name#> = NULL;
+<#          } #>
+<#          else // integer #>
+<#          { #>
+        *a<#=o.name#> = 0;
+<#          } #>
+<#      } #>
     }
     return err;
 }

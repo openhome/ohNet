@@ -1349,6 +1349,8 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetSortCapabilities(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSortCaps = NULL;
+        *aSortLevelCap = 0;
     }
     return err;
 }
@@ -1393,6 +1395,7 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetPropertyList(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aPropertyList = NULL;
     }
     return err;
 }
@@ -1439,6 +1442,7 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetAllowedValues(THandle aH
     }
     catch (ProxyError& ) {
         err = -1;
+        *aPropertyInfo = NULL;
     }
     return err;
 }
@@ -1482,6 +1486,7 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetStateUpdateID(THandle aH
     }
     catch (ProxyError& ) {
         err = -1;
+        *aId = 0;
     }
     return err;
 }
@@ -1524,6 +1529,10 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordSchedules(THand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
+        *aNumberReturned = 0;
+        *aTotalMatches = 0;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -1572,6 +1581,10 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordTasks(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
+        *aNumberReturned = 0;
+        *aTotalMatches = 0;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -1621,6 +1634,9 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncCreateRecordSchedule(THandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aRecordScheduleID = NULL;
+        *aResult = NULL;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -1710,6 +1726,8 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordSchedule(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -1877,6 +1895,8 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordTask(THandle aHand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -2043,6 +2063,8 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordScheduleConflicts(
     }
     catch (ProxyError& ) {
         err = -1;
+        *aRecordScheduleConflictIDList = NULL;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -2088,6 +2110,8 @@ int32_t STDCALL CpProxyUpnpOrgScheduledRecording1SyncGetRecordTaskConflicts(THan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aRecordTaskConflictIDList = NULL;
+        *aUpdateID = 0;
     }
     return err;
 }

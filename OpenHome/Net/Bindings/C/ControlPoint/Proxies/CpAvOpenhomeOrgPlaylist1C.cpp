@@ -1942,6 +1942,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncRepeat(THandle aHandle, uint32_
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = false;
     }
     return err;
 }
@@ -2020,6 +2021,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncShuffle(THandle aHandle, uint32
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = false;
     }
     return err;
 }
@@ -2213,6 +2215,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncTransportState(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }
@@ -2254,6 +2257,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncId(THandle aHandle, uint32_t* a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -2296,6 +2300,8 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncRead(THandle aHandle, uint32_t 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aUri = NULL;
+        *aMetadata = NULL;
     }
     return err;
 }
@@ -2343,6 +2349,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncReadList(THandle aHandle, const
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTrackList = NULL;
     }
     return err;
 }
@@ -2387,6 +2394,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncInsert(THandle aHandle, uint32_
     }
     catch (ProxyError& ) {
         err = -1;
+        *aNewId = 0;
     }
     return err;
 }
@@ -2503,6 +2511,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncTracksMax(THandle aHandle, uint
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -2544,6 +2553,9 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncIdArray(THandle aHandle, uint32
     }
     catch (ProxyError& ) {
         err = -1;
+        *aToken = 0;
+        *aArrayLen = 0;
+        *aArray = NULL;
     }
     return err;
 }
@@ -2588,6 +2600,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncIdArrayChanged(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = false;
     }
     return err;
 }
@@ -2629,6 +2642,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncProtocolInfo(THandle aHandle, c
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }

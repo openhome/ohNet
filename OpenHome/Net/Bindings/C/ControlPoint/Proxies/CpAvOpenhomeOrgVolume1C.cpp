@@ -1324,6 +1324,12 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncCharacteristics(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aVolumeMax = 0;
+        *aVolumeUnity = 0;
+        *aVolumeSteps = 0;
+        *aVolumeMilliDbPerStep = 0;
+        *aBalanceMax = 0;
+        *aFadeMax = 0;
     }
     return err;
 }
@@ -1476,6 +1482,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolume(THandle aHandle, uint32_t*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -1628,6 +1635,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncBalance(THandle aHandle, int32_t*
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -1780,6 +1788,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncFade(THandle aHandle, int32_t* aV
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -1857,6 +1866,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncMute(THandle aHandle, uint32_t* a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = false;
     }
     return err;
 }
@@ -1896,6 +1906,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncVolumeLimit(THandle aHandle, uint
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }

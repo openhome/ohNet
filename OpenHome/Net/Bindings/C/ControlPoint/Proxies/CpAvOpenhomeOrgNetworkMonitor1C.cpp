@@ -314,6 +314,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncName(THandle aHandle, cha
     }
     catch (ProxyError& ) {
         err = -1;
+        *aName = NULL;
     }
     return err;
 }
@@ -355,6 +356,9 @@ int32_t STDCALL CpProxyAvOpenhomeOrgNetworkMonitor1SyncPorts(THandle aHandle, ui
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSender = 0;
+        *aReceiver = 0;
+        *aResults = 0;
     }
     return err;
 }

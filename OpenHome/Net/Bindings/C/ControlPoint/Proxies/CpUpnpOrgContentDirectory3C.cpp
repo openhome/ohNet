@@ -1578,6 +1578,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncGetSearchCapabilities(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSearchCaps = NULL;
     }
     return err;
 }
@@ -1621,6 +1622,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncGetSortCapabilities(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSortCaps = NULL;
     }
     return err;
 }
@@ -1664,6 +1666,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncGetSortExtensionCapabilities(
     }
     catch (ProxyError& ) {
         err = -1;
+        *aSortExtensionCaps = NULL;
     }
     return err;
 }
@@ -1707,6 +1710,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncGetFeatureList(THandle aHandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aFeatureList = NULL;
     }
     return err;
 }
@@ -1748,6 +1752,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncGetSystemUpdateID(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aId = 0;
     }
     return err;
 }
@@ -1788,6 +1793,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncGetServiceResetToken(THandle 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResetToken = NULL;
     }
     return err;
 }
@@ -1835,6 +1841,10 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncBrowse(THandle aHandle, const
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
+        *aNumberReturned = 0;
+        *aTotalMatches = 0;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -1886,6 +1896,10 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncSearch(THandle aHandle, const
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResult = NULL;
+        *aNumberReturned = 0;
+        *aTotalMatches = 0;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -1937,6 +1951,8 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncCreateObject(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aObjectID = NULL;
+        *aResult = NULL;
     }
     return err;
 }
@@ -2071,6 +2087,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncMoveObject(THandle aHandle, c
     }
     catch (ProxyError& ) {
         err = -1;
+        *aNewObjectID = NULL;
     }
     return err;
 }
@@ -2116,6 +2133,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncImportResource(THandle aHandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTransferID = 0;
     }
     return err;
 }
@@ -2158,6 +2176,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncExportResource(THandle aHandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTransferID = 0;
     }
     return err;
 }
@@ -2282,6 +2301,9 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncGetTransferProgress(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTransferStatus = NULL;
+        *aTransferLength = NULL;
+        *aTransferTotal = NULL;
     }
     return err;
 }
@@ -2333,6 +2355,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncCreateReference(THandle aHand
     }
     catch (ProxyError& ) {
         err = -1;
+        *aNewID = NULL;
     }
     return err;
 }
@@ -2380,6 +2403,8 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncFreeFormQuery(THandle aHandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aQueryResult = NULL;
+        *aUpdateID = 0;
     }
     return err;
 }
@@ -2425,6 +2450,7 @@ int32_t STDCALL CpProxyUpnpOrgContentDirectory3SyncGetFreeFormQueryCapabilities(
     }
     catch (ProxyError& ) {
         err = -1;
+        *aFFQCapabilities = NULL;
     }
     return err;
 }

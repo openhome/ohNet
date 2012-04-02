@@ -550,6 +550,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetCount(THandle aHandle, uint3
     }
     catch (ProxyError& ) {
         err = -1;
+        *aCount = 0;
     }
     return err;
 }
@@ -590,6 +591,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetRoom(THandle aHandle, uint32
     }
     catch (ProxyError& ) {
         err = -1;
+        *aRoomName = NULL;
     }
     return err;
 }
@@ -633,6 +635,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetName(THandle aHandle, uint32
     }
     catch (ProxyError& ) {
         err = -1;
+        *aFriendlyName = NULL;
     }
     return err;
 }
@@ -674,6 +677,9 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetPosition(THandle aHandle, ui
     }
     catch (ProxyError& ) {
         err = -1;
+        *aX = 0;
+        *aY = 0;
+        *aZ = 0;
     }
     return err;
 }
@@ -750,6 +756,7 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColor(THandle aHandle, uint3
     }
     catch (ProxyError& ) {
         err = -1;
+        *aColor = 0;
     }
     return err;
 }
@@ -788,6 +795,10 @@ int32_t STDCALL CpProxyOpenhomeOrgTestLights1SyncGetColorComponents(THandle aHan
     }
     catch (ProxyError& ) {
         err = -1;
+        *aBrightness = 0;
+        *aRed = 0;
+        *aGreen = 0;
+        *aBlue = 0;
     }
     return err;
 }

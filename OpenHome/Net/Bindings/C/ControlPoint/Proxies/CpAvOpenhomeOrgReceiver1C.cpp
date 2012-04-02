@@ -666,6 +666,8 @@ int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncSender(THandle aHandle, char** 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aUri = NULL;
+        *aMetadata = NULL;
     }
     return err;
 }
@@ -712,6 +714,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncProtocolInfo(THandle aHandle, c
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }
@@ -755,6 +758,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1SyncTransportState(THandle aHandle,
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = NULL;
     }
     return err;
 }

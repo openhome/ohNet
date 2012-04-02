@@ -313,6 +313,7 @@ int32_t STDCALL CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_
     }
     catch (ProxyError& ) {
         err = -1;
+        *aRetTargetValue = false;
     }
     return err;
 }
@@ -353,6 +354,7 @@ int32_t STDCALL CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_
     }
     catch (ProxyError& ) {
         err = -1;
+        *aResultStatus = false;
     }
     return err;
 }

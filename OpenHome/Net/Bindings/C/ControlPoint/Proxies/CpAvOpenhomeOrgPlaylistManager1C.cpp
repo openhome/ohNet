@@ -1546,6 +1546,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncMetadata(THandle aHandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aMetadata = NULL;
     }
     return err;
 }
@@ -1589,6 +1590,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncImagesXml(THandle aHandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aImagesXml = NULL;
     }
     return err;
 }
@@ -1633,6 +1635,8 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadArray(THandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aArrayLen = 0;
+        *aArray = NULL;
     }
     return err;
 }
@@ -1679,6 +1683,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistReadList(THandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aPlaylistList = NULL;
     }
     return err;
 }
@@ -1725,6 +1730,9 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistRead(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aName = NULL;
+        *aDescription = NULL;
+        *aImageId = 0;
     }
     return err;
 }
@@ -1889,6 +1897,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistInsert(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aNewId = 0;
     }
     return err;
 }
@@ -2005,6 +2014,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistsMax(THandle aHa
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -2043,6 +2053,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncTracksMax(THandle aHandl
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = 0;
     }
     return err;
 }
@@ -2087,6 +2098,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArrays(THandle a
     }
     catch (ProxyError& ) {
         err = -1;
+        *aToken = 0;
+        *aIdArrayLen = 0;
+        *aIdArray = NULL;
+        *aTokenArrayLen = 0;
+        *aTokenArray = NULL;
     }
     return err;
 }
@@ -2136,6 +2152,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArraysChanged(TH
     }
     catch (ProxyError& ) {
         err = -1;
+        *aValue = false;
     }
     return err;
 }
@@ -2177,6 +2194,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, ui
     }
     catch (ProxyError& ) {
         err = -1;
+        *aMetadata = NULL;
     }
     return err;
 }
@@ -2221,6 +2239,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncReadList(THandle aHandle
     }
     catch (ProxyError& ) {
         err = -1;
+        *aTrackList = NULL;
     }
     return err;
 }
@@ -2264,6 +2283,7 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncInsert(THandle aHandle, 
     }
     catch (ProxyError& ) {
         err = -1;
+        *aNewTrackId = 0;
     }
     return err;
 }
