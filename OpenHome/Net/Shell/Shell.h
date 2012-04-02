@@ -66,7 +66,7 @@ private: // from IShellCommandHandler
 private:
     Mutex iLock;
     SocketTcpServer* iServer;
-    typedef std::map<Brn, IShellCommandHandler&, BufferCmp> Map;
+    typedef std::map<Brn, IShellCommandHandler*, BufferCmp> Map;
     Map iCommands;
 };
 
