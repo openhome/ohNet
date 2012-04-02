@@ -266,7 +266,6 @@ private:
     void SsdpNotify(const Brx& aUri, ENotificationType aNotificationType);
 private:
     static const TUint kMaxBufferBytes = 1024;
-    static const TUint kTimeToLive = 4;
 private:
     SocketUdp iSocket;
     UdpWriter iSocketWriter;

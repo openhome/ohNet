@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Private/DviStack.h>
+#include <OpenHome/Net/Private/Stack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -39,7 +40,7 @@ SsdpNotifier::SsdpNotifier(TIpAddress aInterface, TUint aConfigId)
     , iInterface(aInterface)
     , iConfigId(aConfigId)
 {
-    iSocket.SetTtl(kTimeToLive); 
+    iSocket.SetTtl(Stack::InitParams().MsearchTtl()); 
 }
 
 void SsdpNotifier::SsdpNotify(const Brx& aUri, ENotificationType aNotificationType)
