@@ -64,9 +64,7 @@ public class TestProxy implements ICpDeviceListListener, ICpProxyListener, IProp
         
         iListFrozen = true;
 
-
         invokeSync();
-        
         
         // Note that following tests handle the device list changing (i.e. devices being switched on/off) badly.
         System.out.print("\n\n");
@@ -119,8 +117,10 @@ public class TestProxy implements ICpDeviceListListener, ICpProxyListener, IProp
         System.out.println("\n\nSync call to device " + device.getUdn());
         
         CpProxyUpnpOrgConnectionManager1 connMgr = new CpProxyUpnpOrgConnectionManager1(device);
-        GetProtocolInfo points = connMgr.syncGetProtocolInfo();
-        System.out.println("source is " + points.getSource() + "\nsink is " + points.getSink());
+        try {
+            GetProtocolInfo points = connMgr.syncGetProtocolInfo();
+            System.out.println("source is " + points.getSource() + "\nsink is " + points.getSink());
+        } catch (ProxyError pe) { }
         connMgr.dispose();
 	}
 	
