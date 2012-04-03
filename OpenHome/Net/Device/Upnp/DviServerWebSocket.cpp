@@ -473,7 +473,7 @@ void WsProtocol80::Write(WsOpcode aOpcode, const Brx& aData)
     if (dataLen < 126) {
         iWriteBuffer.Write((TByte)dataLen);
     }
-    else if (dataLen > (1<<16)) {
+    else if (dataLen < (1<<16)) {
         iWriteBuffer.Write((TByte)0x7e);
         TUint16 len = (TUint16)dataLen;
         len = Arch::BigEndian2(len);
