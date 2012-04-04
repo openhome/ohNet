@@ -198,26 +198,16 @@ class JenkinsBuild():
         release_targets.append('debug')
         
         for release in release_targets:
-            release_args = []
-            release_args.append('make')
-            release_args.append('bundle-dev')
-            release_args.append('targetplatform=%s' %(platform,))
-            release_args.append('releasetype=%s' %(release,))
-        
             build = []
-    
-            if platform_args == []:
-                 build.append('make')
-                 build.append('bundle-dev')
-                 build.append('targetplatform=%s' %(platform,))
-                 build.append('releasetype=%s' %(release,))
-            else:
+            if platform_args != []:
                 build.extend(platform_args)
                 build.append('&&')
-                build.append('make')
-                build.append('bundle-dev')
-                build.append('targetplatform=%s' %(platform,))
-                build.append('releasetype=%s' %(release,))
+
+            build.append('make')
+            build.append('bundle-dev')
+            build.append('targetplatform=%s' %(platform,))
+            build.append('releasetype=%s' %(release,))
+            build.append('uset4=yes')
 
             print "doing release with bundle %s" %(build,)
 
