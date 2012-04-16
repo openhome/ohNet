@@ -778,6 +778,8 @@ namespace OpenHome.Net.Core
     {
         internal static IntPtr StringToHGlobalUtf8(string aStr)
         {
+            if (aStr == null)
+                return IntPtr.Zero;
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(aStr);
             IntPtr ptr = Marshal.AllocHGlobal(bytes.Length + 1);
             Marshal.Copy(bytes, 0, ptr, bytes.Length);
