@@ -56,6 +56,7 @@ installincludedir = $(installdir)\include
 mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
 uset4 = no
+native_only = no
 
 default : all
 

@@ -3,7 +3,7 @@
 # (Note that some of these depend on variables defined in the generated
 # makefiles, and so cannot be defined in Common.mak.)
 
-ifeq ($(native_only), 1)
+ifeq ($(native_only), yes)
 all : TestsNative proxies devices
 else
 all : Tests proxies CpProxyDotNetAssemblies devices DvDeviceDotNetAssemblies
