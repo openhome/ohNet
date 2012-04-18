@@ -134,6 +134,12 @@ mkdir = mkdir -p
 rmdir = rm -rf
 uset4 = no
 
+ifeq ($(native_only), yes)
+build_targets = $(native_targets)
+else
+build_targets = $(all_targets)
+endif
+
 default : all
 
 # Include the rules to prepare the template engine and the macros to use it.

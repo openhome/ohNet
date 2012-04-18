@@ -56,13 +56,14 @@ installincludedir = $(installdir)\include
 mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
 uset4 = no
-native_only = no
 
 default : all
 
 include T4Windows.mak
 # Actual building of code is shared between platforms
 include Common.mak
+
+build_targets = $(all_targets)
 
 !if "$(uset4)"=="yes"
 !if exist (Generated\GenerateSourceFiles.mak)
