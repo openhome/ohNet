@@ -96,6 +96,7 @@ public:
     static TUint AppendDec(Bwx& aBuffer, TUint aValue);
     static TUint AppendDec(Bwx& aBuffer, TInt64 aValue);
     static TUint AppendDec(Bwx& aBuffer, TUint64 aValue);
+    static TUint AppendDec(Bwx& aBuffer, TBool aValue);
     static TUint AppendHex(Bwx& aBuffer, TUint aValue);
     static TUint AppendHex(Bwx& aBuffer, TByte aValue);
     static TUint AppendHexPrefix(Bwx& aBuffer);
