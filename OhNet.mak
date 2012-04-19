@@ -63,6 +63,8 @@ include T4Windows.mak
 # Actual building of code is shared between platforms
 include Common.mak
 
+build_targets = $(all_targets)
+
 !if "$(uset4)"=="yes"
 !if exist (Generated\GenerateSourceFiles.mak)
 !include Generated\GenerateSourceFiles.mak
