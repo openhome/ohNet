@@ -62,12 +62,13 @@ else
 ifeq ($(platform), Core)
 	# platform == Core
 	freertoslwipdir ?= ${FREERTOSLWIP}
-	platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403 -g
+	platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403
 	platform_linkflags = -B$(freertoslwipdir)/lib/ -specs bsp_specs -mcpu=403
     linkopts_ohNet =
 	osbuilddir = Volkano2
 	osdir = Volkano2
 	endian = BIG
+	native_only = yes
 endif
 
 ifeq ($(platform), Vanilla)
@@ -89,6 +90,7 @@ endif
 endif
 
 # Macros used by Common.mak
+native_only ?= no
 endian ?= LITTLE
 cflags_third_party = -fexceptions -Wall -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 cflags = $(cflags_third_party) -Werror
@@ -137,6 +139,12 @@ installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
 uset4 = no
+
+ifeq ($(native_only), yes)
+build_targets = $(native_targets)
+else
+build_targets = $(all_targets)
+endif
 
 default : all
 
