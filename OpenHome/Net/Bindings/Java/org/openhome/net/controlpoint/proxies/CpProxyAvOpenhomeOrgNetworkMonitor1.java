@@ -154,16 +154,40 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
         iActionPorts.addOutputParameter(param);
 
         iNameChanged = new PropertyChangeListener();
-        iName = new PropertyString("Name", iNameChanged);
+        iName = new PropertyString("Name",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    namePropertyChanged();
+                }
+            }
+        );
         addProperty(iName);
         iSenderChanged = new PropertyChangeListener();
-        iSender = new PropertyUint("Sender", iSenderChanged);
+        iSender = new PropertyUint("Sender",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    senderPropertyChanged();
+                }
+            }
+        );
         addProperty(iSender);
         iReceiverChanged = new PropertyChangeListener();
-        iReceiver = new PropertyUint("Receiver", iReceiverChanged);
+        iReceiver = new PropertyUint("Receiver",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    receiverPropertyChanged();
+                }
+            }
+        );
         addProperty(iReceiver);
         iResultsChanged = new PropertyChangeListener();
-        iResults = new PropertyUint("Results", iResultsChanged);
+        iResults = new PropertyUint("Results",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    resultsPropertyChanged();
+                }
+            }
+        );
         addProperty(iResults);
         iPropertyLock = new Object();
     }

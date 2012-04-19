@@ -726,58 +726,166 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
         iActionSourceXmlChangeCount.addOutputParameter(param);
 
         iManufacturerNameChanged = new PropertyChangeListener();
-        iManufacturerName = new PropertyString("ManufacturerName", iManufacturerNameChanged);
+        iManufacturerName = new PropertyString("ManufacturerName",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    manufacturerNamePropertyChanged();
+                }
+            }
+        );
         addProperty(iManufacturerName);
         iManufacturerInfoChanged = new PropertyChangeListener();
-        iManufacturerInfo = new PropertyString("ManufacturerInfo", iManufacturerInfoChanged);
+        iManufacturerInfo = new PropertyString("ManufacturerInfo",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    manufacturerInfoPropertyChanged();
+                }
+            }
+        );
         addProperty(iManufacturerInfo);
         iManufacturerUrlChanged = new PropertyChangeListener();
-        iManufacturerUrl = new PropertyString("ManufacturerUrl", iManufacturerUrlChanged);
+        iManufacturerUrl = new PropertyString("ManufacturerUrl",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    manufacturerUrlPropertyChanged();
+                }
+            }
+        );
         addProperty(iManufacturerUrl);
         iManufacturerImageUriChanged = new PropertyChangeListener();
-        iManufacturerImageUri = new PropertyString("ManufacturerImageUri", iManufacturerImageUriChanged);
+        iManufacturerImageUri = new PropertyString("ManufacturerImageUri",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    manufacturerImageUriPropertyChanged();
+                }
+            }
+        );
         addProperty(iManufacturerImageUri);
         iModelNameChanged = new PropertyChangeListener();
-        iModelName = new PropertyString("ModelName", iModelNameChanged);
+        iModelName = new PropertyString("ModelName",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    modelNamePropertyChanged();
+                }
+            }
+        );
         addProperty(iModelName);
         iModelInfoChanged = new PropertyChangeListener();
-        iModelInfo = new PropertyString("ModelInfo", iModelInfoChanged);
+        iModelInfo = new PropertyString("ModelInfo",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    modelInfoPropertyChanged();
+                }
+            }
+        );
         addProperty(iModelInfo);
         iModelUrlChanged = new PropertyChangeListener();
-        iModelUrl = new PropertyString("ModelUrl", iModelUrlChanged);
+        iModelUrl = new PropertyString("ModelUrl",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    modelUrlPropertyChanged();
+                }
+            }
+        );
         addProperty(iModelUrl);
         iModelImageUriChanged = new PropertyChangeListener();
-        iModelImageUri = new PropertyString("ModelImageUri", iModelImageUriChanged);
+        iModelImageUri = new PropertyString("ModelImageUri",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    modelImageUriPropertyChanged();
+                }
+            }
+        );
         addProperty(iModelImageUri);
         iProductRoomChanged = new PropertyChangeListener();
-        iProductRoom = new PropertyString("ProductRoom", iProductRoomChanged);
+        iProductRoom = new PropertyString("ProductRoom",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    productRoomPropertyChanged();
+                }
+            }
+        );
         addProperty(iProductRoom);
         iProductNameChanged = new PropertyChangeListener();
-        iProductName = new PropertyString("ProductName", iProductNameChanged);
+        iProductName = new PropertyString("ProductName",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    productNamePropertyChanged();
+                }
+            }
+        );
         addProperty(iProductName);
         iProductInfoChanged = new PropertyChangeListener();
-        iProductInfo = new PropertyString("ProductInfo", iProductInfoChanged);
+        iProductInfo = new PropertyString("ProductInfo",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    productInfoPropertyChanged();
+                }
+            }
+        );
         addProperty(iProductInfo);
         iProductUrlChanged = new PropertyChangeListener();
-        iProductUrl = new PropertyString("ProductUrl", iProductUrlChanged);
+        iProductUrl = new PropertyString("ProductUrl",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    productUrlPropertyChanged();
+                }
+            }
+        );
         addProperty(iProductUrl);
         iProductImageUriChanged = new PropertyChangeListener();
-        iProductImageUri = new PropertyString("ProductImageUri", iProductImageUriChanged);
+        iProductImageUri = new PropertyString("ProductImageUri",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    productImageUriPropertyChanged();
+                }
+            }
+        );
         addProperty(iProductImageUri);
         iStandbyChanged = new PropertyChangeListener();
-        iStandby = new PropertyBool("Standby", iStandbyChanged);
+        iStandby = new PropertyBool("Standby",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    standbyPropertyChanged();
+                }
+            }
+        );
         addProperty(iStandby);
         iSourceIndexChanged = new PropertyChangeListener();
-        iSourceIndex = new PropertyUint("SourceIndex", iSourceIndexChanged);
+        iSourceIndex = new PropertyUint("SourceIndex",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    sourceIndexPropertyChanged();
+                }
+            }
+        );
         addProperty(iSourceIndex);
         iSourceCountChanged = new PropertyChangeListener();
-        iSourceCount = new PropertyUint("SourceCount", iSourceCountChanged);
+        iSourceCount = new PropertyUint("SourceCount",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    sourceCountPropertyChanged();
+                }
+            }
+        );
         addProperty(iSourceCount);
         iSourceXmlChanged = new PropertyChangeListener();
-        iSourceXml = new PropertyString("SourceXml", iSourceXmlChanged);
+        iSourceXml = new PropertyString("SourceXml",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    sourceXmlPropertyChanged();
+                }
+            }
+        );
         addProperty(iSourceXml);
         iAttributesChanged = new PropertyChangeListener();
-        iAttributes = new PropertyString("Attributes", iAttributesChanged);
+        iAttributes = new PropertyString("Attributes",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    attributesPropertyChanged();
+                }
+            }
+        );
         addProperty(iAttributes);
         iPropertyLock = new Object();
     }

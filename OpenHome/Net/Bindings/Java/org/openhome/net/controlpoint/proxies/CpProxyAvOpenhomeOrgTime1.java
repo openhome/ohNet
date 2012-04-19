@@ -121,13 +121,31 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
         iActionTime.addOutputParameter(param);
 
         iTrackCountChanged = new PropertyChangeListener();
-        iTrackCount = new PropertyUint("TrackCount", iTrackCountChanged);
+        iTrackCount = new PropertyUint("TrackCount",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    trackCountPropertyChanged();
+                }
+            }
+        );
         addProperty(iTrackCount);
         iDurationChanged = new PropertyChangeListener();
-        iDuration = new PropertyUint("Duration", iDurationChanged);
+        iDuration = new PropertyUint("Duration",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    durationPropertyChanged();
+                }
+            }
+        );
         addProperty(iDuration);
         iSecondsChanged = new PropertyChangeListener();
-        iSeconds = new PropertyUint("Seconds", iSecondsChanged);
+        iSeconds = new PropertyUint("Seconds",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    secondsPropertyChanged();
+                }
+            }
+        );
         addProperty(iSeconds);
         iPropertyLock = new Object();
     }

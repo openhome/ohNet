@@ -203,19 +203,49 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
         iActionAttributes.addOutputParameter(param);
 
         iPresentationUrlChanged = new PropertyChangeListener();
-        iPresentationUrl = new PropertyString("PresentationUrl", iPresentationUrlChanged);
+        iPresentationUrl = new PropertyString("PresentationUrl",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    presentationUrlPropertyChanged();
+                }
+            }
+        );
         addProperty(iPresentationUrl);
         iMetadataChanged = new PropertyChangeListener();
-        iMetadata = new PropertyString("Metadata", iMetadataChanged);
+        iMetadata = new PropertyString("Metadata",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    metadataPropertyChanged();
+                }
+            }
+        );
         addProperty(iMetadata);
         iAudioChanged = new PropertyChangeListener();
-        iAudio = new PropertyBool("Audio", iAudioChanged);
+        iAudio = new PropertyBool("Audio",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    audioPropertyChanged();
+                }
+            }
+        );
         addProperty(iAudio);
         iStatusChanged = new PropertyChangeListener();
-        iStatus = new PropertyString("Status", iStatusChanged);
+        iStatus = new PropertyString("Status",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    statusPropertyChanged();
+                }
+            }
+        );
         addProperty(iStatus);
         iAttributesChanged = new PropertyChangeListener();
-        iAttributes = new PropertyString("Attributes", iAttributesChanged);
+        iAttributes = new PropertyString("Attributes",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    attributesPropertyChanged();
+                }
+            }
+        );
         addProperty(iAttributes);
         iPropertyLock = new Object();
     }

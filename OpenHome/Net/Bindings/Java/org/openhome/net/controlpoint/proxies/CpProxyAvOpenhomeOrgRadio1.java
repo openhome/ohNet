@@ -555,25 +555,67 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
         iActionProtocolInfo.addOutputParameter(param);
 
         iUriChanged = new PropertyChangeListener();
-        iUri = new PropertyString("Uri", iUriChanged);
+        iUri = new PropertyString("Uri",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    uriPropertyChanged();
+                }
+            }
+        );
         addProperty(iUri);
         iMetadataChanged = new PropertyChangeListener();
-        iMetadata = new PropertyString("Metadata", iMetadataChanged);
+        iMetadata = new PropertyString("Metadata",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    metadataPropertyChanged();
+                }
+            }
+        );
         addProperty(iMetadata);
         iTransportStateChanged = new PropertyChangeListener();
-        iTransportState = new PropertyString("TransportState", iTransportStateChanged);
+        iTransportState = new PropertyString("TransportState",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    transportStatePropertyChanged();
+                }
+            }
+        );
         addProperty(iTransportState);
         iIdChanged = new PropertyChangeListener();
-        iId = new PropertyUint("Id", iIdChanged);
+        iId = new PropertyUint("Id",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    idPropertyChanged();
+                }
+            }
+        );
         addProperty(iId);
         iIdArrayChanged = new PropertyChangeListener();
-        iIdArray = new PropertyBinary("IdArray", iIdArrayChanged);
+        iIdArray = new PropertyBinary("IdArray",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    idArrayPropertyChanged();
+                }
+            }
+        );
         addProperty(iIdArray);
         iChannelsMaxChanged = new PropertyChangeListener();
-        iChannelsMax = new PropertyUint("ChannelsMax", iChannelsMaxChanged);
+        iChannelsMax = new PropertyUint("ChannelsMax",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    channelsMaxPropertyChanged();
+                }
+            }
+        );
         addProperty(iChannelsMax);
         iProtocolInfoChanged = new PropertyChangeListener();
-        iProtocolInfo = new PropertyString("ProtocolInfo", iProtocolInfoChanged);
+        iProtocolInfo = new PropertyString("ProtocolInfo",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    protocolInfoPropertyChanged();
+                }
+            }
+        );
         addProperty(iProtocolInfo);
         iPropertyLock = new Object();
     }

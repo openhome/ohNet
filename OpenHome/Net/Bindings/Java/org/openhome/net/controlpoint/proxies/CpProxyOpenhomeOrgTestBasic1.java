@@ -563,19 +563,49 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iActionShutdown = new Action("Shutdown");
 
         iVarUintChanged = new PropertyChangeListener();
-        iVarUint = new PropertyUint("VarUint", iVarUintChanged);
+        iVarUint = new PropertyUint("VarUint",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    varUintPropertyChanged();
+                }
+            }
+        );
         addProperty(iVarUint);
         iVarIntChanged = new PropertyChangeListener();
-        iVarInt = new PropertyInt("VarInt", iVarIntChanged);
+        iVarInt = new PropertyInt("VarInt",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    varIntPropertyChanged();
+                }
+            }
+        );
         addProperty(iVarInt);
         iVarBoolChanged = new PropertyChangeListener();
-        iVarBool = new PropertyBool("VarBool", iVarBoolChanged);
+        iVarBool = new PropertyBool("VarBool",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    varBoolPropertyChanged();
+                }
+            }
+        );
         addProperty(iVarBool);
         iVarStrChanged = new PropertyChangeListener();
-        iVarStr = new PropertyString("VarStr", iVarStrChanged);
+        iVarStr = new PropertyString("VarStr",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    varStrPropertyChanged();
+                }
+            }
+        );
         addProperty(iVarStr);
         iVarBinChanged = new PropertyChangeListener();
-        iVarBin = new PropertyBinary("VarBin", iVarBinChanged);
+        iVarBin = new PropertyBinary("VarBin",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    varBinPropertyChanged();
+                }
+            }
+        );
         addProperty(iVarBin);
         iPropertyLock = new Object();
     }

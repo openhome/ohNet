@@ -366,40 +366,112 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
         iActionMetatext.addOutputParameter(param);
 
         iTrackCountChanged = new PropertyChangeListener();
-        iTrackCount = new PropertyUint("TrackCount", iTrackCountChanged);
+        iTrackCount = new PropertyUint("TrackCount",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    trackCountPropertyChanged();
+                }
+            }
+        );
         addProperty(iTrackCount);
         iDetailsCountChanged = new PropertyChangeListener();
-        iDetailsCount = new PropertyUint("DetailsCount", iDetailsCountChanged);
+        iDetailsCount = new PropertyUint("DetailsCount",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    detailsCountPropertyChanged();
+                }
+            }
+        );
         addProperty(iDetailsCount);
         iMetatextCountChanged = new PropertyChangeListener();
-        iMetatextCount = new PropertyUint("MetatextCount", iMetatextCountChanged);
+        iMetatextCount = new PropertyUint("MetatextCount",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    metatextCountPropertyChanged();
+                }
+            }
+        );
         addProperty(iMetatextCount);
         iUriChanged = new PropertyChangeListener();
-        iUri = new PropertyString("Uri", iUriChanged);
+        iUri = new PropertyString("Uri",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    uriPropertyChanged();
+                }
+            }
+        );
         addProperty(iUri);
         iMetadataChanged = new PropertyChangeListener();
-        iMetadata = new PropertyString("Metadata", iMetadataChanged);
+        iMetadata = new PropertyString("Metadata",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    metadataPropertyChanged();
+                }
+            }
+        );
         addProperty(iMetadata);
         iDurationChanged = new PropertyChangeListener();
-        iDuration = new PropertyUint("Duration", iDurationChanged);
+        iDuration = new PropertyUint("Duration",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    durationPropertyChanged();
+                }
+            }
+        );
         addProperty(iDuration);
         iBitRateChanged = new PropertyChangeListener();
-        iBitRate = new PropertyUint("BitRate", iBitRateChanged);
+        iBitRate = new PropertyUint("BitRate",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    bitRatePropertyChanged();
+                }
+            }
+        );
         addProperty(iBitRate);
         iBitDepthChanged = new PropertyChangeListener();
-        iBitDepth = new PropertyUint("BitDepth", iBitDepthChanged);
+        iBitDepth = new PropertyUint("BitDepth",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    bitDepthPropertyChanged();
+                }
+            }
+        );
         addProperty(iBitDepth);
         iSampleRateChanged = new PropertyChangeListener();
-        iSampleRate = new PropertyUint("SampleRate", iSampleRateChanged);
+        iSampleRate = new PropertyUint("SampleRate",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    sampleRatePropertyChanged();
+                }
+            }
+        );
         addProperty(iSampleRate);
         iLosslessChanged = new PropertyChangeListener();
-        iLossless = new PropertyBool("Lossless", iLosslessChanged);
+        iLossless = new PropertyBool("Lossless",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    losslessPropertyChanged();
+                }
+            }
+        );
         addProperty(iLossless);
         iCodecNameChanged = new PropertyChangeListener();
-        iCodecName = new PropertyString("CodecName", iCodecNameChanged);
+        iCodecName = new PropertyString("CodecName",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    codecNamePropertyChanged();
+                }
+            }
+        );
         addProperty(iCodecName);
         iMetatextChanged = new PropertyChangeListener();
-        iMetatext = new PropertyString("Metatext", iMetatextChanged);
+        iMetatext = new PropertyString("Metatext",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    metatextPropertyChanged();
+                }
+            }
+        );
         addProperty(iMetatext);
         iPropertyLock = new Object();
     }

@@ -681,13 +681,31 @@ public class CpProxyUpnpOrgContentDirectory1 extends CpProxy implements ICpProxy
         iActionCreateReference.addOutputParameter(param);
 
         iTransferIDsChanged = new PropertyChangeListener();
-        iTransferIDs = new PropertyString("TransferIDs", iTransferIDsChanged);
+        iTransferIDs = new PropertyString("TransferIDs",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    transferIDsPropertyChanged();
+                }
+            }
+        );
         addProperty(iTransferIDs);
         iSystemUpdateIDChanged = new PropertyChangeListener();
-        iSystemUpdateID = new PropertyUint("SystemUpdateID", iSystemUpdateIDChanged);
+        iSystemUpdateID = new PropertyUint("SystemUpdateID",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    systemUpdateIDPropertyChanged();
+                }
+            }
+        );
         addProperty(iSystemUpdateID);
         iContainerUpdateIDsChanged = new PropertyChangeListener();
-        iContainerUpdateIDs = new PropertyString("ContainerUpdateIDs", iContainerUpdateIDsChanged);
+        iContainerUpdateIDs = new PropertyString("ContainerUpdateIDs",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    containerUpdateIDsPropertyChanged();
+                }
+            }
+        );
         addProperty(iContainerUpdateIDs);
         iPropertyLock = new Object();
     }

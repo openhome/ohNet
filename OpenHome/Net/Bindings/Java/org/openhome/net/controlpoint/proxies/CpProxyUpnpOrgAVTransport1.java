@@ -891,7 +891,13 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iActionGetCurrentTransportActions.addOutputParameter(param);
 
         iLastChangeChanged = new PropertyChangeListener();
-        iLastChange = new PropertyString("LastChange", iLastChangeChanged);
+        iLastChange = new PropertyString("LastChange",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    lastChangePropertyChanged();
+                }
+            }
+        );
         addProperty(iLastChange);
         iPropertyLock = new Object();
     }

@@ -1162,7 +1162,13 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iActionSetStateVariables.addOutputParameter(param);
 
         iLastChangeChanged = new PropertyChangeListener();
-        iLastChange = new PropertyString("LastChange", iLastChangeChanged);
+        iLastChange = new PropertyString("LastChange",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    lastChangePropertyChanged();
+                }
+            }
+        );
         addProperty(iLastChange);
         iPropertyLock = new Object();
     }

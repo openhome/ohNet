@@ -728,22 +728,58 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         iActionDeleteAll.addInputParameter(param);
 
         iMetadataChanged = new PropertyChangeListener();
-        iMetadata = new PropertyString("Metadata", iMetadataChanged);
+        iMetadata = new PropertyString("Metadata",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    metadataPropertyChanged();
+                }
+            }
+        );
         addProperty(iMetadata);
         iImagesXmlChanged = new PropertyChangeListener();
-        iImagesXml = new PropertyString("ImagesXml", iImagesXmlChanged);
+        iImagesXml = new PropertyString("ImagesXml",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    imagesXmlPropertyChanged();
+                }
+            }
+        );
         addProperty(iImagesXml);
         iIdArrayChanged = new PropertyChangeListener();
-        iIdArray = new PropertyBinary("IdArray", iIdArrayChanged);
+        iIdArray = new PropertyBinary("IdArray",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    idArrayPropertyChanged();
+                }
+            }
+        );
         addProperty(iIdArray);
         iTokenArrayChanged = new PropertyChangeListener();
-        iTokenArray = new PropertyBinary("TokenArray", iTokenArrayChanged);
+        iTokenArray = new PropertyBinary("TokenArray",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    tokenArrayPropertyChanged();
+                }
+            }
+        );
         addProperty(iTokenArray);
         iPlaylistsMaxChanged = new PropertyChangeListener();
-        iPlaylistsMax = new PropertyUint("PlaylistsMax", iPlaylistsMaxChanged);
+        iPlaylistsMax = new PropertyUint("PlaylistsMax",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    playlistsMaxPropertyChanged();
+                }
+            }
+        );
         addProperty(iPlaylistsMax);
         iTracksMaxChanged = new PropertyChangeListener();
-        iTracksMax = new PropertyUint("TracksMax", iTracksMaxChanged);
+        iTracksMax = new PropertyUint("TracksMax",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    tracksMaxPropertyChanged();
+                }
+            }
+        );
         addProperty(iTracksMax);
         iPropertyLock = new Object();
     }

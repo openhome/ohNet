@@ -747,25 +747,67 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
         iActionProtocolInfo.addOutputParameter(param);
 
         iTransportStateChanged = new PropertyChangeListener();
-        iTransportState = new PropertyString("TransportState", iTransportStateChanged);
+        iTransportState = new PropertyString("TransportState",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    transportStatePropertyChanged();
+                }
+            }
+        );
         addProperty(iTransportState);
         iRepeatChanged = new PropertyChangeListener();
-        iRepeat = new PropertyBool("Repeat", iRepeatChanged);
+        iRepeat = new PropertyBool("Repeat",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    repeatPropertyChanged();
+                }
+            }
+        );
         addProperty(iRepeat);
         iShuffleChanged = new PropertyChangeListener();
-        iShuffle = new PropertyBool("Shuffle", iShuffleChanged);
+        iShuffle = new PropertyBool("Shuffle",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    shufflePropertyChanged();
+                }
+            }
+        );
         addProperty(iShuffle);
         iIdChanged = new PropertyChangeListener();
-        iId = new PropertyUint("Id", iIdChanged);
+        iId = new PropertyUint("Id",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    idPropertyChanged();
+                }
+            }
+        );
         addProperty(iId);
         iIdArrayChanged = new PropertyChangeListener();
-        iIdArray = new PropertyBinary("IdArray", iIdArrayChanged);
+        iIdArray = new PropertyBinary("IdArray",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    idArrayPropertyChanged();
+                }
+            }
+        );
         addProperty(iIdArray);
         iTracksMaxChanged = new PropertyChangeListener();
-        iTracksMax = new PropertyUint("TracksMax", iTracksMaxChanged);
+        iTracksMax = new PropertyUint("TracksMax",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    tracksMaxPropertyChanged();
+                }
+            }
+        );
         addProperty(iTracksMax);
         iProtocolInfoChanged = new PropertyChangeListener();
-        iProtocolInfo = new PropertyString("ProtocolInfo", iProtocolInfoChanged);
+        iProtocolInfo = new PropertyString("ProtocolInfo",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    protocolInfoPropertyChanged();
+                }
+            }
+        );
         addProperty(iProtocolInfo);
         iPropertyLock = new Object();
     }

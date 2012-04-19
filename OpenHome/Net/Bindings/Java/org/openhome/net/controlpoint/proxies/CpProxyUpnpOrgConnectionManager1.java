@@ -390,13 +390,31 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
         allowedValues.clear();
 
         iSourceProtocolInfoChanged = new PropertyChangeListener();
-        iSourceProtocolInfo = new PropertyString("SourceProtocolInfo", iSourceProtocolInfoChanged);
+        iSourceProtocolInfo = new PropertyString("SourceProtocolInfo",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    sourceProtocolInfoPropertyChanged();
+                }
+            }
+        );
         addProperty(iSourceProtocolInfo);
         iSinkProtocolInfoChanged = new PropertyChangeListener();
-        iSinkProtocolInfo = new PropertyString("SinkProtocolInfo", iSinkProtocolInfoChanged);
+        iSinkProtocolInfo = new PropertyString("SinkProtocolInfo",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    sinkProtocolInfoPropertyChanged();
+                }
+            }
+        );
         addProperty(iSinkProtocolInfo);
         iCurrentConnectionIDsChanged = new PropertyChangeListener();
-        iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs", iCurrentConnectionIDsChanged);
+        iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    currentConnectionIDsPropertyChanged();
+                }
+            }
+        );
         addProperty(iCurrentConnectionIDs);
         iPropertyLock = new Object();
     }

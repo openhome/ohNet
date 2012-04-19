@@ -240,16 +240,40 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
         allowedValues.clear();
 
         iUriChanged = new PropertyChangeListener();
-        iUri = new PropertyString("Uri", iUriChanged);
+        iUri = new PropertyString("Uri",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    uriPropertyChanged();
+                }
+            }
+        );
         addProperty(iUri);
         iMetadataChanged = new PropertyChangeListener();
-        iMetadata = new PropertyString("Metadata", iMetadataChanged);
+        iMetadata = new PropertyString("Metadata",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    metadataPropertyChanged();
+                }
+            }
+        );
         addProperty(iMetadata);
         iTransportStateChanged = new PropertyChangeListener();
-        iTransportState = new PropertyString("TransportState", iTransportStateChanged);
+        iTransportState = new PropertyString("TransportState",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    transportStatePropertyChanged();
+                }
+            }
+        );
         addProperty(iTransportState);
         iProtocolInfoChanged = new PropertyChangeListener();
-        iProtocolInfo = new PropertyString("ProtocolInfo", iProtocolInfoChanged);
+        iProtocolInfo = new PropertyString("ProtocolInfo",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    protocolInfoPropertyChanged();
+                }
+            }
+        );
         addProperty(iProtocolInfo);
         iPropertyLock = new Object();
     }

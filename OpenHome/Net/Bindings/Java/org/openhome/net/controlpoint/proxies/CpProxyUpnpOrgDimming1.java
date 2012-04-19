@@ -612,19 +612,49 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
         iActionGetRampTime.addOutputParameter(param);
 
         iLoadLevelStatusChanged = new PropertyChangeListener();
-        iLoadLevelStatus = new PropertyUint("LoadLevelStatus", iLoadLevelStatusChanged);
+        iLoadLevelStatus = new PropertyUint("LoadLevelStatus",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    loadLevelStatusPropertyChanged();
+                }
+            }
+        );
         addProperty(iLoadLevelStatus);
         iStepDeltaChanged = new PropertyChangeListener();
-        iStepDelta = new PropertyUint("StepDelta", iStepDeltaChanged);
+        iStepDelta = new PropertyUint("StepDelta",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    stepDeltaPropertyChanged();
+                }
+            }
+        );
         addProperty(iStepDelta);
         iRampRateChanged = new PropertyChangeListener();
-        iRampRate = new PropertyUint("RampRate", iRampRateChanged);
+        iRampRate = new PropertyUint("RampRate",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    rampRatePropertyChanged();
+                }
+            }
+        );
         addProperty(iRampRate);
         iIsRampingChanged = new PropertyChangeListener();
-        iIsRamping = new PropertyBool("IsRamping", iIsRampingChanged);
+        iIsRamping = new PropertyBool("IsRamping",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    isRampingPropertyChanged();
+                }
+            }
+        );
         addProperty(iIsRamping);
         iRampPausedChanged = new PropertyChangeListener();
-        iRampPaused = new PropertyBool("RampPaused", iRampPausedChanged);
+        iRampPaused = new PropertyBool("RampPaused",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    rampPausedPropertyChanged();
+                }
+            }
+        );
         addProperty(iRampPaused);
         iPropertyLock = new Object();
     }

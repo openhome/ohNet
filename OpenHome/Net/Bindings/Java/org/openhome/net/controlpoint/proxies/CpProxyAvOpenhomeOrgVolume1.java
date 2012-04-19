@@ -561,37 +561,103 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
         iActionVolumeLimit.addOutputParameter(param);
 
         iVolumeChanged = new PropertyChangeListener();
-        iVolume = new PropertyUint("Volume", iVolumeChanged);
+        iVolume = new PropertyUint("Volume",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    volumePropertyChanged();
+                }
+            }
+        );
         addProperty(iVolume);
         iMuteChanged = new PropertyChangeListener();
-        iMute = new PropertyBool("Mute", iMuteChanged);
+        iMute = new PropertyBool("Mute",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    mutePropertyChanged();
+                }
+            }
+        );
         addProperty(iMute);
         iBalanceChanged = new PropertyChangeListener();
-        iBalance = new PropertyInt("Balance", iBalanceChanged);
+        iBalance = new PropertyInt("Balance",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    balancePropertyChanged();
+                }
+            }
+        );
         addProperty(iBalance);
         iFadeChanged = new PropertyChangeListener();
-        iFade = new PropertyInt("Fade", iFadeChanged);
+        iFade = new PropertyInt("Fade",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    fadePropertyChanged();
+                }
+            }
+        );
         addProperty(iFade);
         iVolumeLimitChanged = new PropertyChangeListener();
-        iVolumeLimit = new PropertyUint("VolumeLimit", iVolumeLimitChanged);
+        iVolumeLimit = new PropertyUint("VolumeLimit",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    volumeLimitPropertyChanged();
+                }
+            }
+        );
         addProperty(iVolumeLimit);
         iVolumeMaxChanged = new PropertyChangeListener();
-        iVolumeMax = new PropertyUint("VolumeMax", iVolumeMaxChanged);
+        iVolumeMax = new PropertyUint("VolumeMax",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    volumeMaxPropertyChanged();
+                }
+            }
+        );
         addProperty(iVolumeMax);
         iVolumeUnityChanged = new PropertyChangeListener();
-        iVolumeUnity = new PropertyUint("VolumeUnity", iVolumeUnityChanged);
+        iVolumeUnity = new PropertyUint("VolumeUnity",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    volumeUnityPropertyChanged();
+                }
+            }
+        );
         addProperty(iVolumeUnity);
         iVolumeStepsChanged = new PropertyChangeListener();
-        iVolumeSteps = new PropertyUint("VolumeSteps", iVolumeStepsChanged);
+        iVolumeSteps = new PropertyUint("VolumeSteps",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    volumeStepsPropertyChanged();
+                }
+            }
+        );
         addProperty(iVolumeSteps);
         iVolumeMilliDbPerStepChanged = new PropertyChangeListener();
-        iVolumeMilliDbPerStep = new PropertyUint("VolumeMilliDbPerStep", iVolumeMilliDbPerStepChanged);
+        iVolumeMilliDbPerStep = new PropertyUint("VolumeMilliDbPerStep",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    volumeMilliDbPerStepPropertyChanged();
+                }
+            }
+        );
         addProperty(iVolumeMilliDbPerStep);
         iBalanceMaxChanged = new PropertyChangeListener();
-        iBalanceMax = new PropertyUint("BalanceMax", iBalanceMaxChanged);
+        iBalanceMax = new PropertyUint("BalanceMax",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    balanceMaxPropertyChanged();
+                }
+            }
+        );
         addProperty(iBalanceMax);
         iFadeMaxChanged = new PropertyChangeListener();
-        iFadeMax = new PropertyUint("FadeMax", iFadeMaxChanged);
+        iFadeMax = new PropertyUint("FadeMax",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    fadeMaxPropertyChanged();
+                }
+            }
+        );
         addProperty(iFadeMax);
         iPropertyLock = new Object();
     }

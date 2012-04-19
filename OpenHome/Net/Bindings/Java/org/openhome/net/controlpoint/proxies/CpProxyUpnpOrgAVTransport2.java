@@ -1186,10 +1186,22 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
         iActionSetStateVariables.addOutputParameter(param);
 
         iLastChangeChanged = new PropertyChangeListener();
-        iLastChange = new PropertyString("LastChange", iLastChangeChanged);
+        iLastChange = new PropertyString("LastChange",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    lastChangePropertyChanged();
+                }
+            }
+        );
         addProperty(iLastChange);
         iDRMStateChanged = new PropertyChangeListener();
-        iDRMState = new PropertyString("DRMState", iDRMStateChanged);
+        iDRMState = new PropertyString("DRMState",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    dRMStatePropertyChanged();
+                }
+            }
+        );
         addProperty(iDRMState);
         iPropertyLock = new Object();
     }

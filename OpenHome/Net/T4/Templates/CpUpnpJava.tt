@@ -348,7 +348,13 @@ public class <#=className#> extends CpProxy implements I<#=className#>
 <#      foreach (Variable s in u.evented) #>
 <#      { #>
         i<#=s.name#>Changed = new PropertyChangeListener();
-        i<#=s.name#> = new <#=propertyType[s.type]#>("<#=s.name#>", i<#=s.name#>Changed);
+        i<#=s.name#> = new <#=propertyType[s.type]#>("<#=s.name#>",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    <#=ArgNameLocal(s.name)#>PropertyChanged();
+                }
+            }
+        );
         addProperty(i<#=s.name#>);
 <#      } #>
 <#  } #>

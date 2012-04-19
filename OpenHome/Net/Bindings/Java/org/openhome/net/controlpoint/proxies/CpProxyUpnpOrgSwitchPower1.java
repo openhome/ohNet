@@ -119,7 +119,13 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
         iActionGetStatus.addOutputParameter(param);
 
         iStatusChanged = new PropertyChangeListener();
-        iStatus = new PropertyBool("Status", iStatusChanged);
+        iStatus = new PropertyBool("Status",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    statusPropertyChanged();
+                }
+            }
+        );
         addProperty(iStatus);
         iPropertyLock = new Object();
     }
