@@ -2,6 +2,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandRun.h>
+#include <OpenHome/Net/Private/ShellCommandDebug.h>
 #include <OpenHome/Private/TestFramework.h>
 
 using namespace OpenHome;
@@ -22,10 +23,12 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 
     Shell* shell = new Shell();
     ShellCommandRun* cmdRun = new ShellCommandRun(*shell);
+    ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     Semaphore* blocker = new Semaphore("BLCK", 0);
     blocker->Wait();
     // control never reaches here
     delete blocker;
+    delete cmdDebug;
     delete cmdRun;
     delete shell;
 

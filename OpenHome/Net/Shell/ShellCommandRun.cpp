@@ -83,6 +83,11 @@ ShellCommandRun::ShellCommandRun(Shell& aShell)
 ShellCommandRun::~ShellCommandRun()
 {
     iShell.RemoveCommandHandler(kShellCommandRun);
+    TestMap::iterator it = iTests.begin();
+    while (it != iTests.end()) {
+        delete it->second;
+        it++;
+    }
 }
 
 void ShellCommandRun::HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse)

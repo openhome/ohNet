@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Standard.h>
 
 #include <vector>
+#include <map>
 
 namespace OpenHome {
 namespace Net {

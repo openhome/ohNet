@@ -703,8 +703,8 @@ $(objdir)TestPerformanceCp.$(objext) : OpenHome/Net/Bindings/Cpp/ControlPoint/Te
 	$(compiler)TestPerformanceCp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/Cpp/ControlPoint/Tests/TestPerformanceCp.cpp
 
 TestShell: $(objdir)TestShell.$(exeext) 
-$(objdir)TestShell.$(exeext) :  ohNetCore $(objdir)Shell.$(objext) ShellCommandRun TestsCore $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)Shell.$(objext) $(objdir)ShellCommandRun.$(objext) $(objdir)TestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestShell.$(exeext) :  ohNetCore $(objdir)Shell.$(objext) ShellCommandRun ShellCommandDebug TestsCore $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)Shell.$(objext) $(objdir)ShellCommandRun.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)TestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)Shell.$(objext) : OpenHome/Net/Shell/Shell.cpp $(headers)
 	$(compiler)Shell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/Shell.cpp
 $(objdir)TestShell.$(objext) : OpenHome/Net/Shell/TestShell.cpp $(headers)
@@ -713,6 +713,10 @@ $(objdir)TestShell.$(objext) : OpenHome/Net/Shell/TestShell.cpp $(headers)
 ShellCommandRun: $(objdir)ShellCommandRun.$(objext) TestsCore
 $(objdir)ShellCommandRun.$(objext) : OpenHome/Net/Shell/ShellCommandRun.cpp $(headers)
 	$(compiler)ShellCommandRun.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandRun.cpp
+
+ShellCommandDebug: $(objdir)ShellCommandDebug.$(objext) TestsCore
+$(objdir)ShellCommandDebug.$(objext) : OpenHome/Net/Shell/ShellCommandDebug.cpp $(headers)
+	$(compiler)ShellCommandDebug.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandDebug.cpp
 
 tests_core = $(objdir)TestBuffer.$(objext) \
              $(objdir)TestThread.$(objext) \

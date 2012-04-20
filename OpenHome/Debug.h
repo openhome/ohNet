@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Standard.h>
 #include <stdarg.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Exception.h>
 
 EXCEPTION(AssertionFailed);
 
@@ -111,6 +113,8 @@ public:
     static TBool TestLevel(TUint aLevel);
     static TUint Level();
     static void SetLevel(TUint aLevel);
+    static void AddLevel(TUint aLevel);
+    static void RemoveLevel(TUint aLevel);
     static TBool BreakBeforeThrow();
     static void SetBreakBeforeThrow(TBool aBreak);
 

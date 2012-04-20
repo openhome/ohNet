@@ -18,6 +18,16 @@ void Debug::SetLevel(TUint aLevel)
     iLevel = aLevel;
 }
 
+void Debug::AddLevel(TUint aLevel)
+{
+    iLevel |= aLevel;
+}
+
+void Debug::RemoveLevel(TUint aLevel)
+{
+    iLevel &= ~aLevel;
+}
+
 TBool Debug::TestLevel(TUint aLevel)
 {
     if ((iLevel & aLevel) != 0) 
