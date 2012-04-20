@@ -16,10 +16,11 @@ EXCEPTION(ShellCommandAlreadyRegistered);
 namespace OpenHome {
 namespace Net {
 
-class IShellCommandHandler
+class IShellCommandHandler : public INonCopyable
 {
 public:
     virtual void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse) = 0;
+    virtual void DisplayHelp(IWriter& aResponse) = 0;
 };
     
 class WriterShellResponse : public IWriter
@@ -54,8 +55,11 @@ private:
     Semaphore iShutdownSem;
 };
     
+class ShellCommandHelp;
+
 class Shell : private IShellCommandHandler
 {
+    friend class ShellCommandHelp;
 public:
     Shell();
     ~Shell();
@@ -63,11 +67,25 @@ public:
     void RemoveCommandHandler(const TChar* aCommand);
 private: // from IShellCommandHandler
     void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse);
+    void DisplayHelp(IWriter& aResponse);
 private:
     Mutex iLock;
     SocketTcpServer* iServer;
-    typedef std::map<Brn, IShellCommandHandler*, BufferCmp> Map;
-    Map iCommands;
+    typedef std::map<Brn, IShellCommandHandler*, BufferCmp> CommandMap;
+    CommandMap iCommands;
+    ShellCommandHelp* iCommandHelp;
+};
+
+class ShellCommandHelp : private IShellCommandHandler
+{
+public:
+    ShellCommandHelp(Shell& aShell);
+    ~ShellCommandHelp();
+private: // from IShellCommandHandler
+    void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse);
+    void DisplayHelp(IWriter& aResponse);
+private:
+    Shell& iShell;
 };
 
 } // namespace Net

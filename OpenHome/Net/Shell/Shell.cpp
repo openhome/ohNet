@@ -117,6 +117,7 @@ void ShellSession::Run()
 Shell::Shell()
     : iLock("MSHL")
 {
+    iCommandHelp = new ShellCommandHelp(*this);
     // there's no obvious benefit to only listening on one interface per subnet
     // ...and we can save a bit of code by just binding to all interfaces rather than tracking subnet changes...
     iServer = new SocketTcpServer("SSHL", 2323, 0);
@@ -126,6 +127,7 @@ Shell::Shell()
 Shell::~Shell()
 {
     delete iServer;
+    delete iCommandHelp;
 }
 
 void Shell::AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler)
@@ -143,7 +145,7 @@ void Shell::RemoveCommandHandler(const TChar* aCommand)
 {
     iLock.Wait();
     Brn command(aCommand);
-    Map::iterator it = iCommands.find(command);
+    CommandMap::iterator it = iCommands.find(command);
     if (it != iCommands.end()) {
         iCommands.erase(it);
     }
@@ -153,7 +155,7 @@ void Shell::RemoveCommandHandler(const TChar* aCommand)
 void Shell::HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse)
 {
     AutoMutex a(iLock);
-    Map::iterator it = iCommands.find(aCommand);
+    CommandMap::iterator it = iCommands.find(aCommand);
     if (it == iCommands.end()) {
         aResponse.Write(Brn("Unrecognised command: "));
         aResponse.Write(Brn(aCommand));
@@ -164,5 +166,60 @@ void Shell::HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWri
         // We get away with it here by assuming that command handlers are registered on
         // startup, before commands are likely to run.
         it->second->HandleShellCommand(aCommand, aArgs, aResponse);
+        aResponse.Write(Brn("\n")); // add blank line after test output for the sake of readability
     }
+}
+
+void Shell::DisplayHelp(IWriter& /*aResponse*/)
+{
+    ASSERTS();
+}
+
+
+// ShellCommandHelp
+
+static const TChar* kShellCommandHelp = "help";
+
+ShellCommandHelp::ShellCommandHelp(Shell& aShell)
+    : iShell(aShell)
+{
+    iShell.AddCommandHandler(kShellCommandHelp, *this);
+}
+
+ShellCommandHelp::~ShellCommandHelp()
+{
+    iShell.RemoveCommandHandler(kShellCommandHelp);
+}
+
+void ShellCommandHelp::HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse)
+{
+    if (aArgs.size() == 0) {
+        aResponse.Write(Brn("Available shell commands are:\n"));
+        Shell::CommandMap::iterator it = iShell.iCommands.begin();
+        while (it != iShell.iCommands.end()) {
+            aResponse.Write(Brn("  "));
+            aResponse.Write(it->first);
+            aResponse.Write(Brn("\n"));
+            it++;
+        }
+    }
+    else {
+        Shell::CommandMap::iterator it = iShell.iCommands.find(aArgs[0]);
+        if (it != iShell.iCommands.end()) {
+            it->second->DisplayHelp(aResponse);
+        }
+        else {
+            aResponse.Write(Brn("Error: unrecognised command - "));
+            aResponse.Write(aArgs[0]);
+            aResponse.Write(Brn(" - so no help available\n"));
+        }
+    }
+}
+
+void ShellCommandHelp::DisplayHelp(IWriter& aResponse)
+{
+    aResponse.Write(Brn("Usage for command \'help\':\n"));
+    aResponse.Write(Brn("  available shell commands if called with no args\n"));
+    aResponse.Write(Brn("  help for given command if called with one arg\n"));
+    aResponse.Write(Brn("  ...ignores any args 1..n\n"));
 }
