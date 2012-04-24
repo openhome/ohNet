@@ -519,9 +519,11 @@ void DviProtocolUpnp::GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase)
 
 void DviProtocolUpnp::GetDeviceXml(Brh& aXml, TIpAddress aAdapter)
 {
+    LOG(kDvDevice, "> DviProtocolUpnp::GetDeviceXml\n");
     DviProtocolUpnpDeviceXmlWriter writer(*this);
     writer.Write(aAdapter);
     writer.TransferTo(aXml);
+    LOG(kDvDevice, "< DviProtocolUpnp::GetDeviceXml\n");
 }
 
 void DviProtocolUpnp::LogUnicastNotification(const char* aType)
