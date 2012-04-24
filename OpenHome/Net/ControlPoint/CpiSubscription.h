@@ -213,6 +213,7 @@ private:
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
+    TBool ReadyForShutdown();
     void Run();
 private:
     OpenHome::Mutex iLock;
