@@ -474,8 +474,6 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
     }
     free(iSubscribers);
 
-    ASSERT(iList.size() == 0);
-
     Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListenerId);
     Stack::NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceListListenerId);
     delete iEventServer;
