@@ -202,6 +202,16 @@ void CpTopology3Group::GroupSourceListChanged()
 
 void CpTopology3Group::GroupRemoved()
 {
+	// This is called in the CpTopology2 thread and there are event handlers, above, which can get called in eventing threads.
+	// There is potential that this function will call the iHandler.GroupRemoved thread before the iHandler.GroupVolumeControlChanged
+    // calls in the eventing threads.
+    // This next line ensures that the eventing stops, thus, no further iHandler.GroupVolumeControlChanged calls will
+    // be made after this iHandler.GroupRemoved call.
+	if(iServiceVolume)
+	{
+		iServiceVolume->Unsubscribe();
+	}
+
 	iHandler.GroupRemoved(*this);
 	RemoveRef();
 }
@@ -506,7 +516,7 @@ void CpTopology3::Run()
             job->Execute();
             iFree.Write(job);
         }
-        catch (ThreadKill)
+        catch (ThreadKill e)
         {
             iFree.Write(job);
             break;
