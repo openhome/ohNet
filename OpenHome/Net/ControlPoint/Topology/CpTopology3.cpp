@@ -337,13 +337,11 @@ CpTopology3::~CpTopology3()
     iReady.Write(iFree.Read()); // this null job causes the thread to complete
 
     delete (iThread);
-    
     LOG(kTopology, "CpTopology3::~CpTopology3 deleted thread\n");
 
     for (TUint i = 0; i < kMaxJobCount; i++) {
         delete (iFree.Read());
     }
-
     LOG(kTopology, "CpTopology3::~CpTopology3 deleted jobs\n");
 }
     
@@ -516,7 +514,7 @@ void CpTopology3::Run()
             job->Execute();
             iFree.Write(job);
         }
-        catch (ThreadKill e)
+        catch (ThreadKill)
         {
             iFree.Write(job);
             break;
