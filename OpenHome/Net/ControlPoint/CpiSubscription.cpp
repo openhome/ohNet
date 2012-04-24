@@ -464,10 +464,8 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
         }
     }
 
-    iLock.Wait();
     Kill();
     Join();
-    iLock.Signal();
 
     for (TUint i=0; i<Stack::InitParams().NumSubscriberThreads(); i++) {
         delete iSubscribers[i];
