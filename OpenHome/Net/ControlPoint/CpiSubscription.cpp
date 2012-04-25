@@ -375,7 +375,16 @@ void Subscriber::Error(const TChar* /*aErr*/)
 void Subscriber::Run()
 {
     for (;;) {
-        Wait();
+        TBool exit = false;
+        try {
+            Wait();
+        }
+        catch (ThreadKill&) {
+            if (iSubscription == NULL) {
+                return;
+            }
+            exit = true;
+        }
         try {
             iSubscription->RunInSubscriber();
         }
@@ -395,12 +404,16 @@ void Subscriber::Run()
             Error("Reader");
         }
         iSubscription->RemoveRef();
+        iSubscription = NULL;
         iFree.Write(this);
+        if (exit) {
+            break;
+        }
     }
 }
 
 
-// CpiCpiSubscriptionManager
+// CpiSubscriptionManager
 
 CpiSubscriptionManager::CpiSubscriptionManager()
     : Thread("SBSM")
@@ -676,7 +689,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool /*aNewSubnet*/)
 #endif
 }
 
-TBool CpiSubscriptionManager::ReadyForShutdown()
+TBool CpiSubscriptionManager::ReadyForShutdown() const
 {
     if (!iActive) {
         if (iMap.size() == 0 && iList.size() == 0) {
