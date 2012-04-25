@@ -340,6 +340,7 @@ void CpiSubscription::ListObjectDetails() const
 Subscriber::Subscriber(const TChar* aName, Fifo<Subscriber*>& aFree)
     : Thread(aName)
     , iFree(aFree)
+    , iSubscription(NULL)
 {
 }
 
@@ -375,7 +376,16 @@ void Subscriber::Error(const TChar* /*aErr*/)
 void Subscriber::Run()
 {
     for (;;) {
-        Wait();
+        TBool exit = false;
+        try {
+            Wait();
+        }
+        catch (ThreadKill&) {
+            if (iSubscription == NULL) {
+                return;
+            }
+            exit = true;
+        }
         try {
             iSubscription->RunInSubscriber();
         }
@@ -395,12 +405,16 @@ void Subscriber::Run()
             Error("Reader");
         }
         iSubscription->RemoveRef();
+        iSubscription = NULL;
+        if (exit) {
+            break;
+        }
         iFree.Write(this);
     }
 }
 
 
-// CpiCpiSubscriptionManager
+// CpiSubscriptionManager
 
 CpiSubscriptionManager::CpiSubscriptionManager()
     : Thread("SBSM")
@@ -446,10 +460,9 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
 {
     LOG(kEvent, "> ~CpiSubscriptionManager()\n");
 
-    TBool wait;
     iLock.Wait();
     iActive = false;
-    wait = (iMap.size() > 0);
+    TBool wait = !ReadyForShutdown();
     iShutdownSem.Clear();
     iLock.Signal();
     if (wait) {
@@ -464,17 +477,13 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
         }
     }
 
-    iLock.Wait();
     Kill();
     Join();
-    iLock.Signal();
 
     for (TUint i=0; i<Stack::InitParams().NumSubscriberThreads(); i++) {
         delete iSubscribers[i];
     }
     free(iSubscribers);
-
-    ASSERT(iList.size() == 0);
 
     Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListenerId);
     Stack::NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceListListenerId);
@@ -549,7 +558,6 @@ CpiSubscription* CpiSubscriptionManager::FindSubscription(const Brx& aSid)
 
 void CpiSubscriptionManager::Remove(CpiSubscription& aSubscription)
 {
-    TBool shutdownSignal = false;
     CpiSubscriptionManager* self = CpiSubscriptionManager::Self();
     self->iLock.Wait();
     Brn sid(aSubscription.Sid());
@@ -558,11 +566,7 @@ void CpiSubscriptionManager::Remove(CpiSubscription& aSubscription)
         it->second = NULL;
         self->iMap.erase(it);
     }
-    if (!self->iActive) {
-        if (self->iMap.size() == 0) {
-            shutdownSignal = true;
-        }
-    }
+    TBool shutdownSignal = self->ReadyForShutdown();
     self->iLock.Signal();
     if (shutdownSignal) {
         self->iShutdownSem.Signal();
@@ -686,6 +690,16 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool /*aNewSubnet*/)
 #endif
 }
 
+TBool CpiSubscriptionManager::ReadyForShutdown() const
+{
+    if (!iActive) {
+        if (iMap.size() == 0 && iList.size() == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void CpiSubscriptionManager::Run()
 {
     for (;;) {
@@ -696,6 +710,14 @@ void CpiSubscriptionManager::Run()
         iList.front() = NULL;
         iList.pop_front();
         iLock.Signal();
+
         subscriber->Subscribe(subscription);
+
+        iLock.Wait();
+        TBool shutdownSignal = ReadyForShutdown();
+        iLock.Signal();
+        if (shutdownSignal) {
+            iShutdownSem.Signal();
+        }
     }
 }

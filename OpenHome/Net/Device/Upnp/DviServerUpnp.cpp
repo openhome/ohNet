@@ -587,13 +587,12 @@ void DviSessionUpnp::Error(const HttpStatus& aStatus)
 
 void DviSessionUpnp::Get()
 {
-#if 0
     Stack::Mutex().Wait();
-    Log::Print("Get - ");
-    Log::Print(iReaderRequest->Uri());
-    Log::Print("\n");
+    LOG(kDvDevice, "Get - ");
+    LOG(kDvDevice, iReaderRequest->Uri());
+    LOG(kDvDevice, "\n");
     Stack::Mutex().Signal();
-#endif
+
     if (iReaderRequest->Version() == Http::eHttp11) {
         if (!iHeaderHost.Received()) {
             Error(HttpStatus::kBadRequest);

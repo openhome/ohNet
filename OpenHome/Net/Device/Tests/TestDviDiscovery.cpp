@@ -555,14 +555,14 @@ void SuiteMsearch::TestMsearchAll()
     iListenerUnicast->MsearchAll();
     Wait();
     if (iListener->RootDeviceCount() != 2) {
-        Print("MseachAll: found %u root devices (expected 2)\n", iListener->RootDeviceCount());
+        Print("MsearchAll: found %u root devices (expected 2)\n", iListener->RootDeviceCount());
     }
     TEST(iListener->RootDeviceCount() == 2);
     TEST(iListener->DeviceCount() == 3);
     TEST(iListener->ServiceCount() == 8);
     TEST(iListener->Udns() == 7);
     if (iListener->TotalMessages() != 16) {
-        Print("MseachAll: received %u responses (expected 16)\n", iListener->TotalMessages());
+        Print("MsearchAll: received %u responses (expected 16)\n", iListener->TotalMessages());
     }
     TEST(iListener->TotalMessages() == 16);
     TEST(DeviceTypeMatches(iListener->Dev1Type(), "upnp.org:test1:1"));

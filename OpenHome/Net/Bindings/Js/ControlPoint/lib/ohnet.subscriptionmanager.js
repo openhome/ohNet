@@ -25,6 +25,7 @@ if( typeof ohnet == "undefined" || !ohnet) {
  */
 ohnet.subscriptionmanager = (function() {
 
+    var VERSION = '0.1';
 	// Constants
 	var DEFAULT_SUBSCRIPTION_TIMEOUT_SEC = 1800;
 	var WEBSOCKETRETRYATTEMPTS = 1;
@@ -46,6 +47,7 @@ ohnet.subscriptionmanager = (function() {
 	var running = false;
 	// A flag to state if the Subscription Manager is running
 
+    console.log('--- ohNet v'+VERSION +' ---');
 	// Functions
 
 	/**
@@ -207,6 +209,7 @@ ohnet.subscriptionmanager = (function() {
 	 */
 	var onSocketError = function() {
 		webSocketLive = false;
+		running = false;
 		console.log("onSocketError");
 	};
 	/**
@@ -214,9 +217,11 @@ ohnet.subscriptionmanager = (function() {
 	 * @method onSocketClose
 	 */
 	var onSocketClose = function() {
+	    console.log("onSocketClose");
 		stop();
 		webSocketLive = false;
-		console.log("onSocketClose");
+		running = false;
+
 		
 		if(webSocketOpened) {
 			if(webSocketAttempts < WEBSOCKETRETRYATTEMPTS) {
@@ -243,6 +248,7 @@ ohnet.subscriptionmanager = (function() {
 	 */
 	var onLongPollClose = function() {
 		console.log("onLongPollClose");
+		running = false;
 		stop();
 		if(DisconnectedFunction) {
 			DisconnectedFunction();
@@ -380,6 +386,7 @@ ohnet.subscriptionmanager = (function() {
 		}
 		running = false;
 		if(webSocketLive) {
+		    console.log('Closing websocket');
 			ws.close();
 		}
 	};
