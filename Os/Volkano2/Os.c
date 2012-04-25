@@ -509,9 +509,17 @@ THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
         return kHandleNull;
     }
 
-    int err = OsNetworkHandle_Initialise(h, s);
+    if ( type == SOCK_DGRAM )
+    {
+        char loop = 1;
+        if (lwip_setsockopt(s, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop)) < 0)
+        {
+            OsNetworkHandle_Destroy(h);
+            return kHandleNull;
+        }
+    }
 
-    if ( err < 0 )
+    if ( OsNetworkHandle_Initialise(h, s) < 0 )
     {
         OsNetworkHandle_Destroy(h);
         return kHandleNull;
@@ -543,7 +551,7 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
 
 int32_t OsNetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, TIpAddress aMulticast, uint32_t aPort)
 {
-    return OsNetworkBind(aHandle, 0, aPort);
+    return OsNetworkBind(aHandle, aAdapter, aPort);
 }
 
 int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort)
