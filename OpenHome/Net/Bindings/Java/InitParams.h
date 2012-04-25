@@ -137,6 +137,14 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDvNu
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsDvUpnpServerPort
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDvUpnpServerPort
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsDvWebSocketPort
  * Signature: (J)I
  */
@@ -269,6 +277,14 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
  * Signature: (JI)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvNumWebSocketThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetDvUpnpServerPort
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvUpnpServerPort
   (JNIEnv *, jclass, jlong, jint);
 
 /*

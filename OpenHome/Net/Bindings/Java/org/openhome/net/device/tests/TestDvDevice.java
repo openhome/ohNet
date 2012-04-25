@@ -92,6 +92,7 @@ public class TestDvDevice implements ICpDeviceListListener
 		InitParams initParams = new InitParams();
 		initParams.setMsearchTimeSecs(1);
 		initParams.setUseLoopbackNetworkAdapter();
+        initParams.setDvServerPort(0);
 		Library lib = new Library();
 		lib.initialise(initParams);
 		SubnetList subnetList = new SubnetList();

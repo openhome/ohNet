@@ -16,7 +16,8 @@ namespace OpenHome.Net.Device
             InitParams initParams = new InitParams
             {
                 MsearchTimeSecs = 1,
-                UseLoopbackNetworkAdapter = true
+                UseLoopbackNetworkAdapter = true,
+                DvUpnpWebServerPort = 0
             };
             using (Library lib = Library.Create(initParams))
             {

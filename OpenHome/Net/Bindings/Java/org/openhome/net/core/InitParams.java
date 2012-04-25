@@ -36,6 +36,7 @@ public class InitParams
 	private static native int OhNetInitParamsDvNumServerThreads(long aParams);
 	private static native int OhNetInitParamsDvNumPublisherThreads(long aParams);
 	private static native int OhNetInitParamsDvNumWebSocketThreads(long aParams);
+	private static native int OhNetInitParamsDvUpnpServerPort(long aParams);
 	private static native int OhNetInitParamsDvWebSocketPort(long aParams);
 	private static native int OhNetInitParamsDvIsBonjourEnabled(long aParams);
 	
@@ -55,6 +56,7 @@ public class InitParams
 	private static native void OhNetInitParamsSetDvNumServerThreads(long aParams, int aNumThreads);
 	private static native void OhNetInitParamsSetDvNumPublisherThreads(long aParams, int aNumThreads);
 	private static native void OhNetInitParamsSetDvNumWebSocketThreads(long aParams, int aNumThreads);
+	private static native void OhNetInitParamsSetDvUpnpServerPort(long aParams, int aPort);
 	private static native void OhNetInitParamsSetDvWebSocketPort(long aParams, int aPort);
 	private static native void OhNetInitParamsSetDvEnableBonjour(long aParams);
 
@@ -261,6 +263,19 @@ public class InitParams
 	public int getDvNumWebSocketThreads()
 	{
 		return OhNetInitParamsDvNumWebSocketThreads(iHandle);
+	}
+	
+	/**
+	 * Get the TCP port number the device stack server will run on.
+	 * 
+	 * <p>The default value is 0 (meaning that the OS will assign a port).
+	 * You should question your design if you need to use this.
+	 *
+	 * @return	the TCP port number the device stack server will run on.
+	 */
+	public int getDvServerPort()
+	{
+		return OhNetInitParamsDvUpnpServerPort(iHandle);
 	}
 	
 	/**
@@ -492,6 +507,19 @@ public class InitParams
 		OhNetInitParamsSetDvNumWebSocketThreads(iHandle, aNumThreads);
 	}
 	
+	/**
+	 * Set the TCP port number the device stack server will run on.
+	 * 
+	 * <p>The default value is 0 (meaning that the OS will assign a port).
+	 * You should question your design if you need to use this.
+	 *
+	 * @param aPort		the TCP port number the device stack server will run on.
+	 */
+	public void setDvServerPort(int aPort)
+	{
+		OhNetInitParamsSetDvUpnpServerPort(iHandle, aPort);
+	}
+
 	/**
 	 * Set the TCP port number the WebSocket server will run on.
 	 * 

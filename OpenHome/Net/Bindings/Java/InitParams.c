@@ -232,6 +232,21 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDvNu
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsDvUpnpServerPort
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDvUpnpServerPort
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
+{
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	return (jint) OhNetInitParamsDvUpnpServerPort(params);
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsDvWebSocketPort
  * Signature: (J)I
  */
@@ -468,6 +483,21 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
 	aClass = aClass;
 	
 	OhNetInitParamsSetDvNumWebSocketThreads(params, aNumThreads);
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetDvUpnpServerPort
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvUpnpServerPort
+  (JNIEnv *aEnv, jclass aClass, jlong aParams, jint aPort)
+{
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	OhNetInitParamsSetDvUpnpServerPort(params, aPort);
 }
 
 /*
