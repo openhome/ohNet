@@ -337,7 +337,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         aInitParams->SetUseLoopbackNetworkAdapter();
     }
     aInitParams->SetDvNumWebSocketThreads(5);
-    aInitParams->SetDvWebSocketPort(54321);
+    aInitParams->SetDvWebSocketPort(54320);
+    aInitParams->SetDvUpnpServerPort(0);
     UpnpLibrary::Initialise(aInitParams);
     Debug::SetLevel(Debug::kDvWebSocket | Debug::kError | Debug::kDvInvocation | Debug::kDvEvent | Debug::kDvDevice);
     UpnpLibrary::StartDv();

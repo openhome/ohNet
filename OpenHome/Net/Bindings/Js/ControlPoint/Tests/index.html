@@ -33,7 +33,6 @@
     <script src="scripts/test-min.js" type="text/javascript"></script>
     <script type="text/javascript">
          var nodeUdn = "device-ohNetTestBasic";
-        var webSocketPort = 54321;
 
         var outputFile = true;
         var kAsyncTimeoutMS = 15000; //300;
@@ -97,7 +96,7 @@
 	                            proxy2.subscribe();
                             	Y.Assert.isNotUndefined(proxy);
                    			},
-	                   		port: 54321,
+	                   		port: 54320,
 	                   		debugMode: false,
 	                   		allowWebSockets: websocket
            				});
