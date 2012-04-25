@@ -535,6 +535,15 @@ void DviSessionUpnp::Run()
             Error(HttpStatus::kMethodNotAllowed);
         }
         const Brx& method = iReaderRequest->Method();
+
+        Stack::Mutex().Wait();
+        LOG(kDvDevice, "Method: ");
+        LOG(kDvDevice, method);
+        LOG(kDvDevice, ", uri: ");
+        LOG(kDvDevice, iReaderRequest->Uri());
+        LOG(kDvDevice, "\n");
+        Stack::Mutex().Signal();
+
         iResponseStarted = false;
         iResponseEnded = false;
         if (method == Http::kMethodGet) {
@@ -587,12 +596,6 @@ void DviSessionUpnp::Error(const HttpStatus& aStatus)
 
 void DviSessionUpnp::Get()
 {
-    Stack::Mutex().Wait();
-    LOG(kDvDevice, "Get - ");
-    LOG(kDvDevice, iReaderRequest->Uri());
-    LOG(kDvDevice, "\n");
-    Stack::Mutex().Signal();
-
     if (iReaderRequest->Version() == Http::eHttp11) {
         if (!iHeaderHost.Received()) {
             Error(HttpStatus::kBadRequest);
