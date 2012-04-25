@@ -112,6 +112,7 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 {
     OhNetInitParamsSetMsearchTime(aInitParams, 1);
     OhNetInitParamsSetUseLoopbackNetworkAdapter(aInitParams);
+    OhNetInitParamsSetDvUpnpServerPort(aInitParams, 0);
     OhNetLibraryInitialise(aInitParams);
     Print("TestDvDeviceC - starting\n");
     OhNetHandleNetworkAdapterList subnetList = OhNetSubnetListCreate();

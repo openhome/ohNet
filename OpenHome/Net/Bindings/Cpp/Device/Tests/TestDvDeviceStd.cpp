@@ -90,6 +90,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         aInitParams->SetUseLoopbackNetworkAdapter();
     }
     aInitParams->SetMsearchTime(1);
+    aInitParams->SetDvUpnpServerPort(0);
     UpnpLibrary::Initialise(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
