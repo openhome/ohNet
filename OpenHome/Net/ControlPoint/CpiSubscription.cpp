@@ -405,10 +405,10 @@ void Subscriber::Run()
         }
         iSubscription->RemoveRef();
         iSubscription = NULL;
-        iFree.Write(this);
         if (exit) {
             break;
         }
+        iFree.Write(this);
     }
 }
 
