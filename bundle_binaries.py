@@ -9,6 +9,7 @@ def exclude_non_binary(filename):
         return True
     return not (filename.endswith(".dll") or filename.endswith(".so") or filename.endswith(".elf")
                 or filename.endswith(".lib") or filename.endswith(".map") or filename.endswith(".pdb")
+                or filename.endswith(".a")
                 or ("." not in filename))
 
 # Prior to Python 2.6, tarfile's add method doesn't have any filtering
