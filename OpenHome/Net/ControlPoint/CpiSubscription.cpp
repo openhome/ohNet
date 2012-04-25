@@ -340,6 +340,7 @@ void CpiSubscription::ListObjectDetails() const
 Subscriber::Subscriber(const TChar* aName, Fifo<Subscriber*>& aFree)
     : Thread(aName)
     , iFree(aFree)
+    , iSubscription(NULL)
 {
 }
 
