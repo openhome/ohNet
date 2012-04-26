@@ -3,6 +3,7 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Stream.h>
 
 namespace OpenHome {
 namespace Net {
