@@ -16,6 +16,9 @@ static void RunTestFifo(const std::vector<Brn>& /*aArgs*/) { TestFifo(); }
 extern void TestQueue();
 static void RunTestQueue(const std::vector<Brn>& /*aArgs*/) { TestQueue(); }
 
+extern void TestTextUtils();
+static void RunTestTextUtils(const std::vector<Brn>& /*aArgs*/) { TestTextUtils(); }
+
 extern void TestNetwork(const std::vector<Brn>& aArgs);
 static void RunTestNetwork(const std::vector<Brn>& aArgs) { TestNetwork(aArgs); }
 
@@ -66,6 +69,7 @@ ShellCommandRun::ShellCommandRun(Shell& aShell)
     AddTest("TestThread", RunTestThread);
     AddTest("TestFifo", RunTestFifo);
     AddTest("TestQueue", RunTestQueue);
+    AddTest("TestTextUtils", RunTestTextUtils);
     AddTest("TestNetwork", RunTestNetwork, true);
     AddTest("TestTimer", RunTestTimer);
     AddTest("TestSsdpMListen", RunTestSsdpMListen, true);
