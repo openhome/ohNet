@@ -1,0 +1,8 @@
+*.swp
+*.pyc
+
+/build*/
+/dependencies/
+/.waf-*/
+/.lock-*
+
