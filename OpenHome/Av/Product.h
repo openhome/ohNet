@@ -31,9 +31,6 @@ class Product : /*public IInfoProvider, */private INonCopyable
 public:
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
-    static const TUint kMaxInfoBytes = 256;
-    static const TUint kMaxUrlBytes = 128;
-    static const TUint kMaxImageUriBytes = 64;
 public:
     Product(Net::DvDevice& aDevice, IReadStore& aReadStore);
     ~Product();
