@@ -71,10 +71,26 @@ ifeq ($(platform), Core)
 	native_only = yes
 endif
 
+ifeq ($(gcc4-1), yes)
+	version_specific_cflags =
+	version_specific_linkflags = -B${CROSS_COMPILE} -L${CROSS_COMPILE}../../lib  -L${CROSS_COMPILE}../lib
+	version_specific_library_path = LD_LIBRARY_PATH=${CROSS_COMPILE}../lib
+	version_specific_cflags_third_party = -Wno-non-virtual-dtor
+	version_specific_includes = -I${CROSS_COMPILE}../include
+	version_specific_java_cflags = -Wstrict-aliasing=0
+else
+	version_specific_cflags = -Wno-psabi
+	version_specific_linkflags =
+	version_specific_library_path =
+	version_specific_cflags_third_party =
+	version_specific_includes =
+	version_specific_java_cflags =
+endif
+
 ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
-	platform_cflags = -Wno-psabi -fPIC
-	platform_linkflags = -pthread
+	platform_cflags = $(version_specific_cflags) -fPIC
+	platform_linkflags = $(version_specific_linkflags) -pthread
     linkopts_ohNet = -Wl,-soname,libohNet.so
 	osbuilddir = Posix
 	osdir = Posix
@@ -84,18 +100,18 @@ endif
 	# Continuing with the non-Darwin settings...
 	objdir = Build/Obj/$(osdir)/$(build_dir)/
 	compiler = ${CROSS_COMPILE}gcc -o $(objdir)
-	link = ${CROSS_COMPILE}g++ $(platform_linkflags)
-	ar = ${CROSS_COMPILE}ar rc $(objdir)
+	link = $(version_specific_library_path) ${CROSS_COMPILE}g++ $(platform_linkflags)
+	ar = $(version_specific_library_path) ${CROSS_COMPILE}ar rc $(objdir)
 
 endif
 
 # Macros used by Common.mak
 native_only ?= no
 endian ?= LITTLE
-cflags_third_party = -fexceptions -Wall -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
+cflags_third_party = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 cflags = $(cflags_third_party) -Werror
 inc_build = Build/Include
-includes = -IBuild/Include/
+includes = -IBuild/Include/ $(version_specific_includes)
 bundle_build = Build/Bundles
 osdir ?= Posix
 objext = o
@@ -112,8 +128,8 @@ endif
 exeext = elf
 linkoutput = -o 
 dllprefix = lib
-link_dll = ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
-link_dll_service = ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
+link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
+link_dll_service = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = dmcs /nologo
 publicjavadir = OpenHome/Net/Bindings/Java/
 
@@ -124,12 +140,13 @@ ifeq ($(platform), IntelMac)
 	jar = /usr/bin/jar
 else
 	includes_jni = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
-	link_jvm = $(JAVA_HOME)/jre/lib/i386/server/libjvm.so
+	libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+	link_jvm = $(libjvm_dir)/libjvm.so
 	javac = $(JAVA_HOME)/bin/javac
 	jar = $(JAVA_HOME)/bin/jar
 endif
 
-java_cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
+java_cflags = -fexceptions -Wall $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
 jarflags = cf
 dirsep = /
 prefix = /usr/local
