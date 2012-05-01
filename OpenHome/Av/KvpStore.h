@@ -52,7 +52,7 @@ public:
     virtual TBool TryReadNextPersistedItem(Brn& aKey, Brn& aValue) = 0;
 };
 
-class IPersistor
+class IPersister
 {
 public:
     virtual void LoadPersistedData(IStoreLoaderDynamic& aLoader) = 0;
@@ -86,7 +86,7 @@ class KvpStore : public IReadWriteStore,
                  private IStoreLoaderStatic, private IStoreLoaderDynamic, private IStoreIterator
 {
 public:
-    KvpStore(IStaticDataSource& aStaticData, IPersistor& aPersistedData);
+    KvpStore(IStaticDataSource& aStaticData, IPersister& aPersister);
     ~KvpStore();
 private: // from IReadWriteStore
     TBool TryReadStoreItem(const Brx& aKey, Bwx& aValue);
@@ -128,12 +128,12 @@ private:
         Bws<StoreMaxValueLength> iValue;
     };
 private:
-    IPersistor& iPersistor;
+    IPersister& iPersister;
     Mutex iLock;
     typedef std::map<Brn, KvpPair*, BufferCmp> Map;
     Map iStaticData;
     Map iPersistedData;
-    Map::iterator iPersistorIterator;
+    Map::iterator iPersisterIterator;
     TBool iSaving;
 };
 

@@ -22,13 +22,13 @@ const Brn StaticDataKey::kModelImageUrl = Brn("Model.ImageUrl");
 
 // KvpStore
 
-KvpStore::KvpStore(IStaticDataSource& aStaticData, IPersistor& aPersistedData)
-    : iPersistor(aPersistedData)
+KvpStore::KvpStore(IStaticDataSource& aStaticData, IPersister& aPersister)
+    : iPersister(aPersister)
     , iLock("KVPS")
     , iSaving(false)
 {
     aStaticData.LoadStaticData(*this);
-    iPersistor.LoadPersistedData(*this);
+    iPersister.LoadPersistedData(*this);
 }
 
 KvpStore::~KvpStore()
@@ -94,7 +94,7 @@ TBool KvpStore::WriteStoreItem(const Brx& aKey, const Brx& aValue)
     iPersistedData.insert(std::pair<Brn, KvpPair*>(key, kvp));
 
     iSaving = true;
-    iPersistor.Save(*this);
+    iPersister.Save(*this);
     iSaving = false;
 
     return valueChanged;
@@ -127,12 +127,12 @@ void KvpStore::AddPersistedItem(const Brx& aKey, const Brx& aValue)
 TBool KvpStore::TryReadNextPersistedItem(Brn& aKey, Brn& aValue)
 {
     ASSERT(iSaving);
-    if (iPersistorIterator == iPersistedData.end()) {
+    if (iPersisterIterator == iPersistedData.end()) {
         return false;
     }
-    aKey.Set(iPersistorIterator->first);
-    iPersistorIterator->second->GetValue(aValue);
-    iPersistorIterator++;
+    aKey.Set(iPersisterIterator->first);
+    iPersisterIterator->second->GetValue(aValue);
+    iPersisterIterator++;
     return true;
 }
 
