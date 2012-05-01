@@ -443,6 +443,14 @@ $(objdir)TestFifo.$(objext) : OpenHome/Tests/TestFifo.cpp $(headers)
 $(objdir)TestFifoMain.$(objext) : OpenHome/Tests/TestFifoMain.cpp $(headers)
 	$(compiler)TestFifoMain.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestFifoMain.cpp
 
+TestTextUtils: $(objdir)TestTextUtils.$(exeext) 
+$(objdir)TestTextUtils.$(exeext) :  ohNetCore $(objdir)TestTextUtils.$(objext) $(objdir)TestTextUtilsMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTextUtils.$(exeext) $(objdir)TestTextUtilsMain.$(objext) $(objdir)TestTextUtils.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestTextUtils.$(objext) : OpenHome/Tests/TestTextUtils.cpp $(headers)
+	$(compiler)TestTextUtils.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestTextUtils.cpp
+$(objdir)TestTextUtilsMain.$(objext) : OpenHome/Tests/TestTextUtilsMain.cpp $(headers)
+	$(compiler)TestTextUtilsMain.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestTextUtilsMain.cpp
+
 TestEcho: $(objdir)TestEcho.$(exeext) 
 $(objdir)TestEcho.$(exeext) :  ohNetCore $(objdir)TestEcho.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestEcho.$(exeext) $(objdir)TestEcho.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
