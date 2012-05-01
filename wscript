@@ -19,7 +19,7 @@ def options(opt):
     #opt.add_option('--dest', action='store', default=None)
 
 platforms = {
-        'Linux-x86': dict(endian='LITTLE',    build_platform='linux2', ohnet_plat_dir='Posix'),
+        'Linux-x86': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Linux-x64': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Linux-ARM': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Windows-x86': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
