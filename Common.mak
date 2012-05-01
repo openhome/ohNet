@@ -703,18 +703,21 @@ $(objdir)TestPerformanceCp.$(objext) : OpenHome/Net/Bindings/Cpp/ControlPoint/Te
 	$(compiler)TestPerformanceCp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/Cpp/ControlPoint/Tests/TestPerformanceCp.cpp
 
 TestShell: $(objdir)TestShell.$(exeext) 
-$(objdir)TestShell.$(exeext) :  ohNetCore $(objdir)Shell.$(objext) ShellCommandRun ShellCommandDebug TestsCore $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)Shell.$(objext) $(objdir)ShellCommandRun.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)TestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
-$(objdir)Shell.$(objext) : OpenHome/Net/Shell/Shell.cpp $(headers)
-	$(compiler)Shell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/Shell.cpp
+$(objdir)TestShell.$(exeext) :  Shell ShellCommandRun $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)Shell.$(libext) $(objdir)ShellCommandRun.$(objext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestShell.$(objext) : OpenHome/Net/Shell/TestShell.cpp $(headers)
 	$(compiler)TestShell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/TestShell.cpp
+
+Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug
+	$(ar)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext)
+$(objdir)Shell.$(objext) : OpenHome/Net/Shell/Shell.cpp $(headers)
+	$(compiler)Shell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/Shell.cpp
 
 ShellCommandRun: $(objdir)ShellCommandRun.$(objext) TestsCore
 $(objdir)ShellCommandRun.$(objext) : OpenHome/Net/Shell/ShellCommandRun.cpp $(headers)
 	$(compiler)ShellCommandRun.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandRun.cpp
 
-ShellCommandDebug: $(objdir)ShellCommandDebug.$(objext) TestsCore
+ShellCommandDebug: $(objdir)ShellCommandDebug.$(objext)
 $(objdir)ShellCommandDebug.$(objext) : OpenHome/Net/Shell/ShellCommandDebug.cpp $(headers)
 	$(compiler)ShellCommandDebug.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandDebug.cpp
 
@@ -739,7 +742,7 @@ tests_core = $(objdir)TestBuffer.$(objext) \
              $(objdir)CpOpenhomeOrgTestBasic1.$(objext)
 
 TestsCore: $(tests_core)
-	$(ar)TestsCore.$(libext) $(tests_core)
+	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
 TestsNative: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology4 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
