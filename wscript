@@ -71,10 +71,11 @@ def configure(conf):
     env.MSVC_TARGETS = ['x86']
     if dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.load('msvc')
-        append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/FR', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
+        append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
         #append('CXXFLAGS',['/IC:/work/ohMediaPlayer']) # TODO: copy includes to correct structure (in build folder) and include from there
         if debugmode == 'Debug':
-            append('CXXFLAGS',['/MTd', '/Zi', '/Od', '/RTC1'])
+            append('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
+            append('LINKFLAGS', ['/debug'])
         else:
             append('CXXFLAGS',['/MT', '/Ox'])
         env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
