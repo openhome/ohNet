@@ -131,15 +131,15 @@ void Allocator::QueryInfo(const Brx& aQuery, IWriter& aWriter)
         aWriter.Write(Brn(iName));
         aWriter.Write(Brn(", capacity:"));
         Bws<Ascii::kMaxUintStringBytes> uintBuf;
-        Ascii::AppendDec(uintBuf, iNumCells * iCellBytes);
+        Ascii::AppendDec(uintBuf, iNumCells * iCellBytesTotal);
         aWriter.Write(uintBuf);
         aWriter.Write(Brn(" bytes, used:"));
         uintBuf.SetBytes(0);
-        Ascii::AppendDec(uintBuf, iCellsUsed * iCellBytes);
+        Ascii::AppendDec(uintBuf, iCellsUsed * iCellBytesTotal);
         aWriter.Write(uintBuf);
         aWriter.Write(Brn(" bytes, peak:"));
         uintBuf.SetBytes(0);
-        Ascii::AppendDec(uintBuf, iCellsUsedMax * iCellBytes);
+        Ascii::AppendDec(uintBuf, iCellsUsedMax * iCellBytesTotal);
         aWriter.Write(uintBuf);
         aWriter.Write(Brn(" bytes\n"));
     }
