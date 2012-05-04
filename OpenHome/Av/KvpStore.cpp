@@ -47,12 +47,6 @@ KvpStore::~KvpStore()
 
 TBool KvpStore::TryReadStoreItem(const Brx& aKey, Bwx& aValue)
 {
-    Brn staticValue;
-    if (TryReadStoreStaticItem(aKey, staticValue)) {
-        aValue.Append(staticValue);
-        return true;
-    }
-
     Brn key(aKey);
     AutoMutex a(iLock);
     Map::iterator it = iPersistedData.find(key);
@@ -61,7 +55,7 @@ TBool KvpStore::TryReadStoreItem(const Brx& aKey, Bwx& aValue)
     }
     Brn value;
     it->second->GetValue(value);
-    aValue.Append(value);
+    aValue.Replace(value);
     return true;
 }
 
@@ -79,6 +73,12 @@ TBool KvpStore::TryReadStoreStaticItem(const Brx& aKey, Brn& aValue)
 
 TBool KvpStore::WriteStoreItem(const Brx& aKey, const Brx& aValue)
 {
+    if (aKey.Bytes() > StoreMaxKeyLength) {
+        THROW(AvStoreKeyTooLong);
+    }
+    if (aValue.Bytes() > StoreMaxValueLength) {
+        THROW(AvStoreValueTooLong);
+    }
     Brn key(aKey);
     AutoMutex a(iLock);
     Map::iterator it = iStaticData.find(key);
@@ -94,6 +94,7 @@ TBool KvpStore::WriteStoreItem(const Brx& aKey, const Brx& aValue)
     iPersistedData.insert(std::pair<Brn, KvpPair*>(key, kvp));
 
     iSaving = true;
+    iPersisterIterator = iPersistedData.begin();
     iPersister.Save(*this);
     iSaving = false;
 

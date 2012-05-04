@@ -151,11 +151,23 @@ def build(bld):
             target='ohMediaPlayer')
 
     # Tests
+    bld.stlib(
+            source=[
+                'OpenHome/Av/Tests/RamStore.cpp',
+            ],
+            use=['ohMediaPlayer'],
+            includes = bld.env.INCLUDES_MEDIAPLAYER,
+            target='ohMediaPlayerTestUtils')
     bld.program(
             source='OpenHome/Media/Tests/TestAllocator.cpp',
             use=['OHNET', 'ohMediaPlayer'],
             includes = bld.env.INCLUDES_MEDIAPLAYER,
             target='TestAllocator')
+    bld.program(
+            source='OpenHome/Av/Tests/TestStore.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            includes = bld.env.INCLUDES_MEDIAPLAYER,
+            target='TestStore')
 
     # Bundles
     #header_files = gather_files(bld, '{top}/src', ['*.h'])
@@ -173,9 +185,8 @@ def build(bld):
 # == Command for invoking unit tests ==
 
 def test(tst):
-    print 'No tests yet'
-    #tst(rule=invoke_test, test='TestTopology', always=True)
-    #tst.add_group() # Don't start another test until first has finished.
+    tst(rule=invoke_test, test='TestAllocator', always=True)
+    tst.add_group() # Don't start another test until first has finished.
     #tst(rule=invoke_test, test='TestTopology1', always=True)
     #tst.add_group()
     #tst(rule=invoke_test, test='TestTopology2', always=True)

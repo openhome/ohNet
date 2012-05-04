@@ -37,13 +37,13 @@ public:
 class IStoreLoaderDynamic
 {
 public:
-    virtual void AddStaticItem(const Brx& aKey, const TChar* aValue) = 0;
+    virtual void AddPersistedItem(const Brx& aKey, const Brx& aValue) = 0;
 };
 
 class IStoreLoaderStatic
 {
 public:
-    virtual void AddPersistedItem(const Brx& aKey, const Brx& aValue) = 0;
+    virtual void AddStaticItem(const Brx& aKey, const TChar* aValue) = 0;
 };
 
 class IStoreIterator
