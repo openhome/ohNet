@@ -3,12 +3,12 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
-//#include <OpenHome/Av/Product.h>
+#include <OpenHome/Av/InfoProvider.h>
 
 namespace OpenHome {
 namespace Av {
 
-class Source //: public IInfoProvider
+class Source : protected IInfoProvider
 {
 public:
     static const TUint kMaxSystemNameBytes = 20;
@@ -23,6 +23,7 @@ public:
     TBool IsVisible() const;
     virtual void Enable() = 0;
     virtual void Disable() = 0;
+    // ?? protected void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 protected:
     Source(const TChar* aSystemName, const TChar* aType);
 private:

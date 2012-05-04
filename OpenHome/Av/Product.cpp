@@ -5,13 +5,14 @@
 #include <OpenHome/Av/ProviderProduct.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/KvpStore.h>
+#include <OpenHome/Av/InfoProvider.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IInfoAggregator& /*aInfoAggregator*/)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iLock("PRDM")
@@ -115,4 +116,8 @@ TUint Product::SourceXmlChangeCount()
 {
     ASSERTS();
     return 0xffffffff;
+}
+
+void Product::QueryInfo(const Brx& /*aQuery*/, IWriter& /*aWriter*/)
+{
 }
