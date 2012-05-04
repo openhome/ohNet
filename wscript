@@ -71,7 +71,7 @@ def configure(conf):
     env.MSVC_TARGETS = ['x86']
     if dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.load('msvc')
-        append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE'])
+        append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/FR', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
         #append('CXXFLAGS',['/IC:/work/ohMediaPlayer']) # TODO: copy includes to correct structure (in build folder) and include from there
         if debugmode == 'Debug':
             append('CXXFLAGS',['/MTd', '/Zi', '/Od', '/RTC1'])
@@ -138,21 +138,23 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Av/FaultCode.cpp',
+                'OpenHome/Av/InfoProvider.cpp',
                 'OpenHome/Av/KvpStore.cpp',
                 'OpenHome/Av/Product.cpp',
                 'OpenHome/Av/ProviderProduct.cpp',
                 'OpenHome/Av/Source.cpp',
+                'OpenHome/Media/Allocator.cpp',
             ],
             use=['OHNET'],
             includes = bld.env.INCLUDES_MEDIAPLAYER,
             target='ohMediaPlayer')
 
     # Tests
-    #bld.program(source='src/TestTopology1.cpp', use=['OHNET', 'ohTopology'], target='TestTopology1')
-    #bld.program(source='src/TestTopology2.cpp', use=['OHNET', 'ohTopology'], target='TestTopology2')
-    #bld.program(source='src/TestTopology3.cpp', use=['OHNET', 'ohTopology'], target='TestTopology3')
-    #bld.program(source='src/TestTopology4.cpp', use=['OHNET', 'ohTopology'], target='TestTopology4')
-    #bld.program(source='src/TestTopology.cpp',  use=['OHNET', 'ohTopology'], target='TestTopology')
+    bld.program(
+            source='OpenHome/Media/Tests/TestAllocator.cpp',
+            use=['OHNET', 'ohMediaPlayer'],
+            includes = bld.env.INCLUDES_MEDIAPLAYER,
+            target='TestAllocator')
 
     # Bundles
     #header_files = gather_files(bld, '{top}/src', ['*.h'])
