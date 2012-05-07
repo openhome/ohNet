@@ -476,13 +476,6 @@ void CpTopology4Room::GroupAdded(CpTopology4Group& aGroup)
         return;
     }
 
-    // evaluate standby
-
-    if (aGroup.Group().Standby()) {
-        iStandbyCount++;
-        EvaluateStandby();
-    }
-
     std::vector<CpTopology4Group*>::iterator it;
 
     // Check if this has an existing parent
@@ -525,9 +518,19 @@ void CpTopology4Room::GroupAdded(CpTopology4Group& aGroup)
     aGroup.SetIsRoot(true);
     iGroupList.push_back(&aGroup);
     iRootList.push_back(&aGroup);
+
+	// evaluate standby
+
+    if (aGroup.Group().Standby()) {
+        iStandbyCount++;
+		EvaluateStandby();
+    }
+
     iSourceCount = EvaluateSources();
-    iHandler.RoomChanged(*this);
-    iMutex.Signal();
+    
+	iHandler.RoomChanged(*this);
+    
+	iMutex.Signal();
 }
 
 void CpTopology4Room::GroupRemoved(CpTopology4Group& aGroup)
@@ -642,6 +645,7 @@ void CpTopology4Room::GroupVolumeLimitChanged(CpTopology4Group& /*aGroup*/)
 void CpTopology4Room::UpdateCurrentGroup(CpTopology4Group& aGroup)
 {
     CpTopology3Group& root = aGroup.Root().Group();
+	CpTopology4Group* oldGroup = iCurrentGroup;
 
 	LOG(kTopology, "CpTopology4Room::UpdateCurrentGroup(");
     LOG(kTopology, iName);
@@ -653,13 +657,14 @@ void CpTopology4Room::UpdateCurrentGroup(CpTopology4Group& aGroup)
     LOG(kTopology, root.HasVolumeControl() ? Brn("Yes") : Brn("No"));
     LOG(kTopology, ")\n");
 
-    if (&iCurrentGroup->Root().Group() != &root) {
-		if(root.HasVolumeControl() || root.HasVolumeControl() != iCurrentGroup->Group().HasVolumeControl()) {
+    iCurrentGroup = &aGroup;
+
+	if (&oldGroup->Root().Group() != &root) {
+		if(root.HasVolumeControl() || root.HasVolumeControl() != oldGroup->Group().HasVolumeControl()) {
 			iHandler.RoomVolumeControlChanged(*this);
 		}
     }
 
-    iCurrentGroup = &aGroup;
     iHandler.RoomSourceChanged(*this);
 }
 
