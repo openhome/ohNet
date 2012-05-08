@@ -187,6 +187,8 @@ def build(bld):
 def test(tst):
     tst(rule=invoke_test, test='TestAllocator', always=True)
     tst.add_group() # Don't start another test until first has finished.
+    tst(rule=invoke_test, test='TestStore', always=True)
+    tst.add_group() # Don't start another test until first has finished.
     #tst(rule=invoke_test, test='TestTopology1', always=True)
     #tst.add_group()
     #tst(rule=invoke_test, test='TestTopology2', always=True)
