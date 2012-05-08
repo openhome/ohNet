@@ -127,20 +127,15 @@ void Allocator::DoFree(Cell* aCell)
 void Allocator::QueryInfo(const Brx& aQuery, IWriter& aWriter)
 {
     if (aQuery == kQueryMemory) {
-        aWriter.Write(Brn("Allocator: "));
-        aWriter.Write(Brn(iName));
-        aWriter.Write(Brn(", capacity:"));
-        Bws<Ascii::kMaxUintStringBytes> uintBuf;
-        Ascii::AppendDec(uintBuf, iNumCells * iCellBytesTotal);
-        aWriter.Write(uintBuf);
-        aWriter.Write(Brn(" bytes, used:"));
-        uintBuf.SetBytes(0);
-        Ascii::AppendDec(uintBuf, iCellsUsed * iCellBytesTotal);
-        aWriter.Write(uintBuf);
-        aWriter.Write(Brn(" bytes, peak:"));
-        uintBuf.SetBytes(0);
-        Ascii::AppendDec(uintBuf, iCellsUsedMax * iCellBytesTotal);
-        aWriter.Write(uintBuf);
+        WriterAscii writer(aWriter);
+        writer.Write(Brn("Allocator: "));
+        writer.Write(Brn(iName));
+        writer.Write(Brn(", capacity:"));
+        writer.WriteUint(iNumCells * iCellBytesTotal);
+        writer.Write(Brn(" bytes, used:"));
+        writer.WriteUint(iCellsUsed * iCellBytesTotal);
+        writer.Write(Brn(" bytes, peak:"));
+        writer.WriteUint(iCellsUsedMax * iCellBytesTotal);
         aWriter.Write(Brn(" bytes\n"));
     }
 }
