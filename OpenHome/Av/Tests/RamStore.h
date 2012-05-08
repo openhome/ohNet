@@ -30,4 +30,4 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif HEADER_RAM_STORE
+#endif // HEADER_RAM_STORE

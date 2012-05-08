@@ -16,8 +16,8 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IInfoAggregator
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iLock("PRDM")
-    , iCurrentSource(0xffffffff)
     , iStarted(false)
+    , iCurrentSource(0xffffffff)
 {
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
