@@ -115,7 +115,7 @@ def configure(conf):
         ],
         message='Specify --ohnet-lib-dir or --ohnet'))
     conf.env.STLIB_OHNET=['ohNetProxies', 'TestFramework', 'ohNetCore']
-    conf.env.INCLUDES_MEDIAPLAYER = conf.path.find_node('.').abspath()
+    conf.env.INCLUDES = conf.path.find_node('.').abspath()
 
     if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
         cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
@@ -147,7 +147,6 @@ def build(bld):
                 'OpenHome/Media/Allocator.cpp',
             ],
             use=['OHNET'],
-            includes = bld.env.INCLUDES_MEDIAPLAYER,
             target='ohMediaPlayer')
 
     # Tests
@@ -156,17 +155,14 @@ def build(bld):
                 'OpenHome/Av/Tests/RamStore.cpp',
             ],
             use=['ohMediaPlayer'],
-            includes = bld.env.INCLUDES_MEDIAPLAYER,
             target='ohMediaPlayerTestUtils')
     bld.program(
             source='OpenHome/Media/Tests/TestAllocator.cpp',
             use=['OHNET', 'ohMediaPlayer'],
-            includes = bld.env.INCLUDES_MEDIAPLAYER,
             target='TestAllocator')
     bld.program(
             source='OpenHome/Av/Tests/TestStore.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            includes = bld.env.INCLUDES_MEDIAPLAYER,
             target='TestStore')
 
     # Bundles
