@@ -268,9 +268,6 @@ public class InitParams
 	/**
 	 * Get the TCP port number the device stack server will run on.
 	 * 
-	 * <p>The default value is 0 (meaning that the OS will assign a port).
-	 * You should question your design if you need to use this.
-	 *
 	 * @return	the TCP port number the device stack server will run on.
 	 */
 	public int getDvServerPort()
@@ -281,9 +278,6 @@ public class InitParams
 	/**
 	 * Get the TCP port number the WebSocket server will run on.
 	 * 
-	 * <p>The default value is 0 (meaning that the OS will assign a port).
-	 * You should question your design if you need to use this.
-	 *
 	 * @return	the TCP port number the WebSocket server will run on.
 	 */
 	public int getDvWebSocketPort()
@@ -510,8 +504,7 @@ public class InitParams
 	/**
 	 * Set the TCP port number the device stack server will run on.
 	 * 
-	 * <p>The default value is 0 (meaning that the OS will assign a port).
-	 * You should question your design if you need to use this.
+	 * <p>The default value is 55178.
 	 *
 	 * @param aPort		the TCP port number the device stack server will run on.
 	 */
@@ -524,7 +517,6 @@ public class InitParams
 	 * Set the TCP port number the WebSocket server will run on.
 	 * 
 	 * <p>The default value is 0 (meaning that the OS will assign a port).
-	 * You should question your design if you need to use this.
 	 *
 	 * @param aPort		the TCP port number the WebSocket server will run on.
 	 */
