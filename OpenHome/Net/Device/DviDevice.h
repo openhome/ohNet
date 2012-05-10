@@ -54,7 +54,7 @@ public:
     TBool IsRoot() const;
     DviDevice* Root() const;
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
-    void GetUriBase(Bwh& aUriBase, TIpAddress aInterface, TUint aPort, IDvProtocol& aProtocol);
+    void GetUriBase(Bwx& aUriBase, TIpAddress aInterface, TUint aPort, IDvProtocol& aProtocol);
     TUint ConfigId();
     void CreateSid(Brh& aSid);
     IResourceManager* ResourceManager();

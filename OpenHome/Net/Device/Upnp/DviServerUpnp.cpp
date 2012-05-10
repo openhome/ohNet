@@ -535,6 +535,7 @@ void DviSessionUpnp::Run()
             Error(HttpStatus::kMethodNotAllowed);
         }
         const Brx& method = iReaderRequest->Method();
+        iReaderRequest->UnescapeUri();
 
         Stack::Mutex().Wait();
         LOG(kDvDevice, "Method: ");

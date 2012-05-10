@@ -251,6 +251,7 @@ public:
     const Brx& Uri() const;
     Http::EVersion Version() const;
     TBool MethodNotAllowed() const;
+    void UnescapeUri();
 protected:
     void ProcessMethod(const Brx& aMethod, const Brx& aUri, const Brx& aVersion);
 private:

@@ -146,7 +146,7 @@ void DviProtocolUpnp::NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler)
 void DviProtocolUpnp::AddInterface(const NetworkAdapter& aAdapter)
 {
     TIpAddress addr = aAdapter.Address();
-    Bwh uriBase;
+    Bws<Uri::kMaxUriBytes> uriBase;
     TUint port = iServer->Port(addr);
     DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
     root->GetUriBase(uriBase, addr, port, *this);
@@ -338,7 +338,7 @@ void DviProtocolUpnp::Enable()
     
     for (TUint i=0; i<iAdapters.size(); i++) {
         DviProtocolUpnpAdapterSpecificData* adapter = iAdapters[i];
-        Bwh uriBase;
+        Bws<Uri::kMaxUriBytes> uriBase;
         DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
         adapter->UpdateServerPort(*iServer);
         root->GetUriBase(uriBase, adapter->Interface(), adapter->ServerPort(), *this);
@@ -353,7 +353,7 @@ void DviProtocolUpnp::Enable()
                 DviStack::MdnsProvider()->MdnsSetHostName(name);
                 Bwh redirectedPath(iDevice.Udn().Bytes() + kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 4);
                 redirectedPath.Append('/');
-                redirectedPath.Append(iDevice.Udn());
+                Uri::Escape(redirectedPath, iDevice.Udn());
                 redirectedPath.Append('/');
                 redirectedPath.Append(kProtocolName);
                 redirectedPath.Append('/');
@@ -437,7 +437,7 @@ void DviProtocolUpnp::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh&
             ep.AppendEndpoint(buf);
             writer.Write(buf);
             writer.Write('/');
-            writer.Write(iDevice.Udn());
+            Uri::Escape(writer, iDevice.Udn());
             writer.Write('/');
             writer.Write(kProtocolName);
             writer.Write('/');
@@ -630,16 +630,16 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
 
 // DviProtocolUpnpAdapterSpecificData
 
-DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwh& aUriBase, TUint aServerPort)
+DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort)
     : iMsearchHandler(&aMsearchHandler)
+    , iSubnet(aAdapter.Subnet())
+    , iAdapter(aAdapter.Address())
+    , iUriBase(aUriBase)
     , iServerPort(aServerPort)
     , iBonjourWebPage(0)
 {
     iListener = &Stack::MulticastListenerClaim(aAdapter.Address());
     iId = iListener->AddMsearchHandler(this);
-    iSubnet = aAdapter.Subnet();
-    iAdapter = aAdapter.Address();
-    aUriBase.TransferTo(iUriBase);
 }
 
 DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
@@ -673,9 +673,9 @@ void DviProtocolUpnpAdapterSpecificData::UpdateServerPort(DviServerUpnp& aServer
     iServerPort = aServer.Port(iAdapter);
 }
 
-void DviProtocolUpnpAdapterSpecificData::UpdateUriBase(Bwh& aUriBase)
+void DviProtocolUpnpAdapterSpecificData::UpdateUriBase(Bwx& aUriBase)
 {
-    aUriBase.TransferTo(iUriBase);
+    iUriBase.Replace(aUriBase);
 }
 
 TUint DviProtocolUpnpAdapterSpecificData::ServerPort() const
@@ -876,7 +876,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
             iWriter.Write("</serviceId>");
             iWriter.Write("<SCPDURL>");
             iWriter.Write('/');
-            iWriter.Write(iDeviceUpnp.iDevice.Udn());
+            Uri::Escape(iWriter, iDeviceUpnp.iDevice.Udn());
             iWriter.Write('/');
             iWriter.Write(iDeviceUpnp.ProtocolName());
             iWriter.Write('/');
@@ -886,7 +886,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
             iWriter.Write("</SCPDURL>");
             iWriter.Write("<controlURL>");
             iWriter.Write('/');
-            iWriter.Write(iDeviceUpnp.iDevice.Udn());
+            Uri::Escape(iWriter, iDeviceUpnp.iDevice.Udn());
             iWriter.Write('/');
             iWriter.Write(serviceType.PathUpnp());
             iWriter.Write('/');
@@ -894,7 +894,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
             iWriter.Write("</controlURL>");
             iWriter.Write("<eventSubURL>");
             iWriter.Write('/');
-            iWriter.Write(iDeviceUpnp.iDevice.Udn());
+            Uri::Escape(iWriter, iDeviceUpnp.iDevice.Udn());
             iWriter.Write('/');
             iWriter.Write(serviceType.PathUpnp());
             iWriter.Write('/');

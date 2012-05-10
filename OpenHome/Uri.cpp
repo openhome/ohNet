@@ -326,34 +326,41 @@ TUint Uri::EscapedBytes(const Brx& aBuffer)
 }
 
 void Uri::Escape(Bwx& aDst, const Brx& aSrc)
-{
+{ // static
+    WriterBuffer writer(aDst);
+    Escape(writer, aSrc);
+}
+
+void Uri::Escape(IWriter& aDst, const Brx& aSrc)
+{ // static
     TUint i=0;
     while (i<aSrc.Bytes()) {
         if (IsEscaped(aSrc, i)) {
             // An already escaped substring - copy as is
-            aDst.Append(aSrc[i]);
-            aDst.Append(aSrc[i+1]);
-            aDst.Append(aSrc[i+2]);
+            aDst.Write(aSrc[i]);
+            aDst.Write(aSrc[i+1]);
+            aDst.Write(aSrc[i+2]);
             i += 3;
             continue;
         }
 
         if (Uri::IsExcluded(aSrc[i])) {
             // excluded characters must be escaped
-            aDst.Append('%');
-            Ascii::AppendHex(aDst, aSrc[i]);
+            aDst.Write('%');
+            WriterAscii writerAscii(aDst);
+            writerAscii.WriteHex(aSrc[i]);
             i++;
             continue;
         }
 
         // No escaping required
-        aDst.Append(aSrc[i]);
+        aDst.Write(aSrc[i]);
         i++;
     }
 }
 
 void Uri::Unescape(Bwx& aDst, const Brx& aSrc)
-{
+{ // static
     TUint i=0;
     while (i<aSrc.Bytes()) {
         if (IsEscaped(aSrc, i)) {
@@ -373,7 +380,7 @@ void Uri::Unescape(Bwx& aDst, const Brx& aSrc)
 }
 
 TBool Uri::IsEscaped(const Brx& aBuffer, TUint aIndex)
-{
+{ // static
     if (aIndex+3 > aBuffer.Bytes()) {
         return false;
     }
@@ -381,14 +388,14 @@ TBool Uri::IsEscaped(const Brx& aBuffer, TUint aIndex)
 }
 
 TBool Uri::IsUnreserved(TChar aValue)
-{
+{ // static
     return (Ascii::IsAlphabetic(aValue) || Ascii::IsDigit(aValue) ||
             aValue == '-' || aValue == '_' || aValue == '.' || aValue == '!' ||
             aValue == '~' || aValue == '*' || aValue == '\'' || aValue == '(' || aValue == ')');
 }
 
 TBool Uri::IsExcluded(TChar aValue)
-{
+{ // static
     return (aValue<=0x20 || aValue>=0x7f ||
             aValue=='<' || aValue=='>' || aValue=='#' || aValue=='%' || aValue=='"' ||
             aValue=='{' || aValue=='}' || aValue=='|' || aValue=='\\' ||

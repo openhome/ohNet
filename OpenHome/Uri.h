@@ -9,6 +9,8 @@ EXCEPTION(UriError);
 
 namespace OpenHome {
 
+class IWriter;
+
 class Uri
 {
 public:
@@ -32,7 +34,9 @@ public:
     static TBool IsUnreserved(TChar aValue);
     static TBool IsExcluded(TChar aValue);
 
-    static void Unescape(Bwx& aDst, const Brx& aSrc);
+    static void Escape(Bwx& aDst, const Brx& aSrc);
+    static void Escape(IWriter& aWriter, const Brx& aSrc);
+    static void Unescape(Bwx& aDst, const Brx& aSrc); // supports in-place unescaping
     
 public:
     static const TUint kMaxDirLevels = 50;
@@ -44,7 +48,6 @@ private:
     void ValidateHost();
     void ValidatePath();
     TUint EscapedBytes(const Brx& aBuffer);
-    void Escape(Bwx& aDst, const Brx& aSrc);
     static TBool IsEscaped(const Brx& aBuffer, TUint aIndex);
 
     Bws<kMaxUriBytes> iAbsoluteUri;

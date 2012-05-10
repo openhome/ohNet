@@ -123,13 +123,13 @@ class DviProtocolUpnpAdapterSpecificData : public ISsdpMsearchHandler, public IN
 {
     friend class DviProtocolUpnp;
 public:
-    DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwh& aUriBase, TUint aServerPort);
+    DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort);
     ~DviProtocolUpnpAdapterSpecificData();
     TIpAddress Interface() const;
     TIpAddress Subnet() const;
     const Brx& UriBase() const;
     void UpdateServerPort(DviServerUpnp& aServer);
-    void UpdateUriBase(Bwh& aUriBase);
+    void UpdateUriBase(Bwx& aUriBase);
     TUint ServerPort() const;
     const Brx& DeviceXml() const;
     void SetDeviceXml(Brh& aXml);
@@ -151,7 +151,7 @@ private:
     TInt iId;
     TIpAddress iSubnet;
     TIpAddress iAdapter;
-    Bwh iUriBase;
+    Bws<Uri::kMaxUriBytes> iUriBase;
     TUint iServerPort;
     Brh iDeviceXml;
     BonjourWebPage* iBonjourWebPage;

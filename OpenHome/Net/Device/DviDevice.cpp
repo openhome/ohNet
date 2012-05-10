@@ -269,18 +269,17 @@ void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::v
     }
 }
 
-void DviDevice::GetUriBase(Bwh& aUriBase, TIpAddress aInterface, TUint aPort, IDvProtocol& aProtocol)
+void DviDevice::GetUriBase(Bwx& aUriBase, TIpAddress aInterface, TUint aPort, IDvProtocol& aProtocol)
 {
     static const TUint kMaxAddressBytes = 21; // xxx.xxx.xxx.xxx:xxxxx
     const Brx& name = aProtocol.ProtocolName();
-    aUriBase.Grow(Http::kUriPrefix.Bytes() + kMaxAddressBytes + iUdn.Bytes() + name.Bytes() + 3); // +2 for slashes after port, udn & name
     aUriBase.Append(Http::kUriPrefix);
     Endpoint endpt(aPort, aInterface);
     Endpoint::EndpointBuf buf;
     endpt.AppendEndpoint(buf);
     aUriBase.Append(buf);
     aUriBase.Append('/');
-    aUriBase.Append(iUdn);
+    Uri::Escape(aUriBase, iUdn);
     aUriBase.Append('/');
     aUriBase.Append(name);
     aUriBase.Append('/');

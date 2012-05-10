@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Timer.h>
+#include <OpenHome/Private/Uri.h>
 
 using namespace OpenHome;
 
@@ -387,6 +388,14 @@ Http::EVersion ReaderHttpRequest::Version() const
     return iVersion;
 }
     
+void ReaderHttpRequest::UnescapeUri()
+{
+    // we assume that Uri::Unescape continues to be safe for in-place replacement
+    Brn uri(iUri);
+    iUri.SetBytes(0);
+    Uri::Unescape(iUri, uri);
+}
+
 void ReaderHttpRequest::ProcessMethod(const Brx& aMethod, const Brx& aUri, const Brx& aVersion)
 {
     TUint count = (TUint)iMethods.size();
@@ -397,7 +406,8 @@ void ReaderHttpRequest::ProcessMethod(const Brx& aMethod, const Brx& aUri, const
             if (aUri.Bytes() > kMaxUriBytes) {
                 THROW(HttpError);
             }
-            iUri.Replace(aUri);
+            iUri.SetBytes(0);
+            Uri::Unescape(iUri, aUri);
             //May throw HttpError
             iVersion = Http::Version(aVersion);
             return;
