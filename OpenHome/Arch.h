@@ -1,5 +1,5 @@
-#ifndef HEADER_LINN_ARCH
-#define HEADER_LINN_ARCH
+#ifndef HEADER_ARCH
+#define HEADER_ARCH
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/OsWrapper.h>
@@ -32,5 +32,5 @@ public:
 
 } // namespace OpenHome
 
-#endif  // HEADER_LINN_ARCH
+#endif  // HEADER_ARCH
 
