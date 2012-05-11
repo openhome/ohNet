@@ -271,7 +271,6 @@ void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::v
 
 void DviDevice::GetUriBase(Bwx& aUriBase, TIpAddress aInterface, TUint aPort, IDvProtocol& aProtocol)
 {
-    static const TUint kMaxAddressBytes = 21; // xxx.xxx.xxx.xxx:xxxxx
     const Brx& name = aProtocol.ProtocolName();
     aUriBase.Append(Http::kUriPrefix);
     Endpoint endpt(aPort, aInterface);
