@@ -28,7 +28,7 @@ TBool Ascii::IsDigit(TChar aValue)
 
 TBool Ascii::IsWhitespace(TChar aValue)
 {
-    return (aValue <= ' ');
+    return ((aValue <= ' ') && (aValue >= 0));
 }
 
 TBool Ascii::IsLineEnding(TChar aValue)
