@@ -235,13 +235,11 @@ copy_build_includes:
 	$(cp) OpenHome/Net/ControlPoint/CpDeviceUpnp.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/ControlPoint/CpProxy.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/ControlPoint/CpProxy.h $(inc_build)/OpenHome/Net/Cpp
-	$(cp) OpenHome/Net/ControlPoint/CpTopology.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/ControlPoint/FunctorCpDevice.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/ControlPoint/Cpi*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/ControlPoint/FunctorCpiDevice.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/ControlPoint/Proxies/*.h $(inc_build)/OpenHome/Net/Core
-	$(cp) OpenHome/Net/ControlPoint/Topology/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/ControlPoint/Upnp/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DvStack.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/Device/DvDevice.h $(inc_build)/OpenHome/Net/Core
