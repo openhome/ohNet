@@ -317,7 +317,7 @@ $(objdir)mDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c $(headers)
 $(objdir)uDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c $(headers)
 	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c
 $(objdir)MdnsPlatform.$(objext) : OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp $(headers)
-	$(compiler)MdnsPlatform.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
+	$(compiler)MdnsPlatform.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
 $(objdir)MdnsProvider.$(objext) : OpenHome/Net/Device/Bonjour/MdnsProvider.cpp $(headers)
 	$(compiler)MdnsProvider.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Bonjour/MdnsProvider.cpp
 $(objdir)Maths.$(objext) : OpenHome/Maths.cpp $(headers)

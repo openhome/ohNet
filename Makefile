@@ -108,8 +108,9 @@ endif
 # Macros used by Common.mak
 native_only ?= no
 endian ?= LITTLE
-cflags_third_party = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
-cflags = $(cflags_third_party) -Werror
+cflags_base = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
+cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
+cflags = $(cflags_base) -Werror
 inc_build = Build/Include
 includes = -IBuild/Include/ $(version_specific_includes)
 bundle_build = Build/Bundles
