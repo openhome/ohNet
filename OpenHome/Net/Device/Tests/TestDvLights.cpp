@@ -142,7 +142,7 @@ void ProviderLights::InitMode3()
     iLights.push_back(new Light("Lounge", "Reading", 400, 30, 135, MAKE_COLOR(0, 255, 255, 255)));
     iLights.push_back(new Light("Kitchen", "Kitchen", 160, 120, 200, MAKE_COLOR(0, 255, 255, 255)));
     iLights.push_back(new Light("Hall", "Hall", 120, 60, 200, MAKE_COLOR(0, 255, 255, 255)));
-    iLights.push_back(new Light("Bedroom1", "Ceiling", 225, 150, 200, MAKE_COLOR(64, 32, 32, 256)));
+    iLights.push_back(new Light("Bedroom1", "Ceiling", 225, 150, 200, MAKE_COLOR(64, 32, 32, 255)));
     iLights.push_back(new Light("Bedroom1", "Bedside1", 90, 15, 100, MAKE_COLOR(0, 255, 255, 255)));
     iLights.push_back(new Light("Bedroom1", "Bedside2", 360, 15, 100, MAKE_COLOR(0, 255, 255, 255)));
     iLights.push_back(new Light("Bedroom2", "Ceiling", 150, 150, 200, MAKE_COLOR(0, 255, 255, 255)));
