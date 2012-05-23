@@ -131,7 +131,8 @@ def configure(conf):
 def print_vg_frame_component(frame, tag, prefix):
     o = frame.find(tag)
     if o != None:
-        print '    ' + prefix + ': ' + o.text
+        from xml.sax.saxutils import unescape
+        print '    ' + prefix + ': ' + unescape(o.text)
 
 def invoke_test(tsk):
     import subprocess
