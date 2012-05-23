@@ -3,6 +3,7 @@
 import sys
 import os
 from wafmodules.filetasks import gather_files, build_tree
+from waflib.Node import Node
 
 def options(opt):
     opt.load('msvc')
@@ -72,7 +73,6 @@ def configure(conf):
     if dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.load('msvc')
         append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
-        #append('CXXFLAGS',['/IC:/work/ohMediaPlayer']) # TODO: copy includes to correct structure (in build folder) and include from there
         if debugmode == 'Debug':
             append('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
             append('LINKFLAGS', ['/debug'])
@@ -90,7 +90,9 @@ def configure(conf):
         else:
             append('CXXFLAGS',['-O2'])
         append('LINKFLAGS', ['-pthread'])
-        if dest_platform in ['Linux-x86', 'Linux-x86', 'Linux-ARM']:
+        if dest_platform in ['Linux-x86']:
+            append('VALGRIND_ENABLE', ['1'])
+        if dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM']:
             append('CXXFLAGS',['-Wno-psabi', '-fPIC'])
         elif dest_platform in ['Mac-x86', 'Mac-x64']:
             if dest_platform == 'Mac-x86':
@@ -113,7 +115,7 @@ def configure(conf):
             '{options.ohnet_lib_dir}',
             '{options.ohnet}/Build/Obj/{ohnet_plat_dir}/{debugmode}',
         ],
-        message='Specify --ohnet-lib-dir or --ohnet'))
+        message='FAILED.  Was --ohnet-lib-dir or --ohnet specified?  Do the directories they point to (including debug/release) exist?'))
     conf.env.STLIB_OHNET=['ohNetProxies', 'TestFramework', 'ohNetCore']
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
 
@@ -126,12 +128,77 @@ def configure(conf):
         env.LINK_CXX = cross_compile + 'g++'
         env.LINK_CC = cross_compile + 'gcc'
 
+def print_vg_frame_component(frame, tag, prefix):
+    o = frame.find(tag)
+    if o != None:
+        print '    ' + prefix + ': ' + o.text
+
 def invoke_test(tsk):
     import subprocess
     testfile = tsk.env.cxxprogram_PATTERN % tsk.generator.test
+    testargs = tsk.generator.args
     bldpath = tsk.generator.bld.bldnode.abspath()
     testfilepath = os.path.join(bldpath, testfile)
-    subprocess.check_call([testfile], executable=testfilepath, cwd=bldpath)
+    if not tsk.env.VALGRIND_ENABLE:
+        cmdline = []
+        cmdline.append(testfile)
+        for arg in testargs:
+            cmdline.append(arg)
+        subprocess.check_call(cmdline, executable=testfilepath, cwd=bldpath)
+    else:
+        xmlfile = tsk.generator.test + '.xml'
+        cmdline = []
+        cmdline.append('--leak-check=yes')
+        cmdline.append('--suppressions=../ValgrindSuppressions.txt')
+        cmdline.append('--xml=yes')
+        cmdline.append('--xml-file=' + xmlfile)
+        cmdline.append('./' + testfile)
+        for arg in testargs:
+            cmdline.append(arg)
+        subprocess.check_call(cmdline, executable='valgrind', cwd=bldpath)
+
+        import xml.etree.ElementTree as ET
+        doc = ET.parse(os.path.join(bldpath, xmlfile))
+        errors = doc.findall('//error')
+        if len(errors) > 0:
+            for error in errors:
+                print '---- error start ----'
+                frames = error.findall('.//frame')
+                for frame in frames:
+                    print '  ---- frame start ----'
+                    for tag, prefix in [['ip', 'Object'],
+                                        ['fn', 'Function'],
+                                        ['dir', 'Directory'],
+                                        ['file', 'File'],
+                                        ['line', 'Line'],
+                                       ]:
+                        print_vg_frame_component(frame, tag, prefix)
+                    print '  ---- frame end ----'
+                print '---- error end ----'
+            raise Exception("Errors from valgrind")
+
+def get_node(bld, node_or_filename):
+    if isinstance(node_or_filename, Node):
+        return node_or_filename
+    return bld.path.find_node(node_or_filename)
+
+def create_copy_task(build_context, files, target_dir='', cwd=None, keep_relative_paths=False, name=None):
+    source_file_nodes = [get_node(build_context, f) for f in files]
+    if keep_relative_paths:
+        cwd_node = build_context.path.find_dir(cwd)
+        target_filenames = [
+                path.join(target_dir, source_node.path_from(cwd_node))
+                for source_node in source_file_nodes]
+    else:
+        target_filenames = [
+                os.path.join(target_dir, source_node.name)
+                for source_node in source_file_nodes]
+        target_filenames = map(build_context.bldnode.make_node, target_filenames)
+    return build_context(
+            rule=copy_task,
+            source=source_file_nodes,
+            target=target_filenames,
+            name=name)
 
 def build(bld):
 
@@ -144,7 +211,7 @@ def build(bld):
                 'OpenHome/Av/Product.cpp',
                 'OpenHome/Av/ProviderProduct.cpp',
                 'OpenHome/Av/Source.cpp',
-                'OpenHome/Media/Allocator.cpp',
+                'OpenHome/Media/Msg.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
@@ -157,9 +224,9 @@ def build(bld):
             use=['ohMediaPlayer'],
             target='ohMediaPlayerTestUtils')
     bld.program(
-            source='OpenHome/Media/Tests/TestAllocator.cpp',
+            source='OpenHome/Media/Tests/TestMsg.cpp',
             use=['OHNET', 'ohMediaPlayer'],
-            target='TestAllocator')
+            target='TestMsg')
     bld.program(
             source='OpenHome/Av/Tests/TestStore.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -181,18 +248,11 @@ def build(bld):
 # == Command for invoking unit tests ==
 
 def test(tst):
-    tst(rule=invoke_test, test='TestAllocator', always=True)
-    tst.add_group() # Don't start another test until first has finished.
-    tst(rule=invoke_test, test='TestStore', always=True)
-    tst.add_group() # Don't start another test until first has finished.
-    #tst(rule=invoke_test, test='TestTopology1', always=True)
-    #tst.add_group()
-    #tst(rule=invoke_test, test='TestTopology2', always=True)
-    #tst.add_group()
-    #tst(rule=invoke_test, test='TestTopology3', always=True)
-    #tst.add_group()
-    #tst(rule=invoke_test, test='TestTopology4', always=True)
-    #tst.add_group()
+    for t, a, when in [['TestMsg', [], True]
+                      ,['TestStore', [], True]
+                      ]:
+        tst(rule=invoke_test, test=t, args=a, always=when)
+        tst.add_group() # Don't start another test until previous has finished.
 
 
 # == Contexts to make 'waf test' work ==
