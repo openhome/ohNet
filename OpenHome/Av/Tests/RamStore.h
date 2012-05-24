@@ -25,6 +25,8 @@ private: // from IPersister
     void LoadPersistedData(IStoreLoaderDynamic& aLoader);
     void Save(IStoreIterator& aIterator);
 private:
+    void Clear();
+private:
     typedef std::map<Brn, Brh*, BufferCmp> Map;
     Map iItems;
 };

@@ -9,11 +9,7 @@ using namespace OpenHome::Av;
 
 RamStore::~RamStore()
 {
-    Map::iterator it = iItems.begin();
-    while (it != iItems.end()) {
-        delete it->second;
-        it++;
-    }
+    Clear();
 }
 
 void RamStore::AddItem(const TChar* aKey, const TChar* aValue)
@@ -68,11 +64,21 @@ void RamStore::LoadPersistedData(IStoreLoaderDynamic& aLoader)
 
 void RamStore::Save(IStoreIterator& aIterator)
 {
-    iItems.clear();
+    Clear();
     Brn key;
     Brn value;
     while (aIterator.TryReadNextPersistedItem(key, value)) {
         Brh* val = new Brh(value);
         iItems.insert(std::pair<Brn,Brh*>(key, val));
     }
+}
+
+void RamStore::Clear()
+{
+    Map::iterator it = iItems.begin();
+    while (it != iItems.end()) {
+        delete it->second;
+        it++;
+    }
+    iItems.clear();
 }
