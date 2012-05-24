@@ -82,6 +82,8 @@ void SuiteStore::Test()
     TEST(rwStore->TryReadStoreStaticItem(StaticDataKey::kModelInfo, value));
     TEST(value == Brn("Test implementation of ohMediaPlayer")); // slightly dodgy duplicating ro data from RamStore
     TEST(!rwStore->TryReadStoreItem(StaticDataKey::kModelInfo, value2));
+    TEST(rwStore->TryReadStoreItem(dynamicKey, value2));
+    TEST(value2 == dynamicValue2);
     
     delete kvpStore;
     delete ramStore;
