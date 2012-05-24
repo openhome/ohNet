@@ -90,8 +90,10 @@ TBool KvpStore::WriteStoreItem(const Brx& aKey, const Brx& aValue)
     if (it != iPersistedData.end()) {
         valueChanged = static_cast<KvpPairPersisted*>(it->second)->UpdateValue(aValue);
     }
-    KvpPair* kvp = new KvpPairPersisted(aKey, aValue);
-    iPersistedData.insert(std::pair<Brn, KvpPair*>(key, kvp));
+    else {
+        KvpPair* kvp = new KvpPairPersisted(aKey, aValue);
+        iPersistedData.insert(std::pair<Brn, KvpPair*>(key, kvp));
+    }
 
     iSaving = true;
     iPersisterIterator = iPersistedData.begin();
