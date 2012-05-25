@@ -378,7 +378,7 @@ void Socket::Log(const char* aPrefix, const Brx& aBuffer)
     for (TUint i=0; i<aBuffer.Bytes(); i++) {
         Log::Print(" %02x", aBuffer[i]);
         if ((i&0xf) == 0xf) {
-            fprintf(stdout, "\n");
+            Log::Print(stdout, "\n");
         }
     }
     Log::Print("\n");
