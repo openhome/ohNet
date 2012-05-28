@@ -329,7 +329,7 @@ static int OsNetworkHandle_IsInterrupted(OsNetworkHandle* aHandle)
 
 static void post_int(OsNetworkHandle* aHandle)
 {
-   // Send byte to interrupt socket!
+    // Send byte to interrupt socket
     int sender = lwip_socket ( AF_INET, SOCK_DGRAM, 0 );
     struct sockaddr_in s;
     s.sin_family        = AF_INET;
@@ -362,12 +362,12 @@ static void OsNetworkHandle_SetInterrupted(OsNetworkHandle* aHandle, int aNewInt
     {
         aHandle->iFlagInterrupted = aNewInterruptState;
         
-    #if INT_ENABLED
+#if INT_ENABLED
         if ( aHandle->iFlagInterrupted )
             post_int(aHandle);
         else
             clear_int(aHandle);
-    #endif
+#endif
     }
     
     OsMutexUnlock(aHandle->iMutex);
