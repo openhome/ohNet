@@ -665,7 +665,7 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
         if (bytes != -1) {
             sent += bytes;
         }
-    } while(bytes != -1 && sent < aBytes);
+    } while(bytes != -1 && sent < (int32_t)aBytes);
     return sent;
 }
 
@@ -684,7 +684,7 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
         if (bytes != -1) {
             sent += bytes;
         }
-    } while(bytes != -1 && sent < aBytes);    
+    } while(bytes != -1 && sent < (int32_t)aBytes);    
     return sent;
 }
 

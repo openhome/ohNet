@@ -121,7 +121,7 @@ public:
     const Brx& Uuid() const;
     const Brx& Domain() const;
     const Brx& Type() const;
-    const TUint Version() const;
+    TUint Version() const;
 private:
     // IHttpHeader
     virtual TBool Recognise(const Brx& aHeader);
@@ -144,7 +144,7 @@ public:
     const Brx& Uuid() const;
     const Brx& Domain() const;
     const Brx& Type() const;
-    const TUint Version() const;
+    TUint Version() const;
 private:
     // IHttpHeader
     virtual TBool Recognise(const Brx& aHeader);
@@ -167,7 +167,7 @@ public:
     const Brx& Uuid() const;
     const Brx& Domain() const;
     const Brx& Type() const;
-    const TUint Version() const;
+    TUint Version() const;
 private:
     // IHttpHeader
     virtual TBool Recognise(const Brx& aHeader);

@@ -1,5 +1,6 @@
 #include <OpenHome/Private/Ascii.h>
 #include <stdlib.h>
+#include <limits.h>
 
 using namespace OpenHome;
 
@@ -28,7 +29,13 @@ TBool Ascii::IsDigit(TChar aValue)
 
 TBool Ascii::IsWhitespace(TChar aValue)
 {
-    return ((aValue <= ' ') && (aValue >= 0));
+    bool whitespace = (aValue <= ' ');
+#if CHAR_MIN < 0
+    if (whitespace) {
+        whitespace = (aValue >= 0);
+    }
+#endif
+    return whitespace;
 }
 
 TBool Ascii::IsLineEnding(TChar aValue)

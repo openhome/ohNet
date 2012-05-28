@@ -433,7 +433,7 @@ const Brx& SsdpHeaderSt::Type() const
     return iType;
 }
 
-const TUint SsdpHeaderSt::Version() const
+TUint SsdpHeaderSt::Version() const
 {
     return iVersion;
 }
@@ -526,7 +526,7 @@ const Brx& SsdpHeaderNt::Type() const
     return iType;
 }
 
-const TUint SsdpHeaderNt::Version() const
+TUint SsdpHeaderNt::Version() const
 {
     return iVersion;
 }
@@ -614,7 +614,7 @@ const Brx& SsdpHeaderUsn::Type() const
     return iType;
 }
 
-const TUint SsdpHeaderUsn::Version() const
+TUint SsdpHeaderUsn::Version() const
 {
     return iVersion;
 }
