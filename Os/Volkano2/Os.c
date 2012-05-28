@@ -285,7 +285,7 @@ static int OsNetworkHandle_Initialise(OsNetworkHandle* aHandle, int aSocket)
 
     aHandle->iSocket = aSocket;
     
-    #if INT_ENABLED
+#if INT_ENABLED
     
     int ih = lwip_socket(AF_INET, SOCK_DGRAM, 0);
     
@@ -311,7 +311,7 @@ static int OsNetworkHandle_Initialise(OsNetworkHandle* aHandle, int aSocket)
     
     aHandle->iIntSocket = ih;
     
-    #endif
+#endif
     
     LOG("Created OsNetworkHandle %d:%d\n", aHandle->iSocket, aHandle->iIntSocket);
     
@@ -362,12 +362,12 @@ static void OsNetworkHandle_SetInterrupted(OsNetworkHandle* aHandle, int aNewInt
     {
         aHandle->iFlagInterrupted = aNewInterruptState;
         
-        #if INT_ENABLED
+    #if INT_ENABLED
         if ( aHandle->iFlagInterrupted )
             post_int(aHandle);
         else
             clear_int(aHandle);
-        #endif
+    #endif
     }
     
     OsMutexUnlock(aHandle->iMutex);
@@ -377,12 +377,12 @@ static void OsNetworkHandle_Destroy(OsNetworkHandle* aHandle)
 {
     LOGFUNC();
 
-    #if INT_ENABLED
+#if INT_ENABLED
     if ( aHandle->iIntSocket >= 0 )
     {
         lwip_close(aHandle->iIntSocket);
     }
-    #endif
+#endif
     
     OsMutexDestroy(aHandle->iMutex);
     
@@ -421,9 +421,9 @@ static int local_select(THandle aHandle, int aMode, uint32_t aTimeoutMs)
     else
         FD_SET(h->iSocket, &write_set);
     
-    #if INT_ENABLED
+#if INT_ENABLED
     FD_SET(h->iIntSocket, &read_set);
-    #endif
+#endif
     
     struct timeval t, *t_ptr = NULL;
     
@@ -444,13 +444,13 @@ static int local_select(THandle aHandle, int aMode, uint32_t aTimeoutMs)
     if ( fd == -1 )
         exit(-1);
     
-    #if INT_ENABLED
+#if INT_ENABLED
     if ( FD_ISSET(h->iIntSocket, &read_set) )
     {
         LOG("local_select - interrupted %d", h->iSocket);
         return -1;
     }
-    #endif
+#endif
 
     if ( (aMode == LS_READ) && FD_ISSET(h->iSocket, &read_set) )
     {
