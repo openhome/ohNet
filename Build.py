@@ -143,8 +143,8 @@ def getArguments(module,nightly,arch,valgrind,os):
 	args += ' --buildonly'
     if os == 'Windows' and arch == 'x86':
         args += ' --js --java'
-    if os == 'Windows' or nightly == '1':
-        args += ' --release'
+    if os != 'Windows' and nightly != '1':
+        args += ' --debug'
     if os == 'Linux' and arch == 'x86':
 	args += ' --java'
     if nightly == '1':
@@ -365,9 +365,9 @@ def main():
     release_version = Environment['release_version']
 
     if release_version is not None:
-        build_type = 'debug'
-        if '--release' in Arguments['args']:
-            build_type = 'release'
+        build_type = 'release'
+        if '--debug' in Arguments['args']:
+            build_type = 'debug'
         publish_release(Environment['ostype'], Environment['arch'], release_version, Environment['tool'], build_type)
 
 if __name__=="__main__":

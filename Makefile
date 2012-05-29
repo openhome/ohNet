@@ -9,12 +9,12 @@ else
 cp = cp -u
 endif
 
-ifeq ($(release),1)
+ifeq ($(debug),1)
+debug_specific_cflags = -g -O0
+build_dir = Debug
+else
 debug_specific_cflags = -O2
 build_dir = Release
-else
-debug_specific_cflags = -g -O0 
-build_dir = Debug
 endif
 
 MACHINE = $(shell uname -s)

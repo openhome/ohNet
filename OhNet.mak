@@ -7,14 +7,14 @@ csplatform = x64
 csplatform = x86
 !endif
 
-!if "$(release)"=="1"
-link_flag_debug = 
-debug_specific_cflags = /MT /Ox
-build_dir = Release
-!else
+!if "$(debug)"=="1"
 link_flag_debug = /debug
 debug_specific_cflags = /MTd /Zi /Od /RTC1
 build_dir = Debug
+!else
+link_flag_debug = 
+debug_specific_cflags = /MT /Ox
+build_dir = Release
 !endif
 
 # Macros used by Common.mak

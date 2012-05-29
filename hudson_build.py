@@ -99,12 +99,12 @@ class JenkinsBuild():
 
     def get_platform(self):
         platforms = { 
-        'Linux-x86': { 'os':'linux', 'arch':'x86'},
-        'Linux-x64': { 'os':'linux', 'arch':'x64'},
-        'Windows-x86': { 'os': 'windows', 'arch':'x86'},
-        'Windows-x64': { 'os': 'windows', 'arch':'x64'},
-        'Macos-x64': { 'os': 'macos', 'arch':'x86'},
-        'Linux-ARM': { 'os': 'linux', 'arch': 'arm'},
+            'Linux-x86': { 'os':'linux', 'arch':'x86'},
+            'Linux-x64': { 'os':'linux', 'arch':'x64'},
+            'Windows-x86': { 'os': 'windows', 'arch':'x86'},
+            'Windows-x64': { 'os': 'windows', 'arch':'x64'},
+            'Macos-x64': { 'os': 'macos', 'arch':'x86'},
+            'Linux-ARM': { 'os': 'linux', 'arch': 'arm'},
          }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -173,8 +173,9 @@ class JenkinsBuild():
             build_targets.append('release')
 
         for build_t in build_targets:
+            if build_t == 'debug':
+                build.append('--debug')
             if build_t == 'release':
-                build.append('--release')
                 build.append('--incremental')
 
             print 'running build with %s' %(build,)

@@ -11,9 +11,9 @@ def objPath():
         plat = 'Windows'
     elif os.uname()[0] == 'Darwin':
         plat = 'Mac'
-    variant = 'Debug'
-    if gReleaseBuild == 1:
-        variant = 'Release'
+    variant = 'Release'
+    if gDebugBuild == 1:
+        variant = 'Debug'
     path = os.path.join('Build', 'Obj', plat, variant)
     return path
 
@@ -24,8 +24,8 @@ def build(aTarget):
     buildCmd += aTarget
     if os.environ.has_key('CS_PLATFORM'):
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
-    if gReleaseBuild == 1:
-        buildCmd += ' release=1'
+    if gDebugBuild == 1:
+        buildCmd += ' debug=1'
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
@@ -157,22 +157,24 @@ gValgrind = 0
 gHelgrind = 0
 gRunJavaTests = 0
 gJsTests = 0
-gReleaseBuild = 0
+gDebugBuild = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
+    elif arg == '--debug':
+        gDebugBuild = 1
     elif arg == '-f' or arg == '--full':
         gFullTests = 1
     elif arg == '-i' or arg == '--incremental':
         gIncremental = 1
-    elif arg == '-n' or arg == '--native':
-        gNativeTestsOnly = 1
-    elif arg == '-s' or arg == '--silent':
-        gSilent = 1
     elif arg == '--java':
         gRunJavaTests = 1
     elif arg == '--js':
         gJsTests = 1
+    elif arg == '-n' or arg == '--native':
+        gNativeTestsOnly = 1
+    elif arg == '-s' or arg == '--silent':
+        gSilent = 1
     elif arg == '-t' or arg == '--testsonly':
         gTestsOnly = 1
     elif arg == '-vg' or arg == '--valgrind':
@@ -185,8 +187,6 @@ for arg in sys.argv[1:]:
         if os.name == 'nt':
             print 'ERROR - helgrind is only supported on linux'
             sys.exit(1)
-    elif arg == '-r' or arg == '--release':
-        gReleaseBuild = 1
     else:
         print 'Unrecognised argument - ' + arg
         sys.exit(1)
