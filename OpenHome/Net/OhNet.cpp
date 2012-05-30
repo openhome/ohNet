@@ -485,7 +485,7 @@ InitialisationParams::InitialisationParams()
     , iDvNumPublisherThreads(4)
     , iDvNumWebSocketThreads(0)
     , iCpUpnpEventServerPort(0)
-    , iDvUpnpWebServerPort(55178)
+    , iDvUpnpWebServerPort(0)
     , iDvWebSocketPort(0)
     , iEnableBonjour(false)
 {
