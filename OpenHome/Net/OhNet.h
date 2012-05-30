@@ -261,9 +261,7 @@ public:
     void SetCpUpnpEventServerPort(TUint aPort);
     /**
      * Set the tcp port number the device stack's UPnP web server will run on.
-     * The default value is 55178.
-     * You should only rely on this (or another non-zero value) if you know the full
-     * set of services (plus their port requirements) running on a device.
+     * The default value is 0 (OS-assigned).
      */ 
     void SetDvUpnpServerPort(TUint aPort);
     /**

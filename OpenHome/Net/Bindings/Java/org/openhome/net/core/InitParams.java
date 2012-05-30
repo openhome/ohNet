@@ -504,7 +504,7 @@ public class InitParams
 	/**
 	 * Set the TCP port number the device stack server will run on.
 	 * 
-	 * <p>The default value is 55178.
+	 * <p>The default value is 0 (OS-assigned).
 	 *
 	 * @param aPort		the TCP port number the device stack server will run on.
 	 */

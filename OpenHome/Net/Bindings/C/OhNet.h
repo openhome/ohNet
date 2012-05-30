@@ -408,12 +408,10 @@ DllExport void STDCALL OhNetInitParamsSetCpUpnpEventServerPort(OhNetHandleInitPa
 /**
  * Set the tcp port number the device stack's UPnP web server will run on.
  *
- * The default value is 55178.
- * You should only rely on this (or another non-zero value) if you know the full
- * set of services (plus their port requirements) running on a device.
+ * The default value is 0 (OS-assigned).
  *
  * @param[in] aParams          Initialisation params
- * @param[in] aPort            Port number.  0 implies an OS-assigned port.
+ * @param[in] aPort            Port number.
  */ 
 DllExport void STDCALL OhNetInitParamsSetDvUpnpServerPort(OhNetHandleInitParams aParams, uint32_t aPort);
 
