@@ -1059,8 +1059,8 @@ void DviSessionUpnp::InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescr
     iWriterChunked->SetChunked(true);
 
     iWriterBuffer->Write(Brn("<?xml version=\"1.0\"?>"));
-    iWriterBuffer->Write(Brn("<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">"));
-    iWriterBuffer->Write(Brn("<s:Body s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"));
+    iWriterBuffer->Write(Brn("<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"));
+    iWriterBuffer->Write(Brn("<s:Body>"));
     iWriterBuffer->Write(Brn("<s:Fault><faultcode>s:Client</faultcode><faultstring>UPnPError</faultstring><detail><UPnPError xmlns=\"urn:schemas-upnp-org:control-1-0\"><errorCode>"));
     Bws<Ascii::kMaxUintStringBytes> code;
     Ascii::AppendDec(code, aCode);
@@ -1091,7 +1091,7 @@ void DviSessionUpnp::InvocationWriteStart()
 
     iWriterChunked->SetChunked(true);
 
-    iWriterBuffer->Write(Brn("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><u:"));
+    iWriterBuffer->Write(Brn("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><u:"));
     iWriterBuffer->Write(iHeaderSoapAction.Action());
     iWriterBuffer->Write(Brn("Response xmlns:u=\""));
     Ssdp::WriteServiceType(*iWriterBuffer, iHeaderSoapAction.Domain(), iHeaderSoapAction.Type(), iHeaderSoapAction.Version());
