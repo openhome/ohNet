@@ -637,19 +637,18 @@ void DviSessionUpnp::Post()
             Error(HttpStatus::kBadRequest);
         }
     }
-    if (iHeaderExpect.Continue()) {
-        iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
-        iWriterResponse->WriteFlush();
-    }
     if (iHeaderContentLength.ContentLength() == 0) {
         Error(HttpStatus::kBadRequest);
     }
 
-    iSoapRequest.Set(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
-
     ParseRequestUri(DviProtocolUpnp::kControlUrlTail, &iInvocationDevice, &iInvocationService);
     if (iInvocationDevice != NULL && iInvocationService != NULL) {
         try {
+            if (iHeaderExpect.Continue()) {
+                iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
+                iWriterResponse->WriteFlush();
+            }
+            iSoapRequest.Set(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
             Invoke();
         }
         catch (InvocationError&) { }
