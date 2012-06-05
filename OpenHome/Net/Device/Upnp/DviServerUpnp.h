@@ -187,7 +187,7 @@ private: // IDviInvocation
     void InvocationWriteStringEnd(const TChar* aName);
     void InvocationWriteEnd();
 private:
-    static const TUint kMaxRequestBytes = 4*1024;
+    static const TUint kMaxRequestBytes = 64*1024;
     static const TUint kMaxResponseBytes = 4*1024;
     static const TUint kReadTimeoutMs = 5 * 1000;
 private:
