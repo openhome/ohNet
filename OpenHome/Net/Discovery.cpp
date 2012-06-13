@@ -59,6 +59,7 @@ SsdpListenerMulticast::SsdpListenerMulticast(TIpAddress aInterface)
     , iSocket(aInterface, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocket)
     , iReaderRequest(iBuffer)
+    , iExiting(false)
 {
     try
     {
@@ -131,7 +132,9 @@ void SsdpListenerMulticast::Run()
         }
         catch (ReaderError&) {
             LOG2(kSsdpMulticast, kError, "SSDP Multicast      ReaderError\n");
-            break;
+            if (iExiting) {
+                break;
+            }
         }
     }
 }
@@ -293,6 +296,7 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
 SsdpListenerMulticast::~SsdpListenerMulticast()
 {
     LOG(kSsdpMulticast, "SSDP Multicast      Destructor\n");
+    iExiting = true;
     iReaderRequest.Interrupt();
     Join();
     EraseDisabled(iNotifyHandlers);
@@ -415,6 +419,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIp
     , iWriter(iWriteBuffer)
     , iReadBuffer(iSocketReader)
     , iReaderResponse(iReadBuffer)
+    , iExiting(false)
 {
     iSocket.SetTtl(Stack::InitParams().MsearchTtl());
     try
@@ -434,6 +439,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIp
 SsdpListenerUnicast::~SsdpListenerUnicast()
 {
     LOG(kSsdpUnicast, "SSDP Unicast        Destructor\n");
+    iExiting = true;
     iSocketReader.ReadInterrupt();
     Join();
 }
@@ -513,7 +519,9 @@ void SsdpListenerUnicast::Run()
         }
         catch (ReaderError&) {
             LOG2(kSsdpUnicast, kError, "SSDP Unicast        ReaderError\n");
-            break;
+            if (iExiting) {
+                break;
+            }
         }
         catch (WriterError&) {
             LOG2(kSsdpUnicast, kError, "SSDP Unicast        WriterError\n");

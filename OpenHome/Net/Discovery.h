@@ -139,6 +139,7 @@ private:
     SsdpHeaderMx iHeaderMx;
     SsdpHeaderNt iHeaderNt;
     SsdpHeaderNts iHeaderNts;
+    TBool iExiting;
 };
 
 // SsdpListenerUnicast - sends out an msearch request and listens to the unicast responses
@@ -168,6 +169,7 @@ private:
     Srs<kMaxBufferBytes> iReadBuffer;
     ReaderHttpResponse iReaderResponse;
     SsdpHeaderExt iHeaderExt;
+    TBool iExiting;
 };
 
 } // namespace Net
