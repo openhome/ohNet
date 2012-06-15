@@ -35,6 +35,7 @@ public:
     AutoNetworkAdapterRef(const char* aCookie); // creates ref to stack's current adapter
     AutoNetworkAdapterRef(NetworkAdapter* aAdapter, const char* aCookie);
     ~AutoNetworkAdapterRef();
+    NetworkAdapter* Adapter();
     const NetworkAdapter* Adapter() const;
 private:
     NetworkAdapter* iAdapter;

@@ -70,7 +70,8 @@ void DviServer::SubnetListChanged()
 
     iLock.Wait();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
-    NetworkAdapter* current = adapterList.CurrentAdapter("DviServer::SubnetListChanged");
+    AutoNetworkAdapterRef ref("DviServer::SubnetListChanged");
+    NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         TInt i;
         // remove servers whose interface is no longer available
@@ -85,8 +86,6 @@ void DviServer::SubnetListChanged()
         if (iServers.size() == 0) {
             AddServer(*current);
         }
-
-        current->RemoveRef("DviServer::SubnetListChanged");
     }
     else {
         std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();

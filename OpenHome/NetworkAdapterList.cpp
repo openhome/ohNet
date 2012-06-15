@@ -133,7 +133,7 @@ void NetworkAdapterList::TempFailureRetry(Functor& aCallback)
             aCallback();
             return;
         }
-        catch (NetworkError) {
+        catch (NetworkError&) {
             LOG2(kNetwork, kError, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
             Thread::Sleep(kDelaysMs[i]);
         }

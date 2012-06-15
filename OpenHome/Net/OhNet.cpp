@@ -32,6 +32,11 @@ AutoNetworkAdapterRef::~AutoNetworkAdapterRef()
     }
 }
 
+NetworkAdapter* AutoNetworkAdapterRef::Adapter()
+{
+    return iAdapter;
+}
+
 const NetworkAdapter* AutoNetworkAdapterRef::Adapter() const
 {
     return iAdapter;

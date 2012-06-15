@@ -425,7 +425,8 @@ CpiSubscriptionManager::CpiSubscriptionManager()
     , iShutdownSem("SBMS", 0)
 {
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
-    NetworkAdapter* currentInterface = ifList.CurrentAdapter("CpiSubscriptionManager ctor");
+    AutoNetworkAdapterRef ref("CpiSubscriptionManager ctor");
+    const NetworkAdapter* currentInterface = ref.Adapter();
     Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::CurrentNetworkAdapterChanged);
     iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
     functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetListChanged);
@@ -437,7 +438,6 @@ CpiSubscriptionManager::CpiSubscriptionManager()
         iLock.Wait();
         iEventServer = new EventServerUpnp(currentInterface->Address());
         iLock.Signal();
-        currentInterface->RemoveRef("CpiSubscriptionManager ctor");
     }
 
     TChar thName[5] = "SBS ";

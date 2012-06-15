@@ -324,7 +324,8 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
     , iXmlFetchLock("DRLM")
 {
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
-    NetworkAdapter* current = ifList.CurrentAdapter("CpiDeviceListUpnp ctor");
+    AutoNetworkAdapterRef ref("CpiDeviceListUpnp ctor");
+    const NetworkAdapter* current = ref.Adapter();
     iRefreshTimer = new Timer(MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
     iNextRefreshTimer = new Timer(MakeFunctor(*this, &CpiDeviceListUpnp::NextRefreshDue));
     iPendingRefreshCount = 0;
@@ -342,7 +343,6 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
         iUnicastListener = new SsdpListenerUnicast(*this, iInterface);
         iMulticastListener = &Stack::MulticastListenerClaim(iInterface);
         iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
-        current->RemoveRef("CpiDeviceListUpnp ctor");
     }
     iSsdpLock.Signal();
 }
