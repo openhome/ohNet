@@ -613,19 +613,23 @@ void CpiSubscriptionManager::RemovePendingAdd(CpiSubscription& aSubscription)
 
 void CpiSubscriptionManager::CurrentNetworkAdapterChanged()
 {
-    HandleInterfaceChange(false);
+    HandleInterfaceChange();
 }
 
 void CpiSubscriptionManager::SubnetListChanged()
 {
-    HandleInterfaceChange(true);
+    HandleInterfaceChange();
 }
 
-void CpiSubscriptionManager::HandleInterfaceChange(TBool /*aNewSubnet*/)
+void CpiSubscriptionManager::HandleInterfaceChange()
 {
-    iLock.Wait();
-    NetworkAdapterList& ifList = Stack::NetworkAdapterList();
-    NetworkAdapter* currentInterface = ifList.CurrentAdapter("CpiSubscriptionManager::HandleInterfaceChange");
+    Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::DoHandleInterfaceChange);
+    NetworkAdapterList::TempFailureRetry(functor);
+}
+
+void CpiSubscriptionManager::DoHandleInterfaceChange()
+{
+    AutoMutex a(iLock);
 
     // trigger CpiSubscriptionManager::WaitForPendingAdds
     if (iPendingSubscriptions.size() > 0) {
@@ -634,60 +638,12 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool /*aNewSubnet*/)
 
     // recreate the event server on the new interface
     delete iEventServer;
-    if (currentInterface == NULL) {
-        iEventServer = NULL;
-    }
-    else {
+    iEventServer = NULL;
+    AutoNetworkAdapterRef ref("CpiSubscriptionManager::HandleInterfaceChange");
+    const NetworkAdapter* currentInterface = ref.Adapter();
+    if (currentInterface != NULL) {
         iEventServer = new EventServerUpnp(currentInterface->Address());
-        currentInterface->RemoveRef("CpiSubscriptionManager::HandleInterfaceChange");
     }
-
-    // don't worry about updating existing/pending subscriptions
-    // instead rely on device list updates prompting proxies to be deleted
-    //...which in turn will unsubscribe/delete the existing/pending subscriptions
-#if 0
-    // take a note of all active and pending subscriptions
-    Map activeSubscriptions;
-    Map::iterator it = iMap.begin();
-    while (it != iMap.end()) {
-        Brn sid(it->second->Sid());
-        activeSubscriptions.insert(std::pair<Brn,CpiSubscription*>(sid, it->second));
-        it++;
-    }
-    VectorSubscriptions pendingSubscriptions;
-    for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
-        pendingSubscriptions.push_back(iPendingSubscriptions[i]);
-    }
-#endif
-
-    iLock.Signal();
-
-#if 0
-    if (!aNewSubnet) {
-        // resubscribe any pending subscriptions
-        for (TUint i=0; i<pendingSubscriptions.size(); i++) {
-            pendingSubscriptions[i]->Schedule(CpiSubscription::eSubscribe);
-        }
-
-        // resubscribe all formerly active subscriptions
-        it = activeSubscriptions.begin();
-        while (it != activeSubscriptions.end()) {
-            it->second->SetNotificationError();
-            it++;
-        }
-    }
-    else {
-        /* Its possible that we can't reach the subnet the subscriptions are on.
-           Assume that attempts to unsubscribe in this case will fail extremely
-           quickly, meaning that its not worth storing the last subnet and using
-           that to decide whether unsubscribes have any route to be delivered */
-        it = activeSubscriptions.begin();
-        while (it != activeSubscriptions.end()) {
-            it->second->Unsubscribe();
-            it++;
-        }
-    }
-#endif
 }
 
 TBool CpiSubscriptionManager::ReadyForShutdown() const

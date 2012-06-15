@@ -212,7 +212,8 @@ private:
     void RemovePendingAdd(CpiSubscription& aSubscription);
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
-    void HandleInterfaceChange(TBool aNewSubnet);
+    void HandleInterfaceChange();
+    void DoHandleInterfaceChange();
     TBool ReadyForShutdown() const;
     void Run();
 private:

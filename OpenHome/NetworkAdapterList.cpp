@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/Stack.h>
 #include <algorithm>
 #include <OpenHome/Exception.h>
+#include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
 
@@ -122,6 +123,22 @@ TUint NetworkAdapterList::AddNetworkAdapterChangeListener(FunctorNetworkAdapter 
 void NetworkAdapterList::RemoveNetworkAdapterChangeListener(TUint aId)
 {
     RemoveSubnetListener(aId, iListenersAdapterChanged);
+}
+
+void NetworkAdapterList::TempFailureRetry(Functor& aCallback)
+{ // static
+    static const TUint kDelaysMs[] = { 100, 200, 400, 800, 1600, 3200, 5000 };
+    for (TUint i=0; i<sizeof(kDelaysMs)/sizeof(kDelaysMs[0]); i++) {
+        try {
+            aCallback();
+            return;
+        }
+        catch (NetworkError) {
+            LOG2(kNetwork, kError, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
+            Thread::Sleep(kDelaysMs[i]);
+        }
+    }
+    THROW(NetworkError);
 }
 
 std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetListLocked() const

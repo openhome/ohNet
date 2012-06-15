@@ -26,6 +26,22 @@ public:
 };
 
 /**
+ * Auto ptr for NetworkAdapter references.
+ * @ingroup Core
+ */
+class AutoNetworkAdapterRef
+{
+public:
+    AutoNetworkAdapterRef(const char* aCookie); // creates ref to stack's current adapter
+    AutoNetworkAdapterRef(NetworkAdapter* aAdapter, const char* aCookie);
+    ~AutoNetworkAdapterRef();
+    const NetworkAdapter* Adapter() const;
+private:
+    NetworkAdapter* iAdapter;
+    const char* iCookie;
+};
+
+/**
  * Represents a single network interface
  * @ingroup Core
  */
@@ -92,7 +108,7 @@ public:
      *
      * @return  true if the address is part of the same subnet as this interface; false otherwise
      */
-    bool ContainsAddress(TIpAddress aAddress);
+    bool ContainsAddress(TIpAddress aAddress) const;
     /**
      * Get the name of the network adapter.
      *

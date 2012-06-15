@@ -11,6 +11,33 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+// AutoNetworkAdapterRef
+    
+AutoNetworkAdapterRef::AutoNetworkAdapterRef(const char* aCookie)
+    : iCookie(aCookie)
+{
+    iAdapter = Stack::NetworkAdapterList().CurrentAdapter(aCookie);
+}
+
+AutoNetworkAdapterRef::AutoNetworkAdapterRef(NetworkAdapter* aAdapter, const char* aCookie)
+    : iAdapter(aAdapter)
+    , iCookie(aCookie)
+{
+}
+
+AutoNetworkAdapterRef::~AutoNetworkAdapterRef()
+{
+    if (iAdapter != NULL) {
+        iAdapter->RemoveRef(iCookie);
+    }
+}
+
+const NetworkAdapter* AutoNetworkAdapterRef::Adapter() const
+{
+    return iAdapter;
+}
+
+
 // NetworkAdapter
 
 NetworkAdapter::NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie)
@@ -70,7 +97,7 @@ TIpAddress NetworkAdapter::Mask() const
     return iNetMask;
 }
 
-bool NetworkAdapter::ContainsAddress(TIpAddress aAddress)
+bool NetworkAdapter::ContainsAddress(TIpAddress aAddress) const
 {
     return ((aAddress&iNetMask) == Subnet());
 }
