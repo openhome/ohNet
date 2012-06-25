@@ -47,7 +47,7 @@ Build/Include/OpenHome/Net/C
     Header files for C language bindings.
 
 Build/Include/OpenHome/Net/Cpp
-    Header files for C language bindings.
+    Header files for C++ language bindings.
 
 Build/Include/OpenHome/Net/Core
 Build/Include/OpenHome/Net/Private
