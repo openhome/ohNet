@@ -826,25 +826,8 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
         iWriter.Write(xmlExtension);
     }
 
-    if (iDeviceUpnp.iDevice.ResourceManager() != 0) {
-        iWriter.Write('<');
-        iWriter.Write("presentationURL");
-        iWriter.Write('>');
-        /* UPnP spec says to publish a relative url
-           Intel device spy messes up resolution of this against the base
-           (device xml) url so publish an absolute url instead */
-        for (TUint i=0; i<iDeviceUpnp.iAdapters.size(); i++) {
-            if (iDeviceUpnp.iAdapters[i]->Interface() == aAdapter) {
-                iWriter.Write(iDeviceUpnp.iAdapters[i]->UriBase());
-                break;
-            }
-        }
-        iWriter.Write(DviDevice::kResourceDir);
-        iWriter.Write('/');
-        iWriter.Write("</");
-        iWriter.Write("presentationURL");
-        iWriter.Write('>');
-    }
+    WritePresentationUrlTag(aAdapter);
+
     WriteTag("friendlyName", "FriendlyName", eTagMandatory);
     WriteTag("manufacturer", "Manufacturer", eTagMandatory);
     WriteTag("manufacturerURL", "ManufacturerUrl", eTagOptional);
@@ -949,6 +932,50 @@ void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar
         iWriter.Write(aTagName);
         iWriter.Write("/>");
     }
+}
+
+void DviProtocolUpnpDeviceXmlWriter::WritePresentationUrlTag(TIpAddress aAdapter)
+{
+    const TChar* attributeVal;
+    iDeviceUpnp.GetAttribute("PresentationUrl", &attributeVal);
+
+    bool hasAttribute = attributeVal != 0;
+    bool hasResMgr = iDeviceUpnp.iDevice.ResourceManager() != 0;
+
+    if (!hasAttribute && !hasResMgr)
+    {
+        return;
+    }
+
+    iWriter.Write("<presentationURL>");
+
+    if (hasAttribute) {
+        if (attributeVal[0]==':' || attributeVal[0]=='/') {
+            // If the provided URL starts with a port or a
+            // path, prefix it with the adapter's IP address
+            // in the format 'http://0.0.0.0'. Otherwise, use
+            // it as-is.
+            // Note: What if client wants to use https?
+            Bws<32> ipAddress;
+            Endpoint::AppendAddress(ipAddress, aAdapter);
+            iWriter.Write("http://");
+            iWriter.Write(ipAddress);
+        }
+        Brn buf(attributeVal);
+        Converter::ToXmlEscaped(iWriter, buf);
+    } else if (hasResMgr){
+        /* UPnP spec says to publish a relative url
+           Intel device spy messes up resolution of this against the base
+           (device xml) url so publish an absolute url instead */
+        for (TUint i=0; i<iDeviceUpnp.iAdapters.size(); i++) {
+            if (iDeviceUpnp.iAdapters[i]->Interface() == aAdapter) {
+                iWriter.Write(iDeviceUpnp.iAdapters[i]->UriBase());
+                break;
+            }
+        }
+        iWriter.Write(DviDevice::kResourceDir);
+    }
+    iWriter.Write("</presentationURL>");
 }
 
 void DviProtocolUpnpDeviceXmlWriter::WriteResourceBegin(TUint /*aTotalBytes*/, const TChar* /*aMimeType*/)

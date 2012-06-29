@@ -172,6 +172,7 @@ private:
     };
 private:
     void WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel);
+    void WritePresentationUrlTag(TIpAddress aAdapter);
     void WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeType);
     void WriteResource(const TByte* aData, TUint aBytes);
     void WriteResourceEnd();
