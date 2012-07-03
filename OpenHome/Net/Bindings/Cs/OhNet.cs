@@ -799,6 +799,8 @@ namespace OpenHome.Net.Core
 
         internal static string PtrToStringUtf8(IntPtr aPtr) // aPtr is nul-terminated
         {
+            if (aPtr == IntPtr.Zero)
+                return "";
             int len = 0;
             while (Marshal.ReadByte(aPtr, len) != 0)
                 len++;
