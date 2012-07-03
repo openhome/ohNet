@@ -974,6 +974,7 @@ void DviProtocolUpnpDeviceXmlWriter::WritePresentationUrlTag(TIpAddress aAdapter
             }
         }
         iWriter.Write(DviDevice::kResourceDir);
+        iWriter.Write('/');
     }
     iWriter.Write("</presentationURL>");
 }
