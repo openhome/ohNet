@@ -5,7 +5,22 @@
 *.suo
 _ReSharper.*
 
-/*.sbr
+# Binaries and large files that might accidentally get added:
+*.exe
+*.EXE
+*.dll
+*.DLL
+*.so
+*.sbr
+*.lib
+*.a
+*.obj
+# "tags" files are caches created by ctags for quick navigation in
+# various text editors.
+tags
+
+Build/
+
 /Build/
 /vgout/
 /hgout/
