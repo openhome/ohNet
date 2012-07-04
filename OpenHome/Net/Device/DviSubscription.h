@@ -49,7 +49,7 @@ public:
     const Brx& Sid() const;
     TBool PropertiesInitialised() const;
     TBool HasExpired() const;
-    DviService* Service();
+    DviService* RefService();
 private:
     ~DviSubscription();
     IPropertyWriter* CreateWriter();

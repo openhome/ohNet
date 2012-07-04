@@ -61,6 +61,7 @@ DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWr
 void DviSubscription::Start(DviService& aService)
 {
     iService = &aService;
+    iService->AddRef();
     const DviService::VectorProperties& properties = iService->Properties();
     for (TUint i=0; i<properties.size(); i++) {
         // store all seq nums as 0 initially to ensure all are published by the first call to WriteChanges()
@@ -73,7 +74,10 @@ void DviSubscription::Stop()
 {
     iLock.Wait();
     iTimer->Cancel();
-    iService = NULL;
+    if (iService != NULL) {
+        iService->RemoveRef();
+        iService = NULL;
+    }
     iLock.Signal();
     iWriterFactory.NotifySubscriptionExpired(iSid);
 }
@@ -132,10 +136,11 @@ void DviSubscription::WriteChanges()
         // its reasonable to assume that later attempts are also likely to fail
         // ...so its better if we don't keep blocking and instead remove the subscription
         iLock.Wait();
-        DviService* service = iService;
+        DviService* service = RefService();
         iLock.Signal();
         if (service != NULL) {
             service->RemoveSubscription(iSid);
+            service->RemoveRef();
         }
     }
     catch(NetworkError&) {}
@@ -221,17 +226,25 @@ TBool DviSubscription::HasExpired() const
     return iExpired;
 }
 
-DviService* DviSubscription::Service()
+DviService* DviSubscription::RefService()
 {
     DviService* service;
     iLock.Wait();
     service = iService;
+    if (service != NULL) {
+        service->AddRef();
+    }
     iLock.Signal();
     return service;
 }
 
 DviSubscription::~DviSubscription()
 {
+    iLock.Wait();
+    if (iService != NULL) {
+        iService->RemoveRef();
+    }
+    iLock.Signal();
     iWriterFactory.NotifySubscriptionDeleted(iSid);
     iDevice.RemoveWeakRef();
     delete iTimer;

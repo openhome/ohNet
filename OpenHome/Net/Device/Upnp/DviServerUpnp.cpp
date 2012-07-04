@@ -406,9 +406,10 @@ void PropertyWriterFactory::Disable()
     iSubscriptionMapLock.Signal();
     for (TUint i=0; i<(TUint)subscriptions.size(); i++) {
         DviSubscription* subscription = subscriptions[i];
-        DviService* service = subscription->Service();
+        DviService* service = subscription->RefService();
         if (service != NULL) {
             service->RemoveSubscription(subscription->Sid());
+            service->RemoveRef();
         }
         subscription->RemoveRef();
     }

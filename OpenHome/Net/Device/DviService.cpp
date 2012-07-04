@@ -50,14 +50,9 @@ DviService::DviService(const TChar* aDomain, const TChar* aName, TUint aVersion)
 
 DviService::~DviService()
 {
+    StopSubscriptions();
     iLock.Wait();
     TUint i=0;
-    for (; i<iSubscriptions.size(); i++) {
-        DviSubscription* subscription = iSubscriptions[i];
-        subscription->Stop();
-        DviSubscriptionManager::RemoveSubscription(*subscription);
-        subscription->RemoveRef();
-    }
     for (i=0; i<iDvActions.size(); i++) {
         delete iDvActions[i].Action();
     }
@@ -66,6 +61,19 @@ DviService::~DviService()
     }
     iLock.Signal();
     Stack::RemoveObject(this);
+}
+
+void DviService::StopSubscriptions()
+{
+    iLock.Wait();
+    for (TUint i=0; i<iSubscriptions.size(); i++) {
+        DviSubscription* subscription = iSubscriptions[i];
+        subscription->Stop();
+        DviSubscriptionManager::RemoveSubscription(*subscription);
+        subscription->RemoveRef();
+    }
+    iSubscriptions.clear();
+    iLock.Signal();
 }
 
 void DviService::AddRef()

@@ -75,6 +75,7 @@ public:
     DviService(const TChar* aDomain, const TChar* aName, TUint aVersion);
     void AddRef();
     void RemoveRef();
+    void StopSubscriptions();
 
     DllExport void AddAction(Action* aAction, FunctorDviInvocation aFunctor);
     typedef std::vector<DvAction> VectorActions;

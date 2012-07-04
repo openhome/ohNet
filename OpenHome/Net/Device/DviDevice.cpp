@@ -79,6 +79,7 @@ void DviDevice::Destroy()
     }
     iServiceLock.Wait();
     for (i=0; i<iServices.size(); i++) {
+        iServices[i]->StopSubscriptions();
         iServices[i]->RemoveRef();
     }
     iServices.clear();
