@@ -37,8 +37,8 @@ class remote():
 			cmd.append('rsync'),
 			cmd.append('-r'),
 			cmd.append('-v'),
-			cmd.append('--chmod=o+rwx'),
-			cmd.append('-p'),
+			cmd.append('--chmod=u=rwX,go=rX'), # New files are user-writable and world-readable
+			cmd.append('--no-p'),              # Don't change permissions of existing directories (or files)
 			cmd.append(src),
 			cmd.append(dst)
 
