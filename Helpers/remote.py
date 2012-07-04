@@ -30,20 +30,27 @@ class remote():
 
                         ssh.close()
 
-		def rsync(self,username,host,src,dst):
-			
+		def _rsync_cmd(self, username, host, src, dst):
 			cmd = []
 			dst = "%s@%s:%s" %(username,host,dst)
 
 			cmd.append('rsync'),
 			cmd.append('-r'),
 			cmd.append('-v'),
-			cmd.append('--chmod=o+rwx'),
-			cmd.append('-p'),
+			cmd.append('--chmod=u=rwX,go=rX'), # New files are user-writable and world-readable
+			cmd.append('--no-p'),              # Don't change permissions of existing directories (or files)
 			cmd.append(src),
 			cmd.append(dst)
-			
+
+			return cmd
+
+		def rsync(self, username, host, src, dst):
+			cmd = self._rsync_cmd(username, host, src, dst)
 			ret = subprocess.call(cmd)
 			return ret
 
+		def check_rsync(self, username, host, src, dst):
+			cmd = self._rsync_cmd(username, host, src, dst)
+			ret = subprocess.check_call(cmd)
+			return ret
 
