@@ -135,9 +135,7 @@ void DviSubscription::WriteChanges()
         // we may block a publisher for a relatively long time failing to connect
         // its reasonable to assume that later attempts are also likely to fail
         // ...so its better if we don't keep blocking and instead remove the subscription
-        iLock.Wait();
         DviService* service = RefService();
-        iLock.Signal();
         if (service != NULL) {
             service->RemoveSubscription(iSid);
             service->RemoveRef();
