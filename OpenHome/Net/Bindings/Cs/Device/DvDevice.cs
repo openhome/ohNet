@@ -456,9 +456,11 @@ namespace OpenHome.Net.Device
         /// Query the base uri for the resource manager.
         /// </summary>
         /// <param name="aAdapter">The network adapter to return a uri for.</param>
-        /// <returns>The base uri.  May be null if there is no resource manager.</returns>
+        /// <returns>The base uri.  May be empty if there is no resource manager.</returns>
         public unsafe string ResourceManagerUri(Core.NetworkAdapter aAdapter)
         {
+            if (aAdapter == null)
+                return "";
             IntPtr ptr;
             uint len;
             DvDeviceStandardGetResourceManagerUri(iHandle, aAdapter.Handle(), &ptr, &len);
