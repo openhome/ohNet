@@ -121,8 +121,17 @@ TBool DviDevice::Enabled() const
 
 void DviDevice::SetEnabled()
 {
-    ASSERT(iEnabled != eEnabled && iProtocolDisableCount == 0);
+    ASSERT(iEnabled != eEnabled);
     iLock.Wait();
+    if (iProtocolDisableCount != 0) {
+        // We're in the unusual situation of having the client Enable this device while its in the process of disabling.
+        // It'd be potentially fiddly for each protocol to halt a disable.
+        // ...so we prefer to waste a little time but avoid complex code by waiting for the disable to complete
+        iDisableComplete = MakeFunctor(*this, &DviDevice::DisableComplete);
+        iLock.Signal();
+        iShutdownSem.Wait();
+        iLock.Wait();
+    }
     iEnabled = eEnabled;
     iConfigUpdated = false;
     iShutdownSem.Clear();
@@ -398,6 +407,11 @@ void DviDevice::ProtocolDisabled()
         iShutdownSem.Signal();
     }
     iLock.Signal();
+}
+
+void DviDevice::DisableComplete()
+{
+    iShutdownSem.Signal();
 }
 
 TBool DviDevice::HasService(const OpenHome::Net::ServiceType& aServiceType) const
