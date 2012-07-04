@@ -30,8 +30,7 @@ class remote():
 
                         ssh.close()
 
-		def rsync(self,username,host,src,dst):
-			
+		def _rsync_cmd(self, username, host, src, dst):
 			cmd = []
 			dst = "%s@%s:%s" %(username,host,dst)
 
@@ -42,8 +41,16 @@ class remote():
 			cmd.append('-p'),
 			cmd.append(src),
 			cmd.append(dst)
-			
+
+			return cmd
+
+		def rsync(self, username, host, src, dst):
+			cmd = self._rsync_cmd(username, host, src, dst)
 			ret = subprocess.call(cmd)
 			return ret
 
+		def check_rsync(self, username, host, src, dst):
+			cmd = self._rsync_cmd(username, host, src, dst)
+			ret = subprocess.check_call(cmd)
+			return ret
 
