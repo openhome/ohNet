@@ -158,14 +158,14 @@ class JenkinsBuild():
         os_platform = self.platform['os']
         build_args = self.build_args
         platform_args = self.platform_args
-        build = []
+        common_args = []
             
         if platform_args == []:
-            build.extend(build_args)
+            common_args.extend(build_args)
         else:
-            build.extend(platform_args)
-            build.append('&&')
-            build.extend(build_args)
+            common_args.extend(platform_args)
+            common_args.append('&&')
+            common_args.extend(build_args)
             
         build_targets = []
         build_targets.append('debug')
@@ -174,6 +174,7 @@ class JenkinsBuild():
             build_targets.append('release')
 
         for build_t in build_targets:
+            build = list(common_args)
             if build_t == 'debug':
                 build.append('--debug')
             if build_t == 'release':
