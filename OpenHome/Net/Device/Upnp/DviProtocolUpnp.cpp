@@ -369,7 +369,7 @@ void DviProtocolUpnp::Enable()
 
 void DviProtocolUpnp::Disable(Functor& aComplete)
 {
-    iLock.Wait();
+    AutoMutex a(iLock);
     iDisableComplete = aComplete;
     TUint i;
     for (i=0; i<iMsgSchedulers.size(); i++) {
@@ -392,8 +392,6 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     if (name != 0) {
         DviStack::MdnsProvider()->MdnsSetHostName("");
     }
-
-    iLock.Signal();
 }
 
 void DviProtocolUpnp::GetAttribute(const TChar* aKey, const TChar** aValue) const
@@ -478,7 +476,7 @@ void DviProtocolUpnp::SendAliveNotifications()
         return;
     }
     LogMulticastNotification("alive");
-    iLock.Wait();
+    AutoMutex a(iLock);
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
@@ -491,13 +489,12 @@ void DviProtocolUpnp::SendAliveNotifications()
     TUint maxUpdateTimeMs = Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
     TUint updateTimeMs = Random(maxUpdateTimeMs/2, maxUpdateTimeMs/4);
     iAliveTimer->FireIn(updateTimeMs);
-    iLock.Signal();
 }
 
 void DviProtocolUpnp::SendUpdateNotifications()
 {
     LogMulticastNotification("update");
-    iLock.Wait();
+    AutoMutex a(iLock);
     iAliveTimer->Cancel();
     iUpdateCount = (TUint)iAdapters.size();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetUpdated);
@@ -507,7 +504,6 @@ void DviProtocolUpnp::SendUpdateNotifications()
         iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyUpdate(*this, *this, iAdapters[i]->Interface(),
                                                                   uri, iDevice.ConfigId(), functor));
     }
-    iLock.Signal();
 }
 
 void DviProtocolUpnp::GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase)
@@ -547,7 +543,7 @@ void DviProtocolUpnp::LogMulticastNotification(const char* aType)
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)
 {
     if (iDevice.Enabled()) {
-        iLock.Wait();
+        AutoMutex a(iLock);
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
             LogUnicastNotification("all");
@@ -555,14 +551,13 @@ void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAdd
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchAll(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
-        iLock.Signal();
     }
 }
 
 void DviProtocolUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)
 {
     if (iDevice.Enabled() && iDevice.IsRoot()) {
-        iLock.Wait();
+        AutoMutex a(iLock);
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
             LogUnicastNotification("root");
@@ -570,14 +565,13 @@ void DviProtocolUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAd
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchRoot(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
-        iLock.Signal();
     }
 }
 
 void DviProtocolUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aUuid)
 {
     if (iDevice.Enabled() && iDevice.Udn() == aUuid) {
-        iLock.Wait();
+        AutoMutex a(iLock);
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
             LogUnicastNotification("uuid");
@@ -585,14 +579,13 @@ void DviProtocolUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAd
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchUuid(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
-        iLock.Signal();
     }
 }
 
 void DviProtocolUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     if (iDevice.Enabled() && Version() >= aVersion && Domain() == aDomain && Type() == aType) {
-        iLock.Wait();
+        AutoMutex a(iLock);
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
             LogUnicastNotification("device");
@@ -600,13 +593,12 @@ void DviProtocolUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx,
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchDeviceType(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
-        iLock.Signal();
     }
 }
 
 void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
-    iLock.Wait();
+    AutoMutex a(iLock);
     if (iDevice.Enabled()) {
         const TUint count = iDevice.ServiceCount();
         for (TUint i=0; i<count; i++) {
@@ -624,7 +616,6 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
             }
         }
     }
-    iLock.Signal();
 }
 
 
