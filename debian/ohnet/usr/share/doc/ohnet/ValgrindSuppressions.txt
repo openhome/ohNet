@@ -1,0 +1,15 @@
+{
+   threadStackLeaked
+   Memcheck:Leak
+   fun:calloc
+   fun:_dl_allocate_tls
+   fun:pthread_create@@GLIBC_2*
+   fun:DoThreadCreate
+}
+
+{
+   x64InvalidWrite
+   Memcheck:Value8
+   fun:do_lookup_x
+   obj:/lib*/ld-*.so
+}

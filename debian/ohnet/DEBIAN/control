@@ -1,0 +1,14 @@
+Package: ohnet
+Version: 1.0.234-1
+Architecture: amd64
+Maintainer: Cédric Andrieu <ced@opensource.wolfsonmicro.com>
+Installed-Size: 36
+Section: net
+Priority: extra
+Homepage: http://www.openhome.org/wiki/OhNet
+Description: OpenHome Networking Stack
+ ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
+ point and a device stack that can be used together or independently. It runs on
+ Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ device and control point stacks in C++, C#, Java and C. JavaScript APIs are
+ also provided for the control point stack.

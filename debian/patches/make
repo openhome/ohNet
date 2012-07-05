@@ -1,0 +1,32 @@
+Description: fix broken clean-t4 in makefile
+ The clea-t4 target is not foudn by make patch to be pushed upstream
+ .
+ ohnet (1.0.234-1) unstable; urgency=low
+ .
+   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+Author: Cédric Andrieu <ced@opensource.wolfsonmicro.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- ohnet-1.0.234.orig/UserTargets.mak
++++ ohnet-1.0.234/UserTargets.mak
+@@ -11,7 +11,7 @@ clean :
+ 	$(rmdir) Build/Bundles
+ 	$(rmdir) Build/Docs
+ 
+-mostlyclean : clean clean-t4
++mostlyclean : clean
+ 	$(rmdir) Generated
+ 
+ maintainer-clean : mostlyclean

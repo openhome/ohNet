@@ -1,0 +1,104 @@
+ohNet library
+------------
+ohNet is a library for the discovery, monitoring, manipulation and implementation
+of UPnP devices, generalized to be extensible to other similar protocols.
+
+Prerequisites
+-------------
+On Windows:
+    Microsoft Visual Studio
+    (Express versions are okay. Versions earlier than 2010 will have to edit OhNetTypes.h to
+    include content equivalent to stdint.h.)
+    Microsoft .NET 3.5 SDK (optional, required for changes to service descriptions)
+    Java (optional, required for building Java bindings)
+
+On Linux:
+    Mono (optional, required for changes to service descriptions)
+    Java (optional, required for building Java bindings)
+
+Building
+--------
+    make
+
+If you have a .NET runtime available and want to regenerate makefiles, proxies or providers, run
+    make generate-makefiles uset4=yes
+    make uset4=yes
+
+Installing
+----------
+See "INSTALL.txt".
+
+Directories
+-----------
+Build/
+    Generated during the build process. Build artefacts go here.
+
+Build/Obj/Windows/
+Build/Obj/Posix/
+    Binaries and shared libraries are built to here during a build.
+
+Build/Tools/
+    Binaries that are required by the build process are built to here.
+
+Build/Include/OpenHome
+    Header files needed by users of the library are copied here during the build.
+
+Build/Include/OpenHome/Net/C
+    Header files for C language bindings.
+
+Build/Include/OpenHome/Net/Cpp
+    Header files for C++ language bindings.
+
+Build/Include/OpenHome/Net/Core
+Build/Include/OpenHome/Net/Private
+    Not intended for external use.
+
+OpenHome
+    Base source code.
+
+OpenHome/Net
+    Source code shared by Control Point and Device stacks.
+
+OpenHome/Net/ControlPoint
+    Control Point stack.
+
+OpenHome/Net/Device
+    Device stack.
+
+OpenHome/Net/Bindings
+    Language bindings (for C++, C#, Java, JavaScript & C).
+
+
+Make targets
+------------
+all
+    This is the default target. It (should) build everything.
+
+ohNet.net.dll
+    ohNet as a dll/shared object plus C# bindings
+
+ohNetJavaAll
+    ohNet as a dll/shared object plus Java bindings
+
+generate-makefiles
+    This regenerates the makefiles in Generated/ that are derived from the
+    service descriptions. GNU make will detect these changes automatically,
+    but Microsoft's nmake doesn't handle this, so Windows users will need
+    to use this target when the service descriptions or T4 templates for
+    the makefiles have been changed.
+
+install
+    See "INSTALL.txt".
+
+uninstall
+    See "INSTALL.txt".
+
+clean
+    Removes files from Build/Obj/$platform/ and Build/Include/
+
+mostlyclean
+    Also removes the auto-generated makefiles from Generated/
+
+maintainer-clean
+    Also removes Build/Tools/
+    (Should - but doesn't yet - remove auto-generated source files too.)

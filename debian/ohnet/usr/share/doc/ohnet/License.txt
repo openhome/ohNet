@@ -1,0 +1,17 @@
+Copyright 2011, OpenHome. All rights reserved.
+
+Unless otherwise stated, all code in this project is licensed under the 2-clause
+(Simplified) BSD license.  See BsdLicense.txt for details.
+
+Files at the following locations are licensed under separate terms:
+  OpenHome/Functor.h
+  OpenHome/md5.*
+  OpenHome/Maths.cpp
+  OpenHome/sha*.*
+  OpenHome/Net/Device/Bonjour/mDNSCore/*
+  OpenHome/Net/Bindings/Android/jni/ifaddrs.*
+  OpenHome/Net/Bindings/Android/jni/LocalArray.h
+  OpenHome/Net/Bindings/Js/ControlPoint/lib/ohnet.base64.js
+  JsDoc/*
+  Docs/fop-1.0/*
+
