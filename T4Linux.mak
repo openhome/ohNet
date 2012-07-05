@@ -44,8 +44,7 @@ $(toolsDir)OhNetGen.exe : $(toolsDir)TextTransform.exe OpenHome/Net/T4/OhNetGen.
 	$(mkdir) $(toolsDir)
 	dmcs /t:exe /out:$(toolsDir)OhNetGen.exe OpenHome/Net/T4/OhNetGen.cs OpenHome/Net/T4/AssemblyInfo.cs
 
-$(t4) : $(toolsDir)Mono.TextTemplating.dll $(exesources)
-
+$(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll $(exesources)
 	$(mkdir) $(toolsDir)
 	dmcs /t:exe -out:$(toolsDir)TextTransform.exe /r:$(toolsDir)Mono.TextTemplating.dll $(exesources)
 
