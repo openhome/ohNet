@@ -33,7 +33,8 @@ License:
   3. This notice may not be removed or altered from any source distribution.
 
 Files:  OpenHome/Maths.cpp
-Copyright: 1997 - 2002 Takuji Nishimura, Makoto Matsumoto, Jasper Bedaux, Isaku Wada All rights reserved.
+Copyright: 1997 - 2002 Takuji Nishimura, Makoto Matsumoto, Jasper Bedaux, Isaku
+Wada All rights reserved.
 License:
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
@@ -65,17 +66,68 @@ License:
 Files:  OpenHome/sha*.*
 Copyright:
 Files:  OpenHome/Net/Device/Bonjour/mDNSCore/*
-Copyright:
-Files:  OpenHome/Net/Bindings/Android/jni/ifaddrs.*
-Copyright:
-Files:  OpenHome/Net/Bindings/Android/jni/LocalArray.h
-Copyright:
-Files:  OpenHome/Net/Bindings/Js/ControlPoint/lib/ohnet.base64.js
-Copyright:
-  JsDoc/*
-  Docs/fop-1.0/*
+Copyright: 2002-2003 Apple Computer, Inc. All rights reserved.
+License: Apache 2.0
+	/usr/share/common-licenses/Apache-2.0
 
-Files: *
+Files:  OpenHome/Net/Bindings/Android/jni/ifaddrs.*
+Copyright: 2009 The Android Open Source Project
+License: Apache 2.0
+	/usr/share/common-licenses/Apache-2.0
+
+Files:  OpenHome/Net/Bindings/Android/jni/LocalArray.h
+Copyright: 2009 The Android Open Source Project
+License: Apache 2.0
+	/usr/share/common-licenses/Apache-2.0
+
+Files:  OpenHome/Net/Bindings/Js/ControlPoint/lib/ohnet.base64.js
+Copyright: ???
+License: MIT
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Files: JsDoc/*
+Copyright: JSDOC User group
+License: MIT
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Files: Docs/fop-1.0/* 
+Copyright: 1999-2010 The Apache Software Foundation
+License: Apache 2.0
+	/usr/share/common-licenses/Apache-2.0
+
+Files: Everything else
 Copyright: 2011-2012 OpenHome
 License: BSD-2-clause
 
