@@ -156,6 +156,7 @@ installincludedir = $(prefix)/include/ohNet
 installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
+# T4 to generate wrappers
 uset4 = no
 
 ifeq ($(native_only), yes)

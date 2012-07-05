@@ -9,6 +9,7 @@ ohNetGen = mono $(toolsDir)OhNetGen.exe
 upnpServiceXml = $(toolsDir)UpnpServiceXml.dll
 upnpServiceMake = $(toolsDir)UpnpServiceMake.dll
 argumentProcessor = $(toolsDir)ArgumentProcessor.dll
+#tt = $(upnpServiceXml) $(upnpServiceMake) $(toolsDir)Mono.TextTemplating.dll $(t4) $(ohNetGen)
 tt = $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe $(toolsDir)OhNetGen.exe
 
 tt : $(tt)
