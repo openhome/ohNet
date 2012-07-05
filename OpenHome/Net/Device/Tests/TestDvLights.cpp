@@ -322,7 +322,9 @@ void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/,
     do {
         TByte buf[kMaxReadSize];
         TUint size = (bytes<kMaxReadSize? bytes : kMaxReadSize);
-        (void)fread(buf, size, 1, fd);
+        size_t records_read = fread(buf, size, 1, fd);
+        ASSERT(records_read == 1);
+
         aResourceWriter.WriteResource(buf, size);
         bytes -= size;
         //Print("Written %u, remaining %u\n", size, bytes);
