@@ -166,6 +166,8 @@ endif
 
 default : all
 
+
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 # Include the rules to prepare the template engine and the macros to use it.
 ifeq ($(uset4), yes)
 include T4Linux.mak
@@ -184,6 +186,7 @@ endif
 include Generated/Proxies.mak
 include Generated/Devices.mak
 
+endif
 include UserTargets.mak
 
 # Following macros must be provided by each file which wraps Common.mak
