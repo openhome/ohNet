@@ -76,6 +76,8 @@ public:
     void AddRef();
     void RemoveRef();
     void StopSubscriptions();
+    void Enable();
+    void Disable();
 
     DllExport void AddAction(Action* aAction, FunctorDviInvocation aFunctor);
     typedef std::vector<DvAction> VectorActions;
@@ -93,6 +95,7 @@ public:
     void RemoveSubscription(const Brx& aSid);
 private:
     ~DviService();
+    void InvocationCompleted();
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
@@ -102,6 +105,9 @@ private:
     VectorActions iDvActions;
     VectorProperties iProperties;
     std::vector<DviSubscription*> iSubscriptions;
+    TBool iDisabled;
+    TUint iCurrentInvocationCount;
+    Semaphore iDisabledSem;
 };
 
 class DllExportClass DviInvocation : public IDvInvocation, private INonCopyable

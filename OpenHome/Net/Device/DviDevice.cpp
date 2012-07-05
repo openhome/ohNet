@@ -136,13 +136,15 @@ void DviDevice::SetEnabled()
     iConfigUpdated = false;
     iShutdownSem.Clear();
     iLock.Signal();
-    for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
+    TUint i;
+    for (i=0; i<(TUint)iProtocols.size(); i++) {
         iProtocols[i]->Enable();
-        // queue updates for all service properties
-        // nothing may have changed but individual subscriptions will spot this and skip any update message
-        for (TUint j=0; j<iServices.size(); j++) {
-            iServices[j]->PublishPropertyUpdates();
-        }
+    }
+    // queue updates for all service properties
+    // nothing may have changed but individual subscriptions will spot this and skip any update message
+    for (i=0; i<iServices.size(); i++) {
+        iServices[i]->Enable();
+        iServices[i]->PublishPropertyUpdates();
     }
 }
 
@@ -202,6 +204,7 @@ void DviDevice::AddService(DviService* aService)
     ASSERT(iEnabled == eDisabled);
     ASSERT(!Root()->HasService(aService->ServiceType()));
     iServices.push_back(aService);
+    aService->AddRef();
     ConfigChanged();
 }
 
@@ -392,6 +395,10 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
         for (TUint i=0; i<iProtocols.size(); i++) {
             iProtocols[i]->Disable(functor);
         }
+    }
+    // Tell services not to accept further action invocations
+    for (TUint i=0; i<iServices.size(); i++) {
+        iServices[i]->Disable();
     }
 }
 

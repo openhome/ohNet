@@ -10,8 +10,35 @@
 
 #include <stdlib.h>
 
+
+namespace OpenHome {
+namespace Net {
+class AutoFunctor
+{
+public:
+    AutoFunctor(Functor aFunctor);
+    ~AutoFunctor();
+private:
+    Functor iFunctor;
+};
+} // namespace Net
+} // namespace OpenHome
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
+
+// AutoFunctor
+
+AutoFunctor::AutoFunctor(Functor aFunctor)
+    : iFunctor(aFunctor)
+{
+}
+
+AutoFunctor::~AutoFunctor()
+{
+    iFunctor();
+}
+
 
 // DvAction
 
@@ -44,7 +71,11 @@ DviService::DviService(const TChar* aDomain, const TChar* aName, TUint aVersion)
     , iLock("DVSM")
     , iRefCount(1)
     , iPropertiesLock("SPRM")
+    , iDisabled(true)
+    , iCurrentInvocationCount(0)
+    , iDisabledSem("DVSS", 0)
 {
+    iDisabledSem.Signal();
     Stack::AddObject(this);
 }
 
@@ -94,6 +125,23 @@ void DviService::RemoveRef()
     }
 }
 
+void DviService::Disable()
+{
+    iLock.Wait();
+    iDisabled = true;
+    iLock.Signal();
+    iDisabledSem.Wait();
+    iDisabledSem.Signal(); // allow for possible further calls to Disable()
+}
+
+void DviService::Enable()
+{
+    iLock.Wait();
+    iDisabled = false;
+    iDisabledSem.Signal();
+    iLock.Signal();
+}
+
 void DviService::AddAction(Action* aAction, FunctorDviInvocation aFunctor)
 {
     DvAction action(aAction, aFunctor);
@@ -107,23 +155,46 @@ const DviService::VectorActions& DviService::DvActions() const
 
 void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName)
 {
-    for (TUint i=0; i<iDvActions.size(); i++) {
-        if (iDvActions[i].Action()->Name() == aActionName) {
-            try {
-                iDvActions[i].Functor()(aInvocation);
+    iLock.Wait();
+    TBool disabled = iDisabled;
+    if (disabled) {
+        iLock.Signal();
+        aInvocation.InvocationReportError(502, Brn("Action not available"));
+    }
+    iCurrentInvocationCount++;
+    (void)iDisabledSem.Clear();
+    iLock.Signal();
+
+    {
+        AutoFunctor a(MakeFunctor(*this, &DviService::InvocationCompleted));
+        for (TUint i=0; i<iDvActions.size(); i++) {
+            if (iDvActions[i].Action()->Name() == aActionName) {
+                try {
+                    iDvActions[i].Functor()(aInvocation);
+                }
+                catch (Exception& e) {
+                    Brn msg(e.Message());
+                    aInvocation.InvocationReportError(801, msg);
+                }
+                catch (...) {
+                    aInvocation.InvocationReportError(801, Brn("Unknown error"));
+                }
+                return;
             }
-            catch (Exception& e) {
-                Brn msg(e.Message());
-                aInvocation.InvocationReportError(801, msg);
-            }
-            catch (...) {
-                aInvocation.InvocationReportError(801, Brn("Unknown error"));
-            }
-            return;
         }
     }
 
     aInvocation.InvocationReportError(501, Brn("Action not implemented"));
+}
+
+void DviService::InvocationCompleted()
+{
+    iLock.Wait();
+    iCurrentInvocationCount--;
+    if (iCurrentInvocationCount == 0) {
+        iDisabledSem.Signal();
+    }
+    iLock.Signal();
 }
 
 void DviService::PropertiesLock()

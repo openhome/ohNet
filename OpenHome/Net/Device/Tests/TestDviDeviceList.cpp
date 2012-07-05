@@ -38,6 +38,13 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.PtrZ();
 }
 
+static void AddService(DviDevice* aDevice, DviService* aService)
+{
+    aDevice->AddService(aService);
+    aService->RemoveRef();
+}
+
+
 class DvDevices
 {
 public:
@@ -60,7 +67,7 @@ DvDevices::DvDevices()
     device->SetAttribute("Upnp.Type", "test1");
     device->SetAttribute("Upnp.Version", "1");
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice1.Ptr());
-    device->AddService(new DviService("a.b.c", "service1", 1));
+    AddService(device, new DviService("a.b.c", "service1", 1));
 
     device = new DviDeviceStandard(Brn(gNameDevice1_1));
     iDevices[0]->AddDevice(device);
@@ -68,8 +75,8 @@ DvDevices::DvDevices()
     device->SetAttribute("Upnp.Type", "test3");
     device->SetAttribute("Upnp.Version", "1");
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice1_1.Ptr());
-    device->AddService(new DviService("a.b.c", "service2", 1));
-    device->AddService(new DviService("a.b.c", "service3", 1));
+    AddService(device, new DviService("a.b.c", "service2", 1));
+    AddService(device, new DviService("a.b.c", "service3", 1));
     device->SetEnabled();
 
     device = new DviDeviceStandard(Brn(gNameDevice1_2));
@@ -78,7 +85,7 @@ DvDevices::DvDevices()
     device->SetAttribute("Upnp.Type", "test4");
     device->SetAttribute("Upnp.Version", "1");
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice1_2.Ptr());
-    device->AddService(new DviService("a.b.c", "service4", 1));
+    AddService(device, new DviService("a.b.c", "service4", 1));
     device->SetEnabled();
     iDevices[0]->SetEnabled();
 
@@ -88,8 +95,8 @@ DvDevices::DvDevices()
     device->SetAttribute("Upnp.Type", "test2");
     device->SetAttribute("Upnp.Version", "1");
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice2.Ptr());
-    device->AddService(new DviService("a.b.c", "service1", 1));
-    device->AddService(new DviService("a.b.c", "service2", 1));
+    AddService(device, new DviService("a.b.c", "service1", 1));
+    AddService(device, new DviService("a.b.c", "service2", 1));
     iDevices[1]->SetEnabled();
 }
 

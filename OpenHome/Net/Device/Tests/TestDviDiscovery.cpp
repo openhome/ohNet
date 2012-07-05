@@ -143,6 +143,12 @@ static TBool ServiceVectorContainsType(const std::vector<TChar*>& aVector, const
     return false;
 }
 
+static void AddService(DviDevice* aDevice, DviService* aService)
+{
+    aDevice->AddService(aService);
+    aService->RemoveRef();
+}
+
 
 // CpListenerBasic
 
@@ -258,8 +264,8 @@ void SuiteAlive::Test()
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "type1");
     device->SetAttribute("Upnp.Version", "1");
-    device->AddService(new DviService("a.b.c", "service1", 1));
-    device->AddService(new DviService("a.b.c", "service2", 1));
+    AddService(device, new DviService("a.b.c", "service1", 1));
+    AddService(device, new DviService("a.b.c", "service2", 1));
     device->SetEnabled();
     blocker->Wait(1);
     /* we expect 5 messages but linux sometimes reports multicast messages from
@@ -500,9 +506,9 @@ void SuiteMsearch::Test()
     device->SetAttribute("Upnp.Domain", "upnp.org");
     device->SetAttribute("Upnp.Type", "test1");
     device->SetAttribute("Upnp.Version", "1");
-    device->AddService(new DviService("upnp.org", "service1", 1));
-    device->AddService(new DviService("openhome.org", "service2", 3));
-    device->AddService(new DviService("upnp.org", "service3", 1));
+    AddService(device, new DviService("upnp.org", "service1", 1));
+    AddService(device, new DviService("openhome.org", "service2", 3));
+    AddService(device, new DviService("upnp.org", "service3", 1));
     DviService* service = new DviService("upnp.org", "service1", 1);
     TEST_THROWS(device->AddService(service), AssertionFailed);
     service->RemoveRef();
@@ -516,17 +522,17 @@ void SuiteMsearch::Test()
     device->SetAttribute("Upnp.Domain", "openhome.org");
     device->SetAttribute("Upnp.Type", "test2");
     device->SetAttribute("Upnp.Version", "2");
-    device->AddService(new DviService("openhome.org", "service4", 2));
-    device->AddService(new DviService("openhome.org", "service5", 1));
+    AddService(device, new DviService("openhome.org", "service4", 2));
+    AddService(device, new DviService("openhome.org", "service5", 1));
 
     device = new DviDeviceStandard(gNameDevice2Embedded1);
     iDevices[1]->AddDevice(device);
     device->SetAttribute("Upnp.Domain", "openhome.org");
     device->SetAttribute("Upnp.Type", "test3");
     device->SetAttribute("Upnp.Version", "1");
-    device->AddService(new DviService("upnp.org", "service1", 1));
-    device->AddService(new DviService("openhome.org", "service6", 1));
-    device->AddService(new DviService("openhome.org", "service2", 3));
+    AddService(device, new DviService("upnp.org", "service1", 1));
+    AddService(device, new DviService("openhome.org", "service6", 1));
+    AddService(device, new DviService("openhome.org", "service2", 3));
     service = new DviService("openhome.org", "service5", 1);
     TEST_THROWS(device->AddService(service), AssertionFailed);
     service->RemoveRef();

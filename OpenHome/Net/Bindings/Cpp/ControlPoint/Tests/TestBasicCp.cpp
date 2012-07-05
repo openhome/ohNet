@@ -68,6 +68,19 @@ void TestBasicCp::TestActions(CpDeviceCpp& aDevice)
     delete proxy;
 }
 
+void TestBasicCp::TestThrows(CpDeviceCpp& aDevice)
+{
+    CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(aDevice);
+    Print("  Actions throw when device disabled\n");
+    try {
+        TUint valUint;
+        proxy->SyncGetUint(valUint);
+        ASSERTS();
+    }
+    catch(ProxyError&) { }
+    delete proxy;
+}
+
 static void STDCALL updatesComplete(void* aPtr)
 {
     reinterpret_cast<Semaphore*>(aPtr)->Signal();
