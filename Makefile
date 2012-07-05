@@ -189,21 +189,21 @@ include UserTargets.mak
 # Following macros must be provided by each file which wraps Common.mak
 
 make_obj_dir:
-	mkdir -p $(objdir)
+	$(mkdir) $(objdir)
 
 copy_build_includes:
-	mkdir -p $(inc_build)
-	mkdir -p $(inc_build)/OpenHome
-	mkdir -p $(inc_build)/OpenHome/Private
-	mkdir -p $(inc_build)/OpenHome/Net
-	mkdir -p $(inc_build)/OpenHome/Net/Private
-	mkdir -p $(inc_build)/OpenHome/Net/Core
-	mkdir -p $(inc_build)/OpenHome/Net/C
-	mkdir -p $(inc_build)/OpenHome/Net/Cpp
-	mkdir -p $(inc_build)/OpenHome/Net/Private/Js
-	mkdir -p $(inc_build)/OpenHome/Net/Private/Js/Tests
-	mkdir -p $(inc_build)/OpenHome/Net/Private/Js/Tests/lib
-	mkdir -p $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
+	$(mkdir) $(inc_build)
+	$(mkdir) $(inc_build)/OpenHome
+	$(mkdir) $(inc_build)/OpenHome/Private
+	$(mkdir) $(inc_build)/OpenHome/Net
+	$(mkdir) $(inc_build)/OpenHome/Net/Private
+	$(mkdir) $(inc_build)/OpenHome/Net/Core
+	$(mkdir) $(inc_build)/OpenHome/Net/C
+	$(mkdir) $(inc_build)/OpenHome/Net/Cpp
+	$(mkdir) $(inc_build)/OpenHome/Net/Private/Js
+	$(mkdir) $(inc_build)/OpenHome/Net/Private/Js/Tests
+	$(mkdir) $(inc_build)/OpenHome/Net/Private/Js/Tests/lib
+	$(mkdir) $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
 	$(cp) OpenHome/*.h $(inc_build)/OpenHome/Private
 	$(cp) OpenHome/Buffer.inl $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/Buffer.h
@@ -288,11 +288,11 @@ install-pkgconf : tt
     #@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
 
 install-libs :
-	mkdir -p $(installlibdir)
+	$(mkdir) $(installlibdir)
 	$(cp) $(objdir)* $(installlibdir) 
 
 install-includes :
-	mkdir -p $(installincludedir)
+	$(mkdir) $(installincludedir)
 	$(cp) -r $(inc_build)/* $(installincludedir) 
 
 uninstall-pkgconf :
@@ -300,10 +300,10 @@ uninstall-pkgconf :
     #@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
 
 uninstall-libs :
-	rm -rf $(installlibdir)
+	$(rmdir) $(installlibdir)
 
 uninstall-includes :
-	rm -rf $(installincludedir)
+	$(rmdir) $(installincludedir)
 
 java_packages = ohnet \
 				openhome.net.controlpoint \
@@ -314,22 +314,22 @@ java_packages = ohnet \
 
 docs:
 	rm -rf Build/Docs
-	mkdir -p Build/Docs
-	mkdir -p Build/Docs/C
+	$(mkdir) Build/Docs
+	$(mkdir) Build/Docs/C
 	doxygen DoxyfileC
-	mkdir -p Build/Docs/CppCore
+	$(mkdir) Build/Docs/CppCore
 	doxygen DoxyfileCppCore
-	mkdir -p Build/Docs/CppStd
+	$(mkdir) Build/Docs/CppStd
 	doxygen DoxyfileCppStd
-	mkdir -p Build/Docs/Cs
+	$(mkdir) Build/Docs/Cs
 	doxygen DoxyfileCs
-	mkdir -p Build/Docs/Java
+	$(mkdir) Build/Docs/Java
 	doxygen DoxyfileJava
-	mkdir -p Build/Docs/Js
+	$(mkdir) Build/Docs/Js
 	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js OpenHome/Net/Bindings/Js/ControlPoint OpenHome/Net/Bindings/Js/ControlPoint/Proxies
 
 bundle: tt
-	mkdir -p $(bundle_build)
+	$(mkdir) $(bundle_build)
 ifeq ($(targetplatform),)
 	echo Usage: make bundle targetplatform=Linux-x86
 else

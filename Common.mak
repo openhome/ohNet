@@ -1203,7 +1203,7 @@ $(objdir)ohnet-src.jar :
 ohNetAndroidNative : make_obj_dir copy_build_includes ohNetJava
 	cp OpenHome/Net/Bindings/Android/jni/ifaddrs.h $(ANDROID_NDK_ROOT)/platforms/android-3/arch-arm/usr/include/
 	$(ANDROID_NDK_ROOT)/ndk-build -C OpenHome/Net/Bindings/Android/jni
-	mkdir -p $(objdir)Android/libs/armeabi
+	$(mkdir) $(objdir)Android/libs/armeabi
 	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNet.so $(objdir)Android/libs/armeabi/
 	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNetJni.so $(objdir)Android/libs/armeabi/
 	cp $(objdir)ohnet.jar $(objdir)Android/libs/

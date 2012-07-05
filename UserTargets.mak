@@ -9,6 +9,7 @@ clean :
 	$(rmdir) $(objdir)
 	$(rmdir) $(inc_build)
 	$(rmdir) Build/Bundles
+	$(rmdir) Build/Docs
 
 mostlyclean : clean clean-t4
 	$(rmdir) Generated
