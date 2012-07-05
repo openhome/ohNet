@@ -187,6 +187,8 @@ endif
 include Generated/Proxies.mak
 include Generated/Devices.mak
 
+else
+include T4Linux.mak
 endif
 include UserTargets.mak
 

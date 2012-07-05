@@ -11,7 +11,7 @@ clean :
 	$(rmdir) Build/Bundles
 	$(rmdir) Build/Docs
 
-mostlyclean : clean
+mostlyclean : clean clean-t4
 	$(rmdir) Generated
 
 maintainer-clean : mostlyclean
