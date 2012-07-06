@@ -15,3 +15,4 @@ build:
 	$(MAKE) uset4=yes
 clean:
 	$(MAKE) maintainer-clean
+	dh_clean

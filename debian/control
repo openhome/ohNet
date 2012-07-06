@@ -6,7 +6,6 @@ Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.2
 Homepage: http://www.openhome.org/wiki/OhNet
 Vcs-git: git://github.com/openhome/ohNet.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/ohnet.git;a=summary
 Vcs-Browser: https://github.com/openhome/ohNet.git
 
 Package: ohnet
@@ -18,3 +17,25 @@ Description: OpenHome Networking Stack
  Linux, Windows, Mac, iOS and Android. The public APIs are available for the
  device and control point stacks in C++, C#, Java and C. JavaScript APIs are
  also provided for the control point stack.
+
+Package: ohnet-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OpenHome Networking Stack - development
+ ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
+ point and a device stack that can be used together or independently. It runs on
+ Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ device and control point stacks in C++, C#, Java and C. JavaScript APIs are
+ also provided for the control point stack.  This package includes the
+ development support files.
+
+Package: ohnet-dbg
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OpenHome Networking Stack - development
+ ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
+ point and a device stack that can be used together or independently. It runs on
+ Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ device and control point stacks in C++, C#, Java and C. JavaScript APIs are
+ also provided for the control point stack.  This package includes debugging
+ symbols for use when debugging applications which use ohNet.
