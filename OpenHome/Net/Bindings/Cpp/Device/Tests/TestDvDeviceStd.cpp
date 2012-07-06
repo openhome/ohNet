@@ -22,6 +22,7 @@ public:
     CpDevices(const std::string& aTargetUdn, Semaphore& aAddedSem);
     ~CpDevices();
     void TestActions();
+    void TestThrows();
     void TestSubscriptions();
     void Added(CpDeviceCpp& aDevice);
     void Removed(CpDeviceCpp& aDevice);
@@ -55,6 +56,13 @@ void CpDevices::TestActions()
     TestBasicCp::TestActions(*device);
 }
 
+void CpDevices::TestThrows()
+{
+    ASSERT(iList.size() != 0);
+    CpDeviceCpp* device = iList[0];
+    TestBasicCp::TestThrows(*device);
+}
+
 void CpDevices::TestSubscriptions()
 {
     ASSERT(iList.size() != 0);
@@ -65,7 +73,7 @@ void CpDevices::TestSubscriptions()
 void CpDevices::Added(CpDeviceCpp& aDevice)
 {
     iLock.Wait();
-    if (aDevice.Udn() == iTargetUdn) {
+    if (iList.size() == 0 && aDevice.Udn() == iTargetUdn) {
         iList.push_back(&aDevice);
         aDevice.AddRef();
         iAddedSem.Signal();
@@ -77,6 +85,11 @@ void CpDevices::Removed(CpDeviceCpp& /*aDevice*/)
 {
 }
 
+
+void STDCALL DeviceDisabled(void* aPtr)
+{
+    ((Semaphore*)aPtr)->Signal();
+}
 
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
@@ -111,15 +124,20 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     CpDeviceListCppUpnpServiceType* list =
                 new CpDeviceListCppUpnpServiceType(domainName, serviceType, ver, added, removed);
     sem->Wait(30*1000); // allow up to 30s to find our one device
-    delete sem;
     try {
         deviceList->TestActions();
+        Functor cb = MakeFunctor(sem, &DeviceDisabled);
+        device->Device().SetDisabled(cb);
+        sem->Wait();
+        deviceList->TestThrows();
+        device->Device().SetEnabled();
         deviceList->TestSubscriptions();
     }
     catch (Exception& e) {
         Print("Exception %s from %s:%u\n", e.Message(), e.File(), e.Line());
         ASSERTS();
     }
+    delete sem;
     delete list;
     delete deviceList;
     delete device;

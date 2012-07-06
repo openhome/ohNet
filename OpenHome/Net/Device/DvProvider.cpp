@@ -34,11 +34,13 @@ DvProvider::DvProvider(DviDevice& aDevice, const TChar* aDomain, const TChar* aT
     , iPropertyChanged(false)
 {
     iService = new DviService(aDomain, aType, aVersion);
-    aDevice.AddService(iService); // ownership of service passed to aDevice
+    aDevice.AddService(iService);
 }
 
 DvProvider::~DvProvider()
 {
+    iService->Disable();
+    iService->RemoveRef();
 }
 
 bool DvProvider::SetPropertyInt(PropertyInt& aProperty, TInt aValue)
