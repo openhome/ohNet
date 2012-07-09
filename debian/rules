@@ -12,10 +12,11 @@ export DH_VERBOSE=1
 %:
 	dh $@ 
 
-dh_auto-build: build
+install: build
 
-build:
-	$(MAKE) uset4=yes
 clean:
 	$(MAKE) maintainer-clean
 	dh_clean
+
+build:
+	$(MAKE) uset4=yes

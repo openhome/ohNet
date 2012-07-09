@@ -64,7 +64,22 @@ License:
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Files:  OpenHome/sha*.*
-Copyright:
+Copyright: Copyright (C) The Internet Society (2006).  Donald E. Eastlake, Tony
+ Hansen
+License:
+ This document is subject to the rights, licenses and restrictions
+ contained in BCP 78, and except as set forth therein, the authors
+ retain all their rights.
+
+ This document and the information contained herein are provided on an
+ "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+ OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+ ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+ INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+ INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+ WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
 Files:  OpenHome/Net/Device/Bonjour/mDNSCore/*
 Copyright: 2002-2003 Apple Computer, Inc. All rights reserved.
 License: Apache 2.0
