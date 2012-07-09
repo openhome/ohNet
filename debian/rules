@@ -11,6 +11,9 @@ export DH_VERBOSE=1
 
 %:
 	dh $@ 
+
+dh_auto-build: build
+
 build:
 	$(MAKE) uset4=yes
 clean:
