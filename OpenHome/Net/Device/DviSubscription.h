@@ -44,12 +44,12 @@ public:
     void AddRef();
     TBool TryAddRef();
     void RemoveRef();
+    void Remove();
     void Renew(TUint& aSeconds);
     void WriteChanges();
     const Brx& Sid() const;
     TBool PropertiesInitialised() const;
     TBool HasExpired() const;
-    DviService* RefService();
 private:
     ~DviSubscription();
     IPropertyWriter* CreateWriter();

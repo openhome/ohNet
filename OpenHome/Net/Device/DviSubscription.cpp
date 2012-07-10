@@ -112,6 +112,20 @@ void DviSubscription::RemoveRef()
     }
 }
 
+void DviSubscription::Remove()
+{
+    iLock.Wait();
+    DviService* service = iService;
+    if (service != NULL) {
+        service->AddRef();
+    }
+    iLock.Signal();
+    if (service != NULL) {
+        service->RemoveSubscription(iSid);
+        service->RemoveRef();
+    }
+}
+
 void DviSubscription::Renew(TUint& aSeconds)
 {
     const TUint maxDuration = Stack::InitParams().DvMaxUpdateTimeSecs();
@@ -135,11 +149,7 @@ void DviSubscription::WriteChanges()
         // we may block a publisher for a relatively long time failing to connect
         // its reasonable to assume that later attempts are also likely to fail
         // ...so its better if we don't keep blocking and instead remove the subscription
-        DviService* service = RefService();
-        if (service != NULL) {
-            service->RemoveSubscription(iSid);
-            service->RemoveRef();
-        }
+        Remove();
     }
     catch(NetworkError&) {}
     catch(HttpError&) {}
@@ -222,18 +232,6 @@ TBool DviSubscription::PropertiesInitialised() const
 TBool DviSubscription::HasExpired() const
 {
     return iExpired;
-}
-
-DviService* DviSubscription::RefService()
-{
-    DviService* service;
-    iLock.Wait();
-    service = iService;
-    if (service != NULL) {
-        service->AddRef();
-    }
-    iLock.Signal();
-    return service;
 }
 
 DviSubscription::~DviSubscription()

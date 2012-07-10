@@ -233,11 +233,7 @@ void PropertyUpdatesFlattened::RemoveSubscription(const Brx& aSid, TBool aExpire
         DviSubscription* subscription = it->second;
         iSubscriptionMap.erase(it);
         if (!aExpired) {
-            DviService* service = subscription->RefService();
-            if (service != NULL) {
-                service->RemoveSubscription(aSid);
-                service->RemoveRef();
-            }
+            subscription->Remove();
         }
     }
 }
