@@ -49,13 +49,12 @@ DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWr
     , iUserData(aUserData)
     , iService(NULL)
     , iSequenceNumber(0)
-    , iExpired(false)
 {
     iDevice.AddWeakRef();
     aSid.TransferTo(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
     iTimer = new Timer(functor);
-    Renew(aDurationSecs);
+    DoRenew(aDurationSecs);
 }
 
 void DviSubscription::Start(DviService& aService)
@@ -128,6 +127,17 @@ void DviSubscription::Remove()
 
 void DviSubscription::Renew(TUint& aSeconds)
 {
+    iLock.Wait();
+    TBool expired = (iService == NULL);
+    iLock.Signal();
+    if (expired) {
+        THROW(DvSubscriptionError);
+    }
+    DoRenew(aSeconds);
+}
+
+void DviSubscription::DoRenew(TUint& aSeconds)
+{
     const TUint maxDuration = Stack::InitParams().DvMaxUpdateTimeSecs();
     if (aSeconds == 0 || aSeconds > maxDuration) {
         aSeconds = maxDuration;
@@ -173,10 +183,6 @@ IPropertyWriter* DviSubscription::CreateWriter()
         return NULL;
     }
     AutoPropertiesLock b(*iService);
-    if (iExpired) {
-        LOG(kDvEvent, "Subscription expired; don't publish changes\n");
-        return NULL;
-    }
     IPropertyWriter* writer = NULL;
     const DviService::VectorProperties& properties = iService->Properties();
     ASSERT(properties.size() == iPropertySequenceNumbers.size()); // services can't change definition after first advertisement
@@ -229,11 +235,6 @@ TBool DviSubscription::PropertiesInitialised() const
     return initialised;
 }
 
-TBool DviSubscription::HasExpired() const
-{
-    return iExpired;
-}
-
 DviSubscription::~DviSubscription()
 {
     iLock.Wait();
@@ -251,9 +252,6 @@ DviSubscription::~DviSubscription()
 
 void DviSubscription::Expired()
 {
-    Stack::Mutex().Wait();
-    iExpired = true;
-    Stack::Mutex().Signal();
     // no need to call NotifySubscriptionExpired - line below calls back into Stop() which performs the notification
     iService->RemoveSubscription(iSid);
 }

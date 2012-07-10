@@ -3,6 +3,7 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Private/Timer.h>
@@ -12,6 +13,8 @@
 #include <vector>
 #include <map>
 #include <list>
+
+EXCEPTION(DvSubscriptionError);
 
 namespace OpenHome {
 namespace Net {
@@ -49,11 +52,11 @@ public:
     void WriteChanges();
     const Brx& Sid() const;
     TBool PropertiesInitialised() const;
-    TBool HasExpired() const;
 private:
     ~DviSubscription();
     IPropertyWriter* CreateWriter();
     void Expired();
+    void DoRenew(TUint& aSeconds);
 private:
     mutable Mutex iLock;
     TUint iRefCount;
@@ -65,7 +68,6 @@ private:
     std::vector<TUint> iPropertySequenceNumbers;
     TUint iSequenceNumber;
     Timer* iTimer;
-    TBool iExpired;
 };
 
 class PropertyWriter : public IPropertyWriter
