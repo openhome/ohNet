@@ -104,14 +104,28 @@ void InvocationUpnp::ReadResponse()
     }
     else {
         TUint length = headerContentLength.ContentLength();
-        if (length == 0) {
-            THROW(HttpError);
+        if (length != 0) {
+            Bwh buf(length);
+            while (length > 0) {
+                TUint readBytes = (length<kMaxReadBytes? length : kMaxReadBytes);
+                buf.Append(iReadBuffer.Read(readBytes));
+                length -= readBytes;
+            }
+            buf.TransferTo(entity);
         }
-        entity.Grow(length);
-        while (length > 0) {
-            TUint readBytes = (length<kMaxReadBytes? length : kMaxReadBytes);
-            entity.Append(iReadBuffer.Read(readBytes));
-            length -= readBytes;
+        else { // no content length - read until connection closed by server
+            try {
+                for (;;) {
+                    Brn buf = iReadBuffer.Read(kMaxReadBytes);
+                    entity.Grow(entity.Bytes() + kMaxReadBytes);
+                    entity.Append(buf);
+                }
+            }
+            catch (ReaderError&) {
+                Brn snaffle = iReadBuffer.Snaffle();
+                entity.Grow(entity.Bytes() + snaffle.Bytes());
+                entity.Append(snaffle);
+            }
         }
     }
 
