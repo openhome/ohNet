@@ -1,4 +1,4 @@
-Source: ohnet
+Source: libohnet
 Section: net
 Priority: extra
 Maintainer: Cédric Andrieu <ced@opensource.wolfsonmicro.com>
@@ -8,7 +8,7 @@ Homepage: http://www.openhome.org/wiki/OhNet
 Vcs-git: git://github.com/openhome/ohNet.git
 Vcs-Browser: https://github.com/openhome/ohNet.git
 
-Package: ohnet
+Package: libohnet
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack
@@ -18,7 +18,7 @@ Description: OpenHome Networking Stack
  device and control point stacks in C++, C#, Java and C. JavaScript APIs are
  also provided for the control point stack.
 
-Package: ohnet-dev
+Package: libohnet-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
@@ -29,6 +29,49 @@ Description: OpenHome Networking Stack - development
  also provided for the control point stack.  This package includes the
  development support files.
 
+Package: libohnet-java-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OpenHome Networking Stack - development
+ ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
+ point and a device stack that can be used together or independently. It runs on
+ Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ device and control point stacks in C++, C#, Java and C. JavaScript APIs are
+ also provided for the control point stack.  This package includes the
+ development support files.
+
+Package: libohnet-sharp-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OpenHome Networking Stack - development
+ ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
+ point and a device stack that can be used together or independently. It runs on
+ Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ device and control point stacks in C++, C#, Java and C. JavaScript APIs are
+ also provided for the control point stack.  This package includes the
+ development support files.
+
+Package: libohnet-js-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OpenHome Networking Stack - development
+ ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
+ point and a device stack that can be used together or independently. It runs on
+ Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ device and control point stacks in C++, C#, Java and C. JavaScript APIs are
+ also provided for the control point stack.  This package includes the
+ development support files.
+
+Package: libohnet-cpp-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OpenHome Networking Stack - development
+ ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
+ point and a device stack that can be used together or independently. It runs on
+ Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ device and control point stacks in C++, C#, Java and C. JavaScript APIs are
+ also provided for the control point stack.  This package includes the
+ development support files.
 #Package: ohnet-dbg
 #Architecture: any
 #Depends: ${shlibs:Depends}, ${misc:Depends}

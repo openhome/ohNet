@@ -19,4 +19,35 @@ clean:
 	dh_clean
 
 build:
+	$(MAKE) generate-makefiles uset4=yes
+	$(MAKE) GenAll uset4=yes
 	$(MAKE) uset4=yes
+	$(MAKE) doc
+
+# Build architecture-independent files here.
+binary-indep: build install
+	# We have nothing to do by default.
+	# Build architecture-dependent files here.
+	#
+binary-arch: build install
+	#dh_testdir
+	#dh_testroot
+	#dh_install --sourcedir=debian/tmp
+	
+	dh_installdocs
+	#dh_installexamples
+	#dh_install_installmenu
+	#dh_installcron
+	#dh_installman
+	#dh_installinfo
+	dh_install_installmenutallchangelogs ChangeLog
+	dh_link
+	#dh_strip --dbg-package=libmm-dbg
+	#libmmdh_compress
+	dh_fixperms
+	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
