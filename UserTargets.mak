@@ -9,12 +9,13 @@ clean :
 	$(rmdir) $(objdir)
 	$(rmdir) $(inc_build)
 	$(rmdir) Build/Bundles
-	$(rmdir) Build/Docs
-	$(rmdir) Build
+
 
 mostlyclean : clean
 	$(rmdir) Generated
 
 maintainer-clean : mostlyclean
+	$(rmdir) Build/Docs
+	$(rmdir) Build
 
 generate-makefiles : Generated$(dirsep)GenerateSourceFiles.mak Generated$(dirsep)Proxies.mak Generated$(dirsep)Devices.mak

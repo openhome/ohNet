@@ -174,8 +174,6 @@ ifeq ($(uset4), yes)
 include T4Linux.mak
 endif
 
-# Actual building of code is shared between platforms
-include Common.mak
 
 # Include the generated makefiles. Because nmake on Windows requires contortions to
 # include such files and handle their non-existance, these includes have to be at
@@ -184,11 +182,15 @@ ifeq ($(uset4),yes)
 include Generated/GenerateSourceFiles.mak
 endif
 
+# Actual building of code is shared between platforms
+include Common.mak
+
 include Generated/Proxies.mak
 include Generated/Devices.mak
 
 else
 include T4Linux.mak
+include Common.mak
 endif
 include UserTargets.mak
 
