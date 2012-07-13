@@ -623,12 +623,6 @@ void CpiSubscriptionManager::SubnetListChanged()
 
 void CpiSubscriptionManager::HandleInterfaceChange()
 {
-    Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::DoHandleInterfaceChange);
-    NetworkAdapterList::TempFailureRetry(functor);
-}
-
-void CpiSubscriptionManager::DoHandleInterfaceChange()
-{
     AutoMutex a(iLock);
 
     // trigger CpiSubscriptionManager::WaitForPendingAdds

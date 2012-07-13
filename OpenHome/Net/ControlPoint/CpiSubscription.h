@@ -213,7 +213,6 @@ private:
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange();
-    void DoHandleInterfaceChange();
     TBool ReadyForShutdown() const;
     void Run();
 private:
