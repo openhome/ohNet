@@ -228,7 +228,6 @@ namespace OpenHome.Net.Device
         void SetDisabled(System.Action aCompleted);
         void GetAttribute(string aKey, out string aValue);
         void SetAttribute(string aKey, string aValue);
-        //void SetXmlExtension(string aXml);
         IntPtr Handle();
     }
 
