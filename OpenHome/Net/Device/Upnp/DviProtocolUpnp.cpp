@@ -1347,12 +1347,8 @@ void DviMsgScheduler::NextMsg()
     try {
         stop = (iStop || (remaining = iMsg->NextMsg()) == 0);
     }
-    catch (WriterError&) {
-        stop = true;
-    }
-    catch (NetworkError&) {
-        stop = true;
-    }
+    catch (WriterError&) {}
+    catch (NetworkError&) {}
     if (stop) {
         iListener.NotifyMsgSchedulerComplete(this);
         return;
@@ -1362,16 +1358,12 @@ void DviMsgScheduler::NextMsg()
     }
 }
 
-void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs)
+void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
     TInt remaining = iEndTimeMs - Os::TimeInMs();
     TInt maxUpdateTimeMs = (TInt)Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
-    if (remaining > maxUpdateTimeMs) {
-        // the clock has changed, leaving iEndTimeMs too far in the future.  Reset it to a soonish value.
-        iEndTimeMs = Os::TimeInMs() + (aRemainingMsgs * kMinTimerIntervalMs * 2);
-        remaining = iEndTimeMs - Os::TimeInMs();
-    }
+    ASSERT(remaining <= maxUpdateTimeMs);
     TInt maxInterval = remaining / (TInt)aRemainingMsgs;
     if (maxInterval < kMinTimerIntervalMs) {
         // we're running behind.  Schedule another timer to run immediately

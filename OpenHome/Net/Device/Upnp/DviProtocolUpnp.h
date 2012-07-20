@@ -226,7 +226,7 @@ private:
     void Construct();
     void SetDuration(TUint aDuration);
     void NextMsg();
-    void ScheduleNextTimer(TUint aRemainingMsgs);
+    void ScheduleNextTimer(TUint aRemainingMsgs) const;
 private:
     DviMsg* iMsg;
     Timer* iTimer;
