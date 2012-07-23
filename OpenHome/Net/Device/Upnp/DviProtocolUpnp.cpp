@@ -1579,11 +1579,9 @@ DviMsgNotify::DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
 {
 }
 
-TUint DviMsgNotify::NextMsg()
+DviMsgNotify::~DviMsgNotify()
 {
-    TUint remaining = DviMsg::NextMsg();
-    if (remaining == 0 && iCompleted != 0) {
+    if (iCompleted != NULL) {
         iCompleted();
     }
-    return remaining;
 }

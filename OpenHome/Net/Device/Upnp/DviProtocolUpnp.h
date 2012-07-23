@@ -327,8 +327,7 @@ private:
                                    Bwh& aUri, TUint aConfigId, Functor& aCompleted);
     DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-private: // from DviMsg
-    TUint NextMsg();
+    ~DviMsgNotify();
 private:
     SsdpNotifier iSsdpNotifier;
     Functor iCompleted;
