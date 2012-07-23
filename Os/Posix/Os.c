@@ -247,7 +247,7 @@ uint64_t OsTimeInUs()
     if (now.tv_sec < gPrevTime.tv_sec ||
         (now.tv_sec == gPrevTime.tv_sec && now.tv_usec < gPrevTime.tv_usec)) {
         diff = subtractTimeval(&gPrevTime, &now);
-        //fprintf(stderr, "WARNING: clock moved backwards by %lu.%03lusecs\n", diff.tv_sec, diff.tv_usec/1000);
+        fprintf(stderr, "WARNING: clock moved backwards by %llu.%03llusecs\n", (unsigned long long)diff.tv_sec, (unsigned long long)(diff.tv_usec/1000));
         gTimeAdjustment = addTimeval(&gTimeAdjustment, &diff);
     }
     gPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
