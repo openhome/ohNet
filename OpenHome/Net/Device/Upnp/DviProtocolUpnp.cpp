@@ -27,12 +27,16 @@ const Brn DviProtocolUpnp::kDeviceXmlName("device.xml");
 const Brn DviProtocolUpnp::kServiceXmlName("service.xml");
 const Brn DviProtocolUpnp::kControlUrlTail("control");
 const Brn DviProtocolUpnp::kEventUrlTail("event");
+static const TChar kAttributeKeyVersionMajor[] = "Version.Major";
+static const TChar kAttributeKeyVersionMinor[] = "Version.Minor";
 
 DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     : iDevice(aDevice)
     , iLock("DMUP")
     , iSuppressScheduledEvents(false)
 {
+    SetAttribute(kAttributeKeyVersionMajor, "1");
+    SetAttribute(kAttributeKeyVersionMinor, "1");
     iLock.Wait();
     iServer = &DviStack::ServerUpnp();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
@@ -791,8 +795,15 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
         iWriter.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         iWriter.Write("<root xmlns=\"urn:schemas-upnp-org:device-1-0\">");
         iWriter.Write("<specVersion>");
-        iWriter.Write("<major>1</major>");
-        iWriter.Write("<minor>1</minor>");
+        iWriter.Write("<major>");
+        const TChar* version;
+        (void)iDeviceUpnp.GetAttribute(kAttributeKeyVersionMajor, &version);
+        iWriter.Write(version);
+        iWriter.Write("</major>");
+        iWriter.Write("<minor>");
+        (void)iDeviceUpnp.GetAttribute(kAttributeKeyVersionMinor, &version);
+        iWriter.Write(version);
+        iWriter.Write("</minor>");
         iWriter.Write("</specVersion>");
     }
 
