@@ -1581,7 +1581,7 @@ DviMsgNotify::DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
 
 DviMsgNotify::~DviMsgNotify()
 {
-    if (iCompleted != NULL) {
+    if (iCompleted != 0) {
         iCompleted();
     }
 }
