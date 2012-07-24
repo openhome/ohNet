@@ -1,14 +1,15 @@
 Source: libohnet
-Section: net
+Section: devel
 Priority: extra
 Maintainer: Cédric Andrieu <ced@opensource.wolfsonmicro.com>
 Build-Depends: debhelper (>= 8.0.0)
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 Homepage: http://www.openhome.org/wiki/OhNet
 Vcs-git: git://github.com/openhome/ohNet.git
 Vcs-Browser: https://github.com/openhome/ohNet.git
 
 Package: libohnet
+Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack
@@ -19,6 +20,7 @@ Description: OpenHome Networking Stack
  also provided for the control point stack.
 
 Package: libohnet-dev
+Section: libdevel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
@@ -30,6 +32,7 @@ Description: OpenHome Networking Stack - development
  development support files.
 
 Package: libohnet-java-dev
+Section: libdevel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
@@ -40,7 +43,8 @@ Description: OpenHome Networking Stack - development
  also provided for the control point stack.  This package includes the
  development support files.
 
-Package: libohnet-sharp-dev
+Package: libohnet-csharp-dev
+Section: libdevel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
@@ -52,6 +56,7 @@ Description: OpenHome Networking Stack - development
  development support files.
 
 Package: libohnet-js-dev
+Section: libdevel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
@@ -63,6 +68,7 @@ Description: OpenHome Networking Stack - development
  development support files.
 
 Package: libohnet-cpp-dev
+Section: libdevel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
@@ -74,6 +80,7 @@ Description: OpenHome Networking Stack - development
  development support files.
 
 Package: libohnet-doc
+Section: doc
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development

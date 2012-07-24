@@ -1,5 +1,5 @@
 libohnet (1.0.234-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial release (Closes: 682190)
 
  -- Cédric Andrieu <ced@opensource.wolfsonmicro.com>  Fri, 01 Jun 2012 16:45:38 +0100
