@@ -22,7 +22,7 @@ build:
 	$(MAKE) generate-makefiles uset4=yes
 	$(MAKE) GenAll uset4=yes
 	$(MAKE) uset4=yes
-	$(MAKE) doc
+	$(MAKE) docs
 
 # Build architecture-independent files here.
 binary-indep: build install
