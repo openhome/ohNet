@@ -9,20 +9,35 @@
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 
-%:
-	dh $@ 
+#%:
+#	dh $@ 
 
-install: build
+build: build-stamp
 
-clean:
-	$(MAKE) maintainer-clean
-	dh_clean
+build-stamp:
+	dh_testdir
 
-build:
 	$(MAKE) generate-makefiles uset4=yes
 	$(MAKE) GenAll uset4=yes
 	$(MAKE) uset4=yes
 	$(MAKE) docs
+
+install: build-stamp
+	dh_testdir
+	dh_testroot
+	dh_prep
+	#dh_clean -k
+	dh_installdirs
+					
+	$(MAKE) install prefix=$(CURDIR)/debian/tmp/usr
+	mkdir $(CURDIR)/debian/tmp/Bindings
+	cp -r $(CURDIR)/OpenHome/Net/Bindings/* $(CURDIR)/debian/tmp/Bindings
+
+clean:
+	dh_testdir
+	dh_testroot
+	$(MAKE) maintainer-clean
+	dh_clean
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -30,18 +45,20 @@ binary-indep: build install
 	# Build architecture-dependent files here.
 	#
 binary-arch: build install
-	#dh_testdir
-	#dh_testroot
-	#dh_install --sourcedir=debian/tmp
+	#dh_prep
+	dh_testdir
+	dh_testroot
+	dh_install --sourcedir=debian/tmp
 	
+	dh_installchangelogs
 	dh_installdocs
 	#dh_installexamples
 	#dh_install_installmenu
 	#dh_installcron
 	#dh_installman
 	#dh_installinfo
-	dh_install_installmenutallchangelogs ChangeLog
 	dh_link
+	dh_strip
 	#dh_strip --dbg-package=libmm-dbg
 	#libmmdh_compress
 	dh_fixperms
@@ -51,3 +68,11 @@ binary-arch: build install
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
+
+build-arch: binary-arch
+
+build-indep: binary-indep
+
+binary: binary-indep binary-arch
+
+.PHONY: build clean binary-indep binary-arch binary install
