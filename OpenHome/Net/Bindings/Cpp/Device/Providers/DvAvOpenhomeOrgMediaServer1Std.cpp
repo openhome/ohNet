@@ -190,6 +190,42 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyAttributes(std::string& 
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
+bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyQueryPort(uint32_t aValue)
+{
+    ASSERT(iPropertyQueryPort != NULL);
+    return SetPropertyUint(*iPropertyQueryPort, aValue);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyQueryPort(uint32_t& aValue)
+{
+    ASSERT(iPropertyQueryPort != NULL);
+    aValue = iPropertyQueryPort->Value();
+}
+
+bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyBrowsePort(uint32_t aValue)
+{
+    ASSERT(iPropertyBrowsePort != NULL);
+    return SetPropertyUint(*iPropertyBrowsePort, aValue);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyBrowsePort(uint32_t& aValue)
+{
+    ASSERT(iPropertyBrowsePort != NULL);
+    aValue = iPropertyBrowsePort->Value();
+}
+
+bool DvProviderAvOpenhomeOrgMediaServer1Cpp::SetPropertyUpdateCount(uint32_t aValue)
+{
+    ASSERT(iPropertyUpdateCount != NULL);
+    return SetPropertyUint(*iPropertyUpdateCount, aValue);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::GetPropertyUpdateCount(uint32_t& aValue)
+{
+    ASSERT(iPropertyUpdateCount != NULL);
+    aValue = iPropertyUpdateCount->Value();
+}
+
 DvProviderAvOpenhomeOrgMediaServer1Cpp::DvProviderAvOpenhomeOrgMediaServer1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "MediaServer", 1)
 {
@@ -206,6 +242,9 @@ DvProviderAvOpenhomeOrgMediaServer1Cpp::DvProviderAvOpenhomeOrgMediaServer1Cpp(D
     iPropertyProductUrl = NULL;
     iPropertyProductImageUri = NULL;
     iPropertyAttributes = NULL;
+    iPropertyQueryPort = NULL;
+    iPropertyBrowsePort = NULL;
+    iPropertyUpdateCount = NULL;
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyManufacturerName()
@@ -286,6 +325,24 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyAttributes()
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }
 
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyQueryPort()
+{
+    iPropertyQueryPort = new PropertyUint(new ParameterUint("QueryPort"));
+    iService->AddProperty(iPropertyQueryPort); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyBrowsePort()
+{
+    iPropertyBrowsePort = new PropertyUint(new ParameterUint("BrowsePort"));
+    iService->AddProperty(iPropertyBrowsePort); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnablePropertyUpdateCount()
+{
+    iPropertyUpdateCount = new PropertyUint(new ParameterUint("UpdateCount"));
+    iService->AddProperty(iPropertyUpdateCount); // passes ownership
+}
+
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnableActionManufacturer()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Manufacturer");
@@ -324,6 +381,30 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnableActionAttributes()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Attributes");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyAttributes));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1Cpp::DoAttributes);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnableActionQueryPort()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("QueryPort");
+    action->AddOutputParameter(new ParameterRelated("Value", *iPropertyQueryPort));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1Cpp::DoQueryPort);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnableActionBrowsePort()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("BrowsePort");
+    action->AddOutputParameter(new ParameterRelated("Value", *iPropertyBrowsePort));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1Cpp::DoBrowsePort);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnableActionUpdateCount()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("UpdateCount");
+    action->AddOutputParameter(new ParameterRelated("Value", *iPropertyUpdateCount));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1Cpp::DoUpdateCount);
     iService->AddAction(action, functor);
 }
 
@@ -441,6 +522,45 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoAttributes(IDviInvocation& aInvoc
     aInvocation.InvocationWriteEnd();
 }
 
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoQueryPort(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    uint32_t respValue;
+    DvInvocationStd invocation(aInvocation);
+    QueryPort(invocation, respValue);
+    aInvocation.InvocationWriteStart();
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
+    respWriterValue.Write(respValue);
+    aInvocation.InvocationWriteEnd();
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoBrowsePort(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    uint32_t respValue;
+    DvInvocationStd invocation(aInvocation);
+    BrowsePort(invocation, respValue);
+    aInvocation.InvocationWriteStart();
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
+    respWriterValue.Write(respValue);
+    aInvocation.InvocationWriteEnd();
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoUpdateCount(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    uint32_t respValue;
+    DvInvocationStd invocation(aInvocation);
+    UpdateCount(invocation, respValue);
+    aInvocation.InvocationWriteStart();
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
+    respWriterValue.Write(respValue);
+    aInvocation.InvocationWriteEnd();
+}
+
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoQuery(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
@@ -475,6 +595,21 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::Product(IDvInvocationStd& /*aInvoca
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::Attributes(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
+{
+    ASSERTS();
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::QueryPort(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValue*/)
+{
+    ASSERTS();
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::BrowsePort(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValue*/)
+{
+    ASSERTS();
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1Cpp::UpdateCount(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValue*/)
 {
     ASSERTS();
 }

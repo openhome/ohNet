@@ -44,6 +44,12 @@ public:
     void GetPropertyProductImageUri(Brhz& aValue);
     TBool SetPropertyAttributes(const Brx& aValue);
     void GetPropertyAttributes(Brhz& aValue);
+    TBool SetPropertyQueryPort(TUint aValue);
+    void GetPropertyQueryPort(TUint& aValue);
+    TBool SetPropertyBrowsePort(TUint aValue);
+    void GetPropertyBrowsePort(TUint& aValue);
+    TBool SetPropertyUpdateCount(TUint aValue);
+    void GetPropertyUpdateCount(TUint& aValue);
     void EnablePropertyManufacturerName();
     void EnablePropertyManufacturerInfo();
     void EnablePropertyManufacturerUrl();
@@ -57,16 +63,25 @@ public:
     void EnablePropertyProductUrl();
     void EnablePropertyProductImageUri();
     void EnablePropertyAttributes();
+    void EnablePropertyQueryPort();
+    void EnablePropertyBrowsePort();
+    void EnablePropertyUpdateCount();
     void EnableActionManufacturer(CallbackMediaServer1Manufacturer aCallback, void* aPtr);
     void EnableActionModel(CallbackMediaServer1Model aCallback, void* aPtr);
     void EnableActionProduct(CallbackMediaServer1Product aCallback, void* aPtr);
     void EnableActionAttributes(CallbackMediaServer1Attributes aCallback, void* aPtr);
+    void EnableActionQueryPort(CallbackMediaServer1QueryPort aCallback, void* aPtr);
+    void EnableActionBrowsePort(CallbackMediaServer1BrowsePort aCallback, void* aPtr);
+    void EnableActionUpdateCount(CallbackMediaServer1UpdateCount aCallback, void* aPtr);
     void EnableActionQuery(CallbackMediaServer1Query aCallback, void* aPtr);
 private:
     void DoManufacturer(IDviInvocation& aInvocation);
     void DoModel(IDviInvocation& aInvocation);
     void DoProduct(IDviInvocation& aInvocation);
     void DoAttributes(IDviInvocation& aInvocation);
+    void DoQueryPort(IDviInvocation& aInvocation);
+    void DoBrowsePort(IDviInvocation& aInvocation);
+    void DoUpdateCount(IDviInvocation& aInvocation);
     void DoQuery(IDviInvocation& aInvocation);
 private:
     CallbackMediaServer1Manufacturer iCallbackManufacturer;
@@ -77,6 +92,12 @@ private:
     void* iPtrProduct;
     CallbackMediaServer1Attributes iCallbackAttributes;
     void* iPtrAttributes;
+    CallbackMediaServer1QueryPort iCallbackQueryPort;
+    void* iPtrQueryPort;
+    CallbackMediaServer1BrowsePort iCallbackBrowsePort;
+    void* iPtrBrowsePort;
+    CallbackMediaServer1UpdateCount iCallbackUpdateCount;
+    void* iPtrUpdateCount;
     CallbackMediaServer1Query iCallbackQuery;
     void* iPtrQuery;
     PropertyString* iPropertyManufacturerName;
@@ -92,6 +113,9 @@ private:
     PropertyString* iPropertyProductUrl;
     PropertyString* iPropertyProductImageUri;
     PropertyString* iPropertyAttributes;
+    PropertyUint* iPropertyQueryPort;
+    PropertyUint* iPropertyBrowsePort;
+    PropertyUint* iPropertyUpdateCount;
 };
 
 DvProviderAvOpenhomeOrgMediaServer1C::DvProviderAvOpenhomeOrgMediaServer1C(DvDeviceC aDevice)
@@ -110,6 +134,9 @@ DvProviderAvOpenhomeOrgMediaServer1C::DvProviderAvOpenhomeOrgMediaServer1C(DvDev
     iPropertyProductUrl = NULL;
     iPropertyProductImageUri = NULL;
     iPropertyAttributes = NULL;
+    iPropertyQueryPort = NULL;
+    iPropertyBrowsePort = NULL;
+    iPropertyUpdateCount = NULL;
 }
 
 TBool DvProviderAvOpenhomeOrgMediaServer1C::SetPropertyManufacturerName(const Brx& aValue)
@@ -268,6 +295,42 @@ void DvProviderAvOpenhomeOrgMediaServer1C::GetPropertyAttributes(Brhz& aValue)
     aValue.Set(iPropertyAttributes->Value());
 }
 
+TBool DvProviderAvOpenhomeOrgMediaServer1C::SetPropertyQueryPort(TUint aValue)
+{
+    ASSERT(iPropertyQueryPort != NULL);
+    return SetPropertyUint(*iPropertyQueryPort, aValue);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::GetPropertyQueryPort(TUint& aValue)
+{
+    ASSERT(iPropertyQueryPort != NULL);
+    aValue = iPropertyQueryPort->Value();
+}
+
+TBool DvProviderAvOpenhomeOrgMediaServer1C::SetPropertyBrowsePort(TUint aValue)
+{
+    ASSERT(iPropertyBrowsePort != NULL);
+    return SetPropertyUint(*iPropertyBrowsePort, aValue);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::GetPropertyBrowsePort(TUint& aValue)
+{
+    ASSERT(iPropertyBrowsePort != NULL);
+    aValue = iPropertyBrowsePort->Value();
+}
+
+TBool DvProviderAvOpenhomeOrgMediaServer1C::SetPropertyUpdateCount(TUint aValue)
+{
+    ASSERT(iPropertyUpdateCount != NULL);
+    return SetPropertyUint(*iPropertyUpdateCount, aValue);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::GetPropertyUpdateCount(TUint& aValue)
+{
+    ASSERT(iPropertyUpdateCount != NULL);
+    aValue = iPropertyUpdateCount->Value();
+}
+
 void DvProviderAvOpenhomeOrgMediaServer1C::EnablePropertyManufacturerName()
 {
     iPropertyManufacturerName = new PropertyString(new ParameterString("ManufacturerName"));
@@ -346,6 +409,24 @@ void DvProviderAvOpenhomeOrgMediaServer1C::EnablePropertyAttributes()
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }
 
+void DvProviderAvOpenhomeOrgMediaServer1C::EnablePropertyQueryPort()
+{
+    iPropertyQueryPort = new PropertyUint(new ParameterUint("QueryPort"));
+    iService->AddProperty(iPropertyQueryPort); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::EnablePropertyBrowsePort()
+{
+    iPropertyBrowsePort = new PropertyUint(new ParameterUint("BrowsePort"));
+    iService->AddProperty(iPropertyBrowsePort); // passes ownership
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::EnablePropertyUpdateCount()
+{
+    iPropertyUpdateCount = new PropertyUint(new ParameterUint("UpdateCount"));
+    iService->AddProperty(iPropertyUpdateCount); // passes ownership
+}
+
 void DvProviderAvOpenhomeOrgMediaServer1C::EnableActionManufacturer(CallbackMediaServer1Manufacturer aCallback, void* aPtr)
 {
     iCallbackManufacturer = aCallback;
@@ -392,6 +473,36 @@ void DvProviderAvOpenhomeOrgMediaServer1C::EnableActionAttributes(CallbackMediaS
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Attributes");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyAttributes));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1C::DoAttributes);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::EnableActionQueryPort(CallbackMediaServer1QueryPort aCallback, void* aPtr)
+{
+    iCallbackQueryPort = aCallback;
+    iPtrQueryPort = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("QueryPort");
+    action->AddOutputParameter(new ParameterRelated("Value", *iPropertyQueryPort));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1C::DoQueryPort);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::EnableActionBrowsePort(CallbackMediaServer1BrowsePort aCallback, void* aPtr)
+{
+    iCallbackBrowsePort = aCallback;
+    iPtrBrowsePort = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("BrowsePort");
+    action->AddOutputParameter(new ParameterRelated("Value", *iPropertyBrowsePort));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1C::DoBrowsePort);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::EnableActionUpdateCount(CallbackMediaServer1UpdateCount aCallback, void* aPtr)
+{
+    iCallbackUpdateCount = aCallback;
+    iPtrUpdateCount = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("UpdateCount");
+    action->AddOutputParameter(new ParameterRelated("Value", *iPropertyUpdateCount));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1C::DoUpdateCount);
     iService->AddAction(action, functor);
 }
 
@@ -556,6 +667,69 @@ void DvProviderAvOpenhomeOrgMediaServer1C::DoAttributes(IDviInvocation& aInvocat
     invocation.EndResponse();
 }
 
+void DvProviderAvOpenhomeOrgMediaServer1C::DoQueryPort(IDviInvocation& aInvocation)
+{
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    uint32_t Value;
+    ASSERT(iCallbackQueryPort != NULL);
+    if (0 != iCallbackQueryPort(iPtrQueryPort, invocationC, invocationCPtr, &Value)) {
+        invocation.Error(502, Brn("Action failed"));
+        return;
+    }
+    DviInvocationResponseUint respValue(aInvocation, "Value");
+    invocation.StartResponse();
+    respValue.Write(Value);
+    invocation.EndResponse();
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::DoBrowsePort(IDviInvocation& aInvocation)
+{
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    uint32_t Value;
+    ASSERT(iCallbackBrowsePort != NULL);
+    if (0 != iCallbackBrowsePort(iPtrBrowsePort, invocationC, invocationCPtr, &Value)) {
+        invocation.Error(502, Brn("Action failed"));
+        return;
+    }
+    DviInvocationResponseUint respValue(aInvocation, "Value");
+    invocation.StartResponse();
+    respValue.Write(Value);
+    invocation.EndResponse();
+}
+
+void DvProviderAvOpenhomeOrgMediaServer1C::DoUpdateCount(IDviInvocation& aInvocation)
+{
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    uint32_t Value;
+    ASSERT(iCallbackUpdateCount != NULL);
+    if (0 != iCallbackUpdateCount(iPtrUpdateCount, invocationC, invocationCPtr, &Value)) {
+        invocation.Error(502, Brn("Action failed"));
+        return;
+    }
+    DviInvocationResponseUint respValue(aInvocation, "Value");
+    invocation.StartResponse();
+    respValue.Write(Value);
+    invocation.EndResponse();
+}
+
 void DvProviderAvOpenhomeOrgMediaServer1C::DoQuery(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
@@ -612,6 +786,21 @@ void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionProduct(THandle aPro
 void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionAttributes(THandle aProvider, CallbackMediaServer1Attributes aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnableActionAttributes(aCallback, aPtr);
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionQueryPort(THandle aProvider, CallbackMediaServer1QueryPort aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnableActionQueryPort(aCallback, aPtr);
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionBrowsePort(THandle aProvider, CallbackMediaServer1BrowsePort aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnableActionBrowsePort(aCallback, aPtr);
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionUpdateCount(THandle aProvider, CallbackMediaServer1UpdateCount aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnableActionUpdateCount(aCallback, aPtr);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionQuery(THandle aProvider, CallbackMediaServer1Query aCallback, void* aPtr)
@@ -801,6 +990,45 @@ void STDCALL DvProviderAvOpenhomeOrgMediaServer1GetPropertyAttributes(THandle aP
     *aValue = (char*)buf.Transfer();
 }
 
+int32_t STDCALL DvProviderAvOpenhomeOrgMediaServer1SetPropertyQueryPort(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+{
+    *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->SetPropertyQueryPort(aValue)? 1 : 0);
+    return 0;
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1GetPropertyQueryPort(THandle aProvider, uint32_t* aValue)
+{
+    uint32_t val;
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->GetPropertyQueryPort(val);
+    *aValue = val;
+}
+
+int32_t STDCALL DvProviderAvOpenhomeOrgMediaServer1SetPropertyBrowsePort(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+{
+    *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->SetPropertyBrowsePort(aValue)? 1 : 0);
+    return 0;
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1GetPropertyBrowsePort(THandle aProvider, uint32_t* aValue)
+{
+    uint32_t val;
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->GetPropertyBrowsePort(val);
+    *aValue = val;
+}
+
+int32_t STDCALL DvProviderAvOpenhomeOrgMediaServer1SetPropertyUpdateCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+{
+    *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->SetPropertyUpdateCount(aValue)? 1 : 0);
+    return 0;
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1GetPropertyUpdateCount(THandle aProvider, uint32_t* aValue)
+{
+    uint32_t val;
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->GetPropertyUpdateCount(val);
+    *aValue = val;
+}
+
 void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyManufacturerName(THandle aProvider)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnablePropertyManufacturerName();
@@ -864,5 +1092,20 @@ void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyProductImageUri(TH
 void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyAttributes(THandle aProvider)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnablePropertyAttributes();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyQueryPort(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnablePropertyQueryPort();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyBrowsePort(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnablePropertyBrowsePort();
+}
+
+void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyUpdateCount(THandle aProvider)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgMediaServer1C*>(aProvider)->EnablePropertyUpdateCount();
 }
 
