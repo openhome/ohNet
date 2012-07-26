@@ -27,12 +27,16 @@ const Brn DviProtocolUpnp::kDeviceXmlName("device.xml");
 const Brn DviProtocolUpnp::kServiceXmlName("service.xml");
 const Brn DviProtocolUpnp::kControlUrlTail("control");
 const Brn DviProtocolUpnp::kEventUrlTail("event");
+static const TChar kAttributeKeyVersionMajor[] = "Version.Major";
+static const TChar kAttributeKeyVersionMinor[] = "Version.Minor";
 
 DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     : iDevice(aDevice)
     , iLock("DMUP")
     , iSuppressScheduledEvents(false)
 {
+    SetAttribute(kAttributeKeyVersionMajor, "1");
+    SetAttribute(kAttributeKeyVersionMinor, "1");
     iLock.Wait();
     iServer = &DviStack::ServerUpnp();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
@@ -317,7 +321,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
             if (service == 0) {
                 THROW(ReaderError);
             }
-            DviProtocolUpnpServiceXmlWriter::Write(*service, aResourceWriter);
+            DviProtocolUpnpServiceXmlWriter::Write(*service, *this, aResourceWriter);
         }
     }
 }
@@ -777,6 +781,27 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchServiceType(const Endpoint& a
 }
 
 
+static void writeSpecVersionNumber(WriterBwh& aWriter, const DviProtocolUpnp& aDevice, const TChar* aTag, const TChar* aKey)
+{
+    aWriter.Write('<');
+    aWriter.Write(aTag);
+    aWriter.Write('>');
+    const TChar* version;
+    (void)aDevice.GetAttribute(aKey, &version);
+    aWriter.Write(version);
+    aWriter.Write("</");
+    aWriter.Write(aTag);
+    aWriter.Write('>');
+}
+
+static void writeSpecVersion(WriterBwh& aWriter, const DviProtocolUpnp& aDevice)
+{
+    aWriter.Write("<specVersion>");
+    writeSpecVersionNumber(aWriter, aDevice, "major", kAttributeKeyVersionMajor);
+    writeSpecVersionNumber(aWriter, aDevice, "minor", kAttributeKeyVersionMinor);
+    aWriter.Write("</specVersion>");
+}
+
 // DviProtocolUpnpDeviceXmlWriter
 
 DviProtocolUpnpDeviceXmlWriter::DviProtocolUpnpDeviceXmlWriter(DviProtocolUpnp& aDeviceUpnp)
@@ -790,10 +815,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
     if (iDeviceUpnp.iDevice.IsRoot()) { // root device header
         iWriter.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         iWriter.Write("<root xmlns=\"urn:schemas-upnp-org:device-1-0\">");
-        iWriter.Write("<specVersion>");
-        iWriter.Write("<major>1</major>");
-        iWriter.Write("<minor>1</minor>");
-        iWriter.Write("</specVersion>");
+        writeSpecVersion(iWriter, iDeviceUpnp);
     }
 
     iWriter.Write(Brn("<device>"));
@@ -987,10 +1009,10 @@ void DviProtocolUpnpDeviceXmlWriter::WriteResourceEnd()
 
 // DviProtocolUpnpServiceXmlWriter
 
-void DviProtocolUpnpServiceXmlWriter::Write(const DviService& aService, IResourceWriter& aResourceWriter)
+void DviProtocolUpnpServiceXmlWriter::Write(const DviService& aService, const DviProtocolUpnp& aDevice, IResourceWriter& aResourceWriter)
 {
     WriterBwh writer(1024);
-    WriteServiceXml(writer, aService);
+    WriteServiceXml(writer, aService, aDevice);
     Brh xml;
     writer.TransferTo(xml);
     aResourceWriter.WriteResourceBegin(xml.Bytes(), kOhNetMimeTypeXml);
@@ -998,14 +1020,11 @@ void DviProtocolUpnpServiceXmlWriter::Write(const DviService& aService, IResourc
     aResourceWriter.WriteResourceEnd();
 }
 
-void DviProtocolUpnpServiceXmlWriter::WriteServiceXml(WriterBwh& aWriter, const DviService& aService)
+void DviProtocolUpnpServiceXmlWriter::WriteServiceXml(WriterBwh& aWriter, const DviService& aService, const DviProtocolUpnp& aDevice)
 {
     aWriter.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     aWriter.Write("<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">");
-    aWriter.Write("<specVersion>");
-    aWriter.Write("<major>1</major>");
-    aWriter.Write("<minor>1</minor>");
-    aWriter.Write("</specVersion>");
+    writeSpecVersion(aWriter, aDevice);
     aWriter.Write("<actionList>");
     DviService::VectorActions actions = aService.DvActions();
     for (TUint i=0; i<actions.size(); i++) {
@@ -1362,6 +1381,8 @@ void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
     TInt remaining = iEndTimeMs - Os::TimeInMs();
+    TInt maxUpdateTimeMs = (TInt)Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
+    ASSERT(remaining <= maxUpdateTimeMs);
     TInt maxInterval = remaining / (TInt)aRemainingMsgs;
     if (maxInterval < kMinTimerIntervalMs) {
         // we're running behind.  Schedule another timer to run immediately
@@ -1558,11 +1579,9 @@ DviMsgNotify::DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
 {
 }
 
-TUint DviMsgNotify::NextMsg()
+DviMsgNotify::~DviMsgNotify()
 {
-    TUint remaining = DviMsg::NextMsg();
-    if (remaining == 0 && iCompleted != 0) {
+    if (iCompleted != 0) {
         iCompleted();
     }
-    return remaining;
 }

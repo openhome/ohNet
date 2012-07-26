@@ -888,13 +888,15 @@ void DviSessionWebSocket::Renew(const Brx& aRequest)
         THROW(XmlError);
     }
     DviSessionWebSocket::SubscriptionWrapper* wrapper = it->second;
-    if (wrapper->Subscription().HasExpired()) {
+    try {
+        wrapper->Subscription().Renew(timeout);
+    }
+    catch (DvSubscriptionError&) {
         LOG2(kDvWebSocket, kError, "Attempt made to renew an expired subscription - ");
         LOG2(kDvWebSocket, kError, sid);
         LOG2(kDvWebSocket, kError, "\n");
         THROW(WebSocketError);
     }
-    wrapper->Subscription().Renew(timeout);
     WriteSubscriptionRenewed(wrapper->Sid(), timeout);
 }
 

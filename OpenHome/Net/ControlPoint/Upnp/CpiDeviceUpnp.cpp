@@ -24,7 +24,7 @@ using namespace OpenHome::Net;
 
 // CpiDeviceUpnp
 
-CpiDeviceUpnp::CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList)
+CpiDeviceUpnp::CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList)
     : iLock("CDUP")
     , iLocation(aLocation)
     , iXmlFetch(NULL)
@@ -32,6 +32,7 @@ CpiDeviceUpnp::CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAg
     , iDeviceXml(NULL)
     , iExpiryTime(0)
     , iDeviceList(aDeviceList)
+	, iList(&aList)
     , iSemReady("CDUS", 0)
     , iRemoved(false)
 {
@@ -68,9 +69,9 @@ void CpiDeviceUpnp::UpdateMaxAge(TUint aSeconds)
     }
 }
 
-void CpiDeviceUpnp::FetchXml(CpiDeviceListUpnp& aList)
+void CpiDeviceUpnp::FetchXml()
 {
-    iList = &aList;
+	AutoMutex a(iLock);
     iXmlFetch = XmlFetchManager::Fetch();
     Uri* uri = new Uri(iLocation);
     iDevice->AddRef();
@@ -85,6 +86,7 @@ void CpiDeviceUpnp::InterruptXmlFetch()
     if (iXmlFetch != NULL) {
         iXmlFetch->Interrupt();
     }
+	iList = NULL;
 }
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
@@ -255,37 +257,41 @@ TBool CpiDeviceUpnp::UdnMatches(const Brx& aFound, const Brx& aTarget)
 
 void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
 {
-    iLock.Wait();
-    iXmlFetch = NULL;
-    iLock.Signal();
-    TBool err = iRemoved;
-    try {
-        XmlFetch::Xml(aAsync).TransferTo(iXml);
-    }
-    catch (XmlFetchError&) {
-        err = true;
-        LOG2(kDevice, kError, "Error fetching xml for ");
-        LOG2(kDevice, kError, Udn());
-        LOG2(kDevice, kError, " from ");
-        LOG2(kDevice, kError, iLocation);
-        LOG2(kDevice, kError, "\n");
-    }
-    try {
-        iDeviceXmlDocument = new DeviceXmlDocument(iXml);
-        iDeviceXml = new DeviceXml(iDeviceXmlDocument->Find(Udn()));
-    }
-    catch (XmlError&) {
-        err = true;
-        LOG2(kDevice, kError, "Error within xml for ");
-        LOG2(kDevice, kError, Udn());
-        LOG2(kDevice, kError, " from ");
-        LOG2(kDevice, kError, iLocation);
-        LOG2(kDevice, kError, ".  Xml is ");
-        LOG2(kDevice, kError, iXml);
-        LOG2(kDevice, kError, "\n");
-    }
-    iList->XmlFetchCompleted(*this, err);
-    iList = NULL;
+	iLock.Wait();
+	iXmlFetch = NULL;
+	iLock.Signal();
+	TBool err = iRemoved;
+	try {
+		XmlFetch::Xml(aAsync).TransferTo(iXml);
+	}
+	catch (XmlFetchError&) {
+		err = true;
+		LOG2(kDevice, kError, "Error fetching xml for ");
+		LOG2(kDevice, kError, Udn());
+		LOG2(kDevice, kError, " from ");
+		LOG2(kDevice, kError, iLocation);
+		LOG2(kDevice, kError, "\n");
+	}
+	try {
+		iDeviceXmlDocument = new DeviceXmlDocument(iXml);
+		iDeviceXml = new DeviceXml(iDeviceXmlDocument->Find(Udn()));
+	}
+	catch (XmlError&) {
+		err = true;
+		LOG2(kDevice, kError, "Error within xml for ");
+		LOG2(kDevice, kError, Udn());
+		LOG2(kDevice, kError, " from ");
+		LOG2(kDevice, kError, iLocation);
+		LOG2(kDevice, kError, ".  Xml is ");
+		LOG2(kDevice, kError, iXml);
+		LOG2(kDevice, kError, "\n");
+	}
+	iLock.Wait();
+	if (iList != NULL) {
+		iList->XmlFetchCompleted(*this, err);
+		iList = NULL;
+	}
+	iLock.Signal();
     iSemReady.Signal();
     iDevice->RemoveRef();
     // Don't add code after the RemoveRef(), we might have
@@ -320,8 +326,6 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
     : CpiDeviceList(aAdded, aRemoved)
     , iSsdpLock("DLSM")
     , iStarted(false)
-    , iXmlFetchSem("DRLS", 0)
-    , iXmlFetchLock("DRLM")
 {
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
     AutoNetworkAdapterRef ref("CpiDeviceListUpnp ctor");
@@ -349,40 +353,21 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
 
 CpiDeviceListUpnp::~CpiDeviceListUpnp()
 {
-    TUint xmlWaitCount = 0;
     iLock.Wait();
     iActive = false;
     iLock.Signal();
     Stack::NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
     Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
-    iXmlFetchLock.Wait();
     iLock.Wait();
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
-        CpiDevice* device = reinterpret_cast<CpiDevice*>(it->second);
-        if (!device->IsReady()) {
-            reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData())->InterruptXmlFetch();
-            xmlWaitCount++;
-        }
+        reinterpret_cast<CpiDeviceUpnp*>(it->second->OwnerData())->InterruptXmlFetch();
         it++;
     }
     for (TUint i=0; i<(TUint)iPendingRemove.size(); i++) {
-        if (!iPendingRemove[i]->IsReady()) {
-            reinterpret_cast<CpiDeviceUpnp*>(iPendingRemove[i]->OwnerData())->InterruptXmlFetch();
-            xmlWaitCount++;
-        }
+        reinterpret_cast<CpiDeviceUpnp*>(iPendingRemove[i]->OwnerData())->InterruptXmlFetch();
     }
-    iXmlFetchSem.Clear();
     iLock.Signal();
-    iXmlFetchLock.Signal();
-    while (xmlWaitCount > 0) {
-        iXmlFetchSem.Wait();
-        xmlWaitCount--;
-    }
-    iXmlFetchLock.Wait();
-    // XmlFetchCompleted will signal iXmlFetchSem.
-    // Ensure it gets to exit before we complete the dtor and delete iXmlFetchLock which it holds
-    iXmlFetchLock.Signal();
     delete iRefreshTimer;
     delete iNextRefreshTimer;
 }
@@ -472,7 +457,7 @@ void CpiDeviceListUpnp::Refresh()
 
 TBool CpiDeviceListUpnp::IsDeviceReady(CpiDevice& aDevice)
 {
-    reinterpret_cast<CpiDeviceUpnp*>(aDevice.OwnerData())->FetchXml(*this);
+    reinterpret_cast<CpiDeviceUpnp*>(aDevice.OwnerData())->FetchXml();
     return false;
 }
 
@@ -601,14 +586,12 @@ void CpiDeviceListUpnp::RemoveAll()
 
 void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
 {
-    AutoMutex a(iXmlFetchLock);
     if (aError) {
         Remove(aDevice.Udn());
     }
     else {
         SetDeviceReady(aDevice.Device());
     }
-    iXmlFetchSem.Signal();
 }
 
 void CpiDeviceListUpnp::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
@@ -690,7 +673,7 @@ void CpiDeviceListUpnpAll::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLoc
         return;
     }
     if (IsLocationReachable(aLocation)) {
-        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this);
+        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this, *this);
         Add(&device->Device());
     }
 }
@@ -732,7 +715,7 @@ void CpiDeviceListUpnpRoot::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLo
         return;
     }
     if (IsLocationReachable(aLocation)) {
-        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this);
+        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this, *this);
         Add(&device->Device());
     }
 }
@@ -778,7 +761,7 @@ void CpiDeviceListUpnpUuid::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLo
         return;
     }
     if (IsLocationReachable(aLocation)) {
-        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this);
+        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this, *this);
         Add(&device->Device());
     }
 }
@@ -828,7 +811,7 @@ void CpiDeviceListUpnpDeviceType::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, co
         return;
     }
     if (IsLocationReachable(aLocation)) {
-        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this);
+        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this, *this);
         Add(&device->Device());
     }
 }
@@ -878,7 +861,7 @@ void CpiDeviceListUpnpServiceType::SsdpNotifyServiceTypeAlive(const Brx& aUuid, 
         return;
     }
     if (IsLocationReachable(aLocation)) {
-        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this);
+        CpiDeviceUpnp* device = new CpiDeviceUpnp(aUuid, aLocation, aMaxAge, *this, *this);
         Add(&device->Device());
     }
 }

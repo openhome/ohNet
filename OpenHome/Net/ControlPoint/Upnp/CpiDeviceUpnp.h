@@ -32,7 +32,7 @@ class CpiDeviceListUpnp;
 class CpiDeviceUpnp : private ICpiProtocol, private ICpiDeviceObserver
 {
 public:
-    CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList);
+    CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList);
     const Brx& Udn() const;
     const Brx& Location() const;
     CpiDevice& Device();
@@ -45,7 +45,7 @@ public:
      */
     void UpdateMaxAge(TUint aSeconds);
 
-    void FetchXml(CpiDeviceListUpnp& aList);
+    void FetchXml();
     void InterruptXmlFetch();
 private: // ICpiProtocol
     TBool GetAttribute(const char* aKey, Brh& aValue) const;
@@ -149,8 +149,6 @@ private:
     Timer* iRefreshTimer;
     Timer* iNextRefreshTimer;
     TUint iPendingRefreshCount;
-    Semaphore iXmlFetchSem;
-    Mutex iXmlFetchLock;
 };
 
 /**

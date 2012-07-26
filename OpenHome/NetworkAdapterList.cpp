@@ -125,9 +125,11 @@ void NetworkAdapterList::RemoveNetworkAdapterChangeListener(TUint aId)
     RemoveSubnetListener(aId, iListenersAdapterChanged);
 }
 
+// Disabled while we experiment with retrying RunCallbacks() instead
+/*
 void NetworkAdapterList::TempFailureRetry(Functor& aCallback)
 { // static
-    static const TUint kDelaysMs[] = { 100, 200, 400, 800, 1600, 3200, 5000 };
+    static const TUint kDelaysMs[] = { 100, 200, 400, 800, 1600, 3200, 5000, 10000, 20000, 20000, 30000 }; // roughly 90s worth of retries
     for (TUint i=0; i<sizeof(kDelaysMs)/sizeof(kDelaysMs[0]); i++) {
         try {
             aCallback();
@@ -140,7 +142,7 @@ void NetworkAdapterList::TempFailureRetry(Functor& aCallback)
     }
     THROW(NetworkError);
 }
-
+*/
 std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetListLocked() const
 {
     std::vector<NetworkAdapter*>* list = new std::vector<NetworkAdapter*>;
@@ -360,6 +362,23 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 }
 
 void NetworkAdapterList::RunCallbacks(Map& aMap)
+{
+    static const TUint kDelaysMs[] = { 100, 200, 400, 800, 1600, 3200, 5000, 10000, 20000, 20000, 30000 }; // roughly 90s worth of retries
+    for (TUint i=0; i<sizeof(kDelaysMs)/sizeof(kDelaysMs[0]); i++) {
+        try {
+            DoRunCallbacks(aMap);
+            return;
+        }
+        catch (NetworkError&) {
+            LOG2(kNetwork, kError, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
+            Thread::Sleep(kDelaysMs[i]);
+        }
+    }
+    THROW(NetworkError);
+
+}
+
+void NetworkAdapterList::DoRunCallbacks(Map& aMap)
 {
     iListenerLock.Wait();
     Map::iterator it = aMap.begin();

@@ -55,7 +55,10 @@ __result; }))
 #endif
 
 
-static struct timeval gStartTime;
+static struct timeval gStartTime; /* Time OsCreate was called */
+static struct timeval gPrevTime; /* Last time OsTimeInUs() was called */
+static struct timeval gTimeAdjustment = {0}; /* Amount to adjust return for OsTimeInUs() by. 
+                                                Will be 0 unless time ever jumps backwards. */
 static THandle gMutex = kHandleNull;
 static pthread_key_t gThreadArgKey;
 
@@ -66,6 +69,7 @@ int32_t OsCreate()
 {
     int errnum;
     gettimeofday(&gStartTime, NULL);
+    gPrevTime = gStartTime;
     gMutex = OsMutexCreate("DNSM");
     if (gMutex == kHandleNull)
         return -1;
@@ -204,18 +208,52 @@ void OsStackTraceFinalise(THandle aStackTrace)
 #endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
 
-uint64_t OsTimeInUs()
+static struct timeval subtractTimeval(struct timeval* aT1, struct timeval* aT2)
 {
-    struct timeval now, diff;
-    gettimeofday(&now, NULL);
-    diff.tv_sec = now.tv_sec - gStartTime.tv_sec;
-    if (now.tv_usec > gStartTime.tv_usec) {
-        diff.tv_usec = now.tv_usec - gStartTime.tv_usec;
+    struct timeval diff;
+    diff.tv_sec = aT1->tv_sec - aT2->tv_sec;
+    if (aT1->tv_usec > aT2->tv_usec) {
+        diff.tv_usec = aT1->tv_usec - aT2->tv_usec;
     }
     else {
         diff.tv_sec--;
-        diff.tv_usec = 1000000 - gStartTime.tv_usec + now.tv_usec;
+        diff.tv_usec = 1000000 - aT2->tv_usec + aT1->tv_usec;
     }
+    return diff;
+}
+
+static struct timeval addTimeval(struct timeval* aT1, struct timeval* aT2)
+{
+    struct timeval result;
+    result.tv_sec = aT1->tv_sec + aT2->tv_sec;
+    int32_t usec = aT1->tv_usec + aT2->tv_usec;
+    if (usec < 1000000) {
+        result.tv_usec = usec;
+    }
+    else {
+        result.tv_sec++;
+        result.tv_usec = usec - 1000000;
+    }
+    return result;
+}
+
+uint64_t OsTimeInUs()
+{
+    struct timeval now, diff, adjustedNow;
+    OsMutexLock(gMutex);
+    gettimeofday(&now, NULL);
+    
+    /* if time has moved backwards, calculate by how much and add this to gTimeAdjustment */
+    if (now.tv_sec < gPrevTime.tv_sec ||
+        (now.tv_sec == gPrevTime.tv_sec && now.tv_usec < gPrevTime.tv_usec)) {
+        diff = subtractTimeval(&gPrevTime, &now);
+        fprintf(stderr, "WARNING: clock moved backwards by %llu.%03llusecs\n", (unsigned long long)diff.tv_sec, (unsigned long long)(diff.tv_usec/1000));
+        gTimeAdjustment = addTimeval(&gTimeAdjustment, &diff);
+    }
+    gPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
+    adjustedNow = addTimeval(&now, &gTimeAdjustment); /* add any previous backwards moves to the time */
+    diff = subtractTimeval(&adjustedNow, &gStartTime); /* how long since we started, ignoring any backwards moves */
+    OsMutexUnlock(gMutex);
 
     return (uint64_t)diff.tv_sec * 1000000 + diff.tv_usec;
 }

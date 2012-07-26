@@ -28,7 +28,10 @@ typedef struct InterfaceChangeObserver
     HANDLE               iSem;
 } InterfaceChangeObserver;
 
-static uint64_t gStartTime;
+static uint64_t gStartTime; /* Time OsCreate was called */
+static uint64_t gPrevTime; /* Last time OsTimeInUs() was called */
+static uint64_t gTimeAdjustment = {0}; /* Amount to adjust return for OsTimeInUs() by. 
+                                          Will be 0 unless time ever jumps backwards. */
 static DWORD gTlsIndex;
 static THandle gMutex = kHandleNull;
 static InterfaceChangeObserver* gInterfaceChangeObserver = NULL;
@@ -179,15 +182,26 @@ void OsStackTraceFinalise(THandle aStackTrace)
 
 uint64_t OsTimeInUs()
 {
-    uint64_t timeNow;
-    uint64_t diff;
+    uint64_t now, diff, adjustedNow;
     FILETIME ft;
+    OsMutexLock(gMutex);
     GetSystemTimeAsFileTime(&ft);
-    timeNow = ft.dwHighDateTime;
-    timeNow <<= 32;
-    timeNow |= ft.dwLowDateTime;
-    diff = timeNow - gStartTime;
+    now = ft.dwHighDateTime;
+    now <<= 32;
+    now |= ft.dwLowDateTime;
+    
+    /* if time has moved backwards, calculate by how much and add this to gTimeAdjustment */
+    if (now < gPrevTime) {
+        diff = gPrevTime - now;
+        fprintf(stderr, "WARNING: clock moved backwards by %3lums\n", now / 10000);
+        gTimeAdjustment += diff;
+    }
+    gPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
+    adjustedNow = now + gTimeAdjustment; /* add any previous backwards moves to the time */
+    diff = adjustedNow - gStartTime; /* how long since we started, ignoring any backwards moves */
     diff /= 10; // GetSystemTimeAsFileTime has units of 100 nano-secs
+    OsMutexUnlock(gMutex);
+
     return diff;
 }
 

@@ -184,9 +184,9 @@ private:
 class DviProtocolUpnpServiceXmlWriter
 {
 public:
-    static void Write(const DviService& aService, IResourceWriter& aResourceWriter);
+    static void Write(const DviService& aService, const DviProtocolUpnp& aDevice, IResourceWriter& aResourceWriter);
 private:
-    static void WriteServiceXml(WriterBwh& aWriter, const DviService& aService);
+    static void WriteServiceXml(WriterBwh& aWriter, const DviService& aService, const DviProtocolUpnp& aDevice);
     static void WriteServiceActionParams(WriterBwh& aWriter, const Action& aAction, TBool aIn);
     static void GetRelatedVariableName(Bwh& aName, const Brx& aActionName, const Brx& aParameterName);
     static void WriteStateVariable(IWriter& aWriter, const OpenHome::Net::Parameter& aParam, TBool aEvented, const Action* aAction);
@@ -327,8 +327,7 @@ private:
                                    Bwh& aUri, TUint aConfigId, Functor& aCompleted);
     DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-private: // from DviMsg
-    TUint NextMsg();
+    ~DviMsgNotify();
 private:
     SsdpNotifier iSsdpNotifier;
     Functor iCompleted;

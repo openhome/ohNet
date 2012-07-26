@@ -35,15 +35,6 @@ public:
     void RemoveSubnetRemovedListener(TUint aId);
     TUint AddNetworkAdapterChangeListener(FunctorNetworkAdapter aFunctor);
     void RemoveNetworkAdapterChangeListener(TUint aId);
-    /**
-     * Some platforms behave poorly for a short period after delivering a subnet change message.
-     * e.g. Windows reports adapters as available/usable but attempts to bind to them may fail.
-     * This function helps work around that by calling a client-specified function, catching and
-     * NetworkError failure then re-trying shortly later.  It eventually gives up if errors continue.
-     *
-     * Frequency and overall duration of retries could be user-configurable but are currently hard-coded.
-     */
-     static void TempFailureRetry(Functor& aCallback);
 private:
     typedef std::map<TUint,Functor> Map;
     typedef std::map<TUint,FunctorNetworkAdapter> MapNetworkAdapter;
@@ -57,8 +48,18 @@ private:
     void UpdateCurrentAdapter();
     void HandleInterfaceListChanged();
     void RunCallbacks(Map& aMap);
+    void DoRunCallbacks(Map& aMap);
     void RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdapter& aAdapter);
     static TBool CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ);
+    /**
+     * Some platforms behave poorly for a short period after delivering a subnet change message.
+     * e.g. Windows reports adapters as available/usable but attempts to bind to them may fail.
+     * This function helps work around that by calling a client-specified function, catching and
+     * NetworkError failure then re-trying shortly later.  It eventually gives up if errors continue.
+     *
+     * Frequency and overall duration of retries could be user-configurable but are currently hard-coded.
+     */
+//     static void TempFailureRetry(Functor& aCallback);
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
