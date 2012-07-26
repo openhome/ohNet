@@ -291,7 +291,7 @@ install : install-pkgconf install-libs install-includes
 
 uninstall : uninstall-pkgconf uninstall-libs uninstall-includes
 
-install-pkgconf : tt
+install-pkgconf :
 	@echo "ERROR: no support for (un)install-pckconf yet"
     #@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
 
