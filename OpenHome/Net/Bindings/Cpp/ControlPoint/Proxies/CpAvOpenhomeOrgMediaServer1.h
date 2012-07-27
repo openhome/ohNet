@@ -171,6 +171,84 @@ public:
      * Invoke the action synchronously.  Blocks until the action has been processed
      * on the device and sets any output arguments.
      *
+     * @param[out] aValue
+     */
+    void SyncQueryPort(uint32_t& aValue);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndQueryPort().
+     *
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginQueryPort(FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aValue
+     */
+    void EndQueryPort(IAsync& aAsync, uint32_t& aValue);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[out] aValue
+     */
+    void SyncBrowsePort(uint32_t& aValue);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndBrowsePort().
+     *
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginBrowsePort(FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aValue
+     */
+    void EndBrowsePort(IAsync& aAsync, uint32_t& aValue);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[out] aValue
+     */
+    void SyncUpdateCount(uint32_t& aValue);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndUpdateCount().
+     *
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginUpdateCount(FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aValue
+     */
+    void EndUpdateCount(IAsync& aAsync, uint32_t& aValue);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
      * @param[in]  aRequest
      * @param[out] aResult
      */
@@ -312,6 +390,33 @@ public:
      * @param[in]  aFunctor  The callback to run when the state variable changes
      */
     void SetPropertyAttributesChanged(Functor& aFunctor);
+    /**
+     * Set a callback to be run when the QueryPort state variable changes.
+     *
+     * Callbacks may be run in different threads but callbacks for a
+     * CpProxyAvOpenhomeOrgMediaServer1Cpp instance will not overlap.
+     *
+     * @param[in]  aFunctor  The callback to run when the state variable changes
+     */
+    void SetPropertyQueryPortChanged(Functor& aFunctor);
+    /**
+     * Set a callback to be run when the BrowsePort state variable changes.
+     *
+     * Callbacks may be run in different threads but callbacks for a
+     * CpProxyAvOpenhomeOrgMediaServer1Cpp instance will not overlap.
+     *
+     * @param[in]  aFunctor  The callback to run when the state variable changes
+     */
+    void SetPropertyBrowsePortChanged(Functor& aFunctor);
+    /**
+     * Set a callback to be run when the UpdateCount state variable changes.
+     *
+     * Callbacks may be run in different threads but callbacks for a
+     * CpProxyAvOpenhomeOrgMediaServer1Cpp instance will not overlap.
+     *
+     * @param[in]  aFunctor  The callback to run when the state variable changes
+     */
+    void SetPropertyUpdateCountChanged(Functor& aFunctor);
 
     /**
      * Query the value of the ManufacturerName property.
@@ -443,6 +548,36 @@ public:
      * @param[out] aAttributes
      */
     void PropertyAttributes(std::string& aAttributes) const;
+    /**
+     * Query the value of the QueryPort property.
+     *
+     * This function is threadsafe and can only be called if Subscribe() has been
+     * called and a first eventing callback received more recently than any call
+     * to Unsubscribe().
+     *
+     * @param[out] aQueryPort
+     */
+    void PropertyQueryPort(uint32_t& aQueryPort) const;
+    /**
+     * Query the value of the BrowsePort property.
+     *
+     * This function is threadsafe and can only be called if Subscribe() has been
+     * called and a first eventing callback received more recently than any call
+     * to Unsubscribe().
+     *
+     * @param[out] aBrowsePort
+     */
+    void PropertyBrowsePort(uint32_t& aBrowsePort) const;
+    /**
+     * Query the value of the UpdateCount property.
+     *
+     * This function is threadsafe and can only be called if Subscribe() has been
+     * called and a first eventing callback received more recently than any call
+     * to Unsubscribe().
+     *
+     * @param[out] aUpdateCount
+     */
+    void PropertyUpdateCount(uint32_t& aUpdateCount) const;
 private:
     void ManufacturerNamePropertyChanged();
     void ManufacturerInfoPropertyChanged();
@@ -457,11 +592,17 @@ private:
     void ProductUrlPropertyChanged();
     void ProductImageUriPropertyChanged();
     void AttributesPropertyChanged();
+    void QueryPortPropertyChanged();
+    void BrowsePortPropertyChanged();
+    void UpdateCountPropertyChanged();
 private:
     Action* iActionManufacturer;
     Action* iActionModel;
     Action* iActionProduct;
     Action* iActionAttributes;
+    Action* iActionQueryPort;
+    Action* iActionBrowsePort;
+    Action* iActionUpdateCount;
     Action* iActionQuery;
     PropertyString* iManufacturerName;
     PropertyString* iManufacturerInfo;
@@ -476,6 +617,9 @@ private:
     PropertyString* iProductUrl;
     PropertyString* iProductImageUri;
     PropertyString* iAttributes;
+    PropertyUint* iQueryPort;
+    PropertyUint* iBrowsePort;
+    PropertyUint* iUpdateCount;
     Functor iManufacturerNameChanged;
     Functor iManufacturerInfoChanged;
     Functor iManufacturerUrlChanged;
@@ -489,6 +633,9 @@ private:
     Functor iProductUrlChanged;
     Functor iProductImageUriChanged;
     Functor iAttributesChanged;
+    Functor iQueryPortChanged;
+    Functor iBrowsePortChanged;
+    Functor iUpdateCountChanged;
 };
 
 } // namespace Net

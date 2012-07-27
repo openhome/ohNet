@@ -91,6 +91,36 @@
       </argumentList>
     </action>
     <action>
+      <name>QueryPort</name>
+      <argumentList>
+        <argument>
+          <name>Value</name>
+          <direction>out</direction>
+          <relatedStateVariable>QueryPort</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>BrowsePort</name>
+      <argumentList>
+        <argument>
+          <name>Value</name>
+          <direction>out</direction>
+          <relatedStateVariable>BrowsePort</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>UpdateCount</name>
+      <argumentList>
+        <argument>
+          <name>Value</name>
+          <direction>out</direction>
+          <relatedStateVariable>UpdateCount</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
       <name>Query</name>
       <argumentList>
         <argument>
@@ -158,6 +188,18 @@
     <stateVariable sendEvents="yes">
       <name>Attributes</name>
       <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>QueryPort</name>
+      <dataType>ui4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>BrowsePort</name>
+      <dataType>ui4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>UpdateCount</name>
+      <dataType>ui4</dataType>
     </stateVariable>
     <stateVariable sendEvents="no">
       <name>Request</name>

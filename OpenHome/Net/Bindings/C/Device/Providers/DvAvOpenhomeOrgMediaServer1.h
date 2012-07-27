@@ -77,6 +77,42 @@ typedef int32_t (STDCALL *CallbackMediaServer1Product)(void* aPtr, IDvInvocation
  */
 typedef int32_t (STDCALL *CallbackMediaServer1Attributes)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, char** aValue);
 /**
+ * Callback which runs when the QueryPort action is invoked
+ *
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionQueryPort
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
+ * @param[out] aValue
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackMediaServer1QueryPort)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
+/**
+ * Callback which runs when the BrowsePort action is invoked
+ *
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionBrowsePort
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
+ * @param[out] aValue
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackMediaServer1BrowsePort)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
+/**
+ * Callback which runs when the UpdateCount action is invoked
+ *
+ * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionUpdateCount
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
+ * @param[out] aValue
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackMediaServer1UpdateCount)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
+/**
  * Callback which runs when the Query action is invoked
  *
  * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionQuery
@@ -158,6 +194,18 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyProductI
  * Enable the Attributes property.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyAttributes(THandle aProvider);
+/**
+ * Enable the QueryPort property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyQueryPort(THandle aProvider);
+/**
+ * Enable the BrowsePort property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyBrowsePort(THandle aProvider);
+/**
+ * Enable the UpdateCount property.
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnablePropertyUpdateCount(THandle aProvider);
 
 /**
  * Register a callback for the action Manufacturer
@@ -203,6 +251,39 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionProduct(TH
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionAttributes(THandle aProvider, CallbackMediaServer1Attributes aCallback, void* aPtr);
+/**
+ * Register a callback for the action QueryPort
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionQueryPort(THandle aProvider, CallbackMediaServer1QueryPort aCallback, void* aPtr);
+/**
+ * Register a callback for the action BrowsePort
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionBrowsePort(THandle aProvider, CallbackMediaServer1BrowsePort aCallback, void* aPtr);
+/**
+ * Register a callback for the action UpdateCount
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionUpdateCount(THandle aProvider, CallbackMediaServer1UpdateCount aCallback, void* aPtr);
 /**
  * Register a callback for the action Query
  *
@@ -501,6 +582,72 @@ DllExport int32_t STDCALL DvProviderAvOpenhomeOrgMediaServer1SetPropertyAttribut
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1GetPropertyAttributes(THandle aProvider, char** aValue);
+/**
+ * Set the value of the QueryPort property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgMediaServer1EnablePropertyQueryPort has previously been called.
+ *
+ * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[in]  aValue     New value for the property
+ * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
+ *
+ * @return  0 if the property was successfully set; non-zero if there was an error (including
+ *          an attempt to set a property to a value not in its allowed range/set)
+ */
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgMediaServer1SetPropertyQueryPort(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+/**
+ * Get a copy of the value of the QueryPort property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgMediaServer1EnablePropertyQueryPort has previously been called.
+ *
+ * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[out] aValue     Value for the property
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1GetPropertyQueryPort(THandle aProvider, uint32_t* aValue);
+/**
+ * Set the value of the BrowsePort property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgMediaServer1EnablePropertyBrowsePort has previously been called.
+ *
+ * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[in]  aValue     New value for the property
+ * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
+ *
+ * @return  0 if the property was successfully set; non-zero if there was an error (including
+ *          an attempt to set a property to a value not in its allowed range/set)
+ */
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgMediaServer1SetPropertyBrowsePort(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+/**
+ * Get a copy of the value of the BrowsePort property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgMediaServer1EnablePropertyBrowsePort has previously been called.
+ *
+ * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[out] aValue     Value for the property
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1GetPropertyBrowsePort(THandle aProvider, uint32_t* aValue);
+/**
+ * Set the value of the UpdateCount property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgMediaServer1EnablePropertyUpdateCount has previously been called.
+ *
+ * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[in]  aValue     New value for the property
+ * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
+ *
+ * @return  0 if the property was successfully set; non-zero if there was an error (including
+ *          an attempt to set a property to a value not in its allowed range/set)
+ */
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgMediaServer1SetPropertyUpdateCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+/**
+ * Get a copy of the value of the UpdateCount property
+ *
+ * Can only be called if DvProviderAvOpenhomeOrgMediaServer1EnablePropertyUpdateCount has previously been called.
+ *
+ * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
+ * @param[out] aValue     Value for the property
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1GetPropertyUpdateCount(THandle aProvider, uint32_t* aValue);
 
 /* @} */
 

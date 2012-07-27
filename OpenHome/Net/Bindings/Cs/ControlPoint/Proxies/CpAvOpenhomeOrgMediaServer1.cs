@@ -22,6 +22,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncAttributes(out String aValue);
         void BeginAttributes(CpProxy.CallbackAsyncComplete aCallback);
         void EndAttributes(IntPtr aAsyncHandle, out String aValue);
+        void SyncQueryPort(out uint aValue);
+        void BeginQueryPort(CpProxy.CallbackAsyncComplete aCallback);
+        void EndQueryPort(IntPtr aAsyncHandle, out uint aValue);
+        void SyncBrowsePort(out uint aValue);
+        void BeginBrowsePort(CpProxy.CallbackAsyncComplete aCallback);
+        void EndBrowsePort(IntPtr aAsyncHandle, out uint aValue);
+        void SyncUpdateCount(out uint aValue);
+        void BeginUpdateCount(CpProxy.CallbackAsyncComplete aCallback);
+        void EndUpdateCount(IntPtr aAsyncHandle, out uint aValue);
         void SyncQuery(String aRequest, out String aResult);
         void BeginQuery(String aRequest, CpProxy.CallbackAsyncComplete aCallback);
         void EndQuery(IntPtr aAsyncHandle, out String aResult);
@@ -51,6 +60,12 @@ namespace OpenHome.Net.ControlPoint.Proxies
         String PropertyProductImageUri();
         void SetPropertyAttributesChanged(System.Action aAttributesChanged);
         String PropertyAttributes();
+        void SetPropertyQueryPortChanged(System.Action aQueryPortChanged);
+        uint PropertyQueryPort();
+        void SetPropertyBrowsePortChanged(System.Action aBrowsePortChanged);
+        uint PropertyBrowsePort();
+        void SetPropertyUpdateCountChanged(System.Action aUpdateCountChanged);
+        uint PropertyUpdateCount();
     }
 
     internal class SyncManufacturerAvOpenhomeOrgMediaServer1 : SyncProxyAction
@@ -174,6 +189,63 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
     };
 
+    internal class SyncQueryPortAvOpenhomeOrgMediaServer1 : SyncProxyAction
+    {
+        private CpProxyAvOpenhomeOrgMediaServer1 iService;
+        private uint iValue;
+
+        public SyncQueryPortAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Value()
+        {
+            return iValue;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndQueryPort(aAsyncHandle, out iValue);
+        }
+    };
+
+    internal class SyncBrowsePortAvOpenhomeOrgMediaServer1 : SyncProxyAction
+    {
+        private CpProxyAvOpenhomeOrgMediaServer1 iService;
+        private uint iValue;
+
+        public SyncBrowsePortAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Value()
+        {
+            return iValue;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBrowsePort(aAsyncHandle, out iValue);
+        }
+    };
+
+    internal class SyncUpdateCountAvOpenhomeOrgMediaServer1 : SyncProxyAction
+    {
+        private CpProxyAvOpenhomeOrgMediaServer1 iService;
+        private uint iValue;
+
+        public SyncUpdateCountAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Value()
+        {
+            return iValue;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndUpdateCount(aAsyncHandle, out iValue);
+        }
+    };
+
     internal class SyncQueryAvOpenhomeOrgMediaServer1 : SyncProxyAction
     {
         private CpProxyAvOpenhomeOrgMediaServer1 iService;
@@ -202,6 +274,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
         private OpenHome.Net.Core.Action iActionModel;
         private OpenHome.Net.Core.Action iActionProduct;
         private OpenHome.Net.Core.Action iActionAttributes;
+        private OpenHome.Net.Core.Action iActionQueryPort;
+        private OpenHome.Net.Core.Action iActionBrowsePort;
+        private OpenHome.Net.Core.Action iActionUpdateCount;
         private OpenHome.Net.Core.Action iActionQuery;
         private PropertyString iManufacturerName;
         private PropertyString iManufacturerInfo;
@@ -216,6 +291,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
         private PropertyString iProductUrl;
         private PropertyString iProductImageUri;
         private PropertyString iAttributes;
+        private PropertyUint iQueryPort;
+        private PropertyUint iBrowsePort;
+        private PropertyUint iUpdateCount;
         private System.Action iManufacturerNameChanged;
         private System.Action iManufacturerInfoChanged;
         private System.Action iManufacturerUrlChanged;
@@ -229,6 +307,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
         private System.Action iProductUrlChanged;
         private System.Action iProductImageUriChanged;
         private System.Action iAttributesChanged;
+        private System.Action iQueryPortChanged;
+        private System.Action iBrowsePortChanged;
+        private System.Action iUpdateCountChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -276,6 +357,18 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterString("Value", allowedValues);
             iActionAttributes.AddOutputParameter(param);
 
+            iActionQueryPort = new OpenHome.Net.Core.Action("QueryPort");
+            param = new ParameterUint("Value");
+            iActionQueryPort.AddOutputParameter(param);
+
+            iActionBrowsePort = new OpenHome.Net.Core.Action("BrowsePort");
+            param = new ParameterUint("Value");
+            iActionBrowsePort.AddOutputParameter(param);
+
+            iActionUpdateCount = new OpenHome.Net.Core.Action("UpdateCount");
+            param = new ParameterUint("Value");
+            iActionUpdateCount.AddOutputParameter(param);
+
             iActionQuery = new OpenHome.Net.Core.Action("Query");
             param = new ParameterString("Request", allowedValues);
             iActionQuery.AddInputParameter(param);
@@ -308,6 +401,12 @@ namespace OpenHome.Net.ControlPoint.Proxies
             AddProperty(iProductImageUri);
             iAttributes = new PropertyString("Attributes", AttributesPropertyChanged);
             AddProperty(iAttributes);
+            iQueryPort = new PropertyUint("QueryPort", QueryPortPropertyChanged);
+            AddProperty(iQueryPort);
+            iBrowsePort = new PropertyUint("BrowsePort", BrowsePortPropertyChanged);
+            AddProperty(iBrowsePort);
+            iUpdateCount = new PropertyUint("UpdateCount", UpdateCountPropertyChanged);
+            AddProperty(iUpdateCount);
             
             iPropertyLock = new Mutex();
         }
@@ -543,6 +642,147 @@ namespace OpenHome.Net.ControlPoint.Proxies
             }
             uint index = 0;
             aValue = Invocation.OutputString(aAsyncHandle, index++);
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        public void SyncQueryPort(out uint aValue)
+        {
+            SyncQueryPortAvOpenhomeOrgMediaServer1 sync = new SyncQueryPortAvOpenhomeOrgMediaServer1(this);
+            BeginQueryPort(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValue = sync.Value();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndQueryPort().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginQueryPort(CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionQueryPort, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionQueryPort.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValue"></param>
+        public void EndQueryPort(IntPtr aAsyncHandle, out uint aValue)
+        {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
+            uint index = 0;
+            aValue = Invocation.OutputUint(aAsyncHandle, index++);
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        public void SyncBrowsePort(out uint aValue)
+        {
+            SyncBrowsePortAvOpenhomeOrgMediaServer1 sync = new SyncBrowsePortAvOpenhomeOrgMediaServer1(this);
+            BeginBrowsePort(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValue = sync.Value();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndBrowsePort().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginBrowsePort(CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionBrowsePort, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowsePort.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValue"></param>
+        public void EndBrowsePort(IntPtr aAsyncHandle, out uint aValue)
+        {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
+            uint index = 0;
+            aValue = Invocation.OutputUint(aAsyncHandle, index++);
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        public void SyncUpdateCount(out uint aValue)
+        {
+            SyncUpdateCountAvOpenhomeOrgMediaServer1 sync = new SyncUpdateCountAvOpenhomeOrgMediaServer1(this);
+            BeginUpdateCount(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValue = sync.Value();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndUpdateCount().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginUpdateCount(CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionUpdateCount, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionUpdateCount.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValue"></param>
+        public void EndUpdateCount(IntPtr aAsyncHandle, out uint aValue)
+        {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
+            uint index = 0;
+            aValue = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -883,6 +1123,72 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
 
         /// <summary>
+        /// Set a delegate to be run when the QueryPort state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.</remarks>
+        /// <param name="aQueryPortChanged">The delegate to run when the state variable changes</param>
+        public void SetPropertyQueryPortChanged(System.Action aQueryPortChanged)
+        {
+            lock (iPropertyLock)
+            {
+                iQueryPortChanged = aQueryPortChanged;
+            }
+        }
+
+        private void QueryPortPropertyChanged()
+        {
+            lock (iPropertyLock)
+            {
+                ReportEvent(iQueryPortChanged);
+            }
+        }
+
+        /// <summary>
+        /// Set a delegate to be run when the BrowsePort state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.</remarks>
+        /// <param name="aBrowsePortChanged">The delegate to run when the state variable changes</param>
+        public void SetPropertyBrowsePortChanged(System.Action aBrowsePortChanged)
+        {
+            lock (iPropertyLock)
+            {
+                iBrowsePortChanged = aBrowsePortChanged;
+            }
+        }
+
+        private void BrowsePortPropertyChanged()
+        {
+            lock (iPropertyLock)
+            {
+                ReportEvent(iBrowsePortChanged);
+            }
+        }
+
+        /// <summary>
+        /// Set a delegate to be run when the UpdateCount state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.</remarks>
+        /// <param name="aUpdateCountChanged">The delegate to run when the state variable changes</param>
+        public void SetPropertyUpdateCountChanged(System.Action aUpdateCountChanged)
+        {
+            lock (iPropertyLock)
+            {
+                iUpdateCountChanged = aUpdateCountChanged;
+            }
+        }
+
+        private void UpdateCountPropertyChanged()
+        {
+            lock (iPropertyLock)
+            {
+                ReportEvent(iUpdateCountChanged);
+            }
+        }
+
+        /// <summary>
         /// Query the value of the ManufacturerName property.
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
@@ -1078,6 +1384,51 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
 
         /// <summary>
+        /// Query the value of the QueryPort property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <returns>Value of the QueryPort property</returns>
+        public uint PropertyQueryPort()
+        {
+            PropertyReadLock();
+            uint val = iQueryPort.Value();
+            PropertyReadUnlock();
+            return val;
+        }
+
+        /// <summary>
+        /// Query the value of the BrowsePort property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <returns>Value of the BrowsePort property</returns>
+        public uint PropertyBrowsePort()
+        {
+            PropertyReadLock();
+            uint val = iBrowsePort.Value();
+            PropertyReadUnlock();
+            return val;
+        }
+
+        /// <summary>
+        /// Query the value of the UpdateCount property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <returns>Value of the UpdateCount property</returns>
+        public uint PropertyUpdateCount()
+        {
+            PropertyReadLock();
+            uint val = iUpdateCount.Value();
+            PropertyReadUnlock();
+            return val;
+        }
+
+        /// <summary>
         /// Must be called for each class instance.  Must be called before Core.Library.Close().
         /// </summary>
         public void Dispose()
@@ -1093,6 +1444,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionModel.Dispose();
             iActionProduct.Dispose();
             iActionAttributes.Dispose();
+            iActionQueryPort.Dispose();
+            iActionBrowsePort.Dispose();
+            iActionUpdateCount.Dispose();
             iActionQuery.Dispose();
             iManufacturerName.Dispose();
             iManufacturerInfo.Dispose();
@@ -1107,6 +1461,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iProductUrl.Dispose();
             iProductImageUri.Dispose();
             iAttributes.Dispose();
+            iQueryPort.Dispose();
+            iBrowsePort.Dispose();
+            iUpdateCount.Dispose();
         }
     }
 }

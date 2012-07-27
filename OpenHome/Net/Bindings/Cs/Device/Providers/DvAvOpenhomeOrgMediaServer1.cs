@@ -177,6 +177,45 @@ namespace OpenHome.Net.Device.Providers
         /// </summary>
         /// <returns>Value of the Attributes property.</param>
         string PropertyAttributes();
+
+        /// <summary>
+        /// Set the value of the QueryPort property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyQueryPort(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the QueryPort property
+        /// </summary>
+        /// <returns>Value of the QueryPort property.</param>
+        uint PropertyQueryPort();
+
+        /// <summary>
+        /// Set the value of the BrowsePort property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyBrowsePort(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the BrowsePort property
+        /// </summary>
+        /// <returns>Value of the BrowsePort property.</param>
+        uint PropertyBrowsePort();
+
+        /// <summary>
+        /// Set the value of the UpdateCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyUpdateCount(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the UpdateCount property
+        /// </summary>
+        /// <returns>Value of the UpdateCount property.</param>
+        uint PropertyUpdateCount();
         
     }
     /// <summary>
@@ -189,6 +228,9 @@ namespace OpenHome.Net.Device.Providers
         private ActionDelegate iDelegateModel;
         private ActionDelegate iDelegateProduct;
         private ActionDelegate iDelegateAttributes;
+        private ActionDelegate iDelegateQueryPort;
+        private ActionDelegate iDelegateBrowsePort;
+        private ActionDelegate iDelegateUpdateCount;
         private ActionDelegate iDelegateQuery;
         private PropertyString iPropertyManufacturerName;
         private PropertyString iPropertyManufacturerInfo;
@@ -203,6 +245,9 @@ namespace OpenHome.Net.Device.Providers
         private PropertyString iPropertyProductUrl;
         private PropertyString iPropertyProductImageUri;
         private PropertyString iPropertyAttributes;
+        private PropertyUint iPropertyQueryPort;
+        private PropertyUint iPropertyBrowsePort;
+        private PropertyUint iPropertyUpdateCount;
 
         /// <summary>
         /// Constructor
@@ -342,6 +387,33 @@ namespace OpenHome.Net.Device.Providers
             List<String> allowedValues = new List<String>();
             iPropertyAttributes = new PropertyString(new ParameterString("Attributes", allowedValues));
             AddProperty(iPropertyAttributes);
+        }
+
+        /// <summary>
+        /// Enable the QueryPort property.
+        /// </summary>
+        public void EnablePropertyQueryPort()
+        {
+            iPropertyQueryPort = new PropertyUint(new ParameterUint("QueryPort"));
+            AddProperty(iPropertyQueryPort);
+        }
+
+        /// <summary>
+        /// Enable the BrowsePort property.
+        /// </summary>
+        public void EnablePropertyBrowsePort()
+        {
+            iPropertyBrowsePort = new PropertyUint(new ParameterUint("BrowsePort"));
+            AddProperty(iPropertyBrowsePort);
+        }
+
+        /// <summary>
+        /// Enable the UpdateCount property.
+        /// </summary>
+        public void EnablePropertyUpdateCount()
+        {
+            iPropertyUpdateCount = new PropertyUint(new ParameterUint("UpdateCount"));
+            AddProperty(iPropertyUpdateCount);
         }
 
         /// <summary>
@@ -670,6 +742,81 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
+        /// Set the value of the QueryPort property
+        /// </summary>
+        /// <remarks>Can only be called if EnablePropertyQueryPort has previously been called.</remarks>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public bool SetPropertyQueryPort(uint aValue)
+        {
+            if (iPropertyQueryPort == null)
+                throw new PropertyDisabledError();
+            return SetPropertyUint(iPropertyQueryPort, aValue);
+        }
+
+        /// <summary>
+        /// Get a copy of the value of the QueryPort property
+        /// </summary>
+        /// <remarks>Can only be called if EnablePropertyQueryPort has previously been called.</remarks>
+        /// <returns>Value of the QueryPort property.</returns>
+        public uint PropertyQueryPort()
+        {
+            if (iPropertyQueryPort == null)
+                throw new PropertyDisabledError();
+            return iPropertyQueryPort.Value();
+        }
+
+        /// <summary>
+        /// Set the value of the BrowsePort property
+        /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBrowsePort has previously been called.</remarks>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public bool SetPropertyBrowsePort(uint aValue)
+        {
+            if (iPropertyBrowsePort == null)
+                throw new PropertyDisabledError();
+            return SetPropertyUint(iPropertyBrowsePort, aValue);
+        }
+
+        /// <summary>
+        /// Get a copy of the value of the BrowsePort property
+        /// </summary>
+        /// <remarks>Can only be called if EnablePropertyBrowsePort has previously been called.</remarks>
+        /// <returns>Value of the BrowsePort property.</returns>
+        public uint PropertyBrowsePort()
+        {
+            if (iPropertyBrowsePort == null)
+                throw new PropertyDisabledError();
+            return iPropertyBrowsePort.Value();
+        }
+
+        /// <summary>
+        /// Set the value of the UpdateCount property
+        /// </summary>
+        /// <remarks>Can only be called if EnablePropertyUpdateCount has previously been called.</remarks>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public bool SetPropertyUpdateCount(uint aValue)
+        {
+            if (iPropertyUpdateCount == null)
+                throw new PropertyDisabledError();
+            return SetPropertyUint(iPropertyUpdateCount, aValue);
+        }
+
+        /// <summary>
+        /// Get a copy of the value of the UpdateCount property
+        /// </summary>
+        /// <remarks>Can only be called if EnablePropertyUpdateCount has previously been called.</remarks>
+        /// <returns>Value of the UpdateCount property.</returns>
+        public uint PropertyUpdateCount()
+        {
+            if (iPropertyUpdateCount == null)
+                throw new PropertyDisabledError();
+            return iPropertyUpdateCount.Value();
+        }
+
+        /// <summary>
         /// Signal that the action Manufacturer is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
@@ -728,6 +875,45 @@ namespace OpenHome.Net.Device.Providers
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyAttributes));
             iDelegateAttributes = new ActionDelegate(DoAttributes);
             EnableAction(action, iDelegateAttributes, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
+        /// Signal that the action QueryPort is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// QueryPort must be overridden if this is called.</remarks>
+        protected void EnableActionQueryPort()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("QueryPort");
+            action.AddOutputParameter(new ParameterRelated("Value", iPropertyQueryPort));
+            iDelegateQueryPort = new ActionDelegate(DoQueryPort);
+            EnableAction(action, iDelegateQueryPort, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
+        /// Signal that the action BrowsePort is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// BrowsePort must be overridden if this is called.</remarks>
+        protected void EnableActionBrowsePort()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("BrowsePort");
+            action.AddOutputParameter(new ParameterRelated("Value", iPropertyBrowsePort));
+            iDelegateBrowsePort = new ActionDelegate(DoBrowsePort);
+            EnableAction(action, iDelegateBrowsePort, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
+        /// Signal that the action UpdateCount is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// UpdateCount must be overridden if this is called.</remarks>
+        protected void EnableActionUpdateCount()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("UpdateCount");
+            action.AddOutputParameter(new ParameterRelated("Value", iPropertyUpdateCount));
+            iDelegateUpdateCount = new ActionDelegate(DoUpdateCount);
+            EnableAction(action, iDelegateUpdateCount, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -806,6 +992,48 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
         protected virtual void Attributes(IDvInvocation aInvocation, out string aValue)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// QueryPort action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// QueryPort action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionQueryPort was called.</remarks>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        /// <param name="aValue"></param>
+        protected virtual void QueryPort(IDvInvocation aInvocation, out uint aValue)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// BrowsePort action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// BrowsePort action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBrowsePort was called.</remarks>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        /// <param name="aValue"></param>
+        protected virtual void BrowsePort(IDvInvocation aInvocation, out uint aValue)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// UpdateCount action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// UpdateCount action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionUpdateCount was called.</remarks>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        /// <param name="aValue"></param>
+        protected virtual void UpdateCount(IDvInvocation aInvocation, out uint aValue)
         {
             throw (new ActionDisabledError());
         }
@@ -1022,6 +1250,144 @@ namespace OpenHome.Net.Device.Providers
             catch (System.Exception e)
             {
                 Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Attributes", e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+            }
+            return 0;
+        }
+
+        private static int DoQueryPort(IntPtr aPtr, IntPtr aInvocation)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderAvOpenhomeOrgMediaServer1 self = (DvProviderAvOpenhomeOrgMediaServer1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint value;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.QueryPort(invocation, out value);
+            }
+            catch (ActionError e)
+            {
+                invocation.ReportActionError(e, String.Format("Set{0}", "QueryPort"));
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "QueryPort"));
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "QueryPort", e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("Value", value);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "QueryPort", e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+            }
+            return 0;
+        }
+
+        private static int DoBrowsePort(IntPtr aPtr, IntPtr aInvocation)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderAvOpenhomeOrgMediaServer1 self = (DvProviderAvOpenhomeOrgMediaServer1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint value;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.BrowsePort(invocation, out value);
+            }
+            catch (ActionError e)
+            {
+                invocation.ReportActionError(e, String.Format("Set{0}", "BrowsePort"));
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "BrowsePort"));
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "BrowsePort", e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("Value", value);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "BrowsePort", e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+            }
+            return 0;
+        }
+
+        private static int DoUpdateCount(IntPtr aPtr, IntPtr aInvocation)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderAvOpenhomeOrgMediaServer1 self = (DvProviderAvOpenhomeOrgMediaServer1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint value;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.UpdateCount(invocation, out value);
+            }
+            catch (ActionError e)
+            {
+                invocation.ReportActionError(e, String.Format("Set{0}", "UpdateCount"));
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "UpdateCount"));
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "UpdateCount", e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("Value", value);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "UpdateCount", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
             }
             return 0;
