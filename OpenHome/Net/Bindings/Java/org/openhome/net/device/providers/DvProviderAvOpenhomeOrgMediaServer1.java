@@ -216,6 +216,54 @@ interface IDvProviderAvOpenhomeOrgMediaServer1
      * @return value of the Attributes property.
      */
     public String getPropertyAttributes();
+
+    /**
+     * Set the value of the QueryPort property
+     *
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     *
+     */
+    public boolean setPropertyQueryPort(long aValue);
+
+    /**
+     * Get a copy of the value of the QueryPort property
+     *
+     * @return value of the QueryPort property.
+     */
+    public long getPropertyQueryPort();
+
+    /**
+     * Set the value of the BrowsePort property
+     *
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     *
+     */
+    public boolean setPropertyBrowsePort(long aValue);
+
+    /**
+     * Get a copy of the value of the BrowsePort property
+     *
+     * @return value of the BrowsePort property.
+     */
+    public long getPropertyBrowsePort();
+
+    /**
+     * Set the value of the UpdateCount property
+     *
+     * @param aValue    new value for the property.
+     * @return      <tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
+     *
+     */
+    public boolean setPropertyUpdateCount(long aValue);
+
+    /**
+     * Get a copy of the value of the UpdateCount property
+     *
+     * @return value of the UpdateCount property.
+     */
+    public long getPropertyUpdateCount();
         
 }
 
@@ -340,6 +388,9 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     private IDvInvocationListener iDelegateModel;
     private IDvInvocationListener iDelegateProduct;
     private IDvInvocationListener iDelegateAttributes;
+    private IDvInvocationListener iDelegateQueryPort;
+    private IDvInvocationListener iDelegateBrowsePort;
+    private IDvInvocationListener iDelegateUpdateCount;
     private IDvInvocationListener iDelegateQuery;
     private PropertyString iPropertyManufacturerName;
     private PropertyString iPropertyManufacturerInfo;
@@ -354,6 +405,9 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     private PropertyString iPropertyProductUrl;
     private PropertyString iPropertyProductImageUri;
     private PropertyString iPropertyAttributes;
+    private PropertyUint iPropertyQueryPort;
+    private PropertyUint iPropertyBrowsePort;
+    private PropertyUint iPropertyUpdateCount;
 
     /**
      * Constructor
@@ -493,6 +547,33 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
         List<String> allowedValues = new LinkedList<String>();
         iPropertyAttributes = new PropertyString(new ParameterString("Attributes", allowedValues));
         addProperty(iPropertyAttributes);
+    }
+
+    /**
+     * Enable the QueryPort property.
+     */
+    public void enablePropertyQueryPort()
+    {
+        iPropertyQueryPort = new PropertyUint(new ParameterUint("QueryPort"));
+        addProperty(iPropertyQueryPort);
+    }
+
+    /**
+     * Enable the BrowsePort property.
+     */
+    public void enablePropertyBrowsePort()
+    {
+        iPropertyBrowsePort = new PropertyUint(new ParameterUint("BrowsePort"));
+        addProperty(iPropertyBrowsePort);
+    }
+
+    /**
+     * Enable the UpdateCount property.
+     */
+    public void enablePropertyUpdateCount()
+    {
+        iPropertyUpdateCount = new PropertyUint(new ParameterUint("UpdateCount"));
+        addProperty(iPropertyUpdateCount);
     }
 
     /**
@@ -782,6 +863,72 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     }
 
     /**
+     * Set the value of the QueryPort property
+     *
+     * @param aValue    new value for the property.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
+     */
+    public boolean setPropertyQueryPort(long aValue)
+    {
+        return setPropertyUint(iPropertyQueryPort, aValue);
+    }
+
+    /**
+     * Get a copy of the value of the QueryPort property
+     *
+     * @return  value of the QueryPort property.
+     */
+    public long getPropertyQueryPort()
+    {
+        return iPropertyQueryPort.getValue();
+    }
+
+    /**
+     * Set the value of the BrowsePort property
+     *
+     * @param aValue    new value for the property.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
+     */
+    public boolean setPropertyBrowsePort(long aValue)
+    {
+        return setPropertyUint(iPropertyBrowsePort, aValue);
+    }
+
+    /**
+     * Get a copy of the value of the BrowsePort property
+     *
+     * @return  value of the BrowsePort property.
+     */
+    public long getPropertyBrowsePort()
+    {
+        return iPropertyBrowsePort.getValue();
+    }
+
+    /**
+     * Set the value of the UpdateCount property
+     *
+     * @param aValue    new value for the property.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
+     */
+    public boolean setPropertyUpdateCount(long aValue)
+    {
+        return setPropertyUint(iPropertyUpdateCount, aValue);
+    }
+
+    /**
+     * Get a copy of the value of the UpdateCount property
+     *
+     * @return  value of the UpdateCount property.
+     */
+    public long getPropertyUpdateCount()
+    {
+        return iPropertyUpdateCount.getValue();
+    }
+
+    /**
      * Signal that the action Manufacturer is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
@@ -844,6 +991,48 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
         action.addOutputParameter(new ParameterRelated("Value", iPropertyAttributes));
         iDelegateAttributes = new DoAttributes();
         enableAction(action, iDelegateAttributes);
+    }
+
+    /**
+     * Signal that the action QueryPort is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * QueryPort must be overridden if this is called.
+     */      
+    protected void enableActionQueryPort()
+    {
+        Action action = new Action("QueryPort");
+        action.addOutputParameter(new ParameterRelated("Value", iPropertyQueryPort));
+        iDelegateQueryPort = new DoQueryPort();
+        enableAction(action, iDelegateQueryPort);
+    }
+
+    /**
+     * Signal that the action BrowsePort is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * BrowsePort must be overridden if this is called.
+     */      
+    protected void enableActionBrowsePort()
+    {
+        Action action = new Action("BrowsePort");
+        action.addOutputParameter(new ParameterRelated("Value", iPropertyBrowsePort));
+        iDelegateBrowsePort = new DoBrowsePort();
+        enableAction(action, iDelegateBrowsePort);
+    }
+
+    /**
+     * Signal that the action UpdateCount is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * UpdateCount must be overridden if this is called.
+     */      
+    protected void enableActionUpdateCount()
+    {
+        Action action = new Action("UpdateCount");
+        action.addOutputParameter(new ParameterRelated("Value", iPropertyUpdateCount));
+        iDelegateUpdateCount = new DoUpdateCount();
+        enableAction(action, iDelegateUpdateCount);
     }
 
     /**
@@ -917,6 +1106,51 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected String attributes(IDvInvocation aInvocation)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * QueryPort action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * QueryPort action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionQueryPort} was called.</remarks>
+     *
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
+     */
+    protected long queryPort(IDvInvocation aInvocation)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * BrowsePort action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * BrowsePort action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionBrowsePort} was called.</remarks>
+     *
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
+     */
+    protected long browsePort(IDvInvocation aInvocation)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * UpdateCount action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * UpdateCount action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionUpdateCount} was called.</remarks>
+     *
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
+     */
+    protected long updateCount(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1164,6 +1398,150 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             {
                 invocation.writeStart();
                 invocation.writeString("Value", value);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class DoQueryPort implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long value;
+            try
+            {
+                invocation.readStart();
+                invocation.readEnd();
+                 value = queryPort(invocation);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeUint("Value", value);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class DoBrowsePort implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long value;
+            try
+            {
+                invocation.readStart();
+                invocation.readEnd();
+                 value = browsePort(invocation);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeUint("Value", value);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class DoUpdateCount implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long value;
+            try
+            {
+                invocation.readStart();
+                invocation.readEnd();
+                 value = updateCount(invocation);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeUint("Value", value);
                 invocation.writeEnd();
             }
             catch (ActionError ae)
