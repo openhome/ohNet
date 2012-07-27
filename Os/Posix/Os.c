@@ -287,7 +287,7 @@ typedef struct
 {
     pthread_cond_t  iCond;
     pthread_mutex_t iLock;
-    uint32_t        iValue;
+    int32_t         iValue;
 } SemaphoreData;
 
 THandle OsSemaphoreCreate(const char* aName, uint32_t aCount)
@@ -328,6 +328,10 @@ int32_t OsSemaphoreWait(THandle aSem)
     if (status != 0) {
         goto exit;
     }
+    if (data->iValue < 0) {
+        status = -1;
+        goto exit;
+    }
     while (data->iValue == 0) {
         status = pthread_cond_wait(&data->iCond, &data->iLock);
         if (status != 0) {
@@ -348,6 +352,10 @@ int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
     getAbsTimespec(&timeToWait, aTimeoutMs);
     int status = pthread_mutex_lock(&data->iLock);
     if (status != 0) {
+        goto exit;
+    }
+    if (data->iValue < 0) {
+        status = -1;
         goto exit;
     }
     while (data->iValue == 0 && timeout == 0 && status == 0) {
@@ -382,8 +390,8 @@ int32_t OsSemaphoreSignal(THandle aSem)
     SemaphoreData* data = (SemaphoreData*)aSem;
     pthread_mutex_lock(&data->iLock);
     data->iValue += 1;
-    pthread_mutex_unlock(&data->iLock);
     status = pthread_cond_signal(&data->iCond);
+    pthread_mutex_unlock(&data->iLock);
     return (status==0? 0 : -1);
 }
 
@@ -1081,8 +1089,9 @@ typedef struct InterfaceChangedObserver
 
 #endif /* PLATFOTM_MACOSX_GNU */
 
+#ifndef PLATFORM_IOS
 static InterfaceChangedObserver* gInterfaceChangedObserver = NULL;
-
+#endif
 
 #if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
 
