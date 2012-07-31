@@ -13,6 +13,7 @@
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Private/Maths.h>
+#include <OpenHome/Net/Private/XmlParser.h>
 
 #include <list>
 #include <map>
@@ -214,6 +215,23 @@ void CpiSubscription::DoSubscribe()
         CpiSubscriptionManager::NotifyAddAborted(*this);
         THROW(ReaderError);
     }
+    catch (XmlError&) {
+        CpiSubscriptionManager::NotifyAddAborted(*this);
+        THROW(XmlError);
+        // we don't expect to ever get here.  Its worth capturing some debug info if we do.
+        Brh deviceXml;
+        if (!iDevice.GetAttribute("Upnp.DeviceXml", deviceXml)) {
+            deviceXml.Set("[missing]");
+        }
+        const Brx& udn = iDevice.Udn();
+        Stack::Mutex().Wait();
+        Log::Print("XmlError attempting to subscribe to device ");
+        Log::Print(udn);
+        Log::Print(", with xml\n\n");
+        Log::Print(deviceXml);
+        Log::Print("\n\n");
+        Stack::Mutex().Signal();
+    }
 
     CpiSubscriptionManager::Add(*this);
 
@@ -403,6 +421,9 @@ void Subscriber::Run()
         }
         catch (ReaderError&) {
             Error("Reader");
+        }
+        catch (XmlError&) {
+            Error("XmlError");
         }
         iSubscription->RemoveRef();
         iSubscription = NULL;
