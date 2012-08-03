@@ -261,30 +261,34 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     iXmlFetch = NULL;
     iLock.Signal();
     TBool err = iRemoved;
-    try {
-        XmlFetch::Xml(aAsync).TransferTo(iXml);
+    if (!err) {
+        try {
+            XmlFetch::Xml(aAsync).TransferTo(iXml);
+        }
+        catch (XmlFetchError&) {
+            err = true;
+            LOG2(kDevice, kError, "Error fetching xml for ");
+            LOG2(kDevice, kError, Udn());
+            LOG2(kDevice, kError, " from ");
+            LOG2(kDevice, kError, iLocation);
+            LOG2(kDevice, kError, "\n");
+        }
     }
-    catch (XmlFetchError&) {
-        err = true;
-        LOG2(kDevice, kError, "Error fetching xml for ");
-        LOG2(kDevice, kError, Udn());
-        LOG2(kDevice, kError, " from ");
-        LOG2(kDevice, kError, iLocation);
-        LOG2(kDevice, kError, "\n");
-    }
-    try {
-        iDeviceXmlDocument = new DeviceXmlDocument(iXml);
-        iDeviceXml = new DeviceXml(iDeviceXmlDocument->Find(Udn()));
-    }
-    catch (XmlError&) {
-        err = true;
-        LOG2(kDevice, kError, "Error within xml for ");
-        LOG2(kDevice, kError, Udn());
-        LOG2(kDevice, kError, " from ");
-        LOG2(kDevice, kError, iLocation);
-        LOG2(kDevice, kError, ".  Xml is ");
-        LOG2(kDevice, kError, iXml);
-        LOG2(kDevice, kError, "\n");
+    if (!err) {
+        try {
+            iDeviceXmlDocument = new DeviceXmlDocument(iXml);
+            iDeviceXml = new DeviceXml(iDeviceXmlDocument->Find(Udn()));
+        }
+        catch (XmlError&) {
+            err = true;
+            LOG2(kDevice, kError, "Error within xml for ");
+            LOG2(kDevice, kError, Udn());
+            LOG2(kDevice, kError, " from ");
+            LOG2(kDevice, kError, iLocation);
+            LOG2(kDevice, kError, ".  Xml is ");
+            LOG2(kDevice, kError, iXml);
+            LOG2(kDevice, kError, "\n");
+        }
     }
     iLock.Wait();
     if (iList != NULL) {
