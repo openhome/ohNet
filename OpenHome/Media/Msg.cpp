@@ -263,6 +263,11 @@ void MsgDecoded::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBi
     }
 }
 
+void MsgDecoded::Process(IMsgProcessor& /*aProcessor*/)
+{
+    ASSERTS();
+}
+
 
 // MsgAudio
 
@@ -339,12 +344,22 @@ TUint MsgAudio::Bytes() const
     return bytes;
 }
 
+void MsgAudio::Process(IMsgProcessor& aProcessor)
+{
+    aProcessor.ProcessMsg(*this);
+}
+
 
 // MsgTrack
 
 MsgTrack::MsgTrack(MsgAllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
+}
+
+void MsgTrack::Process(IMsgProcessor& aProcessor)
+{
+    aProcessor.ProcessMsg(*this);
 }
 
 
@@ -355,6 +370,11 @@ MsgStartOfAudio::MsgStartOfAudio(MsgAllocatorBase& aAllocator)
 {
 }
 
+void MsgStartOfAudio::Process(IMsgProcessor& aProcessor)
+{
+    aProcessor.ProcessMsg(*this);
+}
+
 
 // MsgMetaText
 
@@ -362,6 +382,12 @@ MsgMetaText::MsgMetaText(MsgAllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
 }
+
+void MsgMetaText::Process(IMsgProcessor& aProcessor)
+{
+    aProcessor.ProcessMsg(*this);
+}
+
 
 // MsgFactory
 

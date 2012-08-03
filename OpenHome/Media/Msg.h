@@ -62,6 +62,8 @@ template <class T> T* MsgAllocator<T>::Allocate()
     return static_cast<T*>(DoAllocate());
 }
 
+class IMsgProcessor;
+
 class Msg
 {
     friend class MsgAllocatorBase;
@@ -69,6 +71,7 @@ public:
     void AddRef();
     void RemoveRef();
    // virtual void Clear() = 0; // ???
+    virtual void Process(IMsgProcessor& aProcessor) = 0;
 protected:
     Msg(MsgAllocatorBase& aAllocator);
 protected:
@@ -101,6 +104,8 @@ private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian); // sample rate, bit-depth, num channels, const brx& (ptr/len), endianness);
     static void UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
     static void UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
+private: // from Msg
+    void Process(IMsgProcessor& aProcessor);
 private:
     TUint iSubsamples[kMaxSubsamples]; // one sub-sample per channel == 1 sample
     TUint iSubsampleCount;
@@ -128,6 +133,8 @@ public:
     TUint Bytes() const;
 private:
     void Construct(MsgDecoded* aMsgDecoded, TUint aOffsetBytes = 0);
+private: // from Msg
+    void Process(IMsgProcessor& aProcessor);
 private:
     MsgDecoded* iAudioData;
     const TUint* iPtr;
@@ -141,6 +148,8 @@ public:
     static const TUint kMaxBytes = 100; // FIXME
 public:
     MsgTrack(MsgAllocatorBase& aAllocator);
+private: // from Msg
+    void Process(IMsgProcessor& aProcessor);
 private:
     // track uri & meta data
 };
@@ -149,6 +158,8 @@ class MsgStartOfAudio : public Msg
 {
 public:
     MsgStartOfAudio(MsgAllocatorBase& aAllocator);
+private: // from Msg
+    void Process(IMsgProcessor& aProcessor);
 private:
     static const TUint kMaxCodecNameBytes = 32;
     //TUint64 iSamplesTotal; // total num samples in the track
@@ -162,6 +173,17 @@ public:
     static const TUint kMaxBytes = 100; // FIXME
 public:
     MsgMetaText(MsgAllocatorBase& aAllocator);
+private: // from Msg
+    void Process(IMsgProcessor& aProcessor);
+};
+
+class IMsgProcessor
+{
+public:
+    virtual void ProcessMsg(MsgAudio& aMsg) = 0;
+    virtual void ProcessMsg(MsgTrack& aMsg) = 0;
+    virtual void ProcessMsg(MsgStartOfAudio& aMsg) = 0;
+    virtual void ProcessMsg(MsgMetaText& aMsg) = 0;
 };
 
 class MsgFactory // owned by Pipeline object

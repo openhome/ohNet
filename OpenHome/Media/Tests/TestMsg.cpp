@@ -43,6 +43,8 @@ public:
     TestCell(MsgAllocatorBase& aAllocator);
     void Fill(TChar aVal);
     void CheckIsFilled(TChar aVal) const;
+private: // from Msg
+    void Process(IMsgProcessor& aProcessor);
 private:
     static const TUint kNumBytes = 10;
     TChar iBytes[kNumBytes];
@@ -115,6 +117,11 @@ void TestCell::CheckIsFilled(TChar aVal) const
     for (TUint i=0; i<kNumBytes; i++) {
         TEST(iBytes[i] == aVal);
     }
+}
+
+void TestCell::Process(IMsgProcessor& /*aProcessor*/)
+{
+    ASSERTS();
 }
 
 
