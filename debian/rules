@@ -9,8 +9,8 @@
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 
-#%:
-#	dh $@ 
+%:
+	dh $@ 
 
 build: build-stamp
 
@@ -32,6 +32,20 @@ install: build-stamp
 	$(MAKE) install prefix=$(CURDIR)/debian/tmp/usr
 	mkdir $(CURDIR)/debian/tmp/Bindings
 	cp -r $(CURDIR)/OpenHome/Net/Bindings/* $(CURDIR)/debian/tmp/Bindings
+	find $(CURDIR)/debian/tmp/ -type f -exec chmod 644 '{}' \;
+	find $(CURDIR)/debian/tmp/ -type d -exec chmod 755 '{}' \;
+	mkdir $(CURDIR)/debian/tmp/Docs
+	rm -f $(CURDIR)/Build/Docs/CppCore/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/CppCore/jquery.js
+	rm -f $(CURDIR)/Build/Docs/CppStd/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/CppStd/jquery.js
+	rm -f $(CURDIR)/Build/Docs/Cs/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/Cs/jquery.js
+	rm -f $(CURDIR)/Build/Docs/C/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/C/jquery.js
+	rm -f $(CURDIR)/Build/Docs/Java/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/Java/jquery.js
+	cp -r $(CURDIR)/Build/Docs $(CURDIR)/debian/tmp/
 
 clean:
 	dh_testdir
@@ -48,8 +62,8 @@ binary-arch: build install
 	#dh_prep
 	dh_testdir
 	dh_testroot
-	dh_install --sourcedir=debian/tmp
 	
+	dh_compress
 	dh_installchangelogs
 	dh_installdocs
 	#dh_installexamples
@@ -57,14 +71,16 @@ binary-arch: build install
 	#dh_installcron
 	#dh_installman
 	#dh_installinfo
-	dh_link
 	dh_strip
 	#dh_strip --dbg-package=libmm-dbg
 	#libmmdh_compress
 	dh_fixperms
 	dh_makeshlibs
+	dh_shlibdeps
 	dh_installdeb
 	dh_shlibdeps
+	dh_install
+	dh_link
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
