@@ -937,7 +937,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -988,7 +988,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1040,7 +1040,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1088,7 +1088,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1152,7 +1152,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1221,7 +1221,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1280,7 +1280,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1331,7 +1331,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1386,7 +1386,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1436,7 +1436,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1484,7 +1484,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1532,7 +1532,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1587,7 +1587,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1637,7 +1637,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1685,7 +1685,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1733,7 +1733,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1786,7 +1786,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1841,7 +1841,7 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
