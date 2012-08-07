@@ -26,7 +26,6 @@ install: build-stamp
 	dh_testdir
 	dh_testroot
 	dh_prep
-	#dh_clean -k
 	dh_installdirs
 					
 	$(MAKE) install prefix=$(CURDIR)/debian/tmp/usr
@@ -59,21 +58,13 @@ binary-indep: build install
 	# Build architecture-dependent files here.
 	#
 binary-arch: build install
-	#dh_prep
 	dh_testdir
 	dh_testroot
 	
-	dh_compress
 	dh_installchangelogs
+	dh_compress
 	dh_installdocs
-	#dh_installexamples
-	#dh_install_installmenu
-	#dh_installcron
-	#dh_installman
-	#dh_installinfo
 	dh_strip
-	#dh_strip --dbg-package=libmm-dbg
-	#libmmdh_compress
 	dh_fixperms
 	dh_makeshlibs
 	dh_shlibdeps
