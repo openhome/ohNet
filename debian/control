@@ -15,8 +15,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack
  ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
  point and a device stack that can be used together or independently. It runs on
- Linux, Windows, Mac, iOS and Android. The public APIs are available for the
- device and control point stacks in C++, C#, Java and C. JavaScript APIs are
+ Linux, Windows, Mac, i-OS and Android. The public APIs are available for the
+ device and control point stacks in C++, C#, Java and C. Java-Script APIs are
  also provided for the control point stack.
 
 Package: libohnet-dev
@@ -26,7 +26,7 @@ Depends: libohnet, ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
  ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
  point and a device stack that can be used together or independently. It runs on
- Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ Linux, Windows, Mac, i-OS and Android. The public APIs are available for the
  device and control point stacks in C++, C#, Java and C. JavaScript APIs are
  also provided for the control point stack.  This package includes the
  development support files.
@@ -38,7 +38,7 @@ Depends: libohnet-dev, ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
  ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
  point and a device stack that can be used together or independently. It runs on
- Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ Linux, Windows, Mac, i-OS and Android. The public APIs are available for the
  device and control point stacks in C++, C#, Java and C. JavaScript APIs are
  also provided for the control point stack.  This package includes the
  development support files.
@@ -50,7 +50,7 @@ Depends: libohnet-dev, ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
  ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
  point and a device stack that can be used together or independently. It runs on
- Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ Linux, Windows, Mac, i-OS and Android. The public APIs are available for the
  device and control point stacks in C++, C#, Java and C. JavaScript APIs are
  also provided for the control point stack.  This package includes the
  development support files.
@@ -62,7 +62,7 @@ Depends: libohnet-dev, ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
  ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
  point and a device stack that can be used together or independently. It runs on
- Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ Linux, Windows, Mac, i-OS and Android. The public APIs are available for the
  device and control point stacks in C++, C#, Java and C. JavaScript APIs are
  also provided for the control point stack.  This package includes the
  development support files.
@@ -74,7 +74,7 @@ Depends: libohnet-dev, ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
  ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
  point and a device stack that can be used together or independently. It runs on
- Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ Linux, Windows, Mac, i-OS and Android. The public APIs are available for the
  device and control point stacks in C++, C#, Java and C. JavaScript APIs are
  also provided for the control point stack.  This package includes the
  development support files.
@@ -86,7 +86,7 @@ Depends: libjs-jquery, ${shlibs:Depends}, ${misc:Depends}
 Description: OpenHome Networking Stack - development
  ohNet is a modern, cross platform UPnP stack. ohNet includes both a control
  point and a device stack that can be used together or independently. It runs on
- Linux, Windows, Mac, iOS and Android. The public APIs are available for the
+ Linux, Windows, Mac, i-OS and Android. The public APIs are available for the
  device and control point stacks in C++, C#, Java and C. JavaScript APIs are
  also provided for the control point stack.  This package includes the
  development support files.
