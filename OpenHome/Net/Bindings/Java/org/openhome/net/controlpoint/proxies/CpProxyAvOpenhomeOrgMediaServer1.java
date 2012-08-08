@@ -713,9 +713,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Manufacturer endManufacturer(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -783,9 +784,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Model endModel(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -853,9 +855,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Product endProduct(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -915,9 +918,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public String endAttributes(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -969,9 +973,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endQueryPort(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1023,9 +1028,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endBrowsePort(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1077,9 +1083,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endUpdateCount(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1134,9 +1141,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public String endQuery(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);

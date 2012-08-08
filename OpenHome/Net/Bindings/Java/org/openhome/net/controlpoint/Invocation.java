@@ -94,10 +94,9 @@ public class Invocation
 	 * @param aHandle	invocation to check for errors.
 	 * @return			<tt>true</tt> if the invocation failed; <tt>false</tt> if it succeeded.
 	 */
-	public static boolean error(long aHandle)
+	public static int error(long aHandle)
     {
-        int err = CpInvocationError(aHandle);
-        return (err != 0);
+        return CpInvocationError(aHandle);
     }
 	
 	/**

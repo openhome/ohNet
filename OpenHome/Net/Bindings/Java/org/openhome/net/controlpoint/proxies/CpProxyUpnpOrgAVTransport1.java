@@ -946,9 +946,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endSetAVTransportURI(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -997,9 +998,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endSetNextAVTransportURI(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1069,9 +1071,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public GetMediaInfo endGetMediaInfo(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long nrTracks = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1150,9 +1153,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public GetTransportInfo endGetTransportInfo(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String currentTransportState = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1229,9 +1233,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public GetPositionInfo endGetPositionInfo(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long track = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1308,9 +1313,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public GetDeviceCapabilities endGetDeviceCapabilities(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String playMedia = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1375,9 +1381,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public GetTransportSettings endGetTransportSettings(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String playMode = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1429,9 +1436,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endStop(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1478,9 +1486,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endPlay(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1525,9 +1534,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endPause(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1572,9 +1582,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endRecord(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1623,9 +1634,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endSeek(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1670,9 +1682,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endNext(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1717,9 +1730,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endPrevious(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1766,9 +1780,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endSetPlayMode(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1815,9 +1830,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endSetRecordQualityMode(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1869,9 +1885,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
      */
     public String endGetCurrentTransportActions(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String actions = Invocation.getOutputString(aAsyncHandle, index++);

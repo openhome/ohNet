@@ -845,9 +845,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public String endGetSearchCapabilities(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String searchCaps = Invocation.getOutputString(aAsyncHandle, index++);
@@ -899,9 +900,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public String endGetSortCapabilities(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String sortCaps = Invocation.getOutputString(aAsyncHandle, index++);
@@ -953,9 +955,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public String endGetSortExtensionCapabilities(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String sortExtensionCaps = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1007,9 +1010,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public String endGetFeatureList(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String featureList = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1061,9 +1065,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public long endGetSystemUpdateID(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long id = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1136,9 +1141,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public Browse endBrowse(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1219,9 +1225,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public Search endSearch(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1290,9 +1297,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public CreateObject endCreateObject(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String objectID = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1344,9 +1352,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public void endDestroyObject(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1395,9 +1404,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public void endUpdateObject(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1451,9 +1461,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public String endMoveObject(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String newObjectID = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1510,9 +1521,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public long endImportResource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long transferID = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1569,9 +1581,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public long endExportResource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long transferID = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1619,9 +1632,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public void endDeleteResource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1666,9 +1680,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public void endStopTransferResource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1726,9 +1741,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public GetTransferProgress endGetTransferProgress(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String transferStatus = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1791,9 +1807,10 @@ public class CpProxyUpnpOrgContentDirectory2 extends CpProxy implements ICpProxy
      */
     public String endCreateReference(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String newID = Invocation.getOutputString(aAsyncHandle, index++);

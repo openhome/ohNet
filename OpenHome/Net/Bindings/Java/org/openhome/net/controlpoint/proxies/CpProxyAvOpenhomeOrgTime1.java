@@ -200,9 +200,10 @@ public class CpProxyAvOpenhomeOrgTime1 extends CpProxy implements ICpProxyAvOpen
      */
     public Time endTime(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long trackCount = Invocation.getOutputUint(aAsyncHandle, index++);

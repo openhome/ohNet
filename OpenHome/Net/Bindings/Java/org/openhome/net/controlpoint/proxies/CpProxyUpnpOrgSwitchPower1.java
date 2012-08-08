@@ -170,9 +170,10 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
      */
     public void endSetTarget(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -221,9 +222,10 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
      */
     public boolean endGetTarget(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         boolean retTargetValue = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -275,9 +277,10 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
      */
     public boolean endGetStatus(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         boolean resultStatus = Invocation.getOutputBool(aAsyncHandle, index++);

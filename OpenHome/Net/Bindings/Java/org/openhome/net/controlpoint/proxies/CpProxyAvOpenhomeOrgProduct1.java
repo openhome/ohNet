@@ -942,9 +942,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public Manufacturer endManufacturer(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1012,9 +1013,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public Model endModel(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1084,9 +1086,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public Product endProduct(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String room = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1148,9 +1151,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public boolean endStandby(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -1198,9 +1202,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public void endSetStandby(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1249,9 +1254,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public long endSourceCount(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1303,9 +1309,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public String endSourceXml(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1357,9 +1364,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public long endSourceIndex(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1407,9 +1415,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public void endSetSourceIndex(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1454,9 +1463,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public void endSetSourceIndexByName(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -1516,9 +1526,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public Source endSource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String systemName = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1578,9 +1589,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public String endAttributes(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1632,9 +1644,10 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public long endSourceXmlChangeCount(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);

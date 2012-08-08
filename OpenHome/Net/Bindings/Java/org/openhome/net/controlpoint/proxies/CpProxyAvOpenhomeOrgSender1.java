@@ -294,9 +294,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public String endPresentationUrl(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -348,9 +349,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public String endMetadata(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -402,9 +404,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public boolean endAudio(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -456,9 +459,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public String endStatus(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -510,9 +514,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public String endAttributes(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);

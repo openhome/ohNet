@@ -467,9 +467,10 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      */
     public GetProtocolInfo endGetProtocolInfo(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String source = Invocation.getOutputString(aAsyncHandle, index++);
@@ -540,9 +541,10 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      */
     public PrepareForConnection endPrepareForConnection(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         int connectionID = Invocation.getOutputInt(aAsyncHandle, index++);
@@ -596,9 +598,10 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      */
     public void endConnectionComplete(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
     }
         
@@ -647,9 +650,10 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      */
     public String endGetCurrentConnectionIDs(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         String connectionIDs = Invocation.getOutputString(aAsyncHandle, index++);
@@ -718,9 +722,10 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
      */
     public GetCurrentConnectionInfo endGetCurrentConnectionInfo(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		int errCode = Invocation.error(aAsyncHandle);
+        if (errCode != 0)
         {
-            throw new ProxyError();
+            throw new ProxyError(errCode);
         }
         int index = 0;
         int rcsID = Invocation.getOutputInt(aAsyncHandle, index++);
