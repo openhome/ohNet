@@ -36,8 +36,8 @@ public:
 class DllExportClass ProxyError
 {
 public:
-    ProxyError();
-    ProxyError(uint32_t aLevel, uint32_t aCode);
+    DllExport ProxyError();
+    DllExport ProxyError(uint32_t aLevel, uint32_t aCode);
     TUint Level() const;
     DllExport uint32_t Code() const;
 private:

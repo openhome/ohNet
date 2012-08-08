@@ -723,7 +723,7 @@ void CpProxyUpnpOrgContentDirectory3::EndGetSearchCapabilities(IAsync& aAsync, B
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aSearchCaps);
@@ -755,7 +755,7 @@ void CpProxyUpnpOrgContentDirectory3::EndGetSortCapabilities(IAsync& aAsync, Brh
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aSortCaps);
@@ -787,7 +787,7 @@ void CpProxyUpnpOrgContentDirectory3::EndGetSortExtensionCapabilities(IAsync& aA
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aSortExtensionCaps);
@@ -819,7 +819,7 @@ void CpProxyUpnpOrgContentDirectory3::EndGetFeatureList(IAsync& aAsync, Brh& aFe
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aFeatureList);
@@ -851,7 +851,7 @@ void CpProxyUpnpOrgContentDirectory3::EndGetSystemUpdateID(IAsync& aAsync, TUint
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aId = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -883,7 +883,7 @@ void CpProxyUpnpOrgContentDirectory3::EndGetServiceResetToken(IAsync& aAsync, Br
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResetToken);
@@ -926,7 +926,7 @@ void CpProxyUpnpOrgContentDirectory3::EndBrowse(IAsync& aAsync, Brh& aResult, TU
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResult);
@@ -972,7 +972,7 @@ void CpProxyUpnpOrgContentDirectory3::EndSearch(IAsync& aAsync, Brh& aResult, TU
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResult);
@@ -1012,7 +1012,7 @@ void CpProxyUpnpOrgContentDirectory3::EndCreateObject(IAsync& aAsync, Brh& aObje
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aObjectID);
@@ -1045,7 +1045,7 @@ void CpProxyUpnpOrgContentDirectory3::EndDestroyObject(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1077,7 +1077,7 @@ void CpProxyUpnpOrgContentDirectory3::EndUpdateObject(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1111,7 +1111,7 @@ void CpProxyUpnpOrgContentDirectory3::EndMoveObject(IAsync& aAsync, Brh& aNewObj
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aNewObjectID);
@@ -1147,7 +1147,7 @@ void CpProxyUpnpOrgContentDirectory3::EndImportResource(IAsync& aAsync, TUint& a
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aTransferID = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1183,7 +1183,7 @@ void CpProxyUpnpOrgContentDirectory3::EndExportResource(IAsync& aAsync, TUint& a
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aTransferID = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1215,7 +1215,7 @@ void CpProxyUpnpOrgContentDirectory3::EndDeleteResource(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1245,7 +1245,7 @@ void CpProxyUpnpOrgContentDirectory3::EndStopTransferResource(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1280,7 +1280,7 @@ void CpProxyUpnpOrgContentDirectory3::EndGetTransferProgress(IAsync& aAsync, Brh
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aTransferStatus);
@@ -1318,7 +1318,7 @@ void CpProxyUpnpOrgContentDirectory3::EndCreateReference(IAsync& aAsync, Brh& aN
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aNewID);
@@ -1356,7 +1356,7 @@ void CpProxyUpnpOrgContentDirectory3::EndFreeFormQuery(IAsync& aAsync, Brh& aQue
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aQueryResult);
@@ -1389,7 +1389,7 @@ void CpProxyUpnpOrgContentDirectory3::EndGetFreeFormQueryCapabilities(IAsync& aA
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aFFQCapabilities);

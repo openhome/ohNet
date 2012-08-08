@@ -730,7 +730,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndPlay(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -757,7 +757,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndPause(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -784,7 +784,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndStop(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -811,7 +811,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndNext(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -838,7 +838,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndPrevious(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -868,7 +868,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSetRepeat(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -898,7 +898,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndRepeat(IAsync& aAsync, TBool& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -930,7 +930,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSetShuffle(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -960,7 +960,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndShuffle(IAsync& aAsync, TBool& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -992,7 +992,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSeekSecondAbsolute(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1022,7 +1022,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSeekSecondRelative(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1052,7 +1052,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSeekId(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1082,7 +1082,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSeekIndex(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1112,7 +1112,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndTransportState(IAsync& aAsync, Brh& aValu
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);
@@ -1144,7 +1144,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndId(IAsync& aAsync, TUint& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1180,7 +1180,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndRead(IAsync& aAsync, Brh& aUri, Brh& aMet
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aUri);
@@ -1216,7 +1216,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndReadList(IAsync& aAsync, Brh& aTrackList)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aTrackList);
@@ -1253,7 +1253,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndInsert(IAsync& aAsync, TUint& aNewId)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aNewId = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1285,7 +1285,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndDeleteId(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1312,7 +1312,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndDeleteAll(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1342,7 +1342,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndTracksMax(IAsync& aAsync, TUint& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1375,7 +1375,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndIdArray(IAsync& aAsync, TUint& aToken, Br
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aToken = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1411,7 +1411,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndIdArrayChanged(IAsync& aAsync, TBool& aVa
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -1443,7 +1443,7 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndProtocolInfo(IAsync& aAsync, Brh& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);

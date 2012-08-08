@@ -647,7 +647,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndGetSortCapabilities(IAsync& aAsync, B
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aSortCaps);
@@ -683,7 +683,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndGetPropertyList(IAsync& aAsync, Brh& 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aPropertyList);
@@ -719,7 +719,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndGetAllowedValues(IAsync& aAsync, Brh&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aPropertyInfo);
@@ -751,7 +751,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndGetStateUpdateID(IAsync& aAsync, TUin
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aId = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -792,7 +792,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndBrowseRecordSchedules(IAsync& aAsync,
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResult);
@@ -837,7 +837,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndBrowseRecordTasks(IAsync& aAsync, Brh
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResult);
@@ -877,7 +877,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndCreateRecordSchedule(IAsync& aAsync, 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aRecordScheduleID);
@@ -911,7 +911,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndDeleteRecordSchedule(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -946,7 +946,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndGetRecordSchedule(IAsync& aAsync, Brh
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResult);
@@ -979,7 +979,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndEnableRecordSchedule(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1009,7 +1009,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndDisableRecordSchedule(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1039,7 +1039,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndDeleteRecordTask(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1074,7 +1074,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndGetRecordTask(IAsync& aAsync, Brh& aR
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResult);
@@ -1107,7 +1107,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndEnableRecordTask(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1137,7 +1137,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndDisableRecordTask(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1167,7 +1167,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndResetRecordTask(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1201,7 +1201,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndGetRecordScheduleConflicts(IAsync& aA
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aRecordScheduleConflictIDList);
@@ -1238,7 +1238,7 @@ void CpProxyUpnpOrgScheduledRecording2::EndGetRecordTaskConflicts(IAsync& aAsync
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aRecordTaskConflictIDList);

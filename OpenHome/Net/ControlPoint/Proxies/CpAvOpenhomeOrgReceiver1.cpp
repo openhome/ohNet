@@ -231,7 +231,7 @@ void CpProxyAvOpenhomeOrgReceiver1::EndPlay(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -258,7 +258,7 @@ void CpProxyAvOpenhomeOrgReceiver1::EndStop(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -289,7 +289,7 @@ void CpProxyAvOpenhomeOrgReceiver1::EndSetSender(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -320,7 +320,7 @@ void CpProxyAvOpenhomeOrgReceiver1::EndSender(IAsync& aAsync, Brh& aUri, Brh& aM
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aUri);
@@ -353,7 +353,7 @@ void CpProxyAvOpenhomeOrgReceiver1::EndProtocolInfo(IAsync& aAsync, Brh& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);
@@ -385,7 +385,7 @@ void CpProxyAvOpenhomeOrgReceiver1::EndTransportState(IAsync& aAsync, Brh& aValu
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);

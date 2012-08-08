@@ -518,7 +518,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndManufacturer(IAsync& aAsync, Brh& aName, B
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aName);
@@ -556,7 +556,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndModel(IAsync& aAsync, Brh& aName, Brh& aIn
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aName);
@@ -595,7 +595,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndProduct(IAsync& aAsync, Brh& aRoom, Brh& a
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aRoom);
@@ -631,7 +631,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndStandby(IAsync& aAsync, TBool& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -663,7 +663,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndSetStandby(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -693,7 +693,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndSourceCount(IAsync& aAsync, TUint& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -725,7 +725,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndSourceXml(IAsync& aAsync, Brh& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);
@@ -757,7 +757,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndSourceIndex(IAsync& aAsync, TUint& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -789,7 +789,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndSetSourceIndex(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -819,7 +819,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndSetSourceIndexByName(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
 }
 
@@ -855,7 +855,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndSource(IAsync& aAsync, Brh& aSystemName, B
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aSystemName);
@@ -890,7 +890,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndAttributes(IAsync& aAsync, Brh& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);
@@ -922,7 +922,7 @@ void CpProxyAvOpenhomeOrgProduct1::EndSourceXmlChangeCount(IAsync& aAsync, TUint
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError((uint32_t)level, code));
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
