@@ -38,6 +38,18 @@ public:
     void BeginAttributes(FunctorAsync& aFunctor);
     void EndAttributes(IAsync& aAsync, Brh& aValue);
 
+    void SyncQueryPort(TUint& aValue);
+    void BeginQueryPort(FunctorAsync& aFunctor);
+    void EndQueryPort(IAsync& aAsync, TUint& aValue);
+
+    void SyncBrowsePort(TUint& aValue);
+    void BeginBrowsePort(FunctorAsync& aFunctor);
+    void EndBrowsePort(IAsync& aAsync, TUint& aValue);
+
+    void SyncUpdateCount(TUint& aValue);
+    void BeginUpdateCount(FunctorAsync& aFunctor);
+    void EndUpdateCount(IAsync& aAsync, TUint& aValue);
+
     void SyncQuery(const Brx& aRequest, Brh& aResult);
     void BeginQuery(const Brx& aRequest, FunctorAsync& aFunctor);
     void EndQuery(IAsync& aAsync, Brh& aResult);
@@ -55,6 +67,9 @@ public:
     void SetPropertyProductUrlChanged(Functor& aFunctor);
     void SetPropertyProductImageUriChanged(Functor& aFunctor);
     void SetPropertyAttributesChanged(Functor& aFunctor);
+    void SetPropertyQueryPortChanged(Functor& aFunctor);
+    void SetPropertyBrowsePortChanged(Functor& aFunctor);
+    void SetPropertyUpdateCountChanged(Functor& aFunctor);
 
     void PropertyManufacturerName(Brhz& aManufacturerName) const;
     void PropertyManufacturerInfo(Brhz& aManufacturerInfo) const;
@@ -69,6 +84,9 @@ public:
     void PropertyProductUrl(Brhz& aProductUrl) const;
     void PropertyProductImageUri(Brhz& aProductImageUri) const;
     void PropertyAttributes(Brhz& aAttributes) const;
+    void PropertyQueryPort(TUint& aQueryPort) const;
+    void PropertyBrowsePort(TUint& aBrowsePort) const;
+    void PropertyUpdateCount(TUint& aUpdateCount) const;
 private:
     void ManufacturerNamePropertyChanged();
     void ManufacturerInfoPropertyChanged();
@@ -83,12 +101,18 @@ private:
     void ProductUrlPropertyChanged();
     void ProductImageUriPropertyChanged();
     void AttributesPropertyChanged();
+    void QueryPortPropertyChanged();
+    void BrowsePortPropertyChanged();
+    void UpdateCountPropertyChanged();
 private:
     Mutex iLock;
     Action* iActionManufacturer;
     Action* iActionModel;
     Action* iActionProduct;
     Action* iActionAttributes;
+    Action* iActionQueryPort;
+    Action* iActionBrowsePort;
+    Action* iActionUpdateCount;
     Action* iActionQuery;
     PropertyString* iManufacturerName;
     PropertyString* iManufacturerInfo;
@@ -103,6 +127,9 @@ private:
     PropertyString* iProductUrl;
     PropertyString* iProductImageUri;
     PropertyString* iAttributes;
+    PropertyUint* iQueryPort;
+    PropertyUint* iBrowsePort;
+    PropertyUint* iUpdateCount;
     Functor iManufacturerNameChanged;
     Functor iManufacturerInfoChanged;
     Functor iManufacturerUrlChanged;
@@ -116,6 +143,9 @@ private:
     Functor iProductUrlChanged;
     Functor iProductImageUriChanged;
     Functor iAttributesChanged;
+    Functor iQueryPortChanged;
+    Functor iBrowsePortChanged;
+    Functor iUpdateCountChanged;
 };
 
 
@@ -229,6 +259,75 @@ void SyncAttributesAvOpenhomeOrgMediaServer1C::CompleteRequest(IAsync& aAsync)
 }
 
 
+class SyncQueryPortAvOpenhomeOrgMediaServer1C : public SyncProxyAction
+{
+public:
+    SyncQueryPortAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, TUint& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncQueryPortAvOpenhomeOrgMediaServer1C() {};
+private:
+    CpProxyAvOpenhomeOrgMediaServer1C& iService;
+    TUint& iValue;
+};
+
+SyncQueryPortAvOpenhomeOrgMediaServer1C::SyncQueryPortAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, TUint& aValue)
+    : iService(aProxy)
+    , iValue(aValue)
+{
+}
+
+void SyncQueryPortAvOpenhomeOrgMediaServer1C::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndQueryPort(aAsync, iValue);
+}
+
+
+class SyncBrowsePortAvOpenhomeOrgMediaServer1C : public SyncProxyAction
+{
+public:
+    SyncBrowsePortAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, TUint& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncBrowsePortAvOpenhomeOrgMediaServer1C() {};
+private:
+    CpProxyAvOpenhomeOrgMediaServer1C& iService;
+    TUint& iValue;
+};
+
+SyncBrowsePortAvOpenhomeOrgMediaServer1C::SyncBrowsePortAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, TUint& aValue)
+    : iService(aProxy)
+    , iValue(aValue)
+{
+}
+
+void SyncBrowsePortAvOpenhomeOrgMediaServer1C::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndBrowsePort(aAsync, iValue);
+}
+
+
+class SyncUpdateCountAvOpenhomeOrgMediaServer1C : public SyncProxyAction
+{
+public:
+    SyncUpdateCountAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, TUint& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncUpdateCountAvOpenhomeOrgMediaServer1C() {};
+private:
+    CpProxyAvOpenhomeOrgMediaServer1C& iService;
+    TUint& iValue;
+};
+
+SyncUpdateCountAvOpenhomeOrgMediaServer1C::SyncUpdateCountAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, TUint& aValue)
+    : iService(aProxy)
+    , iValue(aValue)
+{
+}
+
+void SyncUpdateCountAvOpenhomeOrgMediaServer1C::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndUpdateCount(aAsync, iValue);
+}
+
+
 class SyncQueryAvOpenhomeOrgMediaServer1C : public SyncProxyAction
 {
 public:
@@ -291,6 +390,18 @@ CpProxyAvOpenhomeOrgMediaServer1C::CpProxyAvOpenhomeOrgMediaServer1C(CpDeviceC a
     param = new OpenHome::Net::ParameterString("Value");
     iActionAttributes->AddOutputParameter(param);
 
+    iActionQueryPort = new Action("QueryPort");
+    param = new OpenHome::Net::ParameterUint("Value");
+    iActionQueryPort->AddOutputParameter(param);
+
+    iActionBrowsePort = new Action("BrowsePort");
+    param = new OpenHome::Net::ParameterUint("Value");
+    iActionBrowsePort->AddOutputParameter(param);
+
+    iActionUpdateCount = new Action("UpdateCount");
+    param = new OpenHome::Net::ParameterUint("Value");
+    iActionUpdateCount->AddOutputParameter(param);
+
     iActionQuery = new Action("Query");
     param = new OpenHome::Net::ParameterString("Request");
     iActionQuery->AddInputParameter(param);
@@ -337,6 +448,15 @@ CpProxyAvOpenhomeOrgMediaServer1C::CpProxyAvOpenhomeOrgMediaServer1C(CpDeviceC a
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgMediaServer1C::AttributesPropertyChanged);
     iAttributes = new PropertyString("Attributes", functor);
     AddProperty(iAttributes);
+    functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgMediaServer1C::QueryPortPropertyChanged);
+    iQueryPort = new PropertyUint("QueryPort", functor);
+    AddProperty(iQueryPort);
+    functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgMediaServer1C::BrowsePortPropertyChanged);
+    iBrowsePort = new PropertyUint("BrowsePort", functor);
+    AddProperty(iBrowsePort);
+    functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgMediaServer1C::UpdateCountPropertyChanged);
+    iUpdateCount = new PropertyUint("UpdateCount", functor);
+    AddProperty(iUpdateCount);
 }
 
 CpProxyAvOpenhomeOrgMediaServer1C::~CpProxyAvOpenhomeOrgMediaServer1C()
@@ -346,6 +466,9 @@ CpProxyAvOpenhomeOrgMediaServer1C::~CpProxyAvOpenhomeOrgMediaServer1C()
     delete iActionModel;
     delete iActionProduct;
     delete iActionAttributes;
+    delete iActionQueryPort;
+    delete iActionBrowsePort;
+    delete iActionUpdateCount;
     delete iActionQuery;
 }
 
@@ -483,6 +606,93 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndAttributes(IAsync& aAsync, Brh& aValu
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);
 }
 
+void CpProxyAvOpenhomeOrgMediaServer1C::SyncQueryPort(TUint& aValue)
+{
+    SyncQueryPortAvOpenhomeOrgMediaServer1C sync(*this, aValue);
+    BeginQueryPort(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::BeginQueryPort(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = Service()->Invocation(*iActionQueryPort, aFunctor);
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iActionQueryPort->OutputParameters();
+    invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
+    Invocable().InvokeAction(*invocation);
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::EndQueryPort(IAsync& aAsync, TUint& aValue)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("QueryPort"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+    TUint index = 0;
+    aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::SyncBrowsePort(TUint& aValue)
+{
+    SyncBrowsePortAvOpenhomeOrgMediaServer1C sync(*this, aValue);
+    BeginBrowsePort(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::BeginBrowsePort(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = Service()->Invocation(*iActionBrowsePort, aFunctor);
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iActionBrowsePort->OutputParameters();
+    invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
+    Invocable().InvokeAction(*invocation);
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::EndBrowsePort(IAsync& aAsync, TUint& aValue)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("BrowsePort"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+    TUint index = 0;
+    aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::SyncUpdateCount(TUint& aValue)
+{
+    SyncUpdateCountAvOpenhomeOrgMediaServer1C sync(*this, aValue);
+    BeginUpdateCount(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::BeginUpdateCount(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = Service()->Invocation(*iActionUpdateCount, aFunctor);
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iActionUpdateCount->OutputParameters();
+    invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
+    Invocable().InvokeAction(*invocation);
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::EndUpdateCount(IAsync& aAsync, TUint& aValue)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("UpdateCount"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+    TUint index = 0;
+    aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
+}
+
 void CpProxyAvOpenhomeOrgMediaServer1C::SyncQuery(const Brx& aRequest, Brh& aResult)
 {
     SyncQueryAvOpenhomeOrgMediaServer1C sync(*this, aResult);
@@ -606,6 +816,27 @@ void CpProxyAvOpenhomeOrgMediaServer1C::SetPropertyAttributesChanged(Functor& aF
     iLock.Signal();
 }
 
+void CpProxyAvOpenhomeOrgMediaServer1C::SetPropertyQueryPortChanged(Functor& aFunctor)
+{
+    iLock.Wait();
+    iQueryPortChanged = aFunctor;
+    iLock.Signal();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::SetPropertyBrowsePortChanged(Functor& aFunctor)
+{
+    iLock.Wait();
+    iBrowsePortChanged = aFunctor;
+    iLock.Signal();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::SetPropertyUpdateCountChanged(Functor& aFunctor)
+{
+    iLock.Wait();
+    iUpdateCountChanged = aFunctor;
+    iLock.Signal();
+}
+
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyManufacturerName(Brhz& aManufacturerName) const
 {
     PropertyReadLock();
@@ -710,6 +941,30 @@ void CpProxyAvOpenhomeOrgMediaServer1C::PropertyAttributes(Brhz& aAttributes) co
     PropertyReadUnlock();
 }
 
+void CpProxyAvOpenhomeOrgMediaServer1C::PropertyQueryPort(TUint& aQueryPort) const
+{
+    PropertyReadLock();
+    ASSERT(IsSubscribed());
+    aQueryPort = iQueryPort->Value();
+    PropertyReadUnlock();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::PropertyBrowsePort(TUint& aBrowsePort) const
+{
+    PropertyReadLock();
+    ASSERT(IsSubscribed());
+    aBrowsePort = iBrowsePort->Value();
+    PropertyReadUnlock();
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::PropertyUpdateCount(TUint& aUpdateCount) const
+{
+    PropertyReadLock();
+    ASSERT(IsSubscribed());
+    aUpdateCount = iUpdateCount->Value();
+    PropertyReadUnlock();
+}
+
 void CpProxyAvOpenhomeOrgMediaServer1C::ManufacturerNamePropertyChanged()
 {
     ReportEvent(iManufacturerNameChanged);
@@ -773,6 +1028,21 @@ void CpProxyAvOpenhomeOrgMediaServer1C::ProductImageUriPropertyChanged()
 void CpProxyAvOpenhomeOrgMediaServer1C::AttributesPropertyChanged()
 {
     ReportEvent(iAttributesChanged);
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::QueryPortPropertyChanged()
+{
+    ReportEvent(iQueryPortChanged);
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::BrowsePortPropertyChanged()
+{
+    ReportEvent(iBrowsePortChanged);
+}
+
+void CpProxyAvOpenhomeOrgMediaServer1C::UpdateCountPropertyChanged()
+{
+    ReportEvent(iUpdateCountChanged);
 }
 
 
@@ -1017,6 +1287,123 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndAttributes(THandle aHandle, O
     return err;
 }
 
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncQueryPort(THandle aHandle, uint32_t* aValue)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    int32_t err = 0;
+    try {
+        proxyC->SyncQueryPort(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+        *aValue = 0;
+    }
+    return err;
+}
+
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginQueryPort(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
+    proxyC->BeginQueryPort(functor);
+}
+
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndQueryPort(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
+{
+    int32_t err = 0;
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->EndQueryPort(*async, *aValue);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncBrowsePort(THandle aHandle, uint32_t* aValue)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    int32_t err = 0;
+    try {
+        proxyC->SyncBrowsePort(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+        *aValue = 0;
+    }
+    return err;
+}
+
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginBrowsePort(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
+    proxyC->BeginBrowsePort(functor);
+}
+
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndBrowsePort(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
+{
+    int32_t err = 0;
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->EndBrowsePort(*async, *aValue);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncUpdateCount(THandle aHandle, uint32_t* aValue)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    int32_t err = 0;
+    try {
+        proxyC->SyncUpdateCount(*aValue);
+    }
+    catch (ProxyError& ) {
+        err = -1;
+        *aValue = 0;
+    }
+    return err;
+}
+
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginUpdateCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
+    proxyC->BeginUpdateCount(functor);
+}
+
+int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndUpdateCount(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
+{
+    int32_t err = 0;
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->EndUpdateCount(*async, *aValue);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+
 int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncQuery(THandle aHandle, const char* aRequest, char** aResult)
 {
     CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
@@ -1167,6 +1554,30 @@ void STDCALL CpProxyAvOpenhomeOrgMediaServer1SetPropertyAttributesChanged(THandl
     proxyC->SetPropertyAttributesChanged(functor);
 }
 
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1SetPropertyQueryPortChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Functor functor = MakeFunctor(aPtr, aCallback);
+    proxyC->SetPropertyQueryPortChanged(functor);
+}
+
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1SetPropertyBrowsePortChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Functor functor = MakeFunctor(aPtr, aCallback);
+    proxyC->SetPropertyBrowsePortChanged(functor);
+}
+
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1SetPropertyUpdateCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Functor functor = MakeFunctor(aPtr, aCallback);
+    proxyC->SetPropertyUpdateCountChanged(functor);
+}
+
 void STDCALL CpProxyAvOpenhomeOrgMediaServer1PropertyManufacturerName(THandle aHandle, char** aManufacturerName)
 {
     CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
@@ -1282,5 +1693,26 @@ void STDCALL CpProxyAvOpenhomeOrgMediaServer1PropertyAttributes(THandle aHandle,
     Brhz buf_aAttributes;
     proxyC->PropertyAttributes(buf_aAttributes);
     *aAttributes = buf_aAttributes.Transfer();
+}
+
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1PropertyQueryPort(THandle aHandle, uint32_t* aQueryPort)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->PropertyQueryPort(*aQueryPort);
+}
+
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1PropertyBrowsePort(THandle aHandle, uint32_t* aBrowsePort)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->PropertyBrowsePort(*aBrowsePort);
+}
+
+void STDCALL CpProxyAvOpenhomeOrgMediaServer1PropertyUpdateCount(THandle aHandle, uint32_t* aUpdateCount)
+{
+    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->PropertyUpdateCount(*aUpdateCount);
 }
 

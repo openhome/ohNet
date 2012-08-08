@@ -31,8 +31,11 @@ var CpProxyAvOpenhomeOrgMediaServer1 = function(udn){
     this.serviceProperties["ProductUrl"] = new ohnet.serviceproperty("ProductUrl","string");
     this.serviceProperties["ProductImageUri"] = new ohnet.serviceproperty("ProductImageUri","string");
     this.serviceProperties["Attributes"] = new ohnet.serviceproperty("Attributes","string");
+    this.serviceProperties["QueryPort"] = new ohnet.serviceproperty("QueryPort","int");
+    this.serviceProperties["BrowsePort"] = new ohnet.serviceproperty("BrowsePort","int");
+    this.serviceProperties["UpdateCount"] = new ohnet.serviceproperty("UpdateCount","int");
 
-                                                                                  
+                                                                                                    
 }
 
 
@@ -225,6 +228,45 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.Attributes_Changed = function (stateC
         stateChangedFunction(ohnet.soaprequest.readStringParameter(state)); 
     });
 }
+    
+
+/**
+* Adds a listener to handle "QueryPort" property change events
+* @method QueryPort_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+CpProxyAvOpenhomeOrgMediaServer1.prototype.QueryPort_Changed = function (stateChangedFunction) {
+    this.serviceProperties.QueryPort.addListener(function (state) 
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
+}
+    
+
+/**
+* Adds a listener to handle "BrowsePort" property change events
+* @method BrowsePort_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+CpProxyAvOpenhomeOrgMediaServer1.prototype.BrowsePort_Changed = function (stateChangedFunction) {
+    this.serviceProperties.BrowsePort.addListener(function (state) 
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
+}
+    
+
+/**
+* Adds a listener to handle "UpdateCount" property change events
+* @method UpdateCount_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+CpProxyAvOpenhomeOrgMediaServer1.prototype.UpdateCount_Changed = function (stateChangedFunction) {
+    this.serviceProperties.UpdateCount.addListener(function (state) 
+    { 
+        stateChangedFunction(ohnet.soaprequest.readIntParameter(state)); 
+    });
+}
 
 
 /**
@@ -306,6 +348,66 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.Attributes = function(successFunction
     var request = new ohnet.soaprequest("Attributes", this.url, this.domain, this.type, this.version);     
     request.send(function(result){
         result["Value"] = ohnet.soaprequest.readStringParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
+}
+
+
+/**
+* A service action to QueryPort
+* @method QueryPort
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyAvOpenhomeOrgMediaServer1.prototype.QueryPort = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("QueryPort", this.url, this.domain, this.type, this.version);     
+    request.send(function(result){
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
+}
+
+
+/**
+* A service action to BrowsePort
+* @method BrowsePort
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyAvOpenhomeOrgMediaServer1.prototype.BrowsePort = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("BrowsePort", this.url, this.domain, this.type, this.version);     
+    request.send(function(result){
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
+}
+
+
+/**
+* A service action to UpdateCount
+* @method UpdateCount
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyAvOpenhomeOrgMediaServer1.prototype.UpdateCount = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("UpdateCount", this.url, this.domain, this.type, this.version);     
+    request.send(function(result){
+        result["Value"] = ohnet.soaprequest.readIntParameter(result["Value"]); 
     
         if (successFunction){
             successFunction(result);

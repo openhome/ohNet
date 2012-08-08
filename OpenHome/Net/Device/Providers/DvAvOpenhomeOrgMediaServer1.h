@@ -207,6 +207,48 @@ public:
      * Can only be called if EnablePropertyAttributes has previously been called.
      */
     void GetPropertyAttributes(Brhz& aValue);
+    /**
+     * Set the value of the QueryPort property
+     *
+     * Can only be called if EnablePropertyQueryPort has previously been called.
+     *
+     * @return  true if the value has been updated; false if aValue was the same as the previous value
+     */
+    TBool SetPropertyQueryPort(TUint aValue);
+    /**
+     * Get a copy of the value of the QueryPort property
+     *
+     * Can only be called if EnablePropertyQueryPort has previously been called.
+     */
+    void GetPropertyQueryPort(TUint& aValue);
+    /**
+     * Set the value of the BrowsePort property
+     *
+     * Can only be called if EnablePropertyBrowsePort has previously been called.
+     *
+     * @return  true if the value has been updated; false if aValue was the same as the previous value
+     */
+    TBool SetPropertyBrowsePort(TUint aValue);
+    /**
+     * Get a copy of the value of the BrowsePort property
+     *
+     * Can only be called if EnablePropertyBrowsePort has previously been called.
+     */
+    void GetPropertyBrowsePort(TUint& aValue);
+    /**
+     * Set the value of the UpdateCount property
+     *
+     * Can only be called if EnablePropertyUpdateCount has previously been called.
+     *
+     * @return  true if the value has been updated; false if aValue was the same as the previous value
+     */
+    TBool SetPropertyUpdateCount(TUint aValue);
+    /**
+     * Get a copy of the value of the UpdateCount property
+     *
+     * Can only be called if EnablePropertyUpdateCount has previously been called.
+     */
+    void GetPropertyUpdateCount(TUint& aValue);
 protected:
     /**
      * Constructor
@@ -273,6 +315,18 @@ protected:
      */
     void EnablePropertyAttributes();
     /**
+     * Enable the QueryPort property.
+     */
+    void EnablePropertyQueryPort();
+    /**
+     * Enable the BrowsePort property.
+     */
+    void EnablePropertyBrowsePort();
+    /**
+     * Enable the UpdateCount property.
+     */
+    void EnablePropertyUpdateCount();
+    /**
      * Signal that the action Manufacturer is supported.
      * The action's availability will be published in the device's service.xml.
      * Manufacturer must be overridden if this is called.
@@ -296,6 +350,24 @@ protected:
      * Attributes must be overridden if this is called.
      */
     void EnableActionAttributes();
+    /**
+     * Signal that the action QueryPort is supported.
+     * The action's availability will be published in the device's service.xml.
+     * QueryPort must be overridden if this is called.
+     */
+    void EnableActionQueryPort();
+    /**
+     * Signal that the action BrowsePort is supported.
+     * The action's availability will be published in the device's service.xml.
+     * BrowsePort must be overridden if this is called.
+     */
+    void EnableActionBrowsePort();
+    /**
+     * Signal that the action UpdateCount is supported.
+     * The action's availability will be published in the device's service.xml.
+     * UpdateCount must be overridden if this is called.
+     */
+    void EnableActionUpdateCount();
     /**
      * Signal that the action Query is supported.
      * The action's availability will be published in the device's service.xml.
@@ -336,6 +408,30 @@ private:
      */
     virtual void Attributes(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
     /**
+     * QueryPort action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * QueryPort action for the owning device.
+     * Must be implemented iff EnableActionQueryPort was called.
+     */
+    virtual void QueryPort(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
+    /**
+     * BrowsePort action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * BrowsePort action for the owning device.
+     * Must be implemented iff EnableActionBrowsePort was called.
+     */
+    virtual void BrowsePort(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
+    /**
+     * UpdateCount action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * UpdateCount action for the owning device.
+     * Must be implemented iff EnableActionUpdateCount was called.
+     */
+    virtual void UpdateCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
+    /**
      * Query action.
      *
      * Will be called when the device stack receives an invocation of the
@@ -350,6 +446,9 @@ private:
     void DoModel(IDviInvocation& aInvocation);
     void DoProduct(IDviInvocation& aInvocation);
     void DoAttributes(IDviInvocation& aInvocation);
+    void DoQueryPort(IDviInvocation& aInvocation);
+    void DoBrowsePort(IDviInvocation& aInvocation);
+    void DoUpdateCount(IDviInvocation& aInvocation);
     void DoQuery(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyManufacturerName;
@@ -365,6 +464,9 @@ private:
     PropertyString* iPropertyProductUrl;
     PropertyString* iPropertyProductImageUri;
     PropertyString* iPropertyAttributes;
+    PropertyUint* iPropertyQueryPort;
+    PropertyUint* iPropertyBrowsePort;
+    PropertyUint* iPropertyUpdateCount;
 };
 
 } // namespace Net

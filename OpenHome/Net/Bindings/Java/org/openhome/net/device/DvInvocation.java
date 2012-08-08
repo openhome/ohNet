@@ -378,6 +378,25 @@ public class DvInvocation implements IDvInvocation
 	}
 	
 	/**
+     * Report an error from action processing in provider code.
+     * 
+     * @param aError       the {@link #ActionError} exception object.
+     * @param aActionName  the action name.
+     */
+    public void reportActionError(ActionError aError, String aActionName)
+    {
+        String msg = aError.getMessage();
+        if (msg == null)
+            msg = String.format("Action %s failed", aActionName);
+
+        int errCode = aError.getErrorCode();
+        if (errCode == 0)
+            errCode = 501;
+
+        reportError(errCode, msg);
+    }
+
+	/**
 	 * Check if an error has been encountered during a read or write process.
 	 * 
 	 * @param aSuccess	the error status to be checked.

@@ -22,6 +22,15 @@ interface ICpProxyAvOpenhomeOrgMediaServer1 extends ICpProxy
     public String syncAttributes();
     public void beginAttributes(ICpProxyListener aCallback);
     public String endAttributes(long aAsyncHandle);
+    public long syncQueryPort();
+    public void beginQueryPort(ICpProxyListener aCallback);
+    public long endQueryPort(long aAsyncHandle);
+    public long syncBrowsePort();
+    public void beginBrowsePort(ICpProxyListener aCallback);
+    public long endBrowsePort(long aAsyncHandle);
+    public long syncUpdateCount();
+    public void beginUpdateCount(ICpProxyListener aCallback);
+    public long endUpdateCount(long aAsyncHandle);
     public String syncQuery(String aRequest);
     public void beginQuery(String aRequest, ICpProxyListener aCallback);
     public String endQuery(long aAsyncHandle);
@@ -51,6 +60,12 @@ interface ICpProxyAvOpenhomeOrgMediaServer1 extends ICpProxy
     public String getPropertyProductImageUri();
     public void setPropertyAttributesChanged(IPropertyChangeListener aAttributesChanged);
     public String getPropertyAttributes();
+    public void setPropertyQueryPortChanged(IPropertyChangeListener aQueryPortChanged);
+    public long getPropertyQueryPort();
+    public void setPropertyBrowsePortChanged(IPropertyChangeListener aBrowsePortChanged);
+    public long getPropertyBrowsePort();
+    public void setPropertyUpdateCountChanged(IPropertyChangeListener aUpdateCountChanged);
+    public long getPropertyUpdateCount();
 }
 
 class SyncManufacturerAvOpenhomeOrgMediaServer1 extends SyncProxyAction
@@ -186,6 +201,69 @@ class SyncAttributesAvOpenhomeOrgMediaServer1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endAttributes(aAsyncHandle);
+        
+        iValue = result;
+    }
+}
+
+class SyncQueryPortAvOpenhomeOrgMediaServer1 extends SyncProxyAction
+{
+    private CpProxyAvOpenhomeOrgMediaServer1 iService;
+    private long iValue;
+
+    public SyncQueryPortAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1 aProxy)
+    {
+        iService = aProxy;
+    }
+    public long getValue()
+    {
+        return iValue;
+    }
+    protected void completeRequest(long aAsyncHandle)
+    {
+        long result = iService.endQueryPort(aAsyncHandle);
+        
+        iValue = result;
+    }
+}
+
+class SyncBrowsePortAvOpenhomeOrgMediaServer1 extends SyncProxyAction
+{
+    private CpProxyAvOpenhomeOrgMediaServer1 iService;
+    private long iValue;
+
+    public SyncBrowsePortAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1 aProxy)
+    {
+        iService = aProxy;
+    }
+    public long getValue()
+    {
+        return iValue;
+    }
+    protected void completeRequest(long aAsyncHandle)
+    {
+        long result = iService.endBrowsePort(aAsyncHandle);
+        
+        iValue = result;
+    }
+}
+
+class SyncUpdateCountAvOpenhomeOrgMediaServer1 extends SyncProxyAction
+{
+    private CpProxyAvOpenhomeOrgMediaServer1 iService;
+    private long iValue;
+
+    public SyncUpdateCountAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1 aProxy)
+    {
+        iService = aProxy;
+    }
+    public long getValue()
+    {
+        return iValue;
+    }
+    protected void completeRequest(long aAsyncHandle)
+    {
+        long result = iService.endUpdateCount(aAsyncHandle);
         
         iValue = result;
     }
@@ -333,6 +411,9 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     private Action iActionModel;
     private Action iActionProduct;
     private Action iActionAttributes;
+    private Action iActionQueryPort;
+    private Action iActionBrowsePort;
+    private Action iActionUpdateCount;
     private Action iActionQuery;
     private PropertyString iManufacturerName;
     private PropertyString iManufacturerInfo;
@@ -347,6 +428,9 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     private PropertyString iProductUrl;
     private PropertyString iProductImageUri;
     private PropertyString iAttributes;
+    private PropertyUint iQueryPort;
+    private PropertyUint iBrowsePort;
+    private PropertyUint iUpdateCount;
     private IPropertyChangeListener iManufacturerNameChanged;
     private IPropertyChangeListener iManufacturerInfoChanged;
     private IPropertyChangeListener iManufacturerUrlChanged;
@@ -360,6 +444,9 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     private IPropertyChangeListener iProductUrlChanged;
     private IPropertyChangeListener iProductImageUriChanged;
     private IPropertyChangeListener iAttributesChanged;
+    private IPropertyChangeListener iQueryPortChanged;
+    private IPropertyChangeListener iBrowsePortChanged;
+    private IPropertyChangeListener iUpdateCountChanged;
     private Object iPropertyLock;
 
     /**
@@ -408,6 +495,18 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         iActionAttributes = new Action("Attributes");
         param = new ParameterString("Value", allowedValues);
         iActionAttributes.addOutputParameter(param);
+
+        iActionQueryPort = new Action("QueryPort");
+        param = new ParameterUint("Value");
+        iActionQueryPort.addOutputParameter(param);
+
+        iActionBrowsePort = new Action("BrowsePort");
+        param = new ParameterUint("Value");
+        iActionBrowsePort.addOutputParameter(param);
+
+        iActionUpdateCount = new Action("UpdateCount");
+        param = new ParameterUint("Value");
+        iActionUpdateCount.addOutputParameter(param);
 
         iActionQuery = new Action("Query");
         param = new ParameterString("Request", allowedValues);
@@ -532,6 +631,33 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             }
         );
         addProperty(iAttributes);
+        iQueryPortChanged = new PropertyChangeListener();
+        iQueryPort = new PropertyUint("QueryPort",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    queryPortPropertyChanged();
+                }
+            }
+        );
+        addProperty(iQueryPort);
+        iBrowsePortChanged = new PropertyChangeListener();
+        iBrowsePort = new PropertyUint("BrowsePort",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    browsePortPropertyChanged();
+                }
+            }
+        );
+        addProperty(iBrowsePort);
+        iUpdateCountChanged = new PropertyChangeListener();
+        iUpdateCount = new PropertyUint("UpdateCount",
+            new PropertyChangeListener() {
+                public void notifyChange() {
+                    updateCountPropertyChanged();
+                }
+            }
+        );
+        addProperty(iUpdateCount);
         iPropertyLock = new Object();
     }
     /**
@@ -795,6 +921,168 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
+        return value;
+    }
+        
+    /**
+     * Invoke the action synchronously.
+     * Blocks until the action has been processed on the device and sets any
+     * output arguments.
+     *
+     * @return the result of the invoked action.
+     */
+    public long syncQueryPort()
+    {
+        SyncQueryPortAvOpenhomeOrgMediaServer1 sync = new SyncQueryPortAvOpenhomeOrgMediaServer1(this);
+        beginQueryPort(sync.getListener());
+        sync.waitToComplete();
+        sync.reportError();
+
+        return sync.getValue();
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endQueryPort}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginQueryPort(ICpProxyListener aCallback)
+    {
+        Invocation invocation = iService.getInvocation(iActionQueryPort, aCallback);
+        int outIndex = 0;
+        invocation.addOutput(new ArgumentUint((ParameterUint)iActionQueryPort.getOutputParameter(outIndex++)));
+        iService.invokeAction(invocation);
+    }
+
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the
+     * {@link #beginQueryPort} method.
+     *
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginQueryPort} method.
+     * @return the result of the previously invoked action.
+     */
+    public long endQueryPort(long aAsyncHandle)
+    {
+        if (Invocation.error(aAsyncHandle))
+        {
+            throw new ProxyError();
+        }
+        int index = 0;
+        long value = Invocation.getOutputUint(aAsyncHandle, index++);
+        return value;
+    }
+        
+    /**
+     * Invoke the action synchronously.
+     * Blocks until the action has been processed on the device and sets any
+     * output arguments.
+     *
+     * @return the result of the invoked action.
+     */
+    public long syncBrowsePort()
+    {
+        SyncBrowsePortAvOpenhomeOrgMediaServer1 sync = new SyncBrowsePortAvOpenhomeOrgMediaServer1(this);
+        beginBrowsePort(sync.getListener());
+        sync.waitToComplete();
+        sync.reportError();
+
+        return sync.getValue();
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endBrowsePort}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginBrowsePort(ICpProxyListener aCallback)
+    {
+        Invocation invocation = iService.getInvocation(iActionBrowsePort, aCallback);
+        int outIndex = 0;
+        invocation.addOutput(new ArgumentUint((ParameterUint)iActionBrowsePort.getOutputParameter(outIndex++)));
+        iService.invokeAction(invocation);
+    }
+
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the
+     * {@link #beginBrowsePort} method.
+     *
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginBrowsePort} method.
+     * @return the result of the previously invoked action.
+     */
+    public long endBrowsePort(long aAsyncHandle)
+    {
+        if (Invocation.error(aAsyncHandle))
+        {
+            throw new ProxyError();
+        }
+        int index = 0;
+        long value = Invocation.getOutputUint(aAsyncHandle, index++);
+        return value;
+    }
+        
+    /**
+     * Invoke the action synchronously.
+     * Blocks until the action has been processed on the device and sets any
+     * output arguments.
+     *
+     * @return the result of the invoked action.
+     */
+    public long syncUpdateCount()
+    {
+        SyncUpdateCountAvOpenhomeOrgMediaServer1 sync = new SyncUpdateCountAvOpenhomeOrgMediaServer1(this);
+        beginUpdateCount(sync.getListener());
+        sync.waitToComplete();
+        sync.reportError();
+
+        return sync.getValue();
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endUpdateCount}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginUpdateCount(ICpProxyListener aCallback)
+    {
+        Invocation invocation = iService.getInvocation(iActionUpdateCount, aCallback);
+        int outIndex = 0;
+        invocation.addOutput(new ArgumentUint((ParameterUint)iActionUpdateCount.getOutputParameter(outIndex++)));
+        iService.invokeAction(invocation);
+    }
+
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the
+     * {@link #beginUpdateCount} method.
+     *
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginUpdateCount} method.
+     * @return the result of the previously invoked action.
+     */
+    public long endUpdateCount(long aAsyncHandle)
+    {
+        if (Invocation.error(aAsyncHandle))
+        {
+            throw new ProxyError();
+        }
+        int index = 0;
+        long value = Invocation.getOutputUint(aAsyncHandle, index++);
         return value;
     }
         
@@ -1154,6 +1442,75 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             reportEvent(iAttributesChanged);
         }
     }
+    /**
+     * Set a delegate to be run when the QueryPort state variable changes.
+     * Callbacks may be run in different threads but callbacks for a
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     *
+     * @param aQueryPortChanged   the listener to call back when the state
+     *          variable changes.
+     */
+    public void setPropertyQueryPortChanged(IPropertyChangeListener aQueryPortChanged)
+    {
+        synchronized (iPropertyLock)
+        {
+            iQueryPortChanged = aQueryPortChanged;
+        }
+    }
+
+    private void queryPortPropertyChanged()
+    {
+        synchronized (iPropertyLock)
+        {
+            reportEvent(iQueryPortChanged);
+        }
+    }
+    /**
+     * Set a delegate to be run when the BrowsePort state variable changes.
+     * Callbacks may be run in different threads but callbacks for a
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     *
+     * @param aBrowsePortChanged   the listener to call back when the state
+     *          variable changes.
+     */
+    public void setPropertyBrowsePortChanged(IPropertyChangeListener aBrowsePortChanged)
+    {
+        synchronized (iPropertyLock)
+        {
+            iBrowsePortChanged = aBrowsePortChanged;
+        }
+    }
+
+    private void browsePortPropertyChanged()
+    {
+        synchronized (iPropertyLock)
+        {
+            reportEvent(iBrowsePortChanged);
+        }
+    }
+    /**
+     * Set a delegate to be run when the UpdateCount state variable changes.
+     * Callbacks may be run in different threads but callbacks for a
+     * CpProxyAvOpenhomeOrgMediaServer1 instance will not overlap.
+     *
+     * @param aUpdateCountChanged   the listener to call back when the state
+     *          variable changes.
+     */
+    public void setPropertyUpdateCountChanged(IPropertyChangeListener aUpdateCountChanged)
+    {
+        synchronized (iPropertyLock)
+        {
+            iUpdateCountChanged = aUpdateCountChanged;
+        }
+    }
+
+    private void updateCountPropertyChanged()
+    {
+        synchronized (iPropertyLock)
+        {
+            reportEvent(iUpdateCountChanged);
+        }
+    }
 
     /**
      * Query the value of the ManufacturerName property.
@@ -1364,6 +1721,54 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     }
     
     /**
+     * Query the value of the QueryPort property.
+     * This function is thread-safe and can only be called if {@link 
+     * #subscribe} has been called and a first eventing callback received
+     * more recently than any call to {@link #unsubscribe}.
+     *
+     * @return  value of the QueryPort property.
+     */
+    public long getPropertyQueryPort()
+    {
+        propertyReadLock();
+        long val = iQueryPort.getValue();
+        propertyReadUnlock();
+        return val;
+    }
+    
+    /**
+     * Query the value of the BrowsePort property.
+     * This function is thread-safe and can only be called if {@link 
+     * #subscribe} has been called and a first eventing callback received
+     * more recently than any call to {@link #unsubscribe}.
+     *
+     * @return  value of the BrowsePort property.
+     */
+    public long getPropertyBrowsePort()
+    {
+        propertyReadLock();
+        long val = iBrowsePort.getValue();
+        propertyReadUnlock();
+        return val;
+    }
+    
+    /**
+     * Query the value of the UpdateCount property.
+     * This function is thread-safe and can only be called if {@link 
+     * #subscribe} has been called and a first eventing callback received
+     * more recently than any call to {@link #unsubscribe}.
+     *
+     * @return  value of the UpdateCount property.
+     */
+    public long getPropertyUpdateCount()
+    {
+        propertyReadLock();
+        long val = iUpdateCount.getValue();
+        propertyReadUnlock();
+        return val;
+    }
+    
+    /**
      * Dispose of this control point proxy.
      * Must be called for each class instance.
      * Must be called before <tt>Library.close()</tt>.
@@ -1382,6 +1787,9 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             iActionModel.destroy();
             iActionProduct.destroy();
             iActionAttributes.destroy();
+            iActionQueryPort.destroy();
+            iActionBrowsePort.destroy();
+            iActionUpdateCount.destroy();
             iActionQuery.destroy();
             iManufacturerName.destroy();
             iManufacturerInfo.destroy();
@@ -1396,6 +1804,9 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             iProductUrl.destroy();
             iProductImageUri.destroy();
             iAttributes.destroy();
+            iQueryPort.destroy();
+            iBrowsePort.destroy();
+            iUpdateCount.destroy();
         }
     }
 }

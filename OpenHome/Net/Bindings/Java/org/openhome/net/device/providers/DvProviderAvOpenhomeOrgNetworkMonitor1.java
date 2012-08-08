@@ -344,7 +344,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -398,7 +398,7 @@ public class DvProviderAvOpenhomeOrgNetworkMonitor1 extends DvProvider implement
             }
             catch (ActionError ae)
             {
-                invocation.reportError(501, "Invalid XML");
+                invocation.reportActionError(ae, "Invalid XML");
                 return;
             }
             catch (PropertyUpdateError pue)

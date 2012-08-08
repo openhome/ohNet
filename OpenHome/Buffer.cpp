@@ -475,8 +475,11 @@ void Bwh::TransferTo(Brh& aBrh)
 void Bwh::TransferTo(Brhz& aBrhz)
 {
     free((void*)aBrhz.iPtr);
-    aBrhz.iPtr = iPtr;
+    aBrhz.iPtr = (TByte*)malloc(iBytes+1);
+    (void)memcpy((void*)aBrhz.iPtr, iPtr, iBytes);
+    const_cast<TByte*>(aBrhz.iPtr)[iBytes] = '\0';
     aBrhz.iBytes = iBytes;
+    free((void*)iPtr);
     iPtr = NULL;
     iBytes = 0;
 }

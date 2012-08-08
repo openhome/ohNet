@@ -146,11 +146,13 @@ DeviceBasicC::DeviceBasicC(EProtocol aProtocol)
 {
     Bwh udn("device");
     RandomiseUdn(udn);
+    Brhz cstr;
+    udn.TransferTo(cstr);
     if (aProtocol == eProtocolNone) {
-        iDevice = DvDeviceCreate((const char*)udn.Ptr());
+        iDevice = DvDeviceCreate((const char*)cstr.Ptr());
     }
     else { // eProtocolUpnp
-        iDevice = DvDeviceStandardCreateNoResources((const char*)udn.Ptr());
+        iDevice = DvDeviceStandardCreateNoResources((const char*)cstr.Ptr());
         DvDeviceSetAttribute(iDevice, "Upnp.Domain", "openhome.org");
         DvDeviceSetAttribute(iDevice, "Upnp.Type", "Test");
         DvDeviceSetAttribute(iDevice, "Upnp.Version", "1");

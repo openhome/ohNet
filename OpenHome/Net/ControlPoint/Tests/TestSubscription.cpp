@@ -136,6 +136,7 @@ void DeviceList::Removed(CpDevice& aDevice)
 
 void TestSubscription()
 {
+    gSubscriptionCount = 0; // reset this here in case we're run multiple times via TestShell
     Debug::SetLevel(Debug::kNone);
     DeviceList* deviceList = new DeviceList;
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &DeviceList::Added);

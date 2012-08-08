@@ -14,16 +14,22 @@ namespace OpenHome.Net.Device
     /// </summary>
     public class ActionError : Exception
     {
+        public uint Code { get; private set; }
+        public string Msg { get; private set; }
+
         public ActionError()
         {
         }
         public ActionError(string aMessage)
             : base(aMessage)
         {
+            Msg = aMessage;
         }
-        public ActionError(string aMessage, int aCode)
+        public ActionError(uint aCode, string aMessage)
             : base(String.Format("{0}: {1}", aCode, aMessage))
         {
+            Code = aCode;
+            Msg = aMessage;
         }
     }
 

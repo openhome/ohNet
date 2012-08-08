@@ -169,7 +169,7 @@ public:
     virtual ~Bwh();
     void Grow(TUint aMaxBytes);
     void TransferTo(Brh& aBrh);
-    void TransferTo(Brhz& aBrh);
+    void TransferTo(Brhz& aBrh); // reallocates buffer for aBrh
     void TransferTo(Bwh& aBwh);
     virtual const TByte* Ptr() const;
 protected:

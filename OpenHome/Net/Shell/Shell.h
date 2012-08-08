@@ -61,6 +61,8 @@ class Shell : private IShellCommandHandler
 {
     friend class ShellCommandHelp;
 public:
+    static const TUint kServerPort = 2323;
+public:
     Shell();
     ~Shell();
     void AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler);

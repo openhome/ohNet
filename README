@@ -22,7 +22,7 @@ Building
 
 If you have a .NET runtime available and want to regenerate makefiles, proxies or providers, run
     make generate-makefiles uset4=yes
-    make uset4=yes
+    make GenAll uset4=yes
 
 Installing
 ----------
