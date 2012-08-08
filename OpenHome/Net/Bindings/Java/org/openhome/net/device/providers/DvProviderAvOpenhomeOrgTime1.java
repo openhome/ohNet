@@ -271,7 +271,7 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Time");
                 return;
             }
             catch (PropertyUpdateError pue)

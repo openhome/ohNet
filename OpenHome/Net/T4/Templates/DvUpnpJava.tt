@@ -336,7 +336,7 @@ public class <#=className#> extends DvProvider implements I<#=className#>
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "<#=a.name#>");
                 return;
             }
             catch (PropertyUpdateError pue)

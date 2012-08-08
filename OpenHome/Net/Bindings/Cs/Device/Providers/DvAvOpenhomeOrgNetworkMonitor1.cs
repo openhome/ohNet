@@ -294,7 +294,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Name"));
+                invocation.ReportActionError(e, "Name");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -342,7 +342,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Ports"));
+                invocation.ReportActionError(e, "Ports");
                 return -1;
             }
             catch (PropertyUpdateError)

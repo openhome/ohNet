@@ -963,7 +963,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetLoadLevelTarget");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1010,7 +1010,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetLoadLevelTarget");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1058,7 +1058,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetLoadLevelStatus");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1107,7 +1107,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetOnEffectLevel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1155,7 +1155,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetOnEffect");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1206,7 +1206,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetOnEffectParameters");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1254,7 +1254,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "StepUp");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1300,7 +1300,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "StepDown");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1346,7 +1346,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "StartRampUp");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1392,7 +1392,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "StartRampDown");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1438,7 +1438,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "StopRamp");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1488,7 +1488,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "StartRampToLevel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1536,7 +1536,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetStepDelta");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1583,7 +1583,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetStepDelta");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1632,7 +1632,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetRampRate");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1679,7 +1679,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetRampRate");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1726,7 +1726,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PauseRamp");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1772,7 +1772,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ResumeRamp");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1819,7 +1819,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetIsRamping");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1867,7 +1867,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetRampPaused");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1915,7 +1915,7 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetRampTime");
                 return;
             }
             catch (PropertyUpdateError pue)

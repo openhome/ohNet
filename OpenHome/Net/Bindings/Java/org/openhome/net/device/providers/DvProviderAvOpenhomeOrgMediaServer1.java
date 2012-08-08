@@ -1210,7 +1210,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Manufacturer");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1269,7 +1269,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Model");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1328,7 +1328,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Product");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1379,7 +1379,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Attributes");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1427,7 +1427,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "QueryPort");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1475,7 +1475,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "BrowsePort");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1523,7 +1523,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "UpdateCount");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1573,7 +1573,7 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Query");
                 return;
             }
             catch (PropertyUpdateError pue)

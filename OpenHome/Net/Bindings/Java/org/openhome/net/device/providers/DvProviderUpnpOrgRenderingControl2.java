@@ -1383,7 +1383,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ListPresets");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1434,7 +1434,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SelectPreset");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1483,7 +1483,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetBrightness");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1534,7 +1534,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetBrightness");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1583,7 +1583,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetContrast");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1634,7 +1634,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetContrast");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1683,7 +1683,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetSharpness");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1734,7 +1734,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetSharpness");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1783,7 +1783,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetRedVideoGain");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1834,7 +1834,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetRedVideoGain");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1883,7 +1883,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetGreenVideoGain");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1934,7 +1934,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetGreenVideoGain");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1983,7 +1983,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetBlueVideoGain");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2034,7 +2034,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetBlueVideoGain");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2083,7 +2083,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetRedVideoBlackLevel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2134,7 +2134,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetRedVideoBlackLevel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2183,7 +2183,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetGreenVideoBlackLevel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2234,7 +2234,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetGreenVideoBlackLevel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2283,7 +2283,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetBlueVideoBlackLevel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2334,7 +2334,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetBlueVideoBlackLevel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2383,7 +2383,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetColorTemperature");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2434,7 +2434,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetColorTemperature");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2483,7 +2483,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetHorizontalKeystone");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2534,7 +2534,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetHorizontalKeystone");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2583,7 +2583,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetVerticalKeystone");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2634,7 +2634,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetVerticalKeystone");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2685,7 +2685,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetMute");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2738,7 +2738,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetMute");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2789,7 +2789,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetVolume");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2842,7 +2842,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetVolume");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2893,7 +2893,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetVolumeDB");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2946,7 +2946,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetVolumeDB");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -3001,7 +3001,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetVolumeDBRange");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -3054,7 +3054,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetLoudness");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -3107,7 +3107,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetLoudness");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -3158,7 +3158,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetStateVariables");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -3216,7 +3216,7 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetStateVariables");
                 return;
             }
             catch (PropertyUpdateError pue)

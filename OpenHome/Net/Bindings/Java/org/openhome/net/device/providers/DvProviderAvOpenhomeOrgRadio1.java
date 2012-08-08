@@ -942,7 +942,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Play");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -988,7 +988,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Pause");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1034,7 +1034,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Stop");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1082,7 +1082,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SeekSecondAbsolute");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1130,7 +1130,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SeekSecondRelative");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1181,7 +1181,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Channel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1233,7 +1233,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetChannel");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1280,7 +1280,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "TransportState");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1328,7 +1328,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Id");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1379,7 +1379,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetId");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1428,7 +1428,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Read");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1478,7 +1478,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ReadList");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1530,7 +1530,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "IdArray");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1581,7 +1581,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "IdArrayChanged");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1629,7 +1629,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ChannelsMax");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1677,7 +1677,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ProtocolInfo");
                 return;
             }
             catch (PropertyUpdateError pue)

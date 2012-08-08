@@ -1201,7 +1201,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetAVTransportURI");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1253,7 +1253,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetNextAVTransportURI");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1320,7 +1320,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetMediaInfo");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1398,7 +1398,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetMediaInfo_Ext");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1463,7 +1463,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetTransportInfo");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1531,7 +1531,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetPositionInfo");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1594,7 +1594,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetDeviceCapabilities");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1650,7 +1650,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetTransportSettings");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1700,7 +1700,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Stop");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1750,7 +1750,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Play");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1798,7 +1798,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Pause");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1846,7 +1846,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Record");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1898,7 +1898,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Seek");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1946,7 +1946,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Next");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1994,7 +1994,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Previous");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2044,7 +2044,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetPlayMode");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2094,7 +2094,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetRecordQualityMode");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2143,7 +2143,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetCurrentTransportActions");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2193,7 +2193,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetDRMState");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2245,7 +2245,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetStateVariables");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2303,7 +2303,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetStateVariables");
                 return;
             }
             catch (PropertyUpdateError pue)

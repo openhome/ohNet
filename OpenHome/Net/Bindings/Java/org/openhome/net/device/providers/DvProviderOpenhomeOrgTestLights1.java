@@ -354,7 +354,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetCount");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -404,7 +404,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetRoom");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -454,7 +454,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetName");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -510,7 +510,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetPosition");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -563,7 +563,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetColor");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -612,7 +612,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetColor");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -670,7 +670,7 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetColorComponents");
                 return;
             }
             catch (PropertyUpdateError pue)

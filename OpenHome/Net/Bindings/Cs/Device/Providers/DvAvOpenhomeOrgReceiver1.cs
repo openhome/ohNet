@@ -409,7 +409,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Play"));
+                invocation.ReportActionError(e, "Play");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -453,7 +453,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Stop"));
+                invocation.ReportActionError(e, "Stop");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -501,7 +501,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "SetSender"));
+                invocation.ReportActionError(e, "SetSender");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -547,7 +547,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Sender"));
+                invocation.ReportActionError(e, "Sender");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -594,7 +594,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "ProtocolInfo"));
+                invocation.ReportActionError(e, "ProtocolInfo");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -640,7 +640,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "TransportState"));
+                invocation.ReportActionError(e, "TransportState");
                 return -1;
             }
             catch (PropertyUpdateError)

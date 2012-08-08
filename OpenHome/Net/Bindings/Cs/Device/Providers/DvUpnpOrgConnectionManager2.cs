@@ -371,7 +371,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetProtocolInfo"));
+                invocation.ReportActionError(e, "GetProtocolInfo");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -428,7 +428,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "PrepareForConnection"));
+                invocation.ReportActionError(e, "PrepareForConnection");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -477,7 +477,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "ConnectionComplete"));
+                invocation.ReportActionError(e, "ConnectionComplete");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -522,7 +522,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetCurrentConnectionIDs"));
+                invocation.ReportActionError(e, "GetCurrentConnectionIDs");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -576,7 +576,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetCurrentConnectionInfo"));
+                invocation.ReportActionError(e, "GetCurrentConnectionInfo");
                 return -1;
             }
             catch (PropertyUpdateError)

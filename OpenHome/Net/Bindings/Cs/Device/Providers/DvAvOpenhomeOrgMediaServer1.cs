@@ -1070,7 +1070,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Manufacturer"));
+                invocation.ReportActionError(e, "Manufacturer");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1122,7 +1122,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Model"));
+                invocation.ReportActionError(e, "Model");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1174,7 +1174,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Product"));
+                invocation.ReportActionError(e, "Product");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1223,7 +1223,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Attributes"));
+                invocation.ReportActionError(e, "Attributes");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1269,7 +1269,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "QueryPort"));
+                invocation.ReportActionError(e, "QueryPort");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1315,7 +1315,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "BrowsePort"));
+                invocation.ReportActionError(e, "BrowsePort");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1361,7 +1361,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "UpdateCount"));
+                invocation.ReportActionError(e, "UpdateCount");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1409,7 +1409,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Query"));
+                invocation.ReportActionError(e, "Query");
                 return -1;
             }
             catch (PropertyUpdateError)
