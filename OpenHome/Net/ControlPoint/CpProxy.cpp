@@ -5,6 +5,33 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+// ProxyError
+
+ProxyError::ProxyError()
+    : iLevel(0)
+    , iCode(0)
+{
+}
+
+ProxyError::ProxyError(uint32_t aLevel, uint32_t aCode)
+    : iLevel(aLevel)
+    , iCode(aCode)
+{
+}
+
+TUint ProxyError::Level() const
+{
+    return iLevel;
+}
+
+uint32_t ProxyError::Code() const
+{
+    return iCode;
+}
+
+
+// CpProxy
+
 void CpProxy::Subscribe()
 {
     if (iInitialEventLock == NULL) {

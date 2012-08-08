@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/Error.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -226,8 +227,11 @@ void CpProxyAvOpenhomeOrgInfo1::EndCounters(IAsync& aAsync, TUint& aTrackCount, 
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Counters"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
     TUint index = 0;
     aTrackCount = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -258,8 +262,11 @@ void CpProxyAvOpenhomeOrgInfo1::EndTrack(IAsync& aAsync, Brh& aUri, Brh& aMetada
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Track"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aUri);
@@ -293,8 +300,11 @@ void CpProxyAvOpenhomeOrgInfo1::EndDetails(IAsync& aAsync, TUint& aDuration, TUi
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Details"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
     TUint index = 0;
     aDuration = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -327,8 +337,11 @@ void CpProxyAvOpenhomeOrgInfo1::EndMetatext(IAsync& aAsync, Brh& aValue)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Metatext"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);

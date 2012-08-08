@@ -654,8 +654,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSetAVTransportURI(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("SetAVTransportURI"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -689,8 +692,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSetNextAVTransportURI(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("SetNextAVTransportURI"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -727,8 +733,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetMediaInfo(IAsync& aAsync, uint32_t& aN
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetMediaInfo"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aNrTracks = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -793,8 +802,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetTransportInfo(IAsync& aAsync, std::str
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetTransportInfo"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     {
@@ -843,8 +855,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetPositionInfo(IAsync& aAsync, uint32_t&
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetPositionInfo"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aTrack = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -899,8 +914,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetDeviceCapabilities(IAsync& aAsync, std
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetDeviceCapabilities"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     {
@@ -943,8 +961,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetTransportSettings(IAsync& aAsync, std:
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetTransportSettings"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     {
@@ -979,8 +1000,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndStop(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Stop"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1010,8 +1034,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndPlay(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Play"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1037,8 +1064,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndPause(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Pause"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1064,8 +1094,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndRecord(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Record"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1099,8 +1132,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSeek(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Seek"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1126,8 +1162,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndNext(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Next"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1153,8 +1192,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndPrevious(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Previous"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1184,8 +1226,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSetPlayMode(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("SetPlayMode"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1215,8 +1260,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSetRecordQualityMode(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("SetRecordQualityMode"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
 }
 
@@ -1245,8 +1293,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetCurrentTransportActions(IAsync& aAsync
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetCurrentTransportActions"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     {

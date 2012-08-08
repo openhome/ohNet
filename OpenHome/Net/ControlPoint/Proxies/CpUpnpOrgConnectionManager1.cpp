@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/Error.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -258,8 +259,11 @@ void CpProxyUpnpOrgConnectionManager1::EndGetProtocolInfo(IAsync& aAsync, Brh& a
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetProtocolInfo"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aSource);
@@ -296,8 +300,11 @@ void CpProxyUpnpOrgConnectionManager1::EndPrepareForConnection(IAsync& aAsync, T
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("PrepareForConnection"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
     TUint index = 0;
     aConnectionID = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -327,8 +334,11 @@ void CpProxyUpnpOrgConnectionManager1::EndConnectionComplete(IAsync& aAsync)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("ConnectionComplete"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
 }
 
@@ -354,8 +364,11 @@ void CpProxyUpnpOrgConnectionManager1::EndGetCurrentConnectionIDs(IAsync& aAsync
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetCurrentConnectionIDs"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aConnectionIDs);
@@ -392,8 +405,11 @@ void CpProxyUpnpOrgConnectionManager1::EndGetCurrentConnectionInfo(IAsync& aAsyn
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("GetCurrentConnectionInfo"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError((uint32_t)level, code));
     }
     TUint index = 0;
     aRcsID = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();

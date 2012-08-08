@@ -291,6 +291,16 @@ public:
     DllExport TBool Error() const;
 
     /**
+     * Returns true if the invocation failed; false if it successed
+     *
+     * The Completed() callback will still be called if an invocation fails.  It should
+     * not attempt to access OutputArguments() if it failed but must free any user data.
+     *
+     * All args are output only and will only be set if the function returns true.
+     */
+    DllExport TBool Error(Error::ELevel& aLevel, TUint& aCode, const TChar*& aDescription) const;
+
+    /**
      * Intended for internal use only
      */
     TBool Interrupt() const;

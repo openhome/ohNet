@@ -389,6 +389,17 @@ TBool OpenHome::Net::Invocation::Error() const
     return (iError.Level() != Error::eNone);
 }
 
+TBool OpenHome::Net::Invocation::Error(Error::ELevel& aLevel, TUint& aCode, const TChar*& aDescription) const
+{
+    if (iError.Level() == Error::eNone) {
+        return false;
+    }
+    aLevel = iError.Level();
+    aCode = iError.Code();
+    aDescription = iError.Description();
+    return true;
+}
+
 TBool OpenHome::Net::Invocation::Interrupt() const
 {
     return iService->Interrupt();

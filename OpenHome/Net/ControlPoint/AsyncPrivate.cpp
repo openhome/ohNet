@@ -3,6 +3,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/CpProxy.h>
+#include <OpenHome/Net/Private/Error.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -15,14 +16,13 @@ FunctorAsync& SyncProxyAction::Functor()
 void SyncProxyAction::Wait()
 {
     iSem.Wait();
-    if (iError) {
-        THROW(ProxyError);
+    if ((Error::ELevel)iError.Level() != Error::eNone) {
+        throw(iError);
     }
 }
 
 SyncProxyAction::SyncProxyAction()
     : iSem("SYNC", 0)
-    , iError(false)
 {
     iFunctor = MakeFunctorAsync(*this, &SyncProxyAction::Completed);
 }
@@ -36,10 +36,10 @@ void SyncProxyAction::Completed(IAsync& aAsync)
     try {
         CompleteRequest(aAsync);
     }
-    catch(ProxyError&) {
-        iError = true;
+    catch(ProxyError& aProxyError) {
+        iError = aProxyError;
         iSem.Signal();
-        THROW(ProxyError);
+        throw(aProxyError);
     }
     iSem.Signal();
 }

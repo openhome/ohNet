@@ -170,8 +170,11 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1C::EndName(IAsync& aAsync, Brh& aName)
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Name"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aName);
@@ -201,8 +204,11 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1C::EndPorts(IAsync& aAsync, TUint& aSend
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Ports"));
 
-    if (invocation.Error()) {
-        THROW(ProxyError);
+    Error::ELevel level;
+	TUint code;
+	const TChar* ignore;
+	if (invocation.Error(level, code, ignore)) {
+        throw(ProxyError(level, code));
     }
     TUint index = 0;
     aSender = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
