@@ -1058,9 +1058,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentPresetNameList"></param>
         public void EndListPresets(IntPtr aAsyncHandle, out String aCurrentPresetNameList)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentPresetNameList = Invocation.OutputString(aAsyncHandle, index++);
@@ -1107,9 +1109,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSelectPreset(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1156,9 +1160,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentBrightness"></param>
         public void EndGetBrightness(IntPtr aAsyncHandle, out uint aCurrentBrightness)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentBrightness = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1205,9 +1211,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetBrightness(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1254,9 +1262,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentContrast"></param>
         public void EndGetContrast(IntPtr aAsyncHandle, out uint aCurrentContrast)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentContrast = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1303,9 +1313,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetContrast(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1352,9 +1364,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentSharpness"></param>
         public void EndGetSharpness(IntPtr aAsyncHandle, out uint aCurrentSharpness)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentSharpness = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1401,9 +1415,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetSharpness(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1450,9 +1466,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentRedVideoGain"></param>
         public void EndGetRedVideoGain(IntPtr aAsyncHandle, out uint aCurrentRedVideoGain)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentRedVideoGain = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1499,9 +1517,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetRedVideoGain(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1548,9 +1568,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentGreenVideoGain"></param>
         public void EndGetGreenVideoGain(IntPtr aAsyncHandle, out uint aCurrentGreenVideoGain)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentGreenVideoGain = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1597,9 +1619,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetGreenVideoGain(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1646,9 +1670,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentBlueVideoGain"></param>
         public void EndGetBlueVideoGain(IntPtr aAsyncHandle, out uint aCurrentBlueVideoGain)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentBlueVideoGain = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1695,9 +1721,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetBlueVideoGain(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1744,9 +1772,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentRedVideoBlackLevel"></param>
         public void EndGetRedVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentRedVideoBlackLevel)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentRedVideoBlackLevel = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1793,9 +1823,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetRedVideoBlackLevel(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1842,9 +1874,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentGreenVideoBlackLevel"></param>
         public void EndGetGreenVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentGreenVideoBlackLevel)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentGreenVideoBlackLevel = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1891,9 +1925,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetGreenVideoBlackLevel(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1940,9 +1976,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentBlueVideoBlackLevel"></param>
         public void EndGetBlueVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentBlueVideoBlackLevel)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentBlueVideoBlackLevel = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1989,9 +2027,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetBlueVideoBlackLevel(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -2038,9 +2078,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentColorTemperature"></param>
         public void EndGetColorTemperature(IntPtr aAsyncHandle, out uint aCurrentColorTemperature)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentColorTemperature = Invocation.OutputUint(aAsyncHandle, index++);
@@ -2087,9 +2129,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetColorTemperature(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -2136,9 +2180,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentHorizontalKeystone"></param>
         public void EndGetHorizontalKeystone(IntPtr aAsyncHandle, out int aCurrentHorizontalKeystone)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentHorizontalKeystone = Invocation.OutputInt(aAsyncHandle, index++);
@@ -2185,9 +2231,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetHorizontalKeystone(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -2234,9 +2282,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentVerticalKeystone"></param>
         public void EndGetVerticalKeystone(IntPtr aAsyncHandle, out int aCurrentVerticalKeystone)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentVerticalKeystone = Invocation.OutputInt(aAsyncHandle, index++);
@@ -2283,9 +2333,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetVerticalKeystone(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -2335,9 +2387,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentMute"></param>
         public void EndGetMute(IntPtr aAsyncHandle, out bool aCurrentMute)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentMute = Invocation.OutputBool(aAsyncHandle, index++);
@@ -2387,9 +2441,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetMute(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -2439,9 +2495,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentVolume"></param>
         public void EndGetVolume(IntPtr aAsyncHandle, out uint aCurrentVolume)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentVolume = Invocation.OutputUint(aAsyncHandle, index++);
@@ -2491,9 +2549,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetVolume(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -2543,9 +2603,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentVolume"></param>
         public void EndGetVolumeDB(IntPtr aAsyncHandle, out int aCurrentVolume)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentVolume = Invocation.OutputInt(aAsyncHandle, index++);
@@ -2595,9 +2657,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetVolumeDB(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -2651,9 +2715,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aMaxValue"></param>
         public void EndGetVolumeDBRange(IntPtr aAsyncHandle, out int aMinValue, out int aMaxValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aMinValue = Invocation.OutputInt(aAsyncHandle, index++);
@@ -2706,9 +2772,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCurrentLoudness"></param>
         public void EndGetLoudness(IntPtr aAsyncHandle, out bool aCurrentLoudness)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aCurrentLoudness = Invocation.OutputBool(aAsyncHandle, index++);
@@ -2758,9 +2826,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetLoudness(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 

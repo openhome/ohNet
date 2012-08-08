@@ -671,9 +671,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aSortLevelCap"></param>
         public void EndGetSortCapabilities(IntPtr aAsyncHandle, out String aSortCaps, out uint aSortLevelCap)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aSortCaps = Invocation.OutputString(aAsyncHandle, index++);
@@ -723,9 +725,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aPropertyList"></param>
         public void EndGetPropertyList(IntPtr aAsyncHandle, out String aPropertyList)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aPropertyList = Invocation.OutputString(aAsyncHandle, index++);
@@ -777,9 +781,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aPropertyInfo"></param>
         public void EndGetAllowedValues(IntPtr aAsyncHandle, out String aPropertyInfo)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aPropertyInfo = Invocation.OutputString(aAsyncHandle, index++);
@@ -824,9 +830,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aId"></param>
         public void EndGetStateUpdateID(IntPtr aAsyncHandle, out uint aId)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aId = Invocation.OutputUint(aAsyncHandle, index++);
@@ -896,9 +904,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndBrowseRecordSchedules(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aResult = Invocation.OutputString(aAsyncHandle, index++);
@@ -974,9 +984,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndBrowseRecordTasks(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aResult = Invocation.OutputString(aAsyncHandle, index++);
@@ -1036,9 +1048,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndCreateRecordSchedule(IntPtr aAsyncHandle, out String aRecordScheduleID, out String aResult, out uint aUpdateID)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRecordScheduleID = Invocation.OutputString(aAsyncHandle, index++);
@@ -1084,9 +1098,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDeleteRecordSchedule(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1140,9 +1156,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndGetRecordSchedule(IntPtr aAsyncHandle, out String aResult, out uint aUpdateID)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aResult = Invocation.OutputString(aAsyncHandle, index++);
@@ -1187,9 +1205,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndEnableRecordSchedule(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1231,9 +1251,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDisableRecordSchedule(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1275,9 +1297,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDeleteRecordTask(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1331,9 +1355,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndGetRecordTask(IntPtr aAsyncHandle, out String aResult, out uint aUpdateID)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aResult = Invocation.OutputString(aAsyncHandle, index++);
@@ -1378,9 +1404,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndEnableRecordTask(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1422,9 +1450,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDisableRecordTask(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1466,9 +1496,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndResetRecordTask(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1519,9 +1551,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndGetRecordScheduleConflicts(IntPtr aAsyncHandle, out String aRecordScheduleConflictIDList, out uint aUpdateID)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRecordScheduleConflictIDList = Invocation.OutputString(aAsyncHandle, index++);
@@ -1575,9 +1609,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndGetRecordTaskConflicts(IntPtr aAsyncHandle, out String aRecordTaskConflictIDList, out uint aUpdateID)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRecordTaskConflictIDList = Invocation.OutputString(aAsyncHandle, index++);

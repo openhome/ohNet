@@ -297,7 +297,7 @@ namespace OpenHome.Net.ControlPoint
         [DllImport("ohNet")]
         static extern void CpInvocationAddOutput(IntPtr aInvocation, IntPtr aArgument);
         [DllImport("ohNet")]
-        static extern uint CpInvocationError(IntPtr aInvocation);
+        static extern unsafe uint CpInvocationError(IntPtr aInvocation, uint* aErrorCode, IntPtr* aErrorDesc);
         [DllImport("ohNet")]
         static extern unsafe void OhNetFree(IntPtr aPtr);
         [DllImport("ohNet")]
@@ -362,9 +362,13 @@ namespace OpenHome.Net.ControlPoint
         /// </summary>
         /// <remarks>Only intended for use in the invocation complete callback</remarks>
         /// <returns>true if the invocation failed; false if it succeeded</returns>
-        public static bool Error(IntPtr aHandle)
+        public static unsafe bool Error(IntPtr aHandle, out uint aErrorCode, out string aErrorDesc)
         {
-            uint err = CpInvocationError(aHandle);
+            uint code;
+            IntPtr desc;
+            uint err = CpInvocationError(aHandle, &code, &desc);
+            aErrorCode = code;
+            aErrorDesc = InteropUtils.PtrToStringUtf8(desc);
             return (err != 0);
         }
 

@@ -165,9 +165,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aName"></param>
         public void EndName(IntPtr aAsyncHandle, out String aName)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aName = Invocation.OutputString(aAsyncHandle, index++);
@@ -220,9 +222,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResults"></param>
         public void EndPorts(IntPtr aAsyncHandle, out uint aSender, out uint aReceiver, out uint aResults)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aSender = Invocation.OutputUint(aAsyncHandle, index++);

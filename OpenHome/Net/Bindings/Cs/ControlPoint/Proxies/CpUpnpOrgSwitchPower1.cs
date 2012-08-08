@@ -154,9 +154,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetTarget(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -199,9 +201,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRetTargetValue"></param>
         public void EndGetTarget(IntPtr aAsyncHandle, out bool aRetTargetValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRetTargetValue = Invocation.OutputBool(aAsyncHandle, index++);
@@ -246,9 +250,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResultStatus"></param>
         public void EndGetStatus(IntPtr aAsyncHandle, out bool aResultStatus)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aResultStatus = Invocation.OutputBool(aAsyncHandle, index++);

@@ -260,9 +260,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
 <#      } #>
         public void End<#=a.name#>(IntPtr aAsyncHandle<#=OutArgsFull(a, true)#>)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
 <#      if (a.outargs.Count > 0) #>
 <#      { #>

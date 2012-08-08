@@ -8,6 +8,15 @@ namespace OpenHome.Net.ControlPoint
 {
     public class ProxyError : Exception
     {
+        public uint Code { get; private set; }
+        public string Description { get; private set; }
+
+        public ProxyError(uint aCode, string aDesc)
+            : base(String.Format("{0}:{1}", aCode, aDesc))
+        {
+            Code = aCode;
+            Description = aDesc;
+        }
     }
     
     /// <summary>
@@ -197,7 +206,7 @@ namespace OpenHome.Net.ControlPoint
     {
         private CpProxy.CallbackAsyncComplete iAsyncComplete;
         private Semaphore iSem;
-        private bool iError;
+        private ProxyError iProxyError;
 
         public CpProxy.CallbackAsyncComplete AsyncComplete()
         {
@@ -211,9 +220,9 @@ namespace OpenHome.Net.ControlPoint
 
         public void ReportError()
         {
-            if (iError)
+            if (iProxyError != null)
             {
-                throw new ProxyError();
+                throw iProxyError;
             }
         }
 
@@ -231,9 +240,9 @@ namespace OpenHome.Net.ControlPoint
             {
                 CompleteRequest(aAsyncHandle);
             }
-            catch (ProxyError)
+            catch (ProxyError aProxyError)
             {
-                iError = true;
+                iProxyError = aProxyError;
             }
             catch (System.Exception e)
             {

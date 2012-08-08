@@ -242,9 +242,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndPresentationUrl(IntPtr aAsyncHandle, out String aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputString(aAsyncHandle, index++);
@@ -289,9 +291,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndMetadata(IntPtr aAsyncHandle, out String aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputString(aAsyncHandle, index++);
@@ -336,9 +340,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndAudio(IntPtr aAsyncHandle, out bool aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputBool(aAsyncHandle, index++);
@@ -383,9 +389,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndStatus(IntPtr aAsyncHandle, out String aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputString(aAsyncHandle, index++);
@@ -430,9 +438,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndAttributes(IntPtr aAsyncHandle, out String aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputString(aAsyncHandle, index++);

@@ -607,9 +607,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetLoadLevelTarget(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -652,9 +654,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aGetLoadlevelTarget"></param>
         public void EndGetLoadLevelTarget(IntPtr aAsyncHandle, out uint aGetLoadlevelTarget)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aGetLoadlevelTarget = Invocation.OutputUint(aAsyncHandle, index++);
@@ -699,9 +703,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRetLoadlevelStatus"></param>
         public void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aRetLoadlevelStatus)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRetLoadlevelStatus = Invocation.OutputUint(aAsyncHandle, index++);
@@ -745,9 +751,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetOnEffectLevel(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -789,9 +797,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetOnEffect(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -838,9 +848,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRetOnEffectLevel"></param>
         public void EndGetOnEffectParameters(IntPtr aAsyncHandle, out String aRetOnEffect, out uint aRetOnEffectLevel)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRetOnEffect = Invocation.OutputString(aAsyncHandle, index++);
@@ -881,9 +893,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStepUp(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -921,9 +935,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStepDown(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -961,9 +977,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStartRampUp(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1001,9 +1019,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStartRampDown(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1041,9 +1061,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStopRamp(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1088,9 +1110,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStartRampToLevel(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1132,9 +1156,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetStepDelta(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1177,9 +1203,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRetStepDelta"></param>
         public void EndGetStepDelta(IntPtr aAsyncHandle, out uint aRetStepDelta)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRetStepDelta = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1223,9 +1251,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetRampRate(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1268,9 +1298,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRetRampRate"></param>
         public void EndGetRampRate(IntPtr aAsyncHandle, out uint aRetRampRate)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRetRampRate = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1310,9 +1342,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPauseRamp(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1350,9 +1384,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndResumeRamp(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1395,9 +1431,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRetIsRamping"></param>
         public void EndGetIsRamping(IntPtr aAsyncHandle, out bool aRetIsRamping)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRetIsRamping = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1442,9 +1480,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRetRampPaused"></param>
         public void EndGetRampPaused(IntPtr aAsyncHandle, out bool aRetRampPaused)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRetRampPaused = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1489,9 +1529,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRetRampTime"></param>
         public void EndGetRampTime(IntPtr aAsyncHandle, out uint aRetRampTime)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRetRampTime = Invocation.OutputUint(aAsyncHandle, index++);

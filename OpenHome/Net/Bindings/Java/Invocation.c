@@ -133,10 +133,12 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocatio
   (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
 {
 	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+    uint32_t code;
+    const char* desc;
 	aEnv = aEnv;
 	aClass = aClass;
-	
-	return CpInvocationError(invocation);
+
+	return CpInvocationError(invocation, &code, &desc);
 }
 
 /*

@@ -682,9 +682,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aMetadata"></param>
         public void EndMetadata(IntPtr aAsyncHandle, out String aMetadata)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aMetadata = Invocation.OutputString(aAsyncHandle, index++);
@@ -729,9 +731,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aImagesXml"></param>
         public void EndImagesXml(IntPtr aAsyncHandle, out String aImagesXml)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aImagesXml = Invocation.OutputString(aAsyncHandle, index++);
@@ -780,9 +784,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aArray"></param>
         public void EndPlaylistReadArray(IntPtr aAsyncHandle, out byte[] aArray)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aArray = Invocation.OutputBinary(aAsyncHandle, index++);
@@ -831,9 +837,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aPlaylistList"></param>
         public void EndPlaylistReadList(IntPtr aAsyncHandle, out String aPlaylistList)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aPlaylistList = Invocation.OutputString(aAsyncHandle, index++);
@@ -890,9 +898,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aImageId"></param>
         public void EndPlaylistRead(IntPtr aAsyncHandle, out String aName, out String aDescription, out uint aImageId)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aName = Invocation.OutputString(aAsyncHandle, index++);
@@ -941,9 +951,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPlaylistSetName(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -988,9 +1000,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPlaylistSetDescription(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1035,9 +1049,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPlaylistSetImageId(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1093,9 +1109,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aNewId"></param>
         public void EndPlaylistInsert(IntPtr aAsyncHandle, out uint aNewId)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aNewId = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1139,9 +1157,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPlaylistDeleteId(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1186,9 +1206,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPlaylistMove(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1231,9 +1253,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndPlaylistsMax(IntPtr aAsyncHandle, out uint aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1278,9 +1302,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndTracksMax(IntPtr aAsyncHandle, out uint aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1333,9 +1359,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aTokenArray"></param>
         public void EndPlaylistArrays(IntPtr aAsyncHandle, out uint aToken, out byte[] aIdArray, out byte[] aTokenArray)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aToken = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1386,9 +1414,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndPlaylistArraysChanged(IntPtr aAsyncHandle, out bool aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1440,9 +1470,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aMetadata"></param>
         public void EndRead(IntPtr aAsyncHandle, out String aMetadata)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aMetadata = Invocation.OutputString(aAsyncHandle, index++);
@@ -1494,9 +1526,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aTrackList"></param>
         public void EndReadList(IntPtr aAsyncHandle, out String aTrackList)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aTrackList = Invocation.OutputString(aAsyncHandle, index++);
@@ -1551,9 +1585,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aNewTrackId"></param>
         public void EndInsert(IntPtr aAsyncHandle, out uint aNewTrackId)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aNewTrackId = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1600,9 +1636,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDeleteId(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -1644,9 +1682,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDeleteAll(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 

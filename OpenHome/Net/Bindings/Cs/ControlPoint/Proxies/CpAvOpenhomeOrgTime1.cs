@@ -140,9 +140,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aSeconds"></param>
         public void EndTime(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aTrackCount = Invocation.OutputUint(aAsyncHandle, index++);
