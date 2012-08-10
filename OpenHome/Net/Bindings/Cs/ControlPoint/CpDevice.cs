@@ -202,10 +202,9 @@ namespace OpenHome.Net.ControlPoint
             {
                 aDelegate(aList, aDevice);
             }
-            catch (Exception e)
+            catch (ProxyError e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         No exceptions should be thrown by device list change delegates");
+                Console.WriteLine("WARNING: ProxyError ({0}:{1}) thrown from {2} in device list change delegate", e.Code, (e.Description != null ? e.Description : "<none>"), e.TargetSite.Name);
             }
         }
     }
