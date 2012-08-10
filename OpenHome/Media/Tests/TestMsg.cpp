@@ -52,7 +52,7 @@ private:
 
 class SuiteMsgAudio : public Suite
 {
-    static const TUint kMsgCount = 4;
+    static const TUint kMsgCount = 8;
 public:
     SuiteMsgAudio();
     ~SuiteMsgAudio();
@@ -228,6 +228,10 @@ void SuiteMsgAudio::Test()
     TEST(msg1->Bytes() == (data1.Bytes() + data2.Bytes() + kData3SplitBytes) * sizeof(TUint));
     TEST(msg4->Bytes() == (data3.Bytes() - kData3SplitBytes) * sizeof(TUint));
 
+    // clone #1.  Check that clone's length matches #1's
+    MsgAudio* msg5 = msg1->Clone();
+    TEST(msg1->Bytes() == msg5->Bytes());
+
     // read/validate data from #1
     Bws<40> outputBytes1;
     outputBytes1.Append(data1);
@@ -242,18 +246,13 @@ void SuiteMsgAudio::Test()
         TEST(outputBytes1[i] == (TChar)(outputWords[i]>>24));
     }
 
-    // clone #4.  Read/validate data from both copies
-    MsgAudio* msg5 = msg4->Clone();
-    msg4->CopyTo(outputWords);
-    subsamples = msg4->Bytes() / sizeof(TUint);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(outputBytes2[i] == (TChar)(outputWords[i]>>24));
-    }
-    msg5->CopyTo(outputWords);
-    subsamples = msg5->Bytes() / sizeof(TUint);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(outputBytes2[i] == (TChar)(outputWords[i]>>24));
-    }
+    // read/validate data from #5 (clone)
+    TUint outputWordsClone[40];
+    msg5->CopyTo(outputWordsClone);
+    TEST(0 == memcmp(outputWords, outputWordsClone, subsamples * sizeof(outputWords[0])));
+
+    // free msg4 without consuming its data in the normal CopyTo way
+    msg4->RemoveRef();
 
     // clean destruction of class implies no leaked msgs
 }
