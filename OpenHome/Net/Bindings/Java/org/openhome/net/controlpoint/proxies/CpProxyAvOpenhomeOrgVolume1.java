@@ -718,10 +718,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public Characteristics endCharacteristics(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long volumeMax = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -781,10 +781,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endSetVolume(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -826,10 +826,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endVolumeInc(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -871,10 +871,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endVolumeDec(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -923,10 +923,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public long endVolume(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -974,10 +974,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endSetBalance(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1019,10 +1019,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endBalanceInc(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1064,10 +1064,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endBalanceDec(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1116,10 +1116,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public int endBalance(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         int value = Invocation.getOutputInt(aAsyncHandle, index++);
@@ -1167,10 +1167,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endSetFade(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1212,10 +1212,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endFadeInc(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1257,10 +1257,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endFadeDec(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1309,10 +1309,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public int endFade(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         int value = Invocation.getOutputInt(aAsyncHandle, index++);
@@ -1360,10 +1360,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endSetMute(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1412,10 +1412,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public boolean endMute(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -1467,10 +1467,10 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public long endVolumeLimit(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);

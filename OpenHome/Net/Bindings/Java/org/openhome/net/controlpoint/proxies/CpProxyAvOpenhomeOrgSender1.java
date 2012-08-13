@@ -294,10 +294,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public String endPresentationUrl(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -349,10 +349,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public String endMetadata(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -404,10 +404,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public boolean endAudio(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -459,10 +459,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public String endStatus(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -514,10 +514,10 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
      */
     public String endAttributes(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);

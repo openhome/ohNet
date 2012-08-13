@@ -657,10 +657,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public void endPlay(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -702,10 +702,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public void endPause(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -747,10 +747,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public void endStop(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -795,10 +795,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public void endSeekSecondAbsolute(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -843,10 +843,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public void endSeekSecondRelative(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -899,10 +899,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public Channel endChannel(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String uri = Invocation.getOutputString(aAsyncHandle, index++);
@@ -956,10 +956,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public void endSetChannel(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1008,10 +1008,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public String endTransportState(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1063,10 +1063,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public long endId(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1116,10 +1116,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public void endSetId(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1171,10 +1171,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public String endRead(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String metadata = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1229,10 +1229,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public String endReadList(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String channelList = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1288,10 +1288,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public IdArray endIdArray(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long token = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1350,10 +1350,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public boolean endIdArrayChanged(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -1405,10 +1405,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public long endChannelsMax(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1460,10 +1460,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
      */
     public String endProtocolInfo(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);

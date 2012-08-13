@@ -315,10 +315,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      */
     public void endPlay(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -360,10 +360,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      */
     public void endStop(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -410,10 +410,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      */
     public void endSetSender(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -466,10 +466,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      */
     public Sender endSender(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String uri = Invocation.getOutputString(aAsyncHandle, index++);
@@ -525,10 +525,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      */
     public String endProtocolInfo(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -580,10 +580,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
      */
     public String endTransportState(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);

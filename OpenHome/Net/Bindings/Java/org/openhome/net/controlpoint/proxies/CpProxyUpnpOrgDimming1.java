@@ -699,10 +699,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endSetLoadLevelTarget(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -751,10 +751,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public long endGetLoadLevelTarget(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long getLoadlevelTarget = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -806,10 +806,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public long endGetLoadLevelStatus(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long retLoadlevelStatus = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -857,10 +857,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endSetOnEffectLevel(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -905,10 +905,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endSetOnEffect(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -961,10 +961,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public GetOnEffectParameters endGetOnEffectParameters(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String retOnEffect = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1013,10 +1013,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endStepUp(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1058,10 +1058,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endStepDown(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1103,10 +1103,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endStartRampUp(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1148,10 +1148,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endStartRampDown(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1193,10 +1193,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endStopRamp(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1243,10 +1243,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endStartRampToLevel(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1291,10 +1291,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endSetStepDelta(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1343,10 +1343,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public long endGetStepDelta(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long retStepDelta = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1394,10 +1394,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endSetRampRate(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1446,10 +1446,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public long endGetRampRate(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long retRampRate = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1494,10 +1494,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endPauseRamp(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1539,10 +1539,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public void endResumeRamp(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1591,10 +1591,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public boolean endGetIsRamping(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         boolean retIsRamping = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -1646,10 +1646,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public boolean endGetRampPaused(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         boolean retRampPaused = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -1701,10 +1701,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
      */
     public long endGetRampTime(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long retRampTime = Invocation.getOutputUint(aAsyncHandle, index++);

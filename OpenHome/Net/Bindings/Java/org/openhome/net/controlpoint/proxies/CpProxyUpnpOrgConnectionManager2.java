@@ -467,10 +467,10 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
      */
     public GetProtocolInfo endGetProtocolInfo(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String source = Invocation.getOutputString(aAsyncHandle, index++);
@@ -541,10 +541,10 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
      */
     public PrepareForConnection endPrepareForConnection(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         int connectionID = Invocation.getOutputInt(aAsyncHandle, index++);
@@ -598,10 +598,10 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
      */
     public void endConnectionComplete(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -650,10 +650,10 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
      */
     public String endGetCurrentConnectionIDs(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String connectionIDs = Invocation.getOutputString(aAsyncHandle, index++);
@@ -722,10 +722,10 @@ public class CpProxyUpnpOrgConnectionManager2 extends CpProxy implements ICpProx
      */
     public GetCurrentConnectionInfo endGetCurrentConnectionInfo(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         int rcsID = Invocation.getOutputInt(aAsyncHandle, index++);

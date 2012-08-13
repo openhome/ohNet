@@ -453,10 +453,10 @@ public class <#=className#> extends CpProxy implements I<#=className#>
      */
     public <#=outType#> end<#=a.name#>(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
 <#      if (a.outargs.Count > 0) #>
 <#      { #>

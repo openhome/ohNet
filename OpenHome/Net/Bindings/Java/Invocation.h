@@ -34,9 +34,9 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocatio
 /*
  * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationError
- * Signature: (J)I
+ * Signature: (J)Lorg/openhome/net/controlpoint/ProxyError;
  */
-JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationError
+JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationError
   (JNIEnv *, jclass, jlong);
 
 /*

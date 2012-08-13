@@ -245,10 +245,10 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      */
     public Subscribe endSubscribe(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String sid = Invocation.getOutputString(aAsyncHandle, index++);
@@ -300,10 +300,10 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      */
     public void endUnsubscribe(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -357,10 +357,10 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      */
     public long endRenew(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long duration = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -415,10 +415,10 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      */
     public String endGetPropertyUpdates(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String updates = Invocation.getOutputString(aAsyncHandle, index++);

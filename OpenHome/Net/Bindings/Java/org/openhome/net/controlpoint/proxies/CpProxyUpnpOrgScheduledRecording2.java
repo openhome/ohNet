@@ -946,10 +946,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetSortCapabilities endGetSortCapabilities(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String sortCaps = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1008,10 +1008,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public String endGetPropertyList(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String propertyList = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1068,10 +1068,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public String endGetAllowedValues(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String propertyInfo = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1123,10 +1123,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public long endGetStateUpdateID(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long id = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1195,10 +1195,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public BrowseRecordSchedules endBrowseRecordSchedules(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1277,10 +1277,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public BrowseRecordTasks endBrowseRecordTasks(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1349,10 +1349,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public CreateRecordSchedule endCreateRecordSchedule(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String recordScheduleID = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1406,10 +1406,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endDeleteRecordSchedule(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1467,10 +1467,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetRecordSchedule endGetRecordSchedule(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1522,10 +1522,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endEnableRecordSchedule(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1570,10 +1570,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endDisableRecordSchedule(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1618,10 +1618,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endDeleteRecordTask(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1679,10 +1679,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetRecordTask endGetRecordTask(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1734,10 +1734,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endEnableRecordTask(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1782,10 +1782,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endDisableRecordTask(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1830,10 +1830,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endResetRecordTask(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
     }
         
@@ -1889,10 +1889,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetRecordScheduleConflicts endGetRecordScheduleConflicts(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String recordScheduleConflictIDList = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1955,10 +1955,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetRecordTaskConflicts endGetRecordTaskConflicts(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String recordTaskConflictIDList = Invocation.getOutputString(aAsyncHandle, index++);

@@ -236,10 +236,10 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
      */
     public String endName(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -297,10 +297,10 @@ public class CpProxyAvOpenhomeOrgNetworkMonitor1 extends CpProxy implements ICpP
      */
     public Ports endPorts(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long sender = Invocation.getOutputUint(aAsyncHandle, index++);

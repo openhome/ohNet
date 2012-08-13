@@ -713,10 +713,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Manufacturer endManufacturer(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -784,10 +784,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Model endModel(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -855,10 +855,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Product endProduct(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -918,10 +918,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public String endAttributes(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String value = Invocation.getOutputString(aAsyncHandle, index++);
@@ -973,10 +973,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endQueryPort(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1028,10 +1028,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endBrowsePort(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1083,10 +1083,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endUpdateCount(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1141,10 +1141,10 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public String endQuery(long aAsyncHandle)
     {
-		int errCode = Invocation.error(aAsyncHandle);
-        if (errCode != 0)
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError(errCode);
+            throw errObj;
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);

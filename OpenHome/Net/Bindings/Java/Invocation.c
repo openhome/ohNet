@@ -129,19 +129,39 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocatio
  * Method:    CpInvocationError
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationError
+JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationError
   (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
 {
 	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
     uint32_t code = 0;
-    const char* desc;
-	aEnv = aEnv;
+    const char* desc = NULL;
+    jclass proxyErrorClass;
+    jmethodID mid;
+    jstring descString;
+    jobject proxyError;
 	aClass = aClass;
 
 	if (CpInvocationError(invocation, &code, &desc) == 0) {
-        return 0;
+        return NULL;
     }
-    return code;
+    proxyErrorClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/controlpoint/ProxyError");
+    if (proxyErrorClass == NULL)
+    {
+        printf("Unable to find class org/openhome/net/controlpoint/ProxyError\n");
+        fflush(stdout);
+        return NULL;
+    }
+    mid = (*aEnv)->GetMethodID(aEnv, proxyErrorClass, "<init>", "(ILjava/lang/String;)V");
+    if (mid == NULL) {
+        printf("Unable to find constructor for class org/openhome/net/controlpoint/proxyError\n");
+        fflush(stdout);
+        return NULL;
+    }
+    descString = desc == NULL ? NULL : (*aEnv)->NewStringUTF(aEnv, desc);
+    proxyError = (*aEnv)->NewObject(aEnv, proxyErrorClass, mid, (jint)code, descString);
+    (*aEnv)->DeleteLocalRef(aEnv, proxyErrorClass);
+    
+    return proxyError;
 }
 
 /*
