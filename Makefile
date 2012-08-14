@@ -73,19 +73,16 @@ endif
 
 ifeq ($(gcc4-1), yes)
 	version_specific_cflags =
-	version_specific_linkflags = -B${CROSS_COMPILE} -L${CROSS_COMPILE}../../lib  -L${CROSS_COMPILE}../lib
-	version_specific_library_path = LD_LIBRARY_PATH=${CROSS_COMPILE}../lib
 	version_specific_cflags_third_party = -Wno-non-virtual-dtor
-	version_specific_includes = -I${CROSS_COMPILE}../include
 	version_specific_java_cflags = -Wstrict-aliasing=0
 else
 	version_specific_cflags = -Wno-psabi
-	version_specific_linkflags =
-	version_specific_library_path =
 	version_specific_cflags_third_party =
-	version_specific_includes =
 	version_specific_java_cflags =
 endif
+version_specific_linkflags = ${CROSS_COMPILE_LINKFLAGS}
+version_specific_library_path = ${CROSS_COMPILE_LIBRARY_PATH}
+version_specific_includes = ${CROSS_COMPILE_INCLUDES}
 
 ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
