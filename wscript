@@ -136,6 +136,8 @@ def print_vg_frame_component(frame, tag, prefix):
 
 def invoke_test(tsk):
     import subprocess
+    os.environ["ABORT_ON_FAILURE"] = "1"
+    os.environ["NO_ERROR_DIALOGS"] = "1"
     testfile = tsk.env.cxxprogram_PATTERN % tsk.generator.test
     testargs = tsk.generator.args
     bldpath = tsk.generator.bld.bldnode.abspath()
