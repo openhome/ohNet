@@ -70,12 +70,13 @@ class Msg
 public:
     void AddRef();
     void RemoveRef();
-   // virtual void Clear() = 0; // ???
     virtual void Process(IMsgProcessor& aProcessor) = 0;
 protected:
     Msg(MsgAllocatorBase& aAllocator);
 protected:
     ~Msg();
+private:
+    virtual void Clear();
 protected:
     MsgAllocatorBase& iAllocator;
 private:
@@ -97,8 +98,10 @@ public:
     static const TUint kMaxSubsamples = kMaxBytes/4;
 public:
     MsgDecoded(MsgAllocatorBase& aAllocator);
+    const TUint* Ptr() const;
     const TUint* PtrOffsetSamples(TUint aSamples) const;
     const TUint* PtrOffsetBytes(TUint aBytes) const;
+    const TUint* PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const;
     TUint Bytes() const;
 private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian); // sample rate, bit-depth, num channels, const brx& (ptr/len), endianness);
@@ -120,7 +123,7 @@ private:
     //TUint iSamples; // bytes/4 - remove
 };
 
-class MsgAudio : public Msg // FIXME - needs to be destroyed via CopyTo.  RemoveRef results in iAudioData being leaked
+class MsgAudio : public Msg
 {
     friend class MsgFactory;
 public:
@@ -132,13 +135,15 @@ public:
     MsgAudio* Clone(); // create new MsgAudio, take ref to MsgDecoded, copy ptr/bytes
     TUint Bytes() const;
 private:
-    void Construct(MsgDecoded* aMsgDecoded, TUint aOffsetBytes = 0);
+    void Construct(MsgDecoded* aMsgDecoded);
 private: // from Msg
+    void Clear();
     void Process(IMsgProcessor& aProcessor);
 private:
     MsgDecoded* iAudioData;
     const TUint* iPtr;
     TUint iBytes;
+    TUint iOffsetBytes;
     MsgAudio* iNext;
 };
 

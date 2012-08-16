@@ -206,7 +206,7 @@ SuiteMsgAudio::~SuiteMsgAudio()
 void SuiteMsgAudio::Test()
 {
     // create 3 msgs.  Check their lengths are as expected
-    Brn data1("1234567890");
+    Brn data1("0123456789");
     Brn data2("abcde");
     Brn data3("fghijklmnopqrstuvwxyz");
     MsgAudio* msg1 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
@@ -249,10 +249,52 @@ void SuiteMsgAudio::Test()
     // read/validate data from #5 (clone)
     TUint outputWordsClone[40];
     msg5->CopyTo(outputWordsClone);
+    for (TUint i=0; i<subsamples; i++) {
+        TEST(outputWords[i] == outputWordsClone[i]);
+    }
     TEST(0 == memcmp(outputWords, outputWordsClone, subsamples * sizeof(outputWords[0])));
 
-    // free msg4 without consuming its data in the normal CopyTo way
-    msg4->RemoveRef();
+    // read/validate data from msg4
+    Brn outputWordsMsg4 = data3.Split(kData3SplitBytes);
+    subsamples = msg4->Bytes() / sizeof(TUint);
+    msg4->CopyTo(outputWords);
+    for (TUint i=0; i<subsamples; i++) {
+        TEST(outputWordsMsg4[i] == (TChar)(outputWords[i]>>24));
+    }
+
+    // create a Msg then free it without consuming its data in the normal CopyTo way
+    MsgAudio* msg6 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
+    msg6->RemoveRef();
+
+    // splt a single message into 3.  Check their lengths/contents are as expected
+    MsgAudio* msg7 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
+    const TUint kData1SplitBytes = 4;
+    MsgAudio* msg8 = msg7->SplitBytes(kData1SplitBytes * sizeof(TUint));
+    MsgAudio* msg9 = msg8->SplitBytes(kData1SplitBytes * sizeof(TUint));
+
+    TEST(msg7->Bytes() == kData1SplitBytes * sizeof(TUint));
+    Brn expected(data1.Ptr(), kData1SplitBytes);
+    subsamples = msg7->Bytes() / sizeof(TUint);
+    msg7->CopyTo(outputWords);
+    for (TUint i=0; i<subsamples; i++) {
+        TEST(expected[i] == (TChar)(outputWords[i]>>24));
+    }
+
+    TEST(msg8->Bytes() == kData1SplitBytes * sizeof(TUint));
+    expected.Set(data1.Split(kData1SplitBytes, kData1SplitBytes));
+    subsamples = msg8->Bytes() / sizeof(TUint);
+    msg8->CopyTo(outputWords);
+    for (TUint i=0; i<subsamples; i++) {
+        TEST(expected[i] == (TChar)(outputWords[i]>>24));
+    }
+
+    TEST(msg9->Bytes() == (data1.Bytes() - (2 * kData1SplitBytes)) * sizeof(TUint));
+    expected.Set(data1.Split(2 * kData1SplitBytes));
+    subsamples = msg9->Bytes() / sizeof(TUint);
+    msg9->CopyTo(outputWords);
+    for (TUint i=0; i<subsamples; i++) {
+        TEST(expected[i] == (TChar)(outputWords[i]>>24));
+    }
 
     // clean destruction of class implies no leaked msgs
 }

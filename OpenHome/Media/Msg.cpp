@@ -93,7 +93,7 @@ Msg* MsgAllocatorBase::DoAllocate()
 {
     Msg* cell;
     try {
-        cell = iFree.Read(1); // use ReadImmediate instead
+        cell = iFree.Read(1); // FIXME - use ReadImmediate instead
         cell->iRefCount = 1;
     }
     catch (Timeout& ) {
@@ -144,8 +144,13 @@ void Msg::RemoveRef()
     TBool free = (--iRefCount == 0);
     iLock.Signal();
     if (free) {
+        Clear();
         iAllocator.Free(this);
     }
+}
+
+void Msg::Clear()
+{
 }
 
 Msg::Msg(MsgAllocatorBase& aAllocator)
@@ -167,6 +172,11 @@ MsgDecoded::MsgDecoded(MsgAllocatorBase& aAllocator)
 {
 }
 
+const TUint* MsgDecoded::Ptr() const
+{
+    return &iSubsamples[0];
+}
+
 const TUint* MsgDecoded::PtrOffsetSamples(TUint aSamples) const
 {
     const TUint index = aSamples * iChannels;
@@ -179,6 +189,13 @@ const TUint* MsgDecoded::PtrOffsetBytes(TUint aBytes) const
     ASSERT(aBytes % 4 == 0);
     TUint index = aBytes/4;
     return &iSubsamples[index];
+}
+
+const TUint* MsgDecoded::PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const
+{
+    TUint offset = (TUint)(aFrom - &iSubsamples[0]) * sizeof(iSubsamples[0]);
+    offset += aBytes;
+    return PtrOffsetBytes(offset);
 }
 
 TUint MsgDecoded::Bytes() const
@@ -277,12 +294,12 @@ MsgAudio::MsgAudio(MsgAllocatorBase& aAllocator)
 {
 }
 
-void MsgAudio::Construct(MsgDecoded* aMsgDecoded, TUint aOffsetBytes)
+void MsgAudio::Construct(MsgDecoded* aMsgDecoded)
 {
     iAudioData = aMsgDecoded;
     iNext = NULL;
-    iPtr = iAudioData->PtrOffsetBytes(aOffsetBytes);
-    iBytes = iAudioData->Bytes() - aOffsetBytes;
+    iPtr = iAudioData->Ptr();
+    iBytes = iAudioData->Bytes();
 }
 
 MsgAudio* MsgAudio::SplitJiffies(TUint64 /*aAt*/)
@@ -297,10 +314,13 @@ MsgAudio* MsgAudio::SplitBytes(TUint aAt)
         return iNext->SplitBytes(aAt - iBytes);
     }
     ASSERT(aAt != iBytes);
-    iBytes = aAt;
     MsgAudio* remaining = static_cast<MsgAllocator<MsgAudio>&>(iAllocator).Allocate();
     iAudioData->AddRef();
-    remaining->Construct(iAudioData, aAt);
+    remaining->iAudioData = iAudioData;
+    remaining->iNext = NULL;
+    remaining->iPtr = iAudioData->PtrOffsetBytes(iPtr, aAt);
+    remaining->iBytes = iBytes - aAt;
+    iBytes = aAt;
     return remaining;
 }
 
@@ -320,18 +340,18 @@ void MsgAudio::CopyTo(TUint* aDest)
     (void)memcpy(aDest, iPtr, iBytes);
     if (iNext != NULL) {
         iNext->CopyTo(aDest + (iBytes / sizeof(TUint)));
-        iNext->RemoveRef();
     }
-    iAudioData->RemoveRef();
     RemoveRef();
 }
 
 MsgAudio* MsgAudio::Clone()
 {
     MsgAudio* clone = static_cast<MsgAllocator<MsgAudio>&>(iAllocator).Allocate();
+    clone->iAudioData = iAudioData;
     iAudioData->AddRef();
-    TUint offsetBytes = iAudioData->Bytes() - iBytes;
-    clone->Construct(iAudioData, offsetBytes);
+    clone->iPtr = iPtr;
+    clone->iBytes = iBytes;
+    clone->iNext = (iNext == NULL? NULL : iNext->Clone());
     return clone;
 }
 
@@ -342,6 +362,11 @@ TUint MsgAudio::Bytes() const
         bytes += iNext->Bytes();
     }
     return bytes;
+}
+
+void MsgAudio::Clear()
+{
+    iAudioData->RemoveRef();
 }
 
 void MsgAudio::Process(IMsgProcessor& aProcessor)
