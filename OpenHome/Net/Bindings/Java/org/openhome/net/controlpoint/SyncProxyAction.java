@@ -20,6 +20,7 @@ public abstract class SyncProxyAction {
 			}
 			catch (Throwable e)
 			{
+                iProxyError = new ProxyError();
 				System.err.println("ERROR: unexpected exception thrown: " + e);
 				System.err.println("       Only ProxyError can be thrown by action complete delegates");
 				e.printStackTrace();
