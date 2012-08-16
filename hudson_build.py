@@ -6,7 +6,6 @@ from Helpers.valgrind_parser import *
 from Helpers.remote import *
 import sys
 from os import path
-import os
 
 class PostActions():
     def valgrind_parse(self):
@@ -249,7 +248,13 @@ class JenkinsBuild():
                 postAction.arm_tests('commit')    
         if os_platform != 'macos' and release == '1':
             self.do_release()
+
+def switch_to_script_directory():
+    ohnet_dir = path.split(path.realpath(__file__))[0]
+    os.chdir(ohnet_dir)
+
 def main():
+    switch_to_script_directory()
     Build = JenkinsBuild()
     Build.get_options()
     Build.get_platform()
