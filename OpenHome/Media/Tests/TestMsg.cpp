@@ -273,61 +273,67 @@ void SuiteMsgAudio::Test()
     MsgAudio* msg6 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
     msg6->RemoveRef();
 
+    // create a Msg, Add() another to it them check that removing the first one's reference frees both
+    /*MsgAudio* msg7 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgAudio* msg8 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
+    msg7->Add(msg8);
+    msg7->RemoveRef();*/
+
     // splt a single message into 3.  Check their lengths/contents are as expected
-    MsgAudio* msg7 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgAudio* msg9 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
     const TUint kData1SplitBytes = 4;
-    MsgAudio* msg8 = msg7->SplitBytes(kData1SplitBytes * sizeof(TUint));
-    MsgAudio* msg9 = msg8->SplitBytes(kData1SplitBytes * sizeof(TUint));
+    MsgAudio* msg10 = msg9->SplitBytes(kData1SplitBytes * sizeof(TUint));
+    MsgAudio* msg11 = msg10->SplitBytes(kData1SplitBytes * sizeof(TUint));
 
-    TEST(msg7->Bytes() == kData1SplitBytes * sizeof(TUint));
+    TEST(msg9->Bytes() == kData1SplitBytes * sizeof(TUint));
     Brn expected(data1.Ptr(), kData1SplitBytes);
-    subsamples = msg7->Bytes() / sizeof(TUint);
-    msg7->CopyTo(outputWords);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(expected[i] == (TChar)(outputWords[i]>>24));
-    }
-
-    TEST(msg8->Bytes() == kData1SplitBytes * sizeof(TUint));
-    expected.Set(data1.Split(kData1SplitBytes, kData1SplitBytes));
-    subsamples = msg8->Bytes() / sizeof(TUint);
-    msg8->CopyTo(outputWords);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(expected[i] == (TChar)(outputWords[i]>>24));
-    }
-
-    TEST(msg9->Bytes() == (data1.Bytes() - (2 * kData1SplitBytes)) * sizeof(TUint));
-    expected.Set(data1.Split(2 * kData1SplitBytes));
     subsamples = msg9->Bytes() / sizeof(TUint);
     msg9->CopyTo(outputWords);
     for (TUint i=0; i<subsamples; i++) {
         TEST(expected[i] == (TChar)(outputWords[i]>>24));
     }
 
+    TEST(msg10->Bytes() == kData1SplitBytes * sizeof(TUint));
+    expected.Set(data1.Split(kData1SplitBytes, kData1SplitBytes));
+    subsamples = msg10->Bytes() / sizeof(TUint);
+    msg10->CopyTo(outputWords);
+    for (TUint i=0; i<subsamples; i++) {
+        TEST(expected[i] == (TChar)(outputWords[i]>>24));
+    }
+
+    TEST(msg11->Bytes() == (data1.Bytes() - (2 * kData1SplitBytes)) * sizeof(TUint));
+    expected.Set(data1.Split(2 * kData1SplitBytes));
+    subsamples = msg11->Bytes() / sizeof(TUint);
+    msg11->CopyTo(outputWords);
+    for (TUint i=0; i<subsamples; i++) {
+        TEST(expected[i] == (TChar)(outputWords[i]>>24));
+    }
+
     // test that queue can be populated and read from
-    MsgAudio* msg10 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
-    MsgAudio* msg11 = iMsgFactory->CreateMsgAudio(data2, 1, 44100, 8, EMediaDataLittleEndian);
-    MsgAudio* msg12 = iMsgFactory->CreateMsgAudio(data3, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgAudio* msg12 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgAudio* msg13 = iMsgFactory->CreateMsgAudio(data2, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgAudio* msg14 = iMsgFactory->CreateMsgAudio(data3, 1, 44100, 8, EMediaDataLittleEndian);
     MsgQueue* queue = new MsgQueue();
-    queue->Enqueue(msg10);
-    queue->Enqueue(msg11);
     queue->Enqueue(msg12);
+    queue->Enqueue(msg13);
+    queue->Enqueue(msg14);
     ProcessorSuiteAudio processor;
     Msg* msg = queue->Dequeue();
     msg->Process(processor);
-    TEST(processor.LastMsgAudioBytes() == msg10->Bytes());
-    msg->RemoveRef();
-    msg = queue->Dequeue();
-    msg->Process(processor);
-    TEST(processor.LastMsgAudioBytes() == msg11->Bytes());
-    msg->RemoveRef();
-    msg = queue->Dequeue();
-    msg->Process(processor);
     TEST(processor.LastMsgAudioBytes() == msg12->Bytes());
+    msg->RemoveRef();
+    msg = queue->Dequeue();
+    msg->Process(processor);
+    TEST(processor.LastMsgAudioBytes() == msg13->Bytes());
+    msg->RemoveRef();
+    msg = queue->Dequeue();
+    msg->Process(processor);
+    TEST(processor.LastMsgAudioBytes() == msg14->Bytes());
     // test that the queue can be emptied then reused
     queue->Enqueue(msg);
     msg = queue->Dequeue();
     msg->Process(processor);
-    TEST(processor.LastMsgAudioBytes() == msg12->Bytes());
+    TEST(processor.LastMsgAudioBytes() == msg14->Bytes());
     msg->RemoveRef();
 
     // FIXME - no check yet that reading from an empty queue blocks
