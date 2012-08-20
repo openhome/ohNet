@@ -34,6 +34,7 @@ ifeq ($(mac-arm),1)
 	# No support for linking Shared Objects for ARM MAC
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
 	ar = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar rc $(objdir)
+    csharpdefines = /define:IOS
 
 else
 	# Darwin, not ARM -> Intel Mac
@@ -129,6 +130,7 @@ dllprefix = lib
 link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
 link_dll_service = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = dmcs /nologo
+csharpdefines ?= 
 publicjavadir = OpenHome/Net/Bindings/Java/
 
 ifeq ($(platform), IntelMac)

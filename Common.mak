@@ -721,7 +721,7 @@ $(objdir)ohNet.net.dll: \
 	$(csShared)OhNet.cs \
 	$(csShared)SubnetList.cs \
 	$(csCp)CpDeviceDv.cs
-	$(csharp) /unsafe /t:library /debug+ /warnaserror+\
+	$(csharp) /unsafe /t:library /debug+ $(csharpdefines) /warnaserror+\
 		/out:$(objdir)ohNet.net.dll \
 		$(csCp)CpDevice.cs \
 		$(csCp)CpDeviceUpnp.cs \
