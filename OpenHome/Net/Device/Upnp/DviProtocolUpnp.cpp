@@ -231,6 +231,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
     }
 
     if (update) {
+        DviStack::UpdateBootId();
         SendUpdateNotifications();
     }
 }
@@ -469,7 +470,6 @@ void DviProtocolUpnp::SubnetUpdated()
     TBool signal = (--iUpdateCount == 0);
     iLock.Signal();
     if (signal) {
-        DviStack::UpdateBootId();
         SendAliveNotifications();
     }
 }
