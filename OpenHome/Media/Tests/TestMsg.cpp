@@ -274,10 +274,10 @@ void SuiteMsgAudio::Test()
     msg6->RemoveRef();
 
     // create a Msg, Add() another to it them check that removing the first one's reference frees both
-    /*MsgAudio* msg7 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgAudio* msg7 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
     MsgAudio* msg8 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
     msg7->Add(msg8);
-    msg7->RemoveRef();*/
+    msg7->RemoveRef();
 
     // splt a single message into 3.  Check their lengths/contents are as expected
     MsgAudio* msg9 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);

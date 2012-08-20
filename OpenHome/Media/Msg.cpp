@@ -349,6 +349,7 @@ void MsgAudio::CopyTo(TUint* aDest)
     (void)memcpy(aDest, iPtr, iBytes);
     if (iNextAudio != NULL) {
         iNextAudio->CopyTo(aDest + (iBytes / sizeof(TUint)));
+        iNextAudio = NULL; // break chain before Clear() gets called and tries removing the reference we remove on function exit
     }
     RemoveRef();
 }
@@ -376,6 +377,9 @@ TUint MsgAudio::Bytes() const
 void MsgAudio::Clear()
 {
     iAudioData->RemoveRef();
+    if (iNextAudio != NULL) {
+        iNextAudio->RemoveRef();
+    }
 }
 
 void MsgAudio::Process(IMsgProcessor& aProcessor)
