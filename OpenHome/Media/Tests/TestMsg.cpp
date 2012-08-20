@@ -60,6 +60,20 @@ private:
     InfoAggregator iInfoAggregator;
 };
 
+class ProcessorSuiteAudio : public IMsgProcessor
+{
+public:
+    ProcessorSuiteAudio();
+    TUint LastMsgAudioBytes() const;
+private:
+    void ProcessMsg(MsgAudio& aMsg);
+    void ProcessMsg(MsgTrack& aMsg);
+    void ProcessMsg(MsgStartOfAudio& aMsg);
+    void ProcessMsg(MsgMetaText& aMsg);
+private:
+    TUint iLastMsgAudioBytes;
+};
+
 } // namespace Media
 } // namespace OpenHome
 
@@ -289,10 +303,72 @@ void SuiteMsgAudio::Test()
         TEST(expected[i] == (TChar)(outputWords[i]>>24));
     }
 
+    // test that queue can be populated and read from
+    MsgAudio* msg10 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgAudio* msg11 = iMsgFactory->CreateMsgAudio(data2, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgAudio* msg12 = iMsgFactory->CreateMsgAudio(data3, 1, 44100, 8, EMediaDataLittleEndian);
+    MsgQueue* queue = new MsgQueue();
+    queue->Enqueue(msg10);
+    queue->Enqueue(msg11);
+    queue->Enqueue(msg12);
+    ProcessorSuiteAudio processor;
+    Msg* msg = queue->Dequeue();
+    msg->Process(processor);
+    TEST(processor.LastMsgAudioBytes() == msg10->Bytes());
+    msg->RemoveRef();
+    msg = queue->Dequeue();
+    msg->Process(processor);
+    TEST(processor.LastMsgAudioBytes() == msg11->Bytes());
+    msg->RemoveRef();
+    msg = queue->Dequeue();
+    msg->Process(processor);
+    TEST(processor.LastMsgAudioBytes() == msg12->Bytes());
+    // test that the queue can be emptied then reused
+    queue->Enqueue(msg);
+    msg = queue->Dequeue();
+    msg->Process(processor);
+    TEST(processor.LastMsgAudioBytes() == msg12->Bytes());
+    msg->RemoveRef();
+
+    // FIXME - no check yet that reading from an empty queue blocks
+
     // clean destruction of class implies no leaked msgs
 }
 
 
+// ProcessorSuiteAudio
+
+ProcessorSuiteAudio::ProcessorSuiteAudio()
+    : iLastMsgAudioBytes(0)
+{
+}
+
+TUint ProcessorSuiteAudio::LastMsgAudioBytes() const
+{
+    return iLastMsgAudioBytes;
+}
+
+void ProcessorSuiteAudio::ProcessMsg(MsgAudio& aMsg)
+{
+    iLastMsgAudioBytes = aMsg.Bytes();
+}
+
+void ProcessorSuiteAudio::ProcessMsg(MsgTrack& /*aMsg*/)
+{
+    ASSERTS();
+}
+
+void ProcessorSuiteAudio::ProcessMsg(MsgStartOfAudio& /*aMsg*/)
+{
+    ASSERTS();
+}
+
+void ProcessorSuiteAudio::ProcessMsg(MsgMetaText& /*aMsg*/)
+{
+    ASSERTS();
+}
+
+    
 void TestMsg()
 {
     Runner runner("Basic Msg tests\n");

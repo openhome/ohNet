@@ -83,14 +83,6 @@ private:
     TUint iRefCount;
 };
 
-class Msg : public Allocated
-{
-public:
-    virtual void Process(IMsgProcessor& aProcessor) = 0;
-protected:
-    Msg(AllocatorBase& aAllocator);
-};
-
 enum EMediaDataEndian
 {
     EMediaDataLittleEndian
@@ -128,6 +120,17 @@ private:
     //TUint iSamples; // bytes/4 - remove
 };
 
+class Msg : public Allocated
+{
+    friend class MsgQueue;
+public:
+    virtual void Process(IMsgProcessor& aProcessor) = 0;
+protected:
+    Msg(AllocatorBase& aAllocator);
+private:
+    Msg* iNextMsg;
+};
+
 class MsgAudio : public Msg
 {
     friend class MsgFactory;
@@ -149,7 +152,7 @@ private:
     const TUint* iPtr;
     TUint iBytes;
     TUint iOffsetBytes;
-    MsgAudio* iNext;
+    MsgAudio* iNextAudio;
 };
 
 class MsgTrack : public Msg
@@ -194,6 +197,20 @@ public:
     virtual void ProcessMsg(MsgTrack& aMsg) = 0;
     virtual void ProcessMsg(MsgStartOfAudio& aMsg) = 0;
     virtual void ProcessMsg(MsgMetaText& aMsg) = 0;
+};
+
+class MsgQueue
+{
+public:
+    MsgQueue();
+    ~MsgQueue();
+    void Enqueue(Msg* aMsg);
+    Msg* Dequeue();
+private:
+    Mutex iLock;
+    Semaphore iSem;
+    Msg* iHead;
+    Msg* iTail;
 };
 
 class MsgFactory // owned by Pipeline object

@@ -19,10 +19,15 @@ const Brn AllocatorBase::kQueryMemory = Brn("memory");
 
 AllocatorBase::~AllocatorBase()
 {
+    //Log::Print("~AllocatorBase for %s, freeing...", iName);
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
-        delete iFree.Read();
+        //Log::Print("  %u", i);
+        Allocated* ptr = iFree.Read();
+        //Log::Print("(%p)", ptr);
+        delete ptr;
     }
+    //Log::Print("\n");
 }
 
 void AllocatorBase::Free(Allocated* aPtr)
@@ -165,14 +170,6 @@ Allocated::~Allocated()
 }
 
     
-// Msg
-
-Msg::Msg(AllocatorBase& aAllocator)
-    : Allocated(aAllocator)
-{
-}
-
-
 // DecodedAudio
 
 DecodedAudio::DecodedAudio(AllocatorBase& aAllocator)
@@ -289,18 +286,27 @@ void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint a
 }
 
 
+// Msg
+
+Msg::Msg(AllocatorBase& aAllocator)
+    : Allocated(aAllocator)
+    , iNextMsg(NULL)
+{
+}
+
+
 // MsgAudio
 
 MsgAudio::MsgAudio(AllocatorBase& aAllocator)
     : Msg(aAllocator)
-    , iNext(NULL)
+    , iNextAudio(NULL)
 {
 }
 
 void MsgAudio::Construct(DecodedAudio* aDecodedAudio)
 {
     iAudioData = aDecodedAudio;
-    iNext = NULL;
+    iNextAudio = NULL;
     iPtr = iAudioData->Ptr();
     iBytes = iAudioData->Bytes();
 }
@@ -313,14 +319,14 @@ MsgAudio* MsgAudio::SplitJiffies(TUint64 /*aAt*/)
 MsgAudio* MsgAudio::SplitBytes(TUint aAt)
 {
     if (aAt > iBytes) {
-        ASSERT(iNext != NULL);
-        return iNext->SplitBytes(aAt - iBytes);
+        ASSERT(iNextAudio != NULL);
+        return iNextAudio->SplitBytes(aAt - iBytes);
     }
     ASSERT(aAt != iBytes);
     MsgAudio* remaining = static_cast<Allocator<MsgAudio>&>(iAllocator).Allocate();
     iAudioData->AddRef();
     remaining->iAudioData = iAudioData;
-    remaining->iNext = NULL;
+    remaining->iNextAudio = NULL;
     remaining->iPtr = iAudioData->PtrOffsetBytes(iPtr, aAt);
     remaining->iBytes = iBytes - aAt;
     iBytes = aAt;
@@ -330,19 +336,19 @@ MsgAudio* MsgAudio::SplitBytes(TUint aAt)
 void MsgAudio::Add(MsgAudio* aMsg)
 {
     MsgAudio* end = this;
-    MsgAudio* next = iNext;
+    MsgAudio* next = iNextAudio;
     while (next != NULL) {
         end = next;
-        next = next->iNext;
+        next = next->iNextAudio;
     }
-    end->iNext = aMsg;
+    end->iNextAudio = aMsg;
 }
 
 void MsgAudio::CopyTo(TUint* aDest)
 {
     (void)memcpy(aDest, iPtr, iBytes);
-    if (iNext != NULL) {
-        iNext->CopyTo(aDest + (iBytes / sizeof(TUint)));
+    if (iNextAudio != NULL) {
+        iNextAudio->CopyTo(aDest + (iBytes / sizeof(TUint)));
     }
     RemoveRef();
 }
@@ -354,15 +360,15 @@ MsgAudio* MsgAudio::Clone()
     iAudioData->AddRef();
     clone->iPtr = iPtr;
     clone->iBytes = iBytes;
-    clone->iNext = (iNext == NULL? NULL : iNext->Clone());
+    clone->iNextAudio = (iNextAudio == NULL? NULL : iNextAudio->Clone());
     return clone;
 }
 
 TUint MsgAudio::Bytes() const
 {
     TUint bytes = iBytes;
-    if (iNext != NULL) {
-        bytes += iNext->Bytes();
+    if (iNextAudio != NULL) {
+        bytes += iNextAudio->Bytes();
     }
     return bytes;
 }
@@ -417,6 +423,60 @@ void MsgMetaText::Process(IMsgProcessor& aProcessor)
 }
 
 
+// MsgQueue
+
+MsgQueue::MsgQueue()
+    : iLock("MSGQ")
+    , iSem("MSGQ", 0)
+    , iHead(NULL)
+    , iTail(NULL)
+{
+}
+
+MsgQueue::~MsgQueue()
+{
+    iLock.Wait();
+    Msg* head = iHead;
+    while (head != NULL) {
+        iHead = head->iNextMsg;
+        head->RemoveRef();
+        head = iHead;
+    }
+    iLock.Signal();
+}
+
+void MsgQueue::Enqueue(Msg* aMsg)
+{
+    ASSERT(aMsg != NULL);
+    iLock.Wait();
+    if (iHead == NULL) {
+        iHead = aMsg;
+    }
+    else {
+        iTail->iNextMsg = aMsg;
+    }
+    iTail = aMsg;
+    aMsg->iNextMsg = NULL;
+    iSem.Signal();
+    iLock.Signal();
+}
+
+Msg* MsgQueue::Dequeue()
+{
+    iSem.Wait();
+    iLock.Wait();
+    ASSERT(iHead != NULL);
+    Msg* head = iHead;
+    iHead = iHead->iNextMsg;
+    head->iNextMsg = NULL; // not strictly necessary but might make debugging simpler
+    if (iHead == NULL) {
+        iTail = NULL;
+    }
+    iLock.Signal();
+    return head;
+}
+
+    
 // MsgFactory
 
 MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator, TUint aDecodedAudioCount, TUint aMsgAudioCount, TUint aMsgTrackCount, TUint aMsgMetaTextCount)
