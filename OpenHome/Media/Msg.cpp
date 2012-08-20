@@ -13,11 +13,11 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-// MsgAllocatorBase
+// AllocatorBase
 
-const Brn MsgAllocatorBase::kQueryMemory = Brn("memory");
+const Brn AllocatorBase::kQueryMemory = Brn("memory");
 
-MsgAllocatorBase::~MsgAllocatorBase()
+AllocatorBase::~AllocatorBase()
 {
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
@@ -25,7 +25,7 @@ MsgAllocatorBase::~MsgAllocatorBase()
     }
 }
 
-void MsgAllocatorBase::Free(Msg* aPtr)
+void AllocatorBase::Free(Allocated* aPtr)
 {
     iFree.Write(aPtr);
     iLock.Wait();
@@ -33,7 +33,7 @@ void MsgAllocatorBase::Free(Msg* aPtr)
     iLock.Signal();
 }
 
-TUint MsgAllocatorBase::CellsTotal() const
+TUint AllocatorBase::CellsTotal() const
 {
     iLock.Wait();
     TUint cellsTotal = iCellsTotal;
@@ -41,7 +41,7 @@ TUint MsgAllocatorBase::CellsTotal() const
     return cellsTotal;
 }
 
-TUint MsgAllocatorBase::CellBytes() const
+TUint AllocatorBase::CellBytes() const
 {
     iLock.Wait();
     TUint cellBytes = iCellBytes;
@@ -49,7 +49,7 @@ TUint MsgAllocatorBase::CellBytes() const
     return cellBytes;
 }
 
-TUint MsgAllocatorBase::CellsUsed() const
+TUint AllocatorBase::CellsUsed() const
 {
     iLock.Wait();
     TUint cellsUsed = iCellsUsed;
@@ -57,7 +57,7 @@ TUint MsgAllocatorBase::CellsUsed() const
     return cellsUsed;
 }
 
-TUint MsgAllocatorBase::CellsUsedMax() const
+TUint AllocatorBase::CellsUsedMax() const
 {
     iLock.Wait();
     TUint cellsUsedMax = iCellsUsedMax;
@@ -65,7 +65,7 @@ TUint MsgAllocatorBase::CellsUsedMax() const
     return cellsUsedMax;
 }
 
-void MsgAllocatorBase::GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const
+void AllocatorBase::GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const
 {
     iLock.Wait();
     aCellsTotal = iCellsTotal;
@@ -75,7 +75,7 @@ void MsgAllocatorBase::GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aC
     iLock.Signal();
 }
 
-MsgAllocatorBase::MsgAllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, Av::IInfoAggregator& aInfoAggregator)
+AllocatorBase::AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, Av::IInfoAggregator& aInfoAggregator)
     : iFree(aNumCells)
     , iLock("PLAL")
     , iName(aName)
@@ -89,9 +89,9 @@ MsgAllocatorBase::MsgAllocatorBase(const TChar* aName, TUint aNumCells, TUint aC
     aInfoAggregator.Register(*this, infoQueries);
 }
 
-Msg* MsgAllocatorBase::DoAllocate()
+Allocated* AllocatorBase::DoAllocate()
 {
-    Msg* cell;
+    Allocated* cell;
     try {
         cell = iFree.Read(1); // FIXME - use ReadImmediate instead
         cell->iRefCount = 1;
@@ -108,7 +108,7 @@ Msg* MsgAllocatorBase::DoAllocate()
     return cell;
 }
 
-void MsgAllocatorBase::QueryInfo(const Brx& aQuery, IWriter& aWriter)
+void AllocatorBase::QueryInfo(const Brx& aQuery, IWriter& aWriter)
 {
     // Note that value of iCellsUsed may be slightly out of date as Allocator doesn't hold any lock while updating its fifo and iCellsUsed
     AutoMutex a(iLock);
@@ -129,16 +129,16 @@ void MsgAllocatorBase::QueryInfo(const Brx& aQuery, IWriter& aWriter)
 }
 
 
-// Msg
+// Allocated
 
-void Msg::AddRef()
+void Allocated::AddRef()
 {
     iLock.Wait();
     iRefCount++;
     iLock.Signal();
 }
 
-void Msg::RemoveRef()
+void Allocated::RemoveRef()
 {
     iLock.Wait();
     TBool free = (--iRefCount == 0);
@@ -149,61 +149,69 @@ void Msg::RemoveRef()
     }
 }
 
-void Msg::Clear()
+void Allocated::Clear()
 {
 }
 
-Msg::Msg(MsgAllocatorBase& aAllocator)
+Allocated::Allocated(AllocatorBase& aAllocator)
     : iAllocator(aAllocator)
-    , iLock("AMSG")
+    , iLock("ALOC")
     , iRefCount(1)
 {
 }
 
-Msg::~Msg()
+Allocated::~Allocated()
+{
+}
+
+    
+// Msg
+
+Msg::Msg(AllocatorBase& aAllocator)
+    : Allocated(aAllocator)
 {
 }
 
 
-// MsgDecoded
+// DecodedAudio
 
-MsgDecoded::MsgDecoded(MsgAllocatorBase& aAllocator)
-    : Msg(aAllocator)
+DecodedAudio::DecodedAudio(AllocatorBase& aAllocator)
+    : Allocated(aAllocator)
 {
 }
 
-const TUint* MsgDecoded::Ptr() const
+const TUint* DecodedAudio::Ptr() const
 {
     return &iSubsamples[0];
 }
 
-const TUint* MsgDecoded::PtrOffsetSamples(TUint aSamples) const
+const TUint* DecodedAudio::PtrOffsetSamples(TUint aSamples) const
 {
     const TUint index = aSamples * iChannels;
     ASSERT(index < iSubsampleCount);
     return &iSubsamples[index];
 }
 
-const TUint* MsgDecoded::PtrOffsetBytes(TUint aBytes) const
+const TUint* DecodedAudio::PtrOffsetBytes(TUint aBytes) const
 {
     ASSERT(aBytes % 4 == 0);
     TUint index = aBytes/4;
     return &iSubsamples[index];
 }
 
-const TUint* MsgDecoded::PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const
+const TUint* DecodedAudio::PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const
 {
     TUint offset = (TUint)(aFrom - &iSubsamples[0]) * sizeof(iSubsamples[0]);
     offset += aBytes;
     return PtrOffsetBytes(offset);
 }
 
-TUint MsgDecoded::Bytes() const
+TUint DecodedAudio::Bytes() const
 {
     return iSubsampleCount * 4;
 }
 
-void MsgDecoded::Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
+void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
 {
     iChannels = aChannels;
     iSampleRate = aSampleRate;
@@ -224,7 +232,7 @@ void MsgDecoded::Construct(const Brx& aData, TUint aChannels, TUint aSampleRate,
 }
 
 // FIXME - unpackers are from big-endian volkano codebase.  Do we need little-endian versions too?
-void MsgDecoded::UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
+void DecodedAudio::UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
 { // static
     TUint i = 0;
 
@@ -252,7 +260,7 @@ void MsgDecoded::UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDe
     }
 }
 
-void MsgDecoded::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
+void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
 { // static
     TUint i = 0;
 
@@ -280,23 +288,18 @@ void MsgDecoded::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBi
     }
 }
 
-void MsgDecoded::Process(IMsgProcessor& /*aProcessor*/)
-{
-    ASSERTS();
-}
-
 
 // MsgAudio
 
-MsgAudio::MsgAudio(MsgAllocatorBase& aAllocator)
+MsgAudio::MsgAudio(AllocatorBase& aAllocator)
     : Msg(aAllocator)
     , iNext(NULL)
 {
 }
 
-void MsgAudio::Construct(MsgDecoded* aMsgDecoded)
+void MsgAudio::Construct(DecodedAudio* aDecodedAudio)
 {
-    iAudioData = aMsgDecoded;
+    iAudioData = aDecodedAudio;
     iNext = NULL;
     iPtr = iAudioData->Ptr();
     iBytes = iAudioData->Bytes();
@@ -314,7 +317,7 @@ MsgAudio* MsgAudio::SplitBytes(TUint aAt)
         return iNext->SplitBytes(aAt - iBytes);
     }
     ASSERT(aAt != iBytes);
-    MsgAudio* remaining = static_cast<MsgAllocator<MsgAudio>&>(iAllocator).Allocate();
+    MsgAudio* remaining = static_cast<Allocator<MsgAudio>&>(iAllocator).Allocate();
     iAudioData->AddRef();
     remaining->iAudioData = iAudioData;
     remaining->iNext = NULL;
@@ -346,7 +349,7 @@ void MsgAudio::CopyTo(TUint* aDest)
 
 MsgAudio* MsgAudio::Clone()
 {
-    MsgAudio* clone = static_cast<MsgAllocator<MsgAudio>&>(iAllocator).Allocate();
+    MsgAudio* clone = static_cast<Allocator<MsgAudio>&>(iAllocator).Allocate();
     clone->iAudioData = iAudioData;
     iAudioData->AddRef();
     clone->iPtr = iPtr;
@@ -377,7 +380,7 @@ void MsgAudio::Process(IMsgProcessor& aProcessor)
 
 // MsgTrack
 
-MsgTrack::MsgTrack(MsgAllocatorBase& aAllocator)
+MsgTrack::MsgTrack(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
 }
@@ -390,7 +393,7 @@ void MsgTrack::Process(IMsgProcessor& aProcessor)
 
 // MsgStartOfAudio
 
-MsgStartOfAudio::MsgStartOfAudio(MsgAllocatorBase& aAllocator)
+MsgStartOfAudio::MsgStartOfAudio(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
 }
@@ -403,7 +406,7 @@ void MsgStartOfAudio::Process(IMsgProcessor& aProcessor)
 
 // MsgMetaText
 
-MsgMetaText::MsgMetaText(MsgAllocatorBase& aAllocator)
+MsgMetaText::MsgMetaText(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
 }
@@ -416,8 +419,8 @@ void MsgMetaText::Process(IMsgProcessor& aProcessor)
 
 // MsgFactory
 
-MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator, TUint aMsgDecodedCount, TUint aMsgAudioCount, TUint aMsgTrackCount, TUint aMsgMetaTextCount)
-    : iAllocatorMsgDecoded("MsgDecoded", aMsgDecodedCount, aInfoAggregator)
+MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator, TUint aDecodedAudioCount, TUint aMsgAudioCount, TUint aMsgTrackCount, TUint aMsgMetaTextCount)
+    : iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudio("MsgAudio", aMsgAudioCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aMsgTrackCount, aInfoAggregator)
     , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
@@ -426,9 +429,9 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator, TUint aMsgDecodedCo
 
 MsgAudio* MsgFactory::CreateMsgAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
 {
-    MsgDecoded* msgDecoded = CreateMsgDecoded(aData, aChannels, aSampleRate, aBitDepth, aEndian);
+    DecodedAudio* DecodedAudio = CreateDecodedAudio(aData, aChannels, aSampleRate, aBitDepth, aEndian);
     MsgAudio* msgAudio = iAllocatorMsgAudio.Allocate();
-    msgAudio->Construct(msgDecoded);
+    msgAudio->Construct(DecodedAudio);
     return msgAudio;
 }
 
@@ -442,9 +445,9 @@ MsgMetaText* MsgFactory::CreateMsgMetaText()
     return iAllocatorMsgMetaText.Allocate();
 }
 
-MsgDecoded* MsgFactory::CreateMsgDecoded(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
+DecodedAudio* MsgFactory::CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
 {
-    MsgDecoded* msgDecoded = iAllocatorMsgDecoded.Allocate();
-    msgDecoded->Construct(aData, aChannels, aSampleRate, aBitDepth, aEndian);
-    return msgDecoded;
+    DecodedAudio* DecodedAudio = iAllocatorDecodedAudio.Allocate();
+    DecodedAudio->Construct(aData, aChannels, aSampleRate, aBitDepth, aEndian);
+    return DecodedAudio;
 }

@@ -37,14 +37,12 @@ private:
     InfoAggregator iInfoAggregator;
 };
 
-class TestCell : public Msg
+class TestCell : public Allocated
 {
 public:
-    TestCell(MsgAllocatorBase& aAllocator);
+    TestCell(AllocatorBase& aAllocator);
     void Fill(TChar aVal);
     void CheckIsFilled(TChar aVal) const;
-private: // from Msg
-    void Process(IMsgProcessor& aProcessor);
 private:
     static const TUint kNumBytes = 10;
     TChar iBytes[kNumBytes];
@@ -75,7 +73,7 @@ InfoAggregator::InfoAggregator()
 void InfoAggregator::PrintStats()
 {
     for (size_t i=0; i<iInfoProviders.size(); i++) {
-        iInfoProviders[i]->QueryInfo(MsgAllocatorBase::kQueryMemory, *this);
+        iInfoProviders[i]->QueryInfo(AllocatorBase::kQueryMemory, *this);
     }
 }
 
@@ -101,8 +99,8 @@ void InfoAggregator::WriteFlush()
 
 // TestCell
 
-TestCell::TestCell(MsgAllocatorBase& aAllocator)
-    : Msg(aAllocator)
+TestCell::TestCell(AllocatorBase& aAllocator)
+    : Allocated(aAllocator)
 {
     Fill((TByte)0xff);
 }
@@ -119,11 +117,6 @@ void TestCell::CheckIsFilled(TChar aVal) const
     }
 }
 
-void TestCell::Process(IMsgProcessor& /*aProcessor*/)
-{
-    ASSERTS();
-}
-
 
 // SuiteAllocator
 
@@ -135,7 +128,7 @@ SuiteAllocator::SuiteAllocator()
 void SuiteAllocator::Test()
 {
     //Print("\nCreate Allocator with 10 TestCells.  Check that 10 TestCells can be allocated\n");
-    MsgAllocator<TestCell>* allocator = new MsgAllocator<TestCell>("TestCell", kNumTestCells, iInfoAggregator);
+    Allocator<TestCell>* allocator = new Allocator<TestCell>("TestCell", kNumTestCells, iInfoAggregator);
     TestCell* cells[kNumTestCells];
     for (TUint i=0; i<kNumTestCells; i++) {
         cells[i] = allocator->Allocate();

@@ -13,13 +13,13 @@ EXCEPTION(AllocatorNoMemory); // heaps are expected to be setup to avoid this.  
 namespace OpenHome {
 namespace Media {
 
-class Msg;
+class Allocated;
 
-class MsgAllocatorBase : private Av::IInfoProvider
+class AllocatorBase : private Av::IInfoProvider
 {
 public:
-    ~MsgAllocatorBase();
-    void Free(Msg* aPtr);
+    ~AllocatorBase();
+    void Free(Allocated* aPtr);
     TUint CellsTotal() const;
     TUint CellBytes() const;
     TUint CellsUsed() const;
@@ -27,12 +27,12 @@ public:
     void GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const;
     static const Brn kQueryMemory;
 protected:
-    MsgAllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, Av::IInfoAggregator& aInfoAggregator);
-    Msg* DoAllocate();
+    AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, Av::IInfoAggregator& aInfoAggregator);
+    Allocated* DoAllocate();
 private: // from Av::IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 protected:
-    Fifo<Msg*> iFree;
+    Fifo<Allocated*> iFree;
 private:
     mutable Mutex iLock;
     const TChar* iName;
@@ -42,46 +42,53 @@ private:
     TUint iCellsUsedMax;
 };
     
-template <class T> class MsgAllocator : public MsgAllocatorBase
+template <class T> class Allocator : public AllocatorBase
 {
 public:
-    MsgAllocator(const TChar* aName, TUint aNumCells, Av::IInfoAggregator& aInfoAggregator);
+    Allocator(const TChar* aName, TUint aNumCells, Av::IInfoAggregator& aInfoAggregator);
     T* Allocate();
 };
 
-template <class T> MsgAllocator<T>::MsgAllocator(const TChar* aName, TUint aNumCells, Av::IInfoAggregator& aInfoAggregator)
-    : MsgAllocatorBase(aName, aNumCells, sizeof(T), aInfoAggregator)
+template <class T> Allocator<T>::Allocator(const TChar* aName, TUint aNumCells, Av::IInfoAggregator& aInfoAggregator)
+    : AllocatorBase(aName, aNumCells, sizeof(T), aInfoAggregator)
 {
     for (TUint i=0; i<aNumCells; i++) {
         iFree.Write(new T(*this));
     }
 }
 
-template <class T> T* MsgAllocator<T>::Allocate()
+template <class T> T* Allocator<T>::Allocate()
 {
     return static_cast<T*>(DoAllocate());
 }
 
 class IMsgProcessor;
 
-class Msg
+class Allocated
 {
-    friend class MsgAllocatorBase;
+    friend class AllocatorBase;
 public:
     void AddRef();
     void RemoveRef();
-    virtual void Process(IMsgProcessor& aProcessor) = 0;
 protected:
-    Msg(MsgAllocatorBase& aAllocator);
+    Allocated(AllocatorBase& aAllocator);
 protected:
-    ~Msg();
+    ~Allocated();
 private:
     virtual void Clear();
 protected:
-    MsgAllocatorBase& iAllocator;
+    AllocatorBase& iAllocator;
 private:
     Mutex iLock;
     TUint iRefCount;
+};
+
+class Msg : public Allocated
+{
+public:
+    virtual void Process(IMsgProcessor& aProcessor) = 0;
+protected:
+    Msg(AllocatorBase& aAllocator);
 };
 
 enum EMediaDataEndian
@@ -90,14 +97,14 @@ enum EMediaDataEndian
    ,EMediaDataBigEndian
 };
 
-class MsgDecoded : public Msg // decoded audio data
+class DecodedAudio : public Allocated
 {
     friend class MsgFactory;
 public:
     static const TUint kMaxBytes = 100; // FIXME
     static const TUint kMaxSubsamples = kMaxBytes/4;
 public:
-    MsgDecoded(MsgAllocatorBase& aAllocator);
+    DecodedAudio(AllocatorBase& aAllocator);
     const TUint* Ptr() const;
     const TUint* PtrOffsetSamples(TUint aSamples) const;
     const TUint* PtrOffsetBytes(TUint aBytes) const;
@@ -107,8 +114,6 @@ private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian); // sample rate, bit-depth, num channels, const brx& (ptr/len), endianness);
     static void UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
     static void UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
-private: // from Msg
-    void Process(IMsgProcessor& aProcessor);
 private:
     TUint iSubsamples[kMaxSubsamples]; // one sub-sample per channel == 1 sample
     TUint iSubsampleCount;
@@ -127,20 +132,20 @@ class MsgAudio : public Msg
 {
     friend class MsgFactory;
 public:
-    MsgAudio(MsgAllocatorBase& aAllocator);
+    MsgAudio(AllocatorBase& aAllocator);
     MsgAudio* SplitJiffies(TUint64 aAt); // returns block after aAt
     MsgAudio* SplitBytes(TUint aAt); // returns block after aAt
     void Add(MsgAudio* aMsg); // combines MsgAudio instances so they report longer durations etc
     void CopyTo(TUint* aDest); // does a RemoveRef at the end
-    MsgAudio* Clone(); // create new MsgAudio, take ref to MsgDecoded, copy ptr/bytes
+    MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy ptr/bytes
     TUint Bytes() const;
 private:
-    void Construct(MsgDecoded* aMsgDecoded);
+    void Construct(DecodedAudio* aDecodedAudio);
 private: // from Msg
     void Clear();
     void Process(IMsgProcessor& aProcessor);
 private:
-    MsgDecoded* iAudioData;
+    DecodedAudio* iAudioData;
     const TUint* iPtr;
     TUint iBytes;
     TUint iOffsetBytes;
@@ -152,7 +157,7 @@ class MsgTrack : public Msg
 public:
     static const TUint kMaxBytes = 100; // FIXME
 public:
-    MsgTrack(MsgAllocatorBase& aAllocator);
+    MsgTrack(AllocatorBase& aAllocator);
 private: // from Msg
     void Process(IMsgProcessor& aProcessor);
 private:
@@ -162,7 +167,7 @@ private:
 class MsgStartOfAudio : public Msg
 {
 public:
-    MsgStartOfAudio(MsgAllocatorBase& aAllocator);
+    MsgStartOfAudio(AllocatorBase& aAllocator);
 private: // from Msg
     void Process(IMsgProcessor& aProcessor);
 private:
@@ -177,7 +182,7 @@ class MsgMetaText : public Msg
 public:
     static const TUint kMaxBytes = 100; // FIXME
 public:
-    MsgMetaText(MsgAllocatorBase& aAllocator);
+    MsgMetaText(AllocatorBase& aAllocator);
 private: // from Msg
     void Process(IMsgProcessor& aProcessor);
 };
@@ -194,17 +199,17 @@ public:
 class MsgFactory // owned by Pipeline object
 {
 public:
-    MsgFactory(Av::IInfoAggregator& aInfoAggregator, TUint aMsgDecodedCount, TUint aMsgAudioCount, TUint aMsgTrackCount, TUint aMsgMetaTextCount);
+    MsgFactory(Av::IInfoAggregator& aInfoAggregator, TUint aDecodedAudioCount, TUint aMsgAudioCount, TUint aMsgTrackCount, TUint aMsgMetaTextCount);
     MsgAudio* CreateMsgAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
     MsgTrack* CreateMsgTrack();
     MsgMetaText* CreateMsgMetaText();
 private:
-    MsgDecoded* CreateMsgDecoded(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
+    DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
-    MsgAllocator<MsgDecoded> iAllocatorMsgDecoded;
-    MsgAllocator<MsgAudio> iAllocatorMsgAudio;
-    MsgAllocator<MsgTrack> iAllocatorMsgTrack;
-    MsgAllocator<MsgMetaText> iAllocatorMsgMetaText;
+    Allocator<DecodedAudio> iAllocatorDecodedAudio;
+    Allocator<MsgAudio> iAllocatorMsgAudio;
+    Allocator<MsgTrack> iAllocatorMsgTrack;
+    Allocator<MsgMetaText> iAllocatorMsgMetaText;
 };
 
 } // namespace Media
