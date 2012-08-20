@@ -33,6 +33,7 @@ static const TChar kAttributeKeyVersionMinor[] = "Version.Minor";
 DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     : iDevice(aDevice)
     , iLock("DMUP")
+    , iUpdateCount(0)
     , iSuppressScheduledEvents(false)
 {
     SetAttribute(kAttributeKeyVersionMajor, "1");
@@ -231,7 +232,6 @@ void DviProtocolUpnp::HandleInterfaceChange()
     }
 
     if (update) {
-        DviStack::UpdateBootId();
         SendUpdateNotifications();
     }
 }
@@ -500,6 +500,7 @@ void DviProtocolUpnp::SendUpdateNotifications()
     LogMulticastNotification("update");
     AutoMutex a(iLock);
     iAliveTimer->Cancel();
+    DviStack::UpdateBootId();
     iUpdateCount += (TUint)iAdapters.size(); // its possible this'll be called while previous updates are still being processed
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetUpdated);
     for (TUint i=0; i<iAdapters.size(); i++) {
