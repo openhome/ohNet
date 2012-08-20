@@ -500,7 +500,7 @@ void DviProtocolUpnp::SendUpdateNotifications()
     LogMulticastNotification("update");
     AutoMutex a(iLock);
     iAliveTimer->Cancel();
-    iUpdateCount = (TUint)iAdapters.size();
+    iUpdateCount += (TUint)iAdapters.size(); // its possible this'll be called while previous updates are still being processed
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetUpdated);
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
