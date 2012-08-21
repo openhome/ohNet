@@ -367,6 +367,7 @@ void SuiteMsgQueue::Test()
     // test that the queue can be emptied then reused
     queue->Enqueue(msg);
     msg = queue->Dequeue();
+    delete queue;
     msg->Process(processor);
     TEST(processor.LastMsgAudioBytes() == msg3->Bytes());
     msg->RemoveRef();
