@@ -1,0 +1,31 @@
+########################################################################
+##  ohWafHelpers
+########################################################################
+
+This collection of Python modules is for optional use by projects
+that employ Waf as their build system.  It contains common classes
+and functions in an effort to minimise source code duplication.
+
+Any project wishing to use this functionality needs to declare
+a dependency on ohWafHelpers and resolve it by running the "go fetch"
+utility, e.g. in projectdata/dependencies.txt:
+
+    # Platform-independent
+    "ohWafHelpers" "${OHNET_ARTIFACTS}/AnyPlatform/ohWafHelpers-0.0.42.tar.gz" "dependencies/AnyPlatform/" ""
+
+The project needs to add the following Python snipppet near the top
+of its top-level wscript file:
+
+    # Python system libraries, e.g.
+    import glob
+
+    # Waf libraries, e.g.
+    import waflib
+
+    # --8<----
+    import os.path, sys
+    sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
+    # ---->8--
+
+    # functionality factored out into ohWafHelper, e.g.
+    from filetasks import gather_files, build_tree, copy_task
