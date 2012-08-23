@@ -721,7 +721,7 @@ $(objdir)ohNet.net.dll: \
 	$(csShared)OhNet.cs \
 	$(csShared)SubnetList.cs \
 	$(csCp)CpDeviceDv.cs
-	$(csharp) /unsafe /t:library /debug+ /warnaserror+\
+	$(csharp) /unsafe /t:library /warnaserror+\
 		/out:$(objdir)ohNet.net.dll \
 		$(csCp)CpDevice.cs \
 		$(csCp)CpDeviceUpnp.cs \
@@ -744,7 +744,7 @@ $(objdir)TestProxyCs.exe: \
 	$(csCpTests)TestProxy.cs \
 	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 	
-	$(csharp) /unsafe /t:exe /debug+ /warnaserror+\
+	$(csharp) /unsafe /t:exe /warnaserror+\
 		/out:$(objdir)TestProxyCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
@@ -761,7 +761,7 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(csCpTests)TestBasicCp.cs \
 	$(csDvTests)TestDvDevice.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
+		/unsafe /warnaserror+ /t:exe \
 		/out:$(objdir)TestDvDeviceCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -779,7 +779,7 @@ $(objdir)TestDvLightsCs.exe: \
 	$(objdir)CpOpenhomeOrgTestLights1.net.dll \
 	$(csDvTests)TestDvLights.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
+		/unsafe /warnaserror+ /t:exe \
 		/out:$(objdir)TestDvLightsCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestLights1.net.dll \
@@ -797,7 +797,7 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(csCpTests)TestBasicCp.cs \
 	$(csCpTests)TestCpDeviceDv.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
+		/unsafe /warnaserror+ /t:exe \
 		/out:$(objdir)TestCpDeviceDvCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
