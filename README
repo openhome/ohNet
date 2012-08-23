@@ -11,7 +11,7 @@ a dependency on ohWafHelpers and resolve it by running the "go fetch"
 utility, e.g. in projectdata/dependencies.txt:
 
     # Platform-independent
-    "ohWafHelpers" "${OHNET_ARTIFACTS}/AnyPlatform/ohWafHelpers-0.0.42.tar.gz" "dependencies/AnyPlatform/" ""
+    "ohWafHelpers" "${OHNET_ARTIFACTS}/ohWafHelpers/ohWafHelpers-0.0.5.tar.gz" "dependencies/AnyPlatform/" ""
 
 The project needs to add the following Python snipppet near the top
 of its top-level wscript file:
