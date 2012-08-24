@@ -191,7 +191,7 @@ const TUint* DecodedAudio::PtrOffsetSamples(TUint aSamples) const
 
 const TUint* DecodedAudio::PtrOffsetBytes(TUint aBytes) const
 {
-    ASSERT(aBytes % 4 == 0);
+    ASSERT(aBytes % (kBytesPerSubsample * iChannels) == 0);
     TUint index = aBytes/4;
     return &iSubsamples[index];
 }
@@ -208,12 +208,31 @@ TUint DecodedAudio::Bytes() const
     return iSubsampleCount * 4;
 }
 
+TUint DecodedAudio::BytesFromJiffies(TUint& aJiffies) const
+{
+    aJiffies -= aJiffies % iJiffiesPerSample; // round down requested aJiffies to the nearest integer number of samples
+    const TUint numSamples = aJiffies / iJiffiesPerSample;
+    const TUint numSubsamples = numSamples * iChannels;
+    const TUint bytes = numSubsamples * kBytesPerSubsample;
+    return bytes;
+}
+
+TUint DecodedAudio::JiffiesFromBytes(TUint aBytes) const
+{
+    ASSERT(aBytes % kBytesPerSubsample == 0);
+    const TUint numSubsamples = aBytes / kBytesPerSubsample;
+    ASSERT(numSubsamples % iChannels == 0);
+    const TUint jiffies = (numSubsamples / iChannels) * iJiffiesPerSample;
+    return jiffies;
+}
+
 void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
 {
     iChannels = aChannels;
     iSampleRate = aSampleRate;
     iBitRate = 0xffffffff; // FIXME
     iBitDepth = aBitDepth;
+    iJiffiesPerSample = JiffiesPerSample();
 
     ASSERT((aBitDepth & 7) == 0);
     TUint bytesPerSubsample = aBitDepth/8;
@@ -285,6 +304,48 @@ void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint a
     }
 }
 
+TUint DecodedAudio::JiffiesPerSample() const
+{
+    switch (iSampleRate)
+    {
+    case 7350:
+        return kJiffies7350;
+    case 8000:
+        return kJiffies8000;
+    case 11025:
+        return kJiffies11025;
+    case 12000:
+        return kJiffies12000;
+    case 14700:
+        return kJiffies14700;
+    case 16000:
+        return kJiffies16000;
+    case 22050:
+        return kJiffies22050;
+    case 24000:
+        return kJiffies24000;
+    case 29400:
+        return kJiffies29400;
+    case 32000:
+        return kJiffies32000;
+    case 44100:
+        return kJiffies44100;
+    case 48000:
+        return kJiffies48000;
+    case 88200:
+        return kJiffies88200;
+    case 96000:
+        return kJiffies96000;
+    case 176400:
+        return kJiffies176400;
+    case 192000:
+        return kJiffies192000;
+    default:
+        ASSERTS();
+    }
+    return 0; // will never get here but compiler doesn't realise that ASSERTS doesn't return
+}
+
 
 // Msg
 
@@ -311,9 +372,23 @@ void MsgAudio::Construct(DecodedAudio* aDecodedAudio)
     iBytes = iAudioData->Bytes();
 }
 
-MsgAudio* MsgAudio::SplitJiffies(TUint64 /*aAt*/)
+MsgAudio* MsgAudio::SplitJiffies(TUint& aAt)
 {
-    return NULL;
+    if (aAt > iJiffies) {
+        ASSERT(iNextAudio != NULL);
+        return iNextAudio->SplitBytes(aAt - iJiffies);
+    }
+    ASSERT(aAt != iJiffies);
+    MsgAudio* remaining = static_cast<Allocator<MsgAudio>&>(iAllocator).Allocate();
+    iAudioData->AddRef();
+    remaining->iAudioData = iAudioData;
+    remaining->iNextAudio = NULL;
+    const TUint bytes = iAudioData->BytesFromJiffies(aAt);
+    remaining->iPtr = iAudioData->PtrOffsetBytes(iPtr, bytes);
+    remaining->iBytes = iBytes - bytes;
+    remaining->iJiffies = aAt;
+    iBytes = bytes;
+    return remaining;
 }
 
 MsgAudio* MsgAudio::SplitBytes(TUint aAt)
@@ -329,7 +404,9 @@ MsgAudio* MsgAudio::SplitBytes(TUint aAt)
     remaining->iNextAudio = NULL;
     remaining->iPtr = iAudioData->PtrOffsetBytes(iPtr, aAt);
     remaining->iBytes = iBytes - aAt;
+    remaining->iJiffies = iAudioData->JiffiesFromBytes(remaining->iBytes);
     iBytes = aAt;
+    iJiffies = iAudioData->JiffiesFromBytes(iBytes);
     return remaining;
 }
 
@@ -361,6 +438,7 @@ MsgAudio* MsgAudio::Clone()
     iAudioData->AddRef();
     clone->iPtr = iPtr;
     clone->iBytes = iBytes;
+    clone->iJiffies = iJiffies;
     clone->iNextAudio = (iNextAudio == NULL? NULL : iNextAudio->Clone());
     return clone;
 }
@@ -372,6 +450,15 @@ TUint MsgAudio::Bytes() const
         bytes += iNextAudio->Bytes();
     }
     return bytes;
+}
+
+TUint MsgAudio::Jiffies() const
+{
+    TUint jiffies = iJiffies;
+    if (iNextAudio != NULL) {
+        jiffies += iNextAudio->Jiffies();
+    }
+    return jiffies;
 }
 
 void MsgAudio::Clear()

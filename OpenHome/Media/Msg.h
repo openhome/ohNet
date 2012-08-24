@@ -102,10 +102,37 @@ public:
     const TUint* PtrOffsetBytes(TUint aBytes) const;
     const TUint* PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const;
     TUint Bytes() const;
+    TUint BytesFromJiffies(TUint& aJiffies) const;
+    TUint JiffiesFromBytes(TUint aBytes) const;
 private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian); // sample rate, bit-depth, num channels, const brx& (ptr/len), endianness);
     static void UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
     static void UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
+    TUint JiffiesPerSample() const;
+private:
+    static const TUint kBytesPerSubsample = sizeof(TUint);
+
+    static const TUint kJiffiesPerSecond = 56448000; // lcm(384000, 352800)
+    static const TUint kJiffiesMinSplit = 56448000 / 25; // can only split by Jiffies on multiples of 40ms
+    static const TUint kJiffiesPerMs = kJiffiesPerSecond / 1000;
+
+    //Number of jiffies per sample
+    static const TUint kJiffies7350   = kJiffiesPerSecond / 7350;
+    static const TUint kJiffies8000   = kJiffiesPerSecond / 8000;
+    static const TUint kJiffies11025  = kJiffiesPerSecond / 11025;
+    static const TUint kJiffies12000  = kJiffiesPerSecond / 12000;
+    static const TUint kJiffies14700  = kJiffiesPerSecond / 14700;
+    static const TUint kJiffies16000  = kJiffiesPerSecond / 16000;
+    static const TUint kJiffies22050  = kJiffiesPerSecond / 22050;
+    static const TUint kJiffies24000  = kJiffiesPerSecond / 24000;
+    static const TUint kJiffies29400  = kJiffiesPerSecond / 29400;
+    static const TUint kJiffies32000  = kJiffiesPerSecond / 32000;
+    static const TUint kJiffies44100  = kJiffiesPerSecond / 44100;
+    static const TUint kJiffies48000  = kJiffiesPerSecond / 48000;
+    static const TUint kJiffies88200  = kJiffiesPerSecond / 88200;
+    static const TUint kJiffies96000  = kJiffiesPerSecond / 96000;
+    static const TUint kJiffies176400 = kJiffiesPerSecond / 176400;
+    static const TUint kJiffies192000 = kJiffiesPerSecond / 192000;
 private:
     TUint iSubsamples[kMaxSubsamples]; // one sub-sample per channel == 1 sample
     TUint iSubsampleCount;
@@ -115,6 +142,7 @@ private:
     TUint iSampleRate;
     TUint iBitRate; // what is this ??
     TUint iBitDepth;
+    TUint iJiffiesPerSample; // cached on construction for convenience
     //TBool iLossless;
     //Bws<kMaxCodecNameBytes> iCodecName;
     //TUint iSamples; // bytes/4 - remove
@@ -136,12 +164,16 @@ class MsgAudio : public Msg
     friend class MsgFactory;
 public:
     MsgAudio(AllocatorBase& aAllocator);
-    MsgAudio* SplitJiffies(TUint64 aAt); // returns block after aAt
+    MsgAudio* SplitJiffies(TUint& aAt); // returns block after aAt.  Rounds aAt down to the nearest sample boundary
     MsgAudio* SplitBytes(TUint aAt); // returns block after aAt
     void Add(MsgAudio* aMsg); // combines MsgAudio instances so they report longer durations etc
-    void CopyTo(TUint* aDest); // does a RemoveRef at the end
+    void CopyTo(TUint* aDest); // does a RemoveRef at the end.  // FIXME - might need to pass sample rate and #channels (to allow for SplitJiffies & MsgSilence...)
     MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy ptr/bytes
-    TUint Bytes() const;
+    TUint Bytes() const; // FIXME - might need to pass sample rate and #channels (to allow for SplitJiffies & MsgSilence...)
+    TUint Jiffies() const;
+    // MsgPlayable* Pin(TUint aSampleRate, TUint aNumChannels); // allows MsgSilence to decide how many Bytes() it has.  'real' MsgAudio asserts if asked to change to different values. // May be replaced by pipeline element
+    // MsgPlayable should be only function with Bytes() or CopyTo()
+    // Pin should also 'return' true/false
 private:
     void Construct(DecodedAudio* aDecodedAudio);
 private: // from Msg
@@ -153,6 +185,7 @@ private:
     TUint iBytes;
     TUint iOffsetBytes;
     MsgAudio* iNextAudio;
+    TUint iJiffies; // not absolutely required but useful to cache this
 };
 
 class MsgTrack : public Msg
