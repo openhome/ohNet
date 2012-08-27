@@ -217,7 +217,11 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpAll : CpDeviceList
     {
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern unsafe IntPtr CpDeviceListCreateUpnpAll(CallbackDevice aAdded, IntPtr aPtrAdded,
                                                             CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
@@ -245,7 +249,11 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpRoot : CpDeviceList
     {
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern unsafe IntPtr CpDeviceListCreateUpnpRoot(CallbackDevice aAdded, IntPtr aPtrAdded,
                                                              CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
@@ -273,7 +281,11 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpUuid : CpDeviceList
     {
-        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern IntPtr CpDeviceListCreateUpnpUuid(IntPtr aUuid,
                                                         CallbackDevice aAdded, IntPtr aPtrAdded,
                                                         CallbackDevice aRemoved, IntPtr aPtrRemoved);
@@ -305,7 +317,11 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpDeviceType : CpDeviceList
     {
-        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern IntPtr CpDeviceListCreateUpnpDeviceType(IntPtr aDomainName, IntPtr aDeviceType, uint aVersion,
                                                               CallbackDevice aAdded, IntPtr aPtrAdded,
                                                               CallbackDevice aRemoved, IntPtr aPtrRemoved);
@@ -342,7 +358,11 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpServiceType : CpDeviceList
     {
-        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern IntPtr CpDeviceListCreateUpnpServiceType(IntPtr aDomainName, IntPtr aServiceType, uint aVersion,
                                                                CallbackDevice aAdded, IntPtr aPtrAdded,
                                                                CallbackDevice aRemoved, IntPtr aPtrRemoved);

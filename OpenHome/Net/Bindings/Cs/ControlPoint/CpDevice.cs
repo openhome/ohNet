@@ -13,15 +13,35 @@ namespace OpenHome.Net.ControlPoint
     /// All references to class instances must have been removed before Core.Library.Close() is called.</remarks>
     public class CpDevice
     {
-        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern unsafe void CpDeviceCGetUdn(IntPtr aDevice, IntPtr* aUdn, uint* aLen);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpDeviceCAddRef(IntPtr aDevice);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpDeviceCRemoveRef(IntPtr aDevice);
-        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern unsafe int CpDeviceCGetAttribute(IntPtr aDevice, IntPtr aKey, char** aValue);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern unsafe void OhNetFree(void* aPtr);
 
         private IntPtr iHandle;
@@ -121,9 +141,17 @@ namespace OpenHome.Net.ControlPoint
     /// Dispose() must be called before Core.Library.Close().</remarks>
     public class CpDeviceList : ICpDeviceList, IDisposable
     {
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpDeviceListDestroy(IntPtr aListHandle);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpDeviceListRefresh(IntPtr aListHandle);
 
         protected IntPtr iHandle;

@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 ohroot := ../../../../../
 
 LOCAL_C_INCLUDES := $(ohroot)Build/Include
-LOCAL_CFLAGS := -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -fvisibility=hidden -Wno-psabi
+LOCAL_CFLAGS := -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -fvisibility=hidden -Wno-psabi -Wno-unused-but-set-variable
 LOCAL_LDLIBS := -llog
 LOCAL_MODULE    := ohNet
 LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
@@ -27,6 +27,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiDevice.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/CpiDeviceUpnp.cpp \
+                   $(ohroot)OpenHome/Net/ControlPoint/AsyncPrivate.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiService.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiStack.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiSubscription.cpp \
@@ -36,6 +37,8 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Device/DvDevice.cpp \
                    $(ohroot)OpenHome/Net/Bindings/Cpp/Device/DvDeviceStd.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvDeviceC.cpp \
+                   $(ohroot)OpenHome/Net/Bindings/C/Device/DvInvocationC.cpp \
+                   $(ohroot)OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp \
                    $(ohroot)OpenHome/Net/Device/DviDevice.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp \
                    $(ohroot)OpenHome/Net/Device/DviServer.cpp \
@@ -45,6 +48,9 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Device/DviStack.cpp \
                    $(ohroot)OpenHome/Net/Device/DviSubscription.cpp \
                    $(ohroot)OpenHome/Net/Device/DvProvider.cpp \
+                   $(ohroot)OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp \
+                   $(ohroot)OpenHome/Net/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.cpp \
+                   $(ohroot)OpenHome/Net/Device/DviPropertyUpdateCollection.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvProviderC.cpp \
                    $(ohroot)OpenHome/Net/Device/DvServerUpnp.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvServerUpnpC.cpp \

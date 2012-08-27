@@ -8,15 +8,35 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class SubnetList : IDisposable
     {
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern IntPtr OhNetSubnetListCreate();
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetSubnetListSize(IntPtr aList);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern IntPtr OhNetSubnetAt(IntPtr aList, uint aIndex);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern IntPtr OhNetCurrentSubnetAdapter(IntPtr aCookie);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetSubnetListDestroy(IntPtr aList);
 
         private IntPtr iHandle;
