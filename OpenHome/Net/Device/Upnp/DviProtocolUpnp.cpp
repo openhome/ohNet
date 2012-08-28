@@ -857,7 +857,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
     iWriter.Write("</UDN>");
 
     WriteTag("UPC", "Upc", eTagOptional);
-    WriteTag("iconList", "IconList", eTagOptional);
+    WriteTag("iconList", "IconList", eTagOptional, eTagUnescaped);
 
     const TUint serviceCount = iDeviceUpnp.iDevice.ServiceCount();
     if (serviceCount > 0) {
@@ -927,7 +927,7 @@ void DviProtocolUpnpDeviceXmlWriter::TransferTo(Brh& aBuf)
     iWriter.TransferTo(aBuf);
 }
 
-void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel)
+void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel, ETagEscaped aEscaped)
 {
     const TChar* val;
     iDeviceUpnp.GetAttribute(aAttributeKey, &val);
@@ -936,7 +936,12 @@ void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar
         iWriter.Write(aTagName);
         iWriter.Write('>');
         Brn buf(val);
-        Converter::ToXmlEscaped(iWriter, buf);
+        if (aEscaped == eTagEscaped) {
+            Converter::ToXmlEscaped(iWriter, buf);
+        }
+        else {
+            iWriter.Write(buf);
+        }
         iWriter.Write("</");
         iWriter.Write(aTagName);
         iWriter.Write('>');
