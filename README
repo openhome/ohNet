@@ -8,10 +8,14 @@ and functions in an effort to minimise source code duplication.
 
 Any project wishing to use this functionality needs to declare
 a dependency on ohWafHelpers and resolve it by running the "go fetch"
-utility, e.g. in projectdata/dependencies.txt:
+utility, e.g. in projectdata/dependencies.json:
 
-    # Platform-independent
-    "ohWafHelpers" "${OHNET_ARTIFACTS}/ohWafHelpers/ohWafHelpers-0.0.5.tar.gz" "dependencies/AnyPlatform/" ""
+    {   "name": "ohWafHelpers",
+        "type": "openhome",
+        "platform-specific": false,
+        "version": "0.0.17",
+        "archive-filename": "${name}-${version}.tar.gz"
+    }
 
 The project needs to add the following Python snipppet near the top
 of its top-level wscript file:
