@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+#if IOS
+using MonoTouch;
+#endif
 
 namespace OpenHome.Net.Core
 {
@@ -18,7 +21,7 @@ namespace OpenHome.Net.Core
         {
             return iHandle;
         }
-        
+
         protected Parameter()
         {
         }
@@ -241,7 +244,10 @@ namespace OpenHome.Net.Core
             iCallbackValueChanged = new Callback(ValueChanged);
         }
 
-        private void ValueChanged(IntPtr aPtr)
+#if IOS
+        [MonoPInvokeCallback (typeof (Callback))]
+#endif
+        private static void ValueChanged(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             Property self = (Property)gch.Target;

@@ -2,6 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
+#if IOS
+using MonoTouch;
+#endif
 
 namespace OpenHome.Net.ControlPoint
 {
@@ -204,6 +207,9 @@ namespace OpenHome.Net.ControlPoint
             iFnRemoved = new CallbackDevice(Removed);
         }
 
+#if IOS
+        [MonoPInvokeCallback (typeof (CallbackDevice))]
+#endif
         protected static void Added(IntPtr aPtr, IntPtr aHandle)
         {
             CpDevice device = new CpDevice(aHandle);
@@ -214,6 +220,9 @@ namespace OpenHome.Net.ControlPoint
             }
         }
 
+#if IOS
+        [MonoPInvokeCallback (typeof (CallbackDevice))]
+#endif
         protected static void Removed(IntPtr aPtr, IntPtr aHandle)
         {
             CpDevice device = new CpDevice(aHandle);

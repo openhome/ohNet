@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
 using System.Collections.Generic;
+#if IOS
+using MonoTouch;
+#endif
 
 namespace OpenHome.Net.ControlPoint
 {
@@ -420,7 +423,6 @@ namespace OpenHome.Net.ControlPoint
         static extern unsafe void CpInvocationGetOutputBinary(IntPtr aInvocation, uint aIndex, IntPtr* aData, uint* aLen);
 
         private CpProxy.CallbackAsyncComplete iAsyncComplete;
-        private CpProxy.CallbackActionComplete iCallbackAsyncComplete;
         private IntPtr iHandle;
         private CpService iService;
         private List<Argument> iInputArgs;
@@ -440,9 +442,8 @@ namespace OpenHome.Net.ControlPoint
             GCHandle gch = GCHandle.Alloc(this); /* no need to store gch as a member as AsyncComplete is guaranteed
                                                     to be called, even in error cases */
             iAsyncComplete = aCallback;
-            iCallbackAsyncComplete = new CpProxy.CallbackActionComplete(AsyncComplete);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
-            iHandle = CpServiceInvocation(aService.Handle(), aAction, iCallbackAsyncComplete, ptr);
+            iHandle = CpServiceInvocation(aService.Handle(), aAction, new CpProxy.CallbackActionComplete(AsyncComplete), ptr);
         }
 
         /// <summary>
@@ -567,7 +568,10 @@ namespace OpenHome.Net.ControlPoint
             return iHandle;
         }
 
-        private void AsyncComplete(IntPtr aPtr, IntPtr aAsyncHandle)
+#if IOS
+        [MonoPInvokeCallback (typeof (CpProxy.CallbackActionComplete))]
+#endif
+        private static void AsyncComplete(IntPtr aPtr, IntPtr aAsyncHandle)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             Invocation self = (Invocation)gch.Target;
@@ -584,7 +588,7 @@ namespace OpenHome.Net.ControlPoint
                 Console.WriteLine("         Only ProxyError can be thrown by action complete delegates");
             }
             gch.Free();
-            self.iService.InvocationComplete(this);
+            self.iService.InvocationComplete(self);
         }
     }
 

@@ -1,6 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+#if IOS
+using MonoTouch;
+#endif
 
 namespace OpenHome.Net.Core
 {
@@ -201,6 +204,46 @@ namespace OpenHome.Net.Core
         }
     }
 
+    public class SubnetListChangedListener : IDisposable
+    {
+        public SubnetListChangedListener(ChangeHandler aChanged)
+        {
+            iGch = GCHandle.Alloc(this);
+            iChanged = aChanged;
+        }
+
+        public void Dispose()
+        {
+            if(iGch.IsAllocated)
+            {
+                iGch.Free();
+            }
+        }
+
+        public IntPtr Handle()
+        {
+            return GCHandle.ToIntPtr(iGch);
+        }
+
+        public delegate void ChangeHandler();
+
+#if IOS
+        [MonoPInvokeCallback (typeof (InitParams.OhNetCallback))]
+#endif
+        public static void SubnetListChanged(IntPtr aPtr)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            SubnetListChangedListener listener = (SubnetListChangedListener)gch.Target;
+            if(listener.iChanged != null)
+            {
+                listener.iChanged();
+            }
+        }
+
+        private GCHandle iGch;
+        private ChangeHandler iChanged;
+    }
+
     /// <summary>
     /// Initialisation options
     /// </summary>
@@ -224,7 +267,7 @@ namespace OpenHome.Net.Core
         public OhNetCallbackAsync AsyncBeginHandler { private get; set; }
         public OhNetCallbackAsync AsyncEndHandler { private get; set; }
         public OhNetCallbackAsync AsyncErrorHandler { private get; set; }
-        public OhNetCallback SubnetListChangedListener { private get; set; }
+        public SubnetListChangedListener SubnetListChangedListener { internal get; set; }
         public OhNetCallbackNetworkAdapter SubnetAddedListener { private get; set; }
         public OhNetCallbackNetworkAdapter SubnetRemovedListener { private get; set; }
         public OhNetCallbackNetworkAdapter NetworkAdapterChangedListener { private get; set; }
@@ -668,7 +711,6 @@ namespace OpenHome.Net.Core
         // and keep whatever value it has. Using this as a sentinel instead of null is
         // useful because it allows the user to write null to the property and have it
         // properly passed through to the library.
-        private static readonly OhNetCallback DefaultCallback = aPtr => DefaultActionFunction();
         private static readonly OhNetCallbackNetworkAdapter DefaultCallbackNetworkAdapter = (aPtr, aAdapter) => DefaultActionFunction();
         private static readonly OhNetCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
         private static readonly OhNetCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
@@ -682,7 +724,7 @@ namespace OpenHome.Net.Core
             AsyncBeginHandler = DefaultCallbackAsync;
             AsyncEndHandler = DefaultCallbackAsync;
             AsyncErrorHandler = DefaultCallbackAsync;
-            SubnetListChangedListener = DefaultCallback;
+            SubnetListChangedListener = null;
             SubnetAddedListener = DefaultCallbackNetworkAdapter;
             SubnetRemovedListener = DefaultCallbackNetworkAdapter;
             NetworkAdapterChangedListener = DefaultCallbackNetworkAdapter;
@@ -732,9 +774,9 @@ namespace OpenHome.Net.Core
             {
                 OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
             }
-            if (SubnetListChangedListener != DefaultCallback)
+            if (SubnetListChangedListener != null)
             {
-                OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener, aCallbackPtr);
+                OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener.SubnetListChanged, SubnetListChangedListener.Handle());
             }
             if (SubnetAddedListener != DefaultCallbackNetworkAdapter)
             {
@@ -904,15 +946,15 @@ namespace OpenHome.Net.Core
 
         private bool iIsDisposed;
 
-        private delegate void CallbackFreeMemory(IntPtr aPtr);
+        private IDisposable iSubnetListChangedListener;
 
-        private CallbackFreeMemory iCallbackFreeMemory;
+        private delegate void CallbackFreeMemory(IntPtr aPtr);
 
         private void Initialise(InitParams aParams)
         {
+            iSubnetListChangedListener = aParams.SubnetListChangedListener;
             IntPtr nativeInitParams = aParams.AllocNativeInitParams(IntPtr.Zero);
-            iCallbackFreeMemory = new CallbackFreeMemory(FreeMemory);
-            OhNetInitParamsSetFreeExternalCallback(nativeInitParams, iCallbackFreeMemory);
+            OhNetInitParamsSetFreeExternalCallback(nativeInitParams, FreeMemory);
             if (0 != OhNetLibraryInitialise(nativeInitParams))
             {
                 InitParams.FreeNativeInitParams(nativeInitParams);
@@ -1009,7 +1051,10 @@ namespace OpenHome.Net.Core
             OhNetSetCurrentSubnet(aSubnet.Subnet());
         }
 
-        private void FreeMemory(IntPtr aPtr)
+#if IOS
+        [MonoPInvokeCallback (typeof (CallbackFreeMemory))]
+#endif
+        private static void FreeMemory(IntPtr aPtr)
         {
             Marshal.FreeHGlobal(aPtr);
         }
@@ -1019,6 +1064,12 @@ namespace OpenHome.Net.Core
             if (!iIsDisposed)
             {
                 iIsDisposed = true;
+
+                if(iSubnetListChangedListener != null)
+                {
+                    iSubnetListChangedListener.Dispose();
+                }
+
                 OhNetLibraryClose();
             }
         }

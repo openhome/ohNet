@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
 using System.Threading;
+#if IOS
+using MonoTouch;
+#endif
 
 namespace OpenHome.Net.ControlPoint
 {
@@ -134,9 +137,7 @@ namespace OpenHome.Net.ControlPoint
         protected CpService iService;
         private GCHandle iGchProxy;
         private System.Action iPropertyChanged;
-        private Callback iCallbackPropertyChanged;
         private System.Action iInitialEvent;
-        private Callback iCallbackInitialEvent;
         private SubscriptionStatus iSubscriptionStatus = SubscriptionStatus.eNotSubscribed;
         private Mutex iSubscriptionStatusLock;
 
@@ -161,17 +162,15 @@ namespace OpenHome.Net.ControlPoint
         public void SetPropertyChanged(System.Action aPropertyChanged)
         {
             iPropertyChanged = aPropertyChanged;
-            iCallbackPropertyChanged = new Callback(PropertyChanged);
             IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
-            CpProxySetPropertyChanged(iHandle, iCallbackPropertyChanged, ptr);
+            CpProxySetPropertyChanged(iHandle, PropertyChanged, ptr);
         }
 
         public void SetPropertyInitialEvent(System.Action aInitialEvent)
         {
             iInitialEvent = aInitialEvent;
-            iCallbackInitialEvent = new Callback(InitialEvent);
             IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
-            CpProxySetPropertyInitialEvent(iHandle, iCallbackInitialEvent, ptr);
+            CpProxySetPropertyInitialEvent(iHandle, InitialEvent, ptr);
         }
 
         protected unsafe CpProxy(String aDomain, String aName, uint aVersion, CpDevice aDevice)
@@ -216,15 +215,21 @@ namespace OpenHome.Net.ControlPoint
         {
             CpProxyAddProperty(iHandle, aProperty.Handle());
         }
-        
-        private void PropertyChanged(IntPtr aPtr)
+
+#if IOS
+        [MonoPInvokeCallback (typeof (Callback))]
+#endif
+        private static void PropertyChanged(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpProxy self = (CpProxy)gch.Target;
             Property.CallPropertyChangedDelegate(self.iPropertyChanged);
         }
 
-        private void InitialEvent(IntPtr aPtr)
+#if IOS
+        [MonoPInvokeCallback (typeof (Callback))]
+#endif
+        private static void InitialEvent(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpProxy self = (CpProxy)gch.Target;
