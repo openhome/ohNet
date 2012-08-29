@@ -423,6 +423,7 @@ namespace OpenHome.Net.ControlPoint
         static extern unsafe void CpInvocationGetOutputBinary(IntPtr aInvocation, uint aIndex, IntPtr* aData, uint* aLen);
 
         private CpProxy.CallbackAsyncComplete iAsyncComplete;
+        private CpProxy.CallbackActionComplete iCallbackAsyncComplete;
         private IntPtr iHandle;
         private CpService iService;
         private List<Argument> iInputArgs;
@@ -442,8 +443,9 @@ namespace OpenHome.Net.ControlPoint
             GCHandle gch = GCHandle.Alloc(this); /* no need to store gch as a member as AsyncComplete is guaranteed
                                                     to be called, even in error cases */
             iAsyncComplete = aCallback;
+            iCallbackAsyncComplete = new CpProxy.CallbackActionComplete(AsyncComplete);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
-            iHandle = CpServiceInvocation(aService.Handle(), aAction, new CpProxy.CallbackActionComplete(AsyncComplete), ptr);
+            iHandle = CpServiceInvocation(aService.Handle(), aAction, iCallbackAsyncComplete, ptr);
         }
 
         /// <summary>

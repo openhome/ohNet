@@ -137,7 +137,9 @@ namespace OpenHome.Net.ControlPoint
         protected CpService iService;
         private GCHandle iGchProxy;
         private System.Action iPropertyChanged;
+        private Callback iCallbackPropertyChanged;
         private System.Action iInitialEvent;
+        private Callback iCallbackInitialEvent;
         private SubscriptionStatus iSubscriptionStatus = SubscriptionStatus.eNotSubscribed;
         private Mutex iSubscriptionStatusLock;
 
@@ -162,15 +164,17 @@ namespace OpenHome.Net.ControlPoint
         public void SetPropertyChanged(System.Action aPropertyChanged)
         {
             iPropertyChanged = aPropertyChanged;
+            iCallbackPropertyChanged = new Callback(PropertyChanged);
             IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
-            CpProxySetPropertyChanged(iHandle, PropertyChanged, ptr);
+            CpProxySetPropertyChanged(iHandle, iCallbackPropertyChanged, ptr);
         }
 
         public void SetPropertyInitialEvent(System.Action aInitialEvent)
         {
             iInitialEvent = aInitialEvent;
+            iCallbackInitialEvent = new Callback(InitialEvent);
             IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
-            CpProxySetPropertyInitialEvent(iHandle, InitialEvent, ptr);
+            CpProxySetPropertyInitialEvent(iHandle, iCallbackInitialEvent, ptr);
         }
 
         protected unsafe CpProxy(String aDomain, String aName, uint aVersion, CpDevice aDevice)
