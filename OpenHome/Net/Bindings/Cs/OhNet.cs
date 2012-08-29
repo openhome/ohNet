@@ -204,7 +204,7 @@ namespace OpenHome.Net.Core
         }
     }
 
-    public public class Listener : IDisposable
+    public class Listener : IDisposable
     {
         protected Listener()
         {
@@ -237,7 +237,7 @@ namespace OpenHome.Net.Core
 #if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallback))]
 #endif
-        public static void SubnetListChanged(IntPtr aPtr)
+        public static void Changed(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             ChangedListener listener = (ChangedListener)gch.Target;
@@ -345,14 +345,14 @@ namespace OpenHome.Net.Core
         /// <remarks>Suggested action if this is called is to exit the process and restart the library and its owning application.
         /// 
         /// The string passed to the callback is an error message so would be useful to log.</remarks>
-        public MessageListener FatalErrorHandler { private get; set; }
-        public AsyncListener AsyncBeginHandler { private get; set; }
-        public AsyncListener AsyncEndHandler { private get; set; }
-        public AsyncListener AsyncErrorHandler { private get; set; }
+        public MessageListener FatalErrorHandler { internal get; set; }
+        public AsyncListener AsyncBeginHandler { internal get; set; }
+        public AsyncListener AsyncEndHandler { internal get; set; }
+        public AsyncListener AsyncErrorHandler { internal get; set; }
         public ChangedListener SubnetListChangedListener { internal get; set; }
-        public NetworkAdapterListener SubnetAddedListener { private get; set; }
-        public NetworkAdapterListener SubnetRemovedListener { private get; set; }
-        public NetworkAdapterListener NetworkAdapterChangedListener { private get; set; }
+        public NetworkAdapterListener SubnetAddedListener { internal get; set; }
+        public NetworkAdapterListener SubnetRemovedListener { internal get; set; }
+        public NetworkAdapterListener NetworkAdapterChangedListener { internal get; set; }
 
         /// <summary>
         /// A timeout for TCP connections in milliseconds. Must be >0
@@ -784,19 +784,6 @@ namespace OpenHome.Net.Core
 #endif
         static extern uint OhNetInitParamsDvIsBonjourEnabled(IntPtr aParams);
 
-        private static void DefaultActionFunction()
-        {
-            throw new InvalidOperationException("This is a sentinel value and shouldn't actually be invoked.");
-        }
-        // These delegates are stored in the callback properties. If they are still there
-        // when we come to generate the native InitParams, we don't write anything into it
-        // and keep whatever value it has. Using this as a sentinel instead of null is
-        // useful because it allows the user to write null to the property and have it
-        // properly passed through to the library.
-        private static readonly OhNetCallbackNetworkAdapter DefaultCallbackNetworkAdapter = (aPtr, aAdapter) => DefaultActionFunction();
-        private static readonly OhNetCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
-        private static readonly OhNetCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
-
         public InitParams()
         {
             IntPtr defaultParams = OhNetInitParamsCreate();
@@ -838,39 +825,39 @@ namespace OpenHome.Net.Core
 
             if (LogOutput != null)
             {
-                OhNetInitParamsSetLogOutput(nativeParams, LogOutput.Message, LogOutput.Handle());
+                OhNetInitParamsSetLogOutput(nativeParams, MessageListener.Message, LogOutput.Handle());
             }
             if (FatalErrorHandler != null)
             {
-                OhNetInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler.Message, FatalErrorHandler.Handle());
+                OhNetInitParamsSetFatalErrorHandler(nativeParams, MessageListener.Message, FatalErrorHandler.Handle());
             }
             if (AsyncBeginHandler != null)
             {
-                OhNetInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler.Callback, AsyncBeginHandler.Handle());
+                OhNetInitParamsSetAsyncBeginHandler(nativeParams, AsyncListener.Callback, AsyncBeginHandler.Handle());
             }
             if (AsyncEndHandler != null)
             {
-                OhNetInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler.Callback, AsyncEndHandler.Handle());
+                OhNetInitParamsSetAsyncEndHandler(nativeParams, AsyncListener.Callback, AsyncEndHandler.Handle());
             }
             if (AsyncErrorHandler != null)
             {
-                OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler.Callback, AsyncErrorHandler.Handle());
+                OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncListener.Callback, AsyncErrorHandler.Handle());
             }
             if (SubnetListChangedListener != null)
             {
-                OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener.SubnetListChanged, SubnetListChangedListener.Handle());
+                OhNetInitParamsSetSubnetListChangedListener(nativeParams, ChangedListener.Changed, SubnetListChangedListener.Handle());
             }
             if (SubnetAddedListener != null)
             {
-                OhNetInitParamsSetSubnetAddedListener(nativeParams, SubnetAddedListener.NetworkAdapter, SubnetAddedListener.Handle());
+                OhNetInitParamsSetSubnetAddedListener(nativeParams, NetworkAdapterListener.NetworkAdapter, SubnetAddedListener.Handle());
             }
             if (SubnetRemovedListener != null)
             {
-                OhNetInitParamsSetSubnetRemovedListener(nativeParams, SubnetRemovedListener.NetworkAdapter, SubnetRemovedListener.Handle());
+                OhNetInitParamsSetSubnetRemovedListener(nativeParams, NetworkAdapterListener.NetworkAdapter, SubnetRemovedListener.Handle());
             }
             if (NetworkAdapterChangedListener != null)
             {
-                OhNetInitParamsSetNetworkAdapterChangedListener(nativeParams, NetworkAdapterChangedListener.NetworkAdapter, NetworkAdapterChangedListener.Handle());
+                OhNetInitParamsSetNetworkAdapterChangedListener(nativeParams, NetworkAdapterListener.NetworkAdapter, NetworkAdapterChangedListener.Handle());
             }
             OhNetInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
             OhNetInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);
