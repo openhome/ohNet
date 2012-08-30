@@ -47,7 +47,7 @@ private:
     static const TUint kNumBytes = 10;
     TChar iBytes[kNumBytes];
 };
-
+#if 0
 class SuiteMsgAudio : public Suite
 {
     static const TUint kMsgCount = 8;
@@ -85,7 +85,7 @@ private:
 private:
     TUint iLastMsgAudioBytes;
 };
-
+#endif // 0
 } // namespace Media
 } // namespace OpenHome
 
@@ -208,7 +208,7 @@ void SuiteAllocator::Test()
     delete allocator;
 }
 
-
+#if 0
 // SuiteMsgAudio
 
 SuiteMsgAudio::SuiteMsgAudio()
@@ -407,14 +407,16 @@ void ProcessorMsgAudio::ProcessMsg(MsgMetaText& /*aMsg*/)
 {
     ASSERTS();
 }
-
+#endif // 0
     
 void TestMsg()
 {
     Runner runner("Basic Msg tests\n");
     runner.Add(new SuiteAllocator());
+#if 0
     runner.Add(new SuiteMsgAudio());
     runner.Add(new SuiteMsgQueue());
+#endif // 0
     runner.Run();
 }
 

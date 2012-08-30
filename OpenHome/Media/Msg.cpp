@@ -170,6 +170,60 @@ Allocated::~Allocated()
 }
 
     
+// Jiffies
+
+TUint Jiffies::JiffiesPerSample(TUint aSampleRate)
+{ // static
+    switch (aSampleRate)
+    {
+    case 7350:
+        return kJiffies7350;
+    case 8000:
+        return kJiffies8000;
+    case 11025:
+        return kJiffies11025;
+    case 12000:
+        return kJiffies12000;
+    case 14700:
+        return kJiffies14700;
+    case 16000:
+        return kJiffies16000;
+    case 22050:
+        return kJiffies22050;
+    case 24000:
+        return kJiffies24000;
+    case 29400:
+        return kJiffies29400;
+    case 32000:
+        return kJiffies32000;
+    case 44100:
+        return kJiffies44100;
+    case 48000:
+        return kJiffies48000;
+    case 88200:
+        return kJiffies88200;
+    case 96000:
+        return kJiffies96000;
+    case 176400:
+        return kJiffies176400;
+    case 192000:
+        return kJiffies192000;
+    default:
+        ASSERTS();
+    }
+    return 0; // will never get here but compiler doesn't realise that ASSERTS doesn't return
+}
+
+TUint Jiffies::BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample)
+{ // static
+    aJiffies -= aJiffies % aJiffiesPerSample; // round down requested aJiffies to the nearest integer number of samples
+    const TUint numSamples = aJiffies / aJiffiesPerSample;
+    const TUint numSubsamples = numSamples * aNumChannels;
+    const TUint bytes = numSubsamples * aBytesPerSubsample;
+    return bytes;
+}
+
+
 // DecodedAudio
 
 DecodedAudio::DecodedAudio(AllocatorBase& aAllocator)
@@ -210,11 +264,7 @@ TUint DecodedAudio::Bytes() const
 
 TUint DecodedAudio::BytesFromJiffies(TUint& aJiffies) const
 {
-    aJiffies -= aJiffies % iJiffiesPerSample; // round down requested aJiffies to the nearest integer number of samples
-    const TUint numSamples = aJiffies / iJiffiesPerSample;
-    const TUint numSubsamples = numSamples * iChannels;
-    const TUint bytes = numSubsamples * kBytesPerSubsample;
-    return bytes;
+    return Jiffies::BytesFromJiffies(aJiffies, iJiffiesPerSample, iChannels, kBytesPerSubsample);
 }
 
 TUint DecodedAudio::JiffiesFromBytes(TUint aBytes) const
@@ -232,7 +282,7 @@ void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRat
     iSampleRate = aSampleRate;
     iBitRate = 0xffffffff; // FIXME
     iBitDepth = aBitDepth;
-    iJiffiesPerSample = JiffiesPerSample();
+    iJiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
 
     ASSERT((aBitDepth & 7) == 0);
     TUint bytesPerSubsample = aBitDepth/8;
@@ -304,48 +354,6 @@ void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint a
     }
 }
 
-TUint DecodedAudio::JiffiesPerSample() const
-{
-    switch (iSampleRate)
-    {
-    case 7350:
-        return kJiffies7350;
-    case 8000:
-        return kJiffies8000;
-    case 11025:
-        return kJiffies11025;
-    case 12000:
-        return kJiffies12000;
-    case 14700:
-        return kJiffies14700;
-    case 16000:
-        return kJiffies16000;
-    case 22050:
-        return kJiffies22050;
-    case 24000:
-        return kJiffies24000;
-    case 29400:
-        return kJiffies29400;
-    case 32000:
-        return kJiffies32000;
-    case 44100:
-        return kJiffies44100;
-    case 48000:
-        return kJiffies48000;
-    case 88200:
-        return kJiffies88200;
-    case 96000:
-        return kJiffies96000;
-    case 176400:
-        return kJiffies176400;
-    case 192000:
-        return kJiffies192000;
-    default:
-        ASSERTS();
-    }
-    return 0; // will never get here but compiler doesn't realise that ASSERTS doesn't return
-}
-
 
 // Msg
 
@@ -355,7 +363,7 @@ Msg::Msg(AllocatorBase& aAllocator)
 {
 }
 
-
+/*
 // MsgAudio
 
 MsgAudio::MsgAudio(AllocatorBase& aAllocator)
@@ -473,6 +481,351 @@ void MsgAudio::Process(IMsgProcessor& aProcessor)
 {
     aProcessor.ProcessMsg(*this);
 }
+*/
+
+// MsgAudio
+
+MsgAudio* MsgAudio::Split(TUint aJiffies)
+{
+    if (aJiffies > iSize) {
+        ASSERT(iNextAudio != NULL);
+        return iNextAudio->Split(aJiffies - iSize);
+    }
+    ASSERT(aJiffies != iSize);
+    MsgAudio* remaining = Allocate();
+    remaining->iNextAudio = NULL;
+    remaining->iOffset = iOffset + aJiffies;
+    remaining->iSize = iSize - aJiffies;
+    iSize = aJiffies;
+    SplitCompleted(*remaining);
+    return remaining;
+}
+
+void MsgAudio::Add(MsgAudio* aMsg)
+{
+    MsgAudio* end = this;
+    MsgAudio* next = iNextAudio;
+    while (next != NULL) {
+        end = next;
+        next = next->iNextAudio;
+    }
+    end->iNextAudio = aMsg;
+}
+
+MsgAudio* MsgAudio::Clone()
+{
+    MsgAudio* clone = Allocate();
+    clone->iSize = iSize;
+    clone->iOffset = iOffset;
+    clone->iNextAudio = (iNextAudio == NULL? NULL : iNextAudio->Clone());
+    return clone;
+}
+
+TUint MsgAudio::Jiffies() const
+{
+    TUint jiffies = iSize;
+    MsgAudio* next = iNextAudio;
+    while (next != NULL) {
+        jiffies += iNextAudio->iSize;
+        next = next->iNextAudio;
+    }
+    return jiffies;
+}
+
+MsgAudio::MsgAudio(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+void MsgAudio::Clear()
+{
+    if (iNextAudio != NULL) {
+        iNextAudio->RemoveRef();
+    }
+}
+
+void MsgAudio::SplitCompleted(MsgAudio& /*aMsg*/)
+{
+    // nothing to do by default
+}
+
+
+// MsgAudioPcm
+
+MsgAudioPcm::MsgAudioPcm(AllocatorBase& aAllocator)
+    : MsgAudio(aAllocator)
+{
+}
+
+MsgPlayable* MsgAudioPcm::CreatePlayable()
+{
+    TUint sizeJiffies = iSize;
+    TUint offsetJiffies = iOffset;
+    const TUint sizeBytes = iAudioData->BytesFromJiffies(sizeJiffies);
+    const TUint offsetBytes = iAudioData->BytesFromJiffies(offsetJiffies);
+    // both size & offset will be rounded down if they don't fall on a sample boundary
+    // we don't risk losing any data doing this as the start and end of each DecodedAudio's data fall on sample boundaries
+
+    MsgPlayablePcm* playable = iAllocatorPlayable->Allocate();
+    playable->Initialise(iAudioData, sizeBytes, offsetBytes);
+    if (iNextAudio != NULL) {
+        MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable();
+        playable->Add(child);
+    }
+    // playable takes ownership of iAudioData so we just remove the ref to self here
+    RemoveRef();
+    return playable;
+}
+
+MsgAudio* MsgAudioPcm::Clone()
+{
+    MsgAudio* clone = MsgAudio::Clone();
+    static_cast<MsgAudioPcm*>(clone)->iAudioData = iAudioData;
+    iAudioData->AddRef();
+    return clone;
+}
+
+void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, Allocator<MsgPlayablePcm>& aAllocatorPlayable)
+{
+    iAllocatorPlayable = &aAllocatorPlayable;
+    iAudioData = aDecodedAudio;
+    iNextAudio = NULL;
+    iSize = iAudioData->Bytes();
+    iOffset = 0;
+}
+
+void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
+{
+    iAudioData->AddRef();
+    static_cast<MsgAudioPcm&>(aRemaining).iAudioData = iAudioData;
+}
+
+MsgAudio* MsgAudioPcm::Allocate()
+{
+    return static_cast<Allocator<MsgAudioPcm>&>(iAllocator).Allocate();
+}
+
+void MsgAudioPcm::Clear()
+{
+    MsgAudio::Clear();
+    iAudioData->RemoveRef();
+}
+
+void MsgAudioPcm::Process(IMsgProcessor& aProcessor)
+{
+    aProcessor.ProcessMsg(*this);
+}
+
+
+// MsgSilence
+
+MsgSilence::MsgSilence(AllocatorBase& aAllocator)
+    : MsgAudio(aAllocator)
+{
+}
+
+MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aNumChannels)
+{
+    TUint sizeJiffies = iSize;
+    TUint offsetJiffies = iOffset;
+    TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
+    TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, aNumChannels, DecodedAudio::kBytesPerSubsample);
+    TUint offsetBytes = Jiffies::BytesFromJiffies(offsetJiffies, jiffiesPerSample, aNumChannels, DecodedAudio::kBytesPerSubsample);
+
+    MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
+    playable->Initialise(sizeBytes, offsetBytes);
+    if (iNextAudio != NULL) {
+        MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aNumChannels);
+        playable->Add(child);
+    }
+    RemoveRef();
+    return playable;
+}
+
+MsgAudio* MsgSilence::Allocate()
+{
+    return static_cast<Allocator<MsgSilence>&>(iAllocator).Allocate();
+}
+
+void MsgSilence::Process(IMsgProcessor& aProcessor)
+{
+    aProcessor.ProcessMsg(*this);
+}
+
+void MsgSilence::Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable)
+{
+    iAllocatorPlayable = &aAllocatorPlayable;
+    iNextAudio = NULL;
+    iSize = aJiffies;
+    iOffset = 0;
+}
+
+
+// MsgPlayable
+
+MsgPlayable* MsgPlayable::Split(TUint aBytes)
+{
+    if (aBytes > iSize) {
+        ASSERT(iNextPlayable != NULL);
+        return iNextPlayable->Split(aBytes - iSize);
+    }
+    ASSERT(aBytes != iSize);
+    MsgPlayable* remaining = Allocate();
+    remaining->iNextPlayable = NULL;
+    remaining->iOffset = iOffset + aBytes;
+    remaining->iSize = iSize - aBytes;
+    iSize = aBytes;
+    SplitCompleted(*remaining);
+    return remaining;
+}
+
+void MsgPlayable::Add(MsgPlayable* aMsg)
+{
+    MsgPlayable* end = this;
+    MsgPlayable* next = iNextPlayable;
+    while (next != NULL) {
+        end = next;
+        next = next->iNextPlayable;
+    }
+    end->iNextPlayable = aMsg;
+}
+
+MsgPlayable* MsgPlayable::Clone()
+{
+    MsgPlayable* clone = Allocate();
+    clone->iSize = iSize;
+    clone->iOffset = iOffset;
+    clone->iNextPlayable = (iNextPlayable == NULL? NULL : iNextPlayable->Clone());
+    return clone;
+}
+
+TUint MsgPlayable::Bytes() const
+{
+    TUint bytes = iSize;
+    MsgPlayable* next = iNextPlayable;
+    while (next != NULL) {
+        bytes += iNextPlayable->Bytes();
+        next = next->iNextPlayable;
+    }
+    return bytes;
+}
+
+MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+void MsgPlayable::Clear()
+{
+    if (iNextPlayable != NULL) {
+        iNextPlayable->RemoveRef();
+    }
+}
+
+void MsgPlayable::Process(IMsgProcessor& aProcessor)
+{
+    aProcessor.ProcessMsg(*this);
+}
+
+void MsgPlayable::SplitCompleted(MsgPlayable& /*aMsg*/)
+{
+    // nothing to do by default
+}
+
+
+// MsgPlayablePcm
+
+MsgPlayablePcm::MsgPlayablePcm(AllocatorBase& aAllocator)
+    : MsgPlayable(aAllocator)
+{
+}
+
+void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes)
+{
+    iNextPlayable = NULL;
+    iAudioData = aDecodedAudio;
+    iSize = aSizeBytes;
+    iOffset = aOffsetBytes;
+}
+
+MsgPlayable* MsgPlayablePcm::Clone()
+{
+    MsgPlayable* clone = MsgPlayable::Clone();
+    static_cast<MsgPlayablePcm*>(clone)->iAudioData = iAudioData;
+    iAudioData->AddRef();
+    return clone;
+}
+
+void MsgPlayablePcm::Write(IWriter& aWriter)
+{
+    AutoRef a(*this);
+    
+    Brn audioBuf((const TByte*)iAudioData->PtrOffsetBytes(iOffset), iSize);
+    aWriter.Write(audioBuf);
+
+    MsgPlayable* next = iNextPlayable;
+    iNextPlayable = NULL; // break chain before Clear() gets called and tries removing the reference we remove on function exit
+    if (next != NULL) {
+        next->Write(aWriter);
+    }
+}
+
+MsgPlayable* MsgPlayablePcm::Allocate()
+{
+    return static_cast<Allocator<MsgPlayablePcm>&>(iAllocator).Allocate();
+}
+
+void MsgPlayablePcm::SplitCompleted(MsgPlayable& aRemaining)
+{
+    iAudioData->AddRef();
+    static_cast<MsgPlayablePcm&>(aRemaining).iAudioData = iAudioData;
+}
+
+void MsgPlayablePcm::Clear()
+{
+    MsgPlayable::Clear();
+    iAudioData->RemoveRef();
+}
+
+
+// MsgPlayableSilence
+
+MsgPlayableSilence::MsgPlayableSilence(AllocatorBase& aAllocator)
+    : MsgPlayable(aAllocator)
+{
+}
+
+void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aOffsetBytes)
+{
+    iNextPlayable = NULL;
+    iSize = aSizeBytes;
+    iOffset = aOffsetBytes;
+}
+
+void MsgPlayableSilence::Write(IWriter& aWriter)
+{
+    static const TUint kSizeBufSilence = 4096;
+    static const TByte silence[kSizeBufSilence] = { 0 };
+
+    AutoRef a(*this);
+    Brn silenceBuf;
+    while (iSize > 0) {
+        TUint bytes = (iSize > kSizeBufSilence? kSizeBufSilence : iSize);
+        silenceBuf.Set(silence, bytes);
+        aWriter.Write(silenceBuf);
+        iSize -= bytes;
+    }
+    MsgPlayable* next = iNextPlayable;
+    iNextPlayable = NULL; // break chain before Clear() gets called and tries removing the reference we remove on function exit
+    if (next != NULL) {
+        next->Write(aWriter);
+    }
+}
+
+MsgPlayable* MsgPlayableSilence::Allocate()
+{
+    return static_cast<Allocator<MsgPlayableSilence>&>(iAllocator).Allocate();
+}
 
 
 // MsgTrack
@@ -483,19 +836,6 @@ MsgTrack::MsgTrack(AllocatorBase& aAllocator)
 }
 
 void MsgTrack::Process(IMsgProcessor& aProcessor)
-{
-    aProcessor.ProcessMsg(*this);
-}
-
-
-// MsgStartOfAudio
-
-MsgStartOfAudio::MsgStartOfAudio(AllocatorBase& aAllocator)
-    : Msg(aAllocator)
-{
-}
-
-void MsgStartOfAudio::Process(IMsgProcessor& aProcessor)
 {
     aProcessor.ProcessMsg(*this);
 }
@@ -567,23 +907,49 @@ Msg* MsgQueue::Dequeue()
     return head;
 }
 
+
+// AutoRef
+
+AutoRef::AutoRef(Msg& aMsg)
+    : iMsg(aMsg)
+{
+}
+
+AutoRef::~AutoRef()
+{
+    iMsg.RemoveRef();
+}
+
     
 // MsgFactory
 
-MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator, TUint aDecodedAudioCount, TUint aMsgAudioCount, TUint aMsgTrackCount, TUint aMsgMetaTextCount)
+MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
+                       TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
+                       TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgTrackCount,
+                       TUint aMsgMetaTextCount)
     : iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
-    , iAllocatorMsgAudio("MsgAudio", aMsgAudioCount, aInfoAggregator)
+    , iAllocatorMsgAudioPcm("MsgAudioPcm", aMsgAudioPcmCount, aInfoAggregator)
+    , iAllocatorMsgSilence("MsgSilence", aMsgSilenceCount, aInfoAggregator)
+    , iAllocatorMsgPlayablePcm("MsgPlayablePcm", aMsgPlayablePcmCount, aInfoAggregator)
+    , iAllocatorMsgPlayableSilence("MsgPlayableSilence", aMsgPlayableSilenceCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aMsgTrackCount, aInfoAggregator)
     , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
 {
 }
 
-MsgAudio* MsgFactory::CreateMsgAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
+MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
 {
-    DecodedAudio* DecodedAudio = CreateDecodedAudio(aData, aChannels, aSampleRate, aBitDepth, aEndian);
-    MsgAudio* msgAudio = iAllocatorMsgAudio.Allocate();
-    msgAudio->Construct(DecodedAudio);
-    return msgAudio;
+    DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aChannels, aSampleRate, aBitDepth, aEndian);
+    MsgAudioPcm* msg = iAllocatorMsgAudioPcm.Allocate();
+    msg->Initialise(decodedAudio, iAllocatorMsgPlayablePcm);
+    return msg;
+}
+
+MsgSilence* MsgFactory::CreateMsgSilence(TUint aSizeJiffies)
+{
+    MsgSilence* msg = iAllocatorMsgSilence.Allocate();
+    msg->Initialise(aSizeJiffies, iAllocatorMsgPlayableSilence);
+    return msg;
 }
 
 MsgTrack* MsgFactory::CreateMsgTrack()
@@ -598,7 +964,7 @@ MsgMetaText* MsgFactory::CreateMsgMetaText()
 
 DecodedAudio* MsgFactory::CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
 {
-    DecodedAudio* DecodedAudio = iAllocatorDecodedAudio.Allocate();
-    DecodedAudio->Construct(aData, aChannels, aSampleRate, aBitDepth, aEndian);
-    return DecodedAudio;
+    DecodedAudio* decodedAudio = iAllocatorDecodedAudio.Allocate();
+    decodedAudio->Construct(aData, aChannels, aSampleRate, aBitDepth, aEndian);
+    return decodedAudio;
 }
