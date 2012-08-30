@@ -53,6 +53,24 @@ def invoke_test(tsk):
             raise Exception("Errors from valgrind")
 
 
+def guess_dest_platform():
+    import sys
+    if sys.platform == 'linux2':
+        dest_platform = 'Linux'
+    # http://stackoverflow.com/a/2145582: "Python on Windows always reports 'win32'"
+    elif sys.platform == 'win32':
+        dest_platform = 'Windows'
+    elif sys.platform == 'darwin':
+        dest_platform = 'Mac'
+    else:
+        raise KeyError(sys.platform)
+    if sys.maxint == 0x7fffffff:
+        dest_isa = 'x86'
+    else:
+        dest_isa = 'x64'
+    return '{dest_platform}-{dest_isa}'.format(dest_platform=dest_platform, dest_isa=dest_isa)
+
+
 def get_platform_info(dest_platform):
     platforms = {
         'Linux-x86': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
