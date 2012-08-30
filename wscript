@@ -28,13 +28,12 @@ def options(opt):
 def configure(conf):
     def match_path(paths, message):
         for p in paths:
-            fname = p.format(options=conf.options, debugmode=debugmode, ohnet_plat_dir=ohnet_plat_dir)
+            fname = p.format(options=conf.options, ohnet_plat_dir=ohnet_plat_dir)
             if os.path.exists(fname):
                 return os.path.abspath(fname)
         conf.fatal(message)
 
-    debugmode = conf.options.debugmode
-    conf.msg("debugmode:", debugmode)
+    conf.msg("debugmode:", conf.options.debugmode)
     dest_platform = conf.options.dest_platform
     if dest_platform is None:
         try:
@@ -56,7 +55,7 @@ def configure(conf):
     if dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.load('msvc')
         append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
-        if debugmode == 'Debug':
+        if conf.options.debugmode == 'Debug':
             append('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
             append('LINKFLAGS', ['/debug'])
         else:
@@ -68,7 +67,7 @@ def configure(conf):
                 '-fexceptions', '-Wall', '-pipe',
                 '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+endian+'_ENDIAN',
                 '-DDEFINE_TRACE', '-fvisibility=hidden', '-Werror'])
-        if debugmode == 'Debug':
+        if conf.options.debugmode == 'Debug':
             append('CXXFLAGS',['-g','-O0'])
         else:
             append('CXXFLAGS',['-O2'])
@@ -96,7 +95,7 @@ def configure(conf):
     set_env_verbose(conf, 'STLIBPATH_OHNET', match_path(
         [
             '{options.ohnet_lib_dir}',
-            '{options.ohnet}/Build/Obj/{ohnet_plat_dir}/{debugmode}',
+            '{options.ohnet}/Build/Obj/{ohnet_plat_dir}/{options.debugmode}',
         ],
         message='FAILED.  Was --ohnet-lib-dir or --ohnet specified?  Do the directories they point to (including debug/release) exist?'))
     conf.env.STLIB_OHNET=['ohNetProxies', 'TestFramework', 'ohNetCore']
