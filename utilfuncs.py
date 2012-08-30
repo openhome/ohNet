@@ -1,3 +1,57 @@
+# FIXME more descriptive name (as valgrind only applicable to native code)
+def invoke_test(tsk):
+    def print_vg_frame_component(frame, tag, prefix):
+        o = frame.find(tag)
+        if o != None:
+            from xml.sax.saxutils import unescape
+            print '    ' + prefix + ': ' + unescape(o.text)
+    # invoke_test
+    import subprocess
+    os.environ["ABORT_ON_FAILURE"] = "1"
+    os.environ["NO_ERROR_DIALOGS"] = "1"
+    testfile = tsk.env.cxxprogram_PATTERN % tsk.generator.test
+    testargs = tsk.generator.args
+    bldpath = tsk.generator.bld.bldnode.abspath()
+    testfilepath = os.path.join(bldpath, testfile)
+    if not tsk.env.VALGRIND_ENABLE:
+        cmdline = []
+        cmdline.append(testfile)
+        for arg in testargs:
+            cmdline.append(arg)
+        subprocess.check_call(cmdline, executable=testfilepath, cwd=bldpath)
+    else:
+        xmlfile = tsk.generator.test + '.xml'
+        cmdline = []
+        cmdline.append('--leak-check=yes')
+        cmdline.append('--suppressions=../ValgrindSuppressions.txt')
+        cmdline.append('--xml=yes')
+        cmdline.append('--xml-file=' + xmlfile)
+        cmdline.append('./' + testfile)
+        for arg in testargs:
+            cmdline.append(arg)
+        subprocess.check_call(cmdline, executable='valgrind', cwd=bldpath)
+
+        import xml.etree.ElementTree as ET
+        doc = ET.parse(os.path.join(bldpath, xmlfile))
+        errors = doc.findall('//error')
+        if len(errors) > 0:
+            for error in errors:
+                print '---- error start ----'
+                frames = error.findall('.//frame')
+                for frame in frames:
+                    print '  ---- frame start ----'
+                    for tag, prefix in [['ip', 'Object'],
+                                        ['fn', 'Function'],
+                                        ['dir', 'Directory'],
+                                        ['file', 'File'],
+                                        ['line', 'Line'],
+                                       ]:
+                        print_vg_frame_component(frame, tag, prefix)
+                    print '  ---- frame end ----'
+                print '---- error end ----'
+            raise Exception("Errors from valgrind")
+
+
 def set_env_verbose(conf, varname, value):
     conf.msg(
         'Setting %s to' % varname,
