@@ -7,6 +7,7 @@ def invoke_test(tsk):
             print '    ' + prefix + ': ' + unescape(o.text)
     # invoke_test
     import subprocess
+    import os
     os.environ["ABORT_ON_FAILURE"] = "1"
     os.environ["NO_ERROR_DIALOGS"] = "1"
     testfile = tsk.env.cxxprogram_PATTERN % tsk.generator.test
