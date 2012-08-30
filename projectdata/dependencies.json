@@ -13,5 +13,11 @@
             "See ohos for more examples, and ohdevtools/dependencies.py for details",
             "of the predefined values and expansion rules."
         ]
+    },
+    {   "name": "ohWafHelpers",
+        "type": "openhome",
+        "platform-specific": false,
+        "version": "0.0.17",
+        "archive-filename": "${name}-${version}.tar.gz"
     }
 ]
