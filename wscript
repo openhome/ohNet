@@ -2,7 +2,6 @@
 
 import sys
 import os
-<<<<<<< Updated upstream
 
 from waflib.Node import Node
 
@@ -12,11 +11,6 @@ sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 from filetasks import gather_files, build_tree
 from utilfuncs import set_env_verbose
 
-=======
-from wafmodules.filetasks import gather_files, build_tree
-from waflib.Node import Node
-
->>>>>>> Stashed changes
 def options(opt):
     opt.load('msvc')
     opt.load('compiler_cxx')
@@ -44,33 +38,11 @@ platforms = {
         }
 
 def configure(conf):
-<<<<<<< Updated upstream
     def match_path(paths, message):
         for p in paths:
             fname = p.format(options=conf.options, debugmode=debugmode, ohnet_plat_dir=ohnet_plat_dir)
             if os.path.exists(fname):
                 return os.path.abspath(fname)
-=======
-    def set_env(varname, value):
-        conf.msg(
-                'Setting %s to' % varname,
-                "True" if value is True else
-                "False" if value is False else
-                value)
-        setattr(conf.env, varname, value)
-        return value
-    def match_path(paths, message):
-        for p in paths:
-            try:
-                fname = p.format(options=conf.options, debugmode=debugmode, ohnet_plat_dir=ohnet_plat_dir)
-                if os.path.exists(fname):
-                    return os.path.abspath(fname)
-                else:
-                    conf.msg("Not found: {0!r}".format(fname))
-                    conf.fatal(message)
-            except:
-                pass
->>>>>>> Stashed changes
         conf.fatal(message)
 
     debugmode = conf.options.debugmode
@@ -124,21 +96,13 @@ def configure(conf):
             append('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
             append('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
 
-<<<<<<< Updated upstream
     set_env_verbose(conf, 'INCLUDES_OHNET', match_path(
-=======
-    set_env('INCLUDES_OHNET', match_path(
->>>>>>> Stashed changes
         [
             '{options.ohnet_include_dir}',
             '{options.ohnet}/Build/Include',
         ],
         message='Specify --ohnet-include-dir or --ohnet'))
-<<<<<<< Updated upstream
     set_env_verbose(conf, 'STLIBPATH_OHNET', match_path(
-=======
-    set_env('STLIBPATH_OHNET', match_path(
->>>>>>> Stashed changes
         [
             '{options.ohnet_lib_dir}',
             '{options.ohnet}/Build/Obj/{ohnet_plat_dir}/{debugmode}',
