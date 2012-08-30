@@ -158,7 +158,7 @@ class Msg : public Allocated
 {
     friend class MsgQueue;
 public:
-    virtual void Process(IMsgProcessor& aProcessor) = 0;
+    virtual Msg* Process(IMsgProcessor& aProcessor) = 0;
 protected:
     Msg(AllocatorBase& aAllocator);
 private:
@@ -233,7 +233,7 @@ private: // from MsgAudio
     void SplitCompleted(MsgAudio& aRemaining);
 private: // from Msg
     void Clear();
-    void Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor);
 private:
     DecodedAudio* iAudioData;
     Allocator<MsgPlayablePcm>* iAllocatorPlayable;
@@ -252,7 +252,7 @@ private:
 private: // from MsgAudio
     MsgAudio* Allocate();
 private: // from Msg
-    void Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor);
 private:
     Allocator<MsgPlayableSilence>* iAllocatorPlayable;
 };
@@ -269,7 +269,7 @@ protected:
     MsgPlayable(AllocatorBase& aAllocator);
 protected: // from Msg
     void Clear();
-    void Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor);
 private:
     virtual MsgPlayable* Allocate() = 0;
     virtual void SplitCompleted(MsgPlayable& aRemaining);
@@ -316,7 +316,7 @@ public:
 public:
     MsgTrack(AllocatorBase& aAllocator);
 private: // from Msg
-    void Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor);
 private:
     // track uri & meta data
 };
@@ -328,17 +328,17 @@ public:
 public:
     MsgMetaText(AllocatorBase& aAllocator);
 private: // from Msg
-    void Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor);
 };
 
 class IMsgProcessor
 {
 public:
-    virtual void ProcessMsg(MsgAudioPcm& aMsg) = 0;
-    virtual void ProcessMsg(MsgSilence& aMsg) = 0;
-    virtual void ProcessMsg(MsgPlayable& aMsg) = 0;
-    virtual void ProcessMsg(MsgTrack& aMsg) = 0;
-    virtual void ProcessMsg(MsgMetaText& aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
 };
 
 class MsgQueue
@@ -353,6 +353,60 @@ private:
     Semaphore iSem;
     Msg* iHead;
     Msg* iTail;
+};
+
+class MsgQueueJiffies
+{
+protected:
+    MsgQueueJiffies();
+    virtual ~MsgQueueJiffies();
+    void DoEnqueue(Msg* aMsg);
+    Msg* DoDequeue();
+    TUint Jiffies() const;
+private:
+    void AddJiffies(TUint aJiffies);
+    void RemoveJiffies(TUint aJiffies);
+private: // from IMsgQueueProcessorIn
+    virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
+    virtual void ProcessMsgIn(MsgSilence* aMsg);
+    virtual void ProcessMsgIn(MsgPlayable* aMsg);
+    virtual void ProcessMsgIn(MsgTrack* aMsg);
+    virtual void ProcessMsgIn(MsgMetaText* aMsg);
+    virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
+    virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
+    virtual Msg* ProcessMsgOut(MsgPlayable* aMsg);
+    virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
+    virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
+private:
+    class ProcessorQueueIn : public IMsgProcessor, private INonCopyable
+    {
+    public:
+        ProcessorQueueIn(MsgQueueJiffies& aQueue);
+    private:
+        Msg* ProcessMsg(MsgAudioPcm* aMsg);
+        Msg* ProcessMsg(MsgSilence* aMsg);
+        Msg* ProcessMsg(MsgPlayable* aMsg);
+        Msg* ProcessMsg(MsgTrack* aMsg);
+        Msg* ProcessMsg(MsgMetaText* aMsg);
+    private:
+        MsgQueueJiffies& iQueue;
+    };
+    class ProcessorQueueOut : public IMsgProcessor, private INonCopyable
+    {
+    public:
+        ProcessorQueueOut(MsgQueueJiffies& aQueue);
+    private:
+        Msg* ProcessMsg(MsgAudioPcm* aMsg);
+        Msg* ProcessMsg(MsgSilence* aMsg);
+        Msg* ProcessMsg(MsgPlayable* aMsg);
+        Msg* ProcessMsg(MsgTrack* aMsg);
+        Msg* ProcessMsg(MsgMetaText* aMsg);
+    private:
+        MsgQueueJiffies& iQueue;
+    };
+private:
+    MsgQueue iQueue;
+    TUint iJiffies;
 };
 
 class AutoRef : private INonCopyable

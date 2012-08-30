@@ -479,7 +479,7 @@ void MsgAudio::Clear()
 
 void MsgAudio::Process(IMsgProcessor& aProcessor)
 {
-    aProcessor.ProcessMsg(*this);
+    aProcessor.ProcessMsg(this);
 }
 */
 
@@ -611,9 +611,9 @@ void MsgAudioPcm::Clear()
     iAudioData->RemoveRef();
 }
 
-void MsgAudioPcm::Process(IMsgProcessor& aProcessor)
+Msg* MsgAudioPcm::Process(IMsgProcessor& aProcessor)
 {
-    aProcessor.ProcessMsg(*this);
+    return aProcessor.ProcessMsg(this);
 }
 
 
@@ -647,9 +647,9 @@ MsgAudio* MsgSilence::Allocate()
     return static_cast<Allocator<MsgSilence>&>(iAllocator).Allocate();
 }
 
-void MsgSilence::Process(IMsgProcessor& aProcessor)
+Msg* MsgSilence::Process(IMsgProcessor& aProcessor)
 {
-    aProcessor.ProcessMsg(*this);
+    return aProcessor.ProcessMsg(this);
 }
 
 void MsgSilence::Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable)
@@ -722,9 +722,9 @@ void MsgPlayable::Clear()
     }
 }
 
-void MsgPlayable::Process(IMsgProcessor& aProcessor)
+Msg* MsgPlayable::Process(IMsgProcessor& aProcessor)
 {
-    aProcessor.ProcessMsg(*this);
+    return aProcessor.ProcessMsg(this);
 }
 
 void MsgPlayable::SplitCompleted(MsgPlayable& /*aMsg*/)
@@ -835,9 +835,9 @@ MsgTrack::MsgTrack(AllocatorBase& aAllocator)
 {
 }
 
-void MsgTrack::Process(IMsgProcessor& aProcessor)
+Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
 {
-    aProcessor.ProcessMsg(*this);
+    return aProcessor.ProcessMsg(this);
 }
 
 
@@ -848,9 +848,9 @@ MsgMetaText::MsgMetaText(AllocatorBase& aAllocator)
 {
 }
 
-void MsgMetaText::Process(IMsgProcessor& aProcessor)
+Msg* MsgMetaText::Process(IMsgProcessor& aProcessor)
 {
-    aProcessor.ProcessMsg(*this);
+    return aProcessor.ProcessMsg(this);
 }
 
 
@@ -905,6 +905,172 @@ Msg* MsgQueue::Dequeue()
     }
     iLock.Signal();
     return head;
+}
+
+
+// MsgQueueJiffies
+
+MsgQueueJiffies::MsgQueueJiffies()
+{
+}
+
+MsgQueueJiffies::~MsgQueueJiffies()
+{
+}
+
+void MsgQueueJiffies::DoEnqueue(Msg* aMsg)
+{
+    ProcessorQueueIn procIn(*this);
+    Msg* msg = aMsg->Process(procIn);
+    iQueue.Enqueue(msg);
+}
+
+Msg* MsgQueueJiffies::DoDequeue()
+{
+    Msg* msg;
+    do {
+        msg = iQueue.Dequeue();
+        ProcessorQueueIn procIn(*this);
+        msg = msg->Process(procIn);
+    } while (msg == NULL);
+    return msg;
+}
+
+TUint MsgQueueJiffies::Jiffies() const
+{
+    return iJiffies;
+}
+
+void MsgQueueJiffies::AddJiffies(TUint aJiffies)
+{
+    iJiffies += aJiffies;
+}
+
+void MsgQueueJiffies::RemoveJiffies(TUint aJiffies)
+{
+    ASSERT(iJiffies >= aJiffies);
+    iJiffies -= aJiffies;
+}
+
+void MsgQueueJiffies::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
+{
+}
+
+void MsgQueueJiffies::ProcessMsgIn(MsgSilence* /*aMsg*/)
+{
+}
+
+void MsgQueueJiffies::ProcessMsgIn(MsgPlayable* /*aMsg*/)
+{
+}
+
+void MsgQueueJiffies::ProcessMsgIn(MsgTrack* /*aMsg*/)
+{
+}
+
+void MsgQueueJiffies::ProcessMsgIn(MsgMetaText* /*aMsg*/)
+{
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgSilence* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgPlayable* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+
+// MsgQueueJiffies::ProcessorQueueIn
+
+MsgQueueJiffies::ProcessorQueueIn::ProcessorQueueIn(MsgQueueJiffies& aQueue)
+    : iQueue(aQueue)
+{
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    iQueue.AddJiffies(aMsg->Jiffies());
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgSilence* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    iQueue.AddJiffies(aMsg->Jiffies());
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+
+// MsgQueueJiffies::ProcessorQueueOut
+
+MsgQueueJiffies::ProcessorQueueOut::ProcessorQueueOut(MsgQueueJiffies& aQueue)
+    : iQueue(aQueue)
+{
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iQueue.RemoveJiffies(aMsg->Jiffies());
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
+{
+    iQueue.RemoveJiffies(aMsg->Jiffies());
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
 }
 
 
