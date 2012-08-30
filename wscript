@@ -28,7 +28,7 @@ def options(opt):
 def configure(conf):
     def match_path(paths, message):
         for p in paths:
-            fname = p.format(options=conf.options, debugmode_lc=conf.options.debugmode.lower(), ohnet_plat_dir=ohnet_plat_dir)
+            fname = p.format(options=conf.options, debugmode_lc=conf.options.debugmode.lower(), platform_info=get_platform_info(conf.options.dest_platform))
             if os.path.exists(fname):
                 return os.path.abspath(fname)
         conf.fatal(message)
@@ -41,7 +41,6 @@ def configure(conf):
             conf.fatal('Specify --dest-platform')
 
     platform_info = get_platform_info(conf.options.dest_platform)
-    ohnet_plat_dir = platform_info['ohnet_plat_dir']
     build_platform = platform_info['build_platform']
     endian = platform_info['endian']
 
@@ -95,7 +94,7 @@ def configure(conf):
     set_env_verbose(conf, 'STLIBPATH_OHNET', match_path(
         [
             '{options.ohnet_lib_dir}',
-            '{options.ohnet}/Build/Obj/{ohnet_plat_dir}/{options.debugmode}',
+            '{options.ohnet}/Build/Obj/{platform_info[ohnet_plat_dir]}/{options.debugmode}',
             'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_lc}-dev/lib',
         ],
         message='FAILED.  Was --ohnet-lib-dir or --ohnet specified?  Do the directories they point to (including debug/release) exist?'))
