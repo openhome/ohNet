@@ -9,7 +9,7 @@ import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree
-from utilfuncs import set_env_verbose
+from utilfuncs import invoke_test, set_env_verbose
 
 def options(opt):
     opt.load('msvc')
@@ -119,58 +119,6 @@ def configure(conf):
         env.AR = cross_compile + 'ar'
         env.LINK_CXX = cross_compile + 'g++'
         env.LINK_CC = cross_compile + 'gcc'
-
-def print_vg_frame_component(frame, tag, prefix):
-    o = frame.find(tag)
-    if o != None:
-        from xml.sax.saxutils import unescape
-        print '    ' + prefix + ': ' + unescape(o.text)
-
-def invoke_test(tsk):
-    import subprocess
-    os.environ["ABORT_ON_FAILURE"] = "1"
-    os.environ["NO_ERROR_DIALOGS"] = "1"
-    testfile = tsk.env.cxxprogram_PATTERN % tsk.generator.test
-    testargs = tsk.generator.args
-    bldpath = tsk.generator.bld.bldnode.abspath()
-    testfilepath = os.path.join(bldpath, testfile)
-    if not tsk.env.VALGRIND_ENABLE:
-        cmdline = []
-        cmdline.append(testfile)
-        for arg in testargs:
-            cmdline.append(arg)
-        subprocess.check_call(cmdline, executable=testfilepath, cwd=bldpath)
-    else:
-        xmlfile = tsk.generator.test + '.xml'
-        cmdline = []
-        cmdline.append('--leak-check=yes')
-        cmdline.append('--suppressions=../ValgrindSuppressions.txt')
-        cmdline.append('--xml=yes')
-        cmdline.append('--xml-file=' + xmlfile)
-        cmdline.append('./' + testfile)
-        for arg in testargs:
-            cmdline.append(arg)
-        subprocess.check_call(cmdline, executable='valgrind', cwd=bldpath)
-
-        import xml.etree.ElementTree as ET
-        doc = ET.parse(os.path.join(bldpath, xmlfile))
-        errors = doc.findall('//error')
-        if len(errors) > 0:
-            for error in errors:
-                print '---- error start ----'
-                frames = error.findall('.//frame')
-                for frame in frames:
-                    print '  ---- frame start ----'
-                    for tag, prefix in [['ip', 'Object'],
-                                        ['fn', 'Function'],
-                                        ['dir', 'Directory'],
-                                        ['file', 'File'],
-                                        ['line', 'Line'],
-                                       ]:
-                        print_vg_frame_component(frame, tag, prefix)
-                    print '  ---- frame end ----'
-                print '---- error end ----'
-            raise Exception("Errors from valgrind")
 
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
