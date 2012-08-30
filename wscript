@@ -34,25 +34,24 @@ def configure(conf):
         conf.fatal(message)
 
     conf.msg("debugmode:", conf.options.debugmode)
-    dest_platform = conf.options.dest_platform
-    if dest_platform is None:
+    if conf.options.dest_platform is None:
         try:
-            dest_platform = conf.options.dest_platform = guess_dest_platform()
+            conf.options.dest_platform = guess_dest_platform()
         except KeyError:
             conf.fatal('Specify --dest-platform')
 
-    platform_info = get_platform_info(dest_platform)
+    platform_info = get_platform_info(conf.options.dest_platform)
     ohnet_plat_dir = platform_info['ohnet_plat_dir']
     build_platform = platform_info['build_platform']
     endian = platform_info['endian']
 
     if build_platform != sys.platform:
-        conf.fatal('Can only build for {0} on {1}, but currently running on {2}.'.format(dest_platform, build_platform, sys.platform))
+        conf.fatal('Can only build for {0} on {1}, but currently running on {2}.'.format(conf.options.dest_platform, build_platform, sys.platform))
 
     env = conf.env
     append = env.append_value
     env.MSVC_TARGETS = ['x86']
-    if dest_platform in ['Windows-x86', 'Windows-x64']:
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.load('msvc')
         append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
         if conf.options.debugmode == 'Debug':
@@ -72,15 +71,15 @@ def configure(conf):
         else:
             append('CXXFLAGS',['-O2'])
         append('LINKFLAGS', ['-pthread'])
-        if dest_platform in ['Linux-x86']:
+        if conf.options.dest_platform in ['Linux-x86']:
             append('VALGRIND_ENABLE', ['1'])
-        if dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM']:
+        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM']:
             append('CXXFLAGS',['-Wno-psabi', '-fPIC'])
-        elif dest_platform in ['Mac-x86', 'Mac-x64']:
-            if dest_platform == 'Mac-x86':
+        elif conf.options.dest_platform in ['Mac-x86', 'Mac-x64']:
+            if conf.options.dest_platform == 'Mac-x86':
                 append('CXXFLAGS', ['-arch', 'i386'])
                 append('LINKFLAGS', ['-arch', 'i386'])
-            if dest_platform == 'Max-x64':
+            if conf.options.dest_platform == 'Mac-x64':
                 append('CXXFLAGS', ['-arch', 'x86_64'])
                 append('LINKFLAGS', ['-arch', 'x86_64'])
             append('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
