@@ -9,7 +9,7 @@ import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree
-from utilfuncs import invoke_test, get_platform_info, set_env_verbose
+from utilfuncs import invoke_test, get_platform_info, guess_dest_platform, set_env_verbose
 
 def options(opt):
     opt.load('msvc')
@@ -37,7 +37,10 @@ def configure(conf):
     conf.msg("debugmode:", debugmode)
     dest_platform = conf.options.dest_platform
     if dest_platform is None:
-        conf.fatal('Specify --dest-platform')
+        try:
+            dest_platform = conf.options.dest_platform = guess_dest_platform()
+        except KeyError:
+            conf.fatal('Specify --dest-platform')
 
     platform_info = get_platform_info(dest_platform)
     ohnet_plat_dir = platform_info['ohnet_plat_dir']
