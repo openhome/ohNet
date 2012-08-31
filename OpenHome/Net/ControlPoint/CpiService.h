@@ -261,7 +261,7 @@ public:
  * - create (possibly allocating) any data required in the callback
  * - use Service::GetInvocation() to retrieve a pointer from an existing pool
  *      the invocation will have Service and Action name set automatically
- *      the invocation will have teh client-specified callback and data set automatically
+ *      the invocation will have the client-specified callback and data set automatically
  * - create one Argument-derived class for each InputParameter on the action
  *      these arguments must have their values set (i.e. use the c'tor taking two params)
  * - call AddInput() for each of these arguments
