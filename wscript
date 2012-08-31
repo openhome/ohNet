@@ -9,7 +9,7 @@ import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree
-from utilfuncs import invoke_test, get_platform_info, guess_dest_platform, set_env_verbose
+from utilfuncs import invoke_test, get_platform_info, guess_dest_platform, guess_ohnet_location
 
 def options(opt):
     opt.load('msvc')
@@ -26,13 +26,6 @@ def options(opt):
     #opt.add_option('--dest', action='store', default=None)
 
 def configure(conf):
-    def match_path(paths, message):
-        for p in paths:
-            fname = p.format(options=conf.options, debugmode_lc=conf.options.debugmode.lower(), platform_info=get_platform_info(conf.options.dest_platform))
-            if os.path.exists(fname):
-                return os.path.abspath(fname)
-        conf.fatal(message)
-
     conf.msg("debugmode:", conf.options.debugmode)
     if conf.options.dest_platform is None:
         try:
@@ -84,20 +77,8 @@ def configure(conf):
             append('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
             append('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
 
-    set_env_verbose(conf, 'INCLUDES_OHNET', match_path(
-        [
-            '{options.ohnet_include_dir}',
-            '{options.ohnet}/Build/Include',
-            'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_lc}-dev/include',
-        ],
-        message='Specify --ohnet-include-dir or --ohnet'))
-    set_env_verbose(conf, 'STLIBPATH_OHNET', match_path(
-        [
-            '{options.ohnet_lib_dir}',
-            '{options.ohnet}/Build/Obj/{platform_info[ohnet_plat_dir]}/{options.debugmode}',
-            'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_lc}-dev/lib',
-        ],
-        message='FAILED.  Was --ohnet-lib-dir or --ohnet specified?  Do the directories they point to (including debug/release) exist?'))
+    guess_ohnet_location(conf)
+
     conf.env.STLIB_OHNET=['ohNetProxies', 'TestFramework', 'ohNetCore']
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
 
