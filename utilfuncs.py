@@ -71,6 +71,41 @@ def guess_dest_platform():
     return '{dest_platform}-{dest_isa}'.format(dest_platform=dest_platform, dest_isa=dest_isa)
 
 
+def guess_ohnet_location(conf):
+    import os.path
+    def set_env_verbose(conf, varname, value):
+        conf.msg(
+            'Setting %s to' % varname,
+            'True' if value is True else
+            'False' if value is False else
+            value)
+        setattr(conf.env, varname, value)
+        return value
+    def match_path(paths, message):
+        for p in paths:
+            fname = p.format(options=conf.options, debugmode_lc=conf.options.debugmode.lower(), platform_info=get_platform_info(conf.options.dest_platform))
+            if os.path.exists(fname):
+                return os.path.abspath(fname)
+        conf.fatal(message)
+    # guess_ohnet_location
+    set_env_verbose(conf, 'INCLUDES_OHNET', match_path(
+        [
+            '{options.ohnet_include_dir}',
+            '{options.ohnet}/Build/Include',
+            'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_lc}-dev/include/ohnet',
+        ],
+        message='Specify --ohnet-include-dir or --ohnet')
+    )
+    set_env_verbose(conf, 'STLIBPATH_OHNET', match_path(
+        [
+            '{options.ohnet_lib_dir}',
+            '{options.ohnet}/Build/Obj/{platform_info[ohnet_plat_dir]}/{options.debugmode}',
+            'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_lc}-dev/lib', 
+        ],
+        message='Specify --ohnet-lib-dir or --ohnet')
+    )
+
+
 def get_platform_info(dest_platform):
     platforms = {
         'Linux-x86': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
@@ -84,13 +119,3 @@ def get_platform_info(dest_platform):
         'iOs-ARM': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac/arm'),
     }
     return platforms[dest_platform]
-
-
-def set_env_verbose(conf, varname, value):
-    conf.msg(
-        'Setting %s to' % varname,
-        'True' if value is True else
-        'False' if value is False else
-        value)
-    setattr(conf.env, varname, value)
-    return value
