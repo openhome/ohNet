@@ -1011,6 +1011,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetDebugSetLevel(uint aLevel);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
         private bool iIsDisposed;
@@ -1134,6 +1140,42 @@ namespace OpenHome.Net.Core
         public void SetCurrentSubnet(NetworkAdapter aSubnet)
         {
             OhNetSetCurrentSubnet(aSubnet.Subnet());
+        }
+
+        public enum DebugLevel: uint
+        {
+            None           = 0,
+            Trace          = 1<<1,
+            Thread         = 1<<2,
+            Network        = 1<<3,
+            Timer          = 1<<4,
+            SsdpMulticast  = 1<<5,
+            SsdpUnicast    = 1<<6,
+            Http           = 1<<7,
+            Device         = 1<<8,
+            XmlFetch       = 1<<9,
+            Service        = 1<<10,
+            Event          = 1<<11,
+            Topology       = 1<<12,
+            DvInvocation   = 1<<13,
+            DvEvent        = 1<<14,
+            DvWebSocket    = 1<<15,
+            Media          = 1<<16,
+            Bonjour        = 1<<17,
+            DvDevice       = 1<<18,
+            Error          = 1<<30,
+            All            = 0x7FFFFFFF,
+            Verbose        = 0x80000000
+        }
+
+        /// <summary>
+        /// Set the level (if any) of debug logging.
+        /// </summary>
+        /// <remarks>Log messages will be passed to the callback registered in InitParams.LogOutput.</remarks>
+        /// <param name="aLevel">Bit(s) specifying which debug levels to enable</param>
+        public static void SetDebugLevel(DebugLevel aLevel)
+        {
+            OhNetDebugSetLevel((uint)aLevel);
         }
 
 #if IOS
