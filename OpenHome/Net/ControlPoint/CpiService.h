@@ -415,7 +415,7 @@ public:
      */
     void Interrupt(const Service& aService);
 private:
-    void LogError(const TChar* aErr);
+    void SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription, const TChar* aLogStr);
     void Run();
 private:
     Fifo<Invoker*>& iFree;

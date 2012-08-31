@@ -641,15 +641,21 @@ void Invoker::Interrupt(const Service& aService)
     }
 }
 
-#ifdef DEFINE_TRACE
-void Invoker::LogError(const TChar* aErr)
-#else
-void Invoker::LogError(const TChar* /*aErr*/)
-#endif
+void Invoker::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription, const TChar* aLogStr)
 {
-    LOG2(kService, kError, "Error - %s - from invocation %p, ", aErr, iInvocation);
-    LOG2(kService, kError, iInvocation->Action().Name());
-    LOG2(kService, kError, "\n");
+    iInvocation->SetError(aLevel, aCode, aDescription);
+    // the above error details might be ignored if an earlier (presumed more detailed) error had been set
+    Error::ELevel level;
+    TUint code;
+    const TChar* desc;
+    (void)iInvocation->Error(level, code, desc);
+    LOG3(kService, kError, kTrace, "Error - %s(%s, %d, %s) - from invocation %p, on action", aLogStr, Error::LevelName(level), code, (desc==NULL? "" : desc), iInvocation);
+    LOG3(kService, kError, kTrace, iInvocation->Action().Name());
+    LOG3(kService, kError, kTrace, ", from device ");
+    LOG3(kService, kError, kTrace, iInvocation->Device().Udn());
+    LOG3(kService, kError, kTrace, "\n");
+
+
 }
 
 void Invoker::Run()
@@ -664,34 +670,22 @@ void Invoker::Run()
             iInvocation->Invoker().InvokeAction(*iInvocation);
         }
         catch (HttpError&) {
-            iInvocation->SetError(Error::eHttp, Error::kCodeUnknown,
-                                  Error::kDescriptionUnknown);
-            LogError("Http");
+            SetError(Error::eHttp, Error::kCodeUnknown, Error::kDescriptionUnknown, "Http");
         }
         catch (NetworkError&) {
-            iInvocation->SetError(Error::eSocket, Error::kCodeUnknown,
-                                  Error::kDescriptionUnknown);
-            LogError("Network");
+            SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown, "Network");
         }
         catch (NetworkTimeout&) {
-            iInvocation->SetError(Error::eSocket, Error::eCodeTimeout,
-                                  Error::kDescriptionSocketTimeout);
-            LogError("NetworkTimeout");
+            SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout, "NetworkTimeout");
         }
         catch (ReaderError&) {
-            iInvocation->SetError(Error::eSocket, Error::kCodeUnknown,
-                                  Error::kDescriptionUnknown);
-            LogError("Reader");
+            SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown, "Reader");
         }
         catch (WriterError&) {
-            iInvocation->SetError(Error::eSocket, Error::kCodeUnknown,
-                                  Error::kDescriptionUnknown);
-            LogError("Writer");
+            SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown, "Writer");
         }
         catch (ParameterValidationError&) {
-            iInvocation->SetError(Error::eService, Error::eCodeParameterInvalid,
-                                  Error::kDescriptionParameterInvalid);
-            LogError("Parameter");
+            SetError(Error::eService, Error::eCodeParameterInvalid, Error::kDescriptionParameterInvalid, "Parameter");
         }
         iLock.Wait();
         iInvocation->SignalCompleted();

@@ -45,7 +45,12 @@ void Error::Output(IAsyncOutput& aConsole)
 
 const TChar* Error::LevelName() const
 {
-    switch (iLevel)
+    return LevelName(iLevel);
+}
+
+const TChar* Error::LevelName(ELevel aLevel)
+{ // static
+    switch (aLevel)
     {
     case eSocket:
         return "Socket";
@@ -59,7 +64,6 @@ const TChar* Error::LevelName() const
         return "Async";
     case eNone:
     default:
-        ASSERTS();
-        return NULL;
+        return "None";
     }
 }
