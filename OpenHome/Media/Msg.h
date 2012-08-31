@@ -64,8 +64,6 @@ template <class T> T* Allocator<T>::Allocate()
     return static_cast<T*>(DoAllocate());
 }
 
-class IMsgProcessor;
-
 class Allocated
 {
     friend class AllocatorBase;
@@ -153,6 +151,8 @@ private:
     //Bws<kMaxCodecNameBytes> iCodecName;
     //TUint iSamples; // bytes/4 - remove
 };
+
+class IMsgProcessor;
 
 class Msg : public Allocated
 {
