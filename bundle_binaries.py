@@ -7,10 +7,11 @@ import os
 def exclude_non_binary(filename):
     if filename.lower().startswith("test"):
         return True
-    return not (filename.endswith(".dll") or filename.endswith(".so") or filename.endswith(".elf")
-                or filename.endswith(".lib") or filename.endswith(".map") or filename.endswith(".pdb")
-                or filename.endswith(".a")
-                or ("." not in filename))
+    executable_extensions = [".dll", ".so", ".elf", ".lib", ".map", ".pdb", ".dylib"]
+    has_executable_extension = any(filename.endswith(ex) for ex in executable_extensions)
+    has_no_extension = "." not in filename
+    is_binary = has_executable_extension or has_no_extension
+    return not is_binary
 
 # Prior to Python 2.6, tarfile's add method doesn't have any filtering
 # mechanism, so we have to replicate that functionality.
