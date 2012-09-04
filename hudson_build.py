@@ -104,7 +104,8 @@ class JenkinsBuild():
             'Windows-x86': { 'os': 'windows', 'arch':'x86', 'publish':True},
             'Windows-x64': { 'os': 'windows', 'arch':'x64', 'publish':True},
             'Macos-x64': { 'os': 'macos', 'arch':'x86', 'publish':False}, # Old Jenkins label
-            'Mac-x64': { 'os': 'macos', 'arch':'x86', 'publish':True}, # New Jenkins label, matches downstream builds
+            'Mac-x64': { 'os': 'macos', 'arch':'x64', 'publish':True}, # New Jenkins label, matches downstream builds
+            'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True}, # New Jenkins label, matches downstream builds
             'Linux-ARM': { 'os': 'linux', 'arch': 'arm', 'publish':True},
         }
         current_platform = self.options.platform
@@ -139,13 +140,13 @@ class JenkinsBuild():
             args.append('--buildonly')
         elif arch == 'x64':
             args.append('--native')
-        if os_platform == 'macos':
-            args.append('--buildonly')
         if os_platform == 'windows' and arch == 'x86':
             args.append('--js')
             args.append('--java')
         if os_platform == 'linux' and arch == 'x86':
             args.append('--java')
+        if os_platform == 'macos' and arch == 'x64':
+            args.append('--mac-64')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
