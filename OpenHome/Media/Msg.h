@@ -122,8 +122,8 @@ class DecodedAudio : public Allocated
     friend class MsgFactory;
 public:
     static const TUint kMaxBytes = 100; // FIXME
-    static const TUint kMaxSubsamples = kMaxBytes/4;
     static const TUint kBytesPerSubsample = sizeof(TUint);
+    static const TUint kMaxSubsamples = kMaxBytes/kBytesPerSubsample;
 public:
     DecodedAudio(AllocatorBase& aAllocator);
     const TUint* Ptr() const; // FIXME - unnecessary?
