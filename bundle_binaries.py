@@ -37,7 +37,7 @@ def main():
     builddir = "Build/Obj/" + osname
     includedir = "Build/Include"
     outputdir = "Build/Bundles"
-    t4dir = "Build/" + osname + "/Tools"
+    t4dir = "Build/Tools"
     templateDir = "OpenHome/Net/T4/Templates"
     uisdkDir = "OpenHome/Net/Bindings/Js/ControlPoint"
 

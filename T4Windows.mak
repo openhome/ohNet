@@ -2,7 +2,7 @@
 
 # Macros used by T4.mak
 
-toolsDir = Build\Windows\Tools^\
+toolsDir = Build\Tools^\
 t4 = $(toolsDir)TextTransform.exe
 ohNetGen = $(toolsDir)OhNetGen.exe
 upnpServiceXml = $(toolsDir)UpnpServiceXml.dll
