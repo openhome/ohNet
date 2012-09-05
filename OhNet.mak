@@ -10,10 +10,12 @@ csplatform = x86
 !if "$(debug)"=="1"
 link_flag_debug = /debug
 debug_specific_cflags = /MTd /Zi /Od /RTC1
+debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
 !else
 link_flag_debug = 
 debug_specific_cflags = /MT /Ox
+debug_csharp = /optimize+
 build_dir = Release
 !endif
 
