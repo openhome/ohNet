@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.334",
+        "version": "1.0.362",
         "archive-suffix": "-dev-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}-dev",
         "configure-args": [
