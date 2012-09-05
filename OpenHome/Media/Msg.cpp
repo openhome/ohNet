@@ -1,4 +1,5 @@
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/RampArray.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Ascii.h>
@@ -12,6 +13,10 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+
+#ifndef MIN
+# define MIN(a, b) ((a) < (b)? (a) : (b))
+#endif // MIN
 
 // AllocatorBase
 
@@ -276,6 +281,11 @@ TUint DecodedAudio::JiffiesFromBytes(TUint aBytes) const
     return jiffies;
 }
 
+TUint DecodedAudio::NumChannels() const
+{
+    return iChannels;
+}
+
 void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
 {
     iChannels = aChannels;
@@ -483,6 +493,155 @@ void MsgAudio::Process(IMsgProcessor& aProcessor)
 }
 */
 
+// Ramp
+
+Ramp::Ramp()
+{
+    Reset();
+
+    // confirm some assumptions made elsewhere in this class
+    // these could be compile-time or one-off run-time assertions
+    ASSERT_DEBUG(kRampMax <= 1<<30); // some 32-bit values in ramp calculations should become 64-bit if this increases
+    ASSERT_DEBUG(kRampArrayCount == 512); // <<22 and >>23 code needs review if this changes
+}
+
+void Ramp::Reset()
+{
+    iStart = kRampMax;
+    iEnd = kRampMax;
+    iDirection = ENone;
+    iEnabled = false;
+}
+
+TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos)
+{
+    ASSERT(aRampDuration >  aFragmentSize || (aStart == kRampMax && aRampDuration ==  aFragmentSize));
+    ASSERT(aDirection != ENone);
+    iEnabled = true;
+    aSplit.Reset();
+    aSplitPos = 0xffffffff;
+    TUint rampDelta = ((TUint64)(kRampMax * aFragmentSize)) / aRampDuration;
+    TUint rampEnd = aDirection == EDown? (TUint)(aStart - rampDelta) : aStart + rampDelta;
+    if (iDirection == ENone) {
+        // No previous ramp.  Trivial to apply the suggested values
+        iDirection = aDirection;
+        iStart = aStart;
+        iEnd = rampEnd;
+    }
+    else if (iDirection == aDirection) {
+        // New ramp runs in the same direction as existing one.  Choose the lower start/end points
+        SelectLowerRampPoints(aStart, rampEnd);
+    }
+    else {
+        // Previous and new ramps run in opposite directions.
+        // Calculate the point at which they intersect.
+        // ... if they don't intersect, use the new values
+        // ...if they do intersect, split the message, selecting ramp with lower start for first and lower end for second
+        /*
+        We start with two lines defined by the points
+            (0, y1), (aFragmentSize, y2)
+            (0, y3), (aFragmentSize, y4)
+        ...we can describe these using the equations y=mx+b & y=nx+c
+        ...where y=mx+b has the lower initial y pos (start ramp)
+        ...we calculate m, n as follows
+            m=(y2-y1)/aFragmentSize
+            n=(y4-y3)/aFragmentSize
+        ... then x, y as follows
+            x=(y3-y1)/(m-n)
+            y=((iEnd-iStart)/aFragmentSize) * x + iStart
+        If x is outside 0..aFragmentSize then the ramps don't intersect during this message
+        ...in this case we fall back to choosing the lower values for start/end
+
+        To avoid rounding errors ('slopes' m,n may be fractional) we change the calculations to
+            x=(aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3))
+            y=((y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1
+        */
+        TUint y1, y2, y3, y4;
+        if (iStart < aStart) {
+            y1 = iStart;
+            y2 = iEnd;
+            y3 = aStart;
+            y4 = rampEnd;
+        }
+        else {
+            y1 = aStart;
+            y2 = rampEnd;
+            y3 = iStart;
+            y4 = iEnd;
+        }
+        if ((y2-y1) == (y4-y3)) {
+            // ramp lines are parallel so won't ever intersect
+            SelectLowerRampPoints(aStart, rampEnd);
+        }
+        else {
+            TInt intersectX = (aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3));
+            TUint intersectY = ((y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1;
+            if (intersectX < 0 || (TUint)intersectX > aFragmentSize) {
+                // ramp lines don't intersect inside this Msg
+                SelectLowerRampPoints(aStart, rampEnd);
+            }
+            else {
+                // split this Ramp; the first portion rises to the intersection of the two ramps, the second drops to the lower final value
+                aSplitPos = intersectX;
+                iDirection = EUp;
+                iStart = MIN(iStart, aStart);
+                iEnd = intersectY;
+                aSplit.iStart = intersectY;
+                aSplit.iEnd = MIN(iEnd, intersectY);
+                aSplit.iDirection = EDown;
+            }
+        }
+    }
+    return aSplit.IsEnabled();
+}
+
+void Ramp::SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd)
+{
+    iStart = MIN(iStart, aRequestedStart);
+    iEnd = MIN(iEnd, aRequestedEnd);
+    if (iStart == iEnd) {
+        iDirection = ENone;
+    }
+    else if (iStart > iEnd) {
+        iDirection = EDown;
+    }
+    else { // iStart < iEnd
+        iDirection = EUp;
+    }
+}
+
+Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
+{
+    Ramp remaining;
+    remaining.iEnd = iEnd;
+    remaining.iDirection = iDirection;
+    remaining.iEnabled = true;
+    TInt ramp = ((TInt64)((iStart-iEnd) * aNewSize)) / aCurrentSize;
+    iEnd = iStart + ramp;
+    remaining.iStart = iEnd;
+    return remaining;
+}
+
+void Ramp::Apply(Bwn& aData, TUint aChannels)
+{
+    ASSERT_DEBUG(aData.Bytes() % (DecodedAudio::kBytesPerSubsample * aChannels) == 0);
+    TUint* ptr = (TUint*)aData.Ptr(); // looks dodgy but we can safely assume ptr is on a word boundary
+    const TUint numSamples = aData.Bytes() / (DecodedAudio::kBytesPerSubsample * aChannels);
+    const TInt64 totalRamp = iStart - iEnd;
+    for (TUint i=0; i<=numSamples; i+=aChannels) {
+        const TUint ramp = iStart - ((TUint)(((TUint64)(i * totalRamp))/numSamples));
+        const TUint rampIndex = 512 - ((kRampMax - ramp + (1<<22)) >> 23); // assumes kRampArray has 512 items. (1<<22 allows rounding up)
+        for (TUint j=0; j<aChannels; j++) { // apply ramp to each subsample
+            TUint subSample = *ptr;
+            TUint rampedSubsample = ((TUint64)(subSample * kRampArray[rampIndex])) >> 16; // >>16 assumes kRampArray values are 16-bit
+            rampedSubsample &= ~0xff; // clear bits which never hold audio data
+            *ptr = rampedSubsample;
+            ptr++;
+        }
+    }
+}
+
+
 // MsgAudio
 
 MsgAudio* MsgAudio::Split(TUint aJiffies)
@@ -496,6 +655,12 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
     remaining->iNextAudio = NULL;
     remaining->iOffset = iOffset + aJiffies;
     remaining->iSize = iSize - aJiffies;
+    if (iRamp.IsEnabled()) {
+        remaining->iRamp = iRamp.Split(aJiffies, iSize);
+    }
+    else {
+        remaining->iRamp.Reset();
+    }
     iSize = aJiffies;
     SplitCompleted(*remaining);
     return remaining;
@@ -517,6 +682,7 @@ MsgAudio* MsgAudio::Clone()
     MsgAudio* clone = Allocate();
     clone->iSize = iSize;
     clone->iOffset = iOffset;
+    clone->iRamp = iRamp;
     clone->iNextAudio = (iNextAudio == NULL? NULL : iNextAudio->Clone());
     return clone;
 }
@@ -532,9 +698,31 @@ TUint MsgAudio::Jiffies() const
     return jiffies;
 }
 
+TUint MsgAudio::SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit)
+{
+    Ramp split;
+    TUint splitPos;
+    TUint rampEnd;
+    if (iRamp.Set(aStart, iSize, aDuration, aDirection, split, splitPos)) {
+        aSplit = Split(splitPos);
+        aSplit->iRamp = split;
+        rampEnd = split.End();
+    }
+    else {
+        rampEnd = iRamp.End();
+    }
+    return rampEnd;
+}
+
 MsgAudio::MsgAudio(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
+}
+
+void MsgAudio::Initialise()
+{
+    iNextAudio = NULL;
+    iRamp.Reset();
 }
 
 void MsgAudio::Clear()
@@ -567,7 +755,7 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     // we don't risk losing any data doing this as the start and end of each DecodedAudio's data fall on sample boundaries
 
     MsgPlayablePcm* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(iAudioData, sizeBytes, offsetBytes);
+    playable->Initialise(iAudioData, sizeBytes, offsetBytes, iRamp);
     if (iNextAudio != NULL) {
         MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable();
         playable->Add(child);
@@ -587,9 +775,9 @@ MsgAudio* MsgAudioPcm::Clone()
 
 void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, Allocator<MsgPlayablePcm>& aAllocatorPlayable)
 {
+    MsgAudio::Initialise();
     iAllocatorPlayable = &aAllocatorPlayable;
     iAudioData = aDecodedAudio;
-    iNextAudio = NULL;
     iSize = iAudioData->Bytes();
     iOffset = 0;
 }
@@ -633,7 +821,7 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aNumChannels)
     TUint offsetBytes = Jiffies::BytesFromJiffies(offsetJiffies, jiffiesPerSample, aNumChannels, DecodedAudio::kBytesPerSubsample);
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(sizeBytes, offsetBytes);
+    playable->Initialise(sizeBytes, offsetBytes, iRamp);
     if (iNextAudio != NULL) {
         MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aNumChannels);
         playable->Add(child);
@@ -654,8 +842,8 @@ Msg* MsgSilence::Process(IMsgProcessor& aProcessor)
 
 void MsgSilence::Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable)
 {
+    MsgAudio::Initialise();
     iAllocatorPlayable = &aAllocatorPlayable;
-    iNextAudio = NULL;
     iSize = aJiffies;
     iOffset = 0;
 }
@@ -674,6 +862,12 @@ MsgPlayable* MsgPlayable::Split(TUint aBytes)
     remaining->iNextPlayable = NULL;
     remaining->iOffset = iOffset + aBytes;
     remaining->iSize = iSize - aBytes;
+    if (iRamp.IsEnabled()) {
+        remaining->iRamp = iRamp.Split(aBytes, iSize);
+    }
+    else {
+        remaining->iRamp.Reset();
+    }
     iSize = aBytes;
     SplitCompleted(*remaining);
     return remaining;
@@ -695,6 +889,7 @@ MsgPlayable* MsgPlayable::Clone()
     MsgPlayable* clone = Allocate();
     clone->iSize = iSize;
     clone->iOffset = iOffset;
+    clone->iRamp = iRamp;
     clone->iNextPlayable = (iNextPlayable == NULL? NULL : iNextPlayable->Clone());
     return clone;
 }
@@ -713,6 +908,14 @@ TUint MsgPlayable::Bytes() const
 MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
+}
+
+void MsgPlayable::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp)
+{
+    iNextPlayable = NULL;
+    iSize = aSizeBytes;
+    iOffset = aOffsetBytes;
+    iRamp = aRamp;
 }
 
 void MsgPlayable::Clear()
@@ -740,12 +943,10 @@ MsgPlayablePcm::MsgPlayablePcm(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes)
+void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp)
 {
-    iNextPlayable = NULL;
+    MsgPlayable::Initialise(aSizeBytes, aOffsetBytes, aRamp);
     iAudioData = aDecodedAudio;
-    iSize = aSizeBytes;
-    iOffset = aOffsetBytes;
 }
 
 MsgPlayable* MsgPlayablePcm::Clone()
@@ -760,7 +961,10 @@ void MsgPlayablePcm::Write(IWriter& aWriter)
 {
     AutoRef a(*this);
     
-    Brn audioBuf((const TByte*)iAudioData->PtrOffsetBytes(iOffset), iSize);
+    Bwn audioBuf((const TByte*)iAudioData->PtrOffsetBytes(iOffset), iSize, iSize);
+    if (iRamp.IsEnabled()) {
+        iRamp.Apply(audioBuf, iAudioData->NumChannels());
+    }
     aWriter.Write(audioBuf);
 
     MsgPlayable* next = iNextPlayable;
@@ -795,11 +999,9 @@ MsgPlayableSilence::MsgPlayableSilence(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aOffsetBytes)
+void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp)
 {
-    iNextPlayable = NULL;
-    iSize = aSizeBytes;
-    iOffset = aOffsetBytes;
+    MsgPlayable::Initialise(aSizeBytes, aOffsetBytes, aRamp);
 }
 
 void MsgPlayableSilence::Write(IWriter& aWriter)

@@ -133,6 +133,7 @@ public:
     TUint Bytes() const;
     TUint BytesFromJiffies(TUint& aJiffies) const;
     TUint JiffiesFromBytes(TUint aBytes) const; // FIXME - unnecessary?
+    TUint NumChannels() const;
 private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian); // sample rate, bit-depth, num channels, const brx& (ptr/len), endianness);
     static void UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
@@ -191,6 +192,37 @@ private:
     TUint iJiffies; // not absolutely required but useful to cache this
 };*/
 
+class Ramp
+{
+    static const TUint kRampMax = 1<<30;
+    static const TUint kRampMin = 0;
+public:
+    enum EDirection
+    {
+        ENone
+       ,EUp
+       ,EDown
+    };
+public:
+    Ramp();
+    void Reset();
+    TBool Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos); // returns true iff aSplit is set
+    Ramp Split(TUint aNewSize, TUint aCurrentSize);
+    void Apply(Bwn& aData, TUint aChannels);
+    //TUint Start() const { return iStart; }
+    TUint End() const { return iEnd; }
+    //EDirection Direction() const { return iDirection; }
+    TBool IsEnabled() const { return iEnabled; }
+private:
+    void SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd);
+private:
+    TUint iStart;
+    TUint iEnd;
+    EDirection iDirection;
+    TBool iEnabled;
+};
+
+
 class MsgFactory;
 
 class MsgAudio : public Msg
@@ -201,8 +233,10 @@ public:
     void Add(MsgAudio* aMsg); // combines MsgAudio instances so they report longer durations etc
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
+    TUint SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
 protected:
     MsgAudio(AllocatorBase& aAllocator);
+    void Initialise();
 protected: // from Msg
     void Clear();
 private:
@@ -213,6 +247,7 @@ protected:
     MsgAudio* iNextAudio;
     TUint iSize; // Jiffies
     TUint iOffset; // Jiffies
+    Ramp iRamp;
 };
 
 class MsgPlayable;
@@ -267,6 +302,7 @@ public:
     virtual void Write(IWriter& aWriter) = 0; // calls RemoveRef on exit - FIXME: needs handling for ErrorWriter exception then
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
+    void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp);
 protected: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -277,6 +313,7 @@ protected:
     MsgPlayable* iNextPlayable;
     TUint iSize; // Bytes
     TUint iOffset; // Bytes
+    Ramp iRamp;
 };
 
 class MsgPlayablePcm : public MsgPlayable
@@ -285,7 +322,7 @@ class MsgPlayablePcm : public MsgPlayable
 public:
     MsgPlayablePcm(AllocatorBase& aAllocator);
 private:
-    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes);
+    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp);
 private: // from MsgPlayable
     MsgPlayable* Clone(); // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
     void Write(IWriter& aWriter); // calls RemoveRef on exit - FIXME: needs handling for ErrorWriter exception then
@@ -303,7 +340,7 @@ class MsgPlayableSilence : public MsgPlayable
 public:
     MsgPlayableSilence(AllocatorBase& aAllocator);
 private:
-    void Initialise(TUint aSizeBytes, TUint aOffsetBytes);
+    void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp);
 private: // from MsgPlayable
     void Write(IWriter& aWriter); // calls RemoveRef on exit
     MsgPlayable* Allocate();
