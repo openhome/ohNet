@@ -51,6 +51,7 @@ private:
     void DoRunCallbacks(Map& aMap);
     void RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdapter& aAdapter);
     static TBool CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ);
+    static void TraceAdapter(const TChar* aPrefix, NetworkAdapter& aAdapter);
     /**
      * Some platforms behave poorly for a short period after delivering a subnet change message.
      * e.g. Windows reports adapters as available/usable but attempts to bind to them may fail.

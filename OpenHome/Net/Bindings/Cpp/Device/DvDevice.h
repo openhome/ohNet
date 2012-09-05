@@ -39,7 +39,7 @@ class DvDeviceStd
 public:
     /**
      * Constructor.  Creates a device ready to have services or attributes added.
-     * Addition of any protocols to operate over is teh responsibility of any sub-classes.
+     * Addition of any protocols to operate over is the responsibility of any sub-classes.
      *
      * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
      *                    calculating/assigning this

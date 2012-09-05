@@ -3,6 +3,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/FunctorMsg.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Debug.h>
 
 #include <stdlib.h>
 
@@ -437,4 +438,9 @@ void STDCALL OhNetFreeExternal(void* aPtr)
     else {
         free(aPtr);
     }
+}
+
+void STDCALL OhNetDebugSetLevel(uint32_t aLevel)
+{
+    Debug::SetLevel(aLevel);
 }

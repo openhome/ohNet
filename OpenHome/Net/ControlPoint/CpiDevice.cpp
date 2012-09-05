@@ -342,6 +342,9 @@ void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
         return;
     }
     iLock.Signal();
+    LOG(kTrace, "Device+ {udn{");
+    LOG(kTrace, aDevice.Udn());
+    LOG(kTrace, "}}\n");
     iAdded(aDevice);
 }
 
@@ -381,6 +384,9 @@ TBool CpiDeviceList::DoRemove(CpiDevice& aDevice)
     if (callObserver) {
         iRemoved(aDevice);
     }
+    LOG(kTrace, "Device-  {udn{");
+    LOG(kTrace, aDevice.Udn());
+    LOG(kTrace, "}}\n");
     aDevice.RemoveRef();
     return true;
 }

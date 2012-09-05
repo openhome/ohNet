@@ -4,13 +4,17 @@ import subprocess
 import time
 import shutil
 import signal
+import platform
 
 def objPath():
     plat = 'Posix'
     if os.name == 'nt':
         plat = 'Windows'
-    elif os.uname()[0] == 'Darwin':
-        plat = 'Mac'
+    elif platform.system() == 'Darwin':
+        if gMac64 == 1:
+            plat = 'Mac-x64'
+        else:
+            plat = 'Mac-x86'
     variant = 'Release'
     if gDebugBuild == 1:
         variant = 'Debug'
@@ -26,6 +30,8 @@ def build(aTarget):
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
     if gDebugBuild == 1:
         buildCmd += ' debug=1'
+    if gMac64 == 1:
+        buildCmd += ' mac-64=1'
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
@@ -158,6 +164,7 @@ gHelgrind = 0
 gRunJavaTests = 0
 gJsTests = 0
 gDebugBuild = 0
+gMac64 = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
@@ -186,6 +193,11 @@ for arg in sys.argv[1:]:
         gHelgrind = 1
         if os.name == 'nt':
             print 'ERROR - helgrind is only supported on linux'
+            sys.exit(1)
+    elif arg == '--mac-64':
+        gMac64 = 1
+        if platform.system() != 'Darwin':
+            print 'ERROR - --mac-64 only applicable on Darwin'
             sys.exit(1)
     else:
         print 'Unrecognised argument - ' + arg
