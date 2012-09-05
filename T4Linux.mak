@@ -3,7 +3,7 @@
 
 # Macros used by T4.mak
 
-toolsDir = Build/Posix/Tools/
+toolsDir = Build/Tools/
 t4 = mono $(toolsDir)TextTransform.exe
 ohNetGen = mono $(toolsDir)OhNetGen.exe
 upnpServiceXml = $(toolsDir)UpnpServiceXml.dll

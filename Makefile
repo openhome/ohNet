@@ -45,13 +45,14 @@ else
 	ifeq ($(mac-64),1)
 		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
 		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
+		osbuilddir = Mac-x64
 	else
 		platform_cflags = -DPLATFORM_MACOSX_GNU -m32 -mmacosx-version-min=10.4
 		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration		
+		osbuilddir = Mac-x86
 	endif
 
-	osbuilddir = Mac
-	objdir = Build/Obj/Mac/$(build_dir)/
+	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
 	link = ${CROSS_COMPILE}g++ -pthread $(platform_linkflags)
 	ar = ${CROSS_COMPILE}ar rc $(objdir)
