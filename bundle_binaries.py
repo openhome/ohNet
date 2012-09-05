@@ -7,7 +7,7 @@ import os
 def exclude_non_binary(filename):
     if filename.lower().startswith("test"):
         return True
-    executable_extensions = [".dll", ".so", ".elf", ".lib", ".map", ".pdb", ".dylib"]
+    executable_extensions = [".dll", ".so", ".elf", ".lib", ".map", ".pdb", ".dylib", ".a"]
     has_executable_extension = any(filename.endswith(ex) for ex in executable_extensions)
     has_no_extension = "." not in filename
     is_binary = has_executable_extension or has_no_extension
