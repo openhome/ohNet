@@ -232,7 +232,10 @@ namespace OpenHome.Net.Core
         public ChangedListener(InitParams.ChangeHandler aHandler)
         {
             iHandler = aHandler;
+            Callback = new InitParams.OhNetCallback(Changed);
         }
+
+        public InitParams.OhNetCallback Callback { get; private set; }
 
 #if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallback))]
@@ -255,7 +258,10 @@ namespace OpenHome.Net.Core
         public MessageListener(InitParams.MessageHandler aHandler)
         {
             iHandler = aHandler;
+            Callback = new InitParams.OhNetCallbackMsg(Message);
         }
+
+        public InitParams.OhNetCallbackMsg Callback { get; private set; }
 
 #if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackMsg))]
@@ -278,7 +284,10 @@ namespace OpenHome.Net.Core
         public NetworkAdapterListener(InitParams.NetworkAdapterHandler aHandler)
         {
             iHandler = aHandler;
+            Callback = new InitParams.OhNetCallbackNetworkAdapter(NetworkAdapter);
         }
+
+        public InitParams.OhNetCallbackNetworkAdapter Callback { get; private set; }
 
 #if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackNetworkAdapter))]
@@ -303,12 +312,15 @@ namespace OpenHome.Net.Core
         public AsyncListener(InitParams.AsyncHandler aHandler)
         {
             iHandler = aHandler;
+            Callback = new InitParams.OhNetCallbackAsync(AsyncListenerCallback);
         }
+
+        public InitParams.OhNetCallbackAsync Callback { get; private set; }
 
 #if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackAsync))]
 #endif
-        public static void Callback(IntPtr aPtr, IntPtr aAsyncHandle)
+        public static void AsyncListenerCallback(IntPtr aPtr, IntPtr aAsyncHandle)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             AsyncListener listener = (AsyncListener)gch.Target;
@@ -825,39 +837,39 @@ namespace OpenHome.Net.Core
 
             if (LogOutput != null)
             {
-                OhNetInitParamsSetLogOutput(nativeParams, MessageListener.Message, LogOutput.Handle());
+                OhNetInitParamsSetLogOutput(nativeParams, LogOutput.Callback, LogOutput.Handle());
             }
             if (FatalErrorHandler != null)
             {
-                OhNetInitParamsSetFatalErrorHandler(nativeParams, MessageListener.Message, FatalErrorHandler.Handle());
+                OhNetInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler.Callback, FatalErrorHandler.Handle());
             }
             if (AsyncBeginHandler != null)
             {
-                OhNetInitParamsSetAsyncBeginHandler(nativeParams, AsyncListener.Callback, AsyncBeginHandler.Handle());
+                OhNetInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler.Callback, AsyncBeginHandler.Handle());
             }
             if (AsyncEndHandler != null)
             {
-                OhNetInitParamsSetAsyncEndHandler(nativeParams, AsyncListener.Callback, AsyncEndHandler.Handle());
+                OhNetInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler.Callback, AsyncEndHandler.Handle());
             }
             if (AsyncErrorHandler != null)
             {
-                OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncListener.Callback, AsyncErrorHandler.Handle());
+                OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler.Callback, AsyncErrorHandler.Handle());
             }
             if (SubnetListChangedListener != null)
             {
-                OhNetInitParamsSetSubnetListChangedListener(nativeParams, ChangedListener.Changed, SubnetListChangedListener.Handle());
+                OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener.Callback, SubnetListChangedListener.Handle());
             }
             if (SubnetAddedListener != null)
             {
-                OhNetInitParamsSetSubnetAddedListener(nativeParams, NetworkAdapterListener.NetworkAdapter, SubnetAddedListener.Handle());
+                OhNetInitParamsSetSubnetAddedListener(nativeParams, SubnetAddedListener.Callback, SubnetAddedListener.Handle());
             }
             if (SubnetRemovedListener != null)
             {
-                OhNetInitParamsSetSubnetRemovedListener(nativeParams, NetworkAdapterListener.NetworkAdapter, SubnetRemovedListener.Handle());
+                OhNetInitParamsSetSubnetRemovedListener(nativeParams, SubnetRemovedListener.Callback, SubnetRemovedListener.Handle());
             }
             if (NetworkAdapterChangedListener != null)
             {
-                OhNetInitParamsSetNetworkAdapterChangedListener(nativeParams, NetworkAdapterListener.NetworkAdapter, NetworkAdapterChangedListener.Handle());
+                OhNetInitParamsSetNetworkAdapterChangedListener(nativeParams, NetworkAdapterChangedListener.Callback, NetworkAdapterChangedListener.Handle());
             }
             OhNetInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
             OhNetInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);
