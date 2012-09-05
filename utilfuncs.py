@@ -54,21 +54,20 @@ def invoke_test(tsk):
 
 
 def guess_dest_platform():
-    import sys
-    if sys.platform == 'linux2':
-        dest_platform = 'Linux'
-    # http://stackoverflow.com/a/2145582: "Python on Windows always reports 'win32'"
-    elif sys.platform == 'win32':
-        dest_platform = 'Windows'
-    elif sys.platform == 'darwin':
-        dest_platform = 'Mac'
-    else:
-        raise KeyError(sys.platform)
-    if sys.maxint == 0x7fffffff:
-        dest_isa = 'x86'
-    else:
-        dest_isa = 'x64'
-    return '{dest_platform}-{dest_isa}'.format(dest_platform=dest_platform, dest_isa=dest_isa)
+    # literally copied (for consistency) from default_platform.py in ohdevtools
+    import platform
+    if platform.system() == 'Windows':
+        return 'Windows-x86'
+    if platform.system() == 'Linux' and platform.architecture()[0] == '32bit':
+        return 'Linux-x86'
+    if platform.system() == 'Linux' and platform.architecture()[0] == '64bit':
+        return 'Linux-x64'
+    if platform.system() == 'Darwin':
+        # Mac behaves similarly to Windows - a 64-bit machine can support
+        # both 32-bit and 64-bit processes. We prefer 32-bit because it's
+        # generally more compatible and in particular Mono is 32-bit-only.
+        return 'Mac-x86'
+    return None
 
 
 def guess_ohnet_location(conf):
