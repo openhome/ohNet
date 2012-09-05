@@ -633,7 +633,7 @@ void Ramp::Apply(Bwn& aData, TUint aChannels)
         const TUint rampIndex = 512 - ((kRampMax - ramp + (1<<22)) >> 23); // assumes kRampArray has 512 items. (1<<22 allows rounding up)
         for (TUint j=0; j<aChannels; j++) { // apply ramp to each subsample
             TUint subSample = *ptr;
-            TUint rampedSubsample = ((TUint64)(subSample * kRampArray[rampIndex])) >> 16; // >>16 assumes kRampArray values are 16-bit
+            TUint rampedSubsample = ((TUint64)(subSample * kRampArray[rampIndex])) >> 32; // >>32 assumes kRampArray values are 32-bit
             rampedSubsample &= ~0xff; // clear bits which never hold audio data
             *ptr = rampedSubsample;
             ptr++;
