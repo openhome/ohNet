@@ -82,6 +82,8 @@ private:
     void ProcessMsg(MsgTrack& aMsg);
     void ProcessMsg(MsgStartOfAudio& aMsg);
     void ProcessMsg(MsgMetaText& aMsg);
+    void ProcessMsg(MsgHalt& aMsg);
+    void ProcessMsg(MsgFlush& aMsg);
 private:
     TUint iLastMsgAudioBytes;
 };
@@ -214,7 +216,7 @@ void SuiteAllocator::Test()
 SuiteMsgAudio::SuiteMsgAudio()
     : Suite("Basic MsgAudio tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1, 1, 1);
 }
 
 SuiteMsgAudio::~SuiteMsgAudio()

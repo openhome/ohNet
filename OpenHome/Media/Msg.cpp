@@ -1058,6 +1058,32 @@ Msg* MsgMetaText::Process(IMsgProcessor& aProcessor)
 }
 
 
+// MsgHalt
+
+MsgHalt::MsgHalt(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+Msg* MsgHalt::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// MsgFlush
+
+MsgFlush::MsgFlush(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+Msg* MsgFlush::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
 // MsgQueue
 
 MsgQueue::MsgQueue()
@@ -1193,6 +1219,14 @@ void MsgQueueJiffies::ProcessMsgIn(MsgMetaText* /*aMsg*/)
 {
 }
 
+void MsgQueueJiffies::ProcessMsgIn(MsgHalt* /*aMsg*/)
+{
+}
+
+void MsgQueueJiffies::ProcessMsgIn(MsgFlush* /*aMsg*/)
+{
+}
+
 Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
     return aMsg;
@@ -1214,6 +1248,16 @@ Msg* MsgQueueJiffies::ProcessMsgOut(MsgTrack* aMsg)
 }
 
 Msg* MsgQueueJiffies::ProcessMsgOut(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgHalt* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgFlush* aMsg)
 {
     return aMsg;
 }
@@ -1258,6 +1302,18 @@ Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
     return aMsg;
 }
 
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgHalt* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgFlush* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
 
 // MsgQueueJiffies::ProcessorQueueOut
 
@@ -1294,6 +1350,16 @@ Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
     return iQueue.ProcessMsgOut(aMsg);
 }
 
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgHalt* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
 
 // AutoRef
 
@@ -1313,7 +1379,7 @@ AutoRef::~AutoRef()
 MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgTrackCount,
-                       TUint aMsgMetaTextCount)
+                       TUint aMsgMetaTextCount, TUint aMsgHaltCount, TUint aMsgFlushCount)
     : iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioPcm("MsgAudioPcm", aMsgAudioPcmCount, aInfoAggregator)
     , iAllocatorMsgSilence("MsgSilence", aMsgSilenceCount, aInfoAggregator)
@@ -1321,6 +1387,8 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     , iAllocatorMsgPlayableSilence("MsgPlayableSilence", aMsgPlayableSilenceCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aMsgTrackCount, aInfoAggregator)
     , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
+    , iAllocatorMsgHalt("MsgHalt", aMsgHaltCount, aInfoAggregator)
+    , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
 {
 }
 
@@ -1347,6 +1415,16 @@ MsgTrack* MsgFactory::CreateMsgTrack()
 MsgMetaText* MsgFactory::CreateMsgMetaText()
 {
     return iAllocatorMsgMetaText.Allocate();
+}
+
+MsgHalt* MsgFactory::CreateMsgHalt()
+{
+    return iAllocatorMsgHalt.Allocate();
+}
+
+MsgFlush* MsgFactory::CreateMsgFlush()
+{
+    return iAllocatorMsgFlush.Allocate();
 }
 
 DecodedAudio* MsgFactory::CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)

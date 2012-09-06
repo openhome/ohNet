@@ -368,6 +368,22 @@ private: // from Msg
     Msg* Process(IMsgProcessor& aProcessor);
 };
 
+class MsgHalt : public Msg
+{
+public:
+    MsgHalt(AllocatorBase& aAllocator);
+private: // from Msg
+    Msg* Process(IMsgProcessor& aProcessor);
+};
+
+class MsgFlush : public Msg
+{
+public:
+    MsgFlush(AllocatorBase& aAllocator);
+private: // from Msg
+    Msg* Process(IMsgProcessor& aProcessor);
+};
+
 class IMsgProcessor
 {
 public:
@@ -376,6 +392,8 @@ public:
     virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgHalt* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgFlush* aMsg) = 0;
 };
 
 class MsgQueue
@@ -411,11 +429,15 @@ private: // from IMsgQueueProcessorIn
     virtual void ProcessMsgIn(MsgPlayable* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
+    virtual void ProcessMsgIn(MsgHalt* aMsg);
+    virtual void ProcessMsgIn(MsgFlush* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
     virtual Msg* ProcessMsgOut(MsgPlayable* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
+    virtual Msg* ProcessMsgOut(MsgHalt* aMsg);
+    virtual Msg* ProcessMsgOut(MsgFlush* aMsg);
 private:
     class ProcessorQueueIn : public IMsgProcessor, private INonCopyable
     {
@@ -427,6 +449,8 @@ private:
         Msg* ProcessMsg(MsgPlayable* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
+        Msg* ProcessMsg(MsgHalt* aMsg);
+        Msg* ProcessMsg(MsgFlush* aMsg);
     private:
         MsgQueueJiffies& iQueue;
     };
@@ -440,6 +464,8 @@ private:
         Msg* ProcessMsg(MsgPlayable* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
+        Msg* ProcessMsg(MsgHalt* aMsg);
+        Msg* ProcessMsg(MsgFlush* aMsg);
     private:
         MsgQueueJiffies& iQueue;
     };
@@ -463,12 +489,14 @@ public:
     MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgTrackCount,
-               TUint aMsgMetaTextCount);
+               TUint aMsgMetaTextCount, TUint aMsgHaltCount, TUint aMsgFlushCount);
     //
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgTrack* CreateMsgTrack();
     MsgMetaText* CreateMsgMetaText();
+    MsgHalt* CreateMsgHalt();
+    MsgFlush* CreateMsgFlush();
 private:
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
@@ -479,6 +507,8 @@ private:
     Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
     Allocator<MsgTrack> iAllocatorMsgTrack;
     Allocator<MsgMetaText> iAllocatorMsgMetaText;
+    Allocator<MsgHalt> iAllocatorMsgHalt;
+    Allocator<MsgFlush> iAllocatorMsgFlush;
 };
 
 } // namespace Media
