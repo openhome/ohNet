@@ -199,7 +199,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetTarget");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -246,7 +246,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetTarget");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -294,7 +294,7 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetStatus");
                 return;
             }
             catch (PropertyUpdateError pue)

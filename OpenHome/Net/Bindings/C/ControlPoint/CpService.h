@@ -310,11 +310,13 @@ DllExport void STDCALL CpInvocationAddOutput(CpInvocationC aInvocation, ActionAr
 /**
  * Query whether the invocation completed successfully
  *
- * @param[in] aInvocation  Returned by CpServiceInvocation
+ * @param[in]  aInvocation  Returned by CpServiceInvocation
+ * @param[out] aErrorCode   Error code
+ * @param[out] aErrorDesc   Error description
  *
  * @return  0 for success; non-zero for error
  */
-DllExport uint32_t STDCALL CpInvocationError(CpInvocationC aInvocation);
+DllExport uint32_t STDCALL CpInvocationError(CpInvocationC aInvocation, uint32_t* aErrorCode, const char** aErrorDesc);
 
 /**
  * Read the value of an integer output argument.  Only intended for use inside the invocation completed callback.

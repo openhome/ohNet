@@ -310,9 +310,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aSink"></param>
         public void EndGetProtocolInfo(IntPtr aAsyncHandle, out String aSource, out String aSink)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aSource = Invocation.OutputString(aAsyncHandle, index++);
@@ -379,9 +381,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRcsID"></param>
         public void EndPrepareForConnection(IntPtr aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aConnectionID = Invocation.OutputInt(aAsyncHandle, index++);
@@ -427,9 +431,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndConnectionComplete(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -472,9 +478,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aConnectionIDs"></param>
         public void EndGetCurrentConnectionIDs(IntPtr aAsyncHandle, out String aConnectionIDs)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aConnectionIDs = Invocation.OutputString(aAsyncHandle, index++);
@@ -547,9 +555,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aStatus"></param>
         public void EndGetCurrentConnectionInfo(IntPtr aAsyncHandle, out int aRcsID, out int aAVTransportID, out String aProtocolInfo, out String aPeerConnectionManager, out int aPeerConnectionID, out String aDirection, out String aStatus)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aRcsID = Invocation.OutputInt(aAsyncHandle, index++);

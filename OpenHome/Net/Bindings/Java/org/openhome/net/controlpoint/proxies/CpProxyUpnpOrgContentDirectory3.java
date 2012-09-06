@@ -982,9 +982,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public String endGetSearchCapabilities(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String searchCaps = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1036,9 +1037,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public String endGetSortCapabilities(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String sortCaps = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1090,9 +1092,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public String endGetSortExtensionCapabilities(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String sortExtensionCaps = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1144,9 +1147,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public String endGetFeatureList(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String featureList = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1198,9 +1202,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public long endGetSystemUpdateID(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long id = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1252,9 +1257,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public String endGetServiceResetToken(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String resetToken = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1327,9 +1333,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public Browse endBrowse(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1410,9 +1417,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public Search endSearch(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String result = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1481,9 +1489,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public CreateObject endCreateObject(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String objectID = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1535,9 +1544,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public void endDestroyObject(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1586,9 +1596,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public void endUpdateObject(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1642,9 +1653,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public String endMoveObject(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String newObjectID = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1701,9 +1713,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public long endImportResource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long transferID = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1760,9 +1773,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public long endExportResource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long transferID = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1810,9 +1824,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public void endDeleteResource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1857,9 +1872,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public void endStopTransferResource(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1917,9 +1933,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public GetTransferProgress endGetTransferProgress(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String transferStatus = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1982,9 +1999,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public String endCreateReference(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String newID = Invocation.getOutputString(aAsyncHandle, index++);
@@ -2047,9 +2065,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public FreeFormQuery endFreeFormQuery(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String queryResult = Invocation.getOutputString(aAsyncHandle, index++);
@@ -2105,9 +2124,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
      */
     public String endGetFreeFormQueryCapabilities(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String fFQCapabilities = Invocation.getOutputString(aAsyncHandle, index++);

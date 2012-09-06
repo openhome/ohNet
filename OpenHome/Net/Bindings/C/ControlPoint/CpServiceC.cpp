@@ -181,12 +181,21 @@ void STDCALL CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument aAr
     invocation->AddOutput(arg);
 }
 
-uint32_t STDCALL CpInvocationError(CpInvocationC aInvocation)
+uint32_t STDCALL CpInvocationError(CpInvocationC aInvocation, uint32_t* aErrorCode, const char** aErrorDesc)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
-    TBool err = invocation->Error();
-    return (err? 1 : 0);
+    Error::ELevel ignore;
+	TUint code;
+	const TChar* desc;
+    if (invocation->Error(ignore, code, desc)) {
+        *aErrorCode = code;
+        *aErrorDesc = desc;
+        return 1;
+    }
+    *aErrorCode = 0;
+    *aErrorDesc = NULL;
+    return 0;
 }
 
 int32_t STDCALL CpInvocationOutputInt(CpInvocationC aInvocation, uint32_t aIndex)

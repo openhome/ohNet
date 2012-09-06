@@ -1,6 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+#if IOS
+using MonoTouch;
+#endif
 
 namespace OpenHome.Net.Core
 {
@@ -55,17 +58,41 @@ namespace OpenHome.Net.Core
             }
         }
 
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetNetworkAdapterAddress(IntPtr aNif);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetNetworkAdapterSubnet(IntPtr aNif);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern IntPtr OhNetNetworkAdapterName(IntPtr aNif);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern IntPtr OhNetNetworkAdapterFullName(IntPtr aNif);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetNetworkAdapterAddRef(IntPtr aNif, IntPtr aCookie);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetNetworkAdapterRemoveRef(IntPtr aNif, IntPtr aCookie);
 
         private IntPtr iHandle;
@@ -177,6 +204,135 @@ namespace OpenHome.Net.Core
         }
     }
 
+    public class Listener : IDisposable
+    {
+        protected Listener()
+        {
+            iGch = GCHandle.Alloc(this);
+        }
+
+        public void Dispose()
+        {
+            if(iGch.IsAllocated)
+            {
+                iGch.Free();
+            }
+        }
+
+        public IntPtr Handle()
+        {
+            return GCHandle.ToIntPtr(iGch);
+        }
+
+        private GCHandle iGch;
+    }
+
+    public class ChangedListener : Listener
+    {
+        public ChangedListener(InitParams.ChangeHandler aHandler)
+        {
+            iHandler = aHandler;
+            Callback = new InitParams.OhNetCallback(Changed);
+        }
+
+        public InitParams.OhNetCallback Callback { get; private set; }
+
+#if IOS
+        [MonoPInvokeCallback (typeof (InitParams.OhNetCallback))]
+#endif
+        public static void Changed(IntPtr aPtr)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            ChangedListener listener = (ChangedListener)gch.Target;
+            if(listener.iHandler != null)
+            {
+                listener.iHandler();
+            }
+        }
+
+        private InitParams.ChangeHandler iHandler;
+    }
+
+    public class MessageListener : Listener
+    {
+        public MessageListener(InitParams.MessageHandler aHandler)
+        {
+            iHandler = aHandler;
+            Callback = new InitParams.OhNetCallbackMsg(Message);
+        }
+
+        public InitParams.OhNetCallbackMsg Callback { get; private set; }
+
+#if IOS
+        [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackMsg))]
+#endif
+        public static void Message(IntPtr aPtr, string aMessage)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            MessageListener listener = (MessageListener)gch.Target;
+            if(listener.iHandler != null)
+            {
+                listener.iHandler(aMessage);
+            }
+        }
+
+        private InitParams.MessageHandler iHandler;
+    }
+
+    public class NetworkAdapterListener : Listener
+    {
+        public NetworkAdapterListener(InitParams.NetworkAdapterHandler aHandler)
+        {
+            iHandler = aHandler;
+            Callback = new InitParams.OhNetCallbackNetworkAdapter(NetworkAdapter);
+        }
+
+        public InitParams.OhNetCallbackNetworkAdapter Callback { get; private set; }
+
+#if IOS
+        [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackNetworkAdapter))]
+#endif
+        public static void NetworkAdapter(IntPtr aPtr, IntPtr aAdapter)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            NetworkAdapterListener listener = (NetworkAdapterListener)gch.Target;
+            gch = GCHandle.FromIntPtr(aAdapter);
+            NetworkAdapter adapter = (NetworkAdapter)gch.Target;
+            if(listener.iHandler != null)
+            {
+                listener.iHandler(adapter);
+            }
+        }
+
+        private InitParams.NetworkAdapterHandler iHandler;
+    }
+
+    public class AsyncListener : Listener
+    {
+        public AsyncListener(InitParams.AsyncHandler aHandler)
+        {
+            iHandler = aHandler;
+            Callback = new InitParams.OhNetCallbackAsync(AsyncListenerCallback);
+        }
+
+        public InitParams.OhNetCallbackAsync Callback { get; private set; }
+
+#if IOS
+        [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackAsync))]
+#endif
+        public static void AsyncListenerCallback(IntPtr aPtr, IntPtr aAsyncHandle)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            AsyncListener listener = (AsyncListener)gch.Target;
+            if(listener.iHandler != null)
+            {
+                listener.iHandler(aAsyncHandle);
+            }
+        }
+
+        private InitParams.AsyncHandler iHandler;
+    }
+
     /// <summary>
     /// Initialisation options
     /// </summary>
@@ -184,26 +340,31 @@ namespace OpenHome.Net.Core
     /// Any functions that are specific to a particular stack include either 'Cp' or 'Dv'</remarks>
     public class InitParams
     {
+        public delegate void ChangeHandler();
+        public delegate void MessageHandler(string aMessage);
+        public delegate void NetworkAdapterHandler(NetworkAdapter aAdapter);
+        public delegate void AsyncHandler(IntPtr aAsyncHandle);
+
         public delegate void OhNetCallback(IntPtr aPtr);
         public delegate void OhNetCallbackNetworkAdapter(IntPtr aPtr, IntPtr aAdapter);
         public delegate void OhNetCallbackMsg(IntPtr aPtr, string aMsg);
         public delegate void OhNetCallbackAsync(IntPtr aPtr, IntPtr aAsyncHandle);
 
-        public OhNetCallbackMsg LogOutput { get; set; }
+        public MessageListener LogOutput { get; set; }
         /// <summary>
         /// A callback which will be run if the library encounters an error it cannot recover from
         /// </summary>
         /// <remarks>Suggested action if this is called is to exit the process and restart the library and its owning application.
         /// 
         /// The string passed to the callback is an error message so would be useful to log.</remarks>
-        public OhNetCallbackMsg FatalErrorHandler { private get; set; }
-        public OhNetCallbackAsync AsyncBeginHandler { private get; set; }
-        public OhNetCallbackAsync AsyncEndHandler { private get; set; }
-        public OhNetCallbackAsync AsyncErrorHandler { private get; set; }
-        public OhNetCallback SubnetListChangedListener { private get; set; }
-        public OhNetCallbackNetworkAdapter SubnetAddedListener { private get; set; }
-        public OhNetCallbackNetworkAdapter SubnetRemovedListener { private get; set; }
-        public OhNetCallbackNetworkAdapter NetworkAdapterChangedListener { private get; set; }
+        public MessageListener FatalErrorHandler { internal get; set; }
+        public AsyncListener AsyncBeginHandler { internal get; set; }
+        public AsyncListener AsyncEndHandler { internal get; set; }
+        public AsyncListener AsyncErrorHandler { internal get; set; }
+        public ChangedListener SubnetListChangedListener { internal get; set; }
+        public NetworkAdapterListener SubnetAddedListener { internal get; set; }
+        public NetworkAdapterListener SubnetRemovedListener { internal get; set; }
+        public NetworkAdapterListener NetworkAdapterChangedListener { internal get; set; }
 
         /// <summary>
         /// A timeout for TCP connections in milliseconds. Must be >0
@@ -346,130 +507,308 @@ namespace OpenHome.Net.Core
 
         private uint iDvUpnpWebServerPort;
 
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern IntPtr OhNetInitParamsCreate();
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsDestroy(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetLogOutput(IntPtr aParams, OhNetCallbackMsg aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetFatalErrorHandler(IntPtr aParams, OhNetCallbackMsg aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetAsyncBeginHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetAsyncEndHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetAsyncErrorHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetSubnetListChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetSubnetAddedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetSubnetRemovedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetNetworkAdapterChangedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetMsearchTime(IntPtr aParams, uint aSecs);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetMsearchTtl(IntPtr aParams, uint aTtl);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetNumEventSessionThreads(IntPtr aParams, uint aNumThreads);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetNumXmlFetcherThreads(IntPtr aParams, uint aNumThreads);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetNumActionInvokerThreads(IntPtr aParams, uint aNumThreads);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetNumInvocations(IntPtr aParams, uint aNumInvocations);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetNumSubscriberThreads(IntPtr aParams, uint aNumThreads);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetSubscriptionDuration(IntPtr aParams, uint aDurationSecs);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetPendingSubscriptionTimeout(IntPtr aParams, uint aTimeoutMs);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetDvMaxUpdateTime(IntPtr aParams, uint aSecs);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetDvNumServerThreads(IntPtr aParams, uint aNumThreads);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetDvNumPublisherThreads(IntPtr aParams, uint aNumThreads);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetDvNumWebSocketThreads(IntPtr aParams, uint aNumThreads);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetCpUpnpEventServerPort(IntPtr aParams, uint aPort);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetDvUpnpServerPort(IntPtr aParams, uint aPort);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetDvWebSocketPort(IntPtr aParams, uint aPort);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetUseLoopbackNetworkAdapter(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsTcpConnectTimeoutMs(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsMsearchTimeSecs(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsMsearchTtl(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsNumEventSessionThreads(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsNumXmlFetcherThreads(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsNumActionInvokerThreads(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsNumInvocations(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsNumSubscriberThreads(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsSubscriptionDurationSecs(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsDvMaxUpdateTimeSecs(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsDvNumServerThreads(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsDvNumPublisherThreads(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsDvNumWebSocketThreads(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsCpUpnpEventServerPort(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsDvUpnpServerPort(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsDvWebSocketPort(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsDvIsBonjourEnabled(IntPtr aParams);
-
-        private static void DefaultActionFunction()
-        {
-            throw new InvalidOperationException("This is a sentinel value and shouldn't actually be invoked.");
-        }
-        // These delegates are stored in the callback properties. If they are still there
-        // when we come to generate the native InitParams, we don't write anything into it
-        // and keep whatever value it has. Using this as a sentinel instead of null is
-        // useful because it allows the user to write null to the property and have it
-        // properly passed through to the library.
-        private static readonly OhNetCallback DefaultCallback = aPtr => DefaultActionFunction();
-        private static readonly OhNetCallbackNetworkAdapter DefaultCallbackNetworkAdapter = (aPtr, aAdapter) => DefaultActionFunction();
-        private static readonly OhNetCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
-        private static readonly OhNetCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
 
         public InitParams()
         {
             IntPtr defaultParams = OhNetInitParamsCreate();
-            
-            LogOutput = DefaultCallbackMsg;
-            FatalErrorHandler = DefaultCallbackMsg;
-            AsyncBeginHandler = DefaultCallbackAsync;
-            AsyncEndHandler = DefaultCallbackAsync;
-            AsyncErrorHandler = DefaultCallbackAsync;
-            SubnetListChangedListener = DefaultCallback;
-            SubnetAddedListener = DefaultCallbackNetworkAdapter;
-            SubnetRemovedListener = DefaultCallbackNetworkAdapter;
-            NetworkAdapterChangedListener = DefaultCallbackNetworkAdapter;
+
+            LogOutput = null;
+            FatalErrorHandler = null;
+            AsyncBeginHandler = null;
+            AsyncEndHandler = null;
+            AsyncErrorHandler = null;
+            SubnetListChangedListener = null;
+            SubnetAddedListener = null;
+            SubnetRemovedListener = null;
+            NetworkAdapterChangedListener = null;
             TcpConnectTimeoutMs = OhNetInitParamsTcpConnectTimeoutMs(defaultParams); 
             MsearchTimeSecs = OhNetInitParamsMsearchTimeSecs(defaultParams); 
             MsearchTtl = OhNetInitParamsMsearchTtl(defaultParams); 
@@ -496,41 +835,41 @@ namespace OpenHome.Net.Core
         {
             IntPtr nativeParams = OhNetInitParamsCreate();
 
-            if (LogOutput != DefaultCallbackMsg)
+            if (LogOutput != null)
             {
-                OhNetInitParamsSetLogOutput(nativeParams, LogOutput, aCallbackPtr);
+                OhNetInitParamsSetLogOutput(nativeParams, LogOutput.Callback, LogOutput.Handle());
             }
-            if (FatalErrorHandler != DefaultCallbackMsg)
+            if (FatalErrorHandler != null)
             {
-                OhNetInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler, aCallbackPtr);
+                OhNetInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler.Callback, FatalErrorHandler.Handle());
             }
-            if (AsyncBeginHandler != DefaultCallbackAsync)
+            if (AsyncBeginHandler != null)
             {
-                OhNetInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler, aCallbackPtr);
+                OhNetInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler.Callback, AsyncBeginHandler.Handle());
             }
-            if (AsyncEndHandler != DefaultCallbackAsync)
+            if (AsyncEndHandler != null)
             {
-                OhNetInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler, aCallbackPtr);
+                OhNetInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler.Callback, AsyncEndHandler.Handle());
             }
-            if (AsyncErrorHandler != DefaultCallbackAsync)
+            if (AsyncErrorHandler != null)
             {
-                OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
+                OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler.Callback, AsyncErrorHandler.Handle());
             }
-            if (SubnetListChangedListener != DefaultCallback)
+            if (SubnetListChangedListener != null)
             {
-                OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener, aCallbackPtr);
+                OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener.Callback, SubnetListChangedListener.Handle());
             }
-            if (SubnetAddedListener != DefaultCallbackNetworkAdapter)
+            if (SubnetAddedListener != null)
             {
-                OhNetInitParamsSetSubnetAddedListener(nativeParams, SubnetAddedListener, aCallbackPtr);
+                OhNetInitParamsSetSubnetAddedListener(nativeParams, SubnetAddedListener.Callback, SubnetAddedListener.Handle());
             }
-            if (SubnetRemovedListener != DefaultCallbackNetworkAdapter)
+            if (SubnetRemovedListener != null)
             {
-                OhNetInitParamsSetSubnetRemovedListener(nativeParams, SubnetRemovedListener, aCallbackPtr);
+                OhNetInitParamsSetSubnetRemovedListener(nativeParams, SubnetRemovedListener.Callback, SubnetRemovedListener.Handle());
             }
-            if (NetworkAdapterChangedListener != DefaultCallbackNetworkAdapter)
+            if (NetworkAdapterChangedListener != null)
             {
-                OhNetInitParamsSetNetworkAdapterChangedListener(nativeParams, NetworkAdapterChangedListener, aCallbackPtr);
+                OhNetInitParamsSetNetworkAdapterChangedListener(nativeParams, NetworkAdapterChangedListener.Callback, NetworkAdapterChangedListener.Handle());
             }
             OhNetInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
             OhNetInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);
@@ -631,36 +970,94 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class Library : IDisposable
     {
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern int OhNetLibraryInitialise(IntPtr aInitParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern int OhNetLibraryInitialiseMinimal(IntPtr aInitParams);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern uint OhNetLibraryStartCp(uint aSubnet);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern uint OhNetLibraryStartDv();
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern uint OhNetLibraryStartCombined(uint aSubnet);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetLibraryClose();
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetFree(IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void OhNetSetCurrentSubnet(uint aSubnet);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
+        static extern void OhNetDebugSetLevel(uint aLevel);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
         private bool iIsDisposed;
 
-        private delegate void CallbackFreeMemory(IntPtr aPtr);
+        private IDisposable iLogOutput;
+        private IDisposable iFatalErrorHandler;
+        private IDisposable iAsyncBeginHandler;
+        private IDisposable iAsyncEndHandler;
+        private IDisposable iAsyncErrorHandler;
+        private IDisposable iSubnetListChangedListener;
+        private IDisposable iSubnetAddedListener;
+        private IDisposable iSubnetRemovedListener;
+        private IDisposable iNetworkAdapterChangedListener;
 
-        private CallbackFreeMemory iCallbackFreeMemory;
+        private delegate void CallbackFreeMemory(IntPtr aPtr);
 
         private void Initialise(InitParams aParams)
         {
+            iLogOutput = aParams.LogOutput;
+            iFatalErrorHandler = aParams.FatalErrorHandler;
+            iAsyncBeginHandler = aParams.AsyncBeginHandler;
+            iAsyncEndHandler = aParams.AsyncEndHandler;
+            iAsyncErrorHandler = aParams.AsyncErrorHandler;
+            iSubnetListChangedListener = aParams.SubnetListChangedListener;
+            iSubnetAddedListener = aParams.SubnetAddedListener;
+            iSubnetRemovedListener = aParams.SubnetRemovedListener;
+            iNetworkAdapterChangedListener = aParams.NetworkAdapterChangedListener;
             IntPtr nativeInitParams = aParams.AllocNativeInitParams(IntPtr.Zero);
-            iCallbackFreeMemory = new CallbackFreeMemory(FreeMemory);
-            OhNetInitParamsSetFreeExternalCallback(nativeInitParams, iCallbackFreeMemory);
+            OhNetInitParamsSetFreeExternalCallback(nativeInitParams, FreeMemory);
             if (0 != OhNetLibraryInitialise(nativeInitParams))
             {
                 InitParams.FreeNativeInitParams(nativeInitParams);
@@ -757,7 +1154,46 @@ namespace OpenHome.Net.Core
             OhNetSetCurrentSubnet(aSubnet.Subnet());
         }
 
-        private void FreeMemory(IntPtr aPtr)
+        public enum DebugLevel: uint
+        {
+            None           = 0,
+            Trace          = 1<<1,
+            Thread         = 1<<2,
+            Network        = 1<<3,
+            Timer          = 1<<4,
+            SsdpMulticast  = 1<<5,
+            SsdpUnicast    = 1<<6,
+            Http           = 1<<7,
+            Device         = 1<<8,
+            XmlFetch       = 1<<9,
+            Service        = 1<<10,
+            Event          = 1<<11,
+            Topology       = 1<<12,
+            DvInvocation   = 1<<13,
+            DvEvent        = 1<<14,
+            DvWebSocket    = 1<<15,
+            Media          = 1<<16,
+            Bonjour        = 1<<17,
+            DvDevice       = 1<<18,
+            Error          = 1<<30,
+            All            = 0x7FFFFFFF,
+            Verbose        = 0x80000000
+        }
+
+        /// <summary>
+        /// Set the level (if any) of debug logging.
+        /// </summary>
+        /// <remarks>Log messages will be passed to the callback registered in InitParams.LogOutput.</remarks>
+        /// <param name="aLevel">Bit(s) specifying which debug levels to enable</param>
+        public static void SetDebugLevel(DebugLevel aLevel)
+        {
+            OhNetDebugSetLevel((uint)aLevel);
+        }
+
+#if IOS
+        [MonoPInvokeCallback (typeof (CallbackFreeMemory))]
+#endif
+        private static void FreeMemory(IntPtr aPtr)
         {
             Marshal.FreeHGlobal(aPtr);
         }
@@ -767,6 +1203,44 @@ namespace OpenHome.Net.Core
             if (!iIsDisposed)
             {
                 iIsDisposed = true;
+
+                if(iLogOutput != null)
+                {
+                    iLogOutput.Dispose();
+                }
+                if(iFatalErrorHandler != null)
+                {
+                    iFatalErrorHandler.Dispose();
+                }
+                if(iAsyncBeginHandler != null)
+                {
+                    iAsyncBeginHandler.Dispose();
+                }
+                if(iAsyncEndHandler != null)
+                {
+                    iAsyncEndHandler.Dispose();
+                }
+                if(iAsyncErrorHandler != null)
+                {
+                    iAsyncErrorHandler.Dispose();
+                }
+                if(iSubnetListChangedListener != null)
+                {
+                    iSubnetListChangedListener.Dispose();
+                }
+                if(iSubnetAddedListener != null)
+                {
+                    iSubnetAddedListener.Dispose();
+                }
+                if(iSubnetRemovedListener != null)
+                {
+                    iSubnetRemovedListener.Dispose();
+                }
+                if(iNetworkAdapterChangedListener != null)
+                {
+                    iNetworkAdapterChangedListener.Dispose();
+                }
+
                 OhNetLibraryClose();
             }
         }

@@ -706,7 +706,7 @@ TestsCs: TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerforma
 
 Tests: TestsNative TestsCs
 
-ohNet.net.dll : ohNetDll $(objdir)ohNet.net.dll
+ohNet.net.dll :  $(objdir)ohNet.net.dll
 
 $(objdir)ohNet.net.dll: \
 	$(csCp)CpDevice.cs \
@@ -721,7 +721,7 @@ $(objdir)ohNet.net.dll: \
 	$(csShared)OhNet.cs \
 	$(csShared)SubnetList.cs \
 	$(csCp)CpDeviceDv.cs
-	$(csharp) /unsafe /t:library /debug+ /warnaserror+\
+	$(csharp) /unsafe /t:library $(debug_csharp) $(csharpdefines) /warnaserror+\
 		/out:$(objdir)ohNet.net.dll \
 		$(csCp)CpDevice.cs \
 		$(csCp)CpDeviceUpnp.cs \
@@ -744,7 +744,7 @@ $(objdir)TestProxyCs.exe: \
 	$(csCpTests)TestProxy.cs \
 	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 	
-	$(csharp) /unsafe /t:exe /debug+ /warnaserror+\
+	$(csharp) /unsafe /t:exe $(debug_csharp) /warnaserror+\
 		/out:$(objdir)TestProxyCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
@@ -761,7 +761,7 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(csCpTests)TestBasicCp.cs \
 	$(csDvTests)TestDvDevice.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
+		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestDvDeviceCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -779,7 +779,7 @@ $(objdir)TestDvLightsCs.exe: \
 	$(objdir)CpOpenhomeOrgTestLights1.net.dll \
 	$(csDvTests)TestDvLights.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
+		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestDvLightsCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestLights1.net.dll \
@@ -797,7 +797,7 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(csCpTests)TestBasicCp.cs \
 	$(csCpTests)TestCpDeviceDv.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
+		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestCpDeviceDvCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -815,7 +815,7 @@ $(objdir)TestPerformanceDvCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csDvTests)TestPerformanceDv.cs
 	$(csharp) \
-		/unsafe /warnaserror+ /t:exe \
+		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestPerformanceDvCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -830,7 +830,7 @@ $(objdir)TestPerformanceCpCs.exe: \
 	$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 	$(csCpTests)TestPerformanceCp.cs
 	$(csharp) \
-		/unsafe /warnaserror+ /t:exe \
+		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestPerformanceCpCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
@@ -1206,7 +1206,7 @@ $(objdir)ohnet-src.jar :
 	$(jar) $(jarflags) $(objdir)ohnet-src.jar -C $(publicjavadir) .
 
 ohNetAndroidNative : make_obj_dir copy_build_includes ohNetJava
-	cp OpenHome/Net/Bindings/Android/jni/ifaddrs.h $(ANDROID_NDK_ROOT)/platforms/android-3/arch-arm/usr/include/
+	#cp OpenHome/Net/Bindings/Android/jni/ifaddrs.h $(ANDROID_NDK_ROOT)/platforms/android-3/arch-arm/usr/include/
 	$(ANDROID_NDK_ROOT)/ndk-build -C OpenHome/Net/Bindings/Android/jni
 	$(mkdir) $(objdir)Android/libs/armeabi
 	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNet.so $(objdir)Android/libs/armeabi/

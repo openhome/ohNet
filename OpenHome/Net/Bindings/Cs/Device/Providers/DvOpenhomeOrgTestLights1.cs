@@ -261,7 +261,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetCount"));
+                invocation.ReportActionError(e, "GetCount");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -309,7 +309,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetRoom"));
+                invocation.ReportActionError(e, "GetRoom");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -357,7 +357,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetName"));
+                invocation.ReportActionError(e, "GetName");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -407,7 +407,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetPosition"));
+                invocation.ReportActionError(e, "GetPosition");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -458,7 +458,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "SetColor"));
+                invocation.ReportActionError(e, "SetColor");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -505,7 +505,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetColor"));
+                invocation.ReportActionError(e, "GetColor");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -556,7 +556,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "GetColorComponents"));
+                invocation.ReportActionError(e, "GetColorComponents");
                 return -1;
             }
             catch (PropertyUpdateError)

@@ -1133,7 +1133,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Characteristics");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1187,7 +1187,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetVolume");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1233,7 +1233,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "VolumeInc");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1279,7 +1279,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "VolumeDec");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1326,7 +1326,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Volume");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1375,7 +1375,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetBalance");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1421,7 +1421,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "BalanceInc");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1467,7 +1467,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "BalanceDec");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1514,7 +1514,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Balance");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1563,7 +1563,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetFade");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1609,7 +1609,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "FadeInc");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1655,7 +1655,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "FadeDec");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1702,7 +1702,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Fade");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1751,7 +1751,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetMute");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1798,7 +1798,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Mute");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1846,7 +1846,7 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "VolumeLimit");
                 return;
             }
             catch (PropertyUpdateError pue)

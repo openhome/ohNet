@@ -219,7 +219,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Time"));
+                invocation.ReportActionError(e, "Time");
                 return -1;
             }
             catch (PropertyUpdateError)

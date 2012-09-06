@@ -13,6 +13,12 @@ namespace OpenHome {
 
 #define ASSERTS()  CallAssertHandler(__FILE__,__LINE__)
 
+#ifdef DEFINE_DEBUG
+# define ASSERT_DEBUG(x) ASSERT(x)
+#else //DEFINE_DEBUG
+# define ASSERT_DEBUG(x)
+#endif //DEFINE_DEBUG
+
 class INonCopyable
 {
 protected:

@@ -16,12 +16,14 @@ public abstract class SyncProxyAction {
 			}
 			catch (ProxyError pe)
 			{
-				iError = true;
+				iProxyError = pe;
 			}
-			catch (Exception e)
+			catch (Throwable e)
 			{
-				System.out.println("ERROR: unexpected exception thrown: " + e.getMessage() + "\nStack trace: " + e.getStackTrace());
-				System.out.println("       Only ProxyError can be thrown by action complete delegates");
+                iProxyError = new ProxyError();
+				System.err.println("ERROR: unexpected exception thrown: " + e);
+				System.err.println("       Only ProxyError can be thrown by action complete delegates");
+				e.printStackTrace();
 			}
 			iSem.release();
 //			synchronized (iSem)
@@ -36,7 +38,7 @@ public abstract class SyncProxyAction {
 	
 	private ICpProxyListener iAsyncComplete;
     private Semaphore iSem;
-    private boolean iError;
+    private ProxyError iProxyError;
     
     protected SyncProxyAction()
     {
@@ -67,9 +69,10 @@ public abstract class SyncProxyAction {
 
     public void reportError()
     {
-        if (iError)
+        if (iProxyError != null)
         {
-            throw new ProxyError();
+			// create a new ProxyError with a meaningful stack trace
+			throw new ProxyError(iProxyError.getErrorCode(), iProxyError.getErrorDescription());
         }
     }
 

@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Core/FunctorAsync.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Net/Core/CpProxy.h>
 
 namespace OpenHome {
 namespace Net {
@@ -34,7 +35,7 @@ private:
 private:
     Semaphore iSem;
     FunctorAsync iFunctor;
-    TBool iError;
+    ProxyError iError;
 };
 
 } // namespace Net

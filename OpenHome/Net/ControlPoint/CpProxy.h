@@ -8,8 +8,6 @@
 
 #include <map>
 
-EXCEPTION(ProxyError);
-
 namespace OpenHome {
 class Mutex;
 namespace Net {
@@ -30,6 +28,21 @@ public:
     virtual void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor) = 0;
     virtual void EventUpdateEnd() = 0;
     virtual ~IEventProcessor() {}
+};
+
+/**
+ * Thrown by Sync or End action invocations.
+ */
+class DllExportClass ProxyError
+{
+public:
+    DllExport ProxyError();
+    DllExport ProxyError(uint32_t aLevel, uint32_t aCode);
+    TUint Level() const;
+    DllExport uint32_t Code() const;
+private:
+    TUint iLevel;
+    TUint iCode;
 };
 
 /**

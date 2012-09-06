@@ -57,6 +57,7 @@ public:
     void Clear();
     ELevel Level() const { return iLevel; }
     const TChar* LevelName() const;
+    static const TChar* LevelName(ELevel aLevel);
     TUint Code() const { return iCode; }
     const TChar* Description() const { return (const TChar*)iDescription.Ptr(); }
 private:

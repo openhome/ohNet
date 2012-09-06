@@ -828,9 +828,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public String endMetadata(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String metadata = Invocation.getOutputString(aAsyncHandle, index++);
@@ -882,9 +883,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public String endImagesXml(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String imagesXml = Invocation.getOutputString(aAsyncHandle, index++);
@@ -939,9 +941,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public byte[] endPlaylistReadArray(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         byte[] array = Invocation.getOutputBinary(aAsyncHandle, index++);
@@ -996,9 +999,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public String endPlaylistReadList(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String playlistList = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1059,9 +1063,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public PlaylistRead endPlaylistRead(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String name = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1117,9 +1122,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public void endPlaylistSetName(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1166,9 +1172,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public void endPlaylistSetDescription(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1215,9 +1222,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public void endPlaylistSetImageId(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1275,9 +1283,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public long endPlaylistInsert(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long newId = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1325,9 +1334,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public void endPlaylistDeleteId(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1374,9 +1384,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public void endPlaylistMove(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1425,9 +1436,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public long endPlaylistsMax(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1479,9 +1491,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public long endTracksMax(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1539,9 +1552,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public PlaylistArrays endPlaylistArrays(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long token = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1602,9 +1616,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public boolean endPlaylistArraysChanged(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         boolean value = Invocation.getOutputBool(aAsyncHandle, index++);
@@ -1661,9 +1676,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public String endRead(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String metadata = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1720,9 +1736,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public String endReadList(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String trackList = Invocation.getOutputString(aAsyncHandle, index++);
@@ -1781,9 +1798,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public long endInsert(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long newTrackId = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -1833,9 +1851,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public void endDeleteId(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -1880,9 +1899,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      */
     public void endDeleteAll(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         

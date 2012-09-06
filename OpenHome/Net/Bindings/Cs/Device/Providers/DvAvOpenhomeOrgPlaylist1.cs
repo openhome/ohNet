@@ -1062,7 +1062,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Play"));
+                invocation.ReportActionError(e, "Play");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1106,7 +1106,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Pause"));
+                invocation.ReportActionError(e, "Pause");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1150,7 +1150,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Stop"));
+                invocation.ReportActionError(e, "Stop");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1194,7 +1194,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Next"));
+                invocation.ReportActionError(e, "Next");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1238,7 +1238,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Previous"));
+                invocation.ReportActionError(e, "Previous");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1284,7 +1284,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "SetRepeat"));
+                invocation.ReportActionError(e, "SetRepeat");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1329,7 +1329,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Repeat"));
+                invocation.ReportActionError(e, "Repeat");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1376,7 +1376,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "SetShuffle"));
+                invocation.ReportActionError(e, "SetShuffle");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1421,7 +1421,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Shuffle"));
+                invocation.ReportActionError(e, "Shuffle");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1468,7 +1468,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "SeekSecondAbsolute"));
+                invocation.ReportActionError(e, "SeekSecondAbsolute");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1514,7 +1514,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "SeekSecondRelative"));
+                invocation.ReportActionError(e, "SeekSecondRelative");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1560,7 +1560,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "SeekId"));
+                invocation.ReportActionError(e, "SeekId");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1606,7 +1606,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "SeekIndex"));
+                invocation.ReportActionError(e, "SeekIndex");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1651,7 +1651,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "TransportState"));
+                invocation.ReportActionError(e, "TransportState");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1697,7 +1697,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Id"));
+                invocation.ReportActionError(e, "Id");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1746,7 +1746,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Read"));
+                invocation.ReportActionError(e, "Read");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1795,7 +1795,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "ReadList"));
+                invocation.ReportActionError(e, "ReadList");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1847,7 +1847,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "Insert"));
+                invocation.ReportActionError(e, "Insert");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1894,7 +1894,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "DeleteId"));
+                invocation.ReportActionError(e, "DeleteId");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1938,7 +1938,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "DeleteAll"));
+                invocation.ReportActionError(e, "DeleteAll");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -1983,7 +1983,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "TracksMax"));
+                invocation.ReportActionError(e, "TracksMax");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -2030,7 +2030,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "IdArray"));
+                invocation.ReportActionError(e, "IdArray");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -2079,7 +2079,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "IdArrayChanged"));
+                invocation.ReportActionError(e, "IdArrayChanged");
                 return -1;
             }
             catch (PropertyUpdateError)
@@ -2125,7 +2125,7 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (ActionError e)
             {
-                invocation.ReportActionError(e, String.Format("Set{0}", "ProtocolInfo"));
+                invocation.ReportActionError(e, "ProtocolInfo");
                 return -1;
             }
             catch (PropertyUpdateError)

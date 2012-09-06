@@ -11,9 +11,11 @@ endif
 
 ifeq ($(debug),1)
 debug_specific_cflags = -g -O0
+debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
 else
 debug_specific_cflags = -O2
+debug_csharp = /optimize+
 build_dir = Release
 endif
 
@@ -23,17 +25,18 @@ ifeq ($(mac-arm),1)
 	# Darwin, ARM -> iOS
 	platform ?= iOS
 	linkopts_ohNet =
-	devroot=/Developer/Platforms/iPhoneOS.platform/Developer
-	sdkroot=$(devroot)/SDKs/iPhoneOS5.0.sdk
-	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
+	devroot=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
+	sdkroot=$(devroot)/SDKs/iPhoneOS5.1.sdk
+	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -I$(sdkroot)/usr/include/c++/4.2.1/armv7-apple-darwin10/ 
 	# It seems a bit weird that iOS uses a sub-dir of Build/Obj/Mac, is that deliberate? --AW
 	osbuilddir = Mac/arm
 	objdir = Build/Obj/Mac/arm/$(build_dir)/
-	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv6  -L$(sdkroot)/usr/lib/system
-	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv6 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk -o $(objdir)
+	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv7  -L$(sdkroot)/usr/lib/system
+	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv7 -isysroot $(sdkroot) -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
-	ar = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar rc $(objdir)
+	ar = $(devroot)/usr/bin/ar rc $(objdir)
+	csharpdefines = /define:IOS /r:monotouch.dll
 
 else
 	# Darwin, not ARM -> Intel Mac
@@ -42,13 +45,14 @@ else
 	ifeq ($(mac-64),1)
 		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
 		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
+		osbuilddir = Mac-x64
 	else
 		platform_cflags = -DPLATFORM_MACOSX_GNU -m32 -mmacosx-version-min=10.4
 		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration		
+		osbuilddir = Mac-x86
 	endif
 
-	osbuilddir = Mac
-	objdir = Build/Obj/Mac/$(build_dir)/
+	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
 	link = ${CROSS_COMPILE}g++ -pthread $(platform_linkflags)
 	ar = ${CROSS_COMPILE}ar rc $(objdir)
@@ -64,28 +68,25 @@ ifeq ($(platform), Core)
 	freertoslwipdir ?= ${FREERTOSLWIP}
 	platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403
 	platform_linkflags = -B$(freertoslwipdir)/lib/ -specs bsp_specs -mcpu=403
-    linkopts_ohNet =
+	linkopts_ohNet =
 	osbuilddir = Volkano2
 	osdir = Volkano2
 	endian = BIG
 	native_only = yes
 endif
 
-ifeq ($(gcc4-1), yes)
+ifeq ($(gcc4_1), yes)
 	version_specific_cflags =
-	version_specific_linkflags = -B${CROSS_COMPILE} -L${CROSS_COMPILE}../../lib  -L${CROSS_COMPILE}../lib
-	version_specific_library_path = LD_LIBRARY_PATH=${CROSS_COMPILE}../lib
 	version_specific_cflags_third_party = -Wno-non-virtual-dtor
-	version_specific_includes = -I${CROSS_COMPILE}../include
 	version_specific_java_cflags = -Wstrict-aliasing=0
 else
 	version_specific_cflags = -Wno-psabi
-	version_specific_linkflags =
-	version_specific_library_path =
 	version_specific_cflags_third_party =
-	version_specific_includes =
 	version_specific_java_cflags =
 endif
+version_specific_linkflags = ${CROSS_COMPILE_LINKFLAGS}
+version_specific_library_path = ${CROSS_COMPILE_LIBRARY_PATH}
+version_specific_includes = ${CROSS_COMPILE_INCLUDES}
 
 ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
@@ -131,7 +132,12 @@ linkoutput = -o
 dllprefix = lib
 link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
 link_dll_service = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
-csharp = dmcs /nologo
+ifeq ($(platform), iOS)
+	csharp = /Developer/MonoTouch/usr/bin/smcs /nologo $(debug_csharp)
+else
+	csharp = dmcs /nologo $(debug_csharp)
+endif
+csharpdefines ?=
 publicjavadir = OpenHome/Net/Bindings/Java/
 
 ifeq ($(platform), IntelMac)

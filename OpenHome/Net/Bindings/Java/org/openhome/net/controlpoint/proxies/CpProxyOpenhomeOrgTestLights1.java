@@ -393,9 +393,10 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public long endGetCount(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long count = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -450,9 +451,10 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public String endGetRoom(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String roomName = Invocation.getOutputString(aAsyncHandle, index++);
@@ -507,9 +509,10 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public String endGetName(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         String friendlyName = Invocation.getOutputString(aAsyncHandle, index++);
@@ -570,9 +573,10 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public GetPosition endGetPosition(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long x = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -628,9 +632,10 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public void endSetColor(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
     }
         
@@ -682,9 +687,10 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public long endGetColor(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long color = Invocation.getOutputUint(aAsyncHandle, index++);
@@ -747,9 +753,10 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public GetColorComponents endGetColorComponents(long aAsyncHandle)
     {
-        if (Invocation.error(aAsyncHandle))
+		ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
         {
-            throw new ProxyError();
+            throw errObj;
         }
         int index = 0;
         long brightness = Invocation.getOutputUint(aAsyncHandle, index++);

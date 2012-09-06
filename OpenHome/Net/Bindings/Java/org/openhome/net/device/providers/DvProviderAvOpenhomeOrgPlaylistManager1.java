@@ -1060,7 +1060,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Metadata");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1108,7 +1108,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ImagesXml");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1158,7 +1158,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistReadArray");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1208,7 +1208,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistReadList");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1264,7 +1264,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistRead");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1317,7 +1317,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistSetName");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1367,7 +1367,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistSetDescription");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1417,7 +1417,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistSetImageId");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1472,7 +1472,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistInsert");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1521,7 +1521,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistDeleteId");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1571,7 +1571,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistMove");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1618,7 +1618,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistsMax");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1666,7 +1666,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "TracksMax");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1720,7 +1720,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistArrays");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1772,7 +1772,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PlaylistArraysChanged");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1824,7 +1824,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Read");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1876,7 +1876,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ReadList");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1930,7 +1930,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Insert");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1981,7 +1981,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "DeleteId");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -2029,7 +2029,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "DeleteAll");
                 return;
             }
             catch (PropertyUpdateError pue)

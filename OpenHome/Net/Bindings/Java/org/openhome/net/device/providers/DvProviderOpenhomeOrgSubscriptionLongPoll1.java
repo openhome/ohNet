@@ -230,7 +230,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Subscribe");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -280,7 +280,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Unsubscribe");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -331,7 +331,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Renew");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -381,7 +381,7 @@ public class DvProviderOpenhomeOrgSubscriptionLongPoll1 extends DvProvider imple
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetPropertyUpdates");
                 return;
             }
             catch (PropertyUpdateError pue)

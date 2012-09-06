@@ -3,11 +3,27 @@ using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
 using System.Threading;
+#if IOS
+using MonoTouch;
+#endif
 
 namespace OpenHome.Net.ControlPoint
 {
     public class ProxyError : Exception
     {
+        public uint Code { get; private set; }
+        public string Description { get; private set; }
+
+        public ProxyError()
+        {
+        }
+        
+        public ProxyError(uint aCode, string aDesc)
+            : base(String.Format("{0}:{1}", aCode, aDesc))
+        {
+            Code = aCode;
+            Description = aDesc;
+        }
     }
     
     /// <summary>
@@ -45,25 +61,65 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpProxy : ICpProxy
     {
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern IntPtr CpProxyCreate(IntPtr aDomain, IntPtr aName, uint aVersion, IntPtr aDevice);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void CpProxyDestroy(IntPtr Proxy);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern IntPtr CpProxyService(IntPtr aProxy);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void CpProxySubscribe(IntPtr aHandle);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void CpProxyUnsubscribe(IntPtr aHandle);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void CpProxySetPropertyChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void CpProxySetPropertyInitialEvent(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void CpProxyPropertyReadLock(IntPtr aHandle);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void CpProxyPropertyReadUnlock(IntPtr aHandle);
+#if IOS
+        [DllImport("__Internal")]
+#else
         [DllImport("ohNet")]
+#endif
         static extern void CpProxyAddProperty(IntPtr aHandle, IntPtr aProperty);
 
         public delegate void CallbackAsyncComplete(IntPtr aAsyncHandle);
@@ -163,15 +219,21 @@ namespace OpenHome.Net.ControlPoint
         {
             CpProxyAddProperty(iHandle, aProperty.Handle());
         }
-        
-        private void PropertyChanged(IntPtr aPtr)
+
+#if IOS
+        [MonoPInvokeCallback (typeof (Callback))]
+#endif
+        private static void PropertyChanged(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpProxy self = (CpProxy)gch.Target;
             Property.CallPropertyChangedDelegate(self.iPropertyChanged);
         }
 
-        private void InitialEvent(IntPtr aPtr)
+#if IOS
+        [MonoPInvokeCallback (typeof (Callback))]
+#endif
+        private static void InitialEvent(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpProxy self = (CpProxy)gch.Target;
@@ -197,7 +259,7 @@ namespace OpenHome.Net.ControlPoint
     {
         private CpProxy.CallbackAsyncComplete iAsyncComplete;
         private Semaphore iSem;
-        private bool iError;
+        private ProxyError iProxyError;
 
         public CpProxy.CallbackAsyncComplete AsyncComplete()
         {
@@ -211,9 +273,9 @@ namespace OpenHome.Net.ControlPoint
 
         public void ReportError()
         {
-            if (iError)
+            if (iProxyError != null)
             {
-                throw new ProxyError();
+                throw iProxyError;
             }
         }
 
@@ -231,12 +293,13 @@ namespace OpenHome.Net.ControlPoint
             {
                 CompleteRequest(aAsyncHandle);
             }
-            catch (ProxyError)
+            catch (ProxyError aProxyError)
             {
-                iError = true;
+                iProxyError = aProxyError;
             }
             catch (System.Exception e)
             {
+                iProxyError = new ProxyError();
                 Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
                 Console.WriteLine("       Only ProxyError can be thrown by action complete delegates");
             }

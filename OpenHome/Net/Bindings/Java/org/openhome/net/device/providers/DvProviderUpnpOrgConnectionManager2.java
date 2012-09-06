@@ -503,7 +503,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetProtocolInfo");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -566,7 +566,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "PrepareForConnection");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -617,7 +617,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ConnectionComplete");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -664,7 +664,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetCurrentConnectionIDs");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -728,7 +728,7 @@ public class DvProviderUpnpOrgConnectionManager2 extends DvProvider implements I
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetCurrentConnectionInfo");
                 return;
             }
             catch (PropertyUpdateError pue)

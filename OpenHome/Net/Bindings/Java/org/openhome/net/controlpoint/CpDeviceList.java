@@ -85,7 +85,17 @@ public class CpDeviceList implements ICpDeviceList
     public void deviceAdded(long aDevice)
     {
     	CpDevice dev = new CpDevice(aDevice);
-    	iListener.deviceAdded(dev);
+        try
+        {
+        	iListener.deviceAdded(dev);
+        }
+        catch (ProxyError pe)
+        {
+            String desc = pe.getErrorDescription();
+            if (desc == null)
+                desc = "<unknown>";
+            System.out.println("WARNING: ProxyError (" + pe.getErrorCode() + ":" + desc + ") thrown in device list added callback");
+        }
     }
     
     /**

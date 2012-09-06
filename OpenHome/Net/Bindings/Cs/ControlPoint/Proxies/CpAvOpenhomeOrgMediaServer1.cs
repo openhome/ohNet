@@ -462,9 +462,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aImageUri"></param>
         public void EndManufacturer(IntPtr aAsyncHandle, out String aName, out String aInfo, out String aUrl, out String aImageUri)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aName = Invocation.OutputString(aAsyncHandle, index++);
@@ -524,9 +526,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aImageUri"></param>
         public void EndModel(IntPtr aAsyncHandle, out String aName, out String aInfo, out String aUrl, out String aImageUri)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aName = Invocation.OutputString(aAsyncHandle, index++);
@@ -586,9 +590,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aImageUri"></param>
         public void EndProduct(IntPtr aAsyncHandle, out String aName, out String aInfo, out String aUrl, out String aImageUri)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aName = Invocation.OutputString(aAsyncHandle, index++);
@@ -636,9 +642,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndAttributes(IntPtr aAsyncHandle, out String aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputString(aAsyncHandle, index++);
@@ -683,9 +691,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndQueryPort(IntPtr aAsyncHandle, out uint aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputUint(aAsyncHandle, index++);
@@ -730,9 +740,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndBrowsePort(IntPtr aAsyncHandle, out uint aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputUint(aAsyncHandle, index++);
@@ -777,9 +789,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndUpdateCount(IntPtr aAsyncHandle, out uint aValue)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aValue = Invocation.OutputUint(aAsyncHandle, index++);
@@ -828,9 +842,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public void EndQuery(IntPtr aAsyncHandle, out String aResult)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aResult = Invocation.OutputString(aAsyncHandle, index++);

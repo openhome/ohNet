@@ -464,7 +464,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Play");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -510,7 +510,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Stop");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -560,7 +560,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "SetSender");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -611,7 +611,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Sender");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -660,7 +660,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ProtocolInfo");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -708,7 +708,7 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "TransportState");
                 return;
             }
             catch (PropertyUpdateError pue)

@@ -8,7 +8,8 @@ all : $(build_targets)
 clean :
 	$(rmdir) $(objdir)
 	$(rmdir) $(inc_build)
-	$(rmdir) Build/Bundles
+	$(rmdir) $(bundle_build)
+	$(rmdir) Build/Docs
 
 
 mostlyclean : clean

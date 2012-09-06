@@ -21,6 +21,9 @@ NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
     iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
+    for (size_t i=0; i<iSubnets->size(); i++) {
+        TraceAdapter("NetworkAdapter added", *(*iSubnets)[i]);
+    }
 }
 
 NetworkAdapterList::~NetworkAdapterList()
@@ -344,11 +347,13 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     // Notify added/removed callbacks.
     if (removed.size() > 0) {
         for (TUint i=0; i < removed.size(); i++) {
+            TraceAdapter("NetworkAdapter removed", *removed[i]);
             RunSubnetCallbacks(iListenersRemoved, *removed[i]);
         }
     }
     if (added.size() > 0) {
         for (TUint i=0; i < added.size(); i++) {
+            TraceAdapter("NetworkAdapter added", *added[i]);
             RunSubnetCallbacks(iListenersAdded, *added[i]);
         }
     }
@@ -356,6 +361,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     // Notify network adapter changed callbacks.
     if (adapterChanged.size() > 0) {
         for (TUint i=0; i < adapterChanged.size(); i++) {
+            TraceAdapter("NetworkAdapter changed", *adapterChanged[i]);
             RunSubnetCallbacks(iListenersAdapterChanged, *adapterChanged[i]);
         }
     }
@@ -398,6 +404,14 @@ void NetworkAdapterList::RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdap
         it++;
     }
     iListenerLock.Signal();
+}
+
+void NetworkAdapterList::TraceAdapter(const TChar* aPrefix, NetworkAdapter& aAdapter)
+{ // static
+    Endpoint ep(0, aAdapter.Address());
+    Bws<Endpoint::kMaxAddressBytes> addr;
+    ep.AppendAddress(addr);
+    LOG(kTrace, "%s: %s(%s)\n", aPrefix, aAdapter.Name(), (const TChar*)addr.Ptr());
 }
 
 void NetworkAdapterList::ListObjectDetails() const

@@ -2,6 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
+#if IOS
+using MonoTouch;
+#endif
 
 namespace OpenHome.Net.ControlPoint
 {
@@ -13,15 +16,35 @@ namespace OpenHome.Net.ControlPoint
     /// All references to class instances must have been removed before Core.Library.Close() is called.</remarks>
     public class CpDevice
     {
-        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern unsafe void CpDeviceCGetUdn(IntPtr aDevice, IntPtr* aUdn, uint* aLen);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpDeviceCAddRef(IntPtr aDevice);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpDeviceCRemoveRef(IntPtr aDevice);
-        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern unsafe int CpDeviceCGetAttribute(IntPtr aDevice, IntPtr aKey, char** aValue);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern unsafe void OhNetFree(void* aPtr);
 
         private IntPtr iHandle;
@@ -121,9 +144,17 @@ namespace OpenHome.Net.ControlPoint
     /// Dispose() must be called before Core.Library.Close().</remarks>
     public class CpDeviceList : ICpDeviceList, IDisposable
     {
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpDeviceListDestroy(IntPtr aListHandle);
-        [DllImport ("ohNet")]
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpDeviceListRefresh(IntPtr aListHandle);
 
         protected IntPtr iHandle;
@@ -176,6 +207,9 @@ namespace OpenHome.Net.ControlPoint
             iFnRemoved = new CallbackDevice(Removed);
         }
 
+#if IOS
+        [MonoPInvokeCallback (typeof (CallbackDevice))]
+#endif
         protected static void Added(IntPtr aPtr, IntPtr aHandle)
         {
             CpDevice device = new CpDevice(aHandle);
@@ -186,6 +220,9 @@ namespace OpenHome.Net.ControlPoint
             }
         }
 
+#if IOS
+        [MonoPInvokeCallback (typeof (CallbackDevice))]
+#endif
         protected static void Removed(IntPtr aPtr, IntPtr aHandle)
         {
             CpDevice device = new CpDevice(aHandle);
@@ -202,10 +239,9 @@ namespace OpenHome.Net.ControlPoint
             {
                 aDelegate(aList, aDevice);
             }
-            catch (Exception e)
+            catch (ProxyError e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         No exceptions should be thrown by device list change delegates");
+                Console.WriteLine("WARNING: ProxyError ({0}:{1}) thrown from {2} in device list change delegate", e.Code, (e.Description != null ? e.Description : "<none>"), e.TargetSite.Name);
             }
         }
     }

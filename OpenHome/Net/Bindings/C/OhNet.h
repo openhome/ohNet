@@ -752,6 +752,23 @@ DllExport void STDCALL OhNetFreeExternal(void* aPtr);
 
 /* @} */
 
+/**
+ * @addtogroup Debug
+ * @ingroup Core
+ * @{
+ */
+
+/**
+ * Enable debug logging.
+ *
+ * Log messages will be passed to the callback registered in OhNetInitParamsSetLogOutput.
+ *
+ * @param[in] aLevel           Bit(s) specifying debug level.  See OpenHome/Private/Debug.h.
+ */
+DllExport void STDCALL OhNetDebugSetLevel(uint32_t aLevel);
+
+/* @} */
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

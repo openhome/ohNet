@@ -913,7 +913,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetSearchCapabilities");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -961,7 +961,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetSortCapabilities");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1009,7 +1009,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetSortExtensionCapabilities");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1057,7 +1057,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetFeatureList");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1105,7 +1105,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetSystemUpdateID");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1173,7 +1173,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Browse");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1244,7 +1244,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "Search");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1303,7 +1303,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "CreateObject");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1353,7 +1353,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "DestroyObject");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1405,7 +1405,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "UpdateObject");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1456,7 +1456,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "MoveObject");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1508,7 +1508,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ImportResource");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1560,7 +1560,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "ExportResource");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1609,7 +1609,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "DeleteResource");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1657,7 +1657,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "StopTransferResource");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1712,7 +1712,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "GetTransferProgress");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1766,7 +1766,7 @@ public class DvProviderUpnpOrgContentDirectory2 extends DvProvider implements ID
             }
             catch (ActionError ae)
             {
-                invocation.reportActionError(ae, "Invalid XML");
+                invocation.reportActionError(ae, "CreateReference");
                 return;
             }
             catch (PropertyUpdateError pue)

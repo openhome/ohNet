@@ -33,6 +33,7 @@ static const TChar kAttributeKeyVersionMinor[] = "Version.Minor";
 DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     : iDevice(aDevice)
     , iLock("DMUP")
+    , iUpdateCount(0)
     , iSuppressScheduledEvents(false)
 {
     SetAttribute(kAttributeKeyVersionMajor, "1");
@@ -469,7 +470,6 @@ void DviProtocolUpnp::SubnetUpdated()
     TBool signal = (--iUpdateCount == 0);
     iLock.Signal();
     if (signal) {
-        DviStack::UpdateBootId();
         SendAliveNotifications();
     }
 }
@@ -498,9 +498,10 @@ void DviProtocolUpnp::SendAliveNotifications()
 void DviProtocolUpnp::SendUpdateNotifications()
 {
     LogMulticastNotification("update");
-    AutoMutex a(iLock);
     iAliveTimer->Cancel();
-    iUpdateCount = (TUint)iAdapters.size();
+    AutoMutex a(iLock);
+    DviStack::UpdateBootId();
+    iUpdateCount += (TUint)iAdapters.size(); // its possible this'll be called while previous updates are still being processed
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetUpdated);
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
@@ -856,7 +857,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
     iWriter.Write("</UDN>");
 
     WriteTag("UPC", "Upc", eTagOptional);
-    WriteTag("iconList", "IconList", eTagOptional);
+    WriteTag("iconList", "IconList", eTagOptional, eTagUnescaped);
 
     const TUint serviceCount = iDeviceUpnp.iDevice.ServiceCount();
     if (serviceCount > 0) {
@@ -926,7 +927,7 @@ void DviProtocolUpnpDeviceXmlWriter::TransferTo(Brh& aBuf)
     iWriter.TransferTo(aBuf);
 }
 
-void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel)
+void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel, ETagEscaped aEscaped)
 {
     const TChar* val;
     iDeviceUpnp.GetAttribute(aAttributeKey, &val);
@@ -935,7 +936,12 @@ void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar
         iWriter.Write(aTagName);
         iWriter.Write('>');
         Brn buf(val);
-        Converter::ToXmlEscaped(iWriter, buf);
+        if (aEscaped == eTagEscaped) {
+            Converter::ToXmlEscaped(iWriter, buf);
+        }
+        else {
+            iWriter.Write(buf);
+        }
         iWriter.Write("</");
         iWriter.Write(aTagName);
         iWriter.Write('>');

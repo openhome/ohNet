@@ -210,9 +210,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aDuration"></param>
         public void EndSubscribe(IntPtr aAsyncHandle, out String aSid, out uint aDuration)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aSid = Invocation.OutputString(aAsyncHandle, index++);
@@ -257,9 +259,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndUnsubscribe(IntPtr aAsyncHandle)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
         }
 
@@ -309,9 +313,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aDuration"></param>
         public void EndRenew(IntPtr aAsyncHandle, out uint aDuration)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aDuration = Invocation.OutputUint(aAsyncHandle, index++);
@@ -360,9 +366,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdates"></param>
         public void EndGetPropertyUpdates(IntPtr aAsyncHandle, out String aUpdates)
         {
-            if (Invocation.Error(aAsyncHandle))
+			uint code;
+			string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
-                throw new ProxyError();
+                throw new ProxyError(code, desc);
             }
             uint index = 0;
             aUpdates = Invocation.OutputString(aAsyncHandle, index++);

@@ -17,7 +17,7 @@ public class Invocation
 	private native long CpServiceInvocation(long aService, long aAction);
 	private static native void CpInvocationAddInput(long aInvocation, long aArgument);
 	private static native void CpInvocationAddOutput(long aInvocation, long aArgument);
-	private static native int CpInvocationError(long aInvocation);
+	private static native ProxyError CpInvocationError(long aInvocation);
 	private static native int CpInvocationOutputInt(long aInvocation, int aIndex);
 	private static native long CpInvocationOutputUint(long aInvocation, int aIndex);
 	private static native int CpInvocationOutputBool(long aInvocation, int aIndex);
@@ -92,12 +92,11 @@ public class Invocation
 	 * <p>Only intended for use in the invocation complete callback.
 	 *
 	 * @param aHandle	invocation to check for errors.
-	 * @return			<tt>true</tt> if the invocation failed; <tt>false</tt> if it succeeded.
+	 * @return			a ProxyError object if the invocation failed; <tt>null</tt> if it succeeded.
 	 */
-	public static boolean error(long aHandle)
+	public static ProxyError error(long aHandle)
     {
-        int err = CpInvocationError(aHandle);
-        return (err != 0);
+        return CpInvocationError(aHandle);
     }
 	
 	/**
@@ -192,10 +191,11 @@ public class Invocation
         catch (ProxyError pe)
         {
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
-        	System.out.println("ERROR: unexpected exception thrown: " + e.getMessage() + "\nStack trace: " + e.getStackTrace());
-			System.out.println("       Only ProxyError can be thrown by action complete delegates");
+            System.err.println("ERROR: unexpected exception thrown: " + e);
+            System.err.println("       Only ProxyError can be thrown by action complete delegates");
+            e.printStackTrace();
         }
 		iService.invocationComplete(this);
     }

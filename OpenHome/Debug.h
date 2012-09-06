@@ -32,6 +32,12 @@ private:
             OpenHome::Log::Print(__VA_ARGS__); \
          } \
         }
+    #define LOG3(x,y,z,...) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x|OpenHome::Debug::y|OpenHome::Debug::z)) \
+         { \
+            OpenHome::Log::Print(__VA_ARGS__); \
+         } \
+        }
     #define LOG2F(x,y,...) \
         {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x|OpenHome::Debug::y)) \
          { \
@@ -88,7 +94,7 @@ class Debug
 {
 public:
     static const TUint kNone           = 0;
-    static const TUint kError          = 1<<1;
+    static const TUint kTrace          = 1<<1;
     static const TUint kThread         = 1<<2;
     static const TUint kNetwork        = 1<<3;
     static const TUint kTimer          = 1<<4;
@@ -106,6 +112,7 @@ public:
     static const TUint kMedia          = 1<<16;
     static const TUint kBonjour        = 1<<17;
     static const TUint kDvDevice       = 1<<18;
+    static const TUint kError          = 1<<30;
 
     static const TUint kAll            = 0x7FFFFFFF;
     static const TUint kVerbose        = 0x80000000;
