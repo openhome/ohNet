@@ -576,6 +576,8 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirecti
         else {
             TInt intersectX = (aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3));
             TUint intersectY = ((y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1;
+            // calculation of intersectY may overflow a TUint.
+            // intersectX will tell us we have no useful intersection in these cases and we'll ignore the Y value.
             if (intersectX < 0 || (TUint)intersectX > aFragmentSize) {
                 // ramp lines don't intersect inside this Msg
                 SelectLowerRampPoints(aStart, rampEnd);
@@ -1109,6 +1111,16 @@ Msg* MsgQueue::Dequeue()
     return head;
 }
 
+void MsgQueue::EnqueueAtHead(Msg* aMsg)
+{
+    ASSERT(aMsg != NULL);
+    iLock.Wait();
+    aMsg->iNextMsg = iHead;
+    iHead = aMsg;
+    iSem.Signal();
+    iLock.Signal();
+}
+
 
 // MsgQueueJiffies
 
@@ -1136,6 +1148,13 @@ Msg* MsgQueueJiffies::DoDequeue()
         msg = msg->Process(procIn);
     } while (msg == NULL);
     return msg;
+}
+
+void MsgQueueJiffies::EnqueueAtHead(Msg* aMsg)
+{
+    ProcessorQueueIn procIn(*this);
+    Msg* msg = aMsg->Process(procIn);
+    iQueue.EnqueueAtHead(msg);
 }
 
 TUint MsgQueueJiffies::Jiffies() const

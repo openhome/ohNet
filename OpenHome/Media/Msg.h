@@ -194,9 +194,9 @@ private:
 
 class Ramp
 {
+public:
     static const TUint kRampMax = 1<<30;
     static const TUint kRampMin = 0;
-public:
     enum EDirection
     {
         ENone
@@ -385,6 +385,7 @@ public:
     ~MsgQueue();
     void Enqueue(Msg* aMsg);
     Msg* Dequeue();
+    void EnqueueAtHead(Msg* aMsg);
 private:
     Mutex iLock;
     Semaphore iSem;
@@ -399,6 +400,7 @@ protected:
     virtual ~MsgQueueJiffies();
     void DoEnqueue(Msg* aMsg);
     Msg* DoDequeue();
+    void EnqueueAtHead(Msg* aMsg);
     TUint Jiffies() const;
 private:
     void AddJiffies(TUint aJiffies);
