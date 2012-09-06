@@ -147,6 +147,9 @@ class JenkinsBuild():
             args.append('--java')
         if os_platform == 'macos' and arch == 'x64':
             args.append('--mac-64')
+            # 32 and 64-bit builds run in parallel on the same slave.
+            # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
+            args.append('--buildonly')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
