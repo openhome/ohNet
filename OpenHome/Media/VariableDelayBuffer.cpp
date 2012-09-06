@@ -10,13 +10,18 @@ using namespace OpenHome::Media;
 
 // VariableDelayBuffer
 
-VariableDelayBuffer::VariableDelayBuffer(MsgFactory& aMsgFactory, TUint aMaxSizeJiffies, TUint aInitialDelay)
+VariableDelayBuffer::VariableDelayBuffer(MsgFactory& aMsgFactory, TUint aMaxSizeJiffies, TUint aInitialDelay, TUint aRampTime)
     : iMsgFactory(aMsgFactory)
     , iMaxJiffies(aMaxSizeJiffies)
     , iDelayJiffies(aInitialDelay)
     , iLock("VDBF")
     , iSem("VDBF", 0)
     , iDelayAdjustment(0)
+    , iStatus(EDefault)
+    , iRampDirection(Ramp::ENone)
+    , iRampDuration(aRampTime)
+    , iCurrentRampValue(Ramp::kRampMax)
+    , iRemainingRampSize(0)
 {
     ASSERT(iDelayJiffies < iMaxJiffies);
     if (iDelayJiffies > 0) {
@@ -37,6 +42,10 @@ void VariableDelayBuffer::AdjustDelay(TUint aJiffies)
     ASSERT(aJiffies < iMaxJiffies);
     iDelayAdjustment += (aJiffies - iDelayJiffies);
     iDelayJiffies = aJiffies;
+    iStatus = ERampingDown;
+    iRampDirection = Ramp::EDown;
+    ASSERT_DEBUG(iCurrentRampValue == Ramp::kRampMax);
+    iRemainingRampSize = iRampDuration;
 }
 
 void VariableDelayBuffer::Enqueue(Msg* aMsg)
@@ -58,9 +67,13 @@ Msg* VariableDelayBuffer::Dequeue()
 {
     Msg* msg;
     iLock.Wait();
-    if (iDelayAdjustment > 0) {
+    if (iStatus == ERampedDown && iDelayAdjustment > 0) {
         msg = iMsgFactory.CreateMsgSilence(iDelayAdjustment);
         iDelayAdjustment = 0;
+        iStatus = ERampingUp;
+        iRampDirection = Ramp::EUp;
+        ASSERT_DEBUG(iCurrentRampValue == Ramp::kRampMin);
+        iRemainingRampSize = iRampDuration;
     }
     else {
         iLock.Signal();
@@ -79,28 +92,6 @@ Msg* VariableDelayBuffer::Dequeue()
     return msg;
 }
 
-MsgAudio* VariableDelayBuffer::DoProcessMsgOut(MsgAudio* aMsg)
-{
-    MsgAudio* msg = aMsg;
-    iLock.Wait();
-    if (iDelayAdjustment < 0) {
-        TUint jiffies = aMsg->Jiffies();
-        if (jiffies > (TUint)(-iDelayAdjustment)) {
-            MsgAudio* remaining = msg->Split(iDelayAdjustment);
-            msg->RemoveRef();
-            msg = remaining;
-            iDelayAdjustment = 0;
-        }
-        else {
-            iDelayAdjustment -= jiffies;
-            msg->RemoveRef();
-            msg = NULL;
-        }
-    }
-    iLock.Signal();
-    return msg;
-}
-
 Msg* VariableDelayBuffer::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
     return DoProcessMsgOut(aMsg);
@@ -109,4 +100,67 @@ Msg* VariableDelayBuffer::ProcessMsgOut(MsgAudioPcm* aMsg)
 Msg* VariableDelayBuffer::ProcessMsgOut(MsgSilence* aMsg)
 {
     return DoProcessMsgOut(aMsg);
+}
+
+MsgAudio* VariableDelayBuffer::DoProcessMsgOut(MsgAudio* aMsg)
+{
+    MsgAudio* msg = aMsg;
+    iLock.Wait();
+    switch (iStatus)
+    {
+    case EDefault:
+        // nothing to do, allow the message to be passed out unchanged
+        break;
+    case ERampingDown:
+    {
+        RampMsg(msg);
+        if (iRemainingRampSize == 0) {
+            iStatus = ERampedDown;
+        }
+    }
+        break;
+    case ERampedDown:
+    {
+        ASSERT(iDelayAdjustment < 0)
+        TUint jiffies = aMsg->Jiffies();
+        MsgAudio* remaining = NULL;
+        if (jiffies > (TUint)(-iDelayAdjustment)) {
+            remaining = msg->Split(iDelayAdjustment);
+        }
+        iDelayAdjustment -= jiffies;
+        msg->RemoveRef();
+        msg = remaining;
+        if (iDelayAdjustment == 0) {
+            iStatus = ERampingUp;
+            iRampDirection = Ramp::EUp;
+            iRemainingRampSize = iRampDuration;
+        }
+    }
+        break;
+    case ERampingUp:
+    {
+        RampMsg(msg);
+        if (iRemainingRampSize == 0) {
+            iStatus = EDefault;
+        }
+    }
+        break;
+    default:
+        ASSERTS();
+    }
+    iLock.Signal();
+    return msg;
+}
+
+void VariableDelayBuffer::RampMsg(MsgAudio* aMsg)
+{
+    TUint jiffies = aMsg->Jiffies();
+    if (aMsg->Jiffies() > iRemainingRampSize) {
+        MsgAudio* remaining = aMsg->Split(iRemainingRampSize);
+        EnqueueAtHead(remaining);
+    }
+    MsgAudio* split;
+    iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRampDuration, iRampDirection, split);
+    ASSERT(split == NULL); // assume we're the first point in the pipeline which applies ramps
+    iRemainingRampSize -= jiffies;
 }

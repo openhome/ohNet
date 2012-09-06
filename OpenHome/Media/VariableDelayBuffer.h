@@ -13,16 +13,27 @@ namespace Media {
 class VariableDelayBuffer : private MsgQueueJiffies
 {
 public:
-    VariableDelayBuffer(MsgFactory& aMsgFactory, TUint aMaxSizeJiffies, TUint aInitialDelay);
+    static const TUint kDefaultRampTime = Jiffies::kJiffiesPerMs * 50;
+public:
+    VariableDelayBuffer(MsgFactory& aMsgFactory, TUint aMaxSizeJiffies, TUint aInitialDelay, TUint aRampTime = kDefaultRampTime);
     ~VariableDelayBuffer();
     void AdjustDelay(TUint aJiffies);
     void Enqueue(Msg* aMsg);
     Msg* Dequeue();
 private:
     MsgAudio* DoProcessMsgOut(MsgAudio* aMsg);
+    void RampMsg(MsgAudio* aMsg);
 private: // from MsgQueueJiffies
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
+private:
+    enum EStatus
+    {
+        EDefault
+       ,ERampingDown
+       ,ERampedDown
+       ,ERampingUp
+    };
 private:
     MsgFactory& iMsgFactory;
     TUint iMaxJiffies;
@@ -31,6 +42,11 @@ private:
     Mutex iLock;
     Semaphore iSem;
     TInt iDelayAdjustment;
+    EStatus iStatus;
+    Ramp::EDirection iRampDirection;
+    const TUint iRampDuration;
+    TUint iCurrentRampValue;
+    TUint iRemainingRampSize;
 };
 
 } // namespace Media
