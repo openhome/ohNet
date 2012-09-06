@@ -75,7 +75,7 @@ ifeq ($(platform), Core)
 	native_only = yes
 endif
 
-ifeq ($(gcc4-1), yes)
+ifeq ($(gcc4_1), yes)
 	version_specific_cflags =
 	version_specific_cflags_third_party = -Wno-non-virtual-dtor
 	version_specific_java_cflags = -Wstrict-aliasing=0
