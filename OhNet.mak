@@ -9,11 +9,13 @@ csplatform = x86
 
 !if "$(debug)"=="1"
 link_flag_debug = /debug
+link_flag_debug_dll = $(link_flag_debug)
 debug_specific_cflags = /MTd /Zi /Od /RTC1
 debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
 !else
-link_flag_debug = 
+link_flag_debug =
+link_flag_debug_dll = /debug /opt:ref
 debug_specific_cflags = /MT /Ox
 debug_csharp = /optimize+
 build_dir = Release
@@ -41,8 +43,8 @@ linkoutput = /out:
 dllprefix =
 dllext = dll
 linkopts_ohNet =
-link_dll = link /nologo $(link_flag_debug) /map Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
-link_dll_service = link /nologo $(link_flag_debug)  /map $(objdir)ohNet.lib Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
+link_dll = link /nologo $(link_flag_debug_dll) /map Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
+link_dll_service = link /nologo $(link_flag_debug_dll)  /map $(objdir)ohNet.lib Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
 csharp = csc /nologo /platform:$(csplatform)
 csharpdefines = 
 publicjavadir = OpenHome\Net\Bindings\Java^\
