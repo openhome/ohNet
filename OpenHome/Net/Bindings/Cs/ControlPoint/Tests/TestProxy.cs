@@ -250,6 +250,7 @@ namespace OpenHome.Net
                         {
                             iDeviceList[i].RemoveRef();
                             iDeviceList.RemoveAt(i);
+                            break;
                         }
                     }
                 }
