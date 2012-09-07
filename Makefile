@@ -124,7 +124,7 @@ ifeq ($(MACHINE), Darwin)
 	sharedlibext = dylib
 	dllext = dylib
 else
-	sharedlibext = so
+	sharedlibext = so.1
 	dllext = so.1
 endif
 exeext = elf
