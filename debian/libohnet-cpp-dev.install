@@ -1,0 +1,3 @@
+Bindings/Cpp/ControlPoint/*.h /usr/include/ohnet/ControlPoint
+Bindings/Cpp/Device/*.h /usr/include/ohnet/Device
+

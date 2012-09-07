@@ -92,7 +92,7 @@ ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
 	platform_cflags = $(version_specific_cflags) -fPIC
 	platform_linkflags = $(version_specific_linkflags) -pthread
-	linkopts_ohNet = -Wl,-soname,libohNet.so
+        linkopts_ohNet = -Wl,-soname,libohNet.so.1
 	osbuilddir = Posix
 	osdir = Posix
 	endian = LITTLE
@@ -125,7 +125,7 @@ ifeq ($(MACHINE), Darwin)
 	dllext = dylib
 else
 	sharedlibext = so
-	dllext = so
+	dllext = so.1
 endif
 exeext = elf
 linkoutput = -o 
@@ -162,6 +162,7 @@ installincludedir = $(prefix)/include/ohNet
 installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
+# T4 to generate wrappers
 uset4 = no
 
 ifeq ($(native_only), yes)
@@ -179,8 +180,6 @@ ifeq ($(uset4), yes)
 include T4Linux.mak
 endif
 
-# Actual building of code is shared between platforms
-include Common.mak
 
 # Include the generated makefiles. Because nmake on Windows requires contortions to
 # include such files and handle their non-existance, these includes have to be at
@@ -189,9 +188,15 @@ ifeq ($(uset4),yes)
 include Generated/GenerateSourceFiles.mak
 endif
 
+# Actual building of code is shared between platforms
+include Common.mak
+
 include Generated/Proxies.mak
 include Generated/Devices.mak
 
+else
+include T4Linux.mak
+include Common.mak
 endif
 include UserTargets.mak
 
@@ -289,10 +294,11 @@ copy_build_includes:
 	$(cp) Os/*.inl $(inc_build)/OpenHome
 
 install : install-pkgconf install-libs install-includes
+	ln -s $(installlibdir)/libohNet.so.1 $(installlibdir)/libohNet.so
 
 uninstall : uninstall-pkgconf uninstall-libs uninstall-includes
 
-install-pkgconf : tt
+install-pkgconf :
 	@echo "ERROR: no support for (un)install-pckconf yet"
     #@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
 

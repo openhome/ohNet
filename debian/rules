@@ -1,0 +1,85 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+%:
+	dh $@ 
+
+build: build-stamp
+
+build-stamp:
+	dh_testdir
+
+	$(MAKE) generate-makefiles uset4=yes
+	$(MAKE) GenAll uset4=yes
+	$(MAKE) uset4=yes
+	$(MAKE) docs
+
+install: build-stamp
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+					
+	$(MAKE) install prefix=$(CURDIR)/debian/tmp/usr
+	mkdir $(CURDIR)/debian/tmp/Bindings
+	cp -r $(CURDIR)/OpenHome/Net/Bindings/* $(CURDIR)/debian/tmp/Bindings
+	find $(CURDIR)/debian/tmp/ -type f -exec chmod 644 '{}' \;
+	find $(CURDIR)/debian/tmp/ -type d -exec chmod 755 '{}' \;
+	mkdir $(CURDIR)/debian/tmp/Docs
+	rm -f $(CURDIR)/Build/Docs/CppCore/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/CppCore/jquery.js
+	rm -f $(CURDIR)/Build/Docs/CppStd/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/CppStd/jquery.js
+	rm -f $(CURDIR)/Build/Docs/Cs/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/Cs/jquery.js
+	rm -f $(CURDIR)/Build/Docs/C/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/C/jquery.js
+	rm -f $(CURDIR)/Build/Docs/Java/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js $(CURDIR)/Build/Docs/Java/jquery.js
+	cp -r $(CURDIR)/Build/Docs $(CURDIR)/debian/tmp/
+
+clean:
+	dh_testdir
+	dh_testroot
+	$(MAKE) maintainer-clean
+	dh_clean
+
+# Build architecture-independent files here.
+binary-indep: build install
+	# We have nothing to do by default.
+	# Build architecture-dependent files here.
+	#
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	
+	dh_installchangelogs
+	dh_compress
+	dh_installdocs
+	dh_strip
+	dh_fixperms
+	dh_makeshlibs
+	dh_shlibdeps
+	dh_installdeb
+	dh_shlibdeps
+	dh_install
+	dh_link
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+build-arch: binary-arch
+
+build-indep: binary-indep
+
+binary: binary-indep binary-arch
+
+.PHONY: build clean binary-indep binary-arch binary install
