@@ -76,11 +76,11 @@ ifeq ($(platform), Core)
 endif
 
 ifeq ($(gcc4_1), yes)
-	version_specific_cflags =
+	version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
 	version_specific_cflags_third_party = -Wno-non-virtual-dtor
 	version_specific_java_cflags = -Wstrict-aliasing=0
 else
-	version_specific_cflags = -Wno-psabi
+	version_specific_cflags = -Wno-psabi ${CROSS_COMPILE_CFLAGS}
 	version_specific_cflags_third_party =
 	version_specific_java_cflags =
 endif
