@@ -212,6 +212,7 @@ void InvocationDv::InvocationReadEnd()
 void InvocationDv::InvocationReportError(TUint aCode, const Brx& aDescription)
 {
     iInvocation.SetError(Error::eUpnp, aCode, aDescription);
+    THROW(InvocationError);
 }
 
 void InvocationDv::InvocationWriteStart()
