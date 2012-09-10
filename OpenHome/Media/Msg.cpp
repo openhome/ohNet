@@ -1147,6 +1147,14 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
     iLock.Signal();
 }
 
+TBool MsgQueue::IsEmpty() const
+{
+    iLock.Wait();
+    const TBool empty = (iHead == NULL);
+    iLock.Signal();
+    return empty;
+}
+
 
 // MsgQueueJiffies
 

@@ -404,8 +404,9 @@ public:
     void Enqueue(Msg* aMsg);
     Msg* Dequeue();
     void EnqueueAtHead(Msg* aMsg);
+    TBool IsEmpty() const;
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     Semaphore iSem;
     Msg* iHead;
     Msg* iTail;
