@@ -235,9 +235,13 @@ void NetworkAdapterList::UpdateCurrentAdapter()
             NetworkAdapter* nif = (*iNetworkAdapters)[i];
             if (nif->Subnet() == iDefaultSubnet) {
                 iCurrent = nif;
+                TraceAdapter("Subnet changed", *iCurrent);
                 break;
             }
         }
+    }
+    if (iCurrent == NULL) {
+        LOG(kTrace, "Subnet changed: none active\n");
     }
 }
 
