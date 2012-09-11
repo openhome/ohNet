@@ -49,7 +49,6 @@ def configure(conf):
             conf.env.append_value('LINKFLAGS', ['/debug'])
         else:
             conf.env.append_value('CXXFLAGS',['/MT', '/Ox'])
-        env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     else:
         conf.load('compiler_cxx')
         conf.env.append_value('CXXFLAGS', [
@@ -77,6 +76,8 @@ def configure(conf):
 
     guess_ohnet_location(conf)
 
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     conf.env.STLIB_OHNET=['ohNetProxies', 'TestFramework', 'ohNetCore']
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
 
