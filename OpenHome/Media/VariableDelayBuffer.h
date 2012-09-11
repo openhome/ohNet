@@ -38,7 +38,6 @@ private:
     MsgFactory& iMsgFactory;
     TUint iMaxJiffies;
     TUint iDelayJiffies;
-    MsgQueue iQueue;
     Mutex iLock;
     Semaphore iSem;
     TInt iDelayAdjustment;
