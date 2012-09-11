@@ -70,6 +70,54 @@ def guess_dest_platform():
     return None
 
 
+def configure_toolchain(conf):
+    import os, sys
+    platform_info = get_platform_info(conf.options.dest_platform)
+    if platform_info['build_platform'] != sys.platform:
+        conf.fatal('Can only build for {0} on {1}, but currently running on {2}.'.format(conf.options.dest_platform, platform_info['build_platform'], sys.platform))
+    conf.env.MSVC_TARGETS = ['x86']
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.load('msvc')
+        conf.env.append_value('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+platform_info['endian']+'_ENDIAN'])
+        if conf.options.debugmode == 'Debug':
+            conf.env.append_value('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
+            conf.env.append_value('LINKFLAGS', ['/debug'])
+        else:
+            conf.env.append_value('CXXFLAGS',['/MT', '/Ox'])
+    else:
+        conf.load('compiler_cxx')
+        conf.env.append_value('CXXFLAGS', [
+                '-fexceptions', '-Wall', '-pipe',
+                '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+platform_info['endian']+'_ENDIAN',
+                '-DDEFINE_TRACE', '-fvisibility=hidden', '-Werror'])
+        if conf.options.debugmode == 'Debug':
+            conf.env.append_value('CXXFLAGS',['-g','-O0'])
+        else:
+            conf.env.append_value('CXXFLAGS',['-O2'])
+        conf.env.append_value('LINKFLAGS', ['-pthread'])
+        if conf.options.dest_platform in ['Linux-x86']:
+            conf.env.append_value('VALGRIND_ENABLE', ['1'])
+        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM']:
+            conf.env.append_value('CXXFLAGS',['-Wno-psabi', '-fPIC'])
+        elif conf.options.dest_platform in ['Mac-x86', 'Mac-x64']:
+            if conf.options.dest_platform == 'Mac-x86':
+                conf.env.append_value('CXXFLAGS', ['-arch', 'i386'])
+                conf.env.append_value('LINKFLAGS', ['-arch', 'i386'])
+            if conf.options.dest_platform == 'Mac-x64':
+                conf.env.append_value('CXXFLAGS', ['-arch', 'x86_64'])
+                conf.env.append_value('LINKFLAGS', ['-arch', 'x86_64'])
+            conf.env.append_value('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
+            conf.env.append_value('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
+    if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
+        cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
+        conf.msg('Cross compiling using compiler prefix:', cross_compile)
+        conf.env.CC = cross_compile + 'gcc'
+        conf.env.CXX = cross_compile + 'g++'
+        conf.env.AR = cross_compile + 'ar'
+        conf.env.LINK_CXX = cross_compile + 'g++'
+        conf.env.LINK_CC = cross_compile + 'gcc'
+
+
 def guess_ohnet_location(conf):
     import os.path
     def set_env_verbose(conf, varname, value):
