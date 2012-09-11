@@ -9,7 +9,7 @@ import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree
-from utilfuncs import invoke_test, get_platform_info, guess_dest_platform, guess_ohnet_location
+from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location
 
 def options(opt):
     opt.load('msvc')
@@ -33,63 +33,13 @@ def configure(conf):
         except KeyError:
             conf.fatal('Specify --dest-platform')
 
-    platform_info = get_platform_info(conf.options.dest_platform)
-    build_platform = platform_info['build_platform']
-    endian = platform_info['endian']
-
-    if build_platform != sys.platform:
-        conf.fatal('Can only build for {0} on {1}, but currently running on {2}.'.format(conf.options.dest_platform, build_platform, sys.platform))
-
-    env = conf.env
-    append = env.append_value
-    env.MSVC_TARGETS = ['x86']
-    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
-        conf.load('msvc')
-        append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
-        if conf.options.debugmode == 'Debug':
-            append('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
-            append('LINKFLAGS', ['/debug'])
-        else:
-            append('CXXFLAGS',['/MT', '/Ox'])
-        env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
-    else:
-        conf.load('compiler_cxx')
-        append('CXXFLAGS', [
-                '-fexceptions', '-Wall', '-pipe',
-                '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+endian+'_ENDIAN',
-                '-DDEFINE_TRACE', '-fvisibility=hidden', '-Werror'])
-        if conf.options.debugmode == 'Debug':
-            append('CXXFLAGS',['-g','-O0'])
-        else:
-            append('CXXFLAGS',['-O2'])
-        append('LINKFLAGS', ['-pthread'])
-        if conf.options.dest_platform in ['Linux-x86']:
-            append('VALGRIND_ENABLE', ['1'])
-        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM']:
-            append('CXXFLAGS',['-Wno-psabi', '-fPIC'])
-        elif conf.options.dest_platform in ['Mac-x86', 'Mac-x64']:
-            if conf.options.dest_platform == 'Mac-x86':
-                append('CXXFLAGS', ['-arch', 'i386'])
-                append('LINKFLAGS', ['-arch', 'i386'])
-            if conf.options.dest_platform == 'Mac-x64':
-                append('CXXFLAGS', ['-arch', 'x86_64'])
-                append('LINKFLAGS', ['-arch', 'x86_64'])
-            append('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
-            append('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
-
+    configure_toolchain(conf)
     guess_ohnet_location(conf)
 
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     conf.env.STLIB_OHNET=['ohNetProxies', 'TestFramework', 'ohNetCore']
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
-
-    if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
-        cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
-        conf.msg('Cross compiling using compiler prefix:', cross_compile)
-        env.CC = cross_compile + 'gcc'
-        env.CXX = cross_compile + 'g++'
-        env.AR = cross_compile + 'ar'
-        env.LINK_CXX = cross_compile + 'g++'
-        env.LINK_CC = cross_compile + 'gcc'
 
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
