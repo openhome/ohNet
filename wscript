@@ -34,16 +34,14 @@ def configure(conf):
             conf.fatal('Specify --dest-platform')
 
     platform_info = get_platform_info(conf.options.dest_platform)
-    build_platform = platform_info['build_platform']
-    endian = platform_info['endian']
 
-    if build_platform != sys.platform:
-        conf.fatal('Can only build for {0} on {1}, but currently running on {2}.'.format(conf.options.dest_platform, build_platform, sys.platform))
+    if platform_info['build_platform'] != sys.platform:
+        conf.fatal('Can only build for {0} on {1}, but currently running on {2}.'.format(conf.options.dest_platform, platform_info['build_platform'], sys.platform))
 
     conf.env.MSVC_TARGETS = ['x86']
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.load('msvc')
-        conf.env.append_value('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
+        conf.env.append_value('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+platform_info['endian']+'_ENDIAN'])
         if conf.options.debugmode == 'Debug':
             conf.env.append_value('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
             conf.env.append_value('LINKFLAGS', ['/debug'])
@@ -53,7 +51,7 @@ def configure(conf):
         conf.load('compiler_cxx')
         conf.env.append_value('CXXFLAGS', [
                 '-fexceptions', '-Wall', '-pipe',
-                '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+endian+'_ENDIAN',
+                '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+platform_info['endian']+'_ENDIAN',
                 '-DDEFINE_TRACE', '-fvisibility=hidden', '-Werror'])
         if conf.options.debugmode == 'Debug':
             conf.env.append_value('CXXFLAGS',['-g','-O0'])
