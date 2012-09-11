@@ -40,42 +40,40 @@ def configure(conf):
     if build_platform != sys.platform:
         conf.fatal('Can only build for {0} on {1}, but currently running on {2}.'.format(conf.options.dest_platform, build_platform, sys.platform))
 
-    env = conf.env
-    append = env.append_value
-    env.MSVC_TARGETS = ['x86']
+    conf.env.MSVC_TARGETS = ['x86']
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.load('msvc')
-        append('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
+        conf.env.append_value('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+endian+'_ENDIAN'])
         if conf.options.debugmode == 'Debug':
-            append('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
-            append('LINKFLAGS', ['/debug'])
+            conf.env.append_value('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
+            conf.env.append_value('LINKFLAGS', ['/debug'])
         else:
-            append('CXXFLAGS',['/MT', '/Ox'])
+            conf.env.append_value('CXXFLAGS',['/MT', '/Ox'])
         env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     else:
         conf.load('compiler_cxx')
-        append('CXXFLAGS', [
+        conf.env.append_value('CXXFLAGS', [
                 '-fexceptions', '-Wall', '-pipe',
                 '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+endian+'_ENDIAN',
                 '-DDEFINE_TRACE', '-fvisibility=hidden', '-Werror'])
         if conf.options.debugmode == 'Debug':
-            append('CXXFLAGS',['-g','-O0'])
+            conf.env.append_value('CXXFLAGS',['-g','-O0'])
         else:
-            append('CXXFLAGS',['-O2'])
-        append('LINKFLAGS', ['-pthread'])
+            conf.env.append_value('CXXFLAGS',['-O2'])
+        conf.env.append_value('LINKFLAGS', ['-pthread'])
         if conf.options.dest_platform in ['Linux-x86']:
-            append('VALGRIND_ENABLE', ['1'])
+            conf.env.append_value('VALGRIND_ENABLE', ['1'])
         if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM']:
-            append('CXXFLAGS',['-Wno-psabi', '-fPIC'])
+            conf.env.append_value('CXXFLAGS',['-Wno-psabi', '-fPIC'])
         elif conf.options.dest_platform in ['Mac-x86', 'Mac-x64']:
             if conf.options.dest_platform == 'Mac-x86':
-                append('CXXFLAGS', ['-arch', 'i386'])
-                append('LINKFLAGS', ['-arch', 'i386'])
+                conf.env.append_value('CXXFLAGS', ['-arch', 'i386'])
+                conf.env.append_value('LINKFLAGS', ['-arch', 'i386'])
             if conf.options.dest_platform == 'Mac-x64':
-                append('CXXFLAGS', ['-arch', 'x86_64'])
-                append('LINKFLAGS', ['-arch', 'x86_64'])
-            append('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
-            append('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
+                conf.env.append_value('CXXFLAGS', ['-arch', 'x86_64'])
+                conf.env.append_value('LINKFLAGS', ['-arch', 'x86_64'])
+            conf.env.append_value('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
+            conf.env.append_value('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
 
     guess_ohnet_location(conf)
 
@@ -85,11 +83,11 @@ def configure(conf):
     if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
         cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
         conf.msg('Cross compiling using compiler prefix:', cross_compile)
-        env.CC = cross_compile + 'gcc'
-        env.CXX = cross_compile + 'g++'
-        env.AR = cross_compile + 'ar'
-        env.LINK_CXX = cross_compile + 'g++'
-        env.LINK_CC = cross_compile + 'gcc'
+        conf.env.CC = cross_compile + 'gcc'
+        conf.env.CXX = cross_compile + 'g++'
+        conf.env.AR = cross_compile + 'ar'
+        conf.env.LINK_CXX = cross_compile + 'g++'
+        conf.env.LINK_CC = cross_compile + 'gcc'
 
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
