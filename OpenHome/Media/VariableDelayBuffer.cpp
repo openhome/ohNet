@@ -25,7 +25,7 @@ VariableDelayBuffer::VariableDelayBuffer(MsgFactory& aMsgFactory, TUint aMaxSize
 {
     ASSERT(iDelayJiffies < iMaxJiffies);
     if (iDelayJiffies > 0) {
-        Enqueue(iMsgFactory.CreateMsgSilence(iDelayJiffies));
+        Enqueue(iMsgFactory.CreateMsgSilence(iDelayJiffies)); // FIXME - possible benefits in splitting silence into many small blocks?
     }
 }
 
@@ -79,14 +79,6 @@ Msg* VariableDelayBuffer::Dequeue()
         iLock.Signal();
         msg = DoDequeue();
         iLock.Wait();
-    }
-    if (Jiffies() + iDelayAdjustment > iDelayJiffies) {
-        // Too much audio in the buffer.  Block adds until more is read
-        (void)iSem.Clear();
-    }
-    else {
-        // room in the buffer.  Allow further data to be added
-        iSem.Signal();
     }
     iLock.Signal();
     return msg;
@@ -148,6 +140,16 @@ MsgAudio* VariableDelayBuffer::DoProcessMsgOut(MsgAudio* aMsg)
     default:
         ASSERTS();
     }
+
+    if (Jiffies() + iDelayAdjustment > iDelayJiffies) {
+        // Too much audio in the buffer.  Block adds until more is read
+        (void)iSem.Clear();
+    }
+    else {
+        // room in the buffer.  Allow further data to be added
+        iSem.Signal();
+    }
+
     iLock.Signal();
     return msg;
 }
