@@ -1,0 +1,21 @@
+# for syntax, see:  man gitattributes
+# for pattern-matching rules, see:  man gitignore
+
+# default, selectively overridden below;
+# implicitly relies on git's heuristics for identifying text files
+*       text=auto
+
+# source code transparently converted to native line endings
+*.cpp   text
+*.h     text
+
+# Windows-only files use CR+LF line endings (across all platforms)
+*.bat   eol=crlf
+
+# by fiat: licences and valgrind exemptions use LF line endings
+*.txt   eol=lf
+
+# by fiat: all project configuration use LF line endings;
+# overriding all extension-specific rules above;
+# leading and trailing slash significant
+/projectdata/   eol=lf
