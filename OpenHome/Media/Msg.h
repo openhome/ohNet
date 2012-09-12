@@ -121,7 +121,7 @@ class DecodedAudio : public Allocated
 {
     friend class MsgFactory;
 public:
-    static const TUint kMaxBytes = 100; // FIXME
+    static const TUint kMaxBytes = 6 * 1024;
     static const TUint kBytesPerSubsample = sizeof(TUint);
     static const TUint kMaxSubsamples = kMaxBytes/kBytesPerSubsample;
 public:
@@ -230,7 +230,7 @@ class MsgAudio : public Msg
     friend class MsgFactory;
 public:
     MsgAudio* Split(TUint aJiffies); // returns block after aAt
-    void Add(MsgAudio* aMsg); // combines MsgAudio instances so they report longer durations etc
+    //void Add(MsgAudio* aMsg); // combines MsgAudio instances so they report longer durations etc
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
     TUint SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()

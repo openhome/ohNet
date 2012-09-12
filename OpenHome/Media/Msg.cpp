@@ -667,7 +667,7 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
     SplitCompleted(*remaining);
     return remaining;
 }
-
+/*
 void MsgAudio::Add(MsgAudio* aMsg)
 {
     MsgAudio* end = this;
@@ -678,7 +678,7 @@ void MsgAudio::Add(MsgAudio* aMsg)
     }
     end->iNextAudio = aMsg;
 }
-
+*/
 MsgAudio* MsgAudio::Clone()
 {
     MsgAudio* clone = Allocate();
