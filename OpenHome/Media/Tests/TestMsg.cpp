@@ -73,18 +73,6 @@ private:
 };
 
 #if 0
-class SuiteMsgAudioOld : public Suite
-{
-    static const TUint kMsgCount = 8;
-public:
-    SuiteMsgAudioOld();
-    ~SuiteMsgAudioOld();
-    void Test();
-private:
-    MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
-};
-
 class SuiteMsgQueue : public Suite
 {
     static const TUint kMsgCount = 8;
@@ -236,122 +224,6 @@ void SuiteAllocator::Test()
 }
 
 #if 0
-// SuiteMsgAudioOld
-
-SuiteMsgAudioOld::SuiteMsgAudioOld()
-    : Suite("Basic MsgAudio tests")
-{
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1, 1, 1);
-}
-
-SuiteMsgAudioOld::~SuiteMsgAudioOld()
-{
-    delete iMsgFactory;
-}
-
-void SuiteMsgAudioOld::Test()
-{
-    // create 3 msgs.  Check their lengths are as expected
-    Brn data1("0123456789");
-    Brn data2("abcde");
-    Brn data3("fghijklmnopqrstuvwxyz");
-    MsgAudio* msg1 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
-    TEST(msg1->Bytes() == data1.Bytes() * sizeof(TUint));
-    MsgAudio* msg2 = iMsgFactory->CreateMsgAudio(data2, 1, 44100, 8, EMediaDataLittleEndian);
-    TEST(msg2->Bytes() == data2.Bytes() * sizeof(TUint));
-    MsgAudio* msg3 = iMsgFactory->CreateMsgAudio(data3, 1, 44100, 8, EMediaDataLittleEndian);
-    TEST(msg3->Bytes() == data3.Bytes() * sizeof(TUint));
-
-    // Add msgs.  Check length of #1 increases as expected
-    msg1->Add(msg2);
-    TEST(msg1->Bytes() == (data1.Bytes() + data2.Bytes()) * sizeof(TUint));
-    msg1->Add(msg3);
-    TEST(msg1->Bytes() == (data1.Bytes() + data2.Bytes() + data3.Bytes()) * sizeof(TUint));
-
-    // split message inside #3.  Check lengths of #1 and (new) #4 are as expected
-    const TUint kData3SplitBytes = 2;
-    MsgAudio* msg4 = msg1->SplitBytes((data1.Bytes() + data2.Bytes() + kData3SplitBytes) * sizeof(TUint));
-    TEST(msg1->Bytes() == (data1.Bytes() + data2.Bytes() + kData3SplitBytes) * sizeof(TUint));
-    TEST(msg4->Bytes() == (data3.Bytes() - kData3SplitBytes) * sizeof(TUint));
-
-    // clone #1.  Check that clone's length matches #1's
-    MsgAudio* msg5 = msg1->Clone();
-    TEST(msg1->Bytes() == msg5->Bytes());
-
-    // read/validate data from #1
-    Bws<40> outputBytes1;
-    outputBytes1.Append(data1);
-    outputBytes1.Append(data2);
-    outputBytes1.Append(Brn(data3.Ptr(), kData3SplitBytes));
-    Bws<40> outputBytes2;
-    outputBytes2.Append(data3.Split(kData3SplitBytes));
-    TUint outputWords[40];
-    TUint subsamples = msg1->Bytes() / sizeof(TUint);
-    msg1->CopyTo(outputWords);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(outputBytes1[i] == (TChar)(outputWords[i]>>24));
-    }
-
-    // read/validate data from #5 (clone)
-    TUint outputWordsClone[40];
-    msg5->CopyTo(outputWordsClone);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(outputWords[i] == outputWordsClone[i]);
-    }
-    TEST(0 == memcmp(outputWords, outputWordsClone, subsamples * sizeof(outputWords[0])));
-
-    // read/validate data from msg4
-    Brn outputWordsMsg4 = data3.Split(kData3SplitBytes);
-    subsamples = msg4->Bytes() / sizeof(TUint);
-    msg4->CopyTo(outputWords);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(outputWordsMsg4[i] == (TChar)(outputWords[i]>>24));
-    }
-
-    // create a Msg then free it without consuming its data in the normal CopyTo way
-    MsgAudio* msg6 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
-    msg6->RemoveRef();
-
-    // create a Msg, Add() another to it them check that removing the first one's reference frees both
-    MsgAudio* msg7 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
-    MsgAudio* msg8 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
-    msg7->Add(msg8);
-    msg7->RemoveRef();
-
-    // splt a single message into 3.  Check their lengths/contents are as expected
-    MsgAudio* msg9 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
-    const TUint kData1SplitBytes = 4;
-    MsgAudio* msg10 = msg9->SplitBytes(kData1SplitBytes * sizeof(TUint));
-    MsgAudio* msg11 = msg10->SplitBytes(kData1SplitBytes * sizeof(TUint));
-
-    TEST(msg9->Bytes() == kData1SplitBytes * sizeof(TUint));
-    Brn expected(data1.Ptr(), kData1SplitBytes);
-    subsamples = msg9->Bytes() / sizeof(TUint);
-    msg9->CopyTo(outputWords);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(expected[i] == (TChar)(outputWords[i]>>24));
-    }
-
-    TEST(msg10->Bytes() == kData1SplitBytes * sizeof(TUint));
-    expected.Set(data1.Split(kData1SplitBytes, kData1SplitBytes));
-    subsamples = msg10->Bytes() / sizeof(TUint);
-    msg10->CopyTo(outputWords);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(expected[i] == (TChar)(outputWords[i]>>24));
-    }
-
-    TEST(msg11->Bytes() == (data1.Bytes() - (2 * kData1SplitBytes)) * sizeof(TUint));
-    expected.Set(data1.Split(2 * kData1SplitBytes));
-    subsamples = msg11->Bytes() / sizeof(TUint);
-    msg11->CopyTo(outputWords);
-    for (TUint i=0; i<subsamples; i++) {
-        TEST(expected[i] == (TChar)(outputWords[i]>>24));
-    }
-
-    // clean destruction of class implies no leaked msgs
-}
-
-
 // SuiteMsgQueue
 
 SuiteMsgQueue::SuiteMsgQueue()
@@ -726,7 +598,6 @@ void TestMsg()
     Runner runner("Basic Msg tests\n");
     runner.Add(new SuiteAllocator());
 #if 0
-    runner.Add(new SuiteMsgAudioOld());
     runner.Add(new SuiteMsgQueue());
 #endif // 0
     runner.Add(new SuiteMsgAudio());
