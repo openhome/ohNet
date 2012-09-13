@@ -390,13 +390,12 @@ void NetworkAdapterList::RunCallbacks(Map& aMap)
 
 void NetworkAdapterList::DoRunCallbacks(Map& aMap)
 {
-    iListenerLock.Wait();
+    AutoMutex a(iListenerLock);
     Map::iterator it = aMap.begin();
     while (it != aMap.end()) {
         it->second();
         it++;
     }
-    iListenerLock.Signal();
 }
 
 void NetworkAdapterList::RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdapter& aAdapter)
