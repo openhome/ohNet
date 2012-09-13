@@ -47,13 +47,38 @@ private:
     static const TUint kNumBytes = 10;
     TChar iBytes[kNumBytes];
 };
-#if 0
+
 class SuiteMsgAudio : public Suite
 {
     static const TUint kMsgCount = 8;
 public:
     SuiteMsgAudio();
     ~SuiteMsgAudio();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    InfoAggregator iInfoAggregator;
+};
+
+class SuiteMsgPlayable : public Suite
+{
+    static const TUint kMsgCount = 8;
+public:
+    SuiteMsgPlayable();
+    ~SuiteMsgPlayable();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    InfoAggregator iInfoAggregator;
+};
+
+#if 0
+class SuiteMsgAudioOld : public Suite
+{
+    static const TUint kMsgCount = 8;
+public:
+    SuiteMsgAudioOld();
+    ~SuiteMsgAudioOld();
     void Test();
 private:
     MsgFactory* iMsgFactory;
@@ -211,20 +236,20 @@ void SuiteAllocator::Test()
 }
 
 #if 0
-// SuiteMsgAudio
+// SuiteMsgAudioOld
 
-SuiteMsgAudio::SuiteMsgAudio()
+SuiteMsgAudioOld::SuiteMsgAudioOld()
     : Suite("Basic MsgAudio tests")
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1, 1, 1);
 }
 
-SuiteMsgAudio::~SuiteMsgAudio()
+SuiteMsgAudioOld::~SuiteMsgAudioOld()
 {
     delete iMsgFactory;
 }
 
-void SuiteMsgAudio::Test()
+void SuiteMsgAudioOld::Test()
 {
     // create 3 msgs.  Check their lengths are as expected
     Brn data1("0123456789");
@@ -410,15 +435,308 @@ void ProcessorMsgAudio::ProcessMsg(MsgMetaText& /*aMsg*/)
     ASSERTS();
 }
 #endif // 0
-    
+
+
+// SuiteMsgAudio
+
+SuiteMsgAudio::SuiteMsgAudio()
+    : Suite("Basic MsgAudio tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1);
+}
+
+SuiteMsgAudio::~SuiteMsgAudio()
+{
+    delete iMsgFactory;
+}
+
+void SuiteMsgAudio::Test()
+{
+    static const TUint dataSize = 1200;
+    Bwh data(dataSize, dataSize);
+    (void)memset((void*)data.Ptr(), 0xde, data.Bytes());
+
+    // Create a pcm msg using the same data at each supported sample rate.
+    // Check that lower sample rates report higher numbers of jiffies.
+    const TUint sampleRates[] = { 7350, 8000, 11025, 12000, 14700, 16000, 22050, 24000, 29400, 32000, 44100, 48000, 88200, 96000, 176400, 192000 };
+    const TUint numRates = sizeof(sampleRates) / sizeof(sampleRates[0]);
+    TUint prevJiffies = 0xffffffff;
+    TUint jiffies;
+    MsgAudio* msg;
+    for (TUint i=0; i<numRates; i++) {
+        msg = iMsgFactory->CreateMsgAudioPcm(data, 2, sampleRates[i], 8, EMediaDataLittleEndian);
+        jiffies = msg->Jiffies();
+        msg->RemoveRef();
+        TEST(prevJiffies > jiffies);
+        prevJiffies = jiffies;
+    }
+
+    // Create pcm msgs using the same data & sample rates but different bit depths.  Check higher bit depths report lower jiffies
+    prevJiffies = 0;
+    const TUint bitDepths[] = { 8, 16, 24 };
+#define numBitDepths (sizeof(bitDepths) / sizeof(bitDepths[0]))
+    MsgAudio* msgbd[numBitDepths];
+    for (TUint i=0; i<numBitDepths; i++) {
+        msgbd[i] = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, bitDepths[i], EMediaDataLittleEndian);
+    }
+    TEST(msgbd[0]->Jiffies() == 2 * msgbd[1]->Jiffies());
+    TEST(msgbd[0]->Jiffies() == 3 * msgbd[2]->Jiffies());
+    for (TUint i=0; i<numBitDepths; i++) {
+        msgbd[i]->RemoveRef();
+    }
+
+    // Split pcm msg.  Check lengths of both parts are as expected.
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    static const TUint kSplitPos = 800;
+    jiffies = msg->Jiffies();
+    MsgAudio* remaining = msg->Split(kSplitPos);
+    TEST(remaining != NULL);
+    TUint newJiffies = msg->Jiffies();
+    TUint remainingJiffies = remaining->Jiffies();
+    remaining->RemoveRef();
+    TEST(newJiffies > 0);
+    TEST(remainingJiffies > 0);
+    TEST(newJiffies < jiffies);
+    TEST(remainingJiffies < jiffies);
+    TEST(newJiffies + remainingJiffies == jiffies);
+
+    // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
+    TEST_THROWS(remaining = msg->Split(0), AssertionFailed);
+    TEST_THROWS(remaining = msg->Split(msg->Jiffies()), AssertionFailed);
+    TEST_THROWS(remaining = msg->Split(msg->Jiffies()+1), AssertionFailed);
+
+    // Clone pcm msg.  Check lengths of clone & parent match
+    MsgAudio* clone = msg->Clone();
+    jiffies = clone->Jiffies();
+    TEST(jiffies == msg->Jiffies());
+    msg->RemoveRef();
+    // confirm clone is usable after parent is destroyed
+    TEST(jiffies == clone->Jiffies());
+    clone->RemoveRef();
+
+    // Create silence msg.  Check its length is as expected
+    jiffies = Jiffies::kJiffiesPerMs;
+    msg = iMsgFactory->CreateMsgSilence(jiffies);
+    TEST(jiffies == msg->Jiffies());
+
+    // Split silence msg.  Check lengths of both parts are as expected.
+    remaining = msg->Split(jiffies/4);
+    TEST(remaining != NULL);
+    TEST(msg->Jiffies() == jiffies/4);
+    TEST(remaining->Jiffies() == (3*jiffies)/4);
+    remaining->RemoveRef();
+
+    // Split silence msg at invalid positions (0, > Jiffies()).  Check these assert.
+    TEST_THROWS(remaining = msg->Split(0), AssertionFailed);
+    TEST_THROWS(remaining = msg->Split(msg->Jiffies()), AssertionFailed);
+    TEST_THROWS(remaining = msg->Split(msg->Jiffies()+1), AssertionFailed);
+
+    // Clone silence msg.  Check lengths of clone & parent match
+    clone = msg->Clone();
+    jiffies = clone->Jiffies();
+    TEST(jiffies == msg->Jiffies());
+    msg->RemoveRef();
+    clone->RemoveRef();
+
+    // clean destruction of class implies no leaked msgs
+}
+
+
+// SuiteMsgPlayable
+
+SuiteMsgPlayable::SuiteMsgPlayable()
+    : Suite("Basic MsgPlayable tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1);
+}
+
+SuiteMsgPlayable::~SuiteMsgPlayable()
+{
+    delete iMsgFactory;
+}
+
+void SuiteMsgPlayable::Test()
+{
+    static const TUint kDataSize = 256;
+    Bws<kDataSize> data(kDataSize);
+    for (TUint i=0; i<kDataSize; i++) {
+        data.At(i) = 0xff - (TByte)i;
+    }
+
+    // Create a pcm msg using the same data at each supported sample rate.
+    // Convert to MsgPlayable; check Bytes() for each are identical
+    const TUint sampleRates[] = { 7350, 8000, 11025, 12000, 14700, 16000, 22050, 24000, 29400, 32000, 44100, 48000, 88200, 96000, 176400, 192000 };
+    const TUint numRates = sizeof(sampleRates) / sizeof(sampleRates[0]);
+    TUint prevBytes = 0;
+    TUint bytes;
+    MsgAudioPcm* audioPcm;
+    MsgPlayable* playable;
+    for (TUint i=0; i<numRates; i++) {
+        audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, sampleRates[i], 8, EMediaDataLittleEndian);
+        playable = audioPcm->CreatePlayable();
+        bytes = playable->Bytes();
+        playable->RemoveRef();
+        if (prevBytes != 0) {
+            TEST(prevBytes == bytes);
+        }
+        prevBytes = bytes;
+    }
+
+    // Create pcm msg.  Read/validate its content
+    static const TUint kWriterBufGranularity = 1024;
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    playable = audioPcm->CreatePlayable();
+    TEST(playable->Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
+    WriterBwh* writerBuf = new WriterBwh(kWriterBufGranularity);
+    playable->Write(*writerBuf);
+    Brh buf;
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    const TUint* ptr = (const TUint*)buf.Ptr();
+    TUint subsampleVal = 0xff;
+    for (TUint i=0; i<buf.Bytes(); i+=4) {
+        TEST(*ptr == subsampleVal << 24);
+        ptr++;
+        subsampleVal--;
+    }
+
+    // Create pcm msg, split it then convert to playable.  Read/validate contents of both
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    MsgAudioPcm* remainingPcm = (MsgAudioPcm*)audioPcm->Split(audioPcm->Jiffies()/4);
+    playable = audioPcm->CreatePlayable();
+    MsgPlayable* remainingPlayable = remainingPcm->CreatePlayable();
+    TEST(remainingPlayable->Bytes() == 3 * playable->Bytes());
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    playable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    subsampleVal = 0xff;
+    ptr = (const TUint*)buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i+=4) {
+        TEST(*ptr == subsampleVal << 24);
+        ptr++;
+        subsampleVal--;
+    }
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    remainingPlayable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    ptr = (const TUint*)buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i+=4) {
+        TEST(*ptr == subsampleVal << 24);
+        ptr++;
+        subsampleVal--;
+    }
+
+    // Create pcm msg, convert to playable then split.  Read/validate contents of both
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    playable = audioPcm->CreatePlayable();
+    remainingPlayable = playable->Split(playable->Bytes()/4);
+    TEST(remainingPlayable->Bytes() == 3 * playable->Bytes());
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    playable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    subsampleVal = 0xff;
+    ptr = (const TUint*)buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i+=4) {
+        TEST(*ptr == subsampleVal << 24);
+        ptr++;
+        subsampleVal--;
+    }
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    remainingPlayable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    ptr = (const TUint*)buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i+=4) {
+        TEST(*ptr == subsampleVal << 24);
+        ptr++;
+        subsampleVal--;
+    }
+
+    // Create pcm msg, split at non-sample boundary.  Read/validate contents of each fragment
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    remainingPcm = (MsgAudioPcm*)audioPcm->Split((audioPcm->Jiffies()/4) - 1);
+    playable = audioPcm->CreatePlayable();
+    remainingPlayable = remainingPcm->CreatePlayable();
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    playable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    subsampleVal = 0xff;
+    ptr = (const TUint*)buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i+=4) {
+        TEST(*ptr == subsampleVal << 24);
+        ptr++;
+        subsampleVal--;
+    }
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    remainingPlayable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    ptr = (const TUint*)buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i+=4) {
+        TEST(*ptr == subsampleVal << 24);
+        ptr++;
+        subsampleVal--;
+    }
+
+    // Create pcm msg, split at 1 jiffy (non-sample boundary).  Check initial msg has 0 Bytes() but can Write() its content
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    remainingPcm = (MsgAudioPcm*)audioPcm->Split(1);
+    playable = audioPcm->CreatePlayable();
+    remainingPlayable = remainingPcm->CreatePlayable();
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    playable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    TEST(buf.Bytes() == 0);
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    remainingPlayable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    TEST(buf.Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
+
+    // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    playable = audioPcm->CreatePlayable();
+    TEST_THROWS(remainingPlayable = playable->Split(0), AssertionFailed);
+    TEST_THROWS(remainingPlayable = playable->Split(playable->Bytes()), AssertionFailed);
+    TEST_THROWS(remainingPlayable = playable->Split(playable->Bytes()+1), AssertionFailed);
+    playable->RemoveRef();
+
+    // For each sample rate, create a silence msg using the same size
+    // Convert to MsgPlayable; check Bytes() decrease as sample rates increase
+
+    // Create silence msg.  Read/validate its content
+
+    // Create silence msg, convert to playable then split.  Read/validate contents of both
+
+    // Create silence msg, split at non-sample boundary.  Read/validate contents of each fragment
+
+    // Create silence msg, split at 1 jiffy (non-sample boundary).  Check initial msg has 0 Bytes() but can Write() its content
+
+    // clean destruction of class implies no leaked msgs
+}
+
+
 void TestMsg()
 {
     Runner runner("Basic Msg tests\n");
     runner.Add(new SuiteAllocator());
 #if 0
-    runner.Add(new SuiteMsgAudio());
+    runner.Add(new SuiteMsgAudioOld());
     runner.Add(new SuiteMsgQueue());
 #endif // 0
+    runner.Add(new SuiteMsgAudio());
+    runner.Add(new SuiteMsgPlayable());
+    // MsgAudio - Pcm & Silence
+    // Playable.  Both Pcm & Silence.  Include checks that can split on non-sample boundaries without losing data
+    // Ramp (stand-alone class, then as part of MsgAudio, then as part of MsgPlayable)
+    // MsgProcessor.  Check that function for each msg type can be called
+    // MsgQueue
+    // MsgQueueJiffies
     runner.Run();
 }
 

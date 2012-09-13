@@ -138,6 +138,8 @@ private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian); // sample rate, bit-depth, num channels, const brx& (ptr/len), endianness);
     static void UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
     static void UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
+private: // from Allocated
+    void Clear();
 private:
     TUint iSubsamples[kMaxSubsamples]; // one sub-sample per channel == 1 sample
     TUint iSubsampleCount;
@@ -165,32 +167,6 @@ protected:
 private:
     Msg* iNextMsg;
 };
-
-/*class MsgAudio : public Msg
-{
-    friend class MsgFactory;
-public:
-    MsgAudio(AllocatorBase& aAllocator);
-    MsgAudio* SplitJiffies(TUint& aAt); // returns block after aAt.  Rounds aAt down to the nearest sample boundary
-    MsgAudio* SplitBytes(TUint aAt); // returns block after aAt
-    void Add(MsgAudio* aMsg); // combines MsgAudio instances so they report longer durations etc
-    void CopyTo(TUint* aDest); // does a RemoveRef at the end.  // FIXME - might need to pass sample rate and #channels (to allow for SplitJiffies & MsgSilence...)
-    MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy ptr/bytes
-    TUint Bytes() const; // FIXME - might need to pass sample rate and #channels (to allow for SplitJiffies & MsgSilence...)
-    TUint Jiffies() const;
-private:
-    void Construct(DecodedAudio* aDecodedAudio);
-private: // from Msg
-    void Clear();
-    void Process(IMsgProcessor& aProcessor);
-private:
-    DecodedAudio* iAudioData;
-    const TUint* iPtr;
-    TUint iBytes;
-    TUint iOffsetBytes;
-    MsgAudio* iNextAudio;
-    TUint iJiffies; // not absolutely required but useful to cache this
-};*/
 
 class Ramp
 {
