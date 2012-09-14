@@ -717,10 +717,9 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aNumChannels)
     TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
     TUint sizeJiffies = iSize + (iOffset - offsetJiffies);
     TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, aNumChannels, DecodedAudio::kBytesPerSubsample);
-    TUint offsetBytes = Jiffies::BytesFromJiffies(offsetJiffies, jiffiesPerSample, aNumChannels, DecodedAudio::kBytesPerSubsample);
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(sizeBytes, offsetBytes, iRamp);
+    playable->Initialise(sizeBytes, iRamp);
     if (iNextAudio != NULL) {
         MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aNumChannels);
         playable->Add(child);
@@ -900,9 +899,9 @@ MsgPlayableSilence::MsgPlayableSilence(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp)
+void MsgPlayableSilence::Initialise(TUint aSizeBytes, const Ramp& aRamp)
 {
-    MsgPlayable::Initialise(aSizeBytes, aOffsetBytes, aRamp);
+    MsgPlayable::Initialise(aSizeBytes, 0, aRamp);
 }
 
 void MsgPlayableSilence::Write(IWriter& aWriter)

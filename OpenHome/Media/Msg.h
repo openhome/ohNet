@@ -316,7 +316,7 @@ class MsgPlayableSilence : public MsgPlayable
 public:
     MsgPlayableSilence(AllocatorBase& aAllocator);
 private:
-    void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp);
+    void Initialise(TUint aSizeBytes, const Ramp& aRamp);
 private: // from MsgPlayable
     void Write(IWriter& aWriter); // calls RemoveRef on exit
     MsgPlayable* Allocate();

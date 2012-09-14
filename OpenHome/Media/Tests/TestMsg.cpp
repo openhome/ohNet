@@ -68,6 +68,8 @@ public:
     ~SuiteMsgPlayable();
     void Test();
 private:
+    void ValidateSilence(MsgPlayable* aMsg);
+private:
     MsgFactory* iMsgFactory;
     InfoAggregator iInfoAggregator;
 };
@@ -579,18 +581,70 @@ void SuiteMsgPlayable::Test()
     playable->RemoveRef();
 
     // For each sample rate, create a silence msg using the same size
-    // Convert to MsgPlayable; check Bytes() decrease as sample rates increase
+    // Convert to MsgPlayable; check Bytes() increase as sample rates increase
+    prevBytes = 0;
+    MsgSilence* silence;
+    for (TUint i=0; i<numRates; i++) {
+        silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 5);
+        playable = silence->CreatePlayable(sampleRates[i], 2);
+        bytes = playable->Bytes();
+        playable->RemoveRef();
+        if (prevBytes != 0) {
+            TEST(prevBytes < bytes);
+        }
+        prevBytes = bytes;
+    }
 
     // Create silence msg.  Read/validate its content
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    playable = silence->CreatePlayable(44100, 1);
+    bytes = playable->Bytes();
+    ValidateSilence(playable);
 
-    // Create silence msg, convert to playable then split.  Read/validate contents of both
+    // Create silence msg, convert to playable then split.  Check sizes/contents of each
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    playable = silence->CreatePlayable(44100, 1);
+    remainingPlayable = playable->Split(playable->Bytes() / 4);
+    TEST(3 * playable->Bytes() == remainingPlayable->Bytes());
+    TEST(playable->Bytes() + remainingPlayable->Bytes() == bytes);
+    ValidateSilence(playable);
+    ValidateSilence(remainingPlayable);
 
-    // Create silence msg, split at non-sample boundary.  Read/validate contents of each fragment
+    // Create silence msg, split at non-sample boundary.  Check that fragments have the correct total length
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    playable = silence->CreatePlayable(44100, 1);
+    remainingPlayable = playable->Split((playable->Bytes() / 4) - 1);
+    TEST(playable->Bytes() + remainingPlayable->Bytes() == bytes);
+    playable->RemoveRef();
+    remainingPlayable->RemoveRef();
 
     // Create silence msg, split at 1 jiffy (non-sample boundary).  Check initial msg has 0 Bytes() but can Write() its content
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    MsgSilence* remainingSilence = (MsgSilence*)silence->Split(1);
+    playable = silence->CreatePlayable(44100, 1);
+    remainingPlayable = remainingSilence->CreatePlayable(44100, 1);
+    TEST(playable->Bytes() == 0);
+    TEST(remainingPlayable->Bytes() == bytes);
+    ValidateSilence(playable);
+    remainingPlayable->RemoveRef();
 
     // clean destruction of class implies no leaked msgs
 }
+
+void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
+{
+    Brh buf;
+    WriterBwh* writerBuf = new WriterBwh(1024);
+    TUint bytes = aMsg->Bytes();
+    aMsg->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    TEST(buf.Bytes() == bytes);
+    for (TUint i=0; i<buf.Bytes(); i++) {
+        TEST(buf[i] == 0);
+    }
+}
+
 
 
 void TestMsg()
