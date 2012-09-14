@@ -1,5 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
+#include "TestBasicDv.h"
 #include <OpenHome/Net/Core/DvStack.h>
 #include <OpenHome/Net/Core/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>
@@ -13,36 +14,11 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
+class DeviceTestBasic : public IResourceManager
 {
 public:
-    ProviderTestBasic(DvDevice& aDevice);
-private:
-    void Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
-    void Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult);
-    void Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult);
-    void EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
-    void EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult);
-    void SetUint(IDvInvocation& aInvocation, TUint aValueUint);
-    void GetUint(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint);
-    void SetInt(IDvInvocation& aInvocation, TInt aValueInt);
-    void GetInt(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValueInt);
-    void SetBool(IDvInvocation& aInvocation, TBool aValueBool);
-    void GetBool(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValueBool);
-    void SetMultiple(IDvInvocation& aInvocation, TUint aValueUint, TInt aValueInt, TBool aValueBool);
-    void SetString(IDvInvocation& aInvocation, const Brx& aValueStr);
-    void GetString(IDvInvocation& aInvocation, IDvInvocationResponseString& aValueStr);
-    void SetBinary(IDvInvocation& aInvocation, const Brx& aValueBin);
-    void GetBinary(IDvInvocation& aInvocation, IDvInvocationResponseBinary& aValueBin);
-    void WriteFile(IDvInvocation& aInvocation, const Brx& aData, const Brx& aFileFullName);
-    void Shutdown(IDvInvocation& aInvocation);
-};
-
-class DeviceBasic : public IResourceManager
-{
-public:
-    DeviceBasic(const Brx& aConfigDir);
-    ~DeviceBasic();
+    DeviceTestBasic(const Brx& aConfigDir);
+    ~DeviceTestBasic();
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private:
@@ -52,194 +28,8 @@ private:
 };
 
 
-ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
-    : DvProviderOpenhomeOrgTestBasic1(aDevice)
-{
-    EnablePropertyVarUint();
-    EnablePropertyVarInt();
-    EnablePropertyVarBool();
-    EnablePropertyVarStr();
-    EnablePropertyVarBin();
-    SetPropertyVarUint(0);
-    SetPropertyVarInt(0);
-    SetPropertyVarBool(false);
-    SetPropertyVarStr(Brx::Empty());
-    SetPropertyVarBin(Brx::Empty());
 
-    EnableActionIncrement();
-    EnableActionDecrement();
-    EnableActionToggle();
-    EnableActionEchoString();
-    EnableActionEchoBinary();
-    EnableActionSetUint();
-    EnableActionGetUint();
-    EnableActionSetInt();
-    EnableActionGetInt();
-    EnableActionSetBool();
-    EnableActionGetBool();
-    EnableActionSetMultiple();
-    EnableActionSetString();
-    EnableActionGetString();
-    EnableActionSetBinary();
-    EnableActionGetBinary();
-    EnableActionWriteFile();
-    EnableActionShutdown();
-}
-
-void ProviderTestBasic::Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(++aValue);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(--aValue);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(!aValue);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(aValue);
-    aResult.WriteFlush();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(aValue);
-    aResult.WriteFlush();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::SetUint(IDvInvocation& aInvocation, TUint aValueUint)
-{
-    SetPropertyVarUint(aValueUint);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::GetUint(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint)
-{
-    aInvocation.StartResponse();
-    TUint val;
-    GetPropertyVarUint(val);
-    aValueUint.Write(val);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::SetInt(IDvInvocation& aInvocation, TInt aValueInt)
-{
-    SetPropertyVarInt(aValueInt);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::GetInt(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValueInt)
-{
-    aInvocation.StartResponse();
-    TInt val;
-    GetPropertyVarInt(val);
-    aValueInt.Write(val);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::SetBool(IDvInvocation& aInvocation, TBool aValueBool)
-{
-    SetPropertyVarBool(aValueBool);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::GetBool(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValueBool)
-{
-    aInvocation.StartResponse();
-    TBool val;
-    GetPropertyVarBool(val);
-    aValueBool.Write(val);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::SetMultiple(IDvInvocation& aInvocation, TUint aValueUint, TInt aValueInt, TBool aValueBool)
-{
-    PropertiesLock();
-    SetPropertyVarUint(aValueUint);
-    SetPropertyVarInt(aValueInt);
-    SetPropertyVarBool(aValueBool);
-    PropertiesUnlock();
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::SetString(IDvInvocation& aInvocation, const Brx& aValueStr)
-{
-    SetPropertyVarStr(aValueStr);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::GetString(IDvInvocation& aInvocation, IDvInvocationResponseString& aValueStr)
-{
-    aInvocation.StartResponse();
-    Brhz val;
-    GetPropertyVarStr(val);
-    aValueStr.Write(val);
-    aValueStr.WriteFlush();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::SetBinary(IDvInvocation& aInvocation, const Brx& aValueBin)
-{
-    SetPropertyVarBin(aValueBin);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::GetBinary(IDvInvocation& aInvocation, IDvInvocationResponseBinary& aValueBin)
-{
-    aInvocation.StartResponse();
-    Brh val;
-    GetPropertyVarBin(val);
-    aValueBin.Write(val);
-    aValueBin.WriteFlush();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::WriteFile(IDvInvocation& aInvocation, const Brx& aData, const Brx& aFileFullName)
-{
-    TUint len = aFileFullName.Bytes();
-    char* name = (char*)malloc(len+1);
-    (void)memcpy(name, aFileFullName.Ptr(), aFileFullName.Bytes());
-    name[len] = 0;
-    FILE* fp = fopen(name, "wb");
-    free(name);
-    (void)fwrite(aData.Ptr(), aData.Bytes(), 1, fp);
-    (void)fflush(fp);
-    (void)fclose(fp);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::Shutdown(IDvInvocation& aInvocation)
-{
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-    putchar('q');
-}
-
-
-DeviceBasic::DeviceBasic(const Brx& aConfigDir)
+DeviceTestBasic::DeviceTestBasic(const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
 {
     iDevice = new DvDeviceStandard(Brn("device-ohNetTestBasic"), *this);
@@ -254,13 +44,13 @@ DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     iDevice->SetEnabled();
 }
 
-DeviceBasic::~DeviceBasic()
+DeviceTestBasic::~DeviceTestBasic()
 {
     delete iTestBasic;
     delete iDevice;
 }
 
-void DeviceBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
+void DeviceTestBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
 {
     const Brn kIndexFile("index.html");
     Bwh filePath(iConfigDir);
@@ -345,7 +135,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     UpnpLibrary::StartDv();
 
     Print("TestDvTestBasic - starting ('q' to quit)\n");
-    DeviceBasic* device = new DeviceBasic(config.Value());
+    DeviceTestBasic* device = new DeviceTestBasic(config.Value());
     while (getchar() != 'q') {
         ;
     }

@@ -525,6 +525,8 @@ $(objdir)TestInvocation.$(objext) : OpenHome/Net/ControlPoint/Tests/TestInvocati
 	$(compiler)TestInvocation.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Tests/TestInvocation.cpp
 $(objdir)TestInvocationMain.$(objext) : OpenHome/Net/ControlPoint/Tests/TestInvocationMain.cpp $(headers)
 	$(compiler)TestInvocationMain.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Tests/TestInvocationMain.cpp
+$(objdir)TestBasicDvCore.$(objext) : OpenHome/Net/Device/Tests/TestBasicDv.cpp $(headers)
+	$(compiler)TestBasicDvCore.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestBasicDv.cpp
 
 TestInvocationStd: $(objdir)TestInvocationStd.$(exeext) 
 $(objdir)TestInvocationStd.$(exeext) :  ohNetCore $(objdir)CpUpnpOrgConnectionManager1Std.$(objext) $(objdir)TestInvocationStd.$(objext) $(libprefix)TestFramework.$(libext)
@@ -571,16 +573,16 @@ $(objdir)TestDviDeviceListMain.$(objext) : OpenHome/Net/Device/Tests/TestDviDevi
 	$(compiler)TestDviDeviceListMain.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDviDeviceListMain.cpp
 
 TestDvInvocation: $(objdir)TestDvInvocation.$(exeext) 
-$(objdir)TestDvInvocation.$(exeext) :  ohNetCore $(objdir)TestDvInvocation.$(objext) $(objdir)TestDvInvocationMain.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestDvInvocation.$(exeext) $(objdir)TestDvInvocationMain.$(objext) $(objdir)TestDvInvocation.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestDvInvocation.$(exeext) :  ohNetCore $(objdir)TestDvInvocation.$(objext) $(objdir)TestDvInvocationMain.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvInvocation.$(exeext) $(objdir)TestDvInvocationMain.$(objext) $(objdir)TestDvInvocation.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestDvInvocation.$(objext) : OpenHome/Net/Device/Tests/TestDvInvocation.cpp $(headers)
 	$(compiler)TestDvInvocation.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDvInvocation.cpp
 $(objdir)TestDvInvocationMain.$(objext) : OpenHome/Net/Device/Tests/TestDvInvocationMain.cpp $(headers)
 	$(compiler)TestDvInvocationMain.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDvInvocationMain.cpp
 
 TestDvSubscription: $(objdir)TestDvSubscription.$(exeext) 
-$(objdir)TestDvSubscription.$(exeext) :  ohNetCore $(objdir)TestDvSubscription.$(objext) $(objdir)TestDvSubscriptionMain.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestDvSubscription.$(exeext) $(objdir)TestDvSubscriptionMain.$(objext) $(objdir)TestDvSubscription.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestDvSubscription.$(exeext) :  ohNetCore $(objdir)TestDvSubscription.$(objext) $(objdir)TestDvSubscriptionMain.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvSubscription.$(exeext) $(objdir)TestDvSubscriptionMain.$(objext) $(objdir)TestDvSubscription.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestDvSubscription.$(objext) : OpenHome/Net/Device/Tests/TestDvSubscription.cpp $(headers)
 	$(compiler)TestDvSubscription.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDvSubscription.cpp
 $(objdir)TestDvSubscriptionMain.$(objext) : OpenHome/Net/Device/Tests/TestDvSubscriptionMain.cpp $(headers)
@@ -593,8 +595,8 @@ $(objdir)TestDvLights.$(objext) : OpenHome/Net/Device/Tests/TestDvLights.cpp $(h
 	$(compiler)TestDvLights.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDvLights.cpp
 
 TestDvTestBasic: $(objdir)TestDvTestBasic.$(exeext) 
-$(objdir)TestDvTestBasic.$(exeext) :  ohNetCore $(objdir)TestDvTestBasic.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestDvTestBasic.$(exeext) $(objdir)TestDvTestBasic.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestDvTestBasic.$(exeext) :  ohNetCore $(objdir)TestDvTestBasic.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvTestBasic.$(exeext) $(objdir)TestDvTestBasic.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestDvTestBasic.$(objext) : OpenHome/Net/Device/Tests/TestDvTestBasic.cpp $(headers)
 	$(compiler)TestDvTestBasic.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDvTestBasic.cpp
 
@@ -694,6 +696,7 @@ tests_core = \
 	$(objdir)TestDviDeviceList.$(objext) \
 	$(objdir)TestDvInvocation.$(objext) \
 	$(objdir)TestDvSubscription.$(objext) \
+    $(objdir)TestBasicDvCore.$(objext) \
 	$(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
 	$(objdir)CpOpenhomeOrgTestBasic1.$(objext)
 

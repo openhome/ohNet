@@ -1,5 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
+#include "TestBasicDv.h"
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Net/Core/DvOpenhomeOrgTestBasic1.h>
@@ -21,33 +22,11 @@ using namespace OpenHome::TestFramework;
 namespace OpenHome {
 namespace TestDvInvocation {
 
-class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
-{
-public:
-    ProviderTestBasic(DvDevice& aDevice);
-private:
-    void Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
-    void Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult);
-    void Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult);
-    void EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
-    void EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult);
-};
-
-class DeviceBasic
-{
-public:
-    DeviceBasic();
-    ~DeviceBasic();
-private:
-    DvDeviceStandard* iDevice;
-    ProviderTestBasic* iTestBasic;
-};
-
 class CpDevices
 {
     static const TUint kTestIterations = 10;
 public:
-    CpDevices(Semaphore& aAddedSem);
+    CpDevices(Semaphore& aAddedSem, const Brx& aTargetUdn);
     ~CpDevices();
     void Test();
     void Added(CpDevice& aDevice);
@@ -56,6 +35,7 @@ private:
     Mutex iLock;
     std::vector<CpDevice*> iList;
     Semaphore& iAddedSem;
+    const Brx& iTargetUdn;
 };
 
 } // namespace OpenHome
@@ -63,109 +43,10 @@ private:
 
 using namespace OpenHome::TestDvInvocation;
 
-
-ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
-    : DvProviderOpenhomeOrgTestBasic1(aDevice)
-{
-    // Initialise all properties in case external control points decide to subscribe to this service
-    EnablePropertyVarUint();
-    EnablePropertyVarInt();
-    EnablePropertyVarBool();
-    EnablePropertyVarStr();
-    EnablePropertyVarBin();
-    SetPropertyVarUint(0);
-    SetPropertyVarInt(0);
-    SetPropertyVarBool(false);
-    SetPropertyVarStr(Brx::Empty());
-    SetPropertyVarBin(Brx::Empty());
-
-    EnableActionIncrement();
-    EnableActionDecrement();
-    EnableActionToggle();
-    EnableActionEchoString();
-    EnableActionEchoBinary();
-}
-
-void ProviderTestBasic::Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult)
-{
-    ASSERT(aInvocation.Version() == 1);
-    aInvocation.StartResponse();
-    aResult.Write(++aValue);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(--aValue);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(!aValue);
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(aValue);
-    aResult.WriteFlush();
-    aInvocation.EndResponse();
-}
-
-void ProviderTestBasic::EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult)
-{
-    aInvocation.StartResponse();
-    aResult.Write(aValue);
-    aResult.WriteFlush();
-    aInvocation.EndResponse();
-}
-
-
-static Bwh gDeviceName("device");
-
-static void RandomiseUdn(Bwh& aUdn)
-{
-    aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
-    aUdn.Append('-');
-    Bws<Ascii::kMaxUintStringBytes> buf;
-    std::vector<NetworkAdapter*>* subnetList = Stack::NetworkAdapterList().CreateSubnetList();
-    TUint max = (*subnetList)[0]->Address();
-    TUint seed = DviStack::ServerUpnp().Port((*subnetList)[0]->Address());
-    SetRandomSeed(seed);
-    Stack::NetworkAdapterList().DestroySubnetList(subnetList);
-    (void)Ascii::AppendDec(buf, Random(max));
-    aUdn.Append(buf);
-    aUdn.PtrZ();
-}
-
-DeviceBasic::DeviceBasic()
-{
-    RandomiseUdn(gDeviceName);
-    iDevice = new DvDeviceStandard(gDeviceName);
-    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
-    iDevice->SetAttribute("Upnp.Type", "Test");
-    iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "ohNetTestDevice");
-    iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
-    iTestBasic = new ProviderTestBasic(*iDevice);
-    iDevice->SetEnabled();
-}
-
-DeviceBasic::~DeviceBasic()
-{
-    delete iTestBasic;
-    delete iDevice;
-}
-
-
-CpDevices::CpDevices(Semaphore& aAddedSem)
+CpDevices::CpDevices(Semaphore& aAddedSem, const Brx& aTargetUdn)
     : iLock("DLMX")
     , iAddedSem(aAddedSem)
+    , iTargetUdn(aTargetUdn)
 {
 }
 
@@ -241,7 +122,7 @@ void CpDevices::Test()
 void CpDevices::Added(CpDevice& aDevice)
 {
     iLock.Wait();
-    if (aDevice.Udn() == gDeviceName) {
+    if (aDevice.Udn() == iTargetUdn) {
         iList.push_back(&aDevice);
         aDevice.AddRef();
         iAddedSem.Signal();
@@ -263,7 +144,7 @@ void TestDvInvocation()
 
     Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceBasic* device = new DeviceBasic;
-    CpDevices* deviceList = new CpDevices(*sem);;
+    CpDevices* deviceList = new CpDevices(*sem, device->Udn());
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &CpDevices::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &CpDevices::Removed);
     Brn domainName("openhome.org");
