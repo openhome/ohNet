@@ -38,8 +38,8 @@ private:
     const Brx& iTargetUdn;
 };
 
-} // namespace OpenHome
 } // namespace TestDvInvocation
+} // namespace OpenHome
 
 using namespace OpenHome::TestDvInvocation;
 
