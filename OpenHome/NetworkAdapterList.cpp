@@ -9,6 +9,7 @@
 
 using namespace OpenHome;
 
+// NetworkAdapterList
 
 NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
     : iListLock("MNIL")
@@ -18,6 +19,8 @@ NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
 {
     Net::Stack::AddObject(this);
     iDefaultSubnet = aDefaultSubnet;
+    iNotifierThread = new NetworkAdapterChangeNotifier(*this);
+    iNotifierThread->Start();
     iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
@@ -28,6 +31,7 @@ NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
 
 NetworkAdapterList::~NetworkAdapterList()
 {
+    delete iNotifierThread;
     DestroySubnetList(iNetworkAdapters);
     DestroySubnetList(iSubnets);
     Net::Stack::RemoveObject(this);
@@ -74,7 +78,7 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     UpdateCurrentAdapter();
     iListLock.Signal();
     if (aSubnet != oldSubnet) {
-        RunCallbacks(iListenersCurrent);
+        iNotifierThread->QueueCurrentChanged();
     }
 }
 
@@ -342,23 +346,23 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     iListLock.Signal();
 
     if (subnetsChanged) {
-        RunCallbacks(iListenersSubnet);
+        iNotifierThread->QueueSubnetsChanged();
     }
     else if (newAddress != oldAddress) {
-        RunCallbacks(iListenersCurrent);
+        iNotifierThread->QueueCurrentChanged();
     }
 
     // Notify added/removed callbacks.
     if (removed.size() > 0) {
         for (TUint i=0; i < removed.size(); i++) {
             TraceAdapter("NetworkAdapter removed", *removed[i]);
-            RunSubnetCallbacks(iListenersRemoved, *removed[i]);
+            iNotifierThread->QueueAdapterRemoved(*removed[i]);
         }
     }
     if (added.size() > 0) {
         for (TUint i=0; i < added.size(); i++) {
             TraceAdapter("NetworkAdapter added", *added[i]);
-            RunSubnetCallbacks(iListenersAdded, *added[i]);
+            iNotifierThread->QueueAdapterAdded(*added[i]);
         }
     }
 
@@ -366,7 +370,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     if (adapterChanged.size() > 0) {
         for (TUint i=0; i < adapterChanged.size(); i++) {
             TraceAdapter("NetworkAdapter changed", *adapterChanged[i]);
-            RunSubnetCallbacks(iListenersAdapterChanged, *adapterChanged[i]);
+            iNotifierThread->QueueAdapterChanged(*adapterChanged[i]);
         }
     }
 }
@@ -400,13 +404,12 @@ void NetworkAdapterList::DoRunCallbacks(Map& aMap)
 
 void NetworkAdapterList::RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdapter& aAdapter)
 {
-    iListenerLock.Wait();
+    AutoMutex a(iListenerLock);
     MapNetworkAdapter::iterator it = aMap.begin();
     while (it != aMap.end()) {
         it->second(aAdapter);
         it++;
     }
-    iListenerLock.Signal();
 }
 
 void NetworkAdapterList::TraceAdapter(const TChar* aPrefix, NetworkAdapter& aAdapter)
@@ -420,4 +423,178 @@ void NetworkAdapterList::TraceAdapter(const TChar* aPrefix, NetworkAdapter& aAda
 void NetworkAdapterList::ListObjectDetails() const
 {
     Log::Print("  NetworkAdapterList: addr=%p\n", this);
+}
+
+void NetworkAdapterList::NotifyCurrentChanged()
+{
+    RunCallbacks(iListenersCurrent);
+}
+
+void NetworkAdapterList::NotifySubnetsChanged()
+{
+    RunCallbacks(iListenersSubnet);
+}
+
+void NetworkAdapterList::NotifyAdapterAdded(NetworkAdapter& aAdapter)
+{
+    RunSubnetCallbacks(iListenersAdded, aAdapter);
+}
+
+void NetworkAdapterList::NotifyAdapterRemoved(NetworkAdapter& aAdapter)
+{
+    RunSubnetCallbacks(iListenersRemoved, aAdapter);
+}
+
+void NetworkAdapterList::NotifyAdapterChanged(NetworkAdapter& aAdapter)
+{
+    RunSubnetCallbacks(iListenersAdapterChanged, aAdapter);
+}
+
+
+// NetworkAdapterChangeNotifier
+
+NetworkAdapterChangeNotifier::NetworkAdapterChangeNotifier(INetworkAdapterChangeNotifier& aAdapterList)
+    : Thread("NACN")
+    , iAdapterList(aAdapterList)
+    , iLock("NACN")
+{
+}
+
+NetworkAdapterChangeNotifier::~NetworkAdapterChangeNotifier()
+{
+    Kill();
+    Join();
+    while (iList.size() > 0) {
+        iLock.Wait();
+        UpdateBase* update = iList.front();
+        iList.pop_front();
+        iLock.Signal();
+        delete update;
+    }
+}
+
+void NetworkAdapterChangeNotifier::QueueCurrentChanged()
+{
+    Queue(new UpdateCurrent());
+}
+
+void NetworkAdapterChangeNotifier::QueueSubnetsChanged()
+{
+    Queue(new UpdateCurrent());
+}
+
+void NetworkAdapterChangeNotifier::QueueAdapterAdded(NetworkAdapter& aAdapter)
+{
+    Queue(new UpdateAdapterAdded(aAdapter));
+}
+
+void NetworkAdapterChangeNotifier::QueueAdapterRemoved(NetworkAdapter& aAdapter)
+{
+    Queue(new UpdateAdapterRemoved(aAdapter));
+}
+
+void NetworkAdapterChangeNotifier::QueueAdapterChanged(NetworkAdapter& aAdapter)
+{
+    Queue(new UpdateAdapterChanged(aAdapter));
+}
+
+void NetworkAdapterChangeNotifier::Queue(UpdateBase* aUpdate)
+{
+    iLock.Wait();
+    iList.push_back(aUpdate);
+    iLock.Signal();
+    Signal();
+}
+
+void NetworkAdapterChangeNotifier::Run()
+{
+    for (;;) {
+        Wait();
+        iLock.Wait();
+        UpdateBase* update = iList.front();
+        iList.pop_front();
+        iLock.Signal();
+        update->Update(iAdapterList);
+        delete update;
+    }
+}
+
+
+// NetworkAdapterChangeNotifier::UpdateBase
+
+NetworkAdapterChangeNotifier::UpdateBase::~UpdateBase()
+{
+}
+
+NetworkAdapterChangeNotifier::UpdateBase::UpdateBase()
+{
+}
+
+
+// NetworkAdapterChangeNotifier::UpdateCurrent
+
+void NetworkAdapterChangeNotifier::UpdateCurrent::Update(INetworkAdapterChangeNotifier& aAdapterList)
+{
+    aAdapterList.NotifyCurrentChanged();
+}
+
+
+// NetworkAdapterChangeNotifier::UpdateSubnet
+
+void NetworkAdapterChangeNotifier::UpdateSubnet::Update(INetworkAdapterChangeNotifier& aAdapterList)
+{
+    aAdapterList.NotifySubnetsChanged();
+}
+
+
+// NetworkAdapterChangeNotifier::UpdateAdapter
+
+NetworkAdapterChangeNotifier::UpdateAdapter::UpdateAdapter(NetworkAdapter& aAdapter)
+    : iAdapter(aAdapter)
+{
+    iAdapter.AddRef("NetworkAdapterChangeNotifier::UpdateBase");
+}
+
+NetworkAdapterChangeNotifier::UpdateAdapter::~UpdateAdapter()
+{
+    iAdapter.RemoveRef("NetworkAdapterChangeNotifier::UpdateBase");
+}
+
+
+// NetworkAdapterChangeNotifier::UpdateAdapterAdded
+
+NetworkAdapterChangeNotifier::UpdateAdapterAdded::UpdateAdapterAdded(NetworkAdapter& aAdapter)
+    : NetworkAdapterChangeNotifier::UpdateAdapter(aAdapter)
+{
+}
+
+void NetworkAdapterChangeNotifier::UpdateAdapterAdded::Update(INetworkAdapterChangeNotifier& aAdapterList)
+{
+    aAdapterList.NotifyAdapterAdded(iAdapter);
+}
+
+
+// NetworkAdapterChangeNotifier::UpdateAdapterRemoved
+
+NetworkAdapterChangeNotifier::UpdateAdapterRemoved::UpdateAdapterRemoved(NetworkAdapter& aAdapter)
+    : NetworkAdapterChangeNotifier::UpdateAdapter(aAdapter)
+{
+}
+
+void NetworkAdapterChangeNotifier::UpdateAdapterRemoved::Update(INetworkAdapterChangeNotifier& aAdapterList)
+{
+    aAdapterList.NotifyAdapterRemoved(iAdapter);
+}
+
+
+// NetworkAdapterChangeNotifier::UpdateAdapterChanged
+
+NetworkAdapterChangeNotifier::UpdateAdapterChanged::UpdateAdapterChanged(NetworkAdapter& aAdapter)
+    : NetworkAdapterChangeNotifier::UpdateAdapter(aAdapter)
+{
+}
+
+void NetworkAdapterChangeNotifier::UpdateAdapterChanged::Update(INetworkAdapterChangeNotifier& aAdapterList)
+{
+    aAdapterList.NotifyAdapterChanged(iAdapter);
 }
