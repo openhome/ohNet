@@ -21,7 +21,7 @@ NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
     iDefaultSubnet = aDefaultSubnet;
     iNotifierThread = new NetworkAdapterChangeNotifier(*this);
     iNotifierThread->Start();
-    iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter(), "NetworkAdapterList");
+    iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
     for (size_t i=0; i<iSubnets->size(); i++) {
@@ -257,7 +257,7 @@ TBool NetworkAdapterList::CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ)
 void NetworkAdapterList::HandleInterfaceListChanged()
 {
     iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter(), "NetworkAdapterList");
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(Net::Stack::InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;

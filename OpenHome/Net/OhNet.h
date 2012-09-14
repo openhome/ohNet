@@ -150,6 +150,13 @@ class DefaultLogger;
 class InitialisationParams
 {
 public:
+    enum ELoopback
+    {
+        ELoopbackExclude // exclude loopback from list of available subnets
+       ,ELoopbackUse     // exclude everything but loopback from list of available subnets
+       ,ELoopbackInclude // include loopback in list of available subnets
+    };
+public:
     /**
      * Create a new InitialisationParams instance.
      * All properties default to sensible values.
@@ -244,6 +251,11 @@ public:
      */
     void SetUseLoopbackNetworkAdapter();
     /**
+     * Include the loopback network interface in the list of available adapters.
+     * Useful for testing but not expected to be used in production code
+     */
+    void SetIncludeLoopbackNetworkAdapter();
+    /**
      * Set the maximum time between device announcements for the device stack
      */
     void SetDvMaxUpdateTime(uint32_t aSecs);
@@ -317,7 +329,7 @@ public:
     uint32_t SubscriptionDurationSecs() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
     OhNetCallbackFreeExternal FreeExternal() const;
-    bool UseLoopbackNetworkAdapter() const;
+    ELoopback LoopbackNetworkAdapter() const;
     uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
@@ -352,7 +364,7 @@ private:
     uint32_t iSubscriptionDurationSecs;
     uint32_t iPendingSubscriptionTimeoutMs;
     OhNetCallbackFreeExternal iFreeExternal;
-    bool iUseLoopbackNetworkAdapter;
+    ELoopback iUseLoopbackNetworkAdapter;
     uint32_t iDvMaxUpdateTimeSecs;
     uint32_t iDvNumServerThreads;
     uint32_t iDvNumPublisherThreads;

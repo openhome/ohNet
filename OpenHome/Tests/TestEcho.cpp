@@ -54,7 +54,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     Net::UpnpLibrary::Initialise(aInitParams);
 //    Debug::SetLevel(Debug::kNetwork);
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false, "TestEcho");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(Net::InitialisationParams::ELoopbackExclude, "TestEcho");
     ASSERT(ifs->size() > 0);
     TIpAddress addr = (*ifs)[0]->Address();
     Endpoint endpt(0, addr);

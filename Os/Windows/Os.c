@@ -857,7 +857,7 @@ int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopb
         goto failure;
     }
 
-    if (aUseLoopback == 0) {
+    if (aUseLoopback == LOOPBACK_EXCLUDE) {
         // Only include loopback if there are no non-loopback adapters
         for (i=0; i<addrTable->dwNumEntries; i++) {
             MIB_IPADDRROW* addrRow = &(addrTable->table[i]);
@@ -887,8 +887,8 @@ int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopb
             continue;
         }
 
-        if ((addrRow->dwAddr == loopbackAddr && !includeLoopback) ||
-            (addrRow->dwAddr != loopbackAddr && aUseLoopback)) {
+        if ((addrRow->dwAddr == loopbackAddr && includeLoopback == 0) ||
+            (addrRow->dwAddr != loopbackAddr && aUseLoopback == LOOPBACK_USE)) {
             continue;
         }
         if (-1 != gTestInterfaceIndex && index++ != gTestInterfaceIndex) {

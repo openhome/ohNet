@@ -612,6 +612,10 @@ typedef struct OsNetworkAdapter
     struct OsNetworkAdapter* iNext; /**< Pointer to next interface or NULL */
 } OsNetworkAdapter;
 
+#define LOOPBACK_EXCLUDE (0) /* exclude loopback from list of available subnets */
+#define LOOPBACK_USE     (1) /* exclude everything but loopback from list of available subnets */
+#define LOOPBACK_INCLUDE (2) /* include loopback in list of available subnets */
+
 /**
  * Return a list of all available network interfaces (aka adaptors).
  *
@@ -621,7 +625,8 @@ typedef struct OsNetworkAdapter
  *
  * @param[out] aInterfaces      List of available interfaces.  Allocated inside this function;
  *                              the caller should use OsNetworkFreeInterfaces to free it
- * @param[out] aUseLoopback     1 if only the loopback interface should be returned;
+ * @param[out] aUseLoopback     2 if all interfaces, including loopback, should be returned;
+ *                              1 if only the loopback interface should be returned;
  *                              0 (default) if normal behaviour is required
  *
  * @return  0 on success; -1 on failure
