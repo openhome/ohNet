@@ -7,6 +7,7 @@
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Net/Private/DviStack.h>
 
+#include <stdlib.h>
 #include <string>
 
 using namespace OpenHome;
