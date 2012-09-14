@@ -480,7 +480,7 @@ void NetworkAdapterChangeNotifier::QueueCurrentChanged()
 
 void NetworkAdapterChangeNotifier::QueueSubnetsChanged()
 {
-    Queue(new UpdateCurrent());
+    Queue(new UpdateSubnet());
 }
 
 void NetworkAdapterChangeNotifier::QueueAdapterAdded(NetworkAdapter& aAdapter)
