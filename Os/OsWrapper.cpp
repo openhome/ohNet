@@ -170,7 +170,7 @@ void OpenHome::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddr
 std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Net::InitialisationParams::ELoopback aUseLoopback, const TChar* aCookie)
 {
     OsNetworkAdapter* cIfs = NULL;
-    int32_t err = OsNetworkListAdapters(&cIfs, (aUseLoopback? 1 : 0));
+    int32_t err = OsNetworkListAdapters(&cIfs, (uint32_t)aUseLoopback);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::NetworkListAdapters RETURN VALUE = %d\n", err);
         THROW(NetworkError);

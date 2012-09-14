@@ -600,6 +600,12 @@ $(objdir)TestDvTestBasic.$(exeext) :  ohNetCore $(objdir)TestDvTestBasic.$(objex
 $(objdir)TestDvTestBasic.$(objext) : OpenHome/Net/Device/Tests/TestDvTestBasic.cpp $(headers)
 	$(compiler)TestDvTestBasic.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDvTestBasic.cpp
 
+TestAdapterChange: $(objdir)TestAdapterChange.$(exeext) 
+$(objdir)TestAdapterChange.$(exeext) :  ohNetCore $(objdir)TestAdapterChange.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestAdapterChange.$(exeext) $(objdir)TestAdapterChange.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestAdapterChange.$(objext) : OpenHome/Net/Device/Tests/TestAdapterChange.cpp $(headers)
+	$(compiler)TestAdapterChange.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestAdapterChange.cpp
+
 TestDeviceFinder: $(objdir)TestDeviceFinder.$(exeext) 
 $(objdir)TestDeviceFinder.$(exeext) :  ohNetCore $(objdir)TestDeviceFinder.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestDeviceFinder.$(exeext) $(objdir)TestDeviceFinder.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -703,7 +709,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestThread TestFifo TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestThread TestFifo TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
