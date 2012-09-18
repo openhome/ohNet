@@ -1103,6 +1103,8 @@ void SuiteMsgQueue::Test()
     dequeued->RemoveRef();
 
     // FIXME - no check yet that reading from an empty queue blocks
+    
+    delete queue;
 }
 
 
