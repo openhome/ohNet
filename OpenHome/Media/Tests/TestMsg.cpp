@@ -87,38 +87,17 @@ private:
     InfoAggregator iInfoAggregator;
 };
 
-class SuiteMsgProcessor : public Suite, private IMsgProcessor
+class SuiteMsgProcessor : public Suite
 {
 public:
     SuiteMsgProcessor();
     ~SuiteMsgProcessor();
     void Test();
-private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgMetaText* aMsg);
-    Msg* ProcessMsg(MsgHalt* aMsg);
-    Msg* ProcessMsg(MsgFlush* aMsg);
-private:
-    enum EMsgType
-    {
-        EMsgAudioPcm
-       ,EMsgSilence
-       ,EMsgPlayable
-       ,EMsgTrack
-       ,EMsgMetaText
-       ,EMsgHalt
-       ,EMsgFlush
-    };
 private:
     MsgFactory* iMsgFactory;
     InfoAggregator iInfoAggregator;
-    EMsgType iLastMsgType;
 };
 
-#if 0
 class SuiteMsgQueue : public Suite
 {
     static const TUint kMsgCount = 8;
@@ -131,22 +110,35 @@ private:
     InfoAggregator iInfoAggregator;
 };
 
-class ProcessorMsgAudio : public IMsgProcessor
+class ProcessorMsgType : public IMsgProcessor
 {
 public:
-    ProcessorMsgAudio();
-    TUint LastMsgAudioBytes() const;
+    enum EMsgType
+    {
+        ENone
+       ,EMsgAudioPcm
+       ,EMsgSilence
+       ,EMsgPlayable
+       ,EMsgTrack
+       ,EMsgMetaText
+       ,EMsgHalt
+       ,EMsgFlush
+    };
+public:
+    ProcessorMsgType();
+    EMsgType LastMsgType() const;
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgMetaText* aMsg);
+    Msg* ProcessMsg(MsgHalt* aMsg);
+    Msg* ProcessMsg(MsgFlush* aMsg);
 private:
-    void ProcessMsg(MsgAudio& aMsg);
-    void ProcessMsg(MsgTrack& aMsg);
-    void ProcessMsg(MsgStartOfAudio& aMsg);
-    void ProcessMsg(MsgMetaText& aMsg);
-    void ProcessMsg(MsgHalt& aMsg);
-    void ProcessMsg(MsgFlush& aMsg);
-private:
-    TUint iLastMsgAudioBytes;
+    EMsgType iLastMsgType;
 };
-#endif // 0
+
 } // namespace Media
 } // namespace OpenHome
 
@@ -268,91 +260,6 @@ void SuiteAllocator::Test()
     }
     delete allocator;
 }
-
-#if 0
-// SuiteMsgQueue
-
-SuiteMsgQueue::SuiteMsgQueue()
-    : Suite("MsgQueue tests")
-{
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1);
-}
-
-SuiteMsgQueue::~SuiteMsgQueue()
-{
-    delete iMsgFactory;
-}
-
-void SuiteMsgQueue::Test()
-{
-    Brn data1("0123456789");
-    Brn data2("abcde");
-    Brn data3("fghijklmnopqrstuvwxyz");
-
-    // test that queue can be populated and read from
-    MsgAudio* msg1 = iMsgFactory->CreateMsgAudio(data1, 1, 44100, 8, EMediaDataLittleEndian);
-    MsgAudio* msg2 = iMsgFactory->CreateMsgAudio(data2, 1, 44100, 8, EMediaDataLittleEndian);
-    MsgAudio* msg3 = iMsgFactory->CreateMsgAudio(data3, 1, 44100, 8, EMediaDataLittleEndian);
-    MsgQueue* queue = new MsgQueue();
-    queue->Enqueue(msg1);
-    queue->Enqueue(msg2);
-    queue->Enqueue(msg3);
-    ProcessorMsgAudio processor;
-    Msg* msg = queue->Dequeue();
-    msg->Process(processor);
-    TEST(processor.LastMsgAudioBytes() == msg1->Bytes());
-    msg->RemoveRef();
-    msg = queue->Dequeue();
-    msg->Process(processor);
-    TEST(processor.LastMsgAudioBytes() == msg2->Bytes());
-    msg->RemoveRef();
-    msg = queue->Dequeue();
-    msg->Process(processor);
-    TEST(processor.LastMsgAudioBytes() == msg3->Bytes());
-    // test that the queue can be emptied then reused
-    queue->Enqueue(msg);
-    msg = queue->Dequeue();
-    delete queue;
-    msg->Process(processor);
-    TEST(processor.LastMsgAudioBytes() == msg3->Bytes());
-    msg->RemoveRef();
-
-    // FIXME - no check yet that reading from an empty queue blocks
-}
-
-
-// ProcessorMsgAudio
-
-ProcessorMsgAudio::ProcessorMsgAudio()
-    : iLastMsgAudioBytes(0)
-{
-}
-
-TUint ProcessorMsgAudio::LastMsgAudioBytes() const
-{
-    return iLastMsgAudioBytes;
-}
-
-void ProcessorMsgAudio::ProcessMsg(MsgAudio& aMsg)
-{
-    iLastMsgAudioBytes = aMsg.Bytes();
-}
-
-void ProcessorMsgAudio::ProcessMsg(MsgTrack& /*aMsg*/)
-{
-    ASSERTS();
-}
-
-void ProcessorMsgAudio::ProcessMsg(MsgStartOfAudio& /*aMsg*/)
-{
-    ASSERTS();
-}
-
-void ProcessorMsgAudio::ProcessMsg(MsgMetaText& /*aMsg*/)
-{
-    ASSERTS();
-}
-#endif // 0
 
 
 // SuiteMsgAudio
@@ -894,8 +801,7 @@ void SuiteRamp::Test()
     }
 
     // Create MsgAudioPcm.  Set [50%...Min] ramp.  Add [Min...50%] ramp.  Convert to playable and check output
-//    const TUint kEncodedAudioSize = 1600;
-    const TUint kEncodedAudioSize = 64;
+    const TUint kEncodedAudioSize = 768;
     TByte encodedAudioData[kEncodedAudioSize];
     (void)memset(encodedAudioData, 0xff, kEncodedAudioSize);
     Brn encodedAudio(encodedAudioData, kEncodedAudioSize);
@@ -957,6 +863,7 @@ SuiteMsgProcessor::~SuiteMsgProcessor()
 
 void SuiteMsgProcessor::Test()
 {
+    ProcessorMsgType processor;
     // lots of code duplication here.
     // If we factored out the repeating block of code, any failures would be in a common method so pretty meaningless
     const TUint kDataBytes = 256;
@@ -964,82 +871,184 @@ void SuiteMsgProcessor::Test()
     (void)memset(encodedAudioData, 0xab, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, 2, 44100, 8, EMediaDataLittleEndian);
-    TEST(audioPcm == static_cast<Msg*>(audioPcm)->Process(*this));
-    TEST(iLastMsgType == EMsgAudioPcm);
+    TEST(audioPcm == static_cast<Msg*>(audioPcm)->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgAudioPcm);
     MsgPlayable* playable = audioPcm->CreatePlayable();
-    TEST(playable == static_cast<Msg*>(playable)->Process(*this));
-    TEST(iLastMsgType == EMsgPlayable);
+    TEST(playable == static_cast<Msg*>(playable)->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
     MsgSilence* silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
-    TEST(silence == static_cast<Msg*>(silence)->Process(*this));
-    TEST(iLastMsgType == EMsgSilence);
+    TEST(silence == static_cast<Msg*>(silence)->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgSilence);
     playable = silence->CreatePlayable(44100, 2);
-    TEST(playable == static_cast<Msg*>(playable)->Process(*this));
-    TEST(iLastMsgType == EMsgPlayable);
+    TEST(playable == static_cast<Msg*>(playable)->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
     Msg* msg = iMsgFactory->CreateMsgTrack();
-    TEST(msg == msg->Process(*this));
-    TEST(iLastMsgType == EMsgTrack);
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
     msg->RemoveRef();
 
     msg = iMsgFactory->CreateMsgMetaText();
-    TEST(msg == msg->Process(*this));
-    TEST(iLastMsgType == EMsgMetaText);
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMetaText);
     msg->RemoveRef();
 
     msg = iMsgFactory->CreateMsgHalt();
-    TEST(msg == msg->Process(*this));
-    TEST(iLastMsgType == EMsgHalt);
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
     msg->RemoveRef();
 
     msg = iMsgFactory->CreateMsgFlush();
-    TEST(msg == msg->Process(*this));
-    TEST(iLastMsgType == EMsgFlush);
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
     msg->RemoveRef();
 }
 
-Msg* SuiteMsgProcessor::ProcessMsg(MsgAudioPcm* aMsg)
+
+// ProcessorMsgType
+
+ProcessorMsgType::ProcessorMsgType()
+    : iLastMsgType(ENone)
 {
-    iLastMsgType = EMsgAudioPcm;
+}
+
+ProcessorMsgType::EMsgType ProcessorMsgType::LastMsgType() const
+{
+    return iLastMsgType;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgAudioPcm;
     return aMsg;
 }
 
-Msg* SuiteMsgProcessor::ProcessMsg(MsgSilence* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgSilence* aMsg)
 {
-    iLastMsgType = EMsgSilence;
+    iLastMsgType = ProcessorMsgType::EMsgSilence;
     return aMsg;
 }
 
-Msg* SuiteMsgProcessor::ProcessMsg(MsgPlayable* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgPlayable* aMsg)
 {
-    iLastMsgType = EMsgPlayable;
+    iLastMsgType = ProcessorMsgType::EMsgPlayable;
     return aMsg;
 }
 
-Msg* SuiteMsgProcessor::ProcessMsg(MsgTrack* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgTrack* aMsg)
 {
-    iLastMsgType = EMsgTrack;
+    iLastMsgType = ProcessorMsgType::EMsgTrack;
     return aMsg;
 }
 
-Msg* SuiteMsgProcessor::ProcessMsg(MsgMetaText* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgMetaText* aMsg)
 {
-    iLastMsgType = EMsgMetaText;
+    iLastMsgType = ProcessorMsgType::EMsgMetaText;
     return aMsg;
 }
 
-Msg* SuiteMsgProcessor::ProcessMsg(MsgHalt* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgHalt* aMsg)
 {
-    iLastMsgType = EMsgHalt;
+    iLastMsgType = ProcessorMsgType::EMsgHalt;
     return aMsg;
 }
 
-Msg* SuiteMsgProcessor::ProcessMsg(MsgFlush* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgFlush* aMsg)
 {
-    iLastMsgType = EMsgFlush;
+    iLastMsgType = ProcessorMsgType::EMsgFlush;
     return aMsg;
+}
+
+
+// SuiteMsgQueue
+
+SuiteMsgQueue::SuiteMsgQueue()
+    : Suite("MsgQueue tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+}
+
+SuiteMsgQueue::~SuiteMsgQueue()
+{
+    delete iMsgFactory;
+}
+
+void SuiteMsgQueue::Test()
+{
+    MsgQueue* queue = new MsgQueue();
+    
+    // queue can be populated and read from
+    TEST(queue->IsEmpty());
+    Msg* msg = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    Msg* dequeued = queue->Dequeue();
+    TEST(msg == dequeued);
+    TEST(queue->IsEmpty());
+    dequeued->RemoveRef();
+
+    // queue can be emptied then reused
+    msg = iMsgFactory->CreateMsgTrack();
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    dequeued = queue->Dequeue();
+    TEST(msg == dequeued);
+    TEST(queue->IsEmpty());
+    dequeued->RemoveRef();
+
+    // queue is fifo by default
+    msg = iMsgFactory->CreateMsgMetaText();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush();
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    ProcessorMsgType processor;
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMetaText);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
+    dequeued->RemoveRef();
+
+    // EnqueueAtHead skips existing items
+    msg = iMsgFactory->CreateMsgMetaText();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush();
+    queue->EnqueueAtHead(msg);
+    TEST(!queue->IsEmpty());
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMetaText);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
+    dequeued->RemoveRef();
+
+    // FIXME - no check yet that reading from an empty queue blocks
 }
 
 
@@ -1048,13 +1057,11 @@ void TestMsg()
 {
     Runner runner("Basic Msg tests\n");
     runner.Add(new SuiteAllocator());
-#if 0
-    runner.Add(new SuiteMsgQueue());
-#endif // 0
     runner.Add(new SuiteMsgAudio());
     runner.Add(new SuiteMsgPlayable());
     runner.Add(new SuiteRamp());
     runner.Add(new SuiteMsgProcessor());
+    runner.Add(new SuiteMsgQueue());
     // MsgQueue
     // MsgQueueJiffies
     runner.Run();
