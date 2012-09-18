@@ -398,7 +398,9 @@ Ramp::Ramp()
 
     // confirm some assumptions made elsewhere in this class
     // these could be compile-time or one-off run-time assertions
-#pragma warning (disable: 4127)
+#ifdef _WIN32
+# pragma warning (disable: 4127)
+#endif // _WIN32
     ASSERT_DEBUG(kRampMax <= 1<<30); // some 32-bit values in ramp calculations should become 64-bit if this increases
     ASSERT_DEBUG(kRampArrayCount == 512); // <<22 and >>23 code needs review if this changes
 }
