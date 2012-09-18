@@ -184,10 +184,10 @@ public:
     void Reset();
     TBool Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos); // returns true iff aSplit is set
     Ramp Split(TUint aNewSize, TUint aCurrentSize);
-    void Apply(Bwn& aData, TUint aChannels);
-    //TUint Start() const { return iStart; }
+    void Apply(Bwx& aData, TUint aChannels);
+    TUint Start() const { return iStart; }
     TUint End() const { return iEnd; }
-    //EDirection Direction() const { return iDirection; }
+    EDirection Direction() const { return iDirection; }
     TBool IsEnabled() const { return iEnabled; }
 private:
     void SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd);
@@ -262,6 +262,7 @@ private:
     void Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable);
 private: // from MsgAudio
     MsgAudio* Allocate();
+    void SplitCompleted(MsgAudio& aRemaining);
 private: // from Msg
     Msg* Process(IMsgProcessor& aProcessor);
 private:

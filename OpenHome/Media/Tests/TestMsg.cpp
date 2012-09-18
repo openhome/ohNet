@@ -1,6 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/RampArray.h>
 
 #include <string.h>
 #include <vector>
@@ -69,6 +70,18 @@ public:
     void Test();
 private:
     void ValidateSilence(MsgPlayable* aMsg);
+private:
+    MsgFactory* iMsgFactory;
+    InfoAggregator iInfoAggregator;
+};
+
+class SuiteRamp : public Suite
+{
+    static const TUint kMsgCount = 8;
+public:
+    SuiteRamp();
+    ~SuiteRamp();
+    void Test();
 private:
     MsgFactory* iMsgFactory;
     InfoAggregator iInfoAggregator;
@@ -646,6 +659,258 @@ void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 }
 
 
+// SuiteRamp
+
+SuiteRamp::SuiteRamp()
+    : Suite("Ramp tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1);
+}
+
+SuiteRamp::~SuiteRamp()
+{
+    delete iMsgFactory;
+}
+
+void SuiteRamp::Test()
+{
+    TUint jiffies = Jiffies::kJiffiesPerMs;
+
+    // start=Ramp::kMax, direction=down, duration=fragmentSize.  Apply, check end is Ramp::kMin
+    Ramp ramp;
+    Ramp split;
+    TUint splitPos;
+    TEST(!ramp.Set(Ramp::kRampMax, jiffies, jiffies, Ramp::EDown, split, splitPos));
+    TEST(ramp.Start() == Ramp::kRampMax);
+    TEST(ramp.End() == Ramp::kRampMin);
+    TEST(ramp.Direction() == Ramp::EDown);
+
+    // start=Ramp::kMax, direction=up, duration=fragmentSize.  Check asserts as invalid to ramp up beyond max
+    ramp.Reset();
+    TEST_THROWS(ramp.Set(Ramp::kRampMax, jiffies, jiffies, Ramp::EUp, split, splitPos), AssertionFailed);
+
+    // start=Ramp::kMin, direction=up, duration=fragmentSize.  Apply, check end is Ramp::kMax
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMin, jiffies, jiffies, Ramp::EUp, split, splitPos));
+    TEST(ramp.Start() == Ramp::kRampMin);
+    TEST(ramp.End() == Ramp::kRampMax);
+    TEST(ramp.Direction() == Ramp::EUp);
+
+    // start=Ramp::kMax, direction=down, duration=2*fragmentSize.  Apply, check end is 50%
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax, jiffies, 2*jiffies, Ramp::EDown, split, splitPos));
+    TEST(ramp.Start() == Ramp::kRampMax);
+    TEST(ramp.End() == (Ramp::kRampMax - Ramp::kRampMin) / 2);
+    TEST(ramp.Direction() == Ramp::EDown);
+
+    // start=Ramp::kMin, direction=up, duration=2*fragmentSize.  Apply, check end is 50%
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMin, jiffies, 2*jiffies, Ramp::EUp, split, splitPos));
+    TEST(ramp.Start() == Ramp::kRampMin);
+    TEST(ramp.End() == (Ramp::kRampMax - Ramp::kRampMin) / 2);
+    TEST(ramp.Direction() == Ramp::EUp);
+
+    // start=50%, direction=down, duration=4*fragmentSize.  Apply, check end is 25%
+    ramp.Reset();
+    TUint start = (Ramp::kRampMax - Ramp::kRampMin) / 2;
+    TEST(!ramp.Set(start, jiffies, 4*jiffies, Ramp::EDown, split, splitPos));
+    TEST(ramp.Start() == start);
+    TEST(ramp.End() == (Ramp::kRampMax - Ramp::kRampMin) / 4);
+    TEST(ramp.Direction() == Ramp::EDown);
+
+    // start=50%, direction=up, duration=4*fragmentSize.  Apply, check end is 75%
+    ramp.Reset();
+    start = (Ramp::kRampMax - Ramp::kRampMin) / 2;
+    TEST(!ramp.Set(start, jiffies, 4*jiffies, Ramp::EUp, split, splitPos));
+    TEST(ramp.Start() == start);
+    TEST(ramp.End() == Ramp::kRampMax - ((Ramp::kRampMax - Ramp::kRampMin) / 4));
+    TEST(ramp.Direction() == Ramp::EUp);
+
+    // Apply ramp [Max...Min].  Check start/end values and that subsequent values never rise
+    const TUint kNumChannels = 2;
+    const TUint kAudioDataSize = 800;
+    TUint audioData[kAudioDataSize];
+    for (TUint i=0; i<kAudioDataSize; i++) {
+        audioData[i] = 0xffffff00;
+    }
+    Bws<kAudioDataSize * sizeof(TUint)> dummyAudio((const TByte*)&audioData[0], kAudioDataSize * sizeof(TUint));
+
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize*4, kAudioDataSize*4, Ramp::EDown, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
+    Bwh* rampBuf = new Bwh(dummyAudio);
+    ramp.Apply(*rampBuf, kNumChannels);
+    TUint prevSampleVal = 0xffffff00, sampleVal;
+    const TUint* ptr = (const TUint*)rampBuf->Ptr();
+    TUint numSubsamples = rampBuf->Bytes() / sizeof(TUint);
+    TEST(0xffffff00 - ptr[0] < 0x200); // test that start of ramp is close to initial value
+    TEST(ptr[numSubsamples-1] == 0);  // test that end of ramp is close to zero
+    for (TUint i=0; i<numSubsamples; i+=kNumChannels) {
+        sampleVal = ptr[i];
+        TEST(sampleVal == ptr[i+1]);
+        TEST(prevSampleVal >= sampleVal);
+        prevSampleVal = sampleVal;
+    }
+    delete rampBuf;
+
+    // Apply ramp [Min...Max].  Check start/end values and that subsequent values never fall
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMin, kAudioDataSize*4, kAudioDataSize*4, Ramp::EUp, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
+    rampBuf = new Bwh(dummyAudio);
+    ramp.Apply(*rampBuf, kNumChannels);
+    prevSampleVal = 0;
+    numSubsamples = rampBuf->Bytes() / sizeof(TUint);
+    ptr = (const TUint*)rampBuf->Ptr();
+    TEST(ptr[0] == 0);  // test that start of ramp is close to zero
+    TEST(0xffffff00 - ptr[numSubsamples-1] < 0x200); // test that end of ramp is close to initial value
+    for (TUint i=0; i<numSubsamples; i+=kNumChannels) {
+        sampleVal = ptr[i];
+        TEST(sampleVal == ptr[i+1]);
+        TEST(prevSampleVal <= sampleVal);
+        prevSampleVal = sampleVal;
+    }
+    delete rampBuf;
+
+    // Apply ramp [Max...50%].  Check start/end values
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize*2, kAudioDataSize*4, Ramp::EDown, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
+    rampBuf = new Bwh(dummyAudio);
+    ramp.Apply(*rampBuf, kNumChannels);
+    prevSampleVal = 0;
+    numSubsamples = rampBuf->Bytes() / sizeof(TUint);
+    ptr = (const TUint*)rampBuf->Ptr();
+    TEST(0xffffff00 - ptr[0] < 0x200); // test that start of ramp is close to initial value
+    TUint endValGuess = (((TUint64)0xffffff00 * kRampArray[256])>>31);
+    TEST(endValGuess - ptr[numSubsamples-1] < 0x100);  // test that end of ramp is close to zero
+    delete rampBuf;
+
+    // Apply ramp [Min...50%].  Check start/end values
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMin, kAudioDataSize*2, kAudioDataSize*4, Ramp::EUp, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
+    rampBuf = new Bwh(dummyAudio);
+    ramp.Apply(*rampBuf, kNumChannels);
+    prevSampleVal = 0;
+    numSubsamples = rampBuf->Bytes() / sizeof(TUint);
+    ptr = (const TUint*)rampBuf->Ptr();
+    TEST(ptr[0] == 0);
+    TEST(endValGuess - ptr[numSubsamples-1] < 0x100);
+    delete rampBuf;
+
+    // Apply ramp [50%...25%].  Check start/end values
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax / 2, kAudioDataSize, kAudioDataSize*4, Ramp::EDown, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
+    rampBuf = new Bwh(dummyAudio);
+    ramp.Apply(*rampBuf, kNumChannels);
+    prevSampleVal = 0;
+    numSubsamples = rampBuf->Bytes() / sizeof(TUint);
+    ptr = (const TUint*)rampBuf->Ptr();
+    TUint startValGuess = (((TUint64)0xffffff00 * kRampArray[256])>>31);
+    endValGuess = (((TUint64)0xffffff00 * kRampArray[384])>>31);
+    TEST(startValGuess - ptr[0] < 0x100);
+    TEST(endValGuess - ptr[numSubsamples-1] < 0x100);
+    delete rampBuf;
+
+    // Create [50%...Min] ramp.  Add [Min...50%] ramp.  Check this splits into [Min...25%], [25%...Min]
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, 2 * jiffies, Ramp::EDown, split, splitPos));
+    TEST(ramp.Set(Ramp::kRampMin, jiffies, 2 * jiffies, Ramp::EUp, split, splitPos));
+    TEST(ramp.Start() == 0);
+    TEST(ramp.End() == Ramp::kRampMax / 4);
+    TEST(ramp.Direction() == Ramp::EUp);
+    TEST(split.Start() == ramp.End());
+    TEST(split.End() == 0);
+    TEST(split.Direction() == Ramp::EDown);
+    TEST(ramp.IsEnabled());
+    TEST(split.IsEnabled());
+
+    // Create [50%...25%] ramp.  Add [70%...30%] ramp.  Check original ramp is retained.
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, 4 * jiffies, Ramp::EDown, split, splitPos));
+    start = ramp.Start();
+    TUint end = ramp.End();
+    Ramp::EDirection direction = ramp.Direction();
+    TEST(!ramp.Set(((TUint64)10 * Ramp::kRampMax) / 7, jiffies, (5 * jiffies) / 2, Ramp::EDown, split, splitPos));
+    TEST(ramp.Start() == start);
+    TEST(ramp.End() == end);
+    TEST(ramp.Direction() == direction);
+
+    // Create [50%...25%] ramp.  Add [40%...Min] ramp.  Check new ramp is used.
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, 4 * jiffies, Ramp::EDown, split, splitPos));
+    start = ramp.Start();
+    start = ((TUint64)2 * Ramp::kRampMax) / 5;
+    TEST(!ramp.Set(start, jiffies, (5 * jiffies) / 2, Ramp::EDown, split, splitPos));
+    TEST(ramp.Start() == start);
+    TEST(ramp.End() == 0);
+    TEST(ramp.Direction() == Ramp::EDown);
+
+    // Create MsgSilence.  Set [Max...Min] ramp.  Convert to playable and check output is all zeros
+    MsgSilence* silence = iMsgFactory->CreateMsgSilence(jiffies);
+    MsgAudio* remaining = NULL;
+    TEST(Ramp::kRampMin == silence->SetRamp(Ramp::kRampMax, jiffies, Ramp::EDown, remaining));
+    TEST(remaining == NULL);
+    MsgPlayable* playable = silence->CreatePlayable(44100, 2);
+    TEST(playable != NULL);
+    const TUint kWriterBufGranularity = 1024;
+    WriterBwh* writerBuf = new WriterBwh(kWriterBufGranularity);
+    playable->Write(*writerBuf);
+    Brh buf;
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    ptr = (const TUint*)buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i+=4) {
+        TEST(*ptr == 0);
+        ptr++;
+    }
+
+    // Create MsgAudioPcm.  Set [50%...Min] ramp.  Add [Min...50%] ramp.  Convert to playable and check output
+//    const TUint kEncodedAudioSize = 1600;
+    const TUint kEncodedAudioSize = 64;
+    TByte encodedAudioData[kEncodedAudioSize];
+    (void)memset(encodedAudioData, 0xff, kEncodedAudioSize);
+    Brn encodedAudio(encodedAudioData, kEncodedAudioSize);
+    MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudio, kNumChannels, 44100, 16, EMediaDataLittleEndian);
+    jiffies = audioPcm->Jiffies();
+    TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMax / 2, jiffies*2, Ramp::EDown, remaining));
+    TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMin, jiffies*2, Ramp::EUp, remaining));
+    TEST(remaining != NULL);
+    TEST(audioPcm->Jiffies() == jiffies / 2);
+    TEST(audioPcm->Jiffies() == remaining->Jiffies());
+    playable = audioPcm->CreatePlayable();
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    playable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    ptr = (const TUint*)buf.Ptr();
+    numSubsamples = buf.Bytes() / DecodedAudio::kBytesPerSubsample;
+    prevSampleVal = 0;
+    TEST(ptr[0] == 0);
+    for (TUint i=0; i<numSubsamples; i+=kNumChannels) {
+        sampleVal = ptr[i];
+        TEST(sampleVal == ptr[i+1]);
+        if (i > 0) {
+            TEST(prevSampleVal < sampleVal);
+        }
+        prevSampleVal = sampleVal;
+    }
+    playable = ((MsgAudioPcm*)remaining)->CreatePlayable();
+    writerBuf = new WriterBwh(kWriterBufGranularity);
+    playable->Write(*writerBuf);
+    writerBuf->TransferTo(buf);
+    delete writerBuf;
+    ptr = (const TUint*)buf.Ptr();
+    numSubsamples = buf.Bytes() / DecodedAudio::kBytesPerSubsample;
+    TEST(ptr[numSubsamples-1] == 0);
+    for (TUint i=0; i<numSubsamples; i+=kNumChannels) {
+        sampleVal = ptr[i];
+        TEST(sampleVal == ptr[i+1]);
+        if (i > 0) {
+            TEST(prevSampleVal > sampleVal);
+        }
+        prevSampleVal = sampleVal;
+    }
+}
+
+
 
 void TestMsg()
 {
@@ -656,8 +921,7 @@ void TestMsg()
 #endif // 0
     runner.Add(new SuiteMsgAudio());
     runner.Add(new SuiteMsgPlayable());
-    // MsgAudio - Pcm & Silence
-    // Playable.  Both Pcm & Silence.  Include checks that can split on non-sample boundaries without losing data
+    runner.Add(new SuiteRamp());
     // Ramp (stand-alone class, then as part of MsgAudio, then as part of MsgPlayable)
     // MsgProcessor.  Check that function for each msg type can be called
     // MsgQueue

@@ -398,6 +398,7 @@ Ramp::Ramp()
 
     // confirm some assumptions made elsewhere in this class
     // these could be compile-time or one-off run-time assertions
+#pragma warning (disable: 4127)
     ASSERT_DEBUG(kRampMax <= 1<<30); // some 32-bit values in ramp calculations should become 64-bit if this increases
     ASSERT_DEBUG(kRampArrayCount == 512); // <<22 and >>23 code needs review if this changes
 }
@@ -412,13 +413,19 @@ void Ramp::Reset()
 
 TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos)
 {
-    ASSERT(aRampDuration >  aFragmentSize || (aStart == kRampMax && aRampDuration ==  aFragmentSize));
+    ASSERT(aRampDuration >  aFragmentSize || ((aStart == kRampMax ||aStart == kRampMin) && aRampDuration ==  aFragmentSize));
     ASSERT(aDirection != ENone);
     iEnabled = true;
     aSplit.Reset();
     aSplitPos = 0xffffffff;
-    TUint rampDelta = ((TUint64)(kRampMax * aFragmentSize)) / aRampDuration;
+    TUint rampDelta = (kRampMax * (TUint64)aFragmentSize) / aRampDuration;
     TUint rampEnd = aDirection == EDown? (TUint)(aStart - rampDelta) : aStart + rampDelta;
+    if (aDirection == EDown) {
+        ASSERT(rampDelta <= aStart);
+    }
+    else {
+        ASSERT(rampEnd <= kRampMax);
+    }
     if (iDirection == ENone) {
         // No previous ramp.  Trivial to apply the suggested values
         iDirection = aDirection;
@@ -471,8 +478,8 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirecti
             SelectLowerRampPoints(aStart, rampEnd);
         }
         else {
-            TInt intersectX = (aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3));
-            TUint intersectY = ((y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1;
+            TInt intersectX = ((TInt64)aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3));
+            TUint intersectY = (((TUint64)y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1;
             // calculation of intersectY may overflow a TUint.
             // intersectX will tell us we have no useful intersection in these cases and we'll ignore the Y value.
             if (intersectX < 0 || (TUint)intersectX > aFragmentSize) {
@@ -482,12 +489,13 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirecti
             else {
                 // split this Ramp; the first portion rises to the intersection of the two ramps, the second drops to the lower final value
                 aSplitPos = intersectX;
+                aSplit.iStart = intersectY;
+                aSplit.iEnd = MIN(iEnd, rampEnd);
+                aSplit.iDirection = EDown;
+                aSplit.iEnabled = true;
                 iDirection = EUp;
                 iStart = MIN(iStart, aStart);
                 iEnd = intersectY;
-                aSplit.iStart = intersectY;
-                aSplit.iEnd = MIN(iEnd, intersectY);
-                aSplit.iDirection = EDown;
             }
         }
     }
@@ -515,25 +523,29 @@ Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
     remaining.iEnd = iEnd;
     remaining.iDirection = iDirection;
     remaining.iEnabled = true;
-    TInt ramp = ((TInt64)((iStart-iEnd) * aNewSize)) / aCurrentSize;
+    TInt ramp = ((iStart-iEnd) * (TInt64)aNewSize) / aCurrentSize;
     iEnd = iStart + ramp;
     remaining.iStart = iEnd;
     return remaining;
 }
 
-void Ramp::Apply(Bwn& aData, TUint aChannels)
+void Ramp::Apply(Bwx& aData, TUint aChannels)
 {
     ASSERT_DEBUG(aData.Bytes() % (DecodedAudio::kBytesPerSubsample * aChannels) == 0);
-    TUint* ptr = (TUint*)aData.Ptr(); // looks dodgy but we can safely assume ptr is on a word boundary
+    TUint* ptr = (TUint*)aData.Ptr(); // looks dodgy but we can safely assume ptr is writable and on a word boundary
     const TUint numSamples = aData.Bytes() / (DecodedAudio::kBytesPerSubsample * aChannels);
-    const TInt64 totalRamp = iStart - iEnd;
-    for (TUint i=0; i<=numSamples; i+=aChannels) {
-        const TUint ramp = iStart - ((TUint)(((TUint64)(i * totalRamp))/numSamples));
-        const TUint rampIndex = 512 - ((kRampMax - ramp + (1<<22)) >> 23); // assumes kRampArray has 512 items. (1<<22 allows rounding up)
+    const TInt totalRamp = iStart - iEnd;
+    const TUint fullRampSpan = kRampMax - kRampMin;
+    for (TUint i=0; i<numSamples; i++) {
+        const TUint ramp = (TUint)(iStart - ((i * (TInt64)totalRamp)/(numSamples-1)));
+        //Log::Print(" %08x ", ramp);
+        TUint rampIndex = (fullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
         for (TUint j=0; j<aChannels; j++) { // apply ramp to each subsample
             TUint subSample = *ptr;
-            TUint rampedSubsample = ((TUint64)(subSample * kRampArray[rampIndex])) >> 31; // >>31 assumes kRampArray values are 32-bit, signed & positive
+            //Log::Print(" %03u ", rampIndex);
+            TUint rampedSubsample = (rampIndex==512? 0 : ((TUint64)subSample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
             rampedSubsample &= ~0xff; // clear bits which never hold audio data
+            //Log::Print("Original=%08x, ramped=%08x, rampIndex=%u\n", *ptr, rampedSubsample, rampIndex);
             *ptr = rampedSubsample;
             ptr++;
         }
@@ -604,9 +616,14 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirecti
     TUint splitPos;
     TUint rampEnd;
     if (iRamp.Set(aStart, iSize, aDuration, aDirection, split, splitPos)) {
+        Ramp ramp = iRamp; // Split() will muck about with ramps.  Allow this to happen then reset the correct values
         aSplit = Split(splitPos);
+        iRamp = ramp;
         aSplit->iRamp = split;
         rampEnd = split.End();
+        ASSERT_DEBUG(iRamp.End() == split.Start());
+        //Log::Print("\nSplit msg at %u jiffies.  First ramp=[%08x...%08x], second ramp=[%08x...%08x]\n",
+        //            splitPos, iRamp.Start(), iRamp.End(), split.Start(), split.End());
     }
     else {
         rampEnd = iRamp.End();
@@ -684,7 +701,9 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, Allocator<MsgPlayableP
 void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
 {
     iAudioData->AddRef();
-    static_cast<MsgAudioPcm&>(aRemaining).iAudioData = iAudioData;
+    MsgAudioPcm& remaining = static_cast<MsgAudioPcm&>(aRemaining);
+    remaining.iAudioData = iAudioData;
+    remaining.iAllocatorPlayable = iAllocatorPlayable;
 }
 
 MsgAudio* MsgAudioPcm::Allocate()
@@ -736,6 +755,11 @@ MsgAudio* MsgSilence::Allocate()
 Msg* MsgSilence::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
+}
+
+void MsgSilence::SplitCompleted(MsgAudio& aRemaining)
+{
+    static_cast<MsgSilence&>(aRemaining).iAllocatorPlayable = iAllocatorPlayable;
 }
 
 void MsgSilence::Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable)
