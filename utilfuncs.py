@@ -80,7 +80,7 @@ def configure_toolchain(conf):
         conf.load('msvc')
         conf.env.append_value('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+platform_info['endian']+'_ENDIAN'])
         if conf.options.debugmode == 'Debug':
-            conf.env.append_value('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1'])
+            conf.env.append_value('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1', '/DDEFINE_DEBUG'])
             conf.env.append_value('LINKFLAGS', ['/debug'])
         else:
             conf.env.append_value('CXXFLAGS',['/MT', '/Ox'])
@@ -91,7 +91,7 @@ def configure_toolchain(conf):
                 '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+platform_info['endian']+'_ENDIAN',
                 '-DDEFINE_TRACE', '-fvisibility=hidden', '-Werror'])
         if conf.options.debugmode == 'Debug':
-            conf.env.append_value('CXXFLAGS',['-g','-O0'])
+            conf.env.append_value('CXXFLAGS',['-g','-O0', '/DDEFINE_DEBUG'])
         else:
             conf.env.append_value('CXXFLAGS',['-O2'])
         conf.env.append_value('LINKFLAGS', ['-pthread'])
