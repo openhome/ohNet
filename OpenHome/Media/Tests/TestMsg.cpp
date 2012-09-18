@@ -98,18 +98,6 @@ private:
     InfoAggregator iInfoAggregator;
 };
 
-class SuiteMsgQueue : public Suite
-{
-    static const TUint kMsgCount = 8;
-public:
-    SuiteMsgQueue();
-    ~SuiteMsgQueue();
-    void Test();
-private:
-    MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
-};
-
 class ProcessorMsgType : public IMsgProcessor
 {
 public:
@@ -137,6 +125,72 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
 private:
     EMsgType iLastMsgType;
+};
+
+class SuiteMsgQueue : public Suite
+{
+public:
+    SuiteMsgQueue();
+    ~SuiteMsgQueue();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    InfoAggregator iInfoAggregator;
+};
+
+class SuiteMsgQueueJiffies : public Suite
+{
+    static const TUint kMsgCount = 8;
+public:
+    SuiteMsgQueueJiffies();
+    ~SuiteMsgQueueJiffies();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    InfoAggregator iInfoAggregator;
+};
+
+class TestMsgQueueJiffies : public MsgQueueJiffies
+{
+public:
+    enum EMsgType
+    {
+        ENone
+       ,EMsgAudioPcm
+       ,EMsgSilence
+       ,EMsgTrack
+       ,EMsgMetaText
+       ,EMsgHalt
+       ,EMsgFlush
+    };
+public:
+    TestMsgQueueJiffies();
+    void Enqueue(Msg* aMsg)         { DoEnqueue(aMsg); }
+    Msg* Dequeue()                  { return DoDequeue(); }
+    void EnqueueAtHead(Msg* aMsg)   { MsgQueueJiffies::EnqueueAtHead(aMsg); }
+    TUint Jiffies() const           { return MsgQueueJiffies::Jiffies(); }
+    EMsgType LastIn() const         { return iLastMsgIn; }
+    EMsgType LastOut() const        { return iLastMsgOut; }
+    void SplitNextAudio()           { iSplitNextAudio = true; }
+private:
+    Msg* ProcessMsgAudioOut(MsgAudio* aMsgAudio);
+private: // from MsgQueueJiffies
+    void ProcessMsgIn(MsgAudioPcm* aMsg);
+    void ProcessMsgIn(MsgSilence* aMsg);
+    void ProcessMsgIn(MsgTrack* aMsg);
+    void ProcessMsgIn(MsgMetaText* aMsg);
+    void ProcessMsgIn(MsgHalt* aMsg);
+    void ProcessMsgIn(MsgFlush* aMsg);
+    Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
+    Msg* ProcessMsgOut(MsgSilence* aMsg);
+    Msg* ProcessMsgOut(MsgTrack* aMsg);
+    Msg* ProcessMsgOut(MsgMetaText* aMsg);
+    Msg* ProcessMsgOut(MsgHalt* aMsg);
+    Msg* ProcessMsgOut(MsgFlush* aMsg);
+private:
+    EMsgType iLastMsgIn;
+    EMsgType iLastMsgOut;
+    TBool iSplitNextAudio;
 };
 
 } // namespace Media
@@ -1052,6 +1106,208 @@ void SuiteMsgQueue::Test()
 }
 
 
+// SuiteMsgQueueJiffies
+
+SuiteMsgQueueJiffies::SuiteMsgQueueJiffies()
+    : Suite("MsgQueueJiffies tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 2, 1, 1, 1, 1, 1, 1, 1);
+}
+
+SuiteMsgQueueJiffies::~SuiteMsgQueueJiffies()
+{
+    delete iMsgFactory;
+}
+
+void SuiteMsgQueueJiffies::Test()
+{
+    // Add msg of each type.  After each addition, check type of last in and that only audio increases Jiffies()
+    // Dequeue msgs.  After each, check type of last out and that only audio decreases Jiffies()
+
+    TestMsgQueueJiffies* queue = new TestMsgQueueJiffies();
+    TUint jiffies = queue->Jiffies();
+    TEST(jiffies == 0);
+    TEST(queue->LastIn() == TestMsgQueueJiffies::ENone);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
+
+    Msg* msg = iMsgFactory->CreateMsgTrack();
+    queue->Enqueue(msg);
+    jiffies = queue->Jiffies();
+    TEST(jiffies == 0);
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgTrack);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
+
+    MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    queue->Enqueue(audio);
+    TEST(queue->Jiffies() == jiffies + audio->Jiffies());
+    jiffies = queue->Jiffies();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgSilence);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
+
+    msg = iMsgFactory->CreateMsgMetaText();
+    queue->Enqueue(msg);
+    TEST(queue->Jiffies() == jiffies);
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgMetaText);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
+
+    msg = iMsgFactory->CreateMsgFlush();
+    queue->Enqueue(msg);
+    TEST(queue->Jiffies() == jiffies);
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgFlush);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
+
+    const TUint kDataBytes = 256;
+    TByte encodedAudioData[kDataBytes];
+    (void)memset(encodedAudioData, 0xab, kDataBytes);
+    Brn encodedAudioBuf(encodedAudioData, kDataBytes);
+    audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, 2, 44100, 8, EMediaDataLittleEndian);
+    TUint audioJiffies = audio->Jiffies();
+    queue->Enqueue(audio);
+    TEST(queue->Jiffies() == jiffies + audioJiffies);
+    jiffies = queue->Jiffies();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgAudioPcm);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
+
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    TEST(queue->Jiffies() == jiffies);
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgTrack);
+    TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgSilence);
+    TEST(queue->Jiffies() == jiffies - Jiffies::kJiffiesPerMs);
+    jiffies = queue->Jiffies();
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgMetaText);
+    TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgFlush);
+    TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    queue->SplitNextAudio();
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgAudioPcm);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgAudioPcm);
+    TEST(queue->Jiffies() == jiffies - (audioJiffies/2));
+    jiffies = queue->Jiffies();
+    msg->RemoveRef();
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgAudioPcm);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgAudioPcm);
+    TEST(queue->Jiffies() == 0);
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgAudioPcm);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgHalt);
+    TEST(queue->Jiffies() == 0);
+    msg->RemoveRef();
+
+    delete queue;
+}
+
+
+// TestMsgQueueJiffies
+
+TestMsgQueueJiffies::TestMsgQueueJiffies()
+    : iLastMsgIn(ENone)
+    , iLastMsgOut(ENone)
+    , iSplitNextAudio(false)
+{
+}
+    
+Msg* TestMsgQueueJiffies::ProcessMsgAudioOut(MsgAudio* aMsgAudio)
+{
+    if (iSplitNextAudio) {
+        iSplitNextAudio = false;
+        MsgAudio* remaining = aMsgAudio->Split(aMsgAudio->Jiffies() / 2);
+        EnqueueAtHead(remaining);
+    }
+    return aMsgAudio;
+}
+    
+void TestMsgQueueJiffies::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
+{
+    iLastMsgIn = EMsgAudioPcm;
+}
+
+void TestMsgQueueJiffies::ProcessMsgIn(MsgSilence* /*aMsg*/)
+{
+    iLastMsgIn = EMsgSilence;
+}
+
+void TestMsgQueueJiffies::ProcessMsgIn(MsgTrack* /*aMsg*/)
+{
+    iLastMsgIn = EMsgTrack;
+}
+
+void TestMsgQueueJiffies::ProcessMsgIn(MsgMetaText* /*aMsg*/)
+{
+    iLastMsgIn = EMsgMetaText;
+}
+
+void TestMsgQueueJiffies::ProcessMsgIn(MsgHalt* /*aMsg*/)
+{
+    iLastMsgIn = EMsgHalt;
+}
+
+void TestMsgQueueJiffies::ProcessMsgIn(MsgFlush* /*aMsg*/)
+{
+    iLastMsgIn = EMsgFlush;
+}
+
+Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
+{
+    iLastMsgOut = EMsgAudioPcm;
+    return ProcessMsgAudioOut(aMsg);
+}
+
+Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgSilence* aMsg)
+{
+    iLastMsgOut = EMsgSilence;
+    return ProcessMsgAudioOut(aMsg);
+}
+
+Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgTrack* aMsg)
+{
+    iLastMsgOut = EMsgTrack;
+    return aMsg;
+}
+
+Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgMetaText* aMsg)
+{
+    iLastMsgOut = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgHalt* aMsg)
+{
+    iLastMsgOut = EMsgHalt;
+    return aMsg;
+}
+
+Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgFlush* aMsg)
+{
+    iLastMsgOut = EMsgFlush;
+    return aMsg;
+}
+
+
 
 void TestMsg()
 {
@@ -1062,8 +1318,7 @@ void TestMsg()
     runner.Add(new SuiteRamp());
     runner.Add(new SuiteMsgProcessor());
     runner.Add(new SuiteMsgQueue());
-    // MsgQueue
-    // MsgQueueJiffies
+    runner.Add(new SuiteMsgQueueJiffies());
     runner.Run();
 }
 

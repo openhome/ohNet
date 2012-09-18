@@ -1081,6 +1081,7 @@ TBool MsgQueue::IsEmpty() const
 // MsgQueueJiffies
 
 MsgQueueJiffies::MsgQueueJiffies()
+    : iJiffies(0)
 {
 }
 
@@ -1100,8 +1101,8 @@ Msg* MsgQueueJiffies::DoDequeue()
     Msg* msg;
     do {
         msg = iQueue.Dequeue();
-        ProcessorQueueIn procIn(*this);
-        msg = msg->Process(procIn);
+        ProcessorQueueOut procOut(*this);
+        msg = msg->Process(procOut);
     } while (msg == NULL);
     return msg;
 }
@@ -1137,10 +1138,6 @@ void MsgQueueJiffies::ProcessMsgIn(MsgSilence* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgPlayable* /*aMsg*/)
-{
-}
-
 void MsgQueueJiffies::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
@@ -1163,11 +1160,6 @@ Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
 }
 
 Msg* MsgQueueJiffies::ProcessMsgOut(MsgSilence* aMsg)
-{
-    return aMsg;
-}
-
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgPlayable* aMsg)
 {
     return aMsg;
 }
