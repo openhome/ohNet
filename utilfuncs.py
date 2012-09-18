@@ -91,7 +91,7 @@ def configure_toolchain(conf):
                 '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+platform_info['endian']+'_ENDIAN',
                 '-DDEFINE_TRACE', '-fvisibility=hidden', '-Werror'])
         if conf.options.debugmode == 'Debug':
-            conf.env.append_value('CXXFLAGS',['-g','-O0', '/DDEFINE_DEBUG'])
+            conf.env.append_value('CXXFLAGS',['-g','-O0', '-DDEFINE_DEBUG'])
         else:
             conf.env.append_value('CXXFLAGS',['-O2'])
         conf.env.append_value('LINKFLAGS', ['-pthread'])
