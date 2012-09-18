@@ -87,6 +87,37 @@ private:
     InfoAggregator iInfoAggregator;
 };
 
+class SuiteMsgProcessor : public Suite, private IMsgProcessor
+{
+public:
+    SuiteMsgProcessor();
+    ~SuiteMsgProcessor();
+    void Test();
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgMetaText* aMsg);
+    Msg* ProcessMsg(MsgHalt* aMsg);
+    Msg* ProcessMsg(MsgFlush* aMsg);
+private:
+    enum EMsgType
+    {
+        EMsgAudioPcm
+       ,EMsgSilence
+       ,EMsgPlayable
+       ,EMsgTrack
+       ,EMsgMetaText
+       ,EMsgHalt
+       ,EMsgFlush
+    };
+private:
+    MsgFactory* iMsgFactory;
+    InfoAggregator iInfoAggregator;
+    EMsgType iLastMsgType;
+};
+
 #if 0
 class SuiteMsgQueue : public Suite
 {
@@ -911,6 +942,107 @@ void SuiteRamp::Test()
 }
 
 
+// SuiteMsgProcessor
+
+SuiteMsgProcessor::SuiteMsgProcessor()
+    : Suite("IMsgProcessor tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+}
+
+SuiteMsgProcessor::~SuiteMsgProcessor()
+{
+    delete iMsgFactory;
+}
+
+void SuiteMsgProcessor::Test()
+{
+    // lots of code duplication here.
+    // If we factored out the repeating block of code, any failures would be in a common method so pretty meaningless
+    const TUint kDataBytes = 256;
+    TByte encodedAudioData[kDataBytes];
+    (void)memset(encodedAudioData, 0xab, kDataBytes);
+    Brn encodedAudioBuf(encodedAudioData, kDataBytes);
+    MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, 2, 44100, 8, EMediaDataLittleEndian);
+    TEST(audioPcm == static_cast<Msg*>(audioPcm)->Process(*this));
+    TEST(iLastMsgType == EMsgAudioPcm);
+    MsgPlayable* playable = audioPcm->CreatePlayable();
+    TEST(playable == static_cast<Msg*>(playable)->Process(*this));
+    TEST(iLastMsgType == EMsgPlayable);
+    playable->RemoveRef();
+
+    MsgSilence* silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    TEST(silence == static_cast<Msg*>(silence)->Process(*this));
+    TEST(iLastMsgType == EMsgSilence);
+    playable = silence->CreatePlayable(44100, 2);
+    TEST(playable == static_cast<Msg*>(playable)->Process(*this));
+    TEST(iLastMsgType == EMsgPlayable);
+    playable->RemoveRef();
+
+    Msg* msg = iMsgFactory->CreateMsgTrack();
+    TEST(msg == msg->Process(*this));
+    TEST(iLastMsgType == EMsgTrack);
+    msg->RemoveRef();
+
+    msg = iMsgFactory->CreateMsgMetaText();
+    TEST(msg == msg->Process(*this));
+    TEST(iLastMsgType == EMsgMetaText);
+    msg->RemoveRef();
+
+    msg = iMsgFactory->CreateMsgHalt();
+    TEST(msg == msg->Process(*this));
+    TEST(iLastMsgType == EMsgHalt);
+    msg->RemoveRef();
+
+    msg = iMsgFactory->CreateMsgFlush();
+    TEST(msg == msg->Process(*this));
+    TEST(iLastMsgType == EMsgFlush);
+    msg->RemoveRef();
+}
+
+Msg* SuiteMsgProcessor::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iLastMsgType = EMsgAudioPcm;
+    return aMsg;
+}
+
+Msg* SuiteMsgProcessor::ProcessMsg(MsgSilence* aMsg)
+{
+    iLastMsgType = EMsgSilence;
+    return aMsg;
+}
+
+Msg* SuiteMsgProcessor::ProcessMsg(MsgPlayable* aMsg)
+{
+    iLastMsgType = EMsgPlayable;
+    return aMsg;
+}
+
+Msg* SuiteMsgProcessor::ProcessMsg(MsgTrack* aMsg)
+{
+    iLastMsgType = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuiteMsgProcessor::ProcessMsg(MsgMetaText* aMsg)
+{
+    iLastMsgType = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteMsgProcessor::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastMsgType = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteMsgProcessor::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastMsgType = EMsgFlush;
+    return aMsg;
+}
+
+
 
 void TestMsg()
 {
@@ -922,8 +1054,7 @@ void TestMsg()
     runner.Add(new SuiteMsgAudio());
     runner.Add(new SuiteMsgPlayable());
     runner.Add(new SuiteRamp());
-    // Ramp (stand-alone class, then as part of MsgAudio, then as part of MsgPlayable)
-    // MsgProcessor.  Check that function for each msg type can be called
+    runner.Add(new SuiteMsgProcessor());
     // MsgQueue
     // MsgQueueJiffies
     runner.Run();
