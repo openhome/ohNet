@@ -126,10 +126,7 @@ public:
     static const TUint kMaxSubsamples = kMaxBytes/kBytesPerSubsample;
 public:
     DecodedAudio(AllocatorBase& aAllocator);
-    //const TUint* Ptr() const; // FIXME - unnecessary?
-    //const TUint* PtrOffsetSamples(TUint aSamples) const; // FIXME - unnecessary?
     const TUint* PtrOffsetBytes(TUint aBytes) const;
-    //const TUint* PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const; // FIXME - unnecessary?
     TUint Bytes() const;
     TUint BytesFromJiffies(TUint& aJiffies) const;
     TUint JiffiesFromBytes(TUint aBytes) const;
