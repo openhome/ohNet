@@ -236,30 +236,11 @@ DecodedAudio::DecodedAudio(AllocatorBase& aAllocator)
 {
 }
 
-const TUint* DecodedAudio::Ptr() const
-{
-    return &iSubsamples[0];
-}
-
-const TUint* DecodedAudio::PtrOffsetSamples(TUint aSamples) const
-{
-    const TUint index = aSamples * iChannels;
-    ASSERT(index < iSubsampleCount);
-    return &iSubsamples[index];
-}
-
 const TUint* DecodedAudio::PtrOffsetBytes(TUint aBytes) const
 {
     ASSERT(aBytes % (kBytesPerSubsample * iChannels) == 0);
     TUint index = aBytes/4;
     return &iSubsamples[index];
-}
-
-const TUint* DecodedAudio::PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const
-{
-    TUint offset = (TUint)(aFrom - &iSubsamples[0]) * sizeof(iSubsamples[0]);
-    offset += aBytes;
-    return PtrOffsetBytes(offset);
 }
 
 TUint DecodedAudio::Bytes() const

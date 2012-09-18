@@ -126,13 +126,13 @@ public:
     static const TUint kMaxSubsamples = kMaxBytes/kBytesPerSubsample;
 public:
     DecodedAudio(AllocatorBase& aAllocator);
-    const TUint* Ptr() const; // FIXME - unnecessary?
-    const TUint* PtrOffsetSamples(TUint aSamples) const; // FIXME - unnecessary?
+    //const TUint* Ptr() const; // FIXME - unnecessary?
+    //const TUint* PtrOffsetSamples(TUint aSamples) const; // FIXME - unnecessary?
     const TUint* PtrOffsetBytes(TUint aBytes) const;
-    const TUint* PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const; // FIXME - unnecessary?
+    //const TUint* PtrOffsetBytes(const TUint* aFrom, TUint aBytes) const; // FIXME - unnecessary?
     TUint Bytes() const;
     TUint BytesFromJiffies(TUint& aJiffies) const;
-    TUint JiffiesFromBytes(TUint aBytes) const; // FIXME - unnecessary?
+    TUint JiffiesFromBytes(TUint aBytes) const;
     TUint NumChannels() const;
 private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian); // sample rate, bit-depth, num channels, const brx& (ptr/len), endianness);
