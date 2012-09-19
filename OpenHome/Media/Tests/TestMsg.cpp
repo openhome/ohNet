@@ -899,6 +899,18 @@ void SuiteRamp::Test()
         }
         prevSampleVal = sampleVal;
     }
+
+    // Create 2 MsgSilences with different durations.
+    // Check can ramp down over them (i.e. there is no rounding error at msg boundary)
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 17);
+    MsgSilence* silence2 = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 23);
+    const TUint duration = silence->Jiffies() + silence2->Jiffies();
+    TUint currentRamp = Ramp::kRampMax;
+    currentRamp = silence->SetRamp(currentRamp, duration, Ramp::EDown, remaining);
+    currentRamp = silence2->SetRamp(currentRamp, duration, Ramp::EDown, remaining);
+    TEST(currentRamp == Ramp::kRampMin);
+    silence->RemoveRef();
+    silence2->RemoveRef();
 }
 
 

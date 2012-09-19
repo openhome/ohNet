@@ -401,13 +401,28 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirecti
     iEnabled = true;
     aSplit.Reset();
     aSplitPos = 0xffffffff;
-    TUint rampDelta = (kRampMax * (TUint64)aFragmentSize) / aRampDuration;
-    TUint rampEnd = aDirection == EDown? (TUint)(aStart - rampDelta) : aStart + rampDelta;
+    // Always round up rampDelta values to avoid rounding errors leading to a ramp failing to complete in its duration 
+    TUint rampDelta = ((kRampMax * (TUint64)aFragmentSize) + aFragmentSize - 1) / aRampDuration;
+    // Rounding up rampDelta means that a ramp may overshoot.
+    // ...check for this and clamp end values to min/max dependent on direction
+    TUint rampEnd;
     if (aDirection == EDown) {
-        ASSERT(rampDelta <= aStart);
+        if (rampDelta > aStart) {
+            ASSERT(aStart - rampDelta <= aFragmentSize - 1); // anything larger must be the result of programming rather than rounding error
+            rampEnd = 0;
+        }
+        else {
+            rampEnd = (TUint)(aStart - rampDelta);
+        }
     }
-    else {
-        ASSERT(rampEnd <= kRampMax);
+    else { // aDirection == EUp
+        if (aStart + rampDelta > kRampMax) {
+            ASSERT(aStart + rampDelta - kRampMax <= aFragmentSize - 1); // anything larger must be the result of programming rather than rounding error
+            rampEnd = kRampMax;
+        }
+        else {
+            rampEnd = aStart + rampDelta;
+        }
     }
     if (iDirection == ENone) {
         // No previous ramp.  Trivial to apply the suggested values
@@ -598,6 +613,7 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirecti
     Ramp split;
     TUint splitPos;
     TUint rampEnd;
+    aSplit = NULL;
     if (iRamp.Set(aStart, iSize, aDuration, aDirection, split, splitPos)) {
         Ramp ramp = iRamp; // Split() will muck about with ramps.  Allow this to happen then reset the correct values
         aSplit = Split(splitPos);
