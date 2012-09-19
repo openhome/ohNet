@@ -92,7 +92,7 @@ ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
 	platform_cflags = $(version_specific_cflags) -fPIC
 	platform_linkflags = $(version_specific_linkflags) -pthread
-        linkopts_ohNet = -Wl,-soname,libohNet.so.1
+        linkopts_ohNet = -Wl,-soname,libohNet.so
 	osbuilddir = Posix
 	osdir = Posix
 	endian = LITTLE
@@ -124,8 +124,8 @@ ifeq ($(MACHINE), Darwin)
 	sharedlibext = dylib
 	dllext = dylib
 else
-	sharedlibext = so.1
-	dllext = so.1
+	sharedlibext = so
+	dllext = so
 endif
 exeext = elf
 linkoutput = -o 
@@ -289,7 +289,6 @@ copy_build_includes:
 	$(cp) Os/*.inl $(inc_build)/OpenHome
 
 install : install-pkgconf install-libs install-includes
-	ln -s $(installlibdir)/libohNet.so.1 $(installlibdir)/libohNet.so
 
 uninstall : uninstall-pkgconf uninstall-libs uninstall-includes
 
