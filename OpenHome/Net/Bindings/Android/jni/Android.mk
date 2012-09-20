@@ -74,7 +74,6 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Printer.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/ProtocolUpnp.cpp \
                    $(ohroot)OpenHome/Queue.cpp \
-                   $(ohroot)OpenHome/RefCounter.cpp \
                    $(ohroot)OpenHome/Net/Service.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/ServiceC.cpp \
                    $(ohroot)OpenHome/sha1.c \

@@ -96,63 +96,6 @@ void Mutex::Signal()
 }
 
 //
-// SemaphoreActive
-//
-
-SemaphoreActive::SemaphoreActive(Semaphore& aSema)
-    : iSema(aSema)
-    , iLock("SMAC")
-    , iCount(0)
-{
-}
-
-SemaphoreActive::SemaphoreActive(Thread& aThread)
-    : iSema(aThread.iSema)
-    , iLock("SMAC")
-    , iCount(0)
-{
-}
-
-void SemaphoreActive::Signal()
-{
-    iLock.Wait();
-    iCount++;
-    iLock.Signal();
-    iSema.Signal();
-}
-
-//This function presumes that there's only _ever_ one thread who calls ::Signalled()
-TBool SemaphoreActive::Signalled()
-{
-    TBool ret = false;
-
-    iLock.Wait();
-    TInt count = iCount--;
-    if(count >= 0) {
-        ret = true;
-    }
-    else {
-        iCount++;
-    }
-    iLock.Signal();
-
-    return ret;
-}
-
-void SemaphoreActive::ConsumeOne()
-{
-    ASSERT(Signalled());
-    ASSERT(iSema.Clear());
-}
-
-void SemaphoreActive::ConsumeAll()
-{
-    while(Signalled()) {
-        ASSERT(iSema.Clear());
-    }
-}
-
-//
 // Thread
 //
 
@@ -335,34 +278,3 @@ AutoMutex::~AutoMutex()
 {
     iMutex.Signal();
 }
-
-//
-// AtomicInt
-//
-
-AtomicInt::AtomicInt(TInt aInitialValue)
-    : iInt(aInitialValue)
-{
-}
-
-AtomicInt::AtomicInt()
-    : iInt(0)
-{
-}
-
-TInt AtomicInt::Inc()
-{
-    Net::Stack::Mutex().Wait();
-    TInt value = ++iInt;
-    Net::Stack::Mutex().Signal();
-    return value;
-}
-
-TInt AtomicInt::Dec()
-{
-    Net::Stack::Mutex().Wait();
-    TInt value = --iInt;
-    Net::Stack::Mutex().Signal();
-    return value;
-}
-

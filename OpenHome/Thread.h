@@ -200,21 +200,6 @@ private:
     Semaphore iStarted;
 };
 
-class SemaphoreActive
-{
-public:
-    SemaphoreActive(Semaphore& aSema);
-    SemaphoreActive(Thread& aThread);
-    void Signal();
-    TBool Signalled();
-    void ConsumeOne();
-    void ConsumeAll();
-private:
-    Semaphore& iSema;
-    Mutex iLock;
-    TInt iCount;
-};
-
 /**
  * Utility class.
  *
@@ -229,17 +214,6 @@ public:
     DllExport ~AutoMutex();
 private:
     Mutex& iMutex;
-};
-
-class AtomicInt : public INonCopyable
-{
-public:
-    AtomicInt(TInt aInitialValue);
-    AtomicInt();
-    TInt Inc();
-    TInt Dec();
-private:
-    TInt iInt;
 };
 
 } // namespace OpenHome

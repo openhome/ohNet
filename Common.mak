@@ -83,7 +83,6 @@ objects_core = \
 	$(objdir)Printer.$(objext) \
 	$(objdir)ProtocolUpnp.$(objext) \
 	$(objdir)Queue.$(objext) \
-	$(objdir)RefCounter.$(objext) \
 	$(objdir)Service.$(objext) \
 	$(objdir)ServiceC.$(objext) \
 	$(objdir)sha1.$(objext) \
@@ -338,8 +337,6 @@ $(objdir)ProtocolUpnp.$(objext) : OpenHome/Net/ControlPoint/Upnp/ProtocolUpnp.cp
 	$(compiler)ProtocolUpnp.$(objext) -c $(cflags) $(includes) OpenHome/Net/ControlPoint/Upnp/ProtocolUpnp.cpp
 $(objdir)Queue.$(objext) : OpenHome/Queue.cpp $(headers)
 	$(compiler)Queue.$(objext) -c $(cflags) $(includes) OpenHome/Queue.cpp
-$(objdir)RefCounter.$(objext) : OpenHome/RefCounter.cpp $(headers)
-	$(compiler)RefCounter.$(objext) -c $(cflags) $(includes) OpenHome/RefCounter.cpp
 $(objdir)Service.$(objext) : OpenHome/Net/Service.cpp $(headers)
 	$(compiler)Service.$(objext) -c $(cflags) $(includes) OpenHome/Net/Service.cpp
 $(objdir)ServiceC.$(objext) : OpenHome/Net/Bindings/C/ServiceC.cpp $(headers)
