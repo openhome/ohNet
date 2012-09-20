@@ -358,6 +358,14 @@ private: // from Msg
     Msg* Process(IMsgProcessor& aProcessor);
 };
 
+class MsgQuit : public Msg
+{
+public:
+    MsgQuit(AllocatorBase& aAllocator);
+private: // from Msg
+    Msg* Process(IMsgProcessor& aProcessor);
+};
+
 class IMsgProcessor
 {
 public:
@@ -368,6 +376,7 @@ public:
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgHalt* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgFlush* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgQuit* aMsg) = 0;
 };
 
 class MsgQueue
@@ -406,12 +415,14 @@ private:
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
     virtual void ProcessMsgIn(MsgHalt* aMsg);
     virtual void ProcessMsgIn(MsgFlush* aMsg);
+    virtual void ProcessMsgIn(MsgQuit* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
     virtual Msg* ProcessMsgOut(MsgHalt* aMsg);
     virtual Msg* ProcessMsgOut(MsgFlush* aMsg);
+    virtual Msg* ProcessMsgOut(MsgQuit* aMsg);
 private:
     class ProcessorQueueIn : public IMsgProcessor, private INonCopyable
     {
@@ -425,6 +436,7 @@ private:
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
+        Msg* ProcessMsg(MsgQuit* aMsg);
     private:
         MsgQueueJiffies& iQueue;
     };
@@ -440,6 +452,7 @@ private:
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
+        Msg* ProcessMsg(MsgQuit* aMsg);
     private:
         MsgQueueJiffies& iQueue;
     };
@@ -463,7 +476,8 @@ public:
     MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgTrackCount,
-               TUint aMsgMetaTextCount, TUint aMsgHaltCount, TUint aMsgFlushCount);
+               TUint aMsgMetaTextCount, TUint aMsgHaltCount, TUint aMsgFlushCount,
+               TUint aMsgQuitCount);
     //
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
@@ -471,6 +485,7 @@ public:
     MsgMetaText* CreateMsgMetaText();
     MsgHalt* CreateMsgHalt();
     MsgFlush* CreateMsgFlush();
+    MsgQuit* CreateMsgQuit();
 private:
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
@@ -483,6 +498,7 @@ private:
     Allocator<MsgMetaText> iAllocatorMsgMetaText;
     Allocator<MsgHalt> iAllocatorMsgHalt;
     Allocator<MsgFlush> iAllocatorMsgFlush;
+    Allocator<MsgQuit> iAllocatorMsgQuit;
 };
 
 } // namespace Media

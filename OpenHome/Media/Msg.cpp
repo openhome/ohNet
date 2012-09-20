@@ -1005,6 +1005,19 @@ Msg* MsgFlush::Process(IMsgProcessor& aProcessor)
 }
 
 
+// MsgQuit
+
+MsgQuit::MsgQuit(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+Msg* MsgQuit::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
 // MsgQueue
 
 MsgQueue::MsgQueue()
@@ -1158,6 +1171,10 @@ void MsgQueueJiffies::ProcessMsgIn(MsgFlush* /*aMsg*/)
 {
 }
 
+void MsgQueueJiffies::ProcessMsgIn(MsgQuit* /*aMsg*/)
+{
+}
+
 Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
     return aMsg;
@@ -1184,6 +1201,11 @@ Msg* MsgQueueJiffies::ProcessMsgOut(MsgHalt* aMsg)
 }
 
 Msg* MsgQueueJiffies::ProcessMsgOut(MsgFlush* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgQuit* aMsg)
 {
     return aMsg;
 }
@@ -1240,6 +1262,12 @@ Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgQuit* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
 
 // MsgQueueJiffies::ProcessorQueueOut
 
@@ -1286,6 +1314,11 @@ Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
     return iQueue.ProcessMsgOut(aMsg);
 }
 
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
 
 // AutoRef
 
@@ -1305,7 +1338,8 @@ AutoRef::~AutoRef()
 MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgTrackCount,
-                       TUint aMsgMetaTextCount, TUint aMsgHaltCount, TUint aMsgFlushCount)
+                       TUint aMsgMetaTextCount, TUint aMsgHaltCount, TUint aMsgFlushCount,
+                       TUint aMsgQuitCount)
     : iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioPcm("MsgAudioPcm", aMsgAudioPcmCount, aInfoAggregator)
     , iAllocatorMsgSilence("MsgSilence", aMsgSilenceCount, aInfoAggregator)
@@ -1315,6 +1349,7 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
     , iAllocatorMsgHalt("MsgHalt", aMsgHaltCount, aInfoAggregator)
     , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
+    , iAllocatorMsgQuit("MsgQuit", aMsgQuitCount, aInfoAggregator)
 {
 }
 
@@ -1351,6 +1386,11 @@ MsgHalt* MsgFactory::CreateMsgHalt()
 MsgFlush* MsgFactory::CreateMsgFlush()
 {
     return iAllocatorMsgFlush.Allocate();
+}
+
+MsgQuit* MsgFactory::CreateMsgQuit()
+{
+    return iAllocatorMsgQuit.Allocate();
 }
 
 DecodedAudio* MsgFactory::CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)

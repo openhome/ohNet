@@ -111,6 +111,7 @@ public:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgQuit
     };
 public:
     ProcessorMsgType();
@@ -123,6 +124,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     EMsgType iLastMsgType;
 };
@@ -162,6 +164,7 @@ public:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgQuit
     };
 public:
     TestMsgQueueJiffies();
@@ -181,12 +184,14 @@ private: // from MsgQueueJiffies
     void ProcessMsgIn(MsgMetaText* aMsg);
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
+    void ProcessMsgIn(MsgQuit* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
     Msg* ProcessMsgOut(MsgTrack* aMsg);
     Msg* ProcessMsgOut(MsgMetaText* aMsg);
     Msg* ProcessMsgOut(MsgHalt* aMsg);
     Msg* ProcessMsgOut(MsgFlush* aMsg);
+    Msg* ProcessMsgOut(MsgQuit* aMsg);
 private:
     EMsgType iLastMsgIn;
     EMsgType iLastMsgOut;
@@ -321,7 +326,7 @@ void SuiteAllocator::Test()
 SuiteMsgAudio::SuiteMsgAudio()
     : Suite("Basic MsgAudio tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgAudio::~SuiteMsgAudio()
@@ -426,7 +431,7 @@ void SuiteMsgAudio::Test()
 SuiteMsgPlayable::SuiteMsgPlayable()
     : Suite("Basic MsgPlayable tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgPlayable::~SuiteMsgPlayable()
@@ -656,7 +661,7 @@ void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 SuiteRamp::SuiteRamp()
     : Suite("Ramp tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1);
 }
 
 SuiteRamp::~SuiteRamp()
@@ -919,7 +924,7 @@ void SuiteRamp::Test()
 SuiteMsgProcessor::SuiteMsgProcessor()
     : Suite("IMsgProcessor tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgProcessor::~SuiteMsgProcessor()
@@ -970,6 +975,11 @@ void SuiteMsgProcessor::Test()
     msg = iMsgFactory->CreateMsgFlush();
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
+    msg->RemoveRef();
+
+    msg = iMsgFactory->CreateMsgQuit();
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgQuit);
     msg->RemoveRef();
 }
 
@@ -1028,13 +1038,19 @@ Msg* ProcessorMsgType::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* ProcessorMsgType::ProcessMsg(MsgQuit* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgQuit;
+    return aMsg;
+}
+
 
 // SuiteMsgQueue
 
 SuiteMsgQueue::SuiteMsgQueue()
     : Suite("MsgQueue tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgQueue::~SuiteMsgQueue()
@@ -1072,6 +1088,8 @@ void SuiteMsgQueue::Test()
     queue->Enqueue(msg);
     msg = iMsgFactory->CreateMsgFlush();
     queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgQuit();
+    queue->Enqueue(msg);
     TEST(!queue->IsEmpty());
     ProcessorMsgType processor;
     dequeued = queue->Dequeue();
@@ -1085,9 +1103,14 @@ void SuiteMsgQueue::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
     dequeued->RemoveRef();
     dequeued = queue->Dequeue();
-    TEST(queue->IsEmpty());
+    TEST(!queue->IsEmpty());
     dequeued->Process(processor);
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgQuit);
     dequeued->RemoveRef();
 
     // EnqueueAtHead skips existing items
@@ -1125,7 +1148,7 @@ void SuiteMsgQueue::Test()
 SuiteMsgQueueJiffies::SuiteMsgQueueJiffies()
     : Suite("MsgQueueJiffies tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 2, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgQueueJiffies::~SuiteMsgQueueJiffies()
@@ -1170,6 +1193,12 @@ void SuiteMsgQueueJiffies::Test()
     TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgFlush);
     TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
 
+    msg = iMsgFactory->CreateMsgQuit();
+    queue->Enqueue(msg);
+    TEST(queue->Jiffies() == jiffies);
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgQuit);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::ENone);
+
     const TUint kDataBytes = 256;
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0xab, kDataBytes);
@@ -1210,6 +1239,12 @@ void SuiteMsgQueueJiffies::Test()
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgHalt);
     TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgFlush);
+    TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgQueueJiffies::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgQueueJiffies::EMsgQuit);
     TEST(queue->Jiffies() == jiffies);
     msg->RemoveRef();
 
@@ -1285,6 +1320,11 @@ void TestMsgQueueJiffies::ProcessMsgIn(MsgFlush* /*aMsg*/)
     iLastMsgIn = EMsgFlush;
 }
 
+void TestMsgQueueJiffies::ProcessMsgIn(MsgQuit* /*aMsg*/)
+{
+    iLastMsgIn = EMsgQuit;
+}
+
 Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
     iLastMsgOut = EMsgAudioPcm;
@@ -1318,6 +1358,12 @@ Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgHalt* aMsg)
 Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgFlush* aMsg)
 {
     iLastMsgOut = EMsgFlush;
+    return aMsg;
+}
+
+Msg* TestMsgQueueJiffies::ProcessMsgOut(MsgQuit* aMsg)
+{
+    iLastMsgOut = EMsgQuit;
     return aMsg;
 }
 
