@@ -395,6 +395,7 @@ protected:
     Msg* DoDequeue();
     void EnqueueAtHead(Msg* aMsg);
     TUint Jiffies() const;
+    TBool IsEmpty() const;
 private:
     void AddJiffies(TUint aJiffies);
     void RemoveJiffies(TUint aJiffies);

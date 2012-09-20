@@ -10,21 +10,21 @@ namespace OpenHome {
 namespace Media {
 
 /*
-Fixed buffer which implements a delay (prob 100ms) to allow time for songcast sending
+Fixed buffer which implements a delay (poss ~100ms) to allow time for songcast sending
 
-Starts with BufferSize of silence.
-Pulls audio, stopping pulling whenever it grows above a 'normal use' threshold (BufferSize)
-If audio drops below starvation threshold, ramp down (then send halt?)
-After starvation, pull until audio reaches an upper 'gorge' threshold before start delivering it again.
-...don't pull more audio until stored falls to normal threshold
-If halt msg encountered, allow buffer to be exhausted without ramping down
-Halt msg or startup allows us to grow from little/no data without ramping up
+- Pulls audio, stopping pulling whenever it grows above a 'normal use' threshold (NormalSize).
+- After emptying (seeing a halt msg or starting to ramp down), enters 'buffering' mode and 
+  pulls until it reaches GorgeSize.  Doesn't deliver any audio to rhs while in buffering mode.
+- If halt msg encountered, allows buffer to be exhausted without ramping down.
+- If no halt msg, starts ramping down once less that StarvationThreshold of data remains.
+- On exit from buffering mode, ramps up iff ramped down before buffering.
 */
     
 class StarvationMonitor : private MsgQueueJiffies, public IPipelineElement
 {
+    friend class SuiteStarvationMonitor;
 public:
-    StarvationMonitor(MsgFactory& aMsgFactory, TUint aSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize);
+    StarvationMonitor(MsgFactory& aMsgFactory, TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize);
     void Enqueue(Msg* aMsg);
 public: // from IPipelineElement
     Msg* Pull();
@@ -33,7 +33,7 @@ private:
     {
         ERunning
        ,ERampingDown
-       ,EStarving
+       ,EBuffering
        ,ERampingUp
     };
 private:
@@ -44,12 +44,17 @@ private: // from MsgQueueJiffies
     void ProcessMsgIn(MsgFlush* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
+private: // test helpers
+    TBool EnqueueWouldBlock() const;
+    TBool PullWouldBlock() const;
 private:
+    static const TUint kMaxSizeSilence = Jiffies::kJiffiesPerMs * 5;
+    MsgFactory& iMsgFactory;
     TUint iNormalMax;
     TUint iStarvationThreshold;
     TUint iGorgeSize;
     TUint iRampUpSize;
-    Mutex iLock;
+    mutable Mutex iLock;
     Semaphore iSemIn;
     Semaphore iSemOut;
     EStatus iStatus;

@@ -396,19 +396,19 @@ void Ramp::Reset()
 
 TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos)
 {
-    ASSERT(aRampDuration >  aFragmentSize || ((aStart == kRampMax ||aStart == kRampMin) && aRampDuration ==  aFragmentSize));
+    ASSERT(aRampDuration >  aFragmentSize || ((aStart == kRampMax || aStart == kRampMin) && aRampDuration == aFragmentSize));
     ASSERT(aDirection != ENone);
     iEnabled = true;
     aSplit.Reset();
     aSplitPos = 0xffffffff;
     // Always round up rampDelta values to avoid rounding errors leading to a ramp failing to complete in its duration 
-    TUint rampDelta = ((kRampMax * (TUint64)aFragmentSize) + aFragmentSize - 1) / aRampDuration;
+    TUint rampDelta = ((kRampMax * (TUint64)aFragmentSize) + aRampDuration - 1) / aRampDuration;
     // Rounding up rampDelta means that a ramp may overshoot.
     // ...check for this and clamp end values to min/max dependent on direction
     TUint rampEnd;
     if (aDirection == EDown) {
         if (rampDelta > aStart) {
-            ASSERT(aStart - rampDelta <= aFragmentSize - 1); // anything larger must be the result of programming rather than rounding error
+            ASSERT(rampDelta - aStart <= aFragmentSize - 1); // anything larger must be the result of programming rather than rounding error
             rampEnd = 0;
         }
         else {
@@ -1116,6 +1116,11 @@ void MsgQueueJiffies::EnqueueAtHead(Msg* aMsg)
 TUint MsgQueueJiffies::Jiffies() const
 {
     return iJiffies;
+}
+
+TBool MsgQueueJiffies::IsEmpty() const
+{
+    return iQueue.IsEmpty();
 }
 
 void MsgQueueJiffies::AddJiffies(TUint aJiffies)
