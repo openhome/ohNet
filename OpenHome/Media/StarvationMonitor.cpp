@@ -9,8 +9,9 @@ using namespace OpenHome::Media;
 
 // StarvationMonitor
 
-StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize)
+StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize)
     : iMsgFactory(aMsgFactory)
+    , iUpstreamElement(aUpstreamElement)
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
     , iGorgeSize(aGorgeSize)
@@ -21,10 +22,27 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, TUint aNormalSize,
     , iStatus(EBuffering)
     , iCurrentRampValue(Ramp::kRampMax)
     , iPlannedHalt(true)
+    , iExit(false)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
     ASSERT(iNormalMax < iGorgeSize);
     ASSERT(iRampUpSize < iGorgeSize);
+    iThread = new ThreadFunctor("STRV", MakeFunctor(*this, &StarvationMonitor::PullerThread), kPriorityNormal); // FIXME - want a priority that's higher that ohNet's threads
+    iThread->Start();
+}
+
+StarvationMonitor::~StarvationMonitor()
+{
+    // FIXME - check that thread has exited
+    delete iThread;
+}
+
+void StarvationMonitor::PullerThread()
+{
+    do {
+        Msg* msg = iUpstreamElement.Pull();
+        Enqueue(msg);
+    } while (!iExit);
 }
 
 void StarvationMonitor::Enqueue(Msg* aMsg)
@@ -48,6 +66,9 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
         }
         iSemOut.Signal();
         isFull = true;
+    }
+    if (iExit) {
+        iSemOut.Signal();
     }
     iLock.Signal();
     if (isFull) {
@@ -108,6 +129,9 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     }
 
     remainingSize = Jiffies(); // re-calculate this as Ramp() can cause a msg to be split with a fragment re-queued
+    if (remainingSize == 0) {
+        iStatus = EBuffering;
+    }
     if ((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax)) {
         iSemIn.Signal();
     }
@@ -139,6 +163,11 @@ void StarvationMonitor::ProcessMsgIn(MsgFlush* /*aMsg*/)
     ASSERTS(); // don't expect flushes to propogate this far down the pipeline
 }
 
+void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
+{
+    iExit = true;
+}
+
 Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
     return DoProcessMsgOut(aMsg);
@@ -166,6 +195,22 @@ TBool StarvationMonitor::EnqueueWouldBlock() const
 
 TBool StarvationMonitor::PullWouldBlock() const
 {
+/*    iLock.Wait();
+    TBool wouldBlock = IsEmpty();
+    if (iStatus == EBuffering) {
+        const TUint jiffies = Jiffies();
+        if (jiffies == 0 && iPlannedHalt) {
+            wouldBlock = IsEmpty(); // allow reading of the halt msg which should be the last item in the queue
+        }
+        else if (jiffies < iGorgeSize) {
+            wouldBlock = true;
+        }
+    }
+    iLock.Signal();
+    return wouldBlock;*/
+
+
+
     AutoMutex a(iLock);
     if (IsEmpty() || (iStatus == EBuffering && Jiffies() < iGorgeSize)) {
         return true;

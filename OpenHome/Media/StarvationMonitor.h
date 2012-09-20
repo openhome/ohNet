@@ -24,8 +24,8 @@ class StarvationMonitor : private MsgQueueJiffies, public IPipelineElement
 {
     friend class SuiteStarvationMonitor;
 public:
-    StarvationMonitor(MsgFactory& aMsgFactory, TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize);
-    void Enqueue(Msg* aMsg);
+    StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize);
+    ~StarvationMonitor();
 public: // from IPipelineElement
     Msg* Pull();
 private:
@@ -37,11 +37,14 @@ private:
        ,ERampingUp
     };
 private:
+    void PullerThread();
+    void Enqueue(Msg* aMsg);
     MsgAudio* DoProcessMsgOut(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, TUint aRampDuration, Ramp::EDirection aDirection);
 private: // from MsgQueueJiffies
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
+    void ProcessMsgIn(MsgQuit* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
 private: // test helpers
@@ -50,6 +53,8 @@ private: // test helpers
 private:
     static const TUint kMaxSizeSilence = Jiffies::kJiffiesPerMs * 5;
     MsgFactory& iMsgFactory;
+    IPipelineElement& iUpstreamElement;
+    ThreadFunctor* iThread;
     TUint iNormalMax;
     TUint iStarvationThreshold;
     TUint iGorgeSize;
@@ -62,6 +67,7 @@ private:
     TUint iRampDownDuration;
     TUint iRemainingRampSize;
     TBool iPlannedHalt;
+    TBool iExit;
 };
 
 } // namespace Media
