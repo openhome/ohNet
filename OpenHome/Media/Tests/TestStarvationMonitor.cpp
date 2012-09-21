@@ -2,7 +2,6 @@
 #include <OpenHome/Media/StarvationMonitor.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
-#include <OpenHome/Media/RampArray.h>
 
 #include <string.h>
 #include <vector>
