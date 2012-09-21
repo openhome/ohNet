@@ -195,22 +195,6 @@ TBool StarvationMonitor::EnqueueWouldBlock() const
 
 TBool StarvationMonitor::PullWouldBlock() const
 {
-/*    iLock.Wait();
-    TBool wouldBlock = IsEmpty();
-    if (iStatus == EBuffering) {
-        const TUint jiffies = Jiffies();
-        if (jiffies == 0 && iPlannedHalt) {
-            wouldBlock = IsEmpty(); // allow reading of the halt msg which should be the last item in the queue
-        }
-        else if (jiffies < iGorgeSize) {
-            wouldBlock = true;
-        }
-    }
-    iLock.Signal();
-    return wouldBlock;*/
-
-
-
     AutoMutex a(iLock);
     if (IsEmpty() || (iStatus == EBuffering && Jiffies() < iGorgeSize)) {
         return true;
