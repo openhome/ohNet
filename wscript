@@ -99,6 +99,10 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer'],
             target='TestStarvationMonitor')
     bld.program(
+            source='OpenHome/Media/Tests/TestStopper.cpp',
+            use=['OHNET', 'ohMediaPlayer'],
+            target='TestStopper')
+    bld.program(
             source='OpenHome/Av/Tests/TestStore.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStore')
@@ -121,6 +125,7 @@ def build(bld):
 def test(tst):
     for t, a, when in [['TestMsg', [], True]
                       ,['TestStarvationMonitor', [], True]
+                      ,['TestStopper', [], True]
                       ,['TestStore', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
