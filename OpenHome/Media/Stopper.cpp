@@ -9,35 +9,40 @@ using namespace OpenHome::Media;
 
 // Stopper
 
-Stopper::Stopper(IStopperObserver& aObserver, IPipelineElement& aUpstreamElement)
-    : iObserver(aObserver)
+Stopper::Stopper(MsgFactory& aMsgFactory, IStopperObserver& aObserver, IPipelineElement& aUpstreamElement, TUint aRampDuration)
+    : iMsgFactory(aMsgFactory)
+    , iObserver(aObserver)
     , iUpstreamElement(aUpstreamElement)
     , iLock("MSTP")
     , iSem("SSTP", 0)
     , iState(EHalted)
-    , iRampDuration(0xffffffff)
-    , iRemainingRampSize(0xffffffff)
+    , iRampDuration(aRampDuration)
+    , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kRampMin)
 {
 }
 
-void Stopper::Start(TUint aRampDuration)
+void Stopper::Start()
 {
     iLock.Wait();
     ASSERT_DEBUG(iState != ERunning && iState != EFlushing);
-    iState = EStarting;
-    iRampDuration = aRampDuration;
-    iRemainingRampSize = iRampDuration;
+    if (iRemainingRampSize == iRampDuration) {
+        iState = ERunning;
+    }
+    else {
+        iState = EStarting;
+        iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
+//        Log::Print("Start, iRemainingRampSize=%u\n", iRemainingRampSize);
+    }
     iSem.Signal();
     iLock.Signal();
 }
 
-void Stopper::BeginHalt(TUint aRampDuration)
+void Stopper::BeginHalt()
 {
     iLock.Wait();
     ASSERT_DEBUG(iState != EFlushing);
-    iRampDuration = aRampDuration;
-    iRemainingRampSize = iRampDuration;
+    iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
     iState = EHalting;
     iLock.Signal();
 }
@@ -47,11 +52,10 @@ void Stopper::BeginFlush()
     ASSERT(iState == EHalted);
     iLock.Wait();
     iState = EFlushing;
-    for (TUint i=0; i<kMaxStoredMsg; i++) {
-        while (!iQueue.IsEmpty()) {
-            iQueue.Dequeue()->RemoveRef();
-        }
+    while (!iQueue.IsEmpty()) {
+        iQueue.Dequeue()->RemoveRef();
     }
+    iSem.Signal();
     iLock.Signal();
 }
 
@@ -60,16 +64,23 @@ Msg* Stopper::Pull()
     Msg* msg;
     do {
         iLock.Wait();
-        const TBool wait = (iState == EHalted);
+        TBool wait = false;
+        if (iState == EHalted) {
+            wait = true;
+            (void)iSem.Clear();
+        }
         iLock.Signal();
         if (wait) {
             iSem.Wait();
         }
-        if (iQueue.IsEmpty()) {
-            msg = iUpstreamElement.Pull();
+        if (iState == EHaltPending) {
+            msg = iMsgFactory.CreateMsgHalt();
+        }
+        else if (!iQueue.IsEmpty()) {
+            msg = iQueue.Dequeue();
         }
         else {
-            msg = iQueue.Dequeue();
+            msg = iUpstreamElement.Pull();
         }
         msg = msg->Process(*this);
         // handling of EFlushing state is common across all message types so we might as well do it here
@@ -83,11 +94,13 @@ Msg* Stopper::Pull()
 
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    //Log::Print("Stopper - MsgAudioPcm(%p), jiffies=%u\n", aMsg, aMsg->Jiffies()); // FIXME - add to ohNet's debug system
     return ProcessMsgAudio(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgSilence* aMsg)
 {
+    //Log::Print("Stopper - MsgSilence(%p)\n", aMsg);
     return ProcessMsgAudio(aMsg);
 }
 
@@ -99,34 +112,38 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
+    //Log::Print("Stopper - MsgTrack(%p)\n", aMsg);
     return aMsg;
 }
 
 Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
 {
+    //Log::Print("Stopper - MsgMetaText(%p)\n", aMsg);
     return aMsg;
 }
 
 Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 {
-    if (iState == EHalting || iState == EHalted) {
-        iState = EHalted;
-        iObserver.PipelineHalted();
-        return aMsg;
-    }
-    // possible we'll get here because we switched from halting to starting very quickly
-    // in this case we want to consume the halt msg and not pass it on
-    aMsg->RemoveRef();
-    return NULL;
+    //Log::Print("Stopper - MsgHalt(%p)\n", aMsg);
+    iState = EHalted;
+    iObserver.PipelineHalted();
+    return aMsg;
 }
 
 Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
 {
+    //Log::Print("Stopper - MsgFlush(%p)\n", aMsg);
     ASSERT_DEBUG(iState == EFlushing);
     aMsg->RemoveRef();
     iState = EHalted;
     iObserver.PipelineFlushed();
     return NULL;
+}
+
+Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
+{
+    //Log::Print("Stopper - MsgQuit(%p)\n", aMsg);
+    return aMsg;
 }
 
 Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
@@ -148,7 +165,7 @@ Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
     case EHalting:
         Ramp(aMsg, Ramp::EDown);
         if (iRemainingRampSize == 0) {
-            iState = EHalted;
+            iState = EHaltPending;
             // FIXME - may need to empty/delete iQueue
             // ... or could hang onto them and see whether they're still relevant if we restart playing?
         }
@@ -162,7 +179,6 @@ Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
 
 void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 {
-    TUint jiffies = aMsg->Jiffies();
     MsgAudio* split;
     if (aMsg->Jiffies() > iRemainingRampSize) {
         split = aMsg->Split(iRemainingRampSize);
@@ -175,5 +191,5 @@ void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
     if (split != NULL) {
         iQueue.EnqueueAtHead(split);
     }
-    iRemainingRampSize -= jiffies;
+    iRemainingRampSize -= aMsg->Jiffies();
 }
