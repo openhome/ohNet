@@ -82,12 +82,14 @@ Msg* Stopper::Pull()
         else {
             msg = iUpstreamElement.Pull();
         }
+        iLock.Wait();
         msg = msg->Process(*this);
         // handling of EFlushing state is common across all message types so we might as well do it here
         if (iState == EFlushing) {
             msg->RemoveRef();
             msg = NULL;
         }
+        iLock.Signal();
     } while (msg == NULL);
     return msg;
 }

@@ -104,6 +104,7 @@ Msg* StarvationMonitor::Pull()
 
 MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
 {
+    iLock.Wait();
     ASSERT(iStatus != EBuffering);
     TUint remainingSize = Jiffies();
     if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
@@ -135,6 +136,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     if ((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax)) {
         iSemIn.Signal();
     }
+    iLock.Signal();
 
     return aMsg;
 }
@@ -155,7 +157,9 @@ void StarvationMonitor::Ramp(MsgAudio* aMsg, TUint aRampDuration, Ramp::EDirecti
 
 void StarvationMonitor::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
+    iLock.Wait();
     iPlannedHalt = true;
+    iLock.Signal();
 }
 
 void StarvationMonitor::ProcessMsgIn(MsgFlush* /*aMsg*/)
@@ -165,7 +169,9 @@ void StarvationMonitor::ProcessMsgIn(MsgFlush* /*aMsg*/)
 
 void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
+    iLock.Wait();
     iExit = true;
+    iLock.Signal();
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
