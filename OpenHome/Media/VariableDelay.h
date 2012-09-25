@@ -10,6 +10,15 @@
 namespace OpenHome {
 namespace Media {
 
+/*
+Element which introduces a delay (likely for lip syncing)
+If the delay is increased, silence is introduced.
+If the delay is decreased, audio (pulled from upstream) is discarded.
+Before any change in delay is actioned, audio spends RampDuration ramping down.
+After a delay is actioned, audio spends RampDuration ramping up.
+FIXME - no handling of pause-resumes
+*/
+    
 class VariableDelay : public IPipelineElement, private IMsgProcessor
 {
     static const TUint kMaxMsgSilenceDuration = Jiffies::kJiffiesPerMs * 5;
