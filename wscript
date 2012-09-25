@@ -75,6 +75,7 @@ def build(bld):
                 'OpenHome/Av/Product.cpp',
                 'OpenHome/Av/ProviderProduct.cpp',
                 'OpenHome/Av/Source.cpp',
+                'OpenHome/Media/AudioReservoir.cpp',
                 'OpenHome/Media/Msg.cpp',
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
