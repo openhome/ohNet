@@ -22,7 +22,7 @@ AudioReservoir::~AudioReservoir()
 {
 }
 
-void AudioReservoir::Enqueue(Msg* aMsg)
+TBool AudioReservoir::Enqueue(Msg* aMsg)
 {
     // Queue the next msg before checking how much data we already have in the buffer
     // This risks us going over the nominal max size for the buffer but guarantees that
@@ -35,6 +35,7 @@ void AudioReservoir::Enqueue(Msg* aMsg)
     if (full) {
         iSem.Wait();
     }
+    return full;
 }
 
 Msg* AudioReservoir::Pull()

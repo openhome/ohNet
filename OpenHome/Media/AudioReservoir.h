@@ -20,10 +20,11 @@ FIXME - no handling of Halt
     
 class AudioReservoir : private MsgQueueJiffies, public IPipelineElement
 {
+    friend class SuiteAudioReservoir;
 public:
     AudioReservoir(TUint aMaxSize);
     ~AudioReservoir();
-    void Enqueue(Msg* aMsg);
+    TBool Enqueue(Msg* aMsg); // returns true if was blocked (due to reservoir temporarily being full)
 public: // from IPipelineElement
     Msg* Pull();
 private: // from MsgQueueJiffies
