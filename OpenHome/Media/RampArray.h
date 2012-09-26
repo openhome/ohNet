@@ -1,7 +1,6 @@
 #ifndef HEADER_RAMP_ARRAY
 #define HEADER_RAMP_ARRAY
-//16 bit signed fractional numbers representing a ramp down curve over 0 to
-//-60dB
+// 31-bit signed fractional numbers representing a ramp down curve over 0 to -60dB
 
 namespace OpenHome {
 namespace Media {
