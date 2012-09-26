@@ -46,7 +46,7 @@ Msg* VariableDelay::Pull()
     Msg* msg;
     iLock.Wait();
     if (iStatus == ERampedDown && iDelayAdjustment > 0) {
-        const TUint size = (iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : iDelayAdjustment);
+        const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
         msg = iMsgFactory.CreateMsgSilence(size);
         iDelayAdjustment -= size;
         if (iDelayAdjustment == 0) {
