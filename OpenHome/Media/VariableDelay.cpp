@@ -57,15 +57,17 @@ Msg* VariableDelay::Pull()
         }
     }
     else {
-        iLock.Signal();
-        if (!iQueue.IsEmpty()) {
-            msg = iQueue.Dequeue();
-        }
-        else {
-            msg = iUpstreamElement.Pull();
-        }
-        iLock.Wait();
-        msg = msg->Process(*this);
+        do {
+            iLock.Signal();
+            if (!iQueue.IsEmpty()) {
+                msg = iQueue.Dequeue();
+            }
+            else {
+                msg = iUpstreamElement.Pull();
+            }
+            iLock.Wait();
+            msg = msg->Process(*this);
+        } while (msg == NULL);
     }
     iLock.Signal();
     return msg;
@@ -98,14 +100,14 @@ MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
     {
         ASSERT(iDelayAdjustment < 0)
         TUint jiffies = msg->Jiffies();
-        MsgAudio* remaining = NULL;
         if (jiffies > (TUint)(-iDelayAdjustment)) {
-            remaining = msg->Split((TUint)(-iDelayAdjustment));
+            MsgAudio* remaining = msg->Split((TUint)(-iDelayAdjustment));
             jiffies = msg->Jiffies();
+            iQueue.EnqueueAtHead(remaining);
         }
         iDelayAdjustment += jiffies;
         msg->RemoveRef();
-        msg = remaining;
+        msg = NULL;
         if (iDelayAdjustment == 0) {
             iStatus = ERampingUp;
             iRampDirection = Ramp::EUp;
