@@ -363,6 +363,7 @@ void SuiteStopper::PipelineFlushed()
 Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsg = EMsgAudioPcm;
+    TUint jiffies = aMsg->Jiffies();
 
     MsgPlayable* playable = aMsg->CreatePlayable();
     WriterBwh writerBuf(1024);
@@ -388,7 +389,7 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
         }
         break;
     }
-    iJiffies += aMsg->Jiffies();
+    iJiffies += jiffies;
     return NULL;
 }
 
