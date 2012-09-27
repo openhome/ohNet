@@ -53,7 +53,18 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     else {
         for (TUint i=0; i<subnetList->size(); i++) {
             NetworkAdapter* subnet = (*subnetList)[i];
-            AddInterface(*subnet);
+            try {
+                AddInterface(*subnet);
+            }
+            catch (NetworkError& ) {
+                // some hosts may have adapters that don't support multicast
+                // we can't differentiate between no support ever and transient failure
+                // (typical on Windows & Mac after hibernation) so just ignore this exception
+                // and trust that we'll get advertised on another interface.
+                char* adapterName = subnet->FullName();
+                LOG2(kTrace, kError, "DvDevice unable to use adapter %s\n", adapterName);
+                delete adapterName;
+            }
         }
     }
     NetworkAdapterList::DestroySubnetList(subnetList);
@@ -628,6 +639,7 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
 
 DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort)
     : iMsearchHandler(&aMsearchHandler)
+    , iId(0x7fffffff)
     , iSubnet(aAdapter.Subnet())
     , iAdapter(aAdapter.Address())
     , iUriBase(aUriBase)
