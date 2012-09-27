@@ -470,7 +470,13 @@ private:
     Msg& iMsg;
 };
 
-class MsgFactory // owned by Pipeline object
+class IPipelineElement
+{
+public:
+    virtual Msg* Pull() = 0;
+};
+
+class MsgFactory
 {
 public:
     MsgFactory(Av::IInfoAggregator& aInfoAggregator,

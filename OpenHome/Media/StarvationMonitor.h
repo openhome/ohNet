@@ -4,7 +4,6 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/Stopper.h> // FIXME - inappropriate location for IPipelineElement
 
 namespace OpenHome {
 namespace Media {

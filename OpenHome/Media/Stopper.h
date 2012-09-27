@@ -8,12 +8,6 @@
 namespace OpenHome {
 namespace Media {
 
-class IPipelineElement
-{
-public:
-    virtual Msg* Pull() = 0;
-};
-
 class IStopperObserver
 {
 public:
