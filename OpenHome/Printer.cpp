@@ -36,7 +36,7 @@ TInt Log::Print(const Brx& aMessage)
 
 TInt Log::PrintHex(const Brx& aBrx)
 {
-    return Print(gLogger, aBrx);
+    return PrintHex(gLogger, aBrx);
 }
 
 TInt Log::Print(const TChar* aFormat, ...)
