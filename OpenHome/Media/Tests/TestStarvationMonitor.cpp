@@ -173,6 +173,9 @@ void SuiteStarvationMonitor::Test()
 
     // Add 0xff filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
     GenerateUpstreamMsgs(EStateAudioFillInitial);
+    while (iSm->Jiffies() < kGorgeSize) {
+        Thread::Sleep(10); // last msg may not quite have been enqueued when we switched threads
+    }
     TEST(iSm->EnqueueWouldBlock());
     TEST(!iSm->PullWouldBlock());
     TEST(iSm->iStatus == StarvationMonitor::ERunning);
