@@ -1246,9 +1246,9 @@ namespace OpenHome.Net.Core
         }
     }
 
-    internal class InteropUtils
+    public class InteropUtils
     {
-        internal static IntPtr StringToHGlobalUtf8(string aStr)
+        public static IntPtr StringToHGlobalUtf8(string aStr)
         {
             if (aStr == null)
                 return IntPtr.Zero;
@@ -1259,7 +1259,7 @@ namespace OpenHome.Net.Core
             return ptr;
         }
 
-        internal static string PtrToStringUtf8(IntPtr aPtr, uint aLen) // aPtr is not nul-terminated
+        public static string PtrToStringUtf8(IntPtr aPtr, uint aLen) // aPtr is not nul-terminated
         {
             String str = "";
             if (aLen > 0)
@@ -1271,7 +1271,7 @@ namespace OpenHome.Net.Core
             return str;
         }
 
-        internal static string PtrToStringUtf8(IntPtr aPtr) // aPtr is nul-terminated
+        public static string PtrToStringUtf8(IntPtr aPtr) // aPtr is nul-terminated
         {
             if (aPtr == IntPtr.Zero)
                 return "";
