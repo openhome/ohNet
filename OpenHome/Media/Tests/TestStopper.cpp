@@ -238,11 +238,11 @@ void SuiteStopper::Test()
     // ...here when we noticed the Stopper is blocked
     iLastMsg = ENone;
     ThreadFunctor* flushThread = new ThreadFunctor("HACK", MakeFunctor(*this, &SuiteStopper::FlushThread));
-    flushThread->Start();
     iAudioMsgsDue = 5;
     iNextGeneratedMsg = EMsgFlush;
     iStopper->BeginFlush();
     TEST(iStopper->iState == Stopper::EFlushing);
+    flushThread->Start();
     for (;;) {
         if (iStopper->iState == Stopper::EHalted) {
             break;
