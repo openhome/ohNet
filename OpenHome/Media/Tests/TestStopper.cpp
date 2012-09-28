@@ -50,6 +50,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
@@ -62,6 +63,7 @@ private:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
+       ,EMsgAudioFormat
        ,EMsgTrack
        ,EMsgMetaText
        ,EMsgHalt
@@ -142,7 +144,7 @@ SuiteStopper::SuiteStopper()
     , iAudioMsgsDue(0)
     , iFlushThreadExit("HACK", 0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iStopper = new Stopper(*iMsgFactory, *this, *this, kRampDuration);
 }
 
@@ -194,7 +196,7 @@ void SuiteStopper::Test()
     TEST(iStopper->iQueue.IsEmpty());
 
     // Deliver Silence, Track, Metatext, Quit msgs.  Check they're passed through.
-    EMsgType expected[] = { EMsgSilence, EMsgTrack, EMsgMetaText, EMsgQuit };
+    EMsgType expected[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgMetaText, EMsgQuit };
     for (TUint i=0; i<sizeof(expected)/sizeof(expected[0]); i++) {
         iNextGeneratedMsg = expected[i];
         msg = iStopper->Pull();
@@ -324,10 +326,12 @@ Msg* SuiteStopper::Pull()
         return CreateAudio();
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    case EMsgAudioFormat:
+        return iMsgFactory->CreateMsgAudioFormat(0, 0, 0, Brx::Empty(), 0, false);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
     case EMsgMetaText:
-        return iMsgFactory->CreateMsgMetaText();
+        return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
@@ -403,6 +407,12 @@ Msg* SuiteStopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not expected at this stage of the pipeline
     return NULL;
+}
+
+Msg* SuiteStopper::ProcessMsg(MsgAudioFormat* aMsg)
+{
+    iLastMsg = EMsgAudioFormat;
+    return aMsg;
 }
 
 Msg* SuiteStopper::ProcessMsg(MsgTrack* aMsg)

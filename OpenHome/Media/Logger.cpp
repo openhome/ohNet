@@ -39,6 +39,15 @@ Msg* Logger::ProcessMsg(MsgPlayable* aMsg)
     return aMsg;
 }
 
+Msg* Logger::ProcessMsg(MsgAudioFormat* aMsg)
+{
+    const AudioFormat& af = aMsg->Format();
+    Log::Print("Pipeline (%s): audio format {bitRate: %u, bitDepth: %u, sampleRate: %u, codec: ", iId, af.BitRate(), af.BitDepth(), af.SampleRate());
+    Log::Print(af.CodecName());
+    Log::Print(", trackLength: %llu, lossless: %s}\n", af.TrackLength(), (af.Lossless()? "true" : "false"));
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 {
     Log::Print("Pipeline (%s): track\n", iId);
@@ -47,7 +56,9 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 
 Msg* Logger::ProcessMsg(MsgMetaText* aMsg)
 {
-    Log::Print("Pipeline (%s): metaText\n", iId);
+    Log::Print("Pipeline (%s): metaText {", iId);
+    Log::Print(aMsg->MetaText());
+    Log::Print("}\n");
     return aMsg;
 }
 

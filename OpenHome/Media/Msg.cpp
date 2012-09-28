@@ -271,7 +271,6 @@ void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRat
 {
     iChannels = aChannels;
     iSampleRate = aSampleRate;
-    iBitRate = 0xffffffff; // FIXME
     iBitDepth = aBitDepth;
     iJiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
 
@@ -355,7 +354,6 @@ void DecodedAudio::Clear()
     iSubsampleCount = deadUint;
     iChannels = deadUint;
     iSampleRate = deadUint;
-    iBitRate = deadUint;
     iBitDepth = deadUint;
     iJiffiesPerSample = deadUint;
 #endif // DEFINE_DEBUG
@@ -953,6 +951,59 @@ MsgPlayable* MsgPlayableSilence::Allocate()
 }
 
 
+// AudioFormat
+
+AudioFormat::AudioFormat()
+    : iBitRate(0)
+    , iBitDepth(0)
+    , iSampleRate(0)
+    , iCodecName("")
+    , iTrackLength(0)
+    , iLossless(false)
+{
+}
+
+void AudioFormat::Set(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
+{
+    iBitRate = aBitRate;
+    iBitDepth = aBitDepth;
+    iSampleRate = aSampleRate;
+    iCodecName.Replace(aCodecName);
+    iTrackLength = aTrackLength;
+    iLossless = aLossless;
+}
+
+
+// MsgAudioFormat
+
+MsgAudioFormat::MsgAudioFormat(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+const AudioFormat& MsgAudioFormat::Format() const
+{
+    return iAudioFormat;
+}
+
+void MsgAudioFormat::Initialise(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
+{
+    iAudioFormat.Set(aBitRate, aBitDepth, aSampleRate, aCodecName, aTrackLength, aLossless);
+}
+
+void MsgAudioFormat::Clear()
+{
+#ifdef DEFINE_DEBUG
+    iAudioFormat.Set(0, 0, 0, Brx::Empty(), 0, false);
+#endif
+}
+
+Msg* MsgAudioFormat::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+    
 // MsgTrack
 
 MsgTrack::MsgTrack(AllocatorBase& aAllocator)
@@ -971,6 +1022,23 @@ Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
 MsgMetaText::MsgMetaText(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
+}
+
+const Brx& MsgMetaText::MetaText() const
+{
+    return iMetaText;
+}
+
+void MsgMetaText::Initialise(const Brx& aMetaText)
+{
+    iMetaText.Append(aMetaText);
+}
+
+void MsgMetaText::Clear()
+{
+#ifdef DEFINE_DEBUG
+    iMetaText.SetBytes(0);
+#endif
 }
 
 Msg* MsgMetaText::Process(IMsgProcessor& aProcessor)
@@ -1155,6 +1223,10 @@ void MsgQueueJiffies::ProcessMsgIn(MsgSilence* /*aMsg*/)
 {
 }
 
+void MsgQueueJiffies::ProcessMsgIn(MsgAudioFormat* /*aMsg*/)
+{
+}
+
 void MsgQueueJiffies::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
@@ -1181,6 +1253,11 @@ Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
 }
 
 Msg* MsgQueueJiffies::ProcessMsgOut(MsgSilence* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioFormat* aMsg)
 {
     return aMsg;
 }
@@ -1236,6 +1313,12 @@ Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgAudioFormat* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
 }
 
 Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
@@ -1294,6 +1377,11 @@ Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgAudioFormat* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
 Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
@@ -1337,14 +1425,15 @@ AutoRef::~AutoRef()
 
 MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
-                       TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgTrackCount,
-                       TUint aMsgMetaTextCount, TUint aMsgHaltCount, TUint aMsgFlushCount,
-                       TUint aMsgQuitCount)
+                       TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgAudioFormatCount,
+                       TUint aMsgTrackCount, TUint aMsgMetaTextCount, TUint aMsgHaltCount,
+                       TUint aMsgFlushCount, TUint aMsgQuitCount)
     : iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioPcm("MsgAudioPcm", aMsgAudioPcmCount, aInfoAggregator)
     , iAllocatorMsgSilence("MsgSilence", aMsgSilenceCount, aInfoAggregator)
     , iAllocatorMsgPlayablePcm("MsgPlayablePcm", aMsgPlayablePcmCount, aInfoAggregator)
     , iAllocatorMsgPlayableSilence("MsgPlayableSilence", aMsgPlayableSilenceCount, aInfoAggregator)
+    , iAllocatorMsgAudioFormat("MsgAudioFormat", aMsgAudioFormatCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aMsgTrackCount, aInfoAggregator)
     , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
     , iAllocatorMsgHalt("MsgHalt", aMsgHaltCount, aInfoAggregator)
@@ -1368,14 +1457,23 @@ MsgSilence* MsgFactory::CreateMsgSilence(TUint aSizeJiffies)
     return msg;
 }
 
+MsgAudioFormat* MsgFactory::CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
+{
+    MsgAudioFormat* msg = iAllocatorMsgAudioFormat.Allocate();
+    msg->Initialise(aBitRate, aBitDepth, aSampleRate, aCodecName, aTrackLength, aLossless);
+    return msg;
+}
+
 MsgTrack* MsgFactory::CreateMsgTrack()
 {
     return iAllocatorMsgTrack.Allocate();
 }
 
-MsgMetaText* MsgFactory::CreateMsgMetaText()
+MsgMetaText* MsgFactory::CreateMsgMetaText(const Brx& aMetaText)
 {
-    return iAllocatorMsgMetaText.Allocate();
+    MsgMetaText* msg = iAllocatorMsgMetaText.Allocate();
+    msg->Initialise(aMetaText);
+    return msg;
 }
 
 MsgHalt* MsgFactory::CreateMsgHalt()

@@ -51,6 +51,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
@@ -63,6 +64,7 @@ private:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
+       ,EMsgAudoiFormat
        ,EMsgTrack
        ,EMsgMetaText
        ,EMsgHalt
@@ -138,7 +140,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iSemUpstream("TSRV", 0)
     , iSemUpstreamCompleted("TSRV", 0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iSm = new StarvationMonitor(*iMsgFactory, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize);
 }
 
@@ -373,6 +375,12 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgSilence* /*aMsg*/)
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not used in this test
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioFormat* /*aMsg*/)
+{
+    ASSERTS(); // MsgAudioFormat not used in this test
     return NULL;
 }
 

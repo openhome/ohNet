@@ -112,6 +112,12 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
+Msg* Stopper::ProcessMsg(MsgAudioFormat* aMsg)
+{
+    //Log::Print("Stopper - MsgAudioFormat(%p)\n", aMsg);
+    return aMsg;
+}
+
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     //Log::Print("Stopper - MsgTrack(%p)\n", aMsg);

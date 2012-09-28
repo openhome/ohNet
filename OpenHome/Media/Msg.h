@@ -132,7 +132,7 @@ public:
     TUint JiffiesFromBytes(TUint aBytes) const;
     TUint NumChannels() const;
 private:
-    void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian); // sample rate, bit-depth, num channels, const brx& (ptr/len), endianness);
+    void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
     static void UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
     static void UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
 private: // from Allocated
@@ -141,15 +141,9 @@ private:
     TUint iSubsamples[kMaxSubsamples]; // one sub-sample per channel == 1 sample
     TUint iSubsampleCount;
     TUint iChannels;
-    //TUint64 iSampleStart; // pos of first sample in iData within the track
-    //TUint64 iSamplesTotal; // total num samples in the track
     TUint iSampleRate;
-    TUint iBitRate; // what is this ??
     TUint iBitDepth;
     TUint iJiffiesPerSample; // cached on construction for convenience
-    //TBool iLossless;
-    //Bws<kMaxCodecNameBytes> iCodecName;
-    //TUint iSamples; // bytes/4 - remove
 };
 
 class IMsgProcessor;
@@ -231,6 +225,7 @@ class MsgAudioPcm : public MsgAudio
     friend class MsgFactory;
 public:
     MsgAudioPcm(AllocatorBase& aAllocator);
+    TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
 public: // from MsgAudio
     MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy size/offset
@@ -245,6 +240,7 @@ private: // from Msg
 private:
     DecodedAudio* iAudioData;
     Allocator<MsgPlayablePcm>* iAllocatorPlayable;
+    TUint64 iTrackOffset;
 };
 
 class MsgPlayableSilence;
@@ -273,7 +269,7 @@ public:
     void Add(MsgPlayable* aMsg); // combines MsgAudio instances so they report longer durations etc
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
-    virtual void Write(IWriter& aWriter) = 0; // calls RemoveRef on exit - FIXME: needs handling for ErrorWriter exception then
+    virtual void Write(IWriter& aWriter) = 0; // calls RemoveRef on exit
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
     void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp);
@@ -299,7 +295,7 @@ private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp);
 private: // from MsgPlayable
     MsgPlayable* Clone(); // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
-    void Write(IWriter& aWriter); // calls RemoveRef on exit - FIXME: needs handling for ErrorWriter exception then
+    void Write(IWriter& aWriter); // calls RemoveRef on exit
     MsgPlayable* Allocate();
     void SplitCompleted(MsgPlayable& aRemaining);
 private: // from Msg
@@ -320,6 +316,45 @@ private: // from MsgPlayable
     MsgPlayable* Allocate();
 };
 
+class AudioFormat
+{
+    friend class MsgAudioFormat;
+public:
+    static const TUint kMaxCodecNameBytes = 32;
+public:
+    TUint BitRate() const { return iBitRate; }
+    TUint BitDepth() const { return iBitDepth; }
+    TUint SampleRate() const { return iSampleRate; }
+    const Brx& CodecName() const { return iCodecName; }
+    TUint64 TrackLength() const { return iTrackLength; }
+    TBool Lossless() const { return iLossless; }
+private:
+    AudioFormat();
+    void Set(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
+private:
+    TUint iBitRate;
+    TUint iBitDepth;
+    TUint iSampleRate;
+    Bws<kMaxCodecNameBytes> iCodecName;
+    TUint64 iTrackLength; // jiffies
+    TBool iLossless;
+};
+
+class MsgAudioFormat : public Msg
+{
+    friend class MsgFactory;
+public:
+    MsgAudioFormat(AllocatorBase& aAllocator);
+    const AudioFormat& Format() const;
+private:
+    void Initialise(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    AudioFormat iAudioFormat;
+};
+
 class MsgTrack : public Msg
 {
 public:
@@ -334,12 +369,19 @@ private:
 
 class MsgMetaText : public Msg
 {
+    friend class MsgFactory;
 public:
-    static const TUint kMaxBytes = 100; // FIXME
+    static const TUint kMaxBytes = 1024;
 public:
     MsgMetaText(AllocatorBase& aAllocator);
+    const Brx& MetaText() const;
+private:
+    void Initialise(const Brx& aMetaText);
 private: // from Msg
+    void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
+private:
+    Bws<kMaxBytes> iMetaText;
 };
 
 class MsgHalt : public Msg
@@ -372,6 +414,7 @@ public:
     virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgAudioFormat* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgHalt* aMsg) = 0;
@@ -411,6 +454,7 @@ private:
 private:
     virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
     virtual void ProcessMsgIn(MsgSilence* aMsg);
+    virtual void ProcessMsgIn(MsgAudioFormat* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
     virtual void ProcessMsgIn(MsgHalt* aMsg);
@@ -418,6 +462,7 @@ private:
     virtual void ProcessMsgIn(MsgQuit* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
+    virtual Msg* ProcessMsgOut(MsgAudioFormat* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
     virtual Msg* ProcessMsgOut(MsgHalt* aMsg);
@@ -432,6 +477,7 @@ private:
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);
         Msg* ProcessMsg(MsgPlayable* aMsg);
+        Msg* ProcessMsg(MsgAudioFormat* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
@@ -448,6 +494,7 @@ private:
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);
         Msg* ProcessMsg(MsgPlayable* aMsg);
+        Msg* ProcessMsg(MsgAudioFormat* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
@@ -481,14 +528,15 @@ class MsgFactory
 public:
     MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
-               TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgTrackCount,
-               TUint aMsgMetaTextCount, TUint aMsgHaltCount, TUint aMsgFlushCount,
-               TUint aMsgQuitCount);
+               TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgAudioFormatCount,
+               TUint aMsgTrackCount, TUint aMsgMetaTextCount, TUint aMsgHaltCount,
+               TUint aMsgFlushCount, TUint aMsgQuitCount);
     //
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
+    MsgAudioFormat* CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
     MsgTrack* CreateMsgTrack();
-    MsgMetaText* CreateMsgMetaText();
+    MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt();
     MsgFlush* CreateMsgFlush();
     MsgQuit* CreateMsgQuit();
@@ -500,6 +548,7 @@ private:
     Allocator<MsgSilence> iAllocatorMsgSilence;
     Allocator<MsgPlayablePcm> iAllocatorMsgPlayablePcm;
     Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
+    Allocator<MsgAudioFormat> iAllocatorMsgAudioFormat;
     Allocator<MsgTrack> iAllocatorMsgTrack;
     Allocator<MsgMetaText> iAllocatorMsgMetaText;
     Allocator<MsgHalt> iAllocatorMsgHalt;
