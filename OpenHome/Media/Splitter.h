@@ -2,7 +2,7 @@
 #define HEADER_PIPELINE_SPLITTER
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Msg.h>
 
 namespace OpenHome {
@@ -16,16 +16,14 @@ public:
     
 /*
 Element which allows the pipeline to fork, with msgs going down both branches.
-Is animated by being Pull()ed.
-Branching can be toggled at runtime (default is off).
+Secondary branch is animated by the primary branch being Pull()ed.
 When enabled, audio msgs are cloned for the branch; others have a reference claimed.
 */
 
-class Splitter : public IPipelineElement, private IMsgProcessor
+class Splitter : public IPipelineElement, private IMsgProcessor, private INonCopyable
 {
 public:
     Splitter(IPipelineElement& aUpstreamElement, IPipelineBranch& aBranch);
-    void SetEnabled(TBool aEnabled);
 public: // from IPipelineElement
     Msg* Pull();
 private: // IMsgProcessor
@@ -41,8 +39,13 @@ private: // IMsgProcessor
 private:
     IPipelineElement& iUpstreamElement;
     IPipelineBranch& iBranch;
-    Mutex iLock;
-    TBool iEnabled;
+};
+
+// Test code helper
+class PipelineBranchNull : public IPipelineBranch
+{
+public: // from IPipelineBranch
+    void AddMsg(Msg* aMsg);
 };
 
 } // namespace Media

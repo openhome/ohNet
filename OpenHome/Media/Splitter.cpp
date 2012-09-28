@@ -1,6 +1,5 @@
 #include <OpenHome/Media/Splitter.h>
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
 
@@ -12,27 +11,14 @@ using namespace OpenHome::Media;
 Splitter::Splitter(IPipelineElement& aUpstreamElement, IPipelineBranch& aBranch)
     : iUpstreamElement(aUpstreamElement)
     , iBranch(aBranch)
-    , iLock("SPLT")
-    , iEnabled(false)
 {
-}
-
-void Splitter::SetEnabled(TBool aEnabled)
-{
-    iLock.Wait();
-    iEnabled = aEnabled;
-    iLock.Signal();
 }
 
 Msg* Splitter::Pull()
 {
     Msg* msg = iUpstreamElement.Pull();
-    iLock.Wait();
-    if (iEnabled) {
-        Msg* copy = msg->Process(*this);
-        iBranch.AddMsg(copy);
-    }
-    iLock.Signal();
+    Msg* copy = msg->Process(*this);
+    iBranch.AddMsg(copy);
     return msg;
 }
 
@@ -86,4 +72,12 @@ Msg* Splitter::ProcessMsg(MsgQuit* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
+}
+
+
+// PipelineBranchNull
+
+void PipelineBranchNull::AddMsg(Msg* aMsg)
+{
+    aMsg->RemoveRef();
 }
