@@ -2,7 +2,7 @@
 #define HEADER_PIPELINE_LOGGER
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/private/Standard.h>
+#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Msg.h>
 
 namespace OpenHome {
