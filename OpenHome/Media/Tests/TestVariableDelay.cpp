@@ -81,6 +81,7 @@ private:
     TUint iJiffies;
     TUint iNumMsgsGenerated;
     TUint iAudioMsgSizeJiffies;
+    TUint64 iTrackOffset;
 };
 
 } // namespace Media
@@ -276,8 +277,9 @@ MsgAudio* SuiteVariableDelay::CreateAudio()
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0xff, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
     iAudioMsgSizeJiffies = audio->Jiffies();
+    iTrackOffset += iAudioMsgSizeJiffies;
     return audio;
 }
 

@@ -374,7 +374,7 @@ void SuiteMsgAudio::Test()
     TUint jiffies;
     MsgAudio* msg;
     for (TUint i=0; i<numRates; i++) {
-        msg = iMsgFactory->CreateMsgAudioPcm(data, 2, sampleRates[i], 8, EMediaDataLittleEndian);
+        msg = iMsgFactory->CreateMsgAudioPcm(data, 2, sampleRates[i], 8, EMediaDataLittleEndian, 0);
         jiffies = msg->Jiffies();
         msg->RemoveRef();
         TEST(prevJiffies > jiffies);
@@ -387,7 +387,7 @@ void SuiteMsgAudio::Test()
 #define numBitDepths (sizeof(bitDepths) / sizeof(bitDepths[0]))
     MsgAudio* msgbd[numBitDepths];
     for (TUint i=0; i<numBitDepths; i++) {
-        msgbd[i] = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, bitDepths[i], EMediaDataLittleEndian);
+        msgbd[i] = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, bitDepths[i], EMediaDataLittleEndian, 0);
     }
     TEST(msgbd[0]->Jiffies() == 2 * msgbd[1]->Jiffies());
     TEST(msgbd[0]->Jiffies() == 3 * msgbd[2]->Jiffies());
@@ -396,7 +396,7 @@ void SuiteMsgAudio::Test()
     }
 
     // Split pcm msg.  Check lengths of both parts are as expected.
-    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, Jiffies::kJiffiesPerSecond);
     static const TUint kSplitPos = 800;
     jiffies = msg->Jiffies();
     MsgAudio* remaining = msg->Split(kSplitPos);
@@ -409,6 +409,8 @@ void SuiteMsgAudio::Test()
     TEST(newJiffies < jiffies);
     TEST(remainingJiffies < jiffies);
     TEST(newJiffies + remainingJiffies == jiffies);
+    TEST(static_cast<MsgAudioPcm*>(msg)->TrackOffset() == Jiffies::kJiffiesPerSecond);
+    TEST(static_cast<MsgAudioPcm*>(remaining)->TrackOffset() == static_cast<MsgAudioPcm*>(msg)->TrackOffset() + msg->Jiffies());
 
     // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
     TEST_THROWS(remaining = msg->Split(0), AssertionFailed);
@@ -419,6 +421,7 @@ void SuiteMsgAudio::Test()
     MsgAudio* clone = msg->Clone();
     jiffies = clone->Jiffies();
     TEST(jiffies == msg->Jiffies());
+    TEST(static_cast<MsgAudioPcm*>(msg)->TrackOffset() == static_cast<MsgAudioPcm*>(clone)->TrackOffset());
     msg->RemoveRef();
     // confirm clone is usable after parent is destroyed
     TEST(jiffies == clone->Jiffies());
@@ -482,7 +485,7 @@ void SuiteMsgPlayable::Test()
     MsgAudioPcm* audioPcm;
     MsgPlayable* playable;
     for (TUint i=0; i<numRates; i++) {
-        audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, sampleRates[i], 8, EMediaDataLittleEndian);
+        audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, sampleRates[i], 8, EMediaDataLittleEndian, 0);
         playable = audioPcm->CreatePlayable();
         bytes = playable->Bytes();
         playable->RemoveRef();
@@ -494,7 +497,7 @@ void SuiteMsgPlayable::Test()
 
     // Create pcm msg.  Read/validate its content
     static const TUint kWriterBufGranularity = 1024;
-    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     playable = audioPcm->CreatePlayable();
     TEST(playable->Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
     WriterBwh* writerBuf = new WriterBwh(kWriterBufGranularity);
@@ -511,7 +514,7 @@ void SuiteMsgPlayable::Test()
     }
 
     // Create pcm msg, split it then convert to playable.  Read/validate contents of both
-    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     MsgAudioPcm* remainingPcm = (MsgAudioPcm*)audioPcm->Split(audioPcm->Jiffies()/4);
     playable = audioPcm->CreatePlayable();
     MsgPlayable* remainingPlayable = remainingPcm->CreatePlayable();
@@ -539,7 +542,7 @@ void SuiteMsgPlayable::Test()
     }
 
     // Create pcm msg, convert to playable then split.  Read/validate contents of both
-    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     playable = audioPcm->CreatePlayable();
     remainingPlayable = playable->Split(playable->Bytes()/4);
     TEST(remainingPlayable->Bytes() == 3 * playable->Bytes());
@@ -566,7 +569,7 @@ void SuiteMsgPlayable::Test()
     }
 
     // Create pcm msg, split at non-sample boundary.  Read/validate contents of each fragment
-    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     remainingPcm = (MsgAudioPcm*)audioPcm->Split((audioPcm->Jiffies()/4) - 1);
     playable = audioPcm->CreatePlayable();
     remainingPlayable = remainingPcm->CreatePlayable();
@@ -593,7 +596,7 @@ void SuiteMsgPlayable::Test()
     }
 
     // Create pcm msg, split at 1 jiffy (non-sample boundary).  Check initial msg has 0 Bytes() but can Write() its content
-    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     remainingPcm = (MsgAudioPcm*)audioPcm->Split(1);
     playable = audioPcm->CreatePlayable();
     remainingPlayable = remainingPcm->CreatePlayable();
@@ -609,7 +612,7 @@ void SuiteMsgPlayable::Test()
     TEST(buf.Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
 
     // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
-    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian);
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     playable = audioPcm->CreatePlayable();
     TEST_THROWS(remainingPlayable = playable->Split(0), AssertionFailed);
     TEST_THROWS(remainingPlayable = playable->Split(playable->Bytes()), AssertionFailed);
@@ -890,7 +893,7 @@ void SuiteRamp::Test()
     TByte encodedAudioData[kEncodedAudioSize];
     (void)memset(encodedAudioData, 0xff, kEncodedAudioSize);
     Brn encodedAudio(encodedAudioData, kEncodedAudioSize);
-    MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudio, kNumChannels, 44100, 16, EMediaDataLittleEndian);
+    MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudio, kNumChannels, 44100, 16, EMediaDataLittleEndian, 0);
     jiffies = audioPcm->Jiffies();
     TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMax / 2, jiffies*2, Ramp::EDown, remaining));
     TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMin, jiffies*2, Ramp::EUp, remaining));
@@ -1064,7 +1067,7 @@ void SuiteMsgProcessor::Test()
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0xab, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, 2, 44100, 8, EMediaDataLittleEndian);
+    MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, 2, 44100, 8, EMediaDataLittleEndian, 0);
     TEST(audioPcm == static_cast<Msg*>(audioPcm)->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgAudioPcm);
     MsgPlayable* playable = audioPcm->CreatePlayable();
@@ -1337,7 +1340,7 @@ void SuiteMsgQueueJiffies::Test()
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0xab, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, 2, 44100, 8, EMediaDataLittleEndian);
+    audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, 2, 44100, 8, EMediaDataLittleEndian, 0);
     TUint audioJiffies = audio->Jiffies();
     queue->Enqueue(audio);
     TEST(queue->Jiffies() == jiffies + audioJiffies);

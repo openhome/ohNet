@@ -92,6 +92,7 @@ private:
     EMsgGenerationState iMsgGenerationState;
     Semaphore iSemUpstream;
     Semaphore iSemUpstreamCompleted;
+    TUint64 iTrackOffset;
 };
 
 } // namespace Media
@@ -333,7 +334,8 @@ MsgAudio* SuiteStarvationMonitor::CreateAudio()
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0xff, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
+    iTrackOffset += audio->Jiffies();
     return audio;
 }
 

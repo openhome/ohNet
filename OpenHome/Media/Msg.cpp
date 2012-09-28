@@ -659,6 +659,11 @@ MsgAudioPcm::MsgAudioPcm(AllocatorBase& aAllocator)
 {
 }
 
+TUint64 MsgAudioPcm::TrackOffset() const
+{
+    return iTrackOffset;
+}
+
 MsgPlayable* MsgAudioPcm::CreatePlayable()
 {
     TUint offsetJiffies = iOffset;
@@ -682,15 +687,17 @@ MsgAudio* MsgAudioPcm::Clone()
 {
     MsgAudio* clone = MsgAudio::Clone();
     static_cast<MsgAudioPcm*>(clone)->iAudioData = iAudioData;
+    static_cast<MsgAudioPcm*>(clone)->iTrackOffset = iTrackOffset;
     iAudioData->AddRef();
     return clone;
 }
 
-void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, Allocator<MsgPlayablePcm>& aAllocatorPlayable)
+void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, Allocator<MsgPlayablePcm>& aAllocatorPlayable)
 {
     MsgAudio::Initialise();
     iAllocatorPlayable = &aAllocatorPlayable;
     iAudioData = aDecodedAudio;
+    iTrackOffset = aTrackOffset;
     iSize = iAudioData->JiffiesFromBytes(iAudioData->Bytes());
     iOffset = 0;
 }
@@ -700,6 +707,7 @@ void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
     iAudioData->AddRef();
     MsgAudioPcm& remaining = static_cast<MsgAudioPcm&>(aRemaining);
     remaining.iAudioData = iAudioData;
+    remaining.iTrackOffset = iTrackOffset + iSize;
     remaining.iAllocatorPlayable = iAllocatorPlayable;
 }
 
@@ -1442,11 +1450,11 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
 {
 }
 
-MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
+MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
 {
     DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aChannels, aSampleRate, aBitDepth, aEndian);
     MsgAudioPcm* msg = iAllocatorMsgAudioPcm.Allocate();
-    msg->Initialise(decodedAudio, iAllocatorMsgPlayablePcm);
+    msg->Initialise(decodedAudio, aTrackOffset, iAllocatorMsgPlayablePcm);
     return msg;
 }
 

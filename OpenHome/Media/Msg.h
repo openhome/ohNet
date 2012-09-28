@@ -230,7 +230,7 @@ public:
 public: // from MsgAudio
     MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
-    void Initialise(DecodedAudio* aDecodedAudio, Allocator<MsgPlayablePcm>& aAllocatorPlayable);
+    void Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, Allocator<MsgPlayablePcm>& aAllocatorPlayable);
 private: // from MsgAudio
     MsgAudio* Allocate();
     void SplitCompleted(MsgAudio& aRemaining);
@@ -532,7 +532,7 @@ public:
                TUint aMsgTrackCount, TUint aMsgMetaTextCount, TUint aMsgHaltCount,
                TUint aMsgFlushCount, TUint aMsgQuitCount);
     //
-    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
+    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgAudioFormat* CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
     MsgTrack* CreateMsgTrack();
