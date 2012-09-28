@@ -78,6 +78,7 @@ def build(bld):
                 'OpenHome/Media/AudioReservoir.cpp',
                 'OpenHome/Media/Logger.cpp',
                 'OpenHome/Media/Msg.cpp',
+                'OpenHome/Media/Reporter.cpp',
                 'OpenHome/Media/Splitter.cpp',
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
@@ -114,6 +115,10 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer'],
             target='TestVariableDelay')
     bld.program(
+            source='OpenHome/Media/Tests/TestReporter.cpp',
+            use=['OHNET', 'ohMediaPlayer'],
+            target='TestReporter')
+    bld.program(
             source='OpenHome/Av/Tests/TestStore.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStore')
@@ -139,6 +144,7 @@ def test(tst):
                       ,['TestStopper', [], True]
                       ,['TestAudioReservoir', [], True]
                       ,['TestVariableDelay', [], True]
+                      ,['TestReporter', [], True]
                       ,['TestStore', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
