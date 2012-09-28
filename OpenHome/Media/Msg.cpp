@@ -1039,7 +1039,7 @@ const Brx& MsgMetaText::MetaText() const
 
 void MsgMetaText::Initialise(const Brx& aMetaText)
 {
-    iMetaText.Append(aMetaText);
+    iMetaText.Replace(aMetaText);
 }
 
 void MsgMetaText::Clear()
