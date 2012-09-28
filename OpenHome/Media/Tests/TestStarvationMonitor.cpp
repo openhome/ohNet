@@ -140,6 +140,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iMsgGenerationState(EStateWait)
     , iSemUpstream("TSRV", 0)
     , iSemUpstreamCompleted("TSRV", 0)
+    , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iSm = new StarvationMonitor(*iMsgFactory, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize);

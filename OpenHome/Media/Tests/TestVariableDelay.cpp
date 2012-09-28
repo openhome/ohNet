@@ -128,6 +128,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     , iLastMsg(ENone)
     , iNumMsgsGenerated(0)
     , iAudioMsgSizeJiffies(0)
+    , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kRampDuration);

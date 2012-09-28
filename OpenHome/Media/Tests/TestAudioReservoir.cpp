@@ -136,6 +136,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     , iLastMsg(ENone)
     , iSemUpstream("TRSV", 0)
     , iSemUpstreamComplete("TRSV", 0)
+    , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iReservoir = new AudioReservoir(kReservoirSize);

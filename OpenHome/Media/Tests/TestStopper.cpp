@@ -144,6 +144,7 @@ SuiteStopper::SuiteStopper()
     , iPipelineFlushedCount(0)
     , iAudioMsgsDue(0)
     , iFlushThreadExit("HACK", 0)
+    , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iStopper = new Stopper(*iMsgFactory, *this, *this, kRampDuration);
