@@ -78,6 +78,7 @@ def build(bld):
                 'OpenHome/Media/AudioReservoir.cpp',
                 'OpenHome/Media/Logger.cpp',
                 'OpenHome/Media/Msg.cpp',
+                'OpenHome/Media/PreDriver.cpp',
                 'OpenHome/Media/Reporter.cpp',
                 'OpenHome/Media/Splitter.cpp',
                 'OpenHome/Media/StarvationMonitor.cpp',
@@ -119,6 +120,10 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer'],
             target='TestReporter')
     bld.program(
+            source='OpenHome/Media/Tests/TestPreDriver.cpp',
+            use=['OHNET', 'ohMediaPlayer'],
+            target='TestPreDriver')
+    bld.program(
             source='OpenHome/Av/Tests/TestStore.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStore')
@@ -145,6 +150,7 @@ def test(tst):
                       ,['TestAudioReservoir', [], True]
                       ,['TestVariableDelay', [], True]
                       ,['TestReporter', [], True]
+                      ,['TestPreDriver', [], True]
                       ,['TestStore', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
