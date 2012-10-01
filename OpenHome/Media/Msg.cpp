@@ -965,17 +965,19 @@ AudioFormat::AudioFormat()
     : iBitRate(0)
     , iBitDepth(0)
     , iSampleRate(0)
+    , iNumChannels(0)
     , iCodecName("")
     , iTrackLength(0)
     , iLossless(false)
 {
 }
 
-void AudioFormat::Set(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
+void AudioFormat::Set(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
 {
     iBitRate = aBitRate;
     iBitDepth = aBitDepth;
     iSampleRate = aSampleRate;
+    iNumChannels = aNumChannels;
     iCodecName.Replace(aCodecName);
     iTrackLength = aTrackLength;
     iLossless = aLossless;
@@ -994,15 +996,15 @@ const AudioFormat& MsgAudioFormat::Format() const
     return iAudioFormat;
 }
 
-void MsgAudioFormat::Initialise(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
+void MsgAudioFormat::Initialise(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
 {
-    iAudioFormat.Set(aBitRate, aBitDepth, aSampleRate, aCodecName, aTrackLength, aLossless);
+    iAudioFormat.Set(aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aLossless);
 }
 
 void MsgAudioFormat::Clear()
 {
 #ifdef DEFINE_DEBUG
-    iAudioFormat.Set(0, 0, 0, Brx::Empty(), 0, false);
+    iAudioFormat.Set(0, 0, 0, 0, Brx::Empty(), 0, false);
 #endif
 }
 
@@ -1465,10 +1467,10 @@ MsgSilence* MsgFactory::CreateMsgSilence(TUint aSizeJiffies)
     return msg;
 }
 
-MsgAudioFormat* MsgFactory::CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
+MsgAudioFormat* MsgFactory::CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless)
 {
     MsgAudioFormat* msg = iAllocatorMsgAudioFormat.Allocate();
-    msg->Initialise(aBitRate, aBitDepth, aSampleRate, aCodecName, aTrackLength, aLossless);
+    msg->Initialise(aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aLossless);
     return msg;
 }
 

@@ -1003,14 +1003,16 @@ void SuiteAudioFormat::Test()
     TUint bitRate = 128; // nonsense value but doesn't matter for this test
     TUint bitDepth = 16;
     TUint sampleRate = 44100;
+    TUint numChannels = 2;
     Brn codecName("test codec");
     TUint64 trackLength = 1<<16;
     TBool lossless = true;
-    MsgAudioFormat* msg = iMsgFactory->CreateMsgAudioFormat(bitRate, bitDepth, sampleRate, codecName, trackLength, lossless);
+    MsgAudioFormat* msg = iMsgFactory->CreateMsgAudioFormat(bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, lossless);
     TEST(msg != NULL);
     TEST(msg->Format().BitRate() == bitRate);
     TEST(msg->Format().BitDepth() == bitDepth);
     TEST(msg->Format().SampleRate() == sampleRate);
+    TEST(msg->Format().NumChannels() == numChannels);
     TEST(msg->Format().CodecName() == codecName);
     TEST(msg->Format().TrackLength() == trackLength);
     TEST(msg->Format().Lossless() == lossless);
@@ -1021,6 +1023,7 @@ void SuiteAudioFormat::Test()
     TEST(msg->Format().BitRate() != bitRate);
     TEST(msg->Format().BitDepth() != bitDepth);
     TEST(msg->Format().SampleRate() != sampleRate);
+    TEST(msg->Format().NumChannels() != numChannels);
     TEST(msg->Format().CodecName() != codecName);
     TEST(msg->Format().TrackLength() != trackLength);
     TEST(msg->Format().Lossless() != lossless);
@@ -1030,14 +1033,16 @@ void SuiteAudioFormat::Test()
     bitRate = 700;
     bitDepth = 24;
     sampleRate = 192000;
+    numChannels = 1;
     codecName.Set("new codec name (a bit longer)");
     trackLength = 1<<30;
     lossless = false;
-    msg = iMsgFactory->CreateMsgAudioFormat(bitRate, bitDepth, sampleRate, codecName, trackLength, lossless);
+    msg = iMsgFactory->CreateMsgAudioFormat(bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, lossless);
     TEST(msg != NULL);
     TEST(msg->Format().BitRate() == bitRate);
     TEST(msg->Format().BitDepth() == bitDepth);
     TEST(msg->Format().SampleRate() == sampleRate);
+    TEST(msg->Format().NumChannels() == numChannels);
     TEST(msg->Format().CodecName() == codecName);
     TEST(msg->Format().TrackLength() == trackLength);
     TEST(msg->Format().Lossless() == lossless);
@@ -1083,7 +1088,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    Msg* msg = iMsgFactory->CreateMsgAudioFormat(0, 0, 0, Brx::Empty(), 0, false);
+    Msg* msg = iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgAudioFormat);
     msg->RemoveRef();

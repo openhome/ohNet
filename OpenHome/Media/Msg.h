@@ -325,16 +325,18 @@ public:
     TUint BitRate() const { return iBitRate; }
     TUint BitDepth() const { return iBitDepth; }
     TUint SampleRate() const { return iSampleRate; }
+    TUint NumChannels() const { return iNumChannels; }
     const Brx& CodecName() const { return iCodecName; }
     TUint64 TrackLength() const { return iTrackLength; }
     TBool Lossless() const { return iLossless; }
 private:
     AudioFormat();
-    void Set(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
+    void Set(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
 private:
     TUint iBitRate;
     TUint iBitDepth;
     TUint iSampleRate;
+    TUint iNumChannels;
     Bws<kMaxCodecNameBytes> iCodecName;
     TUint64 iTrackLength; // jiffies
     TBool iLossless;
@@ -347,7 +349,7 @@ public:
     MsgAudioFormat(AllocatorBase& aAllocator);
     const AudioFormat& Format() const;
 private:
-    void Initialise(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
+    void Initialise(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -534,7 +536,7 @@ public:
     //
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
-    MsgAudioFormat* CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
+    MsgAudioFormat* CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
     MsgTrack* CreateMsgTrack();
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt();

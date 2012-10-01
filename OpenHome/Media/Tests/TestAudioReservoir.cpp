@@ -262,7 +262,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
         break;
     case EMsgAudioFormat:
-        msg = iMsgFactory->CreateMsgAudioFormat(0, 0, 0, Brx::Empty(), 0, false);
+        msg = iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
         break;
     case EMsgTrack:
         msg = iMsgFactory->CreateMsgTrack();

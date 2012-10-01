@@ -255,7 +255,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
     case EMsgAudioFormat:
-        return iMsgFactory->CreateMsgAudioFormat(0, 0, 0, Brx::Empty(), 0, false);
+        return iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
     case EMsgMetaText:
