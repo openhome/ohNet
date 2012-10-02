@@ -510,11 +510,11 @@ private:
     TUint iJiffies;
 };
 
-class AutoRef : private INonCopyable
+class AutoMsgRef : private INonCopyable
 {
 public:
-    AutoRef(Msg& aMsg);
-    ~AutoRef();
+    AutoMsgRef(Msg& aMsg);
+    ~AutoMsgRef();
 private:
     Msg& iMsg;
 };

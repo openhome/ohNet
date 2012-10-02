@@ -888,7 +888,7 @@ MsgPlayable* MsgPlayablePcm::Clone()
 
 void MsgPlayablePcm::Write(IWriter& aWriter)
 {
-    AutoRef a(*this);
+    AutoMsgRef a(*this);
     
     Bwn audioBuf((const TByte*)iAudioData->PtrOffsetBytes(iOffset), iSize, iSize);
     if (iRamp.IsEnabled()) {
@@ -938,7 +938,7 @@ void MsgPlayableSilence::Write(IWriter& aWriter)
     static const TUint kSizeBufSilence = 4096;
     static const TByte silence[kSizeBufSilence] = { 0 };
 
-    AutoRef a(*this);
+    AutoMsgRef a(*this);
     Brn silenceBuf;
     while (iSize > 0) {
         TUint bytes = (iSize > kSizeBufSilence? kSizeBufSilence : iSize);
@@ -1418,14 +1418,14 @@ Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
 }
 
 
-// AutoRef
+// AutoMsgRef
 
-AutoRef::AutoRef(Msg& aMsg)
+AutoMsgRef::AutoMsgRef(Msg& aMsg)
     : iMsg(aMsg)
 {
 }
 
-AutoRef::~AutoRef()
+AutoMsgRef::~AutoMsgRef()
 {
     iMsg.RemoveRef();
 }
