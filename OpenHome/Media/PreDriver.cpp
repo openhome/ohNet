@@ -75,7 +75,6 @@ Msg* PreDriver::ProcessMsg(MsgAudioFormat* aMsg)
         aMsg->RemoveRef();
         return NULL;
     }
-    // change in format.  Signal the driver to halt and cache the format for later delivery
     if (iFormat != NULL) {
         iFormat->RemoveRef();
     }
