@@ -32,7 +32,7 @@ class Stopper : public IPipelineElement, private IMsgProcessor
 {
     friend class SuiteStopper;
 public:
-    Stopper(MsgFactory& aMsgFactory, IStopperObserver& aObserver, IPipelineElement& aUpstreamElement, TUint aRampDuration);
+    Stopper(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
     void Start();
     void BeginHalt();
     void BeginFlush();
@@ -63,8 +63,8 @@ private:
     };
 private:
     MsgFactory& iMsgFactory;
-    IStopperObserver& iObserver;
     IPipelineElement& iUpstreamElement;
+    IStopperObserver& iObserver;
     Mutex iLock;
     Semaphore iSem;
     EState iState;
