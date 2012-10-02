@@ -23,9 +23,7 @@ PreDriver::~PreDriver()
     if (iFormat != NULL) {
         iFormat->RemoveRef();
     }
-    if (iPendingFormatChange != NULL) {
-        iPendingFormatChange->RemoveRef();
-    }
+    ASSERT(iPendingFormatChange == NULL);
 }
 
 Msg* PreDriver::Pull()
@@ -99,7 +97,6 @@ Msg* PreDriver::ProcessMsg(MsgMetaText* aMsg)
     aMsg->RemoveRef();
     return NULL;
 }
-
 
 Msg* PreDriver::ProcessMsg(MsgHalt* aMsg)
 {
