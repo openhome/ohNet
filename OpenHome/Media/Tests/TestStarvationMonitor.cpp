@@ -28,7 +28,7 @@ private:
     std::vector<Av::IInfoProvider*> iInfoProviders;
 };
 
-class SuiteStarvationMonitor : public Suite, private IPipelineElement, private IMsgProcessor
+class SuiteStarvationMonitor : public Suite, private IPipelineElement, private IMsgProcessor, private IStarvationMonitorObserver
 {
     static const TUint kDecodedAudioCount = 1536;
     static const TUint kMsgAudioPcmCount  = 2048;
@@ -57,6 +57,8 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from IStarvationMonitorObserver
+    void NotifyStarvationMonitorBuffering(TBool aBuffering);
 private:
     enum EMsgType
     {
@@ -93,6 +95,7 @@ private:
     Semaphore iSemUpstream;
     Semaphore iSemUpstreamCompleted;
     TUint64 iTrackOffset;
+    TBool iBuffering;
 };
 
 } // namespace Media
@@ -141,9 +144,10 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iSemUpstream("TSRV", 0)
     , iSemUpstreamCompleted("TSRV", 0)
     , iTrackOffset(0)
+    , iBuffering(false)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
-    iSm = new StarvationMonitor(*iMsgFactory, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize);
+    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize);
 }
 
 SuiteStarvationMonitor::~SuiteStarvationMonitor()
@@ -171,6 +175,7 @@ void SuiteStarvationMonitor::Test()
     TEST(iSm->PullWouldBlock());
     TEST(iSm->Jiffies() == 0);
     TEST(iSm->iStatus == StarvationMonitor::EBuffering);
+    TEST(iBuffering);
 
     // Add 0xff filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
     GenerateUpstreamMsgs(EStateAudioFillInitial);
@@ -180,6 +185,7 @@ void SuiteStarvationMonitor::Test()
     TEST(iSm->EnqueueWouldBlock());
     TEST(!iSm->PullWouldBlock());
     TEST(iSm->iStatus == StarvationMonitor::ERunning);
+    TEST(!iBuffering);
 
     Msg* msg;
     // Pull all audio.  Check the last bit ramps down.
@@ -208,6 +214,7 @@ void SuiteStarvationMonitor::Test()
     } while(iSm->Jiffies() > 0);
     TEST(!iSm->EnqueueWouldBlock());
     TEST(iSm->IsEmpty()); // queue is empty but we expect SM to generte a halt message if we Pull again
+    TEST(iBuffering);
 
     // Check halt message is sent and pull would then block
     msg = iSm->Pull();
@@ -220,6 +227,7 @@ void SuiteStarvationMonitor::Test()
     // Continue adding audio until we reach gorge size.  Check enqueue would now block.
     GenerateUpstreamMsgs(EStateAudioFillPostStarvation);
     WaitForEnqueueToBlock();
+    TEST(!iBuffering);
 
     // Pull audio.  Check it ramps up.
     TUint jiffies = iSm->Jiffies();
@@ -232,6 +240,7 @@ void SuiteStarvationMonitor::Test()
     } while (iSm->iStatus == StarvationMonitor::ERampingUp);
     TEST(jiffies - iSm->Jiffies() == kRampUpSize);
     TEST(iSm->iStatus == StarvationMonitor::ERunning);
+    TEST(!iBuffering);
 
     // Check enqueues would block until size drops below normal max
     do {
@@ -241,6 +250,7 @@ void SuiteStarvationMonitor::Test()
         (void)msg->Process(*this);
         TEST(iLastMsg == EMsgAudioPcm);
     } while (iSm->Jiffies() > kRegularSize);
+    TEST(!iBuffering);
 
     // Add Halt.  Check queue can be drained without ramping down
     GenerateUpstreamMsgs(EStateHalt);
@@ -259,6 +269,7 @@ void SuiteStarvationMonitor::Test()
     msg->RemoveRef();
     TEST(iSm->iStatus == StarvationMonitor::EBuffering);
     TEST(iSm->PullWouldBlock());
+    TEST(iBuffering);
 
     // Send Quit msg to unblock the SM thread which is blocked inside a Pull()
     GenerateUpstreamMsgs(EStateQuit);
@@ -418,6 +429,11 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgQuit* aMsg)
 {
     iLastMsg = EMsgQuit;
     return aMsg;
+}
+
+void SuiteStarvationMonitor::NotifyStarvationMonitorBuffering(TBool aBuffering)
+{
+    iBuffering = aBuffering;
 }
 
 

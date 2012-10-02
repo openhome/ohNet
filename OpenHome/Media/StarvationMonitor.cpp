@@ -9,9 +9,11 @@ using namespace OpenHome::Media;
 
 // StarvationMonitor
 
-StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize)
+StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, IStarvationMonitorObserver& aObserver,
+                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iObserver(aObserver)
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
     , iGorgeSize(aGorgeSize)
@@ -19,7 +21,6 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& 
     , iLock("STRV")
     , iSemIn("STR1", 0)
     , iSemOut("STR2", 0)
-    , iStatus(EBuffering)
     , iCurrentRampValue(Ramp::kRampMax)
     , iPlannedHalt(true)
     , iExit(false)
@@ -27,6 +28,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& 
     ASSERT(iStarvationThreshold < iNormalMax);
     ASSERT(iNormalMax < iGorgeSize);
     ASSERT(iRampUpSize < iGorgeSize);
+    UpdateStatus(EBuffering);
     iThread = new ThreadFunctor("STRV", MakeFunctor(*this, &StarvationMonitor::PullerThread), kPriorityNormal); // FIXME - want a priority that's higher that ohNet's threads
     iThread->Start();
 }
@@ -56,11 +58,11 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
     TBool isFull = (iStatus != EBuffering && Jiffies() >= iNormalMax);
     if (iStatus == EBuffering && Jiffies() >= iGorgeSize) {
         if (iPlannedHalt) {
-            iStatus = ERunning;
+            UpdateStatus(ERunning);
             iPlannedHalt = false;
         }
         else {
-            iStatus = ERampingUp;
+            UpdateStatus(ERampingUp);
             ASSERT(iCurrentRampValue == Ramp::kRampMin);
             iRemainingRampSize = iRampUpSize;
         }
@@ -108,7 +110,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     ASSERT(iStatus != EBuffering);
     TUint remainingSize = Jiffies();
     if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
-        iStatus = ERampingDown;
+        UpdateStatus(ERampingDown);
         iRampDownDuration = remainingSize + aMsg->Jiffies();
         ASSERT(iCurrentRampValue == Ramp::kRampMax);
         iRemainingRampSize = iRampDownDuration;
@@ -116,7 +118,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     if (iStatus == ERampingDown) {
         Ramp(aMsg, iRampDownDuration, Ramp::EDown);
         if (iCurrentRampValue == Ramp::kRampMin) {
-            iStatus = EBuffering;
+            UpdateStatus(EBuffering);
         }
         if (remainingSize == 0) {
             ASSERT(iCurrentRampValue == Ramp::kRampMin);
@@ -125,13 +127,13 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     else if (iStatus == ERampingUp) {
         Ramp(aMsg, iRampUpSize, Ramp::EUp);
         if (iCurrentRampValue == Ramp::kRampMax) {
-            iStatus = ERunning;
+            UpdateStatus(ERunning);
         }
     }
 
     remainingSize = Jiffies(); // re-calculate this as Ramp() can cause a msg to be split with a fragment re-queued
     if (remainingSize == 0) {
-        iStatus = EBuffering;
+        UpdateStatus(EBuffering);
     }
     if ((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax)) {
         iSemIn.Signal();
@@ -153,6 +155,17 @@ void StarvationMonitor::Ramp(MsgAudio* aMsg, TUint aRampDuration, Ramp::EDirecti
         EnqueueAtHead(split);
     }
     iRemainingRampSize -= aMsg->Jiffies();
+}
+
+void StarvationMonitor::UpdateStatus(EStatus aStatus)
+{
+    if (aStatus == EBuffering) {
+        iObserver.NotifyStarvationMonitorBuffering(true);
+    }
+    else if (iStatus == EBuffering) {
+        iObserver.NotifyStarvationMonitorBuffering(false);
+    }
+    iStatus = aStatus;
 }
 
 void StarvationMonitor::ProcessMsgIn(MsgHalt* /*aMsg*/)

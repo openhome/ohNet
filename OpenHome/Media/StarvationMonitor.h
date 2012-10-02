@@ -8,6 +8,12 @@
 namespace OpenHome {
 namespace Media {
 
+class IStarvationMonitorObserver
+{
+public:
+    virtual void NotifyStarvationMonitorBuffering(TBool aBuffering) = 0;
+};
+
 /*
 Fixed buffer which implements a delay (poss ~100ms) to allow time for songcast sending
 
@@ -23,7 +29,8 @@ class StarvationMonitor : private MsgQueueJiffies, public IPipelineElement
 {
     friend class SuiteStarvationMonitor;
 public:
-    StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize);
+    StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, IStarvationMonitorObserver& aObserver,
+                      TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize);
     ~StarvationMonitor();
 public: // from IPipelineElement
     Msg* Pull();
@@ -40,6 +47,7 @@ private:
     void Enqueue(Msg* aMsg);
     MsgAudio* DoProcessMsgOut(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, TUint aRampDuration, Ramp::EDirection aDirection);
+    void UpdateStatus(EStatus aStatus);
 private: // from MsgQueueJiffies
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
@@ -53,6 +61,7 @@ private:
     static const TUint kMaxSizeSilence = Jiffies::kJiffiesPerMs * 5;
     MsgFactory& iMsgFactory;
     IPipelineElement& iUpstreamElement;
+    IStarvationMonitorObserver& iObserver;
     ThreadFunctor* iThread;
     TUint iNormalMax;
     TUint iStarvationThreshold;
