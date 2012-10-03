@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <stdlib.h>
 #include "NetworkAdapter.h"
 #include "OpenHome/Net/C/OhNet.h"
 
@@ -66,10 +67,13 @@ JNIEXPORT jstring JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetwork
   (JNIEnv *aEnv, jclass aClass, jlong aNif)
 {
 	OhNetHandleNetworkAdapter adapter = (OhNetHandleNetworkAdapter) (size_t)aNif;
-	const char* name = OhNetNetworkAdapterFullName(adapter);
+	char* name = OhNetNetworkAdapterFullName(adapter);
+    jstring jname;
 	aClass = aClass;
-	
-	return ((*aEnv)->NewStringUTF(aEnv, name));
+
+	jname = ((*aEnv)->NewStringUTF(aEnv, name));
+    free(name);
+    return jname;
 }
 
 #ifdef __cplusplus
