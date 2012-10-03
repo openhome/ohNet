@@ -105,7 +105,7 @@ void setTestNifIndex(TInt aIndex, Blocker& aBlocker)
                        when they would/wouldn't be run */
     NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("TestNetworkInterfaceChange");
     TIpAddress addr = 0;
-    if (nif !=NULL) {
+    if (nif != NULL) {
         addr = nif->Address();
         nif->RemoveRef("TestNetworkInterfaceChange");
     }

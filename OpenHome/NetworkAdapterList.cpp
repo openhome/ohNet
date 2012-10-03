@@ -256,6 +256,7 @@ TBool NetworkAdapterList::CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ)
 
 void NetworkAdapterList::HandleInterfaceListChanged()
 {
+    static const char* kRemovedAdapterCookie = "RemovedAdapter";
     iListLock.Wait();
     std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(Net::Stack::InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
@@ -300,14 +301,18 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     }
     else if (oldSubnets->size() > 0 && newSubnets->size() == 0) {
         for (TUint i=0; i < oldSubnets->size(); i++) {
-            removed.push_back((*oldSubnets)[i]);
+            NetworkAdapter* removedAdapter = (*oldSubnets)[i];
+            removed.push_back(removedAdapter);
+            removedAdapter->AddRef(kRemovedAdapterCookie); // DestroySubnetList(iSubnets) may destroy the last ref to this before QueueAdapterRemoved later claims a new ref
         }
     }
     else {
         TUint j = 0;
         for (TUint i=0; i < newSubnets->size(); i++) {
             while (j < oldSubnets->size() && (*oldSubnets)[j]->Subnet() < (*newSubnets)[i]->Subnet()) {
-                removed.push_back((*oldSubnets)[j]);
+                NetworkAdapter* removedAdapter = (*oldSubnets)[j];
+                removed.push_back(removedAdapter);
+                removedAdapter->AddRef(kRemovedAdapterCookie);
                 j++;
             }
             if (j < oldSubnets->size() && (*oldSubnets)[j]->Subnet() == (*newSubnets)[i]->Subnet()) {
@@ -319,7 +324,9 @@ void NetworkAdapterList::HandleInterfaceListChanged()
         }
         if (j < oldSubnets->size()) {
             while (j < oldSubnets->size()) {
-                removed.push_back((*oldSubnets)[j]);
+                NetworkAdapter* removedAdapter = (*oldSubnets)[j];
+                removed.push_back(removedAdapter);
+                removedAdapter->AddRef(kRemovedAdapterCookie);
                 j++;
             }
         }
@@ -355,8 +362,10 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     // Notify added/removed callbacks.
     if (removed.size() > 0) {
         for (TUint i=0; i < removed.size(); i++) {
-            TraceAdapter("NetworkAdapter removed", *removed[i]);
-            iNotifierThread->QueueAdapterRemoved(*removed[i]);
+            NetworkAdapter* removedAdapter = removed[i];
+            TraceAdapter("NetworkAdapter removed", *removedAdapter);
+            iNotifierThread->QueueAdapterRemoved(*removedAdapter);
+            removedAdapter->RemoveRef(kRemovedAdapterCookie);
         }
     }
     if (added.size() > 0) {
