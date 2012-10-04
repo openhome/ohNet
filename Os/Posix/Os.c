@@ -619,7 +619,9 @@ THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
     int32_t socketH = socket(2, aSocketType, 0);
     OsNetworkHandle* handle = CreateHandle(socketH);
     if (handle == kHandleNull) {
-        TEMP_FAILURE_RETRY(close(socketH));
+        /* close is the one networking call that is exempt from being wrapped by TEMP_FAILURE_RETRY.  See
+        https://sites.google.com/site/michaelsafyan/software-engineering/checkforeintrwheninvokingclosethinkagain */
+        close(socketH);
     }
     return (THandle)handle;
 }
@@ -821,9 +823,9 @@ int32_t OsNetworkClose(THandle aHandle)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t err = 0;
     if (handle != NULL) {
-        err  = TEMP_FAILURE_RETRY(close(handle->iSocket));
-        err |= TEMP_FAILURE_RETRY(close(handle->iPipe[0]));
-        err |= TEMP_FAILURE_RETRY(close(handle->iPipe[1]));
+        err  = close(handle->iSocket);
+        err |= close(handle->iPipe[0]);
+        err |= close(handle->iPipe[1]);
         free(handle);
     }
     return err;
@@ -1277,12 +1279,12 @@ static void SetInterfaceChangedObserver_Linux(InterfaceListChanged aCallback, vo
     addr.nl_family = AF_NETLINK;
     addr.nl_groups = RTMGRP_LINK | RTMGRP_IPV4_IFADDR;
     if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
-        TEMP_FAILURE_RETRY(close(sock));
+        close(sock);
         goto Error;
     }
 
     if ((gInterfaceChangedObserver->netHnd = CreateHandle(sock)) == NULL) {
-        TEMP_FAILURE_RETRY(close(sock));
+        close(sock);
         goto Error;
     }
 
