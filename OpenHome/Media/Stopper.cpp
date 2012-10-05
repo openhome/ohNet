@@ -19,6 +19,8 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iRampDuration(aRampDuration)
     , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kRampMin)
+    , iReportHalted(false)
+    , iReportFlushed(false)
 {
 }
 
@@ -90,6 +92,14 @@ Msg* Stopper::Pull()
             msg = NULL;
         }
         iLock.Signal();
+        if (iReportHalted) {
+            iObserver.PipelineHalted();
+            iReportHalted = false;
+        }
+        else if (iReportFlushed) {
+            iObserver.PipelineFlushed();
+            iReportFlushed = false;
+        }
     } while (msg == NULL);
     return msg;
 }
@@ -134,7 +144,7 @@ Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 {
     //Log::Print("Stopper - MsgHalt(%p)\n", aMsg);
     iState = EHalted;
-    iObserver.PipelineHalted();
+    iReportHalted = true;
     return aMsg;
 }
 
@@ -144,7 +154,7 @@ Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
     ASSERT_DEBUG(iState == EFlushing);
     aMsg->RemoveRef();
     iState = EHalted;
-    iObserver.PipelineFlushed();
+    iReportFlushed = true;
     return NULL;
 }
 

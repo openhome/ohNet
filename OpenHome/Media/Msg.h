@@ -506,6 +506,7 @@ private:
         MsgQueueJiffies& iQueue;
     };
 private:
+    Mutex iLock;
     MsgQueue iQueue;
     TUint iJiffies;
 };

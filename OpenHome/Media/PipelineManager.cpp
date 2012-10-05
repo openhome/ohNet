@@ -242,6 +242,9 @@ void PipelineManager::NotifyStarvationMonitorBuffering(TBool aBuffering)
 {
     iLock.Wait();
     iBuffering = aBuffering;
+    const TBool notify = (iStatus == EPlaying);
     iLock.Signal();
-    NotifyStatus();
+    if (notify) {
+        NotifyStatus();
+    }
 }

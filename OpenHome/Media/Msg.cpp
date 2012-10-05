@@ -1171,7 +1171,8 @@ TBool MsgQueue::IsEmpty() const
 // MsgQueueJiffies
 
 MsgQueueJiffies::MsgQueueJiffies()
-    : iJiffies(0)
+    : iLock("MQJF")
+    , iJiffies(0)
 {
 }
 
@@ -1216,13 +1217,17 @@ TBool MsgQueueJiffies::IsEmpty() const
 
 void MsgQueueJiffies::AddJiffies(TUint aJiffies)
 {
+    iLock.Wait();
     iJiffies += aJiffies;
+    iLock.Signal();
 }
 
 void MsgQueueJiffies::RemoveJiffies(TUint aJiffies)
 {
+    iLock.Wait();
     ASSERT(iJiffies >= aJiffies);
     iJiffies -= aJiffies;
+    iLock.Signal();
 }
 
 void MsgQueueJiffies::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)

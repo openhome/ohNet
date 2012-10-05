@@ -292,9 +292,9 @@ void SuitePipeline::Test()
     // Check audio ramps up for kStopperRampDuration jiffies.
     // Check that pipeline status goes from Buffering to Playing.
     // Duration of ramp should have been PipelineManager::kStopperRampDuration.
+    Print("Run until ramped up\n");
     iPipelineManager->Play();
     PullUntilEnd(ERampUp);
-//    Print("Expected %08x jiffies, got %08x.  Diff: %08x, msgSize: %08x\n", PipelineManager::kStopperRampDuration, iJiffies, (iJiffies - PipelineManager::kStopperRampDuration), iLastMsgJiffies);
     TEST(iJiffies == PipelineManager::kStopperRampDuration);
     // skip earlier test for EPipelineBuffering state as it'd be fiddly to do in a threadsafe way
     TEST(iPipelineState == EPipelinePlaying);
@@ -303,6 +303,7 @@ void SuitePipeline::Test()
     // Stop pushing audio.  Check that pipeline status eventually goes from Playing to Buffering.
     // Check that audio then ramps down in ~PipelineManager::kStarvationMonitorStarvationThreshold.
     // ...will actually take up to duration of 1 MsgAudioPcm extra.
+    Print("\nSimulate starvation\n");
     iJiffies = 0;
     iSupplier->Block();
     PullUntilEnd(ERampDownDeferred);
@@ -311,6 +312,7 @@ void SuitePipeline::Test()
          (iJiffies <  PipelineManager::kStarvationMonitorStarvationThreshold + iLastMsgJiffies));
 
     // Push audio again.  Check that it ramps up in PipelineManager::kStarvationMonitorRampUpDuration.
+    Print("\nRecover from starvation\n");
     iJiffies = 0;
     iSupplier->Unblock();
     PullUntilEnd(ERampUp);
@@ -324,6 +326,7 @@ void SuitePipeline::Test()
     // FIXME - can't set VariableDelay via PipelineManager
 
     // Pause.  Check for ramp down in PipelineManager::kStopperRampDuration.
+    Print("\nPause\n");
     iJiffies = 0;
     iPipelineManager->Pause();
     PullUntilEnd(ERampDownDeferred);
@@ -331,6 +334,7 @@ void SuitePipeline::Test()
     TEST(iJiffies == PipelineManager::kStopperRampDuration);
 
     // Resume.  Check for ramp up in PipelineManager::kStopperRampDuration.
+    Print("\nResume\n");
     iJiffies = 0;
     iPipelineManager->Play();
     PullUntilEnd(ERampUp);
@@ -338,6 +342,7 @@ void SuitePipeline::Test()
     TEST(iJiffies == PipelineManager::kStopperRampDuration);
 
     // Stop.  Check for ramp down in PipelineManager::kStopperRampDuration.
+    Print("\nStop\n");
     iJiffies = 0;
     iPipelineManager->Stop();
     PullUntilEnd(ERampDownDeferred);
@@ -345,6 +350,7 @@ void SuitePipeline::Test()
     TEST(iJiffies == PipelineManager::kStopperRampDuration);
 
     // Quit happens when iPipelineManager is deleted in d'tor.
+    Print("\nQuit\n");
 }
 
 void SuitePipeline::PullUntilEnd(EState aState)
@@ -352,7 +358,6 @@ void SuitePipeline::PullUntilEnd(EState aState)
     static const TUint kSubsampleRampedUpFull = 0xffff0000;
     static const TUint kSubsampleRampUpFinal = (TUint)(((TUint64)kSubsampleRampedUpFull * kRampArray[0]) >> 31) & ~0xff;
     static const TUint kSubsampleRampedDownFull = 0;
-//    Print("Aiming for subsample val %08x\n", kSubsampleRampedUpFull);
     TBool ramping = (aState == ERampDown || aState == ERampUp);
     TBool done = false;
     do {
@@ -391,7 +396,6 @@ void SuitePipeline::PullUntilEnd(EState aState)
             // fallthrough
             break;
         case ERampUp:
-//            Print("ERampUp, lastSubsample = %08x\n", iLastSubsample);
             TEST(iFirstSubsample < iLastSubsample);
             if (iLastSubsample == kSubsampleRampUpFinal) {
                 done = true;

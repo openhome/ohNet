@@ -72,6 +72,8 @@ private:
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
+    TBool iReportHalted;
+    TBool iReportFlushed;
 };
 
 } // namespace Media
