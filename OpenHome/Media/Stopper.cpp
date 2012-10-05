@@ -11,8 +11,8 @@ using namespace OpenHome::Media;
 
 Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
-    , iObserver(aObserver)
     , iUpstreamElement(aUpstreamElement)
+    , iObserver(aObserver)
     , iLock("MSTP")
     , iSem("SSTP", 0)
     , iState(EHalted)
