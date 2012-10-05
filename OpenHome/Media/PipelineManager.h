@@ -53,7 +53,7 @@ public:
 
 class PipelineManager : public IDriverObserver, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
-    friend class SuitePipelineManager; // test code
+    friend class SuitePipeline; // test code
     static const TUint kMsgCountDecodedAudio    = 512;
     static const TUint kMsgCountAudioPcm        = 768;
     static const TUint kMsgCountSilence         = 512;

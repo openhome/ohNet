@@ -122,6 +122,7 @@ void PipelineManager::Play()
         iFlushCompletedIgnoreCount++;
     }
     iStopper->Start();
+    iSupplier.Play();
     iStatus = EPlaying;
     iTargetStatus = EPlaying;
     iLock.Signal();

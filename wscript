@@ -125,6 +125,10 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer'],
             target='TestPreDriver')
     bld.program(
+            source='OpenHome/Media/Tests/TestPipeline.cpp',
+            use=['OHNET', 'ohMediaPlayer'],
+            target='TestPipeline')
+    bld.program(
             source='OpenHome/Av/Tests/TestStore.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStore')
@@ -152,6 +156,7 @@ def test(tst):
                       ,['TestVariableDelay', [], True]
                       ,['TestReporter', [], True]
                       ,['TestPreDriver', [], True]
+                      #,['TestPipeline', [], True]
                       ,['TestStore', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
