@@ -11,7 +11,7 @@ using namespace OpenHome::Media;
 
 const Brn Reporter::kNullMetaText("");
 
-Reporter::Reporter(IPipelineElement& aUpstreamElement, IPipelinePropertyObserver& aObserver)
+Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver)
     : iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
     , iTimeInvalid(true)

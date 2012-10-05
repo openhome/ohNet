@@ -16,12 +16,12 @@ Sends Halt before Format, except on startup (when driver is assumed to be effect
 Converts AudioPcm, Silence msgs to Playable.
 */
     
-class PreDriver : public IPipelineElement, private IMsgProcessor, private INonCopyable
+class PreDriver : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    PreDriver(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement);
+    PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     ~PreDriver();
-public: // from IPipelineElement
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -35,7 +35,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     MsgFactory& iMsgFactory;
-    IPipelineElement& iUpstreamElement;
+    IPipelineElementUpstream& iUpstreamElement;
     MsgAudioFormat* iFormat;
     MsgAudioFormat* iPendingFormatChange;
     TBool iHalted;

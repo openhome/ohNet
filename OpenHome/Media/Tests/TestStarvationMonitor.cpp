@@ -28,7 +28,7 @@ private:
     std::vector<Av::IInfoProvider*> iInfoProviders;
 };
 
-class SuiteStarvationMonitor : public Suite, private IPipelineElement, private IMsgProcessor, private IStarvationMonitorObserver
+class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, private IMsgProcessor, private IStarvationMonitorObserver
 {
     static const TUint kDecodedAudioCount = 1536;
     static const TUint kMsgAudioPcmCount  = 2048;
@@ -45,7 +45,7 @@ public:
     SuiteStarvationMonitor();
     ~SuiteStarvationMonitor();
     void Test();
-private: // from IPipelineElement
+private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);

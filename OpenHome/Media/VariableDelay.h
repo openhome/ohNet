@@ -18,15 +18,15 @@ After a delay is actioned, audio spends RampDuration ramping up.
 FIXME - no handling of pause-resumes
 */
     
-class VariableDelay : public IPipelineElement, private IMsgProcessor
+class VariableDelay : public IPipelineElementUpstream, private IMsgProcessor
 {
     static const TUint kMaxMsgSilenceDuration = Jiffies::kJiffiesPerMs * 5;
     friend class SuiteVariableDelay;
 public:
-    VariableDelay(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, TUint aRampDuration);
+    VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration);
     ~VariableDelay();
     void AdjustDelay(TUint aJiffies);
-public: // from IPipelineElement
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private:
     MsgAudio* DoProcessAudioMsg(MsgAudio* aMsg);
@@ -51,7 +51,7 @@ private:
     };
 private:
     MsgFactory& iMsgFactory;
-    IPipelineElement& iUpstreamElement;
+    IPipelineElementUpstream& iUpstreamElement;
     TUint iDelayJiffies;
     Mutex iLock;
     TInt iDelayAdjustment;

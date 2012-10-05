@@ -23,12 +23,12 @@ Element which reports state changes in pipeline.
 Is passive - it reports on Msgs but doesn't create/destroy/edit them.
 */
 
-class Reporter : public IPipelineElement, private IMsgProcessor, private INonCopyable
+class Reporter : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
     static const Brn kNullMetaText;
 public:
-    Reporter(IPipelineElement& aUpstreamElement, IPipelinePropertyObserver& aObserver);
-public: // from IPipelineElement
+    Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver);
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -41,7 +41,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
-    IPipelineElement& iUpstreamElement;
+    IPipelineElementUpstream& iUpstreamElement;
     IPipelinePropertyObserver& iObserver;
     TBool iTimeInvalid;
     TUint iSeconds;

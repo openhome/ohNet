@@ -28,7 +28,7 @@ private:
     std::vector<Av::IInfoProvider*> iInfoProviders;
 };
 
-class SuiteStopper : public Suite, private IPipelineElement, private IStopperObserver, private IMsgProcessor
+class SuiteStopper : public Suite, private IPipelineElementUpstream, private IStopperObserver, private IMsgProcessor
 {
     static const TUint kDecodedAudioCount = 2;
     static const TUint kMsgAudioPcmCount  = 4;
@@ -41,7 +41,7 @@ public:
     SuiteStopper();
     ~SuiteStopper();
     void Test();
-private: // from IPipelineElement
+private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IStopperObserver
     void PipelineHalted();

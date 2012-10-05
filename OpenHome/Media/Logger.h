@@ -13,11 +13,11 @@ Element which logs msgs as they pass through.
 Can be inserted [0..n] times through the pipeline, depending on your debugging needs.
 */
 
-class Logger : public IPipelineElement, private IMsgProcessor, private INonCopyable
+class Logger : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    Logger(IPipelineElement& aUpstreamElement, const TChar* aId);
-public: // from IPipelineElement
+    Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -30,7 +30,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
-    IPipelineElement& iUpstreamElement;
+    IPipelineElementUpstream& iUpstreamElement;
     const TChar* iId;
 };
 

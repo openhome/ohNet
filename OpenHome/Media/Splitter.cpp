@@ -8,7 +8,7 @@ using namespace OpenHome::Media;
 
 // Splitter
 
-Splitter::Splitter(IPipelineElement& aUpstreamElement, IPipelineBranch& aBranch)
+Splitter::Splitter(IPipelineElementUpstream& aUpstreamElement, IPipelineBranch& aBranch)
     : iUpstreamElement(aUpstreamElement)
     , iBranch(aBranch)
 {

@@ -28,7 +28,7 @@ private:
     std::vector<Av::IInfoProvider*> iInfoProviders;
 };
 
-class SuiteVariableDelay : public Suite, public IPipelineElement, private IMsgProcessor
+class SuiteVariableDelay : public Suite, public IPipelineElementUpstream, private IMsgProcessor
 {
     static const TUint kDecodedAudioCount = 2;
     static const TUint kMsgAudioPcmCount  = 2;
@@ -44,7 +44,7 @@ public:
     SuiteVariableDelay();
     ~SuiteVariableDelay();
     void Test();
-public: // from IPipelineElement
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);

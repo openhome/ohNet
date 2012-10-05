@@ -84,6 +84,7 @@ def build(bld):
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
+                'OpenHome/Media/PipelineManager.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')

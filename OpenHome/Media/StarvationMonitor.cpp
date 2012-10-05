@@ -9,7 +9,7 @@ using namespace OpenHome::Media;
 
 // StarvationMonitor
 
-StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, IStarvationMonitorObserver& aObserver,
+StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
                                      TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)

@@ -28,15 +28,15 @@ Flush msgs are not propogated.  Any audio which gets past this element is guaran
 Note that Flush msg can only be added to pipeline once it is halted (when PipelineHalted() has been called)
 */
 
-class Stopper : public IPipelineElement, private IMsgProcessor
+class Stopper : public IPipelineElementUpstream, private IMsgProcessor
 {
     friend class SuiteStopper;
 public:
-    Stopper(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
+    Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
     void Start();
     void BeginHalt();
     void BeginFlush();
-public: // from IPipelineElement
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -63,7 +63,7 @@ private:
     };
 private:
     MsgFactory& iMsgFactory;
-    IPipelineElement& iUpstreamElement;
+    IPipelineElementUpstream& iUpstreamElement;
     IStopperObserver& iObserver;
     Mutex iLock;
     Semaphore iSem;

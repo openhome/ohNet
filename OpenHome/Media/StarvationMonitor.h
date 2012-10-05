@@ -25,14 +25,14 @@ Fixed buffer which implements a delay (poss ~100ms) to allow time for songcast s
 - On exit from buffering mode, ramps up iff ramped down before buffering.
 */
     
-class StarvationMonitor : private MsgQueueJiffies, public IPipelineElement
+class StarvationMonitor : private MsgQueueJiffies, public IPipelineElementUpstream
 {
     friend class SuiteStarvationMonitor;
 public:
-    StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, IStarvationMonitorObserver& aObserver,
+    StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
                       TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize);
     ~StarvationMonitor();
-public: // from IPipelineElement
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private:
     enum EStatus
@@ -60,7 +60,7 @@ private: // test helpers
 private:
     static const TUint kMaxSizeSilence = Jiffies::kJiffiesPerMs * 5;
     MsgFactory& iMsgFactory;
-    IPipelineElement& iUpstreamElement;
+    IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;
     ThreadFunctor* iThread;
     TUint iNormalMax;

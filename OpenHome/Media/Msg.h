@@ -519,10 +519,16 @@ private:
     Msg& iMsg;
 };
 
-class IPipelineElement
+class IPipelineElementUpstream
 {
 public:
     virtual Msg* Pull() = 0;
+};
+
+class IPipelineElementDownstream
+{
+public:
+    virtual void Push(Msg* aMsg) = 0;
 };
 
 class MsgFactory

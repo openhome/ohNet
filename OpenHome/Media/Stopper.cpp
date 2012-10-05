@@ -9,7 +9,7 @@ using namespace OpenHome::Media;
 
 // Stopper
 
-Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration)
+Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iObserver(aObserver)
     , iUpstreamElement(aUpstreamElement)

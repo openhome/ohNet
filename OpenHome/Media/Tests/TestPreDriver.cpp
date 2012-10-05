@@ -28,7 +28,7 @@ private:
     std::vector<Av::IInfoProvider*> iInfoProviders;
 };
 
-class SuitePreDriver : public Suite, private IPipelineElement, private IMsgProcessor
+class SuitePreDriver : public Suite, private IPipelineElementUpstream, private IMsgProcessor
 {
     static const TUint kMsgFormatCount = 2;
 
@@ -38,7 +38,7 @@ public:
     SuitePreDriver();
     ~SuitePreDriver();
     void Test();
-private: // from IPipelineElement
+private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);

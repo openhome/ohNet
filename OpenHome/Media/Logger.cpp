@@ -8,7 +8,7 @@ using namespace OpenHome::Media;
 
 //  Logger
 
-Logger::Logger(IPipelineElement& aUpstreamElement, const TChar* aId)
+Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
     : iUpstreamElement(aUpstreamElement)
     , iId(aId)
 {

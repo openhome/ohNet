@@ -9,7 +9,7 @@ using namespace OpenHome::Media;
 
 // PreDriver
 
-PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement)
+PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iFormat(NULL)

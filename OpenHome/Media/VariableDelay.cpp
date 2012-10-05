@@ -9,7 +9,7 @@ using namespace OpenHome::Media;
 
 // VariableDelay
 
-VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElement& aUpstreamElement, TUint aRampDuration)
+VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iDelayJiffies(0)

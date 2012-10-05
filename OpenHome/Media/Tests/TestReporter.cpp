@@ -28,7 +28,7 @@ private:
     std::vector<Av::IInfoProvider*> iInfoProviders;
 };
 
-class SuiteReporter : public Suite, public IPipelineElement, private IPipelinePropertyObserver
+class SuiteReporter : public Suite, public IPipelineElementUpstream, private IPipelinePropertyObserver
 {
     static const TUint kBitDepth      = 24;
     static const TUint kSampleRate    = 44100;
@@ -42,7 +42,7 @@ public:
     SuiteReporter();
     ~SuiteReporter();
     void Test();
-public: // from IPipelineElement
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
     void NotifyTrack();

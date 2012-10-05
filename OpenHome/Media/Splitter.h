@@ -20,11 +20,11 @@ Secondary branch is animated by the primary branch being Pull()ed.
 When enabled, audio msgs are cloned for the branch; others have a reference claimed.
 */
 
-class Splitter : public IPipelineElement, private IMsgProcessor, private INonCopyable
+class Splitter : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    Splitter(IPipelineElement& aUpstreamElement, IPipelineBranch& aBranch);
-public: // from IPipelineElement
+    Splitter(IPipelineElementUpstream& aUpstreamElement, IPipelineBranch& aBranch);
+public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -37,7 +37,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
-    IPipelineElement& iUpstreamElement;
+    IPipelineElementUpstream& iUpstreamElement;
     IPipelineBranch& iBranch;
 };
 
