@@ -77,6 +77,7 @@ private:
     };
 private:
     void PullUntilEnd(EState aState);
+    void PullUntilQuit();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
     void NotifyTrack();
@@ -106,6 +107,8 @@ private:
     TUint iFirstSubsample;
     TUint iLastSubsample;
     EPipelineState iPipelineState;
+    Semaphore iSemFlushed;
+    TBool iQuitReceived;
 };
 #undef LOG_PIPELINE_OBSERVER // enable this to check output from IPipelineObserver
 
@@ -192,6 +195,7 @@ void Supplier::Run()
         if (iPendingMsg != NULL) {
             msg = iPendingMsg;
             iPendingMsg = NULL;
+            iBlock = !iQuit; // nasty way of blocking after delivering a Flush
         }
         else {
             msg = CreateAudio();
@@ -240,6 +244,9 @@ void Supplier::Quit(Msg* aMsg)
     iLock.Wait();
     iPendingMsg = aMsg;
     iQuit = true;
+    if (iBlock) {
+        Unblock();
+    }
     iLock.Signal();
 }
 
@@ -255,6 +262,8 @@ SuitePipeline::SuitePipeline()
     , iFirstSubsample(0)
     , iLastSubsample(0)
     , iPipelineState(EPipelineStopped)
+    , iSemFlushed("TPSF", 0)
+    , iQuitReceived(false)
 {
     iSupplier = new Supplier();
     iPipelineManager = new PipelineManager(iInfoAggregator, *iSupplier, *this);
@@ -263,7 +272,13 @@ SuitePipeline::SuitePipeline()
 
 SuitePipeline::~SuitePipeline()
 {
+    // PipelineManager d'tor will block until the driver pulls a Quit msg
+    // we've been cheating by running a driver in this thread up until now
+    // ...so we cheat some more by creating a worker thread to pull until Quit is read
+    ThreadFunctor* th = new ThreadFunctor("QUIT", MakeFunctor(*this, &SuitePipeline::PullUntilQuit));
+    th->Start();
     delete iPipelineManager;
+    delete th;
     delete iSupplier;
 }
 
@@ -319,7 +334,7 @@ void SuitePipeline::Test()
     TEST(iPipelineState == EPipelinePlaying);
     TEST(iJiffies == PipelineManager::kStarvationMonitorRampUpDuration);
 
-    // Set 1s delay.  Check for ramp down in PipelineManager::kVariableDelayRampDuration then 1s seilence then ramp up.
+    // Set 1s delay.  Check for ramp down in PipelineManager::kVariableDelayRampDuration then 1s silence then ramp up.
     // FIXME - can't set VariableDelay via PipelineManager
 
     // Reduce delay to 0.  Check for ramp down then up, each in in PipelineManager::kVariableDelayRampDuration.
@@ -346,6 +361,7 @@ void SuitePipeline::Test()
     iJiffies = 0;
     iPipelineManager->Stop();
     PullUntilEnd(ERampDownDeferred);
+    iSemFlushed.Wait();
     TEST(iPipelineState == EPipelineStopped);
     TEST(iJiffies == PipelineManager::kStopperRampDuration);
 
@@ -366,6 +382,9 @@ void SuitePipeline::PullUntilEnd(EState aState)
         if (!iLastMsgWasAudio) {
             continue;
         }
+        // Introduce a delay to avoid the risk of this thread pulling data faster than the supplier can push it
+        // ...which would cause the starvation monitor to kick in at unpredictable times.
+        Thread::Sleep(iLastMsgJiffies / Jiffies::kJiffiesPerMs);
         switch (aState)
         {
         case ERampDownDeferred:
@@ -404,17 +423,22 @@ void SuitePipeline::PullUntilEnd(EState aState)
         }
     }
     while (!done);
-    if (aState == ERampDownDeferred || aState == ERampDown) {
-        TEST(iPipelineState != EPipelinePlaying);
-    }
-    else {
-        TEST(iPipelineState == EPipelinePlaying);
-    }
+}
+
+void SuitePipeline::PullUntilQuit()
+{
+    do {
+        Msg* msg = iPipelineEnd->Pull();
+        (void)msg->Process(*this);
+    } while (!iQuitReceived);
 }
 
 void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 {
     iPipelineState = aState;
+    if (aState == EPipelineStopped) {
+        iSemFlushed.Signal();
+    }
 #ifdef LOG_PIPELINE_OBSERVER
     const char* state = "";
     switch (aState)
@@ -541,7 +565,9 @@ Msg* SuitePipeline::ProcessMsg(MsgFlush* /*aMsg*/)
 
 Msg* SuitePipeline::ProcessMsg(MsgQuit* aMsg)
 {
+    iQuitReceived = true;
     aMsg->RemoveRef();
+    iPipelineManager->DriverShutdown();
     return NULL;
 }
 

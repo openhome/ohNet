@@ -107,7 +107,7 @@ Msg* StarvationMonitor::Pull()
 MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
 {
     iLock.Wait();
-    ASSERT(iStatus != EBuffering);
+    ASSERT(iExit || iStatus != EBuffering);
     TUint remainingSize = Jiffies();
     if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
         UpdateStatus(ERampingDown);

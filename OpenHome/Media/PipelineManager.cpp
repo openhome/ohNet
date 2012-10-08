@@ -23,11 +23,18 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     , iObserver(aObserver)
     , iLock("PLMG")
     , iShutdownSem("PLMG", 0)
+    , iLoggerAudioReservoir(NULL)
+    , iLoggerVariableDelay(NULL)
+    , iLoggerStopper(NULL)
+    , iLoggerReporter(NULL)
+    , iLoggerSplitter(NULL)
+    , iLoggerStarvationMonitor(NULL)
     , iStatus(EFlushed)
     , iTargetStatus(EFlushed)
     , iHaltCompletedIgnoreCount(0)
     , iFlushCompletedIgnoreCount(0)
     , iBuffering(false)
+    , iQuitting(false)
 {
     iMsgFactory = new MsgFactory(aInfoAggregator,
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
@@ -35,14 +42,20 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
                                  kMsgCountTrack, kMsgCountMetaText, kMsgCountHalt,
                                  kMsgCountFlush, kMsgCountQuit);
     iAudioReservoir = new AudioReservoir(kDecodedReservoirSize);
-    iVariableDelay = new VariableDelay(*iMsgFactory, *iAudioReservoir, kVariableDelayRampDuration);
-    iStopper = new Stopper(*iMsgFactory, *iVariableDelay, *this, kStopperRampDuration);
-    iReporter = new Reporter(*iStopper, *this);
-    iSplitter = new Splitter(*iReporter, iNullSongcaster);
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iSplitter, *this,
+    //iLoggerAudioReservoir = new Logger(*iAudioReservoir, "Audio Reservoir");
+    iVariableDelay = new VariableDelay(*iMsgFactory, *iAudioReservoir/**iLoggerAudioReservoir*/, kVariableDelayRampDuration);
+    //iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
+    iStopper = new Stopper(*iMsgFactory, *iVariableDelay/**iLoggerVariableDelay*/, *this, kStopperRampDuration);
+    //iLoggerStopper = new Logger(*iStopper, "Stopper");
+    iReporter = new Reporter(*iStopper/**iLoggerStopper*/, *this);
+    //iLoggerReporter = new Logger(*iReporter, "Reporter");
+    iSplitter = new Splitter(*iReporter/**iLoggerReporter*/, iNullSongcaster);
+    //iLoggerSplitter = new Logger(*iSplitter, "Splitter");
+    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iSplitter/**iLoggerSplitter*/, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
                                                kStarvationMonitorGorgeSize, kStarvationMonitorRampUpDuration);
-    iPreDriver = new PreDriver(*iMsgFactory, *iStarvationMonitor);
+    //iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
+    iPreDriver = new PreDriver(*iMsgFactory, *iStarvationMonitor/**iLoggerStarvationMonitor*/);
     iSupplier.Initialise(*iMsgFactory, *iAudioReservoir);
 }
 
@@ -51,22 +64,27 @@ PipelineManager::~PipelineManager()
     Quit();
 
     delete iPreDriver;
+    delete iLoggerStarvationMonitor;
     delete iStarvationMonitor;
+    delete iLoggerSplitter;
     delete iSplitter;
+    delete iLoggerReporter;
     delete iReporter;
+    delete iLoggerStopper;
     delete iStopper;
+    delete iLoggerVariableDelay;
     delete iVariableDelay;
+    delete iLoggerAudioReservoir;
     delete iAudioReservoir;
     delete iMsgFactory;
 }
 
 void PipelineManager::Quit()
 {
-    if (iStatus == EFlushed) {
+    iQuitting = true;
+    if (iStatus != EPlaying) {
         iSupplier.Quit(iMsgFactory->CreateMsgQuit());
-    }
-    else {
-        Stop();
+        Play();
         iTargetStatus = EQuit;
     }
 
@@ -78,6 +96,10 @@ void PipelineManager::NotifyStatus()
 {
     EPipelineState state;
     iLock.Wait();
+    if (iQuitting) {
+        iLock.Signal();
+        return;
+    }
     ASSERT(iTargetStatus == iStatus);
     switch (iTargetStatus)
     {
@@ -188,6 +210,7 @@ void PipelineManager::PipelineHalted()
     case EQuit:
         iStatus = EFlushing;
         iStopper->BeginFlush();
+        iSupplier.Flush(iMsgFactory->CreateMsgFlush());
         iLock.Signal();
         break;
     }

@@ -113,19 +113,26 @@ private:
     Semaphore iShutdownSem;
     MsgFactory* iMsgFactory;
     AudioReservoir* iAudioReservoir;
+    Logger* iLoggerAudioReservoir;
     VariableDelay* iVariableDelay;
+    Logger* iLoggerVariableDelay;
     Stopper* iStopper;
+    Logger* iLoggerStopper;
     Reporter* iReporter;
+    Logger* iLoggerReporter;
     Splitter* iSplitter;
-    //Logger* iLogger;
+    Logger* iLoggerSplitter;
     StarvationMonitor* iStarvationMonitor;
+    Logger* iLoggerStarvationMonitor;
     PreDriver* iPreDriver;
+    Logger* iLoggerPreDriver;
     PipelineBranchNull iNullSongcaster; // FIXME - placeholder for real songcaster
     EStatus iStatus;
     EStatus iTargetStatus; // status at the end of a series of async operations
     TUint iHaltCompletedIgnoreCount;
     TUint iFlushCompletedIgnoreCount;
     TBool iBuffering;
+    TBool iQuitting;
 };
 
 } // namespace Media
