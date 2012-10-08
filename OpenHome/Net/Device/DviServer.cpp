@@ -68,7 +68,7 @@ void DviServer::SubnetListChanged()
        always runs its listeners in the order they registered, we'll have updated before
        any device listeners are run. */
 
-    iLock.Wait();
+    AutoMutex a(iLock);
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
     AutoNetworkAdapterRef ref("DviServer::SubnetListChanged");
     NetworkAdapter* current = ref.Adapter();
@@ -108,8 +108,6 @@ void DviServer::SubnetListChanged()
         }
         NetworkAdapterList::DestroySubnetList(subnetList);
     }
-
-    iLock.Signal();
 }
 
 TInt DviServer::FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList)
