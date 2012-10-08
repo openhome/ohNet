@@ -1,5 +1,5 @@
-#ifndef HEADER_PIPELINE_LOGGER
-#define HEADER_PIPELINE_LOGGER
+#ifndef HEADER_PIPELINE_REPORTER
+#define HEADER_PIPELINE_REPORTER
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
@@ -52,4 +52,4 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_LOGGER
+#endif // HEADER_PIPELINE_REPORTER
