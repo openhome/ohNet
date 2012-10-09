@@ -88,7 +88,7 @@ Msg* StarvationMonitor::Pull()
         return iMsgFactory.CreateMsgHalt(); // signal that we won't be providing any more audio for a while
     }
     TBool wait = false;
-    if (iStatus == EBuffering) {
+    if (iStatus == EBuffering && !iExit) {
         if (jiffies == 0 && iPlannedHalt) {
             wait = IsEmpty(); // allow reading of the halt msg which should be the last item in the queue
         }
