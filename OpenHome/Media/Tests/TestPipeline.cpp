@@ -202,6 +202,7 @@ void Supplier::Run()
         }
         iLock.Signal();
         iPipeline->Push(msg);
+        Thread::Sleep(5); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
     if (iPendingMsg != NULL) {
         iPipeline->Push(iPendingMsg);
