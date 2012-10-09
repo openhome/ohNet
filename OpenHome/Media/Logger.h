@@ -17,6 +17,7 @@ class Logger : public IPipelineElementUpstream, private IMsgProcessor, private I
 {
 public:
     Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
+    void SetEnabled(TBool aEnabled);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
@@ -32,6 +33,7 @@ private: // IMsgProcessor
 private:
     IPipelineElementUpstream& iUpstreamElement;
     const TChar* iId;
+    TBool iEnabled;
 };
 
 } // namespace Media

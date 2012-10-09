@@ -29,6 +29,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     , iLoggerReporter(NULL)
     , iLoggerSplitter(NULL)
     , iLoggerStarvationMonitor(NULL)
+    , iLoggerPreDriver(NULL)
     , iStatus(EFlushed)
     , iTargetStatus(EFlushed)
     , iHaltCompletedIgnoreCount(0)
@@ -42,27 +43,37 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
                                  kMsgCountTrack, kMsgCountMetaText, kMsgCountHalt,
                                  kMsgCountFlush, kMsgCountQuit);
     iAudioReservoir = new AudioReservoir(kDecodedReservoirSize);
-    //iLoggerAudioReservoir = new Logger(*iAudioReservoir, "Audio Reservoir");
-    iVariableDelay = new VariableDelay(*iMsgFactory, *iAudioReservoir/**iLoggerAudioReservoir*/, kVariableDelayRampDuration);
-    //iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
-    iStopper = new Stopper(*iMsgFactory, *iVariableDelay/**iLoggerVariableDelay*/, *this, kStopperRampDuration);
-    //iLoggerStopper = new Logger(*iStopper, "Stopper");
-    iReporter = new Reporter(*iStopper/**iLoggerStopper*/, *this);
-    //iLoggerReporter = new Logger(*iReporter, "Reporter");
-    iSplitter = new Splitter(*iReporter/**iLoggerReporter*/, iNullSongcaster);
-    //iLoggerSplitter = new Logger(*iSplitter, "Splitter");
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iSplitter/**iLoggerSplitter*/, *this,
+    iLoggerAudioReservoir = new Logger(*iAudioReservoir, "Audio Reservoir");
+    iVariableDelay = new VariableDelay(*iMsgFactory, /**iAudioReservoir*/*iLoggerAudioReservoir, kVariableDelayRampDuration);
+    iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
+    iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *this, kStopperRampDuration);
+    iLoggerStopper = new Logger(*iStopper, "Stopper");
+    iReporter = new Reporter(/**iStopper*/*iLoggerStopper, *this);
+    iLoggerReporter = new Logger(*iReporter, "Reporter");
+    iSplitter = new Splitter(/**iReporter*/*iLoggerReporter, iNullSongcaster);
+    iLoggerSplitter = new Logger(*iSplitter, "Splitter");
+    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, /**iSplitter*/*iLoggerSplitter, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
                                                kStarvationMonitorGorgeSize, kStarvationMonitorRampUpDuration);
-    //iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
-    iPreDriver = new PreDriver(*iMsgFactory, *iStarvationMonitor/**iLoggerStarvationMonitor*/);
+    iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
+    iPreDriver = new PreDriver(*iMsgFactory, /**iStarvationMonitor*/*iLoggerStarvationMonitor);
+    iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     iSupplier.Initialise(*iMsgFactory, *iAudioReservoir);
+
+    //iLoggerAudioReservoir->SetEnabled(true);
+    //iLoggerVariableDelay->SetEnabled(true);
+    //iLoggerStopper->SetEnabled(true);
+    //iLoggerReporter->SetEnabled(true);
+    //iLoggerSplitter->SetEnabled(true);
+    //iLoggerStarvationMonitor->SetEnabled(true);
+    //iLoggerPreDriver->SetEnabled(true);
 }
 
 PipelineManager::~PipelineManager()
 {
     Quit();
 
+    delete iLoggerPreDriver;
     delete iPreDriver;
     delete iLoggerStarvationMonitor;
     delete iStarvationMonitor;
@@ -127,7 +138,10 @@ MsgFactory& PipelineManager::Factory()
 
 IPipelineElementUpstream& PipelineManager::FinalElement()
 {
-    return *iPreDriver;
+    if (iLoggerPreDriver == NULL) {
+        return *iPreDriver;
+    }
+    return *iLoggerPreDriver;
 }
 
 void PipelineManager::Play()
