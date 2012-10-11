@@ -174,6 +174,10 @@ TBool Thread::TryWait()
 
 void Thread::Sleep(TUint aMilliSecs)
 { // static
+    if (aMilliSecs == 0) {
+        // a 0ms sleep will block forever so round up to the smallest delay we can manage (1ms)
+        aMilliSecs = 1;
+    }
     Semaphore sem("", 0);
     try {
         sem.Wait(aMilliSecs);
