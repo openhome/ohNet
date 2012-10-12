@@ -12,7 +12,13 @@ Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
     : iUpstreamElement(aUpstreamElement)
     , iId(aId)
     , iEnabled(false)
+    , iShutdownSem("PDSD", 0)
 {
+}
+
+Logger::~Logger()
+{
+    iShutdownSem.Wait();
 }
 
 void Logger::SetEnabled(TBool aEnabled)
@@ -30,7 +36,9 @@ Msg* Logger::Pull()
 Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (iEnabled) {
-        Log::Print("Pipeline (%s): audioPcm {jiffies: %u}\n", iId, aMsg->Jiffies());
+        Log::Print("Pipeline (%s): audioPcm {jiffies: %u}", iId, aMsg->Jiffies());
+        LogRamp(aMsg->Ramp());
+        Log::Print("\n");
     }
     return aMsg;
 }
@@ -38,7 +46,9 @@ Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* Logger::ProcessMsg(MsgSilence* aMsg)
 {
     if (iEnabled) {
-        Log::Print("Pipeline (%s): silence {jiffies: %u}\n", iId, aMsg->Jiffies());
+        Log::Print("Pipeline (%s): silence {jiffies: %u}", iId, aMsg->Jiffies());
+        LogRamp(aMsg->Ramp());
+        Log::Print("\n");
     }
     return aMsg;
 }
@@ -46,7 +56,9 @@ Msg* Logger::ProcessMsg(MsgSilence* aMsg)
 Msg* Logger::ProcessMsg(MsgPlayable* aMsg)
 {
     if (iEnabled) {
-        Log::Print("Pipeline (%s): playable {bytes: %u}\n", iId, aMsg->Bytes());
+        Log::Print("Pipeline (%s): playable {bytes: %u}", iId, aMsg->Bytes());
+        LogRamp(aMsg->Ramp());
+        Log::Print("\n");
     }
     return aMsg;
 }
@@ -101,5 +113,13 @@ Msg* Logger::ProcessMsg(MsgQuit* aMsg)
     if (iEnabled) {
         Log::Print("Pipeline (%s): quit\n", iId);
     }
+    iShutdownSem.Signal();
     return aMsg;
+}
+
+void Logger::LogRamp(const Media::Ramp& aRamp)
+{
+    if (aRamp.IsEnabled()) {
+        Log::Print(", {ramp: [%08x..%08x]}", aRamp.Start(), aRamp.End());
+    }
 }

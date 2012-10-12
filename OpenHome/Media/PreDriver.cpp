@@ -9,32 +9,36 @@ using namespace OpenHome::Media;
 
 // PreDriver
 
-PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
+PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableBytes)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iMaxPlayableBytes(aMaxPlayableBytes)
+    , iPlayable(NULL)
     , iFormat(NULL)
     , iPendingFormatChange(NULL)
+    , iPendingHalt(NULL)
     , iHalted(true)
+    , iShutdownSem("PDSD", 0)
 {
 }
 
 PreDriver::~PreDriver()
 {
+    iShutdownSem.Wait();
     if (iFormat != NULL) {
         iFormat->RemoveRef();
     }
+    ASSERT(iPlayable == NULL);
     ASSERT(iPendingFormatChange == NULL);
+    ASSERT(iPendingHalt == NULL);
 }
 
 Msg* PreDriver::Pull()
 {
     Msg* msg;
     do {
-        if (iPendingFormatChange != NULL) {
-            msg = iPendingFormatChange;
-            iPendingFormatChange = NULL;
-        }
-        else {
+        msg = NextStoredMsg();
+        if (msg == NULL) {
             msg = iUpstreamElement.Pull();
             msg = msg->Process(*this);
         }
@@ -42,11 +46,70 @@ Msg* PreDriver::Pull()
     return msg;
 }
 
+Msg* PreDriver::NextStoredMsg()
+{
+    Msg* msg = NULL;
+    if (iPlayable != NULL) {
+        const TUint bytes = iPlayable->Bytes();
+        if (bytes == iMaxPlayableBytes) {
+            msg = iPlayable;
+            iPlayable = NULL;
+        }
+        else if (bytes > iMaxPlayableBytes) {
+            msg = iPlayable;
+            iPlayable = iPlayable->Split(iMaxPlayableBytes);
+        }
+        else if (iPendingHalt != NULL || iPendingFormatChange != NULL) {
+            msg = iPlayable;
+            iPlayable = NULL;
+        }
+    }
+    else if (iPendingHalt != NULL) {
+        msg = iPendingHalt;
+        iPendingHalt = NULL;
+    }
+    else if (iPendingFormatChange != NULL) {
+        msg = iPendingFormatChange;
+        iPendingFormatChange = NULL;
+    }
+    return msg;
+}
+
+Msg* PreDriver::AddPlayable(MsgPlayable* aPlayable)
+{
+    Msg* ret = NULL;
+    if (iPlayable == NULL) {
+        if (aPlayable->Bytes() < iMaxPlayableBytes) {
+            iPlayable = aPlayable;
+        }
+        else if (aPlayable->Bytes() == iMaxPlayableBytes) {
+            ret = aPlayable;
+        }
+        else {
+            iPlayable = aPlayable->Split(iMaxPlayableBytes);
+            ret = aPlayable;
+        }
+    }
+    else {
+        iPlayable->Add(aPlayable);
+        const TUint bytes = iPlayable->Bytes();
+        if (bytes == iMaxPlayableBytes) {
+            ret = iPlayable;
+            iPlayable = NULL;
+        }
+        else if (bytes > iMaxPlayableBytes) {
+            ret = iPlayable;
+            iPlayable = iPlayable->Split(iMaxPlayableBytes);
+        }
+    }
+    return ret;
+}
+
 Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iHalted = false;
     MsgPlayable* playable = aMsg->CreatePlayable();
-    return playable;
+    return AddPlayable(playable);
 }
 
 Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
@@ -54,7 +117,7 @@ Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
     iHalted = false;
     const AudioFormat& format = iFormat->Format();
     MsgPlayable* playable = aMsg->CreatePlayable(format.SampleRate(), format.NumChannels());
-    return playable;
+    return AddPlayable(playable);
 }
 
 Msg* PreDriver::ProcessMsg(MsgPlayable* /*aMsg*/)
@@ -79,11 +142,13 @@ Msg* PreDriver::ProcessMsg(MsgAudioFormat* aMsg)
     iFormat = aMsg;
     iFormat->AddRef();
     if (iHalted) {
+        ASSERT(iPlayable == NULL);
         return aMsg;
     }
     iHalted = true;
     iPendingFormatChange = aMsg;
-    return iMsgFactory.CreateMsgHalt();
+    iPendingHalt = iMsgFactory.CreateMsgHalt();
+    return NextStoredMsg();
 }
 
 Msg* PreDriver::ProcessMsg(MsgTrack* aMsg)
@@ -101,6 +166,12 @@ Msg* PreDriver::ProcessMsg(MsgMetaText* aMsg)
 Msg* PreDriver::ProcessMsg(MsgHalt* aMsg)
 {
     iHalted = true;
+    if (iPlayable != NULL) {
+        iPendingHalt = aMsg;
+        Msg* msg = iPlayable;
+        iPlayable = NULL;
+        return msg;
+    }
     return aMsg;
 }
 
@@ -112,5 +183,6 @@ Msg* PreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
 
 Msg* PreDriver::ProcessMsg(MsgQuit* aMsg)
 {
+    iShutdownSem.Signal();
     return aMsg;
 }

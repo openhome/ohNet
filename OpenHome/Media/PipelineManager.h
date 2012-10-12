@@ -3,7 +3,6 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
-//#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/AudioReservoir.h>
 #include <OpenHome/Media/VariableDelay.h>
@@ -45,20 +44,14 @@ public:
     virtual void NotifyAudioFormat(const AudioFormat& aFormat) = 0;
 };
     
-class IDriverObserver
-{
-public:
-    virtual void DriverShutdown() = 0;
-};
-
-class PipelineManager : public IDriverObserver, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class PipelineManager : private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
     static const TUint kMsgCountDecodedAudio    = 512;
     static const TUint kMsgCountAudioPcm        = 768;
     static const TUint kMsgCountSilence         = 512;
-    static const TUint kMsgCountPlayablePcm     = 2;
-    static const TUint kMsgCountPlayableSilence = 2;
+    static const TUint kMsgCountPlayablePcm     = 1024;
+    static const TUint kMsgCountPlayableSilence = 1024;
     static const TUint kMsgCountAudioFormat     = 20;
     static const TUint kMsgCountTrack           = 20;
     static const TUint kMsgCountMetaText        = 20;
@@ -74,7 +67,7 @@ class PipelineManager : public IDriverObserver, private IStopperObserver, privat
     static const TUint kStarvationMonitorGorgeSize           = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kJiffiesPerMs * 100;
 public:
-    PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier& aSupplier, IPipelineObserver& aObserver);
+    PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier& aSupplier, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes);
     ~PipelineManager();
     MsgFactory& Factory();
     IPipelineElementUpstream& FinalElement();
@@ -84,8 +77,6 @@ public:
 private:
     void Quit();
     void NotifyStatus();
-public: // from IDriverObserver
-    void DriverShutdown();
 private: // from IStopperObserver
     void PipelineHalted();
     void PipelineFlushed();
@@ -110,7 +101,6 @@ private:
     ISupplier& iSupplier;
     IPipelineObserver& iObserver;
     Mutex iLock;
-    Semaphore iShutdownSem;
     MsgFactory* iMsgFactory;
     AudioReservoir* iAudioReservoir;
     Logger* iLoggerAudioReservoir;
@@ -133,6 +123,16 @@ private:
     TUint iFlushCompletedIgnoreCount;
     TBool iBuffering;
     TBool iQuitting;
+};
+
+class NullPipelineObserver : public IPipelineObserver // test helper
+{
+private: // from IPipelineObserver
+    void NotifyPipelineState(EPipelineState aState);
+    void NotifyTrack();
+    void NotifyMetaText(const Brx& aText);
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
+    void NotifyAudioFormat(const AudioFormat& aFormat);
 };
 
 } // namespace Media

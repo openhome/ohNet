@@ -10,19 +10,24 @@ namespace Media {
 
 /*
 Element which sits at the very right of the generic pipeline.
-Passes on Playable, Format, Halt and Quit msgs only.
+Passes on Format, Halt and Quit msgs.
 Only passes on Format when either sample rate and/or bit depth changes.
 Sends Halt before Format, except on startup (when driver is assumed to be effectively halted already).
 Converts AudioPcm, Silence msgs to Playable.
+Combines Playable msgs into client-specified lengths.
+May send shorter msg if format change or Halt is encountered.
 */
     
 class PreDriver : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
+    PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableBytes);
     ~PreDriver();
 public: // from IPipelineElementUpstream
     Msg* Pull();
+private:
+    Msg* NextStoredMsg();
+    Msg* AddPlayable(MsgPlayable* aPlayable);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -36,9 +41,13 @@ private: // IMsgProcessor
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
+    TUint iMaxPlayableBytes;
+    MsgPlayable* iPlayable;
     MsgAudioFormat* iFormat;
     MsgAudioFormat* iPendingFormatChange;
+    MsgHalt* iPendingHalt;
     TBool iHalted;
+    Semaphore iShutdownSem;
 };
 
 } // namespace Media

@@ -65,7 +65,7 @@ private:
        ,EMsgQuit
     };
 private:
-    MsgAudio* CreateAudio();
+    MsgAudioPcm* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
     InfoAggregator iInfoAggregator;
@@ -75,6 +75,9 @@ private:
     TUint64 iTrackOffset;
     TUint iSampleRate;
     TUint iBitDepth;
+    TUint iAudioMsgSizeJiffies;
+    TUint iAudioMsgSizeBytes;
+    TUint iNextMsgSilenceSize;
 };
 
 } // namespace Media
@@ -121,8 +124,14 @@ SuitePreDriver::SuitePreDriver()
     , iLastMsg(ENone)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, kMsgFormatCount, 1, 1, 1, 1, 1);
-    iPreDriver = new PreDriver(*iMsgFactory, *this);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1);
+    MsgAudioPcm* audio = CreateAudio();
+    iAudioMsgSizeJiffies = audio->Jiffies();
+    MsgPlayable* playable = audio->CreatePlayable();
+    iAudioMsgSizeBytes = playable->Bytes();
+    playable->RemoveRef();
+    iNextMsgSilenceSize = iAudioMsgSizeJiffies;
+    iPreDriver = new PreDriver(*iMsgFactory, *this, iAudioMsgSizeBytes);
 }
 
 SuitePreDriver::~SuitePreDriver()
@@ -224,7 +233,7 @@ Msg* SuitePreDriver::Pull()
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:
-        return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+        return iMsgFactory->CreateMsgSilence(iNextMsgSilenceSize);
     case EMsgAudioFormat:
         iNextGeneratedMsg = EMsgSilence;
         return iMsgFactory->CreateMsgAudioFormat(128000, iBitDepth, iSampleRate, kNumChannels, Brn("dummy codec"), (TUint64)1<<31, false);
@@ -244,7 +253,7 @@ Msg* SuitePreDriver::Pull()
     }
 }
 
-MsgAudio* SuitePreDriver::CreateAudio()
+MsgAudioPcm* SuitePreDriver::CreateAudio()
 {
     static const TUint kDataBytes = 3 * 1024;
     TByte encodedAudioData[kDataBytes];

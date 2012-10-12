@@ -120,7 +120,7 @@ void InfoAggregator::WriteFlush()
 // SuiteReporter
 
 SuiteReporter::SuiteReporter()
-    : Suite("Variable delay tests")
+    : Suite("Reporter tests")
     , iNextGeneratedMsg(ENone)
     , iTrackOffset(0)
     , iTrackUpdates(0)

@@ -182,6 +182,7 @@ public:
     TBool IsEnabled() const { return iEnabled; }
 private:
     void SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd);
+    void Validate();
 private:
     TUint iStart;
     TUint iEnd;
@@ -201,6 +202,7 @@ public:
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
     TUint SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
+    const Ramp& Ramp() const;
 protected:
     MsgAudio(AllocatorBase& aAllocator);
     void Initialise();
@@ -214,7 +216,7 @@ protected:
     MsgAudio* iNextAudio;
     TUint iSize; // Jiffies
     TUint iOffset; // Jiffies
-    Ramp iRamp;
+    Media::Ramp iRamp;
 };
 
 class MsgPlayable;
@@ -269,10 +271,11 @@ public:
     void Add(MsgPlayable* aMsg); // combines MsgAudio instances so they report longer durations etc
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
+    const Ramp& Ramp() const;
     virtual void Write(IWriter& aWriter) = 0; // calls RemoveRef on exit
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
-    void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp);
+    void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
 protected: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -283,7 +286,7 @@ protected:
     MsgPlayable* iNextPlayable;
     TUint iSize; // Bytes
     TUint iOffset; // Bytes
-    Ramp iRamp;
+    Media::Ramp iRamp;
 };
 
 class MsgPlayablePcm : public MsgPlayable
@@ -292,7 +295,7 @@ class MsgPlayablePcm : public MsgPlayable
 public:
     MsgPlayablePcm(AllocatorBase& aAllocator);
 private:
-    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp);
+    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
 private: // from MsgPlayable
     MsgPlayable* Clone(); // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
     void Write(IWriter& aWriter); // calls RemoveRef on exit
@@ -310,7 +313,7 @@ class MsgPlayableSilence : public MsgPlayable
 public:
     MsgPlayableSilence(AllocatorBase& aAllocator);
 private:
-    void Initialise(TUint aSizeBytes, const Ramp& aRamp);
+    void Initialise(TUint aSizeBytes, const Media::Ramp& aRamp);
 private: // from MsgPlayable
     void Write(IWriter& aWriter); // calls RemoveRef on exit
     MsgPlayable* Allocate();

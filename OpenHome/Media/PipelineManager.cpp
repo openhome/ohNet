@@ -18,11 +18,10 @@ using namespace OpenHome::Media;
 
 // PipelineManager
 
-PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier& aSupplier, IPipelineObserver& aObserver)
+PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier& aSupplier, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes)
     : iSupplier(aSupplier)
     , iObserver(aObserver)
     , iLock("PLMG")
-    , iShutdownSem("PLMG", 0)
     , iLoggerAudioReservoir(NULL)
     , iLoggerVariableDelay(NULL)
     , iLoggerStopper(NULL)
@@ -56,7 +55,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
                                                kStarvationMonitorGorgeSize, kStarvationMonitorRampUpDuration);
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
-    iPreDriver = new PreDriver(*iMsgFactory, /**iStarvationMonitor*/*iLoggerStarvationMonitor);
+    iPreDriver = new PreDriver(*iMsgFactory, /**iStarvationMonitor*/*iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     iSupplier.Initialise(*iMsgFactory, *iAudioReservoir);
 
@@ -73,6 +72,7 @@ PipelineManager::~PipelineManager()
 {
     Quit();
 
+    // loggers (if non-null) and iPreDriver will block until they receive the Quit msg
     delete iLoggerPreDriver;
     delete iPreDriver;
     delete iLoggerStarvationMonitor;
@@ -98,9 +98,6 @@ void PipelineManager::Quit()
         Play();
         iTargetStatus = EQuit;
     }
-
-    // wait to be told that the driver has shutdown
-    iShutdownSem.Wait();
 }
 
 void PipelineManager::NotifyStatus()
@@ -196,11 +193,6 @@ void PipelineManager::Stop()
     }
 }
 
-void PipelineManager::DriverShutdown()
-{
-    iShutdownSem.Signal();
-}
-
 void PipelineManager::PipelineHalted()
 {
     iLock.Wait();
@@ -284,4 +276,28 @@ void PipelineManager::NotifyStarvationMonitorBuffering(TBool aBuffering)
     if (notify) {
         NotifyStatus();
     }
+}
+
+
+// NullPipelineObserver
+
+void NullPipelineObserver::NotifyPipelineState(EPipelineState /*aState*/)
+{
+}
+
+void NullPipelineObserver::NotifyTrack()
+{
+}
+
+void NullPipelineObserver::NotifyMetaText(const Brx& /*aText*/)
+{
+}
+
+void NullPipelineObserver::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDurationSeconds*/)
+{
+}
+
+
+void NullPipelineObserver::NotifyAudioFormat(const AudioFormat& /*aFormat*/)
+{
 }

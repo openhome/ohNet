@@ -17,6 +17,7 @@ class Logger : public IPipelineElementUpstream, private IMsgProcessor, private I
 {
 public:
     Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
+    ~Logger();
     void SetEnabled(TBool aEnabled);
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -31,9 +32,12 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
+    void LogRamp(const Media::Ramp& aRamp);
+private:
     IPipelineElementUpstream& iUpstreamElement;
     const TChar* iId;
     TBool iEnabled;
+    Semaphore iShutdownSem;
 };
 
 } // namespace Media

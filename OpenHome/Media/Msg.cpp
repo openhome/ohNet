@@ -495,6 +495,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirecti
             }
         }
     }
+    Validate();
     return aSplit.IsEnabled();
 }
 
@@ -513,15 +514,37 @@ void Ramp::SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd)
     }
 }
 
+void Ramp::Validate()
+{
+    ASSERT(iStart <= kRampMax);
+    ASSERT(iEnd <= kRampMax);
+    if (iDirection == EUp) {
+        ASSERT(iStart < iEnd);
+    }
+    else {
+        ASSERT(iStart > iEnd);
+    }
+}
+
 Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
 {
+    //TUint start = iStart, end = iEnd;
     Ramp remaining;
     remaining.iEnd = iEnd;
     remaining.iDirection = iDirection;
     remaining.iEnabled = true;
-    TInt ramp = ((iStart-iEnd) * (TInt64)aNewSize) / aCurrentSize;
-    iEnd = iStart + ramp;
-    remaining.iStart = iEnd;
+    if (iDirection == EUp) {
+        TUint ramp = ((iEnd-iStart) * (TUint64)aNewSize) / aCurrentSize;
+        iEnd = iStart + ramp;
+    }
+    else {
+        TUint ramp = ((iStart-iEnd) * (TUint64)aNewSize) / aCurrentSize;
+        iEnd = iStart - ramp;
+    }
+    remaining.iStart = iEnd; // FIXME - remaining.iStart is one sample on from iEnd so should have a ramp value that progresses one 'step'
+    //Log::Print("Split [%08x : %08x] ramp into [%08x : %08x] and [%08x : %08x]\n", start, end, iStart, iEnd, remaining.iStart, remaining.iEnd);
+    Validate();
+    remaining.Validate();
     return remaining;
 }
 
@@ -533,7 +556,7 @@ void Ramp::Apply(Bwx& aData, TUint aChannels)
     const TInt totalRamp = iStart - iEnd;
     const TUint fullRampSpan = kRampMax - kRampMin;
     for (TUint i=0; i<numSamples; i++) {
-        const TUint ramp = (TUint)(iStart - ((i * (TInt64)totalRamp)/(numSamples-1)));
+        const TUint ramp = (numSamples==1? iStart : (TUint)(iStart - ((i * (TInt64)totalRamp)/(numSamples-1))));
         //Log::Print(" %08x ", ramp);
         TUint rampIndex = (fullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
         for (TUint j=0; j<aChannels; j++) { // apply ramp to each subsample
@@ -608,12 +631,12 @@ TUint MsgAudio::Jiffies() const
 
 TUint MsgAudio::SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit)
 {
-    Ramp split;
+    Media::Ramp split;
     TUint splitPos;
     TUint rampEnd;
     aSplit = NULL;
     if (iRamp.Set(aStart, iSize, aDuration, aDirection, split, splitPos)) {
-        Ramp ramp = iRamp; // Split() will muck about with ramps.  Allow this to happen then reset the correct values
+        Media::Ramp ramp = iRamp; // Split() will muck about with ramps.  Allow this to happen then reset the correct values
         aSplit = Split(splitPos);
         iRamp = ramp;
         aSplit->iRamp = split;
@@ -626,6 +649,11 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirecti
         rampEnd = iRamp.End();
     }
     return rampEnd;
+}
+
+const Ramp& MsgAudio::Ramp() const
+{
+    return iRamp;
 }
 
 MsgAudio::MsgAudio(AllocatorBase& aAllocator)
@@ -827,10 +855,15 @@ TUint MsgPlayable::Bytes() const
     TUint bytes = iSize;
     MsgPlayable* next = iNextPlayable;
     while (next != NULL) {
-        bytes += iNextPlayable->Bytes();
+        bytes += next->iSize;
         next = next->iNextPlayable;
     }
     return bytes;
+}
+
+const Ramp& MsgPlayable::Ramp() const
+{
+    return iRamp;
 }
 
 MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
@@ -838,7 +871,7 @@ MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayable::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp)
+void MsgPlayable::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp)
 {
     iNextPlayable = NULL;
     iSize = aSizeBytes;
@@ -871,7 +904,7 @@ MsgPlayablePcm::MsgPlayablePcm(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Ramp& aRamp)
+void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp)
 {
     MsgPlayable::Initialise(aSizeBytes, aOffsetBytes, aRamp);
     iAudioData = aDecodedAudio;
@@ -928,7 +961,7 @@ MsgPlayableSilence::MsgPlayableSilence(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayableSilence::Initialise(TUint aSizeBytes, const Ramp& aRamp)
+void MsgPlayableSilence::Initialise(TUint aSizeBytes, const Media::Ramp& aRamp)
 {
     MsgPlayable::Initialise(aSizeBytes, 0, aRamp);
 }
