@@ -202,7 +202,7 @@ public:
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
     TUint SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
-    const Ramp& Ramp() const;
+    const Media::Ramp& Ramp() const;
 protected:
     MsgAudio(AllocatorBase& aAllocator);
     void Initialise();
@@ -271,7 +271,7 @@ public:
     void Add(MsgPlayable* aMsg); // combines MsgAudio instances so they report longer durations etc
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
-    const Ramp& Ramp() const;
+    const Media::Ramp& Ramp() const;
     virtual void Write(IWriter& aWriter) = 0; // calls RemoveRef on exit
 protected:
     MsgPlayable(AllocatorBase& aAllocator);

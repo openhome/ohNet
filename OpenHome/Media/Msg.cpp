@@ -651,7 +651,7 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirecti
     return rampEnd;
 }
 
-const Ramp& MsgAudio::Ramp() const
+const Media::Ramp& MsgAudio::Ramp() const
 {
     return iRamp;
 }
@@ -861,7 +861,7 @@ TUint MsgPlayable::Bytes() const
     return bytes;
 }
 
-const Ramp& MsgPlayable::Ramp() const
+const Media::Ramp& MsgPlayable::Ramp() const
 {
     return iRamp;
 }
