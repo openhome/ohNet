@@ -146,6 +146,7 @@ void Allocated::AddRef()
     iLock.Wait();
     iRefCount++;
     iLock.Signal();
+    RefAdded();
 }
 
 void Allocated::RemoveRef()
@@ -153,10 +154,19 @@ void Allocated::RemoveRef()
     iLock.Wait();
     TBool free = (--iRefCount == 0);
     iLock.Signal();
+    RefRemoved();
     if (free) {
         Clear();
         iAllocator.Free(this);
     }
+}
+
+void Allocated::RefAdded()
+{
+}
+
+void Allocated::RefRemoved()
+{
 }
 
 void Allocated::Clear()
@@ -879,7 +889,14 @@ void MsgPlayable::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::
     iRamp = aRamp;
 }
 
-void MsgPlayable::Clear()
+void MsgPlayable::RefAdded()
+{
+    if (iNextPlayable != NULL) {
+        iNextPlayable->AddRef();
+    }
+}
+
+void MsgPlayable::RefRemoved()
 {
     if (iNextPlayable != NULL) {
         iNextPlayable->RemoveRef();
@@ -919,20 +936,18 @@ MsgPlayable* MsgPlayablePcm::Clone()
     return clone;
 }
 
-void MsgPlayablePcm::Write(IWriter& aWriter)
+void MsgPlayablePcm::CopyTo(void* aDest)
 {
-    AutoMsgRef a(*this);
-    
-    Bwn audioBuf((const TByte*)iAudioData->PtrOffsetBytes(iOffset), iSize, iSize);
+    (void)memcpy(aDest, iAudioData->PtrOffsetBytes(iOffset), iSize);
     if (iRamp.IsEnabled()) {
+        // apply ramp after copying to client's buffer as driver and songcast sender branches
+        // of the pipeline will both access the same DecodedAudio but won't always agree
+        // on when to apply ramps.
+        Bwn audioBuf((const TByte*)aDest, iSize, iSize);
         iRamp.Apply(audioBuf, iAudioData->NumChannels());
     }
-    aWriter.Write(audioBuf);
-
-    MsgPlayable* next = iNextPlayable;
-    iNextPlayable = NULL; // break chain before Clear() gets called and tries removing the reference we remove on function exit
-    if (next != NULL) {
-        next->Write(aWriter);
+    if (iNextPlayable != NULL) {
+        iNextPlayable->CopyTo((TByte*)aDest + iSize);
     }
 }
 
@@ -949,7 +964,6 @@ void MsgPlayablePcm::SplitCompleted(MsgPlayable& aRemaining)
 
 void MsgPlayablePcm::Clear()
 {
-    MsgPlayable::Clear();
     iAudioData->RemoveRef();
 }
 
@@ -966,23 +980,11 @@ void MsgPlayableSilence::Initialise(TUint aSizeBytes, const Media::Ramp& aRamp)
     MsgPlayable::Initialise(aSizeBytes, 0, aRamp);
 }
 
-void MsgPlayableSilence::Write(IWriter& aWriter)
+void MsgPlayableSilence::CopyTo(void* aDest)
 {
-    static const TUint kSizeBufSilence = 4096;
-    static const TByte silence[kSizeBufSilence] = { 0 };
-
-    AutoMsgRef a(*this);
-    Brn silenceBuf;
-    while (iSize > 0) {
-        TUint bytes = (iSize > kSizeBufSilence? kSizeBufSilence : iSize);
-        silenceBuf.Set(silence, bytes);
-        aWriter.Write(silenceBuf);
-        iSize -= bytes;
-    }
-    MsgPlayable* next = iNextPlayable;
-    iNextPlayable = NULL; // break chain before Clear() gets called and tries removing the reference we remove on function exit
-    if (next != NULL) {
-        next->Write(aWriter);
+    (void)memset(aDest, 0, iSize);
+    if (iNextPlayable != NULL) {
+        iNextPlayable->CopyTo((TByte*)aDest + iSize);
     }
 }
 

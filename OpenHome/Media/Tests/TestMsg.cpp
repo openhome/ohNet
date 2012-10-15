@@ -63,7 +63,7 @@ private:
 
 class SuiteMsgPlayable : public Suite
 {
-    static const TUint kMsgCount = 8;
+    static const TUint kMsgCount = 2;
 public:
     SuiteMsgPlayable();
     ~SuiteMsgPlayable();
@@ -73,6 +73,7 @@ private:
 private:
     MsgFactory* iMsgFactory;
     InfoAggregator iInfoAggregator;
+    TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
 class SuiteRamp : public Suite
@@ -85,6 +86,7 @@ public:
 private:
     MsgFactory* iMsgFactory;
     InfoAggregator iInfoAggregator;
+    TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
 class SuiteMetaText : public Suite
@@ -500,11 +502,9 @@ void SuiteMsgPlayable::Test()
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     playable = audioPcm->CreatePlayable();
     TEST(playable->Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
-    WriterBwh* writerBuf = new WriterBwh(kWriterBufGranularity);
-    playable->Write(*writerBuf);
-    Brh buf;
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    playable->CopyTo(iBuf);
+    Brn buf(iBuf, playable->Bytes());
+    playable->RemoveRef();
     const TUint* ptr = (const TUint*)buf.Ptr();
     TUint subsampleVal = 0xff;
     for (TUint i=0; i<buf.Bytes(); i+=4) {
@@ -519,10 +519,9 @@ void SuiteMsgPlayable::Test()
     playable = audioPcm->CreatePlayable();
     MsgPlayable* remainingPlayable = remainingPcm->CreatePlayable();
     TEST(remainingPlayable->Bytes() == 3 * playable->Bytes());
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    playable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    playable->CopyTo(iBuf);
+    buf.Set(iBuf, playable->Bytes());
+    playable->RemoveRef();
     subsampleVal = 0xff;
     ptr = (const TUint*)buf.Ptr();
     for (TUint i=0; i<buf.Bytes(); i+=4) {
@@ -530,10 +529,9 @@ void SuiteMsgPlayable::Test()
         ptr++;
         subsampleVal--;
     }
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    remainingPlayable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    remainingPlayable->CopyTo(iBuf);
+    buf.Set(iBuf, remainingPlayable->Bytes());
+    remainingPlayable->RemoveRef();
     ptr = (const TUint*)buf.Ptr();
     for (TUint i=0; i<buf.Bytes(); i+=4) {
         TEST(*ptr == subsampleVal << 24);
@@ -546,10 +544,9 @@ void SuiteMsgPlayable::Test()
     playable = audioPcm->CreatePlayable();
     remainingPlayable = playable->Split(playable->Bytes()/4);
     TEST(remainingPlayable->Bytes() == 3 * playable->Bytes());
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    playable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    playable->CopyTo(iBuf);
+    buf.Set(iBuf, playable->Bytes());
+    playable->RemoveRef();
     subsampleVal = 0xff;
     ptr = (const TUint*)buf.Ptr();
     for (TUint i=0; i<buf.Bytes(); i+=4) {
@@ -557,10 +554,9 @@ void SuiteMsgPlayable::Test()
         ptr++;
         subsampleVal--;
     }
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    remainingPlayable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    remainingPlayable->CopyTo(iBuf);
+    buf.Set(iBuf, remainingPlayable->Bytes());
+    remainingPlayable->RemoveRef();
     ptr = (const TUint*)buf.Ptr();
     for (TUint i=0; i<buf.Bytes(); i+=4) {
         TEST(*ptr == subsampleVal << 24);
@@ -573,10 +569,9 @@ void SuiteMsgPlayable::Test()
     remainingPcm = (MsgAudioPcm*)audioPcm->Split((audioPcm->Jiffies()/4) - 1);
     playable = audioPcm->CreatePlayable();
     remainingPlayable = remainingPcm->CreatePlayable();
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    playable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    playable->CopyTo(iBuf);
+    buf.Set(iBuf, playable->Bytes());
+    playable->RemoveRef();
     subsampleVal = 0xff;
     ptr = (const TUint*)buf.Ptr();
     for (TUint i=0; i<buf.Bytes(); i+=4) {
@@ -584,10 +579,9 @@ void SuiteMsgPlayable::Test()
         ptr++;
         subsampleVal--;
     }
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    remainingPlayable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    remainingPlayable->CopyTo(iBuf);
+    buf.Set(iBuf, remainingPlayable->Bytes());
+    remainingPlayable->RemoveRef();
     ptr = (const TUint*)buf.Ptr();
     for (TUint i=0; i<buf.Bytes(); i+=4) {
         TEST(*ptr == subsampleVal << 24);
@@ -600,15 +594,13 @@ void SuiteMsgPlayable::Test()
     remainingPcm = (MsgAudioPcm*)audioPcm->Split(1);
     playable = audioPcm->CreatePlayable();
     remainingPlayable = remainingPcm->CreatePlayable();
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    playable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    playable->CopyTo(iBuf);
+    buf.Set(iBuf, playable->Bytes());
+    playable->RemoveRef();
     TEST(buf.Bytes() == 0);
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    remainingPlayable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    remainingPlayable->CopyTo(iBuf);
+    buf.Set(iBuf, remainingPlayable->Bytes());
+    remainingPlayable->RemoveRef();
     TEST(buf.Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
 
     // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
@@ -672,15 +664,11 @@ void SuiteMsgPlayable::Test()
 
 void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 {
-    Brh buf;
-    WriterBwh* writerBuf = new WriterBwh(1024);
     TUint bytes = aMsg->Bytes();
-    aMsg->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
-    TEST(buf.Bytes() == bytes);
-    for (TUint i=0; i<buf.Bytes(); i++) {
-        TEST(buf[i] == 0);
+    aMsg->CopyTo(iBuf);
+    aMsg->RemoveRef();
+    for (TUint i=0; i<bytes; i++) {
+        TEST(iBuf[i] == 0);
     }
 }
 
@@ -876,12 +864,9 @@ void SuiteRamp::Test()
     TEST(remaining == NULL);
     MsgPlayable* playable = silence->CreatePlayable(44100, 2);
     TEST(playable != NULL);
-    const TUint kWriterBufGranularity = 1024;
-    WriterBwh* writerBuf = new WriterBwh(kWriterBufGranularity);
-    playable->Write(*writerBuf);
-    Brh buf;
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    playable->CopyTo(iBuf);
+    Brn buf(iBuf, playable->Bytes());
+    playable->RemoveRef();
     ptr = (const TUint*)buf.Ptr();
     for (TUint i=0; i<buf.Bytes(); i+=4) {
         TEST(*ptr == 0);
@@ -901,10 +886,9 @@ void SuiteRamp::Test()
     TEST(audioPcm->Jiffies() == jiffies / 2);
     TEST(audioPcm->Jiffies() == remaining->Jiffies());
     playable = audioPcm->CreatePlayable();
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    playable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    playable->CopyTo(iBuf);
+    buf.Set(iBuf, playable->Bytes());
+    playable->RemoveRef();
     ptr = (const TUint*)buf.Ptr();
     numSubsamples = buf.Bytes() / DecodedAudio::kBytesPerSubsample;
     prevSampleVal = 0;
@@ -918,10 +902,9 @@ void SuiteRamp::Test()
         prevSampleVal = sampleVal;
     }
     playable = ((MsgAudioPcm*)remaining)->CreatePlayable();
-    writerBuf = new WriterBwh(kWriterBufGranularity);
-    playable->Write(*writerBuf);
-    writerBuf->TransferTo(buf);
-    delete writerBuf;
+    playable->CopyTo(iBuf);
+    buf.Set(iBuf, playable->Bytes());
+    playable->RemoveRef();
     ptr = (const TUint*)buf.Ptr();
     numSubsamples = buf.Bytes() / DecodedAudio::kBytesPerSubsample;
     TEST(ptr[numSubsamples-1] == 0);

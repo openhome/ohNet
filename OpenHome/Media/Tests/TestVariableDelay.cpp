@@ -82,6 +82,7 @@ private:
     TUint iNumMsgsGenerated;
     TUint iAudioMsgSizeJiffies;
     TUint64 iTrackOffset;
+    TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
 } // namespace Media
@@ -290,10 +291,9 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
     TUint jiffies = aMsg->Jiffies();
 
     MsgPlayable* playable = aMsg->CreatePlayable();
-    WriterBwh writerBuf(1024);
-    playable->Write(writerBuf);
-    Brh buf;
-    writerBuf.TransferTo(buf);
+    playable->CopyTo(iBuf);
+    Brn buf(iBuf, playable->Bytes());
+    playable->RemoveRef();
     const TUint* ptr = (const TUint*)buf.Ptr();
     const TUint firstSubsample = ptr[0];
     const TUint numSubsamples = buf.Bytes() / sizeof(TUint);

@@ -75,6 +75,8 @@ protected:
 protected:
     ~Allocated();
 private:
+    virtual void RefAdded();
+    virtual void RefRemoved();
     virtual void Clear();
 protected:
     AllocatorBase& iAllocator;
@@ -272,12 +274,13 @@ public:
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
     const Media::Ramp& Ramp() const;
-    virtual void Write(IWriter& aWriter) = 0; // calls RemoveRef on exit
+    virtual void CopyTo(void* aDest) = 0;
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
     void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
 protected: // from Msg
-    void Clear();
+    void RefAdded();
+    void RefRemoved();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     virtual MsgPlayable* Allocate() = 0;
@@ -298,7 +301,7 @@ private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
 private: // from MsgPlayable
     MsgPlayable* Clone(); // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
-    void Write(IWriter& aWriter); // calls RemoveRef on exit
+    void CopyTo(void* aDest);
     MsgPlayable* Allocate();
     void SplitCompleted(MsgPlayable& aRemaining);
 private: // from Msg
@@ -315,7 +318,7 @@ public:
 private:
     void Initialise(TUint aSizeBytes, const Media::Ramp& aRamp);
 private: // from MsgPlayable
-    void Write(IWriter& aWriter); // calls RemoveRef on exit
+    void CopyTo(void* aDest);
     MsgPlayable* Allocate();
 };
 

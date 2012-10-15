@@ -111,6 +111,7 @@ private:
     EPipelineState iPipelineState;
     Semaphore iSemFlushed;
     TBool iQuitReceived;
+    TByte iBuf[DecodedAudio::kMaxBytes];
 };
 #undef LOG_PIPELINE_OBSERVER // enable this to check output from IPipelineObserver
 
@@ -527,10 +528,9 @@ Msg* SuitePipeline::ProcessMsg(MsgSilence* /*aMsg*/)
 Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
 {
     iLastMsgWasAudio = true;
-    WriterBwh writerBuf(1024);
-    aMsg->Write(writerBuf);
-    Brh buf;
-    writerBuf.TransferTo(buf);
+    aMsg->CopyTo(iBuf);
+    Brn buf(iBuf, aMsg->Bytes());
+    aMsg->RemoveRef();
     const TUint* ptr = (const TUint*)buf.Ptr();
     iFirstSubsample = ptr[0];
     const TUint numSubsamples = buf.Bytes() / sizeof(TUint);
