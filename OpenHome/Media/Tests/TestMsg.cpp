@@ -498,7 +498,6 @@ void SuiteMsgPlayable::Test()
     }
 
     // Create pcm msg.  Read/validate its content
-    static const TUint kWriterBufGranularity = 1024;
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     playable = audioPcm->CreatePlayable();
     TEST(playable->Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
