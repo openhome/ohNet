@@ -275,8 +275,12 @@ void SupplierWav::Run()
             iPendingMsg = NULL;
             iBlock = !iQuit; // nasty way of blocking after delivering a Flush
         }
-        else {
+        else if (iBytesRemaining > 0) {
             msg = CreateAudio();
+        }
+        else {
+            msg = iMsgFactory->CreateMsgHalt();
+            Block();
         }
         iLock.Signal();
         if (msg == NULL) {
@@ -442,6 +446,7 @@ int WavSender::Run()
             }
             break;
         case 'q':
+            quit = true;
             break;
         default:
             break;

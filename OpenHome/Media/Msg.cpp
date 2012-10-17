@@ -297,11 +297,12 @@ void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRat
     }
 }
 
-// FIXME - unpackers are from big-endian volkano codebase.  Do we need little-endian versions too?
+
+#ifdef DEFINE_LITTLE_ENDIAN
+
 void DecodedAudio::UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
 { // static
     TUint i = 0;
-
     switch (aBitDepth)
     {
         case 8:
@@ -329,7 +330,64 @@ void DecodedAudio::UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBit
 void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
 { // static
     TUint i = 0;
+    switch (aBitDepth)
+    {
+        case 8:
+            for (i=0; i < aNumSubsamples; i++) {
+                *aDst++ = (*aSrc++ << 24);
+            }
+            break;
+        case 16:
+            for (i=0; i < aNumSubsamples; i++) {
+                TUint16 src = *(TUint16*)aSrc;
+                TUint32 dest = (src<<24) | ((src&0xff00)<<8);
+                *aDst++ = dest;
+                aSrc += 2;
+            }
+            break;
+        case 24:
+            for (i=0; i < aNumSubsamples; i++) {
+                *aDst++ = (((aSrc[2]<<16) | (aSrc[1]<<8) | aSrc[0]) << 8);
+                aSrc += 3;
+            }
+            break;
+        default:
+            ASSERTS();
+    }
+}
 
+#else /* ! DEFINE_LITTLE_ENDIAN */
+
+void DecodedAudio::UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
+{ // static
+    TUint i = 0;
+    switch (aBitDepth)
+    {
+        case 8:
+            for (i=0; i < aNumSubsamples; i++) {
+                *aDst++ = (*aSrc++ << 24);
+            }
+            break;
+        case 16:
+            for (i=0; i < aNumSubsamples; i++) {
+                *aDst++ = (Arch::BigEndian2(*((TUint16*)aSrc)) << 16);
+                aSrc += 2;
+            }
+            break;
+        case 24:
+            for (i=0; i < aNumSubsamples; i++) {
+                *aDst++ = ((aSrc[2] | (aSrc[1]<<8) | (aSrc[0]<<16)) << 8);
+                aSrc += 3;
+            }
+            break;
+        default:
+            ASSERTS();
+    }
+}
+
+void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
+{ // static
+    TUint i = 0;
     switch (aBitDepth)
     {
         case 8:
@@ -353,6 +411,8 @@ void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint a
             ASSERTS();
     }
 }
+
+#endif /* DEFINE_LITTLE_ENDIAN */
 
 void DecodedAudio::Clear()
 {

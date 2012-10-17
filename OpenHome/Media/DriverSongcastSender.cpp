@@ -18,6 +18,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iPipeline(aPipeline)
     , iMaxMsgSizeJiffies(aMaxMsgSizeJiffies)
     , iBuf(NULL)
+    , iBufPacked(NULL)
     , iSampleRate(0)
     , iNumChannels(0)
     , iJiffiesToSend(Jiffies::kJiffiesPerMs)
@@ -25,7 +26,6 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iPlayable(NULL)
     , iAudioSent(false)
     , iQuit(false)
-    , iTotalBytesSent(0)
 {
     iOhmSenderDriver = new Av::OhmSenderDriver();
     Brn imageData(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender) / sizeof(kIconDriverSongcastSender[0]));
@@ -42,6 +42,8 @@ DriverSongcastSender::~DriverSongcastSender()
     delete iTimer;
     delete iOhmSender;
     delete iOhmSenderDriver;
+    delete[] iBuf;
+    delete[] iBufPacked;
 }
 
 void DriverSongcastSender::Run()
@@ -92,9 +94,27 @@ void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
     }
     iJiffiesToSend -= jiffies;
     aMsg->CopyTo(iBuf);
-    iTotalBytesSent += aMsg->Bytes();
-//    Log::Print("SendAudio sending %d bytes (%d total)\n", aMsg->Bytes(), iTotalBytesSent);
-    iOhmSenderDriver->SendAudio(iBuf, aMsg->Bytes());
+    const TUint numSubsamples = aMsg->Bytes() / DecodedAudio::kBytesPerSubsample;
+    TUint32* src = (TUint32*)&iBuf[0];
+    TUint16* dest = (TUint16*)&iBufPacked[0];
+    for (TUint i=0; i<numSubsamples; i++) {
+        switch (iBitDepth)
+        {
+        case 8:
+            ASSERTS();
+            break;
+        case 16:
+            *dest++ = (*src)>>16;
+            break;
+        case 24:
+            ASSERTS();
+            break;
+        default:
+            ASSERTS();
+        }
+        src++;
+    }
+    iOhmSenderDriver->SendAudio(iBufPacked, numSubsamples * (iBitDepth/8));
     aMsg->RemoveRef();
 }
 
@@ -121,12 +141,15 @@ Msg* DriverSongcastSender::ProcessMsg(MsgAudioFormat* aMsg)
     const AudioFormat& fmt = aMsg->Format();
     iSampleRate = fmt.SampleRate();
     iNumChannels = fmt.NumChannels();
+    iBitDepth = fmt.BitDepth();
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
     TUint jiffies = iMaxMsgSizeJiffies;
     const TUint bufMaxSize = Jiffies::BytesFromJiffies(jiffies, iJiffiesPerSample, iNumChannels, DecodedAudio::kBytesPerSubsample);
     delete[] iBuf;
     iBuf = new TByte[bufMaxSize];
-    iOhmSenderDriver->SetAudioFormat(fmt.SampleRate(), fmt.BitRate(), fmt.NumChannels(), fmt.BitDepth(), fmt.Lossless(), fmt.CodecName());
+    delete[] iBufPacked;
+    iBufPacked = new TByte[(iBitDepth/8)*(bufMaxSize/DecodedAudio::kBytesPerSubsample)];
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, fmt.BitRate(), iNumChannels, iBitDepth, fmt.Lossless(), fmt.CodecName());
     aMsg->RemoveRef();
     return NULL;
 }

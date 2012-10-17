@@ -40,16 +40,17 @@ private:
     Av::OhmSenderDriver* iOhmSenderDriver;
     Av::OhmSender* iOhmSender;
     Timer* iTimer;
-    TByte* iBuf; // FIXME - uninitialised
+    TByte* iBuf;
+    TByte* iBufPacked;
     TUint iSampleRate;
     TUint iJiffiesPerSample;
     TUint iNumChannels;
+    TUint iBitDepth;
     TUint iJiffiesToSend;
     TUint iLastSendTime;
     MsgPlayable* iPlayable;
     TBool iAudioSent;
     TBool iQuit;
-    TUint iTotalBytesSent;
 };
 
 } // namespace Media
