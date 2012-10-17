@@ -38,7 +38,7 @@ def configure(conf):
 
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
-    conf.env.STLIB_OHNET=['ohNetProxies', 'TestFramework', 'ohNetCore']
+    conf.env.STLIB_OHNET=['ohNetProxies', 'ohNetDevices', 'TestFramework', 'ohNetCore']
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
 
 def get_node(bld, node_or_filename):
@@ -92,6 +92,7 @@ def build(bld):
                 'OpenHome/Media/Stopper.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
+                'OpenHome/Media/DriverSongcastSender.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
@@ -135,10 +136,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestPipeline.cpp',
             use=['OHNET', 'ohMediaPlayer'],
             target='TestPipeline')
-    #bld.program(
-    #        source='OpenHome/Media/Tests/WavSender.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-    #        target='WavSender')
+    bld.program(
+            source='OpenHome/Media/Tests/WavSender.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='WavSender')
     bld.program(
             source='OpenHome/Av/Tests/TestStore.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

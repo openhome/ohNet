@@ -21,7 +21,7 @@ May send shorter msg if format change or Halt is encountered.
 class PreDriver : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableBytes);
+    PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies);
     ~PreDriver();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -41,6 +41,7 @@ private: // IMsgProcessor
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
+    TUint iMaxPlayableJiffies;
     TUint iMaxPlayableBytes;
     MsgPlayable* iPlayable;
     MsgAudioFormat* iFormat;

@@ -63,6 +63,7 @@ private:
 class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor
 {
     static const TUint kDriverMaxAudioBytes = 2048;
+    static const TUint kDriverMaxAudioJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
     SuitePipeline();
 private: // from Suite
@@ -111,7 +112,7 @@ private:
     EPipelineState iPipelineState;
     Semaphore iSemFlushed;
     TBool iQuitReceived;
-    TByte iBuf[DecodedAudio::kMaxBytes];
+    TByte iBuf[32 * 1024]; // far too large a buffer to save recalculating sizes if/when sample rates change
 };
 #undef LOG_PIPELINE_OBSERVER // enable this to check output from IPipelineObserver
 
@@ -205,7 +206,7 @@ void Supplier::Run()
         }
         iLock.Signal();
         iPipeline->Push(msg);
-        Thread::Sleep(5); // small delay to avoid this thread hogging all cpu on platforms without priorities
+        Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
     if (iPendingMsg != NULL) {
         iPipeline->Push(iPendingMsg);
@@ -270,7 +271,7 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iSupplier = new Supplier();
-    iPipelineManager = new PipelineManager(iInfoAggregator, *iSupplier, *this, kDriverMaxAudioBytes);
+    iPipelineManager = new PipelineManager(iInfoAggregator, *iSupplier, *this, kDriverMaxAudioJiffies);
     iPipelineEnd = &iPipelineManager->FinalElement();
 }
 
@@ -375,11 +376,11 @@ void SuitePipeline::Test()
 
 void SuitePipeline::TestJiffies(TUint aTarget)
 {
-    // MsgPlayable instances are grouped together into msgs of kDriverMaxAudioBytes
+    // MsgPlayable instances are grouped together into msgs of kDriverMaxAudioJiffies
     // This means that msgs don't typically end at the end of a ramp
     // ...so we'll read a bit more data than expected when checking ramp durations
-    TEST(aTarget >= iJiffies);
-    TEST(aTarget - iJiffies <= kDriverMaxAudioBytes);
+    TEST(aTarget <= iJiffies);
+    TEST(iJiffies - aTarget <= kDriverMaxAudioJiffies);
 }
 
 void SuitePipeline::PullUntilEnd(EState aState)

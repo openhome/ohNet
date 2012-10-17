@@ -9,10 +9,11 @@ using namespace OpenHome::Media;
 
 // PreDriver
 
-PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableBytes)
+PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
-    , iMaxPlayableBytes(aMaxPlayableBytes)
+    , iMaxPlayableJiffies(aMaxPlayableJiffies)
+    , iMaxPlayableBytes(0)
     , iPlayable(NULL)
     , iFormat(NULL)
     , iPendingFormatChange(NULL)
@@ -28,9 +29,15 @@ PreDriver::~PreDriver()
     if (iFormat != NULL) {
         iFormat->RemoveRef();
     }
-    ASSERT(iPlayable == NULL);
-    ASSERT(iPendingFormatChange == NULL);
-    ASSERT(iPendingHalt == NULL);
+    if (iPlayable != NULL) {
+        iPlayable->RemoveRef();
+    }
+    if (iPendingFormatChange != NULL) {
+        iPendingFormatChange->RemoveRef();
+    }
+    if (iPendingHalt != NULL) {
+        iPendingHalt->RemoveRef();
+    }
 }
 
 Msg* PreDriver::Pull()
@@ -141,6 +148,9 @@ Msg* PreDriver::ProcessMsg(MsgAudioFormat* aMsg)
     }
     iFormat = aMsg;
     iFormat->AddRef();
+    TUint jiffies = iMaxPlayableJiffies;
+    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iFormat->Format().SampleRate());
+    iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iFormat->Format().NumChannels(), DecodedAudio::kBytesPerSubsample);
     if (iHalted) {
         ASSERT(iPlayable == NULL);
         return aMsg;

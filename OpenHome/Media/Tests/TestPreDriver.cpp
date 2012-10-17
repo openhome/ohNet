@@ -76,7 +76,6 @@ private:
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iAudioMsgSizeJiffies;
-    TUint iAudioMsgSizeBytes;
     TUint iNextMsgSilenceSize;
 };
 
@@ -127,11 +126,9 @@ SuitePreDriver::SuitePreDriver()
     iMsgFactory = new MsgFactory(iInfoAggregator, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1);
     MsgAudioPcm* audio = CreateAudio();
     iAudioMsgSizeJiffies = audio->Jiffies();
-    MsgPlayable* playable = audio->CreatePlayable();
-    iAudioMsgSizeBytes = playable->Bytes();
-    playable->RemoveRef();
+    audio->RemoveRef();
     iNextMsgSilenceSize = iAudioMsgSizeJiffies;
-    iPreDriver = new PreDriver(*iMsgFactory, *this, iAudioMsgSizeBytes);
+    iPreDriver = new PreDriver(*iMsgFactory, *this, iAudioMsgSizeJiffies);
 }
 
 SuitePreDriver::~SuitePreDriver()
@@ -215,8 +212,9 @@ void SuitePreDriver::Test()
     TEST(iLastMsg == EMsgPlayable);
     iBitDepth = 24;
     iNextGeneratedMsg = EMsgAudioFormat;
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgHalt);
+    do {
+        iPreDriver->Pull()->Process(*this)->RemoveRef();
+    } while (iLastMsg != EMsgHalt);
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgAudioFormat);
 }

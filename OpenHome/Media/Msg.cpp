@@ -823,7 +823,11 @@ MsgPlayable* MsgPlayable::Split(TUint aBytes)
         return iNextPlayable->Split(aBytes - iSize);
     }
     ASSERT(aBytes != 0);
-    ASSERT(aBytes < iSize);
+    if (aBytes == iSize) {
+        MsgPlayable* remaining = iNextPlayable;
+        iNextPlayable = NULL;
+        return remaining;
+    }
     MsgPlayable* remaining = Allocate();
     remaining->iNextPlayable = NULL;
     remaining->iOffset = iOffset + aBytes;
