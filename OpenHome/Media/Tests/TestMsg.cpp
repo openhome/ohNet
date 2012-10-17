@@ -602,11 +602,16 @@ void SuiteMsgPlayable::Test()
     remainingPlayable->RemoveRef();
     TEST(buf.Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
 
+    // Test splitting at the end of a message returns NULL
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    playable = audioPcm->CreatePlayable();
+    TEST(NULL == playable->Split(playable->Bytes()));
+    playable->RemoveRef();
+
     // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     playable = audioPcm->CreatePlayable();
     TEST_THROWS(remainingPlayable = playable->Split(0), AssertionFailed);
-    TEST_THROWS(remainingPlayable = playable->Split(playable->Bytes()), AssertionFailed);
     TEST_THROWS(remainingPlayable = playable->Split(playable->Bytes()+1), AssertionFailed);
     playable->RemoveRef();
 
