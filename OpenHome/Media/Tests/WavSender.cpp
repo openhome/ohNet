@@ -279,17 +279,13 @@ void SupplierWav::Run()
             msg = CreateAudio();
         }
         else {
+            printf("Reached end of track, pipeline will shut down\n");
             msg = iMsgFactory->CreateMsgHalt();
-            Block();
+            iPendingMsg = iMsgFactory->CreateMsgQuit();
         }
         iLock.Signal();
-        if (msg == NULL) {
-            printf("Reached end of track\n");
-        }
-        else {
-            iPipeline->Push(msg);
-            Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
-        }
+        iPipeline->Push(msg);
+        Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
     if (iPendingMsg != NULL) {
         iPipeline->Push(iPendingMsg);
@@ -526,7 +522,7 @@ void WavSender::NotifyAudioFormat(const AudioFormat& aFormat)
 int CDECL main(int aArgc, char* aArgv[])
 {
     OptionParser parser;
-    OptionString optionFile("-f", "--file", Brn("c:\\test.wav"), "[file] wav file to play");
+    OptionString optionFile("-f", "--file", Brn(""), "[file] wav file to play");
     parser.AddOption(&optionFile);
     OptionString optionUdn("-u", "--udn", Brn("PipelineWavSender"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
