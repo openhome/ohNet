@@ -123,7 +123,7 @@ Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 {
     iHalted = false;
     const AudioFormat& format = iFormat->Format();
-    MsgPlayable* playable = aMsg->CreatePlayable(format.SampleRate(), format.NumChannels());
+    MsgPlayable* playable = aMsg->CreatePlayable(format.SampleRate(), format.BitDepth(), format.NumChannels());
     return AddPlayable(playable);
 }
 

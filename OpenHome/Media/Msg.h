@@ -126,6 +126,7 @@ public:
     static const TUint kMaxBytes = 6 * 1024;
     static const TUint kBytesPerSubsample = sizeof(TUint);
     static const TUint kMaxSubsamples = kMaxBytes/kBytesPerSubsample;
+    static const TUint kMaxNumChannels = 8;
 public:
     DecodedAudio(AllocatorBase& aAllocator);
     const TUint* PtrOffsetBytes(TUint aBytes) const;
@@ -133,6 +134,7 @@ public:
     TUint BytesFromJiffies(TUint& aJiffies) const;
     TUint JiffiesFromBytes(TUint aBytes) const;
     TUint NumChannels() const;
+    TUint BitDepth() const;
 private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
     static void UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
@@ -190,6 +192,23 @@ private:
     TUint iEnd;
     EDirection iDirection;
     TBool iEnabled;
+};
+
+class RampApplicator : private INonCopyable
+{
+public:
+    RampApplicator(const Media::Ramp& aRamp);
+    TUint Start(const Brx& aData, TUint aBitDepth, TUint aNumChannels); // returns number of samples
+    void GetNextSample(TByte* aDest);
+private:
+    const Media::Ramp& iRamp;
+    const TByte* iPtr;
+    TUint iBitDepth;
+    TUint iNumChannels;
+    TUint iNumSamples;
+    TInt iTotalRamp;
+    TUint iFullRampSpan;
+    TUint iLoopCount;
 };
 
 
@@ -254,7 +273,7 @@ class MsgSilence : public MsgAudio
     friend class MsgFactory;
 public:
     MsgSilence(AllocatorBase& aAllocator);
-    MsgPlayable* CreatePlayable(TUint aSampleRate, TUint aNumChannels); // removes ref
+    MsgPlayable* CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels); // removes ref
 private:
     void Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable);
 private: // from MsgAudio
@@ -266,6 +285,8 @@ private:
     Allocator<MsgPlayableSilence>* iAllocatorPlayable;
 };
 
+class IPcmProcessor;
+
 class MsgPlayable : public Msg
 {
 public:
@@ -275,6 +296,7 @@ public:
     TUint Bytes() const;
     const Media::Ramp& Ramp() const;
     virtual void CopyTo(void* aDest) = 0;
+    virtual void Read(IPcmProcessor& aProcessor) = 0;
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
     void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
@@ -302,6 +324,7 @@ private:
 private: // from MsgPlayable
     MsgPlayable* Clone(); // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
     void CopyTo(void* aDest);
+    void Read(IPcmProcessor& aProcessor);
     MsgPlayable* Allocate();
     void SplitCompleted(MsgPlayable& aRemaining);
 private: // from Msg
@@ -316,10 +339,14 @@ class MsgPlayableSilence : public MsgPlayable
 public:
     MsgPlayableSilence(AllocatorBase& aAllocator);
 private:
-    void Initialise(TUint aSizeBytes, const Media::Ramp& aRamp);
+    void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp);
 private: // from MsgPlayable
     void CopyTo(void* aDest);
+    void Read(IPcmProcessor& aProcessor);
     MsgPlayable* Allocate();
+private:
+    TUint iBitDepth;
+    TUint iNumChannels;
 };
 
 class AudioFormat
@@ -428,6 +455,52 @@ public:
     virtual Msg* ProcessMsg(MsgHalt* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgFlush* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgQuit* aMsg) = 0;
+};
+
+/**
+ * Used to retrieve pcm audio data from a MsgPlayable
+ */
+class IPcmProcessor
+{
+public:
+    /**
+     * Called once per call to MsgPlayable::ProcessAudio.
+     *
+     * Will be called before any calls to ProcessFragment or ProcessSample.
+     */
+    virtual void BeginBlock() = 0;
+    /**
+     * Optional function.  Gives the processor a chance to copy memory in a single block.
+     *
+     * Is not guaranteed to be called so all processors must implement ProcessSample.
+     * Bit depth is indicated in function name; number of channels is passed as a parameter.
+     *
+     * @param aData         Packed big endian pcm data.  Will always be a complete number of samples.
+     * @param aNumChannels  Number of channels.
+     *
+     * @return  true if the fragment was processed (meaning that ProcessSample will not be called for aData);
+     *          false otherwise (meaning that ProcessSample will be called for each sample in aData).
+     */
+    virtual TBool ProcessFragment8(const Brx& aData, TUint aNumChannels) = 0;
+    virtual TBool ProcessFragment16(const Brx& aData, TUint aNumChannels) = 0;
+    virtual TBool ProcessFragment24(const Brx& aData, TUint aNumChannels) = 0;
+    /**
+     * Process a single sample of audio.
+     *
+     * Data is packed and big endian.
+     * Bit depth is indicated in function name; number of channels is passed as a parameter.
+     *
+     * @param aSample  Pcm data for a single sample.  Length will be (bitDepth * numChannels).
+     */
+    virtual void ProcessSample8(const TByte* aSample, TUint aNumChannels) = 0;
+    virtual void ProcessSample16(const TByte* aSample, TUint aNumChannels) = 0;
+    virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels) = 0;
+    /**
+     * Called once per call to MsgPlayable::ProcessAudio.
+     *
+     * No more calls to ProcessFragment or ProcessSample will be made after this.
+     */
+    virtual void EndBlock() = 0;
 };
 
 class MsgQueue

@@ -621,7 +621,7 @@ void SuiteMsgPlayable::Test()
     MsgSilence* silence;
     for (TUint i=0; i<numRates; i++) {
         silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 5);
-        playable = silence->CreatePlayable(sampleRates[i], 2);
+        playable = silence->CreatePlayable(sampleRates[i], 8, 2);
         bytes = playable->Bytes();
         playable->RemoveRef();
         if (prevBytes != 0) {
@@ -632,13 +632,13 @@ void SuiteMsgPlayable::Test()
 
     // Create silence msg.  Read/validate its content
     silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
-    playable = silence->CreatePlayable(44100, 1);
+    playable = silence->CreatePlayable(44100, 8, 1);
     bytes = playable->Bytes();
     ValidateSilence(playable);
 
     // Create silence msg, convert to playable then split.  Check sizes/contents of each
     silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
-    playable = silence->CreatePlayable(44100, 1);
+    playable = silence->CreatePlayable(44100, 8, 1);
     remainingPlayable = playable->Split(playable->Bytes() / 4);
     TEST(3 * playable->Bytes() == remainingPlayable->Bytes());
     TEST(playable->Bytes() + remainingPlayable->Bytes() == bytes);
@@ -647,7 +647,7 @@ void SuiteMsgPlayable::Test()
 
     // Create silence msg, split at non-sample boundary.  Check that fragments have the correct total length
     silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
-    playable = silence->CreatePlayable(44100, 1);
+    playable = silence->CreatePlayable(44100, 8, 1);
     remainingPlayable = playable->Split((playable->Bytes() / 4) - 1);
     TEST(playable->Bytes() + remainingPlayable->Bytes() == bytes);
     playable->RemoveRef();
@@ -656,8 +656,8 @@ void SuiteMsgPlayable::Test()
     // Create silence msg, split at 1 jiffy (non-sample boundary).  Check initial msg has 0 Bytes() but can Write() its content
     silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
     MsgSilence* remainingSilence = (MsgSilence*)silence->Split(1);
-    playable = silence->CreatePlayable(44100, 1);
-    remainingPlayable = remainingSilence->CreatePlayable(44100, 1);
+    playable = silence->CreatePlayable(44100, 8, 1);
+    remainingPlayable = remainingSilence->CreatePlayable(44100, 8, 1);
     TEST(playable->Bytes() == 0);
     TEST(remainingPlayable->Bytes() == bytes);
     ValidateSilence(playable);
@@ -866,7 +866,7 @@ void SuiteRamp::Test()
     MsgAudio* remaining = NULL;
     TEST(Ramp::kRampMin == silence->SetRamp(Ramp::kRampMax, jiffies, Ramp::EDown, remaining));
     TEST(remaining == NULL);
-    MsgPlayable* playable = silence->CreatePlayable(44100, 2);
+    MsgPlayable* playable = silence->CreatePlayable(44100, 8, 2);
     TEST(playable != NULL);
     playable->CopyTo(iBuf);
     Brn buf(iBuf, playable->Bytes());
@@ -1070,7 +1070,7 @@ void SuiteMsgProcessor::Test()
     MsgSilence* silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
     TEST(silence == static_cast<Msg*>(silence)->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgSilence);
-    playable = silence->CreatePlayable(44100, 2);
+    playable = silence->CreatePlayable(44100, 8, 2);
     TEST(playable == static_cast<Msg*>(playable)->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
