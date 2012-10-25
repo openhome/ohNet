@@ -8,6 +8,7 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
+#include "AllocatorInfoLogger.h"
 
 #include <stdio.h>
 
@@ -46,21 +47,6 @@ int mygetch()
 
 namespace OpenHome {
 namespace Media {
-
-class InfoAggregator : public Av::IInfoAggregator, private IWriter
-{
-public:
-    InfoAggregator();
-    void PrintStats();
-private: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
-private: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
-private:
-    std::vector<Av::IInfoProvider*> iInfoProviders;
-};
 
 class SupplierWav : public Thread, public ISupplier
 {
@@ -116,7 +102,7 @@ private: // from IPipelineObserver
     void NotifyAudioFormat(const AudioFormat& aFormat);
 private:
     SupplierWav* iSupplier;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
     PipelineManager* iPipeline;
     Net::DvDeviceStandard* iDevice;
     DriverSongcastSender* iDriver;
@@ -130,39 +116,6 @@ using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
-
-// InfoAggregator
-
-InfoAggregator::InfoAggregator()
-{
-}
-
-void InfoAggregator::PrintStats()
-{
-    for (size_t i=0; i<iInfoProviders.size(); i++) {
-        iInfoProviders[i]->QueryInfo(AllocatorBase::kQueryMemory, *this);
-    }
-}
-
-void InfoAggregator::Register(Av::IInfoProvider& aProvider, std::vector<Brn>& /*aSupportedQueries*/)
-{
-    iInfoProviders.push_back(&aProvider);
-}
-
-void InfoAggregator::Write(TByte aValue)
-{
-    Log::Print("%c", aValue);
-}
-
-void InfoAggregator::Write(const Brx& aBuffer)
-{
-    Log::Print(aBuffer);
-}
-
-void InfoAggregator::WriteFlush()
-{
-}
-
 
 // SupplierWav
 
