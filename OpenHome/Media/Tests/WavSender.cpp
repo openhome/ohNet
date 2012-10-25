@@ -51,9 +51,6 @@ namespace Media {
 class SupplierWav : public Thread, public ISupplier
 {
     static const size_t kFileHeaderBytes = 44;
-    static const TUint kBitDepth    = 16;
-    static const TUint kSampleRate  = 44100;
-    static const TUint kNumChannels = 2;
 public:
     SupplierWav();
     ~SupplierWav();
