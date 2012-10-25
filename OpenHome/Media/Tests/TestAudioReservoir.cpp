@@ -2,6 +2,8 @@
 #include <OpenHome/Media/AudioReservoir.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/ProcessorPcmUtils.h>
 
 #include <string.h>
 #include <vector>
@@ -12,21 +14,6 @@ using namespace OpenHome::Media;
 
 namespace OpenHome {
 namespace Media {
-
-class InfoAggregator : public Av::IInfoAggregator, private IWriter
-{
-public:
-    InfoAggregator();
-    void PrintStats();
-private: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
-private: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
-private:
-    std::vector<Av::IInfoProvider*> iInfoProviders;
-};
 
 class SuiteAudioReservoir : public Suite, private IMsgProcessor
 {
@@ -81,7 +68,7 @@ private:
     MsgAudio* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
     AudioReservoir* iReservoir;
     ThreadFunctor* iThread;
     EMsgGenerationState iMsgGenerationState;
@@ -95,39 +82,6 @@ private:
 
 } // namespace Media
 } // namespace OpenHome
-
-
-// InfoAggregator
-
-InfoAggregator::InfoAggregator()
-{
-}
-
-void InfoAggregator::PrintStats()
-{
-    for (size_t i=0; i<iInfoProviders.size(); i++) {
-        iInfoProviders[i]->QueryInfo(AllocatorBase::kQueryMemory, *this);
-    }
-}
-
-void InfoAggregator::Register(Av::IInfoProvider& aProvider, std::vector<Brn>& /*aSupportedQueries*/)
-{
-    iInfoProviders.push_back(&aProvider);
-}
-
-void InfoAggregator::Write(TByte aValue)
-{
-    Print("%c", aValue);
-}
-
-void InfoAggregator::Write(const Brx& aBuffer)
-{
-    Print(aBuffer);
-}
-
-void InfoAggregator::WriteFlush()
-{
-}
 
 
 // SuiteAudioReservoir
@@ -299,15 +253,20 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsg = EMsgAudioPcm;
     MsgPlayable* playable = aMsg->CreatePlayable();
-    playable->CopyTo(iBuf);
-    Brn buf(iBuf, playable->Bytes());
-    playable->RemoveRef();
-    const TUint* ptr = (const TUint*)buf.Ptr();
-    const TUint firstSubsample = ptr[0];
-    const TUint numSubsamples = buf.Bytes() / sizeof(TUint);
-    const TUint lastSubsample = ptr[numSubsamples - 1];
-    TEST(firstSubsample == 0xffff0000);
+    ProcessorPcmBufPacked pcmProcessor;
+    playable->Read(pcmProcessor);
+    Brn buf(pcmProcessor.Buf());
+//    playable->RemoveRef();
+    const TByte* ptr = buf.Ptr();
+    const TInt firstSubsample = (ptr[0]<<8) | ptr[1];
+    const TUint bytes = buf.Bytes();
+    const TInt lastSubsample = (ptr[bytes-2]<<8) | ptr[bytes-1];
+    TEST(firstSubsample == 0xffff);
     TEST(firstSubsample == lastSubsample);
+    if (firstSubsample != lastSubsample) {
+        Print("firstSubsample=%08x, lastSubsample=%08x\n", firstSubsample, lastSubsample);
+    }
+    playable->RemoveRef();
     return NULL;
 }
 

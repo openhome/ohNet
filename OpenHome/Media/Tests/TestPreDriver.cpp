@@ -2,6 +2,8 @@
 #include <OpenHome/Media/PreDriver.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/ProcessorPcmUtils.h>
 
 #include <string.h>
 #include <vector>
@@ -12,21 +14,6 @@ using namespace OpenHome::Media;
 
 namespace OpenHome {
 namespace Media {
-
-class InfoAggregator : public Av::IInfoAggregator, private IWriter
-{
-public:
-    InfoAggregator();
-    void PrintStats();
-private: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
-private: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
-private:
-    std::vector<Av::IInfoProvider*> iInfoProviders;
-};
 
 class SuitePreDriver : public Suite, private IPipelineElementUpstream, private IMsgProcessor
 {
@@ -68,7 +55,7 @@ private:
     MsgAudioPcm* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
     PreDriver* iPreDriver;
     EMsgType iNextGeneratedMsg;
     EMsgType iLastMsg;
@@ -81,39 +68,6 @@ private:
 
 } // namespace Media
 } // namespace OpenHome
-
-
-// InfoAggregator
-
-InfoAggregator::InfoAggregator()
-{
-}
-
-void InfoAggregator::PrintStats()
-{
-    for (size_t i=0; i<iInfoProviders.size(); i++) {
-        iInfoProviders[i]->QueryInfo(AllocatorBase::kQueryMemory, *this);
-    }
-}
-
-void InfoAggregator::Register(Av::IInfoProvider& aProvider, std::vector<Brn>& /*aSupportedQueries*/)
-{
-    iInfoProviders.push_back(&aProvider);
-}
-
-void InfoAggregator::Write(TByte aValue)
-{
-    Print("%c", aValue);
-}
-
-void InfoAggregator::Write(const Brx& aBuffer)
-{
-    Print(aBuffer);
-}
-
-void InfoAggregator::WriteFlush()
-{
-}
 
 
 // SuitePreDriver

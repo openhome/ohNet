@@ -4,6 +4,8 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/RampArray.h>
+#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/ProcessorPcmUtils.h>
 
 #include <string.h>
 #include <vector>
@@ -14,21 +16,6 @@ using namespace OpenHome::Media;
 
 namespace OpenHome {
 namespace Media {
-
-class InfoAggregator : public Av::IInfoAggregator, private IWriter
-{
-public:
-    InfoAggregator();
-    void PrintStats();
-private: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
-private: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
-private:
-    std::vector<Av::IInfoProvider*> iInfoProviders;
-};
 
 class Supplier : public Thread, public ISupplier
 {
@@ -98,12 +85,13 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
     PipelineManager* iPipelineManager;
     IPipelineElementUpstream* iPipelineEnd;
     TUint iSampleRate;
     TUint iNumChannels;
+    TUint iBitDepth;
     TUint iJiffies;
     TUint iLastMsgJiffies;
     TBool iLastMsgWasAudio;
@@ -118,39 +106,6 @@ private:
 
 } // namespace Media
 } // namespace OpenHome
-
-
-// InfoAggregator
-
-InfoAggregator::InfoAggregator()
-{
-}
-
-void InfoAggregator::PrintStats()
-{
-    for (size_t i=0; i<iInfoProviders.size(); i++) {
-        iInfoProviders[i]->QueryInfo(AllocatorBase::kQueryMemory, *this);
-    }
-}
-
-void InfoAggregator::Register(Av::IInfoProvider& aProvider, std::vector<Brn>& /*aSupportedQueries*/)
-{
-    iInfoProviders.push_back(&aProvider);
-}
-
-void InfoAggregator::Write(TByte aValue)
-{
-    Print("%c", aValue);
-}
-
-void InfoAggregator::Write(const Brx& aBuffer)
-{
-    Print(aBuffer);
-}
-
-void InfoAggregator::WriteFlush()
-{
-}
 
 
 // Supplier
@@ -221,6 +176,24 @@ MsgAudio* Supplier::CreateAudio()
     (void)memset(encodedAudioData, 0xff, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian, iTrackOffset);
+/*    {
+        TUint jiffies = audio->Jiffies();
+        TUint j = jiffies;
+        TUint bytes = Jiffies::BytesFromJiffies(j, Jiffies::JiffiesPerSample(kSampleRate), kNumChannels, kBitDepth/8);
+        ASSERT(j == jiffies);
+        ASSERT(bytes == kDataBytes);
+        MsgAudioPcm* clone = reinterpret_cast<MsgAudioPcm*>(audio->Clone());
+        ASSERT(clone->Jiffies() == jiffies);
+        MsgPlayable* playable = clone->CreatePlayable();
+        ASSERT(playable->Bytes() == bytes);
+        ProcessorPcmBufPacked pcmProcessor;
+        playable->Read(pcmProcessor);
+        Brn buf(pcmProcessor.Buf());
+        ASSERT(buf.Bytes() == bytes);
+        TUint finalJiffies = Jiffies::JiffiesPerSample(kSampleRate) * (buf.Bytes() / ((kBitDepth/8) * kNumChannels));
+        ASSERT(finalJiffies == jiffies);
+        playable->RemoveRef();
+    }*/
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -262,6 +235,7 @@ SuitePipeline::SuitePipeline()
     : Suite("Pipeline integration tests")
     , iSampleRate(0)
     , iNumChannels(0)
+    , iBitDepth(0)
     , iJiffies(0)
     , iLastMsgJiffies(0)
     , iFirstSubsample(0)
@@ -385,8 +359,8 @@ void SuitePipeline::TestJiffies(TUint aTarget)
 
 void SuitePipeline::PullUntilEnd(EState aState)
 {
-    static const TUint kSubsampleRampedUpFull = 0xffffff00;
-    static const TUint kSubsampleRampUpFinal = (TUint)(((TUint64)kSubsampleRampedUpFull * kRampArray[0]) >> 31) & ~0xff;
+    static const TUint kSubsampleRampedUpFull = 0xffffff;
+    static const TUint kSubsampleRampUpFinal = (TUint)(((TUint64)kSubsampleRampedUpFull * kRampArray[0]) >> 31) & kSubsampleRampedUpFull;
     static const TUint kSubsampleRampedDownFull = 0;
     TBool ramping = (aState == ERampDown || aState == ERampUp);
     TBool done = false;
@@ -430,6 +404,9 @@ void SuitePipeline::PullUntilEnd(EState aState)
             break;
         case ERampUp:
             TEST(iFirstSubsample < iLastSubsample);
+            if (iFirstSubsample >= iLastSubsample) {
+                Print("Ramping up - first=%08x, last=%08x\n", iFirstSubsample, iLastSubsample);
+            }
             if (iLastSubsample >= kSubsampleRampUpFinal && iLastSubsample <= kSubsampleRampedUpFull) {
                 done = true;
             }
@@ -529,15 +506,34 @@ Msg* SuitePipeline::ProcessMsg(MsgSilence* /*aMsg*/)
 Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
 {
     iLastMsgWasAudio = true;
-    aMsg->CopyTo(iBuf);
-    Brn buf(iBuf, aMsg->Bytes());
+    ProcessorPcmBufPacked pcmProcessor;
+    aMsg->Read(pcmProcessor);
+    Brn buf(pcmProcessor.Buf());
+    ASSERT(buf.Bytes() == aMsg->Bytes());
     aMsg->RemoveRef();
-    const TUint* ptr = (const TUint*)buf.Ptr();
-    iFirstSubsample = ptr[0];
-    const TUint numSubsamples = buf.Bytes() / sizeof(TUint);
-    iLastSubsample = ptr[numSubsamples - 1];
-    ASSERT(numSubsamples % iNumChannels == 0);
-    iLastMsgJiffies = Jiffies::JiffiesPerSample(iSampleRate) * (numSubsamples / iNumChannels);
+    const TByte* ptr = buf.Ptr();
+    const TUint bytes = buf.Bytes();
+    switch (iBitDepth)
+    {
+    case 8:
+        iFirstSubsample = ptr[0];
+        iLastSubsample = ptr[bytes-1];
+        break;
+    case 16:
+        iFirstSubsample = (ptr[0]<<8) | ptr[1];
+        iLastSubsample = (ptr[bytes-2]<<8) | ptr[bytes-1];
+        break;
+    case 24:
+        iFirstSubsample = (ptr[0]<<16) | (ptr[1]<<8) | ptr[2];
+        iLastSubsample = (ptr[bytes-3]<<16) | (ptr[bytes-2]<<8) | ptr[bytes-1];
+        break;
+    default:
+        ASSERTS();
+    }
+    const TUint bytesPerSample = (iBitDepth/8) * iNumChannels;
+    ASSERT(bytes % bytesPerSample == 0);
+    const TUint numSamples = bytes / bytesPerSample;
+    iLastMsgJiffies = Jiffies::JiffiesPerSample(iSampleRate) * numSamples;
     iJiffies += iLastMsgJiffies;
     return NULL;
 }
@@ -547,6 +543,7 @@ Msg* SuitePipeline::ProcessMsg(MsgAudioFormat* aMsg)
     iLastMsgWasAudio = false;
     iSampleRate = aMsg->Format().SampleRate();
     iNumChannels = aMsg->Format().NumChannels();
+    iBitDepth = aMsg->Format().BitDepth();
     aMsg->RemoveRef();
     return NULL;
 }

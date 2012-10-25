@@ -1,7 +1,8 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Media/RampArray.h>
+#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/ProcessorPcmUtils.h>
 
 #include <string.h>
 #include <vector>
@@ -13,21 +14,6 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class InfoAggregator : public Av::IInfoAggregator, private IWriter
-{
-public:
-    InfoAggregator();
-    void PrintStats();
-private: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
-private: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
-private:
-    std::vector<Av::IInfoProvider*> iInfoProviders;
-};
-
 class SuiteAllocator : public Suite
 {
 public:
@@ -35,7 +21,7 @@ public:
     void Test();
 private:
     static const TUint kNumTestCells = 10;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
 };
 
 class TestCell : public Allocated
@@ -58,7 +44,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
 };
 
 class SuiteMsgPlayable : public Suite
@@ -72,7 +58,7 @@ private:
     void ValidateSilence(MsgPlayable* aMsg);
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
     TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
@@ -85,7 +71,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
     TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
@@ -98,7 +84,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
 };
 
 class SuiteAudioFormat : public Suite
@@ -110,7 +96,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
 };
 
 class SuiteMsgProcessor : public Suite
@@ -121,7 +107,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
 };
 
 class ProcessorMsgType : public IMsgProcessor
@@ -165,7 +151,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
 };
 
 class SuiteMsgQueueJiffies : public Suite
@@ -177,7 +163,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
 };
 
 class TestMsgQueueJiffies : public MsgQueueJiffies
@@ -228,39 +214,6 @@ private:
 
 } // namespace Media
 } // namespace OpenHome
-
-
-// InfoAggregator
-
-InfoAggregator::InfoAggregator()
-{
-}
-
-void InfoAggregator::PrintStats()
-{
-    for (size_t i=0; i<iInfoProviders.size(); i++) {
-        iInfoProviders[i]->QueryInfo(AllocatorBase::kQueryMemory, *this);
-    }
-}
-
-void InfoAggregator::Register(Av::IInfoProvider& aProvider, std::vector<Brn>& /*aSupportedQueries*/)
-{
-    iInfoProviders.push_back(&aProvider);
-}
-
-void InfoAggregator::Write(TByte aValue)
-{
-    Print("%c", aValue);
-}
-
-void InfoAggregator::Write(const Brx& aBuffer)
-{
-    Print(aBuffer);
-}
-
-void InfoAggregator::WriteFlush()
-{
-}
 
 
 // TestCell
@@ -500,14 +453,14 @@ void SuiteMsgPlayable::Test()
     // Create pcm msg.  Read/validate its content
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     playable = audioPcm->CreatePlayable();
-    TEST(playable->Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
-    playable->CopyTo(iBuf);
-    Brn buf(iBuf, playable->Bytes());
+    TEST(playable->Bytes() == data.Bytes());
+    ProcessorPcmBufPacked pcmProcessor;
+    playable->Read(pcmProcessor);
     playable->RemoveRef();
-    const TUint* ptr = (const TUint*)buf.Ptr();
+    const TByte* ptr = pcmProcessor.Ptr();
     TUint subsampleVal = 0xff;
-    for (TUint i=0; i<buf.Bytes(); i+=4) {
-        TEST(*ptr == subsampleVal << 24);
+    for (TUint i=0; i<data.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
         ptr++;
         subsampleVal--;
     }
@@ -518,22 +471,22 @@ void SuiteMsgPlayable::Test()
     playable = audioPcm->CreatePlayable();
     MsgPlayable* remainingPlayable = remainingPcm->CreatePlayable();
     TEST(remainingPlayable->Bytes() == 3 * playable->Bytes());
-    playable->CopyTo(iBuf);
-    buf.Set(iBuf, playable->Bytes());
+    playable->Read(pcmProcessor);
     playable->RemoveRef();
     subsampleVal = 0xff;
-    ptr = (const TUint*)buf.Ptr();
-    for (TUint i=0; i<buf.Bytes(); i+=4) {
-        TEST(*ptr == subsampleVal << 24);
+    Brn buf(pcmProcessor.Buf());
+    ptr = buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
         ptr++;
         subsampleVal--;
     }
-    remainingPlayable->CopyTo(iBuf);
-    buf.Set(iBuf, remainingPlayable->Bytes());
+    remainingPlayable->Read(pcmProcessor);
     remainingPlayable->RemoveRef();
-    ptr = (const TUint*)buf.Ptr();
-    for (TUint i=0; i<buf.Bytes(); i+=4) {
-        TEST(*ptr == subsampleVal << 24);
+    buf.Set(pcmProcessor.Buf());
+    ptr = buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
         ptr++;
         subsampleVal--;
     }
@@ -543,22 +496,22 @@ void SuiteMsgPlayable::Test()
     playable = audioPcm->CreatePlayable();
     remainingPlayable = playable->Split(playable->Bytes()/4);
     TEST(remainingPlayable->Bytes() == 3 * playable->Bytes());
-    playable->CopyTo(iBuf);
-    buf.Set(iBuf, playable->Bytes());
+    playable->Read(pcmProcessor);
     playable->RemoveRef();
+    buf.Set(pcmProcessor.Buf());
+    ptr = buf.Ptr();
     subsampleVal = 0xff;
-    ptr = (const TUint*)buf.Ptr();
-    for (TUint i=0; i<buf.Bytes(); i+=4) {
-        TEST(*ptr == subsampleVal << 24);
+    for (TUint i=0; i<buf.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
         ptr++;
         subsampleVal--;
     }
-    remainingPlayable->CopyTo(iBuf);
-    buf.Set(iBuf, remainingPlayable->Bytes());
+    remainingPlayable->Read(pcmProcessor);
     remainingPlayable->RemoveRef();
-    ptr = (const TUint*)buf.Ptr();
-    for (TUint i=0; i<buf.Bytes(); i+=4) {
-        TEST(*ptr == subsampleVal << 24);
+    buf.Set(pcmProcessor.Buf());
+    ptr = buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
         ptr++;
         subsampleVal--;
     }
@@ -568,22 +521,22 @@ void SuiteMsgPlayable::Test()
     remainingPcm = (MsgAudioPcm*)audioPcm->Split((audioPcm->Jiffies()/4) - 1);
     playable = audioPcm->CreatePlayable();
     remainingPlayable = remainingPcm->CreatePlayable();
-    playable->CopyTo(iBuf);
-    buf.Set(iBuf, playable->Bytes());
+    playable->Read(pcmProcessor);
     playable->RemoveRef();
+    buf.Set(pcmProcessor.Buf());
+    ptr = buf.Ptr();
     subsampleVal = 0xff;
-    ptr = (const TUint*)buf.Ptr();
-    for (TUint i=0; i<buf.Bytes(); i+=4) {
-        TEST(*ptr == subsampleVal << 24);
+    for (TUint i=0; i<buf.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
         ptr++;
         subsampleVal--;
     }
-    remainingPlayable->CopyTo(iBuf);
-    buf.Set(iBuf, remainingPlayable->Bytes());
+    remainingPlayable->Read(pcmProcessor);
     remainingPlayable->RemoveRef();
-    ptr = (const TUint*)buf.Ptr();
-    for (TUint i=0; i<buf.Bytes(); i+=4) {
-        TEST(*ptr == subsampleVal << 24);
+    buf.Set(pcmProcessor.Buf());
+    ptr = buf.Ptr();
+    for (TUint i=0; i<buf.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
         ptr++;
         subsampleVal--;
     }
@@ -593,14 +546,14 @@ void SuiteMsgPlayable::Test()
     remainingPcm = (MsgAudioPcm*)audioPcm->Split(1);
     playable = audioPcm->CreatePlayable();
     remainingPlayable = remainingPcm->CreatePlayable();
-    playable->CopyTo(iBuf);
-    buf.Set(iBuf, playable->Bytes());
+    playable->Read(pcmProcessor);
     playable->RemoveRef();
+    buf.Set(pcmProcessor.Buf());
     TEST(buf.Bytes() == 0);
-    remainingPlayable->CopyTo(iBuf);
-    buf.Set(iBuf, remainingPlayable->Bytes());
+    remainingPlayable->Read(pcmProcessor);
     remainingPlayable->RemoveRef();
-    TEST(buf.Bytes() == data.Bytes() * DecodedAudio::kBytesPerSubsample);
+    buf.Set(pcmProcessor.Buf());
+    TEST(buf.Bytes() == data.Bytes());
 
     // Test splitting at the end of a message returns NULL
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
@@ -669,10 +622,12 @@ void SuiteMsgPlayable::Test()
 void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 {
     TUint bytes = aMsg->Bytes();
-    aMsg->CopyTo(iBuf);
+    ProcessorPcmBufPacked pcmProcessor;
+    aMsg->Read(pcmProcessor);
     aMsg->RemoveRef();
+    const TByte* ptr = pcmProcessor.Ptr();
     for (TUint i=0; i<bytes; i++) {
-        TEST(iBuf[i] == 0);
+        TEST(ptr[i] == 0);
     }
 }
 
@@ -745,87 +700,118 @@ void SuiteRamp::Test()
     TEST(ramp.Direction() == Ramp::EUp);
 
     // Apply ramp [Max...Min].  Check start/end values and that subsequent values never rise
-    const TUint kNumChannels = 2;
-    const TUint kAudioDataSize = 800;
-    TUint audioData[kAudioDataSize];
-    for (TUint i=0; i<kAudioDataSize; i++) {
-        audioData[i] = 0xffffff00;
-    }
-    Bws<kAudioDataSize * sizeof(TUint)> dummyAudio((const TByte*)&audioData[0], kAudioDataSize * sizeof(TUint));
+//    const TUint kNumChannels = 2;
+    const TUint kAudioDataSize = 804;
+    TByte audioData[kAudioDataSize];
+    (void)memset(audioData, 0x7f, kAudioDataSize);
+    Brn audioBuf(audioData, kAudioDataSize);
 
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize*4, kAudioDataSize*4, Ramp::EDown, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
-    Bwh* rampBuf = new Bwh(dummyAudio);
-    ramp.Apply(*rampBuf, kNumChannels);
-    TUint prevSampleVal = 0xffffff00, sampleVal;
-    const TUint* ptr = (const TUint*)rampBuf->Ptr();
-    TUint numSubsamples = rampBuf->Bytes() / sizeof(TUint);
-    TEST(0xffffff00 - ptr[0] < 0x200); // test that start of ramp is close to initial value
-    TEST(ptr[numSubsamples-1] == 0);  // test that end of ramp is close to zero
-    for (TUint i=0; i<numSubsamples; i+=kNumChannels) {
-        sampleVal = ptr[i];
-        TEST(sampleVal == ptr[i+1]);
+    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
+    RampApplicator applicator(ramp);
+    TUint prevSampleVal = 0x7f, sampleVal;
+    TByte sample[DecodedAudio::kMaxNumChannels * 3];
+    TUint numSamples = applicator.Start(audioBuf, 8, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = sample[0];
+        if (i==0) {
+            TEST(sampleVal >= 0x7d); // test that start of ramp is close to initial value
+        }
+        TEST(sampleVal == sample[1]);
         TEST(prevSampleVal >= sampleVal);
         prevSampleVal = sampleVal;
     }
-    delete rampBuf;
+    TEST(sampleVal == 0);
+
+    // Repeat the above test, but for 16-bit subsamples
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
+    prevSampleVal = 0x7f7f;
+    numSamples = applicator.Start(audioBuf, 16, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = (sample[0]<<8) | sample[1];
+        TEST(sampleVal == (TUint)(sample[2]<<8 | sample[3]));
+        TEST(prevSampleVal >= sampleVal);
+        prevSampleVal = sampleVal;
+    }
+
+    // Repeat the above test, but for 24-bit subsamples
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
+    prevSampleVal = 0x7f7f7f;
+    numSamples = applicator.Start(audioBuf, 24, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = (sample[0]<<16) | (sample[1]<<8) | sample[2];
+        TEST(sampleVal == (TUint)((sample[3]<<16) | (sample[4]<<8) | sample[5]));
+        TEST(prevSampleVal >= sampleVal);
+        prevSampleVal = sampleVal;
+    }
 
     // Apply ramp [Min...Max].  Check start/end values and that subsequent values never fall
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMin, kAudioDataSize*4, kAudioDataSize*4, Ramp::EUp, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
-    rampBuf = new Bwh(dummyAudio);
-    ramp.Apply(*rampBuf, kNumChannels);
+    TEST(!ramp.Set(Ramp::kRampMin, kAudioDataSize, kAudioDataSize, Ramp::EUp, split, splitPos));
     prevSampleVal = 0;
-    numSubsamples = rampBuf->Bytes() / sizeof(TUint);
-    ptr = (const TUint*)rampBuf->Ptr();
-    TEST(ptr[0] == 0);  // test that start of ramp is close to zero
-    TEST(0xffffff00 - ptr[numSubsamples-1] < 0x200); // test that end of ramp is close to initial value
-    for (TUint i=0; i<numSubsamples; i+=kNumChannels) {
-        sampleVal = ptr[i];
-        TEST(sampleVal == ptr[i+1]);
+    numSamples = applicator.Start(audioBuf, 8, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = sample[0];
+        if (i==0) {
+            TEST(sampleVal <= 0x02); // test that start of ramp is close to zero
+        }
+        TEST(sampleVal == sample[1]);
         TEST(prevSampleVal <= sampleVal);
         prevSampleVal = sampleVal;
     }
-    delete rampBuf;
+    TEST(sampleVal >= 0x7d); // test that end of ramp is close to max
 
     // Apply ramp [Max...50%].  Check start/end values
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize*2, kAudioDataSize*4, Ramp::EDown, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
-    rampBuf = new Bwh(dummyAudio);
-    ramp.Apply(*rampBuf, kNumChannels);
+    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize*2, Ramp::EDown, split, splitPos));
     prevSampleVal = 0;
-    numSubsamples = rampBuf->Bytes() / sizeof(TUint);
-    ptr = (const TUint*)rampBuf->Ptr();
-    TEST(0xffffff00 - ptr[0] < 0x200); // test that start of ramp is close to initial value
-    TUint endValGuess = (((TUint64)0xffffff00 * kRampArray[256])>>31);
-    TEST(endValGuess - ptr[numSubsamples-1] < 0x100);  // test that end of ramp is close to zero
-    delete rampBuf;
+    numSamples = applicator.Start(audioBuf, 8, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = sample[0];
+        if (i==0) {
+            TEST(sampleVal >= 0x7d); // test that start of ramp is close to max
+        }
+    }
+    TUint endValGuess = (((TUint64)0x7f * kRampArray[256])>>31);
+    TEST(endValGuess - sampleVal <= 0x02);
 
     // Apply ramp [Min...50%].  Check start/end values
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMin, kAudioDataSize*2, kAudioDataSize*4, Ramp::EUp, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
-    rampBuf = new Bwh(dummyAudio);
-    ramp.Apply(*rampBuf, kNumChannels);
+    TEST(!ramp.Set(Ramp::kRampMin, kAudioDataSize, kAudioDataSize*2, Ramp::EUp, split, splitPos));
     prevSampleVal = 0;
-    numSubsamples = rampBuf->Bytes() / sizeof(TUint);
-    ptr = (const TUint*)rampBuf->Ptr();
-    TEST(ptr[0] == 0);
-    TEST(endValGuess - ptr[numSubsamples-1] < 0x100);
-    delete rampBuf;
+    numSamples = applicator.Start(audioBuf, 8, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = sample[0];
+        if (i==0) {
+            TEST(sampleVal <= 0x02); // test that start of ramp is close to zero
+        }
+    }
+    endValGuess = (((TUint64)0x7f * kRampArray[256])>>31);
+    TEST(endValGuess - sampleVal <= 0x02);
 
     // Apply ramp [50%...25%].  Check start/end values
     ramp.Reset();
     TEST(!ramp.Set(Ramp::kRampMax / 2, kAudioDataSize, kAudioDataSize*4, Ramp::EDown, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
-    rampBuf = new Bwh(dummyAudio);
-    ramp.Apply(*rampBuf, kNumChannels);
     prevSampleVal = 0;
-    numSubsamples = rampBuf->Bytes() / sizeof(TUint);
-    ptr = (const TUint*)rampBuf->Ptr();
-    TUint startValGuess = (((TUint64)0xffffff00 * kRampArray[256])>>31);
-    endValGuess = (((TUint64)0xffffff00 * kRampArray[384])>>31);
-    TEST(startValGuess - ptr[0] < 0x100);
-    TEST(endValGuess - ptr[numSubsamples-1] < 0x100);
-    delete rampBuf;
+    numSamples = applicator.Start(audioBuf, 8, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = sample[0];
+        if (i==0) {
+            TUint startValGuess = (((TUint64)0x7f * kRampArray[256])>>31);
+            TEST(startValGuess - sampleVal < 0x02);
+        }
+    }
+    endValGuess = (((TUint64)0x7f * kRampArray[384])>>31);
+    TEST(endValGuess - sampleVal <= 0x02);
 
     // Create [50%...Min] ramp.  Add [Min...50%] ramp.  Check this splits into [Min...25%], [25%...Min]
     ramp.Reset();
@@ -868,20 +854,21 @@ void SuiteRamp::Test()
     TEST(remaining == NULL);
     MsgPlayable* playable = silence->CreatePlayable(44100, 8, 2);
     TEST(playable != NULL);
-    playable->CopyTo(iBuf);
-    Brn buf(iBuf, playable->Bytes());
-    playable->RemoveRef();
-    ptr = (const TUint*)buf.Ptr();
-    for (TUint i=0; i<buf.Bytes(); i+=4) {
+    ProcessorPcmBufPacked pcmProcessor;
+    playable->Read(pcmProcessor);
+    const TByte* ptr = pcmProcessor.Ptr();
+    for (TUint i=0; i<playable->Bytes(); i++) {
         TEST(*ptr == 0);
         ptr++;
     }
+    playable->RemoveRef();
 
     // Create MsgAudioPcm.  Set [50%...Min] ramp.  Add [Min...50%] ramp.  Convert to playable and check output
     const TUint kEncodedAudioSize = 768;
     TByte encodedAudioData[kEncodedAudioSize];
-    (void)memset(encodedAudioData, 0xff, kEncodedAudioSize);
+    (void)memset(encodedAudioData, 0x7f, kEncodedAudioSize);
     Brn encodedAudio(encodedAudioData, kEncodedAudioSize);
+    const TUint kNumChannels = 2;
     MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudio, kNumChannels, 44100, 16, EMediaDataLittleEndian, 0);
     jiffies = audioPcm->Jiffies();
     TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMax / 2, jiffies*2, Ramp::EDown, remaining));
@@ -890,33 +877,31 @@ void SuiteRamp::Test()
     TEST(audioPcm->Jiffies() == jiffies / 2);
     TEST(audioPcm->Jiffies() == remaining->Jiffies());
     playable = audioPcm->CreatePlayable();
-    playable->CopyTo(iBuf);
-    buf.Set(iBuf, playable->Bytes());
+    playable->Read(pcmProcessor);
     playable->RemoveRef();
-    ptr = (const TUint*)buf.Ptr();
-    numSubsamples = buf.Bytes() / DecodedAudio::kBytesPerSubsample;
+    ptr = pcmProcessor.Ptr();
+    TUint bytes = pcmProcessor.Buf().Bytes();
     prevSampleVal = 0;
-    TEST(ptr[0] == 0);
-    for (TUint i=0; i<numSubsamples; i+=kNumChannels) {
-        sampleVal = ptr[i];
-        TEST(sampleVal == ptr[i+1]);
+    TEST(((ptr[0]<<8) | ptr[1]) == 0);
+    for (TUint i=0; i<bytes; i+=4) {
+        sampleVal = (TUint)((ptr[i]<<8) | ptr[i+1]);
+        TEST(sampleVal == (TUint)((ptr[i+2]<<8) | ptr[i+3]));
         if (i > 0) {
-            TEST(prevSampleVal < sampleVal);
+            TEST(prevSampleVal <= sampleVal);
         }
         prevSampleVal = sampleVal;
     }
     playable = ((MsgAudioPcm*)remaining)->CreatePlayable();
-    playable->CopyTo(iBuf);
-    buf.Set(iBuf, playable->Bytes());
+    playable->Read(pcmProcessor);
     playable->RemoveRef();
-    ptr = (const TUint*)buf.Ptr();
-    numSubsamples = buf.Bytes() / DecodedAudio::kBytesPerSubsample;
-    TEST(ptr[numSubsamples-1] == 0);
-    for (TUint i=0; i<numSubsamples; i+=kNumChannels) {
-        sampleVal = ptr[i];
-        TEST(sampleVal == ptr[i+1]);
+    ptr = pcmProcessor.Ptr();
+    bytes = pcmProcessor.Buf().Bytes();
+    TEST(((ptr[bytes-2]<<8) | ptr[bytes-1]) == 0);
+    for (TUint i=0; i<bytes; i+=4) {
+        sampleVal = (TUint)((ptr[i]<<8) | ptr[i+1]);
+        TEST(sampleVal == (TUint)((ptr[i+2]<<8) | ptr[i+3]));
         if (i > 0) {
-            TEST(prevSampleVal > sampleVal);
+            TEST(prevSampleVal >= sampleVal);
         }
         prevSampleVal = sampleVal;
     }

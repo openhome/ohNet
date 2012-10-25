@@ -246,27 +246,26 @@ DecodedAudio::DecodedAudio(AllocatorBase& aAllocator)
 {
 }
 
-const TUint* DecodedAudio::PtrOffsetBytes(TUint aBytes) const
+const TByte* DecodedAudio::PtrOffsetBytes(TUint aBytes) const
 {
-    ASSERT(aBytes % (kBytesPerSubsample * iChannels) == 0);
-    TUint index = aBytes/4;
-    return &iSubsamples[index];
+    ASSERT(aBytes % ((iBitDepth/8) * iChannels) == 0);
+    return &iData[aBytes];
 }
 
 TUint DecodedAudio::Bytes() const
 {
-    return iSubsampleCount * 4;
+    return iSubsampleCount * iByteDepth;
 }
 
 TUint DecodedAudio::BytesFromJiffies(TUint& aJiffies) const
 {
-    return Jiffies::BytesFromJiffies(aJiffies, iJiffiesPerSample, iChannels, kBytesPerSubsample);
+    return Jiffies::BytesFromJiffies(aJiffies, iJiffiesPerSample, iChannels, iByteDepth);
 }
 
 TUint DecodedAudio::JiffiesFromBytes(TUint aBytes) const
 {
-    ASSERT(aBytes % kBytesPerSubsample == 0);
-    const TUint numSubsamples = aBytes / kBytesPerSubsample;
+    ASSERT(aBytes % iByteDepth == 0);
+    const TUint numSubsamples = aBytes / iByteDepth;
     ASSERT(numSubsamples % iChannels == 0);
     const TUint jiffies = (numSubsamples / iChannels) * iJiffiesPerSample;
     return jiffies;
@@ -287,149 +286,63 @@ void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRat
     iChannels = aChannels;
     iSampleRate = aSampleRate;
     iBitDepth = aBitDepth;
+    iByteDepth = iBitDepth/8;
     iJiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
 
     ASSERT((aBitDepth & 7) == 0);
-    TUint bytesPerSubsample = aBitDepth/8;
-    ASSERT(aData.Bytes() % bytesPerSubsample == 0);
-    iSubsampleCount = aData.Bytes() / bytesPerSubsample;
-    ASSERT(iSubsampleCount <= kMaxSubsamples);
-    if (aEndian == EMediaDataLittleEndian) {
-        UnpackLittleEndian(iSubsamples, aData.Ptr(), iBitDepth, iSubsampleCount);
+    ASSERT(aData.Bytes() % iByteDepth == 0);
+    iSubsampleCount = aData.Bytes() / iByteDepth;
+    ASSERT(aData.Bytes() <= kMaxBytes);
+    if (aEndian == EMediaDataBigEndian || aBitDepth == 8) {
+        (void)memcpy(iData, aData.Ptr(), aData.Bytes());
     }
-    else { // EMediaDataBigEndian
-        UnpackBigEndian(iSubsamples, aData.Ptr(), iBitDepth, iSubsampleCount);
+    else if (aBitDepth == 16) {
+        CopyToBigEndian16(aData);
+    }
+    else if (aBitDepth == 24) {
+        CopyToBigEndian24(aData);
+    }
+    else { // unsupported bit depth
+        ASSERTS();
+    }
+    /*for (TUint i=0; i<Bytes(); i++) {
+        if (iData[i] == 0xcd) {
+            _asm int 3;
+        }
+    }*/
+}
+
+void DecodedAudio::CopyToBigEndian16(const Brx& aData)
+{
+    const TByte* src = aData.Ptr();
+    for (TUint i=0; i<aData.Bytes(); i+=2) {
+        iData[i]   = src[i+1];
+        iData[i+1] = src[i];
     }
 }
 
-
-#ifdef DEFINE_LITTLE_ENDIAN
-
-void DecodedAudio::UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
-{ // static
-    TUint i = 0;
-    switch (aBitDepth)
-    {
-        case 8:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (*aSrc++ << 24);
-            }
-            break;
-        case 16:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (Arch::BigEndian2(*((TUint16*)aSrc)) << 16);
-                aSrc += 2;
-            }
-            break;
-        case 24:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = ((aSrc[2] | (aSrc[1]<<8) | (aSrc[0]<<16)) << 8);
-                aSrc += 3;
-            }
-            break;
-        default:
-            ASSERTS();
+void DecodedAudio::CopyToBigEndian24(const Brx& aData)
+{
+    const TByte* src = aData.Ptr();
+    for (TUint i=0; i<aData.Bytes(); i+=3) {
+        iData[i]   = src[i+2];
+        iData[i+1] = src[i+1];
+        iData[i+2] = src[i];
     }
 }
-
-void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
-{ // static
-    TUint i = 0;
-    switch (aBitDepth)
-    {
-        case 8:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (*aSrc++ << 24);
-            }
-            break;
-        case 16:
-            for (i=0; i < aNumSubsamples; i++) {
-                TUint16 src = *(TUint16*)aSrc;
-                TUint32 dest = (src<<24) | ((src&0xff00)<<8);
-                *aDst++ = dest;
-                aSrc += 2;
-            }
-            break;
-        case 24:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (((aSrc[2]<<16) | (aSrc[1]<<8) | aSrc[0]) << 8);
-                aSrc += 3;
-            }
-            break;
-        default:
-            ASSERTS();
-    }
-}
-
-#else /* ! DEFINE_LITTLE_ENDIAN */
-
-void DecodedAudio::UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
-{ // static
-    TUint i = 0;
-    switch (aBitDepth)
-    {
-        case 8:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (*aSrc++ << 24);
-            }
-            break;
-        case 16:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (Arch::BigEndian2(*((TUint16*)aSrc)) << 16);
-                aSrc += 2;
-            }
-            break;
-        case 24:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = ((aSrc[2] | (aSrc[1]<<8) | (aSrc[0]<<16)) << 8);
-                aSrc += 3;
-            }
-            break;
-        default:
-            ASSERTS();
-    }
-}
-
-void DecodedAudio::UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples)
-{ // static
-    TUint i = 0;
-    switch (aBitDepth)
-    {
-        case 8:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (*aSrc++ << 24);
-            }
-            break;
-        case 16:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (Arch::LittleEndian2(*((TUint16*)aSrc)) << 16);
-                aSrc += 2;
-            }
-            break;
-        case 24:
-            for (i=0; i < aNumSubsamples; i++) {
-                *aDst++ = (((aSrc[2]<<16) | (aSrc[1]<<8) | aSrc[0]) << 8);
-                aSrc += 3;
-            }
-            break;
-        default:
-            ASSERTS();
-    }
-}
-
-#endif /* DEFINE_LITTLE_ENDIAN */
 
 void DecodedAudio::Clear()
 {
 #ifdef DEFINE_DEBUG
     // fill in all members with recognisable 'bad' values to make ref counting bugs more obvious
-    static const TUint deadByte = 0xde;
+    static const TByte deadByte = 0xde;
     static const TUint deadUint = 0xdead;
-    memset(&iSubsamples[0], deadByte, kMaxSubsamples * sizeof(iSubsamples[0]));
+    memset(&iData[0], deadByte, sizeof(iData));
     iSubsampleCount = deadUint;
     iChannels = deadUint;
     iSampleRate = deadUint;
     iBitDepth = deadUint;
+    iByteDepth = deadUint;
     iJiffiesPerSample = deadUint;
 #endif // DEFINE_DEBUG
 }
@@ -623,29 +536,6 @@ Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
     return remaining;
 }
 
-void Ramp::Apply(Bwx& aData, TUint aChannels)
-{
-    ASSERT_DEBUG(aData.Bytes() % (DecodedAudio::kBytesPerSubsample * aChannels) == 0);
-    TUint* ptr = (TUint*)aData.Ptr(); // looks dodgy but we can safely assume ptr is writable and on a word boundary
-    const TUint numSamples = aData.Bytes() / (DecodedAudio::kBytesPerSubsample * aChannels);
-    const TInt totalRamp = iStart - iEnd;
-    const TUint fullRampSpan = kRampMax - kRampMin;
-    for (TUint i=0; i<numSamples; i++) {
-        const TUint ramp = (numSamples==1? iStart : (TUint)(iStart - ((i * (TInt64)totalRamp)/(numSamples-1))));
-        //Log::Print(" %08x ", ramp);
-        TUint rampIndex = (fullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
-        for (TUint j=0; j<aChannels; j++) { // apply ramp to each subsample
-            TUint subSample = *ptr;
-            //Log::Print(" %03u ", rampIndex);
-            TUint rampedSubsample = (rampIndex==512? 0 : ((TUint64)subSample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
-            rampedSubsample &= ~0xff; // clear bits which never hold audio data
-            //Log::Print("Original=%08x, ramped=%08x, rampIndex=%u\n", *ptr, rampedSubsample, rampIndex);
-            *ptr = rampedSubsample;
-            ptr++;
-        }
-    }
-}
-
 
 // RampApplicator
 
@@ -674,67 +564,48 @@ void RampApplicator::GetNextSample(TByte* aDest)
     const TUint ramp = (iNumSamples==1? iRamp.Start() : (TUint)(iRamp.Start() - ((iLoopCount * (TInt64)iTotalRamp)/(iNumSamples-1))));
     //Log::Print(" %08x ", ramp);
     const TUint rampIndex = (iFullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
+    TInt subsample = 0;
+    switch (iBitDepth)
+    {
+    case 8:
+        subsample = *iPtr;
+        iPtr++;
+        break;
+    case 16:
+        subsample = *iPtr << 8;
+        iPtr++;
+        subsample += *iPtr;
+        iPtr++;
+        break;
+    case 24:
+        subsample = *iPtr << 16;
+        iPtr++;
+        subsample += *iPtr << 8;
+        iPtr++;
+        subsample += *iPtr;
+        iPtr++;
+        break;
+    default:
+        ASSERTS();
+    }
+    //Log::Print(" %03u ", rampIndex);
+    TInt rampedSubsample = (rampIndex==512? 0 : ((TInt64)subsample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
+    //Log::Print("Original=%08x, ramped=%08x, rampIndex=%u\n", subsample, rampedSubsample, rampIndex);
+
     for (TUint i=0; i<iNumChannels; i++) { // apply ramp to each subsample
-        TInt subsample = 0;
         switch (iBitDepth)
         {
         case 8:
-            subsample = *iPtr;
-            iPtr++;
+            *aDest++ = (TByte)rampedSubsample;
             break;
         case 16:
-            subsample = *iPtr << 16;
-            iPtr++;
-            subsample += *iPtr;
-            iPtr++;
+            *aDest++ = (TByte)(rampedSubsample >> 8);
+            *aDest++ = (TByte)rampedSubsample;
             break;
         case 24:
-            subsample = *iPtr << 24;
-            iPtr++;
-            subsample += *iPtr << 16;
-            iPtr++;
-            subsample += *iPtr;
-            iPtr++;
-            break;
-        default:
-            ASSERTS();
-        }
-        //Log::Print(" %03u ", rampIndex);
-        TInt rampedSubsample = (rampIndex==512? 0 : ((TInt64)subsample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
-        
-        // clear bits which never hold audio data
-        switch (iBitDepth)
-        {
-        case 8:
-            rampedSubsample &= 0xff;
-            break;
-        case 16:
-            rampedSubsample &= 0xffff;
-            break;
-        case 24:
-            rampedSubsample &= 0xffffff;
-            break;
-        default:
-            ASSERTS();
-        }
-        
-        //Log::Print("Original=%08x, ramped=%08x, rampIndex=%u\n", subsample, rampedSubsample, rampIndex);
-        switch (iBitDepth)
-        {
-        case 8:
-            *aDest = (TByte)rampedSubsample;
-            break;
-        case 16:
-            *aDest = (TByte)(rampedSubsample >> 8);
-            aDest++;
-            *aDest = (TByte)rampedSubsample;
-            break;
-        case 24:
-            *aDest = (TByte)(rampedSubsample >> 16);
-            aDest++;
-            *aDest = (TByte)(rampedSubsample >> 8);
-            aDest++;
-            *aDest = (TByte)rampedSubsample;
+            *aDest++ = (TByte)(rampedSubsample >> 16);
+            *aDest++ = (TByte)(rampedSubsample >> 8);
+            *aDest++ = (TByte)rampedSubsample;
             break;
         default:
             ASSERTS();
@@ -888,6 +759,7 @@ MsgAudio* MsgAudioPcm::Clone()
 {
     MsgAudio* clone = MsgAudio::Clone();
     static_cast<MsgAudioPcm*>(clone)->iAudioData = iAudioData;
+    static_cast<MsgAudioPcm*>(clone)->iAllocatorPlayable = iAllocatorPlayable;
     static_cast<MsgAudioPcm*>(clone)->iTrackOffset = iTrackOffset;
     iAudioData->AddRef();
     return clone;
@@ -941,7 +813,7 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUin
     TUint offsetJiffies = iOffset;
     TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
     TUint sizeJiffies = iSize + (iOffset - offsetJiffies);
-    TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, aNumChannels, DecodedAudio::kBytesPerSubsample);
+    TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, aNumChannels, aBitDepth/8);
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
     playable->Initialise(sizeBytes, aBitDepth, aNumChannels, iRamp);
@@ -1103,27 +975,20 @@ MsgPlayable* MsgPlayablePcm::Clone()
     return clone;
 }
 
-void MsgPlayablePcm::CopyTo(void* aDest)
-{
-    (void)memcpy(aDest, iAudioData->PtrOffsetBytes(iOffset), iSize);
-    if (iRamp.IsEnabled()) {
-        // apply ramp after copying to client's buffer as driver and songcast sender branches
-        // of the pipeline will both access the same DecodedAudio but won't always agree
-        // on when to apply ramps.
-        Bwn audioBuf((const TByte*)aDest, iSize, iSize);
-        iRamp.Apply(audioBuf, iAudioData->NumChannels());
-    }
-    if (iNextPlayable != NULL) {
-        iNextPlayable->CopyTo((TByte*)aDest + iSize);
-    }
-}
-
 void MsgPlayablePcm::Read(IPcmProcessor& aProcessor)
 {
     aProcessor.BeginBlock();
     MsgPlayablePcm* playable = this;
     while (playable != NULL) {
-        Brn audioBuf((const TByte*)playable->iAudioData->PtrOffsetBytes(iOffset), iSize); // FIXME - remove cast once we've updated the return type of PtrOffsetBytes
+        Brn audioBuf(playable->iAudioData->PtrOffsetBytes(playable->iOffset), playable->iSize);
+        /*{
+            const TUint testBytes = audioBuf.Bytes();
+            for (TUint i=0; i<testBytes; i++) {
+                if (audioBuf[i] == 0xcd) {
+                    _asm int 3;
+                }
+            }
+        }*/
         const TUint numChannels = playable->iAudioData->NumChannels();
         const TUint bitDepth = playable->iAudioData->BitDepth();
         const TUint byteDepth = bitDepth / 8;
@@ -1175,7 +1040,7 @@ void MsgPlayablePcm::Read(IPcmProcessor& aProcessor)
                 case 1:
                     for (TUint i=0; i<numSamples; i++) {
                         aProcessor.ProcessSample8(ptr, numChannels);
-                        ptr += numChannels;
+                        ptr += sampleLen;
                     }
                     break;
                 case 2:
@@ -1231,38 +1096,37 @@ void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNu
     iNumChannels = aNumChannels;
 }
 
-void MsgPlayableSilence::CopyTo(void* aDest)
-{
-    (void)memset(aDest, 0, iSize);
-    if (iNextPlayable != NULL) {
-        iNextPlayable->CopyTo((TByte*)aDest + iSize);
-    }
-}
-
 void MsgPlayableSilence::Read(IPcmProcessor& aProcessor)
 {
     static const TByte silence[DecodedAudio::kMaxBytes] = { 0 };
     aProcessor.BeginBlock();
     MsgPlayableSilence* playable = this;
     while (playable != NULL) {
-        Brn audioBuf(silence, playable->iSize);
         TBool fragmentProcessed = false;
-        switch (iBitDepth)
-        {
-        case 8:
-            fragmentProcessed = aProcessor.ProcessFragment8(audioBuf, iNumChannels);
-            break;
-        case 16:
-            fragmentProcessed = aProcessor.ProcessFragment16(audioBuf, iNumChannels);
-            break;
-        case 24:
-            fragmentProcessed = aProcessor.ProcessFragment24(audioBuf, iNumChannels);
-            break;
-        default:
-            ASSERTS();
-        }
+        TUint remainingBytes = playable->iSize;
+        do {
+            TUint bytes = (remainingBytes > DecodedAudio::kMaxBytes? DecodedAudio::kMaxBytes : remainingBytes);
+            Brn audioBuf(silence, bytes);
+            switch (iBitDepth)
+            {
+            case 8:
+                fragmentProcessed = aProcessor.ProcessFragment8(audioBuf, iNumChannels);
+                break;
+            case 16:
+                fragmentProcessed = aProcessor.ProcessFragment16(audioBuf, iNumChannels);
+                break;
+            case 24:
+                fragmentProcessed = aProcessor.ProcessFragment24(audioBuf, iNumChannels);
+                break;
+            default:
+                ASSERTS();
+            }
+            if (fragmentProcessed) {
+                remainingBytes -= bytes;
+            }
+        } while (fragmentProcessed && remainingBytes > 0);
         if (!fragmentProcessed) {
-            const TUint numSamples = playable->iSize / ((iBitDepth/8) * iNumChannels);
+            const TUint numSamples = remainingBytes / ((iBitDepth/8) * iNumChannels);
             switch (iBitDepth)
             {
             case 8:

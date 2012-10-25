@@ -295,7 +295,7 @@ void SupplierWav::Run()
 
 MsgAudio* SupplierWav::CreateAudio()
 {
-    TUint bytes = DecodedAudio::kMaxSubsamples * (iBitDepth / 8);
+    TUint bytes = DecodedAudio::kMaxBytes / (iBitDepth/8);
     if (iBytesRemaining < bytes) {
         bytes = iBytesRemaining;
     }

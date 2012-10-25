@@ -7,6 +7,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Private/Timer.h>
+#include <OpenHome/Media/ProcessorPcmUtils.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -17,8 +18,6 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     : Thread("DSCS")
     , iPipeline(aPipeline)
     , iMaxMsgSizeJiffies(aMaxMsgSizeJiffies)
-    , iBuf(NULL)
-    , iBufPacked(NULL)
     , iSampleRate(0)
     , iNumChannels(0)
     , iJiffiesToSend(Jiffies::kJiffiesPerMs)
@@ -42,8 +41,6 @@ DriverSongcastSender::~DriverSongcastSender()
     delete iTimer;
     delete iOhmSender;
     delete iOhmSenderDriver;
-    delete[] iBuf;
-    delete[] iBufPacked;
 }
 
 void DriverSongcastSender::Run()
@@ -78,13 +75,13 @@ void DriverSongcastSender::TimerCallback()
 void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
 {
     iPlayable = NULL;
-    const TUint numSamples = aMsg->Bytes() / (DecodedAudio::kBytesPerSubsample * iNumChannels);
+    const TUint numSamples = aMsg->Bytes() / ((iBitDepth/8) * iNumChannels);
     TUint jiffies = numSamples * iJiffiesPerSample;
     if (jiffies >= iJiffiesToSend) {
         iAudioSent = true;
         if (jiffies > iJiffiesToSend) {
             jiffies = iJiffiesToSend;
-            const TUint bytes = Jiffies::BytesFromJiffies(jiffies, iJiffiesPerSample, iNumChannels, DecodedAudio::kBytesPerSubsample);
+            const TUint bytes = Jiffies::BytesFromJiffies(jiffies, iJiffiesPerSample, iNumChannels, (iBitDepth/8));
             if (bytes == 0) {
                 iPlayable = aMsg;
                 return;
@@ -93,28 +90,11 @@ void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
         }
     }
     iJiffiesToSend -= jiffies;
-    aMsg->CopyTo(iBuf);
-    const TUint numSubsamples = aMsg->Bytes() / DecodedAudio::kBytesPerSubsample;
-    TUint32* src = (TUint32*)&iBuf[0];
-    TUint16* dest = (TUint16*)&iBufPacked[0];
-    for (TUint i=0; i<numSubsamples; i++) {
-        switch (iBitDepth)
-        {
-        case 8:
-            ASSERTS();
-            break;
-        case 16:
-            *dest++ = (*src)>>16;
-            break;
-        case 24:
-            ASSERTS();
-            break;
-        default:
-            ASSERTS();
-        }
-        src++;
-    }
-    iOhmSenderDriver->SendAudio(iBufPacked, numSubsamples * (iBitDepth/8));
+    ProcessorPcmBufPacked pcmProcessor;
+    aMsg->Read(pcmProcessor);
+    Brn buf = pcmProcessor.Buf();
+    const TUint numSubsamples = buf.Bytes() / (iBitDepth/8);
+    iOhmSenderDriver->SendAudio(buf.Ptr(), numSubsamples * (iBitDepth/8));
     aMsg->RemoveRef();
 }
 
@@ -143,12 +123,6 @@ Msg* DriverSongcastSender::ProcessMsg(MsgAudioFormat* aMsg)
     iNumChannels = fmt.NumChannels();
     iBitDepth = fmt.BitDepth();
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
-    TUint jiffies = iMaxMsgSizeJiffies;
-    const TUint bufMaxSize = Jiffies::BytesFromJiffies(jiffies, iJiffiesPerSample, iNumChannels, DecodedAudio::kBytesPerSubsample);
-    delete[] iBuf;
-    iBuf = new TByte[bufMaxSize];
-    delete[] iBufPacked;
-    iBufPacked = new TByte[(iBitDepth/8)*(bufMaxSize/DecodedAudio::kBytesPerSubsample)];
     iOhmSenderDriver->SetAudioFormat(iSampleRate, fmt.BitRate(), iNumChannels, iBitDepth, fmt.Lossless(), fmt.CodecName());
     aMsg->RemoveRef();
     return NULL;

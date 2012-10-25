@@ -124,12 +124,10 @@ class DecodedAudio : public Allocated
     friend class MsgFactory;
 public:
     static const TUint kMaxBytes = 6 * 1024;
-    static const TUint kBytesPerSubsample = sizeof(TUint);
-    static const TUint kMaxSubsamples = kMaxBytes/kBytesPerSubsample;
     static const TUint kMaxNumChannels = 8;
 public:
     DecodedAudio(AllocatorBase& aAllocator);
-    const TUint* PtrOffsetBytes(TUint aBytes) const;
+    const TByte* PtrOffsetBytes(TUint aBytes) const;
     TUint Bytes() const;
     TUint BytesFromJiffies(TUint& aJiffies) const;
     TUint JiffiesFromBytes(TUint aBytes) const;
@@ -137,16 +135,17 @@ public:
     TUint BitDepth() const;
 private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
-    static void UnpackBigEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
-    static void UnpackLittleEndian(TUint32* aDst, const TUint8* aSrc, TUint aBitDepth, TUint aNumSubsamples);
+    void CopyToBigEndian16(const Brx& aData);
+    void CopyToBigEndian24(const Brx& aData);
 private: // from Allocated
     void Clear();
 private:
-    TUint iSubsamples[kMaxSubsamples]; // one sub-sample per channel == 1 sample
+    TByte iData[kMaxBytes];
     TUint iSubsampleCount;
     TUint iChannels;
     TUint iSampleRate;
     TUint iBitDepth;
+    TUint iByteDepth;
     TUint iJiffiesPerSample; // cached on construction for convenience
 };
 
@@ -179,7 +178,6 @@ public:
     void Reset();
     TBool Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos); // returns true iff aSplit is set
     Ramp Split(TUint aNewSize, TUint aCurrentSize);
-    void Apply(Bwx& aData, TUint aChannels);
     TUint Start() const { return iStart; }
     TUint End() const { return iEnd; }
     EDirection Direction() const { return iDirection; }
@@ -295,7 +293,6 @@ public:
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
     const Media::Ramp& Ramp() const;
-    virtual void CopyTo(void* aDest) = 0;
     virtual void Read(IPcmProcessor& aProcessor) = 0;
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
@@ -323,7 +320,6 @@ private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
 private: // from MsgPlayable
     MsgPlayable* Clone(); // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
-    void CopyTo(void* aDest);
     void Read(IPcmProcessor& aProcessor);
     MsgPlayable* Allocate();
     void SplitCompleted(MsgPlayable& aRemaining);
@@ -341,7 +337,6 @@ public:
 private:
     void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp);
 private: // from MsgPlayable
-    void CopyTo(void* aDest);
     void Read(IPcmProcessor& aProcessor);
     MsgPlayable* Allocate();
 private:

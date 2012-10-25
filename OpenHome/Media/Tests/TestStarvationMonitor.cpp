@@ -2,6 +2,8 @@
 #include <OpenHome/Media/StarvationMonitor.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/ProcessorPcmUtils.h>
 
 #include <string.h>
 #include <vector>
@@ -12,21 +14,6 @@ using namespace OpenHome::Media;
 
 namespace OpenHome {
 namespace Media {
-
-class InfoAggregator : public Av::IInfoAggregator, private IWriter
-{
-public:
-    InfoAggregator();
-    void PrintStats();
-private: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
-private: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
-private:
-    std::vector<Av::IInfoProvider*> iInfoProviders;
-};
 
 class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, private IMsgProcessor, private IStarvationMonitorObserver
 {
@@ -88,7 +75,7 @@ private:
     MsgAudio* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
-    InfoAggregator iInfoAggregator;
+    AllocatorInfoLogger iInfoAggregator;
     StarvationMonitor* iSm;
     EMsgType iLastMsg;
     EMsgGenerationState iMsgGenerationState;
@@ -101,39 +88,6 @@ private:
 
 } // namespace Media
 } // namespace OpenHome
-
-
-// InfoAggregator
-
-InfoAggregator::InfoAggregator()
-{
-}
-
-void InfoAggregator::PrintStats()
-{
-    for (size_t i=0; i<iInfoProviders.size(); i++) {
-        iInfoProviders[i]->QueryInfo(AllocatorBase::kQueryMemory, *this);
-    }
-}
-
-void InfoAggregator::Register(Av::IInfoProvider& aProvider, std::vector<Brn>& /*aSupportedQueries*/)
-{
-    iInfoProviders.push_back(&aProvider);
-}
-
-void InfoAggregator::Write(TByte aValue)
-{
-    Print("%c", aValue);
-}
-
-void InfoAggregator::Write(const Brx& aBuffer)
-{
-    Print(aBuffer);
-}
-
-void InfoAggregator::WriteFlush()
-{
-}
 
 
 // SuiteStarvationMonitor
@@ -359,8 +313,9 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsg = EMsgAudioPcm;
     MsgPlayable* playable = aMsg->CreatePlayable();
-    playable->CopyTo(iBuf);
-    Brn buf(iBuf, playable->Bytes());
+    ProcessorPcmBufUnpacked pcmProcessor;
+    playable->Read(pcmProcessor);
+    Brn buf(pcmProcessor.Buf());
     playable->RemoveRef();
     const TUint* ptr = (const TUint*)buf.Ptr();
     const TUint firstSubsample = ptr[0];

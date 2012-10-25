@@ -150,7 +150,7 @@ Msg* PreDriver::ProcessMsg(MsgAudioFormat* aMsg)
     iFormat->AddRef();
     TUint jiffies = iMaxPlayableJiffies;
     const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iFormat->Format().SampleRate());
-    iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iFormat->Format().NumChannels(), DecodedAudio::kBytesPerSubsample);
+    iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iFormat->Format().NumChannels(), iFormat->Format().BitDepth() / 8);
     if (iHalted) {
         ASSERT(iPlayable == NULL);
         return aMsg;
