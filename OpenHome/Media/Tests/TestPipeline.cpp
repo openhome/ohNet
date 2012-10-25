@@ -285,11 +285,13 @@ void SuitePipeline::Test()
     // Push audio.  Repeat until our dummy driver can start pulling.
     // Check audio ramps up for kStopperRampDuration jiffies.
     // Check that pipeline status goes from Buffering to Playing.
-    // Duration of ramp should have been PipelineManager::kStopperRampDuration.
+    // There should not be any ramp        Duration of ramp should have been PipelineManager::kStopperRampDuration.
     Print("Run until ramped up\n");
     iPipelineManager->Play();
-    PullUntilEnd(ERampUp);
-    TestJiffies(PipelineManager::kStopperRampDuration);
+    do {
+        iPipelineEnd->Pull()->Process(*this);
+    } while (!iLastMsgWasAudio);
+    TEST(iFirstSubsample == iLastSubsample);
     // skip earlier test for EPipelineBuffering state as it'd be fiddly to do in a threadsafe way
     TEST(iPipelineState == EPipelinePlaying);
 

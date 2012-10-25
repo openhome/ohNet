@@ -106,13 +106,11 @@ Msg* Stopper::Pull()
 
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    //Log::Print("Stopper - MsgAudioPcm(%p), jiffies=%u\n", aMsg, aMsg->Jiffies()); // FIXME - add to ohNet's debug system
     return ProcessMsgAudio(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgSilence* aMsg)
 {
-    //Log::Print("Stopper - MsgSilence(%p)\n", aMsg);
     return ProcessMsgAudio(aMsg);
 }
 
@@ -124,25 +122,23 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgAudioFormat* aMsg)
 {
-    //Log::Print("Stopper - MsgAudioFormat(%p)\n", aMsg);
     return aMsg;
 }
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
-    //Log::Print("Stopper - MsgTrack(%p)\n", aMsg);
+    iRemainingRampSize = 0;
+    iCurrentRampValue = Ramp::kRampMax;
     return aMsg;
 }
 
 Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
 {
-    //Log::Print("Stopper - MsgMetaText(%p)\n", aMsg);
     return aMsg;
 }
 
 Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 {
-    //Log::Print("Stopper - MsgHalt(%p)\n", aMsg);
     iState = EHalted;
     iReportHalted = true;
     return aMsg;
@@ -150,7 +146,6 @@ Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
 {
-    //Log::Print("Stopper - MsgFlush(%p)\n", aMsg);
     ASSERT_DEBUG(iState == EFlushing);
     aMsg->RemoveRef();
     iState = EHalted;
@@ -160,7 +155,6 @@ Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 {
-    //Log::Print("Stopper - MsgQuit(%p)\n", aMsg);
     return aMsg;
 }
 
@@ -197,6 +191,10 @@ Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
 
 void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 {
+    if (iRemainingRampSize == 0) {
+        // may happen if we receive a MsgTrack while ramping
+        return;
+    }
     MsgAudio* split;
     if (aMsg->Jiffies() > iRemainingRampSize) {
         split = aMsg->Split(iRemainingRampSize);
