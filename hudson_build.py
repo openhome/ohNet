@@ -107,6 +107,7 @@ class JenkinsBuild():
             'Mac-x64': { 'os': 'macos', 'arch':'x64', 'publish':True}, # New Jenkins label, matches downstream builds
             'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True}, # New Jenkins label, matches downstream builds
             'Linux-ARM': { 'os': 'linux', 'arch': 'arm', 'publish':True},
+            'iOs-ARM': { 'os': 'macos', 'arch':'arm', 'publish':True},
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -122,7 +123,7 @@ class JenkinsBuild():
             args.append('vcvarsall.bat')
             args.append('amd64')
             os.environ['CS_PLATFORM'] = 'x64'
-        if arch == 'arm':
+        if os_platform == 'linux' and arch == 'arm':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
 
         self.platform_args = args
@@ -148,6 +149,8 @@ class JenkinsBuild():
         if os_platform == 'macos':
             if arch == 'x64':
                 args.append('--mac-64')
+            elif arch == 'arm':
+                args.append('--mac-arm')
             # 32 and 64-bit builds run in parallel on the same slave.
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
