@@ -16,9 +16,24 @@ Can be inserted [0..n] times through the pipeline, depending on your debugging n
 class Logger : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
 public:
+    enum EMsgType
+    {
+        EMsgAudioPcm    = 1<<0
+       ,EMsgSilence     = 1<<1
+       ,EMsgPlayable    = 1<<2
+       ,EMsgAudioFormat = 1<<3
+       ,EMsgTrack       = 1<<4
+       ,EMsgMetaText    = 1<<5
+       ,EMsgHalt        = 1<<6
+       ,EMsgFlush       = 1<<7
+       ,EMsgQuit        = 1<<8
+       ,EMsgAll         = 0x7fffffff
+    };
+public:
     Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
     ~Logger();
     void SetEnabled(TBool aEnabled);
+    void SetFilter(TUint aMsgTypes);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
@@ -33,10 +48,12 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     void LogRamp(const Media::Ramp& aRamp);
+    TBool IsEnabled(EMsgType aType) const;
 private:
     IPipelineElementUpstream& iUpstreamElement;
     const TChar* iId;
     TBool iEnabled;
+    TInt iFilter;
     Semaphore iShutdownSem;
 };
 

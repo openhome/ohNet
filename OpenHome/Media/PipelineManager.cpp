@@ -66,6 +66,14 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     //iLoggerSplitter->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
+
+    //iLoggerAudioReservoir->SetFilter(Logger::EMsgAll);
+    //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
+    //iLoggerStopper->SetFilter(Logger::EMsgAll);
+    //iLoggerReporter->SetFilter(Logger::EMsgAll);
+    //iLoggerSplitter->SetFilter(Logger::EMsgAll);
+    //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
+    //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
 }
 
 PipelineManager::~PipelineManager()

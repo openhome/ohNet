@@ -12,6 +12,7 @@ Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
     : iUpstreamElement(aUpstreamElement)
     , iId(aId)
     , iEnabled(false)
+    , iFilter(EMsgAll)
     , iShutdownSem("PDSD", 0)
 {
 }
@@ -26,6 +27,11 @@ void Logger::SetEnabled(TBool aEnabled)
     iEnabled = aEnabled;
 }
 
+void Logger::SetFilter(TUint aMsgTypes)
+{
+    iFilter = aMsgTypes;
+}
+
 Msg* Logger::Pull()
 {
     Msg* msg = iUpstreamElement.Pull();
@@ -35,7 +41,7 @@ Msg* Logger::Pull()
 
 Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgAudioPcm)) {
         Log::Print("Pipeline (%s): audioPcm {jiffies: %u}", iId, aMsg->Jiffies());
         LogRamp(aMsg->Ramp());
         Log::Print("\n");
@@ -45,7 +51,7 @@ Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* Logger::ProcessMsg(MsgSilence* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgSilence)) {
         Log::Print("Pipeline (%s): silence {jiffies: %u}", iId, aMsg->Jiffies());
         LogRamp(aMsg->Ramp());
         Log::Print("\n");
@@ -55,7 +61,7 @@ Msg* Logger::ProcessMsg(MsgSilence* aMsg)
 
 Msg* Logger::ProcessMsg(MsgPlayable* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgPlayable)) {
         Log::Print("Pipeline (%s): playable {bytes: %u}", iId, aMsg->Bytes());
         LogRamp(aMsg->Ramp());
         Log::Print("\n");
@@ -65,7 +71,7 @@ Msg* Logger::ProcessMsg(MsgPlayable* aMsg)
 
 Msg* Logger::ProcessMsg(MsgAudioFormat* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgAudioFormat)) {
         const AudioFormat& af = aMsg->Format();
         Log::Print("Pipeline (%s): audio format {bitRate: %u, bitDepth: %u, sampleRate: %u, codec: ", iId, af.BitRate(), af.BitDepth(), af.SampleRate());
         Log::Print(af.CodecName());
@@ -76,7 +82,7 @@ Msg* Logger::ProcessMsg(MsgAudioFormat* aMsg)
 
 Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgTrack)) {
         Log::Print("Pipeline (%s): track\n", iId);
     }
     return aMsg;
@@ -84,7 +90,7 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 
 Msg* Logger::ProcessMsg(MsgMetaText* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgMetaText)) {
         Log::Print("Pipeline (%s): metaText {", iId);
         Log::Print(aMsg->MetaText());
         Log::Print("}\n");
@@ -94,7 +100,7 @@ Msg* Logger::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* Logger::ProcessMsg(MsgHalt* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgHalt)) {
         Log::Print("Pipeline (%s): halt\n", iId);
     }
     return aMsg;
@@ -102,7 +108,7 @@ Msg* Logger::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Logger::ProcessMsg(MsgFlush* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgFlush)) {
         Log::Print("Pipeline (%s): flush\n", iId);
     }
     return aMsg;
@@ -110,7 +116,7 @@ Msg* Logger::ProcessMsg(MsgFlush* aMsg)
 
 Msg* Logger::ProcessMsg(MsgQuit* aMsg)
 {
-    if (iEnabled) {
+    if (IsEnabled(EMsgQuit)) {
         Log::Print("Pipeline (%s): quit\n", iId);
     }
     iShutdownSem.Signal();
@@ -122,4 +128,12 @@ void Logger::LogRamp(const Media::Ramp& aRamp)
     if (aRamp.IsEnabled()) {
         Log::Print(", {ramp: [%08x..%08x]}", aRamp.Start(), aRamp.End());
     }
+}
+
+TBool Logger::IsEnabled(EMsgType aType) const
+{
+    if (iEnabled && (iFilter & aType) == aType) {
+        return true;
+    }
+    return false;
 }
