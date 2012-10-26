@@ -135,6 +135,16 @@ private: // from IPipelineObserver
     void NotifyAudioFormat(const AudioFormat& aFormat);
 };
 
+class LoggingPipelineObserver : public IPipelineObserver // test helper
+{
+private: // from IPipelineObserver
+    void NotifyPipelineState(EPipelineState aState);
+    void NotifyTrack();
+    void NotifyMetaText(const Brx& aText);
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
+    void NotifyAudioFormat(const AudioFormat& aFormat);
+};
+
 } // namespace Media
 } // namespace OpenHome
 

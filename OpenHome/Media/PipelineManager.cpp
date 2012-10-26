@@ -204,9 +204,8 @@ void PipelineManager::PipelineHalted()
     switch (iTargetStatus)
     {
     case EPlaying:
-    default:
-        ASSERTS();
-        break;
+        iTargetStatus = EHalted;
+        // fallthrough
     case EHalted:
         iStatus = EHalted;
         iLock.Signal();
@@ -218,6 +217,9 @@ void PipelineManager::PipelineHalted()
         iStopper->BeginFlush();
         iSupplier.Flush(iMsgFactory->CreateMsgFlush());
         iLock.Signal();
+        break;
+    default:
+        ASSERTS();
         break;
     }
 }
@@ -300,4 +302,56 @@ void NullPipelineObserver::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDuration
 
 void NullPipelineObserver::NotifyAudioFormat(const AudioFormat& /*aFormat*/)
 {
+}
+
+
+// LoggingPipelineObserver
+
+void LoggingPipelineObserver::NotifyPipelineState(EPipelineState aState)
+{
+    const char* state = "";
+    switch (aState)
+    {
+    case EPipelinePlaying:
+        state = "playing";
+        break;
+    case EPipelinePaused:
+        state = "paused";
+        break;
+    case EPipelineStopped:
+        state = "stopped";
+        break;
+    case EPipelineBuffering:
+        state = "buffering";
+        break;
+    default:
+        ASSERTS();
+    }
+    Log::Print("Pipeline state change: %s\n", state);
+}
+
+void LoggingPipelineObserver::NotifyTrack()
+{
+    Log::Print("Pipeline report property: TRACK\n");
+}
+
+void LoggingPipelineObserver::NotifyMetaText(const Brx& aText)
+{
+    Log::Print("Pipeline report property: METATEXT {");
+    Log::Print(aText);
+    Log::Print("}\n");
+}
+
+void LoggingPipelineObserver::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
+{
+    Log::Print("Pipeline report property: TIME {secs=%u; duration=%u}\n", aSeconds, aTrackDurationSeconds);
+}
+
+
+void LoggingPipelineObserver::NotifyAudioFormat(const AudioFormat& aFormat)
+{
+    Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
+               aFormat.BitRate(), aFormat.BitDepth(), aFormat.SampleRate(), aFormat.NumChannels());
+    Log::Print(aFormat.CodecName());
+    Log::Print("; trackLength=%llx, lossless=%u}\n", aFormat.TrackLength(), aFormat.Lossless());
 }
