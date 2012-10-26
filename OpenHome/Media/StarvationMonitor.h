@@ -75,6 +75,7 @@ private:
     TUint iRampDownDuration;
     TUint iRemainingRampSize;
     TBool iPlannedHalt;
+    TBool iHaltDelivered;
     TBool iExit;
 };
 

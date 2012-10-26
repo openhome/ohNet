@@ -23,6 +23,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iSemOut("STR2", 0)
     , iCurrentRampValue(Ramp::kRampMax)
     , iPlannedHalt(true)
+    , iHaltDelivered(false)
     , iExit(false)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
@@ -57,6 +58,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
     iLock.Wait();
     TBool isFull = (iStatus != EBuffering && Jiffies() >= iNormalMax);
     if (iStatus == EBuffering && Jiffies() >= iGorgeSize) {
+        iHaltDelivered = false;
         if (iPlannedHalt) {
             UpdateStatus(ERunning);
             iPlannedHalt = false;
@@ -83,9 +85,16 @@ Msg* StarvationMonitor::Pull()
     Msg* msg;
     iLock.Wait();
     const TUint jiffies = Jiffies();
-    if (iStatus == EBuffering && jiffies == 0 && !iPlannedHalt ) {
+    if (iStatus == EBuffering && jiffies == 0 && !iPlannedHalt && !iHaltDelivered) {
+#if 0
+        iLock.Signal();
+        EnqueueAtHead(iMsgFactory.CreateMsgHalt()); // signal that we won't be providing any more audio for a while
+        iLock.Wait();
+#else
+        iHaltDelivered = true;
         iLock.Signal();
         return iMsgFactory.CreateMsgHalt(); // signal that we won't be providing any more audio for a while
+#endif
     }
     TBool wait = false;
     if (iStatus == EBuffering && !iExit) {
