@@ -92,7 +92,7 @@ Msg* StarvationMonitor::Pull()
     }
     TBool wait = false;
     if (iStatus == EBuffering && !iExit) {
-        if (jiffies == 0 && iPlannedHalt) {
+        if (jiffies == 0 && iPlannedHalt && !iHaltDelivered) {
             wait = IsEmpty(); // allow reading of the halt msg which should be the last item in the queue
         }
         else if (jiffies < iGorgeSize) {
@@ -198,6 +198,14 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
 Msg* StarvationMonitor::ProcessMsgOut(MsgSilence* aMsg)
 {
     return DoProcessMsgOut(aMsg);
+}
+
+Msg* StarvationMonitor::ProcessMsgOut(MsgHalt* aMsg)
+{
+    iLock.Wait();
+    iHaltDelivered = true;
+    iLock.Signal();
+    return aMsg;
 }
 
 TBool StarvationMonitor::EnqueueWouldBlock() const

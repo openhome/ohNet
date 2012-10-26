@@ -54,6 +54,7 @@ private: // from MsgQueueJiffies
     void ProcessMsgIn(MsgQuit* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
+    Msg* ProcessMsgOut(MsgHalt* aMsg);
 private: // test helpers
     TBool EnqueueWouldBlock() const;
     TBool PullWouldBlock() const;
