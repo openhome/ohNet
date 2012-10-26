@@ -37,6 +37,7 @@ ifeq ($(mac-arm),1)
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
 	ar = $(devroot)/usr/bin/ar rc $(objdir)
 	csharpdefines = /define:IOS /r:monotouch.dll
+	no_shared_objects = yes
 
 else
 	# Darwin, not ARM -> Intel Mac
@@ -108,6 +109,7 @@ endif
 
 # Macros used by Common.mak
 native_only ?= no
+no_shared_objects ?= no
 endian ?= LITTLE
 cflags_base = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
@@ -167,7 +169,11 @@ uset4 = no
 ifeq ($(native_only), yes)
 build_targets = $(native_targets)
 else
+ifeq ($(no_shared_objects), yes)
+build_targets = $(native_targets) ohNet.net.dll
+else
 build_targets = $(all_targets)
+endif
 endif
 
 default : all
