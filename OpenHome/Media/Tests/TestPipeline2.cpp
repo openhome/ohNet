@@ -88,7 +88,7 @@ using namespace OpenHome::Net;
 // SupplierWav
 
 SupplierWav::SupplierWav()
-    : Thread("SWAV")
+    : Thread("SWAV", kPriorityHighest)
     , iMsgFactory(NULL)
     , iPipeline(NULL)
     , iBuf(NULL)
@@ -154,9 +154,10 @@ Brn SupplierWav::LoadFile(const Brx& aFileName)
     	goto exit;
     }
     iDataSize = header[40] | (header[41] << 8) | (header[42] << 16) | (header[43] << 24);
-    
+
 //    printf("numChannels=%u, sampleRate=%u, byteRate=%u, blockAlign=%u, bitsDepth=%u, subChunk2Size=%u\n",
 //           iNumChannels, iSampleRate, byteRate, blockAlign, iBitDepth, iDataBytes);
+
     iBuf = new TByte[iDataSize];
     if (fread(iBuf, 1, iDataSize, fh) != iDataSize) {
     	printf("ERROR: Unable to read wav file data\n");
@@ -183,8 +184,6 @@ void SupplierWav::Run()
         msg = CreateAudio();
         iPipeline->Push(msg);
     }
-    msg = iMsgFactory->CreateMsgHalt();
-    iPipeline->Push(msg);
     msg = iMsgFactory->CreateMsgQuit();
     iPipeline->Push(msg);
 }
@@ -247,7 +246,9 @@ void DriverAudioCheck::Run()
     do {
         Msg* msg = iPipeline.Pull();
         (void)msg->Process(*this);
+        Thread::Sleep(1); // nasty but don't seem able to rely on highest priority thread always being scheduled
     } while (!iQuit);
+    Log::Print("Expected %u bytes, got %u\n", iExpectedAudio.Bytes(), iPos-1);
 }
 
 Msg* DriverAudioCheck::ProcessMsg(MsgAudioPcm* /*aMsg*/)
@@ -266,14 +267,15 @@ Msg* DriverAudioCheck::ProcessMsg(MsgPlayable* aMsg)
 {
     ProcessorPcmBufPacked pcmProcessor;
     aMsg->Read(pcmProcessor);
-    aMsg->RemoveRef();
     Brn buf = pcmProcessor.Buf();
     for (TUint i=0; i<buf.Bytes(); i++) {
-        if (buf[i] != iExpectedAudio[iPos]) {
-            Log::Print("Content mismatch at byte %u (0x%08x)\n", iPos, iPos);
-        }
+        /*if (buf[i] != iExpectedAudio[iPos]) {
+            Log::Print("Content mismatch (expected %08x, got %08x) at byte %u\n", iExpectedAudio[iPos], buf[i], iPos);
+            _asm int 3;
+        }*/
         iPos++;
     }
+    aMsg->RemoveRef();
     return NULL;
 }
 
@@ -335,7 +337,8 @@ int CDECL main(int aArgc, char* aArgv[])
         return 1;
     }
     AllocatorInfoLogger infoAggregator;
-    NullPipelineObserver observer;
+    //NullPipelineObserver observer;
+    LoggingPipelineObserver observer;
     PipelineManager* pipeline = new PipelineManager(infoAggregator, *supplier, observer, Jiffies::kJiffiesPerMs * 5);
     DriverAudioCheck* driver = new DriverAudioCheck(pipeline->FinalElement(), audioData);
     pipeline->Play();
