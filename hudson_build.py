@@ -137,6 +137,8 @@ class JenkinsBuild():
         args.append('AllTests.py')
         args.append('--silent')
 
+        self.platform_make_args = []
+
         if arch == 'arm':
             args.append('--buildonly')
         elif arch == 'x64':
@@ -148,9 +150,9 @@ class JenkinsBuild():
             args.append('--java')
         if os_platform == 'macos':
             if arch == 'x64':
-                args.append('--mac-64')
+                self.platform_make_args.append('--mac-64')
             elif arch == 'arm':
-                args.append('--mac-arm')
+                self.platform_make_args.append('--mac-arm')
             # 32 and 64-bit builds run in parallel on the same slave.
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
@@ -159,7 +161,7 @@ class JenkinsBuild():
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
                 args.append('--valgrind')    
-        self.build_args = args
+        self.build_args = args + self.platform_make_args
 
     def do_build(self):
         nightly = self.options.nightly
@@ -220,6 +222,7 @@ class JenkinsBuild():
             build.append('targetplatform=%s' %(platform,))
             build.append('releasetype=%s' %(release,))
             build.append('uset4=yes')
+            build.extend(self.platform_make_args)
 
             print "doing release with bundle %s" %(build,)
 
