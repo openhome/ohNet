@@ -86,15 +86,9 @@ Msg* StarvationMonitor::Pull()
     iLock.Wait();
     const TUint jiffies = Jiffies();
     if (iStatus == EBuffering && jiffies == 0 && !iPlannedHalt && !iHaltDelivered) {
-#if 0
-        iLock.Signal();
-        EnqueueAtHead(iMsgFactory.CreateMsgHalt()); // signal that we won't be providing any more audio for a while
-        iLock.Wait();
-#else
         iHaltDelivered = true;
         iLock.Signal();
         return iMsgFactory.CreateMsgHalt(); // signal that we won't be providing any more audio for a while
-#endif
     }
     TBool wait = false;
     if (iStatus == EBuffering && !iExit) {
