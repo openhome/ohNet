@@ -134,15 +134,19 @@ Brn SupplierWav::LoadFile(const Brx& aFileName)
     	printf("ERROR: Invalid wav file\n");
     	goto exit;
     }
-    const TUint subChunk1Size = header[16] | (header[17] << 8) | (header[18] << 16) | (header[19] << 24);
-    if (subChunk1Size != 16) {
-    	printf("ERROR: Unsupported wav file\n");
-    	goto exit;
-    }
-    const TUint audioFormat = header[20] | (header[21] << 8);
-    if (audioFormat != 1) {
-    	printf("ERROR: Unsupported wav file\n");
-    	goto exit;
+    {
+        // gcc doesn't like gotos jumping over declaration for below variables
+        // ...so move them into their own scope
+        const TUint subChunk1Size = header[16] | (header[17] << 8) | (header[18] << 16) | (header[19] << 24);
+        if (subChunk1Size != 16) {
+            printf("ERROR: Unsupported wav file\n");
+            goto exit;
+        }
+        const TUint audioFormat = header[20] | (header[21] << 8);
+        if (audioFormat != 1) {
+            printf("ERROR: Unsupported wav file\n");
+            goto exit;
+        }
     }
     iNumChannels = header[22] | (header[23] << 8);
     iSampleRate = header[24] | (header[25] << 8) | (header[26] << 16) | (header[27] << 24);
