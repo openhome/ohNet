@@ -173,7 +173,7 @@ MsgAudio* Supplier::CreateAudio()
 {
     static const TUint kDataBytes = 3 * 1024;
     TByte encodedAudioData[kDataBytes];
-    (void)memset(encodedAudioData, 0xff, kDataBytes);
+    (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian, iTrackOffset);
 /*    {
@@ -361,7 +361,7 @@ void SuitePipeline::TestJiffies(TUint aTarget)
 
 void SuitePipeline::PullUntilEnd(EState aState)
 {
-    static const TUint kSubsampleRampedUpFull = 0xffffff;
+    static const TUint kSubsampleRampedUpFull = 0x7f7f7f;
     static const TUint kSubsampleRampUpFinal = (TUint)(((TUint64)kSubsampleRampedUpFull * kRampArray[0]) >> 31) & kSubsampleRampedUpFull;
     static const TUint kSubsampleRampedDownFull = 0;
     TBool ramping = (aState == ERampDown || aState == ERampUp);

@@ -115,13 +115,13 @@ void SuiteStopper::Test()
 {
     /*
     Test goes something like
-        Create Stopper.  Start() then deliver 0xff filled audio until ramp up completes.  
+        Create Stopper.  Start() then deliver 0x7f filled audio until ramp up completes.  
         Check that ramp size matches kRampDuration and that the final msg was Split to ensure this.
         Check that remaining audio is not ramped.
         Deliver Track, Metatext, Quit msgs.  Check they're passed through.
         BeginHalt.  Deliver more audio, checking it ramps down
         BeginFlush.  Deliver other msgs, check none are delivered and PipelineFlushed is called.
-        Start() then deliver 0xff filled audio.  Check it ramps up.
+        Start() then deliver 0x7f filled audio.  Check it ramps up.
         Halt then re-Start soon after.  Check no halt msg is output
         Send halt msg.  Check there was no previous ramping down.
     */
@@ -210,7 +210,7 @@ void SuiteStopper::Test()
     TEST(iPipelineHaltedCount == 1);
     TEST(iPipelineFlushedCount == 1);
         
-    // Start() then deliver 0xff filled audio.  Check it ramps up.
+    // Start() then deliver 0x7f filled audio.  Check it ramps up.
     iNextGeneratedMsg = EMsgAudioPcm;
     iJiffies = 0;
     iStopper->Start();
@@ -305,7 +305,7 @@ MsgAudio* SuiteStopper::CreateAudio()
 {
     static const TUint kDataBytes = 3 * 1024;
     TByte encodedAudioData[kDataBytes];
-    (void)memset(encodedAudioData, 0xff, kDataBytes);
+    (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
     iTrackOffset += audio->Jiffies();

@@ -568,21 +568,21 @@ void RampApplicator::GetNextSample(TByte* aDest)
     switch (iBitDepth)
     {
     case 8:
-        subsample = *iPtr;
+        subsample = *iPtr << 24;
         iPtr++;
         break;
     case 16:
-        subsample = *iPtr << 8;
+        subsample = *iPtr << 24;
         iPtr++;
-        subsample += *iPtr;
+        subsample += *iPtr << 16;
         iPtr++;
         break;
     case 24:
-        subsample = *iPtr << 16;
+        subsample = *iPtr << 24;
+        iPtr++;
+        subsample += *iPtr << 16;
         iPtr++;
         subsample += *iPtr << 8;
-        iPtr++;
-        subsample += *iPtr;
         iPtr++;
         break;
     default:
@@ -596,16 +596,16 @@ void RampApplicator::GetNextSample(TByte* aDest)
         switch (iBitDepth)
         {
         case 8:
-            *aDest++ = (TByte)rampedSubsample;
+            *aDest++ = (TByte)(rampedSubsample >> 24);
             break;
         case 16:
-            *aDest++ = (TByte)(rampedSubsample >> 8);
-            *aDest++ = (TByte)rampedSubsample;
+            *aDest++ = (TByte)(rampedSubsample >> 24);
+            *aDest++ = (TByte)(rampedSubsample >> 16);
             break;
         case 24:
+            *aDest++ = (TByte)(rampedSubsample >> 24);
             *aDest++ = (TByte)(rampedSubsample >> 16);
             *aDest++ = (TByte)(rampedSubsample >> 8);
-            *aDest++ = (TByte)rampedSubsample;
             break;
         default:
             ASSERTS();

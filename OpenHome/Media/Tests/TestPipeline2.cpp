@@ -248,7 +248,7 @@ void DriverAudioCheck::Run()
         (void)msg->Process(*this);
         Thread::Sleep(1); // nasty but don't seem able to rely on highest priority thread always being scheduled
     } while (!iQuit);
-    Log::Print("Expected %u bytes, got %u\n", iExpectedAudio.Bytes(), iPos-1);
+    Log::Print("Expected %u bytes, got %u\n", iExpectedAudio.Bytes(), iPos);
 }
 
 Msg* DriverAudioCheck::ProcessMsg(MsgAudioPcm* /*aMsg*/)
@@ -269,10 +269,10 @@ Msg* DriverAudioCheck::ProcessMsg(MsgPlayable* aMsg)
     aMsg->Read(pcmProcessor);
     Brn buf = pcmProcessor.Buf();
     for (TUint i=0; i<buf.Bytes(); i++) {
-        /*if (buf[i] != iExpectedAudio[iPos]) {
+        if (buf[i] != iExpectedAudio[iPos]) {
             Log::Print("Content mismatch (expected %08x, got %08x) at byte %u\n", iExpectedAudio[iPos], buf[i], iPos);
             _asm int 3;
-        }*/
+        }
         iPos++;
     }
     aMsg->RemoveRef();
@@ -321,7 +321,7 @@ Msg* DriverAudioCheck::ProcessMsg(MsgQuit* aMsg)
 int CDECL main(int aArgc, char* aArgv[])
 {
     OptionParser parser;
-    OptionString optionFile("-f", "--file", Brn(""), "[file] wav file to play");
+    OptionString optionFile("-f", "--file", Brn("c:\\test.wav"), "[file] wav file to play");
     parser.AddOption(&optionFile);
     if (!parser.Parse(aArgc, aArgv)) {
         return 1;

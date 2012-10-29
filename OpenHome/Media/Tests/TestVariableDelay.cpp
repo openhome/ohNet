@@ -231,7 +231,7 @@ MsgAudio* SuiteVariableDelay::CreateAudio()
 {
     static const TUint kDataBytes = 3 * 1024;
     TByte encodedAudioData[kDataBytes];
-    (void)memset(encodedAudioData, 0xff, kDataBytes);
+    (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
     iAudioMsgSizeJiffies = audio->Jiffies();

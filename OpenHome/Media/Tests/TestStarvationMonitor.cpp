@@ -116,10 +116,10 @@ void SuiteStarvationMonitor::Test()
     /*
     Test goes something like
         Create SM.  Check pull would block.
-        Add 0xff filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
+        Add 0x7f filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
         Pull all audio.  Check the last bit ramps down.
         Check halt message is sent and pull would then block
-        Start filling with 0xff filled audio again.  Check pull would still block as we grow beyond regular limit
+        Start filling with 0x7f filled audio again.  Check pull would still block as we grow beyond regular limit
         Continue adding audio until we reach gorge size.  Check enqueue would now block.
         Pull audio.  Check it ramps up.
         Check enqueues would block until size drops below normal max
@@ -132,7 +132,7 @@ void SuiteStarvationMonitor::Test()
     TEST(iSm->iStatus == StarvationMonitor::EBuffering);
     TEST(iBuffering);
 
-    // Add 0xff filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
+    // Add 0x7f filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
     GenerateUpstreamMsgs(EStateAudioFillInitial);
     while (iSm->Jiffies() < kGorgeSize) {
         Thread::Sleep(10); // last msg may not quite have been enqueued when we switched threads
@@ -178,7 +178,7 @@ void SuiteStarvationMonitor::Test()
     msg->RemoveRef();
     TEST(iSm->PullWouldBlock());
 
-    // Start filling with 0xff filled audio again.  Check pull would still block as we grow beyond regular limit
+    // Start filling with 0x7f filled audio again.  Check pull would still block as we grow beyond regular limit
     // Continue adding audio until we reach gorge size.  Check enqueue would now block.
     GenerateUpstreamMsgs(EStateAudioFillPostStarvation);
     WaitForEnqueueToBlock();
@@ -302,7 +302,7 @@ MsgAudio* SuiteStarvationMonitor::CreateAudio()
 {
     static const TUint kDataBytes = 3 * 1024;
     TByte encodedAudioData[kDataBytes];
-    (void)memset(encodedAudioData, 0xff, kDataBytes);
+    (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
     iTrackOffset += audio->Jiffies();
@@ -313,14 +313,14 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsg = EMsgAudioPcm;
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufUnpacked pcmProcessor;
+    ProcessorPcmBufPacked pcmProcessor;
     playable->Read(pcmProcessor);
-    Brn buf(pcmProcessor.Buf());
+    Brn buf = pcmProcessor.Buf();
     playable->RemoveRef();
-    const TUint* ptr = (const TUint*)buf.Ptr();
-    const TUint firstSubsample = ptr[0];
-    const TUint numSubsamples = buf.Bytes() / sizeof(TUint);
-    const TUint lastSubsample = ptr[numSubsamples - 1];
+    const TByte* ptr = buf.Ptr();
+    const TUint firstSubsample = (ptr[0]<<8) | ptr[1];
+    const TUint bytes = buf.Bytes();
+    const TUint lastSubsample = (ptr[bytes-2]<<8) | ptr[bytes-1];
 
     switch (iSm->iStatus)
     {
