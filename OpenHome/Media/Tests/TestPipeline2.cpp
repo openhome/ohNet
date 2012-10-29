@@ -275,7 +275,6 @@ Msg* DriverAudioCheck::ProcessMsg(MsgPlayable* aMsg)
     for (TUint i=0; i<buf.Bytes(); i++) {
         if (buf[i] != iExpectedAudio[iPos]) {
             Log::Print("Content mismatch (expected %08x, got %08x) at byte %u\n", iExpectedAudio[iPos], buf[i], iPos);
-            _asm int 3;
         }
         iPos++;
     }
