@@ -231,7 +231,7 @@ void SupplierWav::Run()
         else {
             printf("Reached end of track, pipeline will shut down\n");
             msg = iMsgFactory->CreateMsgHalt();
-            iPendingMsg = iMsgFactory->CreateMsgQuit();
+            iBlock = true; // wait for a quit command now
         }
         iLock.Signal();
         iPipeline->Push(msg);
