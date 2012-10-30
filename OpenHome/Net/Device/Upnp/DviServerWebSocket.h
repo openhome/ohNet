@@ -152,6 +152,7 @@ private:
 class WsProtocol : private INonCopyable
 {
 public:
+    virtual ~WsProtocol();
     virtual void Read(Brn& aData, TBool& aClosed) = 0;
     virtual void Write(const Brx& aData) = 0;
     virtual void Close() = 0;

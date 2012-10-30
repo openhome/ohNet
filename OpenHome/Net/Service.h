@@ -378,7 +378,7 @@ public:
     const OpenHome::Net::ServiceType& ServiceType() const;
 protected:
     Service(const TChar* aDomain, const TChar* aName, TUint aVersion);
-    ~Service() {}
+    virtual ~Service() {}
 protected:
     OpenHome::Net::ServiceType iServiceType;
 };

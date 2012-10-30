@@ -14,7 +14,7 @@ namespace Net {
 class DviServer
 {
 public:
-    ~DviServer();
+    virtual ~DviServer();
     TUint Port(TIpAddress aInterface);
 protected:
     DviServer();

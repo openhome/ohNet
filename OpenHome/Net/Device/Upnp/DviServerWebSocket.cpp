@@ -266,6 +266,10 @@ void PropertyWriterWs::PropertyWriteEnd()
 
 // WsProtocol
 
+WsProtocol::~WsProtocol()
+{
+}
+
 WsProtocol::WsProtocol(Srx& aReadBuffer, Swx& aWriteBuffer)
     : iReadBuffer(aReadBuffer)
     , iWriteBuffer(aWriteBuffer)
