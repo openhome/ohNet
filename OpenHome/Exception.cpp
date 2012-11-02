@@ -11,6 +11,8 @@
 # define snprintf _snprintf
 #endif
 
+#define EXCEPTION_LOGGING_LEVEL (0)
+
 using namespace OpenHome;
 
 AssertHandler gAssertHandler = 0;
@@ -111,6 +113,14 @@ Exception::Exception(const TChar* aMsg, const TChar* aFile, TUint aLine)
     , iFile(aFile)
     , iLine(aLine)
 {
+#if EXCEPTION_LOGGING_LEVEL > 0
+    Net::Stack::Mutex().Wait();
+    Log::Print("THROW %s from %s:%u", aMsg, aFile, aLine);
+    Log::Print(" (th=");
+    Log::Print(Thread::CurrentThreadName());
+    Log::Print(")\n");
+    Net::Stack::Mutex().Signal();
+#endif
     iStackTrace = Os::StackTraceInitialise();
 }
 
@@ -120,11 +130,22 @@ Exception::Exception(const TChar* aMsg)
     , iFile(kUnknown)
     , iLine(0)
 {
+#if EXCEPTION_LOGGING_LEVEL > 0
+    Net::Stack::Mutex().Wait();
+    Log::Print("THROW %s", aMsg);
+    Log::Print(" (th=");
+    Log::Print(Thread::CurrentThreadName());
+    Log::Print(")\n");
+    Net::Stack::Mutex().Signal();
+#endif
     iStackTrace = Os::StackTraceInitialise();
 }
 
 Exception::Exception(const Exception& aException)
 {
+#if EXCEPTION_LOGGING_LEVEL > 1
+    Log::Print("Copy ctor for %s\n", iMsg);
+#endif
     iMsg = aException.iMsg;
     iFile = aException.iFile;
     iLine = aException.iLine;
@@ -133,6 +154,9 @@ Exception::Exception(const Exception& aException)
 
 Exception::~Exception()
 {
+#if EXCEPTION_LOGGING_LEVEL > 1
+    Log::Print("Dtor for %s\n", iMsg);
+#endif
     Os::StackTraceFinalise(iStackTrace);
 }
 
