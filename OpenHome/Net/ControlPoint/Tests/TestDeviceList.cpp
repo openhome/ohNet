@@ -56,6 +56,13 @@ void DeviceListLogger::PrintDeviceInfo(const char* aPrologue, const CpDevice& aD
     Print("\n    name = ");
     aDevice.GetAttribute("Upnp.FriendlyName", val);
     Print(val);
+    Print("\n    presentationUrl = ");
+    if (aDevice.GetAttribute("Upnp.PresentationUrl", val)) {
+        Print(val);
+    }
+    else {
+        Print("[none]");
+    }
     Print("\n");
     iLock.Signal();
 }
@@ -80,7 +87,6 @@ void TestDeviceList(const std::vector<Brn>& aArgs)
     if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
         return;
     }
-
 //    Debug::SetLevel(Debug::kDevice);
     DeviceListLogger logger;
     CpDeviceList* deviceList = NULL;
