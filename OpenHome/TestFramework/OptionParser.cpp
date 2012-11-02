@@ -168,7 +168,7 @@ TBool OptionBool::Value() const
 
 OptionParser::OptionParser()
     : iHelpOption("-h", "--help", "show this help message and exit")
-    , iUsage(false)
+    , iUsage(NULL)
 
 {
     AddOption(&iHelpOption);

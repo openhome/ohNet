@@ -36,12 +36,14 @@ typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
 class IInvocable
 {
 public:
+    virtual ~IInvocable() {}
     virtual void InvokeAction(Invocation& aInvocation) = 0;
 };
 
 class ICpiProtocol : public IInvocable
 {
 public:
+    virtual ~ICpiProtocol() {}
     virtual TBool GetAttribute(const char* aKey, Brh& aValue) const = 0;
     virtual TUint Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri& aSubscriber) = 0;
     virtual TUint Renew(CpiSubscription& aSubscription) = 0;

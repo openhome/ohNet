@@ -19,6 +19,7 @@ namespace Net {
 class IShellCommandHandler : public INonCopyable
 {
 public:
+    virtual ~IShellCommandHandler() {}
     virtual void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse) = 0;
     virtual void DisplayHelp(IWriter& aResponse) = 0;
 };

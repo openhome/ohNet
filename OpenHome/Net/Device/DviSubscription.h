@@ -22,6 +22,7 @@ namespace Net {
 class IDviSubscriptionUserData
 {
 public:
+    virtual ~IDviSubscriptionUserData() {}
     virtual const void* Data() const = 0;
     virtual void Release() = 0;
 };
@@ -29,6 +30,7 @@ public:
 class IPropertyWriterFactory
 {
 public:
+    virtual ~IPropertyWriterFactory() {}
     virtual IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, 
                                           const Brx& aSid, TUint aSequenceNumber) = 0;
     virtual void NotifySubscriptionDeleted(const Brx& aSid) = 0;

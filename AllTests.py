@@ -13,6 +13,8 @@ def objPath():
     elif platform.system() == 'Darwin':
         if gMac64 == 1:
             plat = 'Mac-x64'
+        elif gMacArm == 1:
+            plat = 'Mac/arm'
         else:
             plat = 'Mac-x86'
     variant = 'Release'
@@ -32,6 +34,8 @@ def build(aTarget):
         buildCmd += ' debug=1'
     if gMac64 == 1:
         buildCmd += ' mac-64=1'
+    if gMacArm == 1:
+        buildCmd += ' mac-arm=1'
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
@@ -165,6 +169,7 @@ gRunJavaTests = 0
 gJsTests = 0
 gDebugBuild = 0
 gMac64 = 0
+gMacArm = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
@@ -198,6 +203,11 @@ for arg in sys.argv[1:]:
         gMac64 = 1
         if platform.system() != 'Darwin':
             print 'ERROR - --mac-64 only applicable on Darwin'
+            sys.exit(1)
+    elif arg == '--mac-arm':
+        gMacArm = 1
+        if platform.system() != 'Darwin':
+            print 'ERROR - --mac-arm only applicable on Darwin'
             sys.exit(1)
     else:
         print 'Unrecognised argument - ' + arg

@@ -125,7 +125,7 @@ public:
      */
     char* FullName() const;
 private:
-    ~NetworkAdapter();
+    virtual ~NetworkAdapter();
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
