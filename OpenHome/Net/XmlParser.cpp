@@ -9,8 +9,9 @@ using namespace OpenHome::Net;
 
 Brn XmlParserBasic::Find(const TChar* aTag, const Brx& aDocument)
 {
+    Brn tag(aTag);
     Brn ignore;
-    return XmlParserBasic::Find(aTag, aDocument, ignore);
+    return XmlParserBasic::Find(tag, aDocument, ignore);
 }
 
 Brn XmlParserBasic::Find(const Brx& aTag, const Brx& aDocument)
