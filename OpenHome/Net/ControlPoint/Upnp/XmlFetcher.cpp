@@ -326,9 +326,9 @@ XmlFetchManager::~XmlFetchManager()
 
     iLock.Wait();
     iActive = false;
+    iLock.Signal();
     Kill();
     Join();
-    iLock.Signal();
 
     iFree.ReadInterrupt();
 
