@@ -644,12 +644,16 @@ void CpiSubscriptionManager::SubnetListChanged()
 
 void CpiSubscriptionManager::HandleInterfaceChange()
 {
-    AutoMutex a(iLock);
-
+    iLock.Wait();
     // trigger CpiSubscriptionManager::WaitForPendingAdds
     if (iPendingSubscriptions.size() > 0) {
         iWaiter.Signal();
     }
+    // releasing the lock here leaves a tiny window in which an event session thread can
+    // block at CpiSubscriptionManager::WaitForPendingAdds.  This will add a very rare delay
+    // of a few seconds so it's acceptable to risk this rather than add complicated, hard
+    // to test, code.
+    iLock.Signal();
 
     // recreate the event server on the new interface
     delete iEventServer;
