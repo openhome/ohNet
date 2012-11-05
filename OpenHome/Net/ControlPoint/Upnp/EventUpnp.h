@@ -38,6 +38,7 @@ private:
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
     const HttpStatus* iErrorStatus;
+    Semaphore iShutdownSem;
 };
 
 class EventServerUpnp

@@ -282,3 +282,17 @@ AutoMutex::~AutoMutex()
 {
     iMutex.Signal();
 }
+
+//
+// AutoSemaphore
+//
+
+AutoSemaphore::AutoSemaphore(Semaphore& aSemaphore)
+    : iSem(aSemaphore)
+{
+}
+
+AutoSemaphore::~AutoSemaphore()
+{
+    iSem.Signal();
+}

@@ -21,6 +21,7 @@ const Brn EventSessionUpnp::kExpectedNts("upnp:propchange");
 // EventSessionUpnp
 
 EventSessionUpnp::EventSessionUpnp()
+    : iShutdownSem("EVSD", 1)
 {
     iReadBuffer = new Srs<kMaxReadBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -36,6 +37,8 @@ EventSessionUpnp::EventSessionUpnp()
 
 EventSessionUpnp::~EventSessionUpnp()
 {
+    Interrupt(true);
+    iShutdownSem.Wait();
     delete iReadBuffer;
     delete iReaderRequest;
 }
@@ -65,6 +68,7 @@ void EventSessionUpnp::LogError(CpiSubscription* aSubscription, const TChar* /*a
 
 void EventSessionUpnp::Run()
 {
+    AutoSemaphore a(iShutdownSem);
     CpiSubscription* subscription = NULL;
     iErrorStatus = &HttpStatus::kOk;
     try {
