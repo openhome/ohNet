@@ -206,7 +206,7 @@ public:
     static CpiSubscription* FindSubscription(const Brx& aSid);
     static void Remove(CpiSubscription& aSubscription);
     static void Schedule(CpiSubscription& aSubscription);
-    static EventServerUpnp* EventServer();
+    static TUint EventServerPort();
 private:
     static CpiSubscriptionManager* Self();
     void RemovePendingAdd(CpiSubscription& aSubscription);

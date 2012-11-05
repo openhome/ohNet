@@ -175,7 +175,7 @@ void CpiSubscription::DoSubscribe()
     if (nif == NULL) {
         THROW(NetworkError);
     }
-    Endpoint endpt(CpiSubscriptionManager::EventServer()->Port(), nif->Address());
+    Endpoint endpt(CpiSubscriptionManager::EventServerPort(), nif->Address());
     nif->RemoveRef("CpiSubscription::DoSubscribe");
     Endpoint::EndpointBuf buf;
     endpt.AppendEndpoint(buf);
@@ -604,10 +604,15 @@ void CpiSubscriptionManager::Schedule(CpiSubscription& aSubscription)
     self->iLock.Signal();
 }
 
-EventServerUpnp* CpiSubscriptionManager::EventServer()
+TUint CpiSubscriptionManager::EventServerPort()
 {
     CpiSubscriptionManager* self = CpiSubscriptionManager::Self();
-    return self->iEventServer;
+    AutoMutex a(self->iLock);
+    EventServerUpnp* server = self->iEventServer;
+    if (server == NULL) {
+        THROW(ReaderError);
+    }
+    return server->Port();
 }
 
 CpiSubscriptionManager* CpiSubscriptionManager::Self()
@@ -649,6 +654,8 @@ void CpiSubscriptionManager::HandleInterfaceChange()
     if (iPendingSubscriptions.size() > 0) {
         iWaiter.Signal();
     }
+    EventServerUpnp* server = iEventServer;
+    iEventServer = NULL;
     // releasing the lock here leaves a tiny window in which an event session thread can
     // block at CpiSubscriptionManager::WaitForPendingAdds.  This will add a very rare delay
     // of a few seconds so it's acceptable to risk this rather than add complicated, hard
@@ -656,8 +663,7 @@ void CpiSubscriptionManager::HandleInterfaceChange()
     iLock.Signal();
 
     // recreate the event server on the new interface
-    delete iEventServer;
-    iEventServer = NULL;
+    delete server;
     AutoNetworkAdapterRef ref("CpiSubscriptionManager::HandleInterfaceChange");
     const NetworkAdapter* currentInterface = ref.Adapter();
     if (currentInterface != NULL) {
