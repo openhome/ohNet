@@ -290,6 +290,7 @@ AutoMutex::~AutoMutex()
 AutoSemaphore::AutoSemaphore(Semaphore& aSemaphore)
     : iSem(aSemaphore)
 {
+    iSem.Wait();
 }
 
 AutoSemaphore::~AutoSemaphore()
