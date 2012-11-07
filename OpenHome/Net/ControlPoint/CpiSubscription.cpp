@@ -175,8 +175,9 @@ void CpiSubscription::DoSubscribe()
     if (nif == NULL) {
         THROW(NetworkError);
     }
-    Endpoint endpt(CpiSubscriptionManager::EventServerPort(), nif->Address());
+    TIpAddress nifAddr = nif->Address();
     nif->RemoveRef("CpiSubscription::DoSubscribe");
+    Endpoint endpt(CpiSubscriptionManager::EventServerPort(), nifAddr);
     Endpoint::EndpointBuf buf;
     endpt.AppendEndpoint(buf);
     uri.Append(buf);
