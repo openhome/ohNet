@@ -176,8 +176,6 @@ public:
      */
     ~CpiSubscriptionManager();
     static CpiSubscription* NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType);
-    static void NotifyAddPending(CpiSubscription& aSubscription);
-    static void NotifyAddAborted(CpiSubscription& aSubscription);
     
     /**
      * The UPnP specification contains a race condition where it is possible to
@@ -193,7 +191,7 @@ public:
      * streams of (un)subscribe requests.)  After this completes, FindSubscription()
      * should be tried again before treating the notification as an error.
      */
-    static void WaitForPendingAdds();
+    static void WaitForPendingAdd(const Brx& aSid);
     static void Add(CpiSubscription& aSubscription);
 
     /**
@@ -209,12 +207,21 @@ public:
     static TUint EventServerPort();
 private:
     static CpiSubscriptionManager* Self();
-    void RemovePendingAdd(CpiSubscription& aSubscription);
+    void RemovePendingAdd(const Brx& aSid);
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange();
     TBool ReadyForShutdown() const;
     void Run();
+private:
+    class PendingSubscription
+    {
+    public:
+        PendingSubscription(const Brx& aSid);
+    public:
+        Brn iSid;
+        Semaphore iSem;
+    };
 private:
     OpenHome::Mutex iLock;
     std::list<CpiSubscription*> iList;
@@ -227,8 +234,7 @@ private:
     TUint iWaiters;
     Semaphore iShutdownSem;
     EventServerUpnp* iEventServer;
-    typedef std::vector<CpiSubscription*> VectorSubscriptions;
-    VectorSubscriptions iPendingSubscriptions;
+    std::vector<PendingSubscription*> iPendingSubscriptions;
     TUint iInterfaceListListenerId;
     TUint iSubnetListenerId;
 };

@@ -88,14 +88,15 @@ void EventSessionUpnp::Run()
             Error(HttpStatus::kPreconditionFailed);
         }
 
-        subscription = CpiSubscriptionManager::FindSubscription(iHeaderSid.Sid());
+        const Brx& sid = iHeaderSid.Sid();
+        subscription = CpiSubscriptionManager::FindSubscription(sid);
         if (subscription == NULL) {
             /* the UPnP spec contains a potential race condition where the first NOTIFY
                message can be processed ahead of the SUBSCRIBE reply which provides
                the sid.  Wait until any in-progress subscriptions complete and try
                again in case that's what has happened here */
-            CpiSubscriptionManager::WaitForPendingAdds();
-            subscription = CpiSubscriptionManager::FindSubscription(iHeaderSid.Sid());
+            CpiSubscriptionManager::WaitForPendingAdd(sid);
+            subscription = CpiSubscriptionManager::FindSubscription(sid);
             if (subscription == NULL) {
                 LOG2(kEvent, kError, "notification for unexpected device - ")
                 LOG2(kEvent, kError, iHeaderSid.Sid());

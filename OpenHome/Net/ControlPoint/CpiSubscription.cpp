@@ -190,34 +190,11 @@ void CpiSubscription::DoSubscribe()
     LOG(kEvent, "\n");
 
     iNextSequenceNumber = 0;
-    CpiSubscriptionManager::NotifyAddPending(*this);
     TUint renewSecs;
     try {
         renewSecs = iDevice.Subscribe(*this, subscriber);
     }
-    catch (HttpError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
-        THROW(HttpError);
-    }
-    catch (NetworkError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
-        THROW(NetworkError);
-    }
-    catch (NetworkTimeout&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
-        THROW(NetworkTimeout);
-    }
-    catch (WriterError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
-        THROW(WriterError);
-    }
-    catch (ReaderError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
-        THROW(ReaderError);
-    }
     catch (XmlError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
-        THROW(XmlError);
         // we don't expect to ever get here.  Its worth capturing some debug info if we do.
         Brh deviceXml;
         if (!iDevice.GetAttribute("Upnp.DeviceXml", deviceXml)) {
@@ -231,6 +208,7 @@ void CpiSubscription::DoSubscribe()
         Log::Print(deviceXml);
         Log::Print("\n\n");
         Stack::Mutex().Signal();
+        THROW(XmlError);
     }
 
     CpiSubscriptionManager::Add(*this);
@@ -518,38 +496,22 @@ CpiSubscription* CpiSubscriptionManager::NewSubscription(CpiDevice& aDevice, IEv
     return new CpiSubscription(aDevice, aEventProcessor, aServiceType);
 }
 
-void CpiSubscriptionManager::NotifyAddPending(CpiSubscription& aSubscription)
+void CpiSubscriptionManager::WaitForPendingAdd(const Brx& aSid)
 {
     CpiSubscriptionManager* self = CpiSubscriptionManager::Self();
     self->iLock.Wait();
-    self->iPendingSubscriptions.push_back(&aSubscription);
+    PendingSubscription* pending = new PendingSubscription(aSid);
+    self->iPendingSubscriptions.push_back(pending);
     self->iLock.Signal();
-}
-
-void CpiSubscriptionManager::NotifyAddAborted(CpiSubscription& aSubscription)
-{
-    CpiSubscriptionManager* self = CpiSubscriptionManager::Self();
-    self->iLock.Wait();
-    self->RemovePendingAdd(aSubscription);
-    self->iLock.Signal();
-}
-
-void CpiSubscriptionManager::WaitForPendingAdds()
-{
-    CpiSubscriptionManager* self = CpiSubscriptionManager::Self();
-    TBool wait;
-    self->iLock.Wait();
-    wait = (self->iPendingSubscriptions.size() > 0);
-    if (wait) {
-        self->iWaiters++;
+    try {
+        pending->iSem.Wait(Stack::InitParams().PendingSubscriptionTimeoutMs());
     }
-    self->iLock.Signal();
-    if (wait) {
-        try {
-            self->iWaiter.Wait(Stack::InitParams().PendingSubscriptionTimeoutMs());
-        }
-        catch(Timeout&) {}
+    catch(Timeout&) {
+        self->iLock.Wait();
+        self->RemovePendingAdd(aSid);
+        self->iLock.Signal();
     }
+    delete pending;
 }
 
 void CpiSubscriptionManager::Add(CpiSubscription& aSubscription)
@@ -559,7 +521,7 @@ void CpiSubscriptionManager::Add(CpiSubscription& aSubscription)
     Brn sid(aSubscription.Sid());
     ASSERT(sid.Bytes() > 0);
     self->iMap.insert(std::pair<Brn,CpiSubscription*>(sid, &aSubscription));
-    self->RemovePendingAdd(aSubscription);
+    self->RemovePendingAdd(sid);
     self->iLock.Signal();
 }
 
@@ -620,20 +582,15 @@ CpiSubscriptionManager* CpiSubscriptionManager::Self()
     return &CpiStack::SubscriptionManager();
 }
 
-void CpiSubscriptionManager::RemovePendingAdd(CpiSubscription& aSubscription)
+void CpiSubscriptionManager::RemovePendingAdd(const Brx& aSid)
 {
     for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
-        if (iPendingSubscriptions[i] == &aSubscription) {
+        PendingSubscription* pending = iPendingSubscriptions[i];
+        if (pending->iSid == aSid) {
+            pending->iSem.Signal();
             iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
             break;
         }
-    }
-
-    if (iPendingSubscriptions.size() == 0) {
-        for (TUint i=0; i<iWaiters; i++) {
-            iWaiter.Signal();
-        }
-        iWaiters = 0;
     }
 }
 
@@ -650,9 +607,9 @@ void CpiSubscriptionManager::SubnetListChanged()
 void CpiSubscriptionManager::HandleInterfaceChange()
 {
     iLock.Wait();
-    // trigger CpiSubscriptionManager::WaitForPendingAdds
-    if (iPendingSubscriptions.size() > 0) {
-        iWaiter.Signal();
+    // trigger CpiSubscriptionManager::WaitForPendingAdd
+    while (iPendingSubscriptions.size() > 0) {
+        RemovePendingAdd(iPendingSubscriptions[0]->iSid);
     }
     EventServerUpnp* server = iEventServer;
     iEventServer = NULL;
@@ -701,4 +658,13 @@ void CpiSubscriptionManager::Run()
             iShutdownSem.Signal();
         }
     }
+}
+
+
+// CpiSubscriptionManager::PendingSubscription
+
+CpiSubscriptionManager::PendingSubscription::PendingSubscription(const Brx& aSid)
+    : iSid(aSid)
+    , iSem("SMPS", 0)
+{
 }
