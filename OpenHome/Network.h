@@ -177,7 +177,7 @@ class SocketTcpServer : public Socket
     friend class SocketTcpSession;
 public:
     SocketTcpServer(const TChar* aName, TUint aPort, TIpAddress aInterface, TUint aSessionPriority = kPriorityHigh,
-                    TUint aSessionStackBytes = Thread::kDefaultStackBytes, TUint aSlots = 10);
+                    TUint aSessionStackBytes = Thread::kDefaultStackBytes, TUint aSlots = 128);
     // Add is not thread safe, but why would you want that?
     void Add(const TChar* aName, SocketTcpSession* aSession, TInt aPriorityOffset = 0);
     TUint Port() const { return iPort; }
