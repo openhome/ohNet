@@ -41,6 +41,8 @@ private:
     DviDevice& iDeviceDv;
     DviSubscription* iSubscriptionDv;
     CpiSubscription* iSubscriptionCp;
+    typedef std::map<Brn,Brn,BufferCmp> SubscriptionMap;
+    SubscriptionMap iSubscriptions;
 };
 
 class Argument;

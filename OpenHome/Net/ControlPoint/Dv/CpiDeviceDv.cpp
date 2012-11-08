@@ -110,18 +110,29 @@ void CpiDeviceDv::Release()
 }
 
 IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/,
-                                           const Brx& /*aSid*/, TUint aSequenceNumber)
+                                           const Brx& aSid, TUint aSequenceNumber)
 {
     if (!iSubscriptionCp->UpdateSequenceNumber(aSequenceNumber)) {
         iSubscriptionCp->SetNotificationError();
         return NULL;
     }
+    Brn sid(aSid);
+    SubscriptionMap::iterator it = iSubscriptions.find(sid);
+    if (it == iSubscriptions.end()) {
+        iSubscriptions.insert(std::pair<Brn,Brn>(sid, sid));
+        iDeviceCp->AddRef();
+    }
     ASSERT(iSubscriptionCp != NULL);
     return new PropertyWriterDv(*iSubscriptionCp);
 }
 
-void CpiDeviceDv::NotifySubscriptionDeleted(const Brx& /*aSid*/)
+void CpiDeviceDv::NotifySubscriptionDeleted(const Brx& aSid)
 {
+    Brn sid(aSid);
+    SubscriptionMap::iterator it = iSubscriptions.find(sid);
+    ASSERT(it != iSubscriptions.end());
+    iSubscriptions.erase(it);
+    iDeviceCp->RemoveRef();
 }
 
 void CpiDeviceDv::NotifySubscriptionExpired(const Brx& /*aSid*/)
