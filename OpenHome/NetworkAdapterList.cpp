@@ -77,7 +77,8 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     iDefaultSubnet = aSubnet;
     UpdateCurrentAdapter();
     iListLock.Signal();
-    if (aSubnet != oldSubnet) {
+    const TBool started = (Net::Stack::CpiStack() != NULL || Net::Stack::DviStack() != NULL);
+    if (started && aSubnet != oldSubnet) {
         iNotifierThread->QueueCurrentChanged();
     }
 }

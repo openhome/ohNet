@@ -51,12 +51,12 @@ public:
     static void AddObject(IStackObject* aObject);
     static void RemoveObject(IStackObject* aObject);
     static void ListObjects();
+    static IStack* CpiStack();
+    static IStack* DviStack();
 private:
     ~Stack();
     static void SetCpiStack(IStack* aStack);
     static void SetDviStack(IStack* aStack);
-    static IStack* CpiStack();
-    static IStack* DviStack();
     void DoAddObject(IStackObject* aObject);
     void DoRemoveObject(IStackObject* aObject);
     void DoListObjects();
