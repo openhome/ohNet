@@ -955,6 +955,10 @@ IPropertyWriter* DviSessionWebSocket::CreateWriter(const IDviSubscriptionUserDat
     return new PropertyWriterWs(*this, aSid, aSequenceNumber);
 }
 
+void DviSessionWebSocket::NotifySubscriptionCreated(const Brx& /*aSid*/)
+{
+}
+
 void DviSessionWebSocket::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 {
 }

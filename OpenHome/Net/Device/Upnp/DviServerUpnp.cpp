@@ -425,6 +425,10 @@ IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserD
     return new PropertyWriterUpnp(publisher, data->Subscriber(), data->SubscriberPath(), aSid, aSequenceNumber);
 }
 
+void PropertyWriterFactory::NotifySubscriptionCreated(const Brx& /*aSid*/)
+{
+}
+
 void PropertyWriterFactory::NotifySubscriptionDeleted(const Brx& aSid)
 {
     AddRef();

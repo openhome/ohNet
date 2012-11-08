@@ -408,6 +408,10 @@ IPropertyWriter* DviPropertyUpdateCollection::CreateWriter(const IDviSubscriptio
     return NULL;
 }
 
+void DviPropertyUpdateCollection::NotifySubscriptionCreated(const Brx& /*aSid*/)
+{
+}
+
 void DviPropertyUpdateCollection::NotifySubscriptionDeleted(const Brx& /*aSid*/)
 {
 }

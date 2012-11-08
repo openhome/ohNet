@@ -52,6 +52,7 @@ DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWr
 {
     iDevice.AddWeakRef();
     aSid.TransferTo(iSid);
+    iWriterFactory.NotifySubscriptionCreated(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
     iTimer = new Timer(functor);
     DoRenew(aDurationSecs);
