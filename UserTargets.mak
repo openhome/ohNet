@@ -3,7 +3,7 @@
 # (Note that some of these depend on variables defined in the generated
 # makefiles, and so cannot be defined in Common.mak.)
 
-all : $(build_targets)
+all : bundle $(build_targets)
 
 clean :
 	$(rmdir) $(objdir)
