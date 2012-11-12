@@ -223,7 +223,7 @@ class JenkinsBuild():
                 build.append('&&')
 
             build.append('make')
-            build.append('bundle-dev')
+            build.append('bundle')
             #build.append('targetplatform=%s' %(platform,))
             #build.append('releasetype=%s' %(release,))
             build.append('uset4=yes')
