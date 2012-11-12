@@ -28,53 +28,70 @@ endif
 gcc_machine = $(shell ${CROSS_COMPILE}gcc -dumpmachine)
 MACHINE = $(shell uname -s)
 
+$(info Machine reported by compiler is: ${gcc_machine})
+$(info Machine reported by uname is: ${MACHINE})
+
 ifeq ($(MACHINE), Darwin)
   ifeq ($(mac-arm),1)
     platform = iOS
-    openhome_system = iOs
-    openhome_architecture = armv7
+    detected_openhome_system = iOs
+    detected_openhome_architecture = armv7
   else
     platform = IntelMac
     openhome_system = Mac
     ifeq ($(mac-64),1)
-      openhome_architecture = x64
+      detected_openhome_architecture = x64
     else
-      openhome_architecture = x86
+      detected_openhome_architecture = x86
     endif
   endif
 else
   # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
   platform ?= Vanilla
   ifeq ($(platform), Core)
-    openhome_system = Core
-    openhome_architecture = Core
+    detected_openhome_system = Core
+    detected_openhome_architecture = Core
   else
     ifneq (,$(findstring linux,$(gcc_machine)))
-      openhome_system = Linux
+      detected_openhome_system = Linux
     endif
     ifeq ($(gcc_machine),arm-none-linux-gnueabi)
-      openhome_architecture = armel
+      detected_openhome_architecture = armel
     endif
     ifeq ($(gcc_machine),arm-linux-gnueabi)
-      openhome_architecture = armel
+      detected_openhome_architecture = armel
     endif
     ifeq ($(gcc_machine),arm-linux-gnueabihf)
-      openhome_architecture = armhf
+      detected_openhome_architecture = armhf
     endif
     ifneq (,$(findstring i686,$(gcc_machine)))
-      openhome_architecture = x86
+      detected_openhome_architecture = x86
     endif
     ifneq (,$(findstring amd64,$(gcc_machine)))
-      openhome_architecture = x64
+      detected_openhome_architecture = x64
     endif
   endif
 endif
 
-openhome_system ?= Unknown
-openhome_architecture ?= Unknown
+detected_openhome_system ?= Unknown
+detected_openhome_architecture ?= Unknown
 
+ifneq (${openhome_system},)
+  ifneq (${openhome_system},${detected_openhome_system})
+    $(warning Detected compiler is for system ${detected_openhome_system} but expected ${openhome_system}. Build will probably fail.)
+  endif
+endif
 
+ifneq (${openhome_architecture},)
+  ifneq (${openhome_architecture},${detected_openhome_architecture})
+    $(warning Detected compiler is for architecture ${detected_openhome_architecture} but expected ${openhome_architecture}. Build will probably fail.)
+  endif
+endif
 
+openhome_system = ${detected_openhome_system}
+openhome_architecture = ${detected_openhome_architecture}
+
+$(info Building for system ${openhome_system} and architecture ${openhome_architecture})
 
 
 ifeq ($(platform),iOS)
@@ -404,4 +421,6 @@ docs:
 
 bundle: $(all_targets)
 	$(mkdir) $(bundle_build)
+	echo gcc_machine=${gcc_machine}
+	echo MACHINE=${MACHINE}
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
