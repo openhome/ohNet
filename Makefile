@@ -31,14 +31,14 @@ MACHINE = $(shell uname -s)
 $(info Machine reported by compiler is: ${gcc_machine})
 $(info Machine reported by uname is: ${MACHINE})
 
-ifeq ($(MACHINE), Darwin)
+ifeq ($(MACHINE),Darwin)
   ifeq ($(mac-arm),1)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = armv7
   else
     platform = IntelMac
-    openhome_system = Mac
+    detected_openhome_system = Mac
     ifeq ($(mac-64),1)
       detected_openhome_architecture = x64
     else
@@ -65,6 +65,15 @@ else
       detected_openhome_architecture = armhf
     endif
     ifneq (,$(findstring i686,$(gcc_machine)))
+      detected_openhome_architecture = x86
+    endif
+    ifneq (,$(findstring i586,$(gcc_machine)))
+      detected_openhome_architecture = x86
+    endif
+    ifneq (,$(findstring i486,$(gcc_machine)))
+      detected_openhome_architecture = x86
+    endif
+    ifneq (,$(findstring i386,$(gcc_machine)))
       detected_openhome_architecture = x86
     endif
     ifneq (,$(findstring amd64,$(gcc_machine)))
