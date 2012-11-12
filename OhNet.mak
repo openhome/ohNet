@@ -200,6 +200,10 @@ uninstall :
 	if exist "$(installincludedir)" rmdir /s /q "$(installincludedir)"
 	rmdir "$(installdir)"
 
-bundle: $(all_targets)
+bundle-after-build: $(all_targets)
+	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
+
+bundle:
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
