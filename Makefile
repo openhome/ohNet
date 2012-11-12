@@ -79,6 +79,9 @@ else
     ifneq (,$(findstring amd64,$(gcc_machine)))
       detected_openhome_architecture = x64
     endif
+    ifneq (,$(findstring x86_64,$(gcc_machine)))
+      detected_openhome_architecture = x64
+    endif
   endif
 endif
 
