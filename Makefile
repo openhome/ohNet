@@ -433,6 +433,4 @@ docs:
 
 bundle: $(all_targets)
 	$(mkdir) $(bundle_build)
-	echo gcc_machine=${gcc_machine}
-	echo MACHINE=${MACHINE}
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
