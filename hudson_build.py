@@ -152,7 +152,7 @@ class JenkinsBuild():
             if arch == 'x64':
                 args.append('--mac-64')
                 self.platform_make_args.append('mac-64=1')
-            elif arch == 'arm':
+            elif arch == 'armv7':
                 args.append('--mac-arm')
                 self.platform_make_args.append('mac-arm=1')
             # 32 and 64-bit builds run in parallel on the same slave.
