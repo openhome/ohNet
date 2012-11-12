@@ -99,15 +99,15 @@ class JenkinsBuild():
 
     def get_platform(self):
         platforms = { 
-            'Linux-x86': { 'os':'linux', 'arch':'x86', 'publish':True},
-            'Linux-x64': { 'os':'linux', 'arch':'x64', 'publish':True},
-            'Windows-x86': { 'os': 'windows', 'arch':'x86', 'publish':True},
-            'Windows-x64': { 'os': 'windows', 'arch':'x64', 'publish':True},
-            'Macos-x64': { 'os': 'macos', 'arch':'x86', 'publish':False}, # Old Jenkins label
-            'Mac-x64': { 'os': 'macos', 'arch':'x64', 'publish':True}, # New Jenkins label, matches downstream builds
-            'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True}, # New Jenkins label, matches downstream builds
-            'Linux-ARM': { 'os': 'linux', 'arch': 'arm', 'publish':True},
-            'iOs-ARM': { 'os': 'macos', 'arch':'arm', 'publish':True},
+                'Linux-x86': { 'os':'linux', 'arch':'x86', 'publish':True, 'system':'Linux'},
+                'Linux-x64': { 'os':'linux', 'arch':'x64', 'publish':True, 'system':'Linux'},
+                'Windows-x86': { 'os': 'windows', 'arch':'x86', 'publish':True, 'system':'Linux'},
+                'Windows-x64': { 'os': 'windows', 'arch':'x64', 'publish':True, 'system':'Linux'},
+                'Macos-x64': { 'os': 'macos', 'arch':'x86', 'publish':False, 'system':'Mac'}, # Old Jenkins label
+                'Mac-x64': { 'os': 'macos', 'arch':'x64', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
+                'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
+                'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish':True, 'system':'Linux'},
+                'iOs-ARM': { 'os': 'macos', 'arch':'armv7', 'publish':True, 'system':'iOs'},
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -123,7 +123,7 @@ class JenkinsBuild():
             args.append('vcvarsall.bat')
             args.append('amd64')
             os.environ['CS_PLATFORM'] = 'x64'
-        if os_platform == 'linux' and arch == 'arm':
+        if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
 
         self.platform_args = args
@@ -139,7 +139,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if arch == 'arm':
+        if arch in ['armel', 'armhf', 'armv7']:
             args.append('--buildonly')
         elif arch == 'x64':
             args.append('--native')
@@ -208,12 +208,15 @@ class JenkinsBuild():
         platform_args = self.platform_args
         platform = self.options.platform
         version = self.options.version
+        openhome_system = self.current_platform['system']
+        openhome_architecture = self.current_platform['arch']
         
         release_targets = []
         release_targets.append('release')
         release_targets.append('debug')
         
         for release in release_targets:
+            openhome_configuration = release.title()
             build = []
             if platform_args != []:
                 build.extend(platform_args)
@@ -221,9 +224,12 @@ class JenkinsBuild():
 
             build.append('make')
             build.append('bundle-dev')
-            build.append('targetplatform=%s' %(platform,))
-            build.append('releasetype=%s' %(release,))
+            #build.append('targetplatform=%s' %(platform,))
+            #build.append('releasetype=%s' %(release,))
             build.append('uset4=yes')
+            build.append('openhome_system=' + openhome_system)
+            build.append('openhome_architecture=' + openhome_architecture)
+            build.append('openhome_configuration=' + openhome_configuration)
             build.extend(self.platform_make_args)
 
             print "doing release with bundle %s" %(build,)
@@ -233,8 +239,8 @@ class JenkinsBuild():
                 print ret
                 sys.exit(10)
 
-            bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-dev.tar.gz" %(platform,release))        
-            dest = os.path.join('Build/Bundles',"ohNet-%s-%s-dev-%s.tar.gz" %(version,platform,release))
+            bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-%s.tar.gz" %(openhome_system, openhome_architecture, openhome_configuration))
+            dest = os.path.join('Build/Bundles',"ohNet-%s-%s-%s-%s.tar.gz" %(version, openhome_system, openhome_architecture, openhome_configuration))
             if os.path.exists(dest):
                 os.remove(dest)
             os.rename(bundle_name, dest)
@@ -256,10 +262,10 @@ class JenkinsBuild():
                 postAction.valgrind_parse()
                 postAction.gen_docs()
 
-            if os_platform == 'linux' and arch == 'arm':
+            if os_platform == 'linux' and arch in ['armel', 'armhf']:
                 postAction.arm_tests('nightly')
         else:
-            if os_platform == 'linux' and arch == 'arm':
+            if os_platform == 'linux' and arch in ['armel', 'armhf']:
                 postAction.arm_tests('commit')    
         if self.platform['publish'] and release == '1':
             self.do_release()

@@ -36,10 +36,12 @@ ALL_TARGETS = {
 
         BuildTarget("Linux",   "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
-        BuildTarget("Linux",   "arm",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildTarget("Linux",   "armel", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildTarget("Linux",   "armhf", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "x86",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "x64",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
-        BuildTarget("Linux",   "arm",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildTarget("Linux",   "armel", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildTarget("Linux",   "armhf", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
 
         BuildTarget("Mac",     "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac/Debug"),
         BuildTarget("Mac",     "x86",   "Release"): BuildInfo(builddir="Build/Obj/Mac/Release"),
@@ -61,7 +63,7 @@ def get_target_as_option_string(target):
 
 def main():
     parser = optparse.OptionParser()
-    parser.add_option("-d", "--dev", dest="dev", action="store_true", default=False, help="Include development files (e.g. headers)")
+    #parser.add_option("-d", "--dev", dest="dev", action="store_true", default=False, help="Include development files (e.g. headers)")
     parser.add_option("-s", "--system", default=None, help="Target operating system. (One of: {0})".format(", ".join(sorted(ALL_SYSTEMS))))
     parser.add_option("-a", "--architecture", default=None, help="Target architecture. (One of: {0})".format(", ".join(sorted(ALL_ARCHITECTURES))))
     parser.add_option("-c", "--configuration", default=None, help="Target configuration. (One of: {0})".format(", ".join(sorted(ALL_CONFIGURATIONS))))
@@ -103,7 +105,7 @@ def main():
     #if release_type == 'release':
     #    builddir = os.path.join(builddir, 'Release')
 
-    bundle_fileprefix = "ohNet-{target.system}-{target.architecture}-{target.configuration}{suffix}".format(target=target, suffix="-dev" if options.dev else "")
+    bundle_fileprefix = "ohNet-{target.system}-{target.architecture}-{target.configuration}".format(target=target)
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
     if os.path.exists(bundle_path):
@@ -113,12 +115,11 @@ def main():
 
     recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
     #tf.add(builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
-    if options.dev:
-        recursively_add_directory(tf, includedir, bundle_fileprefix + "/include/ohnet")
-        #tf.add(includedir, bundle_fileprefix + "/include/ohnet")
-        recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
-        recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
-        recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")
+    recursively_add_directory(tf, includedir, bundle_fileprefix + "/include/ohnet")
+    #tf.add(includedir, bundle_fileprefix + "/include/ohnet")
+    recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
+    recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
+    recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")
 
 if __name__ == "__main__":
     main()

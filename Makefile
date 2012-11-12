@@ -405,7 +405,3 @@ docs:
 bundle: tt
 	$(mkdir) $(bundle_build)
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
-
-bundle-dev: tt
-	mkdir -p $(bundle_build)
-	python bundle_binaries.py --dev --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)

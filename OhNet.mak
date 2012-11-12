@@ -203,7 +203,3 @@ uninstall :
 bundle: tt
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
-
-bundle-dev: tt
-	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
-	python bundle_binaries.py --dev --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
