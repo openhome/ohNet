@@ -208,8 +208,8 @@ class JenkinsBuild():
         platform_args = self.platform_args
         platform = self.options.platform
         version = self.options.version
-        openhome_system = self.current_platform['system']
-        openhome_architecture = self.current_platform['arch']
+        openhome_system = self.platform['system']
+        openhome_architecture = self.platform['arch']
         
         release_targets = []
         release_targets.append('release')
