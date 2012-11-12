@@ -431,7 +431,7 @@ docs:
 	$(mkdir) Build/Docs/Js
 	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js OpenHome/Net/Bindings/Js/ControlPoint OpenHome/Net/Bindings/Js/ControlPoint/Proxies
 
-bundle-after-build: $(all_targets)
+bundle-after-build: $(build_targets)
 	$(mkdir) $(bundle_build)
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
 
