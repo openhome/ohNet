@@ -1,11 +1,19 @@
 # Makefile for Windows
 #
 
-!if "$(csplatform)"=="x64"
-csplatform = x64
+openhome_system=Windows
+
+!if [cl 2>&1 | find "for x64" > nul] == 0
+!message Detected 64-bit compiler.
+openhome_architecture=x64
+!elseif [cl 2>&1 | find "for 80x86" > nul] == 0
+!message Detected 32-bit compiler.
+openhome_architecture=x86
 !else
-csplatform = x86
+!message Cannot tell if compiler is 32-bit or 64-bit. Please specify openhome_architecture=x64 or openhome_architecture=x86.
 !endif
+
+csplatform = $(openhome_architecture)
 
 !if "$(debug)"=="1"
 link_flag_debug = /debug
@@ -13,12 +21,14 @@ link_flag_debug_dll = $(link_flag_debug)
 debug_specific_cflags = /MTd /Zi /Od /RTC1
 debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
+openhome_configuration = Debug
 !else
 link_flag_debug =
 link_flag_debug_dll = /debug /opt:ref
 debug_specific_cflags = /MT /Ox
 debug_csharp = /optimize+
 build_dir = Release
+openhome_configuration = Release
 !endif
 
 # Macros used by Common.mak
@@ -112,19 +122,19 @@ copy_build_includes:
 	if not exist $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies mkdir $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies
 	copy OpenHome\*.h $(inc_build)\OpenHome\Private > nul
 	copy OpenHome\Buffer.inl $(inc_build)\OpenHome > nul
-    move $(inc_build)\OpenHome\Private\Buffer.h $(inc_build)\OpenHome > nul
-    move $(inc_build)\OpenHome\Private\Exception.h $(inc_build)\OpenHome > nul
-    move $(inc_build)\OpenHome\Private\Functor*.h $(inc_build)\OpenHome > nul
-    move $(inc_build)\OpenHome\Private\MimeTypes.h $(inc_build)\OpenHome > nul
-    move $(inc_build)\OpenHome\Private\OhNetDefines.h $(inc_build)\OpenHome > nul
-    move $(inc_build)\OpenHome\Private\OsTypes.h $(inc_build)\OpenHome > nul
-    move $(inc_build)\OpenHome\Private\OhNetTypes.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\Buffer.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\Exception.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\Functor*.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\MimeTypes.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\OhNetDefines.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\OsTypes.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\OhNetTypes.h $(inc_build)\OpenHome > nul
 	copy OpenHome\TestFramework\*.h $(inc_build)\OpenHome\Private > nul
 	copy OpenHome\Net\*.h $(inc_build)\OpenHome\Net\Private > nul
-    move $(inc_build)\OpenHome\Net\Private\FunctorAsync.h $(inc_build)\OpenHome\Net\Core > nul
-    copy $(inc_build)\OpenHome\Net\Core\FunctorAsync.h $(inc_build)\OpenHome\Net\Cpp > nul
-    move $(inc_build)\OpenHome\Net\Private\OhNet.h $(inc_build)\OpenHome\Net\Core > nul
-    copy $(inc_build)\OpenHome\Net\Core\OhNet.h $(inc_build)\OpenHome\Net\Cpp > nul
+	move $(inc_build)\OpenHome\Net\Private\FunctorAsync.h $(inc_build)\OpenHome\Net\Core > nul
+	copy $(inc_build)\OpenHome\Net\Core\FunctorAsync.h $(inc_build)\OpenHome\Net\Cpp > nul
+	move $(inc_build)\OpenHome\Net\Private\OhNet.h $(inc_build)\OpenHome\Net\Core > nul
+	copy $(inc_build)\OpenHome\Net\Core\OhNet.h $(inc_build)\OpenHome\Net\Cpp > nul
 	copy OpenHome\Net\Shell\*.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\ControlPoint\AsyncPrivate.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\ControlPoint\CpStack.h $(inc_build)\OpenHome\Net\Core > nul
@@ -169,10 +179,10 @@ copy_build_includes:
 	copy OpenHome\Net\Bindings\Cpp\ControlPoint\Proxies\*.h $(inc_build)\OpenHome\Net\Cpp > nul
 	copy OpenHome\Net\Bindings\Cpp\Device\*.h $(inc_build)\OpenHome\Net\Cpp > nul
 	copy OpenHome\Net\Bindings\Cpp\Device\Providers\*.h $(inc_build)\OpenHome\Net\Cpp > nul
-    xcopy OpenHome\Net\Bindings\Js\ControlPoint\Tests\*.*/s $(inc_build)\OpenHome\Net\Private\Js\Tests /y > nul
-    copy OpenHome\Net\Bindings\Js\ControlPoint\lib\*.js $(inc_build)\OpenHome\Net\Private\Js\Tests\lib > nul
-    copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgTestBasic1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies > nul
-    copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies > nul
+	xcopy OpenHome\Net\Bindings\Js\ControlPoint\Tests\*.*/s $(inc_build)\OpenHome\Net\Private\Js\Tests /y > nul
+	copy OpenHome\Net\Bindings\Js\ControlPoint\lib\*.js $(inc_build)\OpenHome\Net\Private\Js\Tests\lib > nul
+	copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgTestBasic1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies > nul
+	copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies > nul
 	copy Os\*.h $(inc_build)\OpenHome > nul
 	copy Os\*.inl $(inc_build)\OpenHome > nul
 
@@ -192,10 +202,8 @@ uninstall :
 
 bundle: tt
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
-	if "$(targetplatform)"=="" echo "Usage: make bundle targetplatform=Windows-x86" && exit /b 1
-	python bundle_binaries.py Windows $(targetplatform) $(releasetype)
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
 
 bundle-dev: tt
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
-	if "$(targetplatform)"=="" echo "Usage: make bundle-dev targetplatform=Windows-x86" && exit /b 1
-	python bundle_binaries.py --dev Windows $(targetplatform) $(releasetype)
+	python bundle_binaries.py --dev --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)

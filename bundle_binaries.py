@@ -3,6 +3,7 @@ import tarfile
 import optparse
 from os import path
 import os
+from collections import namedtuple
 
 def exclude_non_binary(filename):
     if filename.lower().startswith("test"):
@@ -25,28 +26,84 @@ def recursively_add_directory(tarfile, directory_path, path_in_archive, exclude=
             if exclude is None or not exclude(fname):
                 tarfile.add(path.join(sub_path, fname), path.join(path_in_archive, relative_dir, fname))
 
+BuildTarget = namedtuple("BuildTarget", "system architecture configuration")
+BuildInfo = namedtuple("BuildInfo", "builddir")
+ALL_TARGETS = {
+        BuildTarget("Windows", "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
+        BuildTarget("Windows", "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
+        BuildTarget("Windows", "x86",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
+        BuildTarget("Windows", "x64",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
+
+        BuildTarget("Linux",   "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildTarget("Linux",   "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildTarget("Linux",   "arm",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildTarget("Linux",   "x86",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildTarget("Linux",   "x64",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildTarget("Linux",   "arm",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
+
+        BuildTarget("Mac",     "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac/Debug"),
+        BuildTarget("Mac",     "x86",   "Release"): BuildInfo(builddir="Build/Obj/Mac/Release"),
+
+        BuildTarget("iOs",     "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac/arm/Debug"),
+        BuildTarget("iOs",     "armv6", "Debug"):   BuildInfo(builddir="Build/Obj/Mac/arm/Debug"),
+        BuildTarget("iOs",     "armv7", "Debug"):   BuildInfo(builddir="Build/Obj/Mac/arm/Debug"),
+        BuildTarget("iOs",     "x86",   "Release"): BuildInfo(builddir="Build/Obj/Mac/arm/Release"),
+        BuildTarget("iOs",     "armv6", "Release"): BuildInfo(builddir="Build/Obj/Mac/arm/Release"),
+        BuildTarget("iOs",     "armv7", "Release"): BuildInfo(builddir="Build/Obj/Mac/arm/Release"),
+    }
+
+ALL_SYSTEMS = set(tgt.system for tgt in ALL_TARGETS.keys())
+ALL_ARCHITECTURES = set(tgt.architecture for tgt in ALL_TARGETS.keys())
+ALL_CONFIGURATIONS = set(tgt.configuration for tgt in ALL_TARGETS.keys())
+
+def get_target_as_option_string(target):
+    return "--system {0} --architecture {1} --configuration {2}".format(target.system, target.architecture, target.configuration)
 
 def main():
     parser = optparse.OptionParser()
     parser.add_option("-d", "--dev", dest="dev", action="store_true", default=False, help="Include development files (e.g. headers)")
+    parser.add_option("-s", "--system", default=None, help="Target operating system. (One of: {0})".format(", ".join(sorted(ALL_SYSTEMS))))
+    parser.add_option("-a", "--architecture", default=None, help="Target architecture. (One of: {0})".format(", ".join(sorted(ALL_ARCHITECTURES))))
+    parser.add_option("-c", "--configuration", default=None, help="Target configuration. (One of: {0})".format(", ".join(sorted(ALL_CONFIGURATIONS))))
     options, args = parser.parse_args()
-    osname = args[0]      # E.g. "Windows", "Posix"
-    targetname = args[1]  # E.g. "Windows-x86", "Linux-ARM", "Linux-x64"
-    release_type = args[2] # e.g. debug release
+    if len(args)>0:
+        print "Too many arguments."
+        sys.exit(1)
+    if options.system not in ALL_SYSTEMS:
+        print "Please specify --system from one of {0}.".format(", ".join(sorted(ALL_SYSTEMS)))
+        sys.exit(1)
+    if options.architecture not in ALL_ARCHITECTURES:
+        print "Please specify --architecture from one of {0}.".format(", ".join(sorted(set(tgt.architecture for tgt in ALL_TARGETS.keys() if tgt.system == options.system))))
+        sys.exit(1)
+    if options.configuration not in ALL_CONFIGURATIONS:
+        print "Please specify --configuration from one of {0}.".format(", ".join(sorted(ALL_CONFIGURATIONS)))
+        sys.exit(1)
+    target = BuildTarget(options.system, options.architecture, options.configuration)
+    if target not in ALL_TARGETS:
+        print "Unrecognized target combination. Valid combinations are:"
+        for valid_target in sorted(ALL_TARGETS.keys()):
+            print "    " + get_target_as_option_string(valid_target)
+        sys.exit(1)
 
-    builddir = "Build/Obj/" + osname
+    buildinfo = ALL_TARGETS[target]
+
+    #osname = args[0]      # E.g. "Windows", "Posix"
+    #targetname = args[1]  # E.g. "Windows-x86", "Linux-ARM", "Linux-x64"
+    #release_type = args[2] # e.g. debug release
+
+    builddir = buildinfo.builddir
     includedir = "Build/Include"
     outputdir = "Build/Bundles"
     t4dir = "Build/Tools"
     templateDir = "OpenHome/Net/T4/Templates"
     uisdkDir = "OpenHome/Net/Bindings/Js/ControlPoint"
 
-    if release_type == 'debug':
-        builddir = os.path.join(builddir, 'Debug')
-    if release_type == 'release':
-        builddir = os.path.join(builddir, 'Release')
+    #if release_type == 'debug':
+    #    builddir = os.path.join(builddir, 'Debug')
+    #if release_type == 'release':
+    #    builddir = os.path.join(builddir, 'Release')
 
-    bundle_fileprefix = "ohNet-%s-%s%s" % (targetname, release_type, "-dev" if options.dev else "")
+    bundle_fileprefix = "ohNet-{target.system}-{target.architecture}-{target.configuration}{suffix}".format(target=target, suffix="-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
     if os.path.exists(bundle_path):

@@ -13,17 +13,71 @@ ifeq ($(debug),1)
 debug_specific_cflags = -g -O0
 debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
+openhome_configuration = Debug
 else
 debug_specific_cflags = -O2
 debug_csharp = /optimize+
 build_dir = Release
+openhome_configuration = Release
 endif
 
+
+
+# Figure out platform, openhome_system and openhome_architecture
+
+gcc_machine = $(shell ${CROSS_COMPILE}gcc -dumpmachine)
 MACHINE = $(shell uname -s)
+
 ifeq ($(MACHINE), Darwin)
-ifeq ($(mac-arm),1)
-	# Darwin, ARM -> iOS
-	platform ?= iOS
+  ifeq ($(mac-arm),1)
+    platform = iOS
+    openhome_system = iOs
+    openhome_architecture = armv7
+  else
+    platform = IntelMac
+    openhome_system = Mac
+    ifeq ($(mac-64),1)
+      openhome_architecture = x64
+    else
+      openhome_architecture = x86
+    endif
+  endif
+else
+  # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
+  platform ?= Vanilla
+  ifeq ($(platform), Core)
+    openhome_system = Core
+    openhome_architecture = Core
+  else
+    ifneq (,$(findstring linux,$(gcc_machine)))
+      openhome_system = Linux
+    endif
+    ifeq ($(gcc_machine),arm-none-linux-gnueabi)
+      openhome_architecture = armel
+    endif
+    ifeq ($(gcc_machine),arm-linux-gnueabi)
+      openhome_architecture = armel
+    endif
+    ifeq ($(gcc_machine),arm-linux-gnueabihf)
+      openhome_architecture = armhf
+    endif
+    ifneq (,$(findstring i686,$(gcc_machine)))
+      openhome_architecture = x86
+    endif
+    ifneq (,$(findstring amd64,$(gcc_machine)))
+      openhome_architecture = x64
+    endif
+  endif
+endif
+
+openhome_system ?= Unknown
+openhome_architecture ?= Unknown
+
+
+
+
+
+ifeq ($(platform),iOS)
 	linkopts_ohNet =
 	devroot=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
 	sdkroot=$(devroot)/SDKs/iPhoneOS5.1.sdk
@@ -38,8 +92,11 @@ ifeq ($(mac-arm),1)
 	ar = $(devroot)/usr/bin/ar rc $(objdir)
 	csharpdefines = /define:IOS /r:monotouch.dll
 	no_shared_objects = yes
+	openhome_system = iOs
+	openhome_architecture = armv7
+endif
 
-else
+ifeq ($(platform),IntelMac)
 	# Darwin, not ARM -> Intel Mac
 	platform ?= IntelMac
 	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
@@ -47,22 +104,20 @@ else
 		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
 		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
 		osbuilddir = Mac-x64
+		openhome_architecture = x64
 	else
 		platform_cflags = -DPLATFORM_MACOSX_GNU -m32 -mmacosx-version-min=10.4
 		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration		
 		osbuilddir = Mac-x86
+		openhome_architecture = x86
 	endif
 
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
 	link = ${CROSS_COMPILE}g++ -pthread $(platform_linkflags)
 	ar = ${CROSS_COMPILE}ar rc $(objdir)
-
+	openhome_system = Mac
 endif
-else
-	# Not Darwin
-	platform ?= Vanilla
-	# At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
 
 ifeq ($(platform), Core)
 	# platform == Core
@@ -76,18 +131,28 @@ ifeq ($(platform), Core)
 	native_only = yes
 endif
 
-ifeq ($(gcc4_1), yes)
-	version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
-	version_specific_cflags_third_party = -Wno-non-virtual-dtor
-	version_specific_java_cflags = -Wstrict-aliasing=0
-else
-	version_specific_cflags = -Wno-psabi ${CROSS_COMPILE_CFLAGS}
-	version_specific_cflags_third_party =
-	version_specific_java_cflags =
+
+ifneq (,$(findstring $(platform),Core Vanilla))
+  ifeq ($(gcc4_1), yes)
+    version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
+    version_specific_cflags_third_party = -Wno-non-virtual-dtor
+    version_specific_java_cflags = -Wstrict-aliasing=0
+  else
+    version_specific_cflags = -Wno-psabi ${CROSS_COMPILE_CFLAGS}
+    version_specific_cflags_third_party =
+    version_specific_java_cflags =
+  endif
+
+  version_specific_linkflags = ${CROSS_COMPILE_LINKFLAGS}
+  version_specific_library_path = ${CROSS_COMPILE_LIBRARY_PATH}
+  version_specific_includes = ${CROSS_COMPILE_INCLUDES}
+
+  # Continuing with the non-Darwin settings...
+  objdir = Build/Obj/$(osdir)/$(build_dir)/
+  compiler = ${CROSS_COMPILE}gcc -o $(objdir)
+  link = $(version_specific_library_path) ${CROSS_COMPILE}g++ $(platform_linkflags)
+  ar = $(version_specific_library_path) ${CROSS_COMPILE}ar rc $(objdir)
 endif
-version_specific_linkflags = ${CROSS_COMPILE_LINKFLAGS}
-version_specific_library_path = ${CROSS_COMPILE_LIBRARY_PATH}
-version_specific_includes = ${CROSS_COMPILE_INCLUDES}
 
 ifeq ($(platform), Vanilla)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
@@ -97,13 +162,7 @@ ifeq ($(platform), Vanilla)
 	osbuilddir = Posix
 	osdir = Posix
 	endian = LITTLE
-endif
-
-	# Continuing with the non-Darwin settings...
-	objdir = Build/Obj/$(osdir)/$(build_dir)/
-	compiler = ${CROSS_COMPILE}gcc -o $(objdir)
-	link = $(version_specific_library_path) ${CROSS_COMPILE}g++ $(platform_linkflags)
-	ar = $(version_specific_library_path) ${CROSS_COMPILE}ar rc $(objdir)
+	openhome_system = Linux
 
 endif
 
@@ -300,7 +359,7 @@ uninstall : uninstall-pkgconf uninstall-libs uninstall-includes
 
 install-pkgconf : tt
 	@echo "ERROR: no support for (un)install-pckconf yet"
-    #@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
+	#@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
 
 install-libs :
 	$(mkdir) $(installlibdir)
@@ -312,7 +371,7 @@ install-includes :
 
 uninstall-pkgconf :
 	@echo "ERROR: no support for (un)install-pckconf yet"
-    #@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
+	#@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
 
 uninstall-libs :
 	$(rmdir) $(installlibdir)
@@ -345,16 +404,8 @@ docs:
 
 bundle: tt
 	$(mkdir) $(bundle_build)
-ifeq ($(targetplatform),)
-	echo Usage: make bundle targetplatform=Linux-x86
-else
-	python bundle_binaries.py $(osbuilddir) $(targetplatform) $(releasetype)
-endif
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
 
 bundle-dev: tt
 	mkdir -p $(bundle_build)
-ifeq ($(targetplatform),)
-	echo Usage: make bundle-dev targetplatform=Linux-x86
-else
-	python bundle_binaries.py --dev $(osbuilddir) $(targetplatform) $(releasetype)
-endif
+	python bundle_binaries.py --dev --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
