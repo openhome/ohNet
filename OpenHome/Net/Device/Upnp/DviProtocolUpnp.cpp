@@ -179,66 +179,67 @@ void DviProtocolUpnp::HandleInterfaceChange()
 
     TBool update = false;
     std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
-    iLock.Wait();
-    NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
-    AutoNetworkAdapterRef ref("DviProtocolUpnp::HandleInterfaceChange");
-    const NetworkAdapter* current = ref.Adapter();
-    TUint i = 0;
-    if (current != 0) {
-        // remove listeners whose interface is no longer available
-        while (i<iAdapters.size()) {
-            if (iAdapters[i]->Interface() == current->Address()) {
-                i++;
+    {
+        AutoMutex a(iLock);
+        NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
+        AutoNetworkAdapterRef ref("DviProtocolUpnp::HandleInterfaceChange");
+        const NetworkAdapter* current = ref.Adapter();
+        TUint i = 0;
+        if (current != 0) {
+            // remove listeners whose interface is no longer available
+            while (i<iAdapters.size()) {
+                if (iAdapters[i]->Interface() == current->Address()) {
+                    i++;
+                }
+                else {
+                    iAdapters[i]->SetPendingDelete();
+                    pendingDelete.push_back(iAdapters[i]);
+                    iAdapters.erase(iAdapters.begin() + i);
+                }
+                // add listener if 'current' is a new subnet
+                if (iAdapters.size() == 0) {
+                    AddInterface(*current);
+                    update = true;
+                }
             }
-            else {
-                iAdapters[i]->SetPendingDelete();
-                pendingDelete.push_back(iAdapters[i]);
-                iAdapters.erase(iAdapters.begin() + i);
+        }
+        else {
+            std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
+            const std::vector<NetworkAdapter*>& adapters = adapterList.List();
+            // remove listeners whose interface is no longer available
+            while (i<iAdapters.size()) {
+                if (FindAdapter(iAdapters[i]->Interface(), adapters) != -1) {
+                    i++;
+                }
+                else {
+                    iAdapters[i]->SetPendingDelete();
+                    pendingDelete.push_back(iAdapters[i]);
+                    iAdapters.erase(iAdapters.begin() + i);
+                }
             }
-            // add listener if 'current' is a new subnet
-            if (iAdapters.size() == 0) {
-                AddInterface(*current);
-                update = true;
+
+            // add listeners for new subnets
+            for (i=0; i<subnetList->size(); i++) {
+                NetworkAdapter* subnet = (*subnetList)[i];
+                if (FindListenerForSubnet(subnet->Subnet()) == -1) {
+                    AddInterface(*subnet);
+                    update = true;
+                }
+            }
+            NetworkAdapterList::DestroySubnetList(subnetList);
+        }
+
+        if (update) {
+            // halt any ssdp broadcasts/responses that are currently in progress
+            // (in case they're for a subnet that's no longer valid)
+            // they'll be advertised again by the SendUpdateNotifications() call below
+            for (i=0; i<iMsgSchedulers.size(); i++) {
+                iMsgSchedulers[i]->Stop();
             }
         }
     }
-    else {
-        std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
-        const std::vector<NetworkAdapter*>& adapters = adapterList.List();
-        // remove listeners whose interface is no longer available
-        while (i<iAdapters.size()) {
-            if (FindAdapter(iAdapters[i]->Interface(), adapters) != -1) {
-                i++;
-            }
-            else {
-                iAdapters[i]->SetPendingDelete();
-                pendingDelete.push_back(iAdapters[i]);
-                iAdapters.erase(iAdapters.begin() + i);
-            }
-        }
 
-        // add listeners for new subnets
-        for (i=0; i<subnetList->size(); i++) {
-            NetworkAdapter* subnet = (*subnetList)[i];
-            if (FindListenerForSubnet(subnet->Subnet()) == -1) {
-                AddInterface(*subnet);
-                update = true;
-            }
-        }
-        NetworkAdapterList::DestroySubnetList(subnetList);
-    }
-
-    if (update) {
-        // halt any ssdp broadcasts/responses that are currently in progress
-        // (in case they're for a subnet that's no longer valid)
-        // they'll be advertised again by the SendUpdateNotifications() call below
-        for (i=0; i<iMsgSchedulers.size(); i++) {
-            iMsgSchedulers[i]->Stop();
-        }
-    }
-
-    iLock.Signal();
-    for (i=0; i<pendingDelete.size(); i++) {
+    for (TUint i=0; i<pendingDelete.size(); i++) {
         delete pendingDelete[i];
     }
 
