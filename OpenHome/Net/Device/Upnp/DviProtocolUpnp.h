@@ -72,10 +72,12 @@ public: // from IUpnpAnnouncementData
     Brn Domain() const;
     Brn Type() const;
     TUint Version() const;
+    void SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Functor aCompleted);
+    void SendAlives(TIpAddress aAdapter, const Brx& aUriBase);
 private: // from IUpnpMsgListener
     void NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler);
 private:
-    void AddInterface(const NetworkAdapter& aAdapter);
+    DviProtocolUpnpAdapterSpecificData* AddInterface(const NetworkAdapter& aAdapter);
     void HandleInterfaceChange();
     TInt FindAdapter(TIpAddress aAdapter, const std::vector<NetworkAdapter*>& aAdapterList);
     TInt FindListenerForSubnet(TIpAddress aSubnet);
@@ -83,6 +85,7 @@ private:
     void SubnetDisabled();
     void SubnetUpdated();
     void SendAliveNotifications();
+    void QueueAliveTimer();
     void SendUpdateNotifications();
     void GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase);
     void GetDeviceXml(Brh& aXml, TIpAddress aAdapter);
@@ -121,10 +124,10 @@ private:
 
 class DviProtocolUpnpAdapterSpecificData : public ISsdpMsearchHandler, public INonCopyable
 {
-    friend class DviProtocolUpnp;
+//    friend class DviProtocolUpnp;
 public:
     DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort);
-    ~DviProtocolUpnpAdapterSpecificData();
+    void Destroy();
     TIpAddress Interface() const;
     TIpAddress Subnet() const;
     const Brx& UriBase() const;
@@ -137,15 +140,19 @@ public:
     void SetPendingDelete();
     void BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir);
     void BonjourDeregister();
+    void SendByeByeThenAlive(DviProtocolUpnp& aDevice);
 private:
+    ~DviProtocolUpnpAdapterSpecificData();
     IUpnpMsearchHandler* Handler();
-private:
+    void ByeByesComplete();
+private: // from ISsdpMsearchHandler
     void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx);
     void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx);
     void SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid);
     void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
+    TUint iRefCount;
     IUpnpMsearchHandler* iMsearchHandler;
     SsdpListenerMulticast* iListener;
     TInt iId;
@@ -155,6 +162,7 @@ private:
     TUint iServerPort;
     Brh iDeviceXml;
     BonjourWebPage* iBonjourWebPage;
+    DviProtocolUpnp* iDevice;
 };
 
 class DviProtocolUpnpDeviceXmlWriter : public IResourceWriter

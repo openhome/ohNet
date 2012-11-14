@@ -79,7 +79,7 @@ DviProtocolUpnp::~DviProtocolUpnp()
     Stack::NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iAdapters.size(); i++) {
-        delete iAdapters[i];
+        iAdapters[i]->Destroy();
     }
     iSuppressScheduledEvents = true;
     iLock.Signal();
@@ -159,7 +159,7 @@ void DviProtocolUpnp::NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler)
     }
 }
 
-void DviProtocolUpnp::AddInterface(const NetworkAdapter& aAdapter)
+DviProtocolUpnpAdapterSpecificData* DviProtocolUpnp::AddInterface(const NetworkAdapter& aAdapter)
 {
     TIpAddress addr = aAdapter.Address();
     Bws<Uri::kMaxUriBytes> uriBase;
@@ -168,15 +168,11 @@ void DviProtocolUpnp::AddInterface(const NetworkAdapter& aAdapter)
     root->GetUriBase(uriBase, addr, port, *this);
     DviProtocolUpnpAdapterSpecificData* adapter = new DviProtocolUpnpAdapterSpecificData(*this, aAdapter, uriBase, port);
     iAdapters.push_back(adapter);
+    return adapter;
 }
 
 void DviProtocolUpnp::HandleInterfaceChange()
 {
-    // !!!! untested
-    if (!iDevice.Enabled()) {
-        return;
-    }
-
     TBool update = false;
     std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
     {
@@ -198,8 +194,13 @@ void DviProtocolUpnp::HandleInterfaceChange()
                 }
                 // add listener if 'current' is a new subnet
                 if (iAdapters.size() == 0) {
-                    AddInterface(*current);
-                    update = true;
+                    for (i=0; i<iMsgSchedulers.size(); i++) {
+                        iMsgSchedulers[i]->Stop();
+                    }
+                    DviProtocolUpnpAdapterSpecificData* adapter = AddInterface(*current);
+                    if (iDevice.Enabled()) {
+                        adapter->SendByeByeThenAlive(*this);
+                    }
                 }
             }
         }
@@ -223,24 +224,23 @@ void DviProtocolUpnp::HandleInterfaceChange()
                 NetworkAdapter* subnet = (*subnetList)[i];
                 if (FindListenerForSubnet(subnet->Subnet()) == -1) {
                     AddInterface(*subnet);
-                    update = true;
+                    update = iDevice.Enabled();
                 }
             }
             NetworkAdapterList::DestroySubnetList(subnetList);
-        }
-
-        if (update) {
-            // halt any ssdp broadcasts/responses that are currently in progress
-            // (in case they're for a subnet that's no longer valid)
-            // they'll be advertised again by the SendUpdateNotifications() call below
-            for (i=0; i<iMsgSchedulers.size(); i++) {
-                iMsgSchedulers[i]->Stop();
+            if (update) {
+                // halt any ssdp broadcasts/responses that are currently in progress
+                // (in case they're for a subnet that's no longer valid)
+                // they'll be advertised again by the SendUpdateNotifications() call below
+                for (i=0; i<iMsgSchedulers.size(); i++) {
+                    iMsgSchedulers[i]->Stop();
+                }
             }
         }
     }
 
     for (TUint i=0; i<pendingDelete.size(); i++) {
-        delete pendingDelete[i];
+        pendingDelete[i]->Destroy();
     }
 
     if (update) {
@@ -380,8 +380,11 @@ void DviProtocolUpnp::Enable()
             }
         }
     }
+    for (TUint i=0; i<iAdapters.size(); i++) {
+        iAdapters[i]->SendByeByeThenAlive(*this);
+    }
     iLock.Signal();
-    SendAliveNotifications();
+    QueueAliveTimer();
 }
 
 void DviProtocolUpnp::Disable(Functor& aComplete)
@@ -502,6 +505,11 @@ void DviProtocolUpnp::SendAliveNotifications()
         }
         catch (NetworkError&) {}
     }
+    QueueAliveTimer();
+}
+
+void DviProtocolUpnp::QueueAliveTimer()
+{
     TUint maxUpdateTimeMs = Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
     TUint updateTimeMs = Random(maxUpdateTimeMs/2, maxUpdateTimeMs/4);
     iAliveTimer->FireIn(updateTimeMs);
@@ -521,6 +529,28 @@ void DviProtocolUpnp::SendUpdateNotifications()
         iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyUpdate(*this, *this, iAdapters[i]->Interface(),
                                                                   uri, iDevice.ConfigId(), functor));
     }
+}
+
+void DviProtocolUpnp::SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Functor aCompleted)
+{
+    Bwh uri;
+    GetUriDeviceXml(uri, aUriBase);
+    try {
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyByeBye(*this, *this, aAdapter, uri,
+                                                                  iDevice.ConfigId(), aCompleted));
+    }
+    catch (NetworkError& ) {}
+}
+
+void DviProtocolUpnp::SendAlives(TIpAddress aAdapter, const Brx& aUriBase)
+{
+    AutoMutex a(iLock);
+    Bwh uri;
+    GetUriDeviceXml(uri, aUriBase);
+    try {
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyAlive(*this, *this, aAdapter, uri, iDevice.ConfigId()));
+    }
+    catch (NetworkError&) {}
 }
 
 void DviProtocolUpnp::GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase)
@@ -639,16 +669,27 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
 // DviProtocolUpnpAdapterSpecificData
 
 DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort)
-    : iMsearchHandler(&aMsearchHandler)
+    : iRefCount(1)
+    , iMsearchHandler(&aMsearchHandler)
     , iId(0x7fffffff)
     , iSubnet(aAdapter.Subnet())
     , iAdapter(aAdapter.Address())
     , iUriBase(aUriBase)
     , iServerPort(aServerPort)
     , iBonjourWebPage(0)
+    , iDevice(NULL)
 {
     iListener = &Stack::MulticastListenerClaim(aAdapter.Address());
     iId = iListener->AddMsearchHandler(this);
+}
+
+void DviProtocolUpnpAdapterSpecificData::Destroy()
+{
+    if (--iRefCount == 0) {
+        delete this;
+    }
+    // if iRefCount>0 this object is now orphaned
+    // ...there is a tiny risk of it being leaked if the stack is immediately shut down
 }
 
 DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
@@ -743,6 +784,24 @@ void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
 {
     if (iBonjourWebPage != 0) {
         iBonjourWebPage->SetDisabled();
+    }
+}
+
+void DviProtocolUpnpAdapterSpecificData::SendByeByeThenAlive(DviProtocolUpnp& aDevice)
+{
+    iDevice = &aDevice;
+    iRefCount++;
+    Functor functor = MakeFunctor(*this, &DviProtocolUpnpAdapterSpecificData::ByeByesComplete);
+    iDevice->SendByeByes(iAdapter, iUriBase, functor);
+}
+
+void DviProtocolUpnpAdapterSpecificData::ByeByesComplete()
+{
+    if (--iRefCount == 0) {
+        delete this;
+    }
+    else {
+        iDevice->SendAlives(iAdapter, iUriBase);
     }
 }
 

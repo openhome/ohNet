@@ -22,7 +22,8 @@ class CpListenerBasic : public ISsdpNotifyHandler
 {
 public:
     CpListenerBasic();
-    TUint TotalMessages() const { return iTotal; }
+    TUint TotalAlives() const { return iTotalAlives; }
+    TUint TotalByeByes() const { return iTotalByeByes; }
 private:
     TBool LogAdd(const Brx& aUuid);
     TBool LogRemove(const Brx& aUuid);
@@ -36,7 +37,8 @@ private:
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
     Mutex iLock;
-    TUint iTotal;
+    TUint iTotalAlives;
+    TUint iTotalByeByes;
 };
 
 class CpListenerMsearch : public ISsdpNotifyHandler
@@ -154,7 +156,8 @@ static void AddService(DviDevice* aDevice, DviService* aService)
 
 CpListenerBasic::CpListenerBasic()
     : iLock("LBMX")
-    , iTotal(0)
+    , iTotalAlives(0)
+    , iTotalByeByes(0)
 {
 }
 
@@ -162,7 +165,7 @@ TBool CpListenerBasic::LogAdd(const Brx& aUuid)
 {
     if (aUuid == SuiteAlive::gNameDevice1) {
         iLock.Wait();
-        iTotal++;
+        iTotalAlives++;
         iLock.Signal();
         return true;
     }
@@ -173,8 +176,7 @@ TBool CpListenerBasic::LogRemove(const Brx& aUuid)
 {
     if (aUuid == SuiteAlive::gNameDevice1) {
         iLock.Wait();
-        ASSERT(iTotal != 0);
-        iTotal--;
+        iTotalByeByes++;
         iLock.Signal();
         return true;
     }
@@ -259,7 +261,6 @@ void SuiteAlive::Test()
     nif->RemoveRef(kAdapterCookie);
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
     listenerMulticast->Start();
-
     DviDevice* device = new DviDeviceStandard(gNameDevice1);
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "type1");
@@ -271,30 +272,36 @@ void SuiteAlive::Test()
     /* we expect 5 messages but linux sometimes reports multicast messages from
       all subnets to listeners on any single subnet so just check that we've
       received a multiple of 5 messages */
-      
-    TEST(listener->TotalMessages() > 0);
-    TEST(listener->TotalMessages() % 5 == 0);
 
+    TEST(listener->TotalAlives() > 0);
+    TEST(listener->TotalAlives() == listener->TotalByeByes());
+    TEST(listener->TotalAlives() % 5 == 0);
+
+    TUint byebyes = listener->TotalByeByes();
     Functor disabled = MakeFunctor(*this, &SuiteAlive::Disabled);
     device->SetDisabled(disabled);
     iSem.Wait();
     blocker->Wait(1); /* semaphore being signalled implies that the device has been
                          disabled.  We may require some extra time to receive the
                          multicast byebye confirming this */
-    TEST(listener->TotalMessages() == 0);
+    TEST(listener->TotalByeByes() > byebyes);
+    TEST(listener->TotalByeByes() % 5 == 0);
 
+    TUint alives = listener->TotalAlives();
+    byebyes = listener->TotalByeByes();
     device->SetEnabled();
     blocker->Wait(1);
-    TEST(listener->TotalMessages() > 0);
-    TEST(listener->TotalMessages() % 5 == 0);
+    TEST(listener->TotalAlives() > alives);
+    TEST(listener->TotalAlives() - alives == listener->TotalByeByes() - byebyes);
+    TEST(listener->TotalAlives() % 5 == 0);
 
     // Control point doesn't process ssdp:update notifications
     // check that updates are basically working by counting the extra alive messages instead
-    TUint oldTotal = listener->TotalMessages();
+    alives = listener->TotalAlives();
     device->SetAttribute("Upnp.TestUpdate", "1");
     blocker->Wait(1);
-    TEST(listener->TotalMessages() > oldTotal);
-    TEST(listener->TotalMessages() % 5 == 0);
+    TEST(listener->TotalAlives() > alives);
+    TEST(listener->TotalAlives() % 5 == 0);
 
     device->Destroy();
     listenerMulticast->RemoveNotifyHandler(listenerId);
