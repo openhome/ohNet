@@ -14,6 +14,11 @@ def exclude_non_binary(filename):
     is_binary = has_executable_extension or has_no_extension
     return not is_binary
 
+def exclude_non_managed(filename):
+    managed_extensions = [".net.dll", ".net.pdb", ".net.dll.mdb"]
+    has_managed_extension = any(filename.endswith(ex) for ex in managed_extensions)
+    return not has_managed_extension
+
 # Prior to Python 2.6, tarfile's add method doesn't have any filtering
 # mechanism, so we have to replicate that functionality.
 def recursively_add_directory(tarfile, directory_path, path_in_archive, exclude=None):
@@ -69,6 +74,7 @@ def main():
     parser.add_option("-s", "--system", default=None, help="Target operating system. (One of: {0})".format(", ".join(sorted(ALL_SYSTEMS))))
     parser.add_option("-a", "--architecture", default=None, help="Target architecture. (One of: {0})".format(", ".join(sorted(ALL_ARCHITECTURES))))
     parser.add_option("-c", "--configuration", default=None, help="Target configuration. (One of: {0})".format(", ".join(sorted(ALL_CONFIGURATIONS))))
+    parser.add_option("-m", "--managed-only", default=False, action="store_true", help="Package only the managed assembly.")
     options, args = parser.parse_args()
     if len(args)>0:
         print "Too many arguments."
@@ -107,7 +113,10 @@ def main():
     #if release_type == 'release':
     #    builddir = os.path.join(builddir, 'Release')
 
-    bundle_fileprefix = "ohNet-{target.system}-{target.architecture}-{target.configuration}".format(target=target)
+    if options.managed_only:
+        bundle_fileprefix = "ohNet.net-AnyPlatform-{target.configuration}".format(target=target)
+    else:
+        bundle_fileprefix = "ohNet-{target.system}-{target.architecture}-{target.configuration}".format(target=target)
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
     if os.path.exists(bundle_path):
@@ -115,13 +124,16 @@ def main():
 
     tf = tarfile.open(bundle_path, 'w:gz')
 
-    recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
-    #tf.add(builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
-    recursively_add_directory(tf, includedir, bundle_fileprefix + "/include/ohnet")
-    #tf.add(includedir, bundle_fileprefix + "/include/ohnet")
-    recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
-    recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
-    recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")
+    if options.managed_only:
+        recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_managed)
+    else:
+        recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
+        #tf.add(builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
+        recursively_add_directory(tf, includedir, bundle_fileprefix + "/include/ohnet")
+        #tf.add(includedir, bundle_fileprefix + "/include/ohnet")
+        recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
+        recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
+        recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")
 
 if __name__ == "__main__":
     main()

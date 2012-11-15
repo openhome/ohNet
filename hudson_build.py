@@ -223,7 +223,7 @@ class JenkinsBuild():
                 build.append('&&')
 
             build.append('make')
-            build.append('bundle')
+            build.append('bundle-managed' if managed else 'bundle')
             #build.append('targetplatform=%s' %(platform,))
             #build.append('releasetype=%s' %(release,))
             build.append('uset4=yes')
@@ -239,11 +239,14 @@ class JenkinsBuild():
                 print ret
                 sys.exit(10)
 
-            bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-%s.tar.gz" %(openhome_system, openhome_architecture, openhome_configuration))
-            dest = os.path.join('Build/Bundles',"ohNet-%s-%s-%s-%s.tar.gz" %(version, openhome_system, openhome_architecture, openhome_configuration))
-            if os.path.exists(dest):
-                os.remove(dest)
-            os.rename(bundle_name, dest)
+            native_bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-%s.tar.gz" %(openhome_system, openhome_architecture, openhome_configuration))
+            managed_bundle_name = os.path.join('Build/Bundles','ohNet.net-AnyPlatform-%s.tar.gz' % (openhome_configuration,))
+            native_dest = os.path.join('Build/Bundles',"ohNet-%s-%s-%s-%s.tar.gz" %(version, openhome_system, openhome_architecture, openhome_configuration))
+            managed_dest = os.path.join('Build/Bundles',"ohNet.net-%s-AnyPlatform-%s.tar.gz" %(version, openhome_configuration))
+            for (name, dest) in [(native_bundle_name, native_dest), (managed_bundle_name, managed_dest)]:
+                if os.path.exists(dest):
+                    os.remove(dest)
+                os.rename(name, dest)
             rem.check_rsync('releases','www.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
                         
     
