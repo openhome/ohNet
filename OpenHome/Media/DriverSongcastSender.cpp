@@ -20,12 +20,15 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iMaxMsgSizeJiffies(aMaxMsgSizeJiffies)
     , iSampleRate(0)
     , iNumChannels(0)
-    , iJiffiesToSend(Jiffies::kJiffiesPerMs)
-    , iLastSendTime(0)
+    , iJiffiesToSend(aMaxMsgSizeJiffies)
+    , iTimerFrequencyMs(aMaxMsgSizeJiffies / Jiffies::kJiffiesPerMs)
+    , iLastTimeUs(0)
+    , iTimeOffsetUs(0)
     , iPlayable(NULL)
     , iAudioSent(false)
     , iQuit(false)
 {
+    ASSERT(aMaxMsgSizeJiffies % Jiffies::kJiffiesPerMs == 0);
     iOhmSenderDriver = new Av::OhmSenderDriver();
     Brn imageData(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender) / sizeof(kIconDriverSongcastSender[0]));
     Brn imageMime(kIconDriverSongcastSenderMimeType);
@@ -45,17 +48,51 @@ DriverSongcastSender::~DriverSongcastSender()
 
 void DriverSongcastSender::Run()
 {
+    // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
+    Msg* msg = iPipeline.Pull();
+    (void)msg->Process(*this);
+
+    TUint64 now = OsTimeInUs();
     do {
         if (iAudioSent) {
-            iTimer->FireIn(5);
-            Wait();
-            iAudioSent = false;
-            const TUint timeNow = Os::TimeInMs();
-            if (iLastSendTime != 0) {
-                iJiffiesToSend += (timeNow - iLastSendTime) * Jiffies::kJiffiesPerMs; // FIXME - very low priority but doesn't handle clock wrapping
+		    // skip the first packet, and any time the clock value wraps
+		    if (iLastTimeUs == 0 || iLastTimeUs >= now) {
+                iTimer->FireIn(iTimerFrequencyMs);
             }
-//            Log::Print("%ums on, trying to send %dms of data\n", timeNow - iLastSendTime, iJiffiesToSend/Jiffies::kJiffiesPerMs);
-            iLastSendTime = timeNow;
+            else {
+			    TUint nextTimerMs = iTimerFrequencyMs;
+			    TInt diff = (TInt)(now - iLastTimeUs) - (iTimerFrequencyMs * 1000); // the difference in usec from where we should be
+			    iTimeOffsetUs -= diff; // increment running offset
+
+			    // determine new timer value based upon current offset from ideal
+			    if (iTimeOffsetUs < -1000) { // we are late
+				    TInt32 timeOffsetMs = iTimeOffsetUs/1000;
+				    if (timeOffsetMs < 4 * (TInt32)iTimerFrequencyMs) {
+                        // we're miles behind, probably as a result of drop-outs
+                        // don't even try to catch up
+					    iTimeOffsetUs = 0;
+                    }
+                    else if (timeOffsetMs < 1-(TInt32)iTimerFrequencyMs) {
+					    // in case callback is pretty late, we can only catch up so much
+					    nextTimerMs = 1;
+				    }
+                    else {
+					    nextTimerMs = iTimerFrequencyMs + timeOffsetMs;
+				    }
+			    }
+                else if (iTimeOffsetUs > 1000) { // we are early
+				    nextTimerMs = iTimerFrequencyMs+1;
+			    }
+                else { // we are about on time
+				    nextTimerMs = iTimerFrequencyMs;
+			    }
+			    iTimer->FireIn(nextTimerMs);
+            }
+    		iLastTimeUs = now;
+            Wait();
+            now = OsTimeInUs();
+            iAudioSent = false;
+            iJiffiesToSend = iMaxMsgSizeJiffies;
         }
         if (iPlayable != NULL) {
             SendAudio(iPlayable);

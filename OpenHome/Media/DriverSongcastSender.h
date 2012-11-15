@@ -47,7 +47,11 @@ private:
     TUint iNumChannels;
     TUint iBitDepth;
     TUint iJiffiesToSend;
-    TUint iLastSendTime;
+    TUint iTimerFrequencyMs;
+	TUint64 iLastTimeUs; // last time stamp from system
+	TInt iTimeOffsetUs;  // running offset in usec from ideal time
+	                     //  <0 means sender is behind
+	                     //  >0 means sender is ahead
     MsgPlayable* iPlayable;
     TBool iAudioSent;
     TBool iQuit;
