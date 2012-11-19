@@ -712,7 +712,7 @@ TestsCs: TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerforma
 
 Tests: TestsNative TestsCs
 
-ohNet.net.dll :  $(objdir)ohNet.net.dll
+ohNet.net.dll :  $(objdir)ohNet.net.dll ohNetDll
 
 $(objdir)ohNet.net.dll: \
 	$(csCp)CpDevice.cs \
