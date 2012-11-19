@@ -649,7 +649,7 @@ void Invoker::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescriptio
     TUint code;
     const TChar* desc;
     (void)iInvocation->Error(level, code, desc);
-    LOG3(kService, kError, kTrace, "Error - %s(%s, %d, %s) - from invocation %p, on action", aLogStr, Error::LevelName(level), code, (desc==NULL? "" : desc), iInvocation);
+    LOG3(kService, kError, kTrace, "Error - %s(%s, %d, %s) - from invocation %p, on action ", aLogStr, Error::LevelName(level), code, (desc==NULL? "" : desc), iInvocation);
     LOG3(kService, kError, kTrace, iInvocation->Action().Name());
     LOG3(kService, kError, kTrace, ", from device ");
     LOG3(kService, kError, kTrace, iInvocation->Device().Udn());
