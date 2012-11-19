@@ -227,6 +227,10 @@ void CpiDeviceUpnp::GetServiceUri(Uri& aUri, const TChar* aType, const ServiceTy
         serviceList.Set(remaining);
     } while (serviceType != targServiceType);
     Brn path = XmlParserBasic::Find(aType, service);
+    if (path.Bytes() == 0) {
+        // no event url => service doesn't have any evented state variables
+        THROW(XmlError);
+    }
 
     // now create a uri using the scheme/host/port of the device xml location
     // plus the path we've just constructed
