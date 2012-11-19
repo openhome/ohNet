@@ -31,6 +31,8 @@ build_dir = Release
 openhome_configuration = Release
 !endif
 
+!message Building for system $(openhome_system), architecture $(openhome_architecture), configuration $(openhome_configuration)
+
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
 cflags_third_party = $(debug_specific_cflags) /W4 /EHsc /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS
@@ -203,7 +205,9 @@ uninstall :
 bundle-after-build: $(all_targets)
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration) --managed
 
 bundle:
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration) --managed
