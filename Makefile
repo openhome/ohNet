@@ -440,3 +440,9 @@ bundle:
 	$(mkdir) $(bundle_build)
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration) --managed
+
+ifeq ($(platform),iOS)
+ohNet.net.dll :  $(objdir)ohNet.net.dll
+else
+ohNet.net.dll :  $(objdir)ohNet.net.dll ohNetDll
+endif

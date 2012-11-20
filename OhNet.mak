@@ -211,3 +211,5 @@ bundle:
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration) --managed
+
+ohNet.net.dll :  $(objdir)ohNet.net.dll ohNetDll
