@@ -85,6 +85,24 @@ private:
     TUint iRefCount;
 };
 
+class EncodedAudio : public Allocated
+{
+    friend class MsgFactory;
+public:
+    static const TUint kMaxBytes = 6 * 1024;
+public:
+    EncodedAudio(AllocatorBase& aAllocator);
+    const TByte* Ptr(TUint aBytes) const;
+    TUint Bytes() const;
+private:
+    void Construct(const Brx& aData);
+private: // from Allocated
+    void Clear();
+private:
+    TByte iData[kMaxBytes];
+    TUint iBytes;
+};
+
 enum EMediaDataEndian
 {
     EMediaDataLittleEndian
@@ -211,6 +229,27 @@ private:
 
 
 class MsgFactory;
+
+class MsgAudioEncoded : public Msg
+{
+    friend class MsgFactory;
+public:
+    MsgAudioEncoded(AllocatorBase& aAllocator);
+    MsgAudioEncoded* Split(TUint aBytes); // returns block after aBytes
+    void Add(MsgAudioEncoded* aMsg); // combines MsgAudioEncoded instances so they report larger sizes etc
+    TUint Bytes() const;
+    void CopyTo(TByte* aPtr);
+private:
+    void Initialise(EncodedAudio* aEncodedAudio);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    MsgAudioEncoded* iNextAudio;
+    TUint iSize; // Bytes
+    TUint iOffset; // Bytes
+    EncodedAudio* iAudioData;
+};
 
 class MsgAudio : public Msg
 {
@@ -441,6 +480,7 @@ private: // from Msg
 class IMsgProcessor
 {
 public:
+    virtual Msg* ProcessMsg(MsgAudioEncoded* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
@@ -528,6 +568,7 @@ private:
     void AddJiffies(TUint aJiffies);
     void RemoveJiffies(TUint aJiffies);
 private:
+    virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
     virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
     virtual void ProcessMsgIn(MsgSilence* aMsg);
     virtual void ProcessMsgIn(MsgAudioFormat* aMsg);
@@ -536,6 +577,7 @@ private:
     virtual void ProcessMsgIn(MsgHalt* aMsg);
     virtual void ProcessMsgIn(MsgFlush* aMsg);
     virtual void ProcessMsgIn(MsgQuit* aMsg);
+    virtual Msg* ProcessMsgOut(MsgAudioEncoded* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioFormat* aMsg);
@@ -550,6 +592,7 @@ private:
     public:
         ProcessorQueueIn(MsgQueueJiffies& aQueue);
     private:
+        Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);
         Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -567,6 +610,7 @@ private:
     public:
         ProcessorQueueOut(MsgQueueJiffies& aQueue);
     private:
+        Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);
         Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -610,11 +654,13 @@ class MsgFactory
 {
 public:
     MsgFactory(Av::IInfoAggregator& aInfoAggregator,
+               TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgAudioFormatCount,
                TUint aMsgTrackCount, TUint aMsgMetaTextCount, TUint aMsgHaltCount,
                TUint aMsgFlushCount, TUint aMsgQuitCount);
     //
+    MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgAudioFormat* CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
@@ -624,9 +670,12 @@ public:
     MsgFlush* CreateMsgFlush();
     MsgQuit* CreateMsgQuit();
 private:
+    EncodedAudio* CreateEncodedAudio(const Brx& aData);
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
+    Allocator<EncodedAudio> iAllocatorEncodedAudio;
     Allocator<DecodedAudio> iAllocatorDecodedAudio;
+    Allocator<MsgAudioEncoded> iAllocatorMsgAudioEncoded;
     Allocator<MsgAudioPcm> iAllocatorMsgAudioPcm;
     Allocator<MsgSilence> iAllocatorMsgSilence;
     Allocator<MsgPlayablePcm> iAllocatorMsgPlayablePcm;

@@ -31,7 +31,7 @@ public:
     void Test();
 public: // from IPipelineElementUpstream
     Msg* Pull();
-private: // from IMsgProcessor
+private: // from IPipelinePropertyObserver
     void NotifyTrack();
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
@@ -84,7 +84,7 @@ SuiteReporter::SuiteReporter()
     , iSeconds(0)
     , iTrackDurationSeconds(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iReporter = new Reporter(*this, *this);
 }
 

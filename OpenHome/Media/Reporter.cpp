@@ -28,6 +28,12 @@ Msg* Reporter::Pull()
     return msg;
 }
 
+Msg* Reporter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
+}
+
 Msg* Reporter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     TBool reportChange = false;

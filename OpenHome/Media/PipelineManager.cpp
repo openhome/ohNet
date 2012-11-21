@@ -37,6 +37,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     , iQuitting(false)
 {
     iMsgFactory = new MsgFactory(aInfoAggregator,
+                                 kMsgCountEncodedAudio, kMsgCountAudioEncoded,
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountAudioFormat,
                                  kMsgCountTrack, kMsgCountMetaText, kMsgCountHalt,

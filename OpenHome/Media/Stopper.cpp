@@ -104,6 +104,12 @@ Msg* Stopper::Pull()
     return msg;
 }
 
+Msg* Stopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
+}
+
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
     return ProcessMsgAudio(aMsg);

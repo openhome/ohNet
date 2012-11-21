@@ -34,6 +34,7 @@ private: // from IStopperObserver
     void PipelineHalted();
     void PipelineFlushed();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -101,7 +102,7 @@ SuiteStopper::SuiteStopper()
     , iFlushThreadExit("HACK", 0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iStopper = new Stopper(*iMsgFactory, *this, *this, kRampDuration);
 }
 
@@ -320,6 +321,12 @@ void SuiteStopper::PipelineHalted()
 void SuiteStopper::PipelineFlushed()
 {
     iPipelineFlushedCount++;
+}
+
+Msg* SuiteStopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
 }
 
 Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)

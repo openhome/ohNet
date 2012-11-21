@@ -52,6 +52,7 @@ public:
 private: // from Thread
     void Run();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -194,6 +195,12 @@ void DriverTp3::Run()
         (void)msg->Process(*this);
         Thread::Sleep(2); // nasty but don't seem able to rely on highest priority thread always being scheduled
     } while (!iQuit);
+}
+
+Msg* DriverTp3::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
 }
 
 Msg* DriverTp3::ProcessMsg(MsgAudioPcm* /*aMsg*/)

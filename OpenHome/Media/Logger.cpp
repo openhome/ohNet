@@ -39,6 +39,14 @@ Msg* Logger::Pull()
     return msg;
 }
 
+Msg* Logger::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    if (IsEnabled(EMsgAudioEncoded)) {
+        Log::Print("Pipeline (%s): encoded {bytes: %u}\n", iId, aMsg->Bytes());
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (IsEnabled(EMsgAudioPcm)) {

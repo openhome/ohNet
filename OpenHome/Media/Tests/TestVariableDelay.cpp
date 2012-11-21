@@ -34,6 +34,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -85,7 +86,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     , iAudioMsgSizeJiffies(0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kRampDuration);
 }
 
@@ -237,6 +238,12 @@ MsgAudio* SuiteVariableDelay::CreateAudio()
     iAudioMsgSizeJiffies = audio->Jiffies();
     iTrackOffset += iAudioMsgSizeJiffies;
     return audio;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
 }
 
 Msg* SuiteVariableDelay::ProcessMsg(MsgAudioPcm* aMsg)

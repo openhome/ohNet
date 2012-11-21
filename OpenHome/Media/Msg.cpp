@@ -184,6 +184,43 @@ Allocated::~Allocated()
 {
 }
 
+
+// EncodedAudio
+
+EncodedAudio::EncodedAudio(AllocatorBase& aAllocator)
+    : Allocated(aAllocator)
+{
+}
+
+const TByte* EncodedAudio::Ptr(TUint aBytes) const
+{
+    ASSERT(aBytes < iBytes);
+    return &iData[aBytes];
+}
+
+TUint EncodedAudio::Bytes() const
+{
+    return iBytes;
+}
+
+void EncodedAudio::Construct(const Brx& aData)
+{
+    ASSERT(aData.Bytes() <= kMaxBytes);
+    (void)memcpy(iData, aData.Ptr(), aData.Bytes());
+    iBytes = aData.Bytes();
+}
+
+void EncodedAudio::Clear()
+{
+#ifdef DEFINE_DEBUG
+    // fill in all members with recognisable 'bad' values to make ref counting bugs more obvious
+    static const TByte deadByte = 0xde;
+    static const TUint deadUint = 0xdead;
+    memset(&iData[0], deadByte, sizeof(iData));
+    iBytes = deadUint;
+#endif // DEFINE_DEBUG
+}
+
     
 // Jiffies
 
@@ -616,6 +653,85 @@ void RampApplicator::GetNextSample(TByte* aDest)
 }
 
 
+// MsgAudioEncoded
+
+MsgAudioEncoded::MsgAudioEncoded(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+MsgAudioEncoded* MsgAudioEncoded::Split(TUint aBytes)
+{
+    if (aBytes > iSize) {
+        ASSERT(iNextAudio != NULL);
+        return iNextAudio->Split(aBytes - iSize);
+    }
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes < iSize);
+    MsgAudioEncoded* remaining = static_cast<Allocator<MsgAudioEncoded>&>(iAllocator).Allocate();
+    remaining->iNextAudio = iNextAudio;
+    remaining->iOffset = iOffset + aBytes;
+    remaining->iSize = iSize - aBytes;
+    remaining->iAudioData = iAudioData;
+    remaining->iAudioData->AddRef();
+    iSize = aBytes;
+    iNextAudio = NULL;
+    return remaining;
+}
+
+void MsgAudioEncoded::Add(MsgAudioEncoded* aMsg)
+{
+    MsgAudioEncoded* end = this;
+    MsgAudioEncoded* next = iNextAudio;
+    while (next != NULL) {
+        end = next;
+        next = next->iNextAudio;
+    }
+    end->iNextAudio = aMsg;
+}
+
+TUint MsgAudioEncoded::Bytes() const
+{
+    TUint bytes = iSize;
+    MsgAudioEncoded* next = iNextAudio;
+    while (next != NULL) {
+        bytes += iNextAudio->iSize;
+        next = next->iNextAudio;
+    }
+    return bytes;
+}
+
+void MsgAudioEncoded::CopyTo(TByte* aPtr)
+{
+    const TByte* src = iAudioData->Ptr(iOffset);
+    (void)memcpy(aPtr, src, iSize);
+    if (iNextAudio != NULL) {
+        iNextAudio->CopyTo(aPtr + iSize);
+    }
+}
+
+void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio)
+{
+    iAudioData = aEncodedAudio;
+    iSize = iAudioData->Bytes();
+    iOffset = 0;
+    iNextAudio = NULL;
+}
+
+void MsgAudioEncoded::Clear()
+{
+    if (iNextAudio != NULL) {
+        iNextAudio->RemoveRef();
+    }
+    iAudioData->RemoveRef();
+}
+
+Msg* MsgAudioEncoded::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
 // MsgAudio
 
 MsgAudio* MsgAudio::Split(TUint aJiffies)
@@ -627,7 +743,7 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
     ASSERT(aJiffies > 0);
     ASSERT(aJiffies < iSize);
     MsgAudio* remaining = Allocate();
-    remaining->iNextAudio = NULL;
+    remaining->iNextAudio = iNextAudio;
     remaining->iOffset = iOffset + aJiffies;
     remaining->iSize = iSize - aJiffies;
     if (iRamp.IsEnabled()) {
@@ -637,6 +753,7 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
         remaining->iRamp.Reset();
     }
     iSize = aJiffies;
+    iNextAudio = NULL;
     SplitCompleted(*remaining);
     return remaining;
 }
@@ -864,7 +981,7 @@ MsgPlayable* MsgPlayable::Split(TUint aBytes)
         return remaining;
     }
     MsgPlayable* remaining = Allocate();
-    remaining->iNextPlayable = NULL;
+    remaining->iNextPlayable = iNextPlayable;
     remaining->iOffset = iOffset + aBytes;
     remaining->iSize = iSize - aBytes;
     if (iRamp.IsEnabled()) {
@@ -874,6 +991,7 @@ MsgPlayable* MsgPlayable::Split(TUint aBytes)
         remaining->iRamp.Reset();
     }
     iSize = aBytes;
+    iNextPlayable = NULL;
     SplitCompleted(*remaining);
     return remaining;
 }
@@ -1430,6 +1548,10 @@ void MsgQueueJiffies::RemoveJiffies(TUint aJiffies)
     iLock.Signal();
 }
 
+void MsgQueueJiffies::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
+{
+}
+
 void MsgQueueJiffies::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
 {
 }
@@ -1460,6 +1582,11 @@ void MsgQueueJiffies::ProcessMsgIn(MsgFlush* /*aMsg*/)
 
 void MsgQueueJiffies::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
+}
+
+Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioEncoded* aMsg)
+{
+    return aMsg;
 }
 
 Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
@@ -1508,6 +1635,12 @@ Msg* MsgQueueJiffies::ProcessMsgOut(MsgQuit* aMsg)
 MsgQueueJiffies::ProcessorQueueIn::ProcessorQueueIn(MsgQueueJiffies& aQueue)
     : iQueue(aQueue)
 {
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
 }
 
 Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgAudioPcm* aMsg)
@@ -1572,6 +1705,11 @@ Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgQuit* aMsg)
 MsgQueueJiffies::ProcessorQueueOut::ProcessorQueueOut(MsgQueueJiffies& aQueue)
     : iQueue(aQueue)
 {
+}
+
+Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
 }
 
 Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
@@ -1639,11 +1777,14 @@ AutoMsgRef::~AutoMsgRef()
 // MsgFactory
 
 MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
+                       TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgAudioFormatCount,
                        TUint aMsgTrackCount, TUint aMsgMetaTextCount, TUint aMsgHaltCount,
                        TUint aMsgFlushCount, TUint aMsgQuitCount)
-    : iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
+    : iAllocatorEncodedAudio("EncodedAudio", aEncodedAudioCount, aInfoAggregator)
+    , iAllocatorMsgAudioEncoded("MsgAudioEncoded", aMsgAudioEncodedCount, aInfoAggregator)
+    , iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioPcm("MsgAudioPcm", aMsgAudioPcmCount, aInfoAggregator)
     , iAllocatorMsgSilence("MsgSilence", aMsgSilenceCount, aInfoAggregator)
     , iAllocatorMsgPlayablePcm("MsgPlayablePcm", aMsgPlayablePcmCount, aInfoAggregator)
@@ -1655,6 +1796,14 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
     , iAllocatorMsgQuit("MsgQuit", aMsgQuitCount, aInfoAggregator)
 {
+}
+
+MsgAudioEncoded* MsgFactory::CreateMsgAudioEncoded(const Brx& aData)
+{
+    EncodedAudio* encodedAudio = CreateEncodedAudio(aData);
+    MsgAudioEncoded* msg = iAllocatorMsgAudioEncoded.Allocate();
+    msg->Initialise(encodedAudio);
+    return msg;
 }
 
 MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
@@ -1704,6 +1853,13 @@ MsgFlush* MsgFactory::CreateMsgFlush()
 MsgQuit* MsgFactory::CreateMsgQuit()
 {
     return iAllocatorMsgQuit.Allocate();
+}
+
+EncodedAudio* MsgFactory::CreateEncodedAudio(const Brx& aData)
+{
+    EncodedAudio* encodedAudio = iAllocatorEncodedAudio.Allocate();
+    encodedAudio->Construct(aData);
+    return encodedAudio;
 }
 
 DecodedAudio* MsgFactory::CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)

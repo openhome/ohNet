@@ -35,6 +35,18 @@ private:
     TChar iBytes[kNumBytes];
 };
 
+class SuiteMsgAudioEncoded : public Suite
+{
+    static const TUint kMsgCount = 8;
+public:
+    SuiteMsgAudioEncoded();
+    ~SuiteMsgAudioEncoded();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    AllocatorInfoLogger iInfoAggregator;
+};
+
 class SuiteMsgAudio : public Suite
 {
     static const TUint kMsgCount = 8;
@@ -116,6 +128,7 @@ public:
     enum EMsgType
     {
         ENone
+       ,EMsgAudioEncoded
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
@@ -130,6 +143,7 @@ public:
     ProcessorMsgType();
     EMsgType LastMsgType() const;
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -302,12 +316,137 @@ void SuiteAllocator::Test()
 }
 
 
+// SuiteMsgAudioEncoded
+
+SuiteMsgAudioEncoded::SuiteMsgAudioEncoded()
+    : Suite("MsgAudioEncoded tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+}
+
+SuiteMsgAudioEncoded::~SuiteMsgAudioEncoded()
+{
+    delete iMsgFactory;
+}
+
+void SuiteMsgAudioEncoded::Test()
+{
+    // create msg, check it reports the correct number of bytes
+    const TUint kNumBytes = 64;
+    TByte data[kNumBytes];
+    for (TUint i=0; i<sizeof(data)/sizeof(data[0]); i++) {
+        data[i] = (TByte)i;
+    }
+    Brn buf(data, sizeof(data));
+    MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    TEST(msg->Bytes() == buf.Bytes());
+
+    // check that CopyTo outputs the expected data
+    TByte output[128];
+    msg->CopyTo(output);
+    for (TUint i=0; i<msg->Bytes(); i++) {
+        TEST(output[i] == buf[i]);
+    }
+
+    // split msg, check its two parts report the same number of bytes
+    TUint totalSize = msg->Bytes();
+    TUint splitPos = 49;
+    MsgAudioEncoded* msg2 = msg->Split(splitPos);
+    TEST(msg->Bytes() == splitPos);
+    TEST(msg2->Bytes() == totalSize - splitPos);
+
+    // check that each part outputs the expected data
+    (void)memset(output, 0xde, sizeof(output));
+    msg->CopyTo(output);
+    for (TUint i=0; i<msg->Bytes(); i++) {
+        TEST(output[i] == buf[i]);
+    }
+    (void)memset(output, 0xde, sizeof(output));
+    msg2->CopyTo(output);
+    for (TUint i=0; i<msg2->Bytes(); i++) {
+        TEST(output[i] == buf[splitPos + i]);
+    }
+    msg->RemoveRef();
+    msg2->RemoveRef();
+
+    // create two msgs; add them together; check their size and output
+    TByte data2[kNumBytes/2];
+    for (TUint i=0; i<sizeof(data2)/sizeof(data2[0]); i++) {
+        data2[i] = (TByte)(255 - i);
+    }
+    Brn buf2(data2, sizeof(data2));
+    msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    TUint msg1Size = msg->Bytes();
+    msg2 = iMsgFactory->CreateMsgAudioEncoded(buf2);
+    TUint msg2Size = msg2->Bytes();
+    msg->Add(msg2);
+    TEST(msg->Bytes() == msg1Size + msg2Size);
+    (void)memset(output, 0xde, sizeof(output));
+    msg->CopyTo(output);
+    for (TUint i=0; i<msg->Bytes(); i++) {
+        if (i < buf.Bytes()) {
+            TEST(output[i] == buf[i]);
+        }
+        else {
+            TEST(output[i] == buf2[i - buf.Bytes()]);
+        }
+    }
+
+    // split in second msg; check size/output of both
+    splitPos = 10;
+    msg2 = msg->Split(msg1Size + splitPos);
+    TEST(msg->Bytes() == msg1Size + splitPos);
+    TEST(msg2->Bytes() == msg2Size - splitPos);
+    (void)memset(output, 0xde, sizeof(output));
+    msg->CopyTo(output);
+    for (TUint i=0; i<msg->Bytes(); i++) {
+        if (i < buf.Bytes()) {
+            TEST(output[i] == buf[i]);
+        }
+        else {
+            TEST(output[i] == buf2[i - buf.Bytes()]);
+        }
+    }
+    (void)memset(output, 0xde, sizeof(output));
+    msg2->CopyTo(output);
+    for (TUint i=0; i<msg2->Bytes(); i++) {
+        TEST(output[i] == buf2[i + splitPos]);
+    }
+    msg2->RemoveRef();
+
+    // split first fragment inside first msg; check size/output of both
+    msg1Size = msg->Bytes();
+    msg2 = msg->Split(splitPos);
+    TEST(msg->Bytes() == splitPos);
+    TEST(msg2->Bytes() == msg1Size - splitPos);
+    (void)memset(output, 0xde, sizeof(output));
+    msg->CopyTo(output);
+    for (TUint i=0; i<msg->Bytes(); i++) {
+        TEST(output[i] == buf[i]);
+    }
+    msg->RemoveRef();
+    (void)memset(output, 0xde, sizeof(output));
+    msg2->CopyTo(output);
+    for (TUint i=0; i<msg2->Bytes(); i++) {
+        if (i < buf.Bytes() - splitPos) {
+            TEST(output[i] == buf[i + splitPos]);
+        }
+        else {
+            TEST(output[i] == buf2[i - buf.Bytes() + splitPos]);
+        }
+    }
+    msg2->RemoveRef();
+
+    // clean shutdown implies no leaked msgs
+}
+
+
 // SuiteMsgAudio
 
 SuiteMsgAudio::SuiteMsgAudio()
     : Suite("Basic MsgAudio tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgAudio::~SuiteMsgAudio()
@@ -415,7 +554,7 @@ void SuiteMsgAudio::Test()
 SuiteMsgPlayable::SuiteMsgPlayable()
     : Suite("Basic MsgPlayable tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgPlayable::~SuiteMsgPlayable()
@@ -637,7 +776,7 @@ void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 SuiteRamp::SuiteRamp()
     : Suite("Ramp tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteRamp::~SuiteRamp()
@@ -925,7 +1064,7 @@ void SuiteRamp::Test()
 SuiteMetaText::SuiteMetaText()
     : Suite("MsgMetaText tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, kMsgMetaTextCount, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgMetaTextCount, 1, 1, 1);
 }
 
 SuiteMetaText::~SuiteMetaText()
@@ -961,7 +1100,7 @@ void SuiteMetaText::Test()
 SuiteAudioFormat::SuiteAudioFormat()
     : Suite("MsgAudioFormat tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, kMsgAudioFormatCount, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, kMsgAudioFormatCount, 1, 1, 1, 1, 1);
 }
 
 SuiteAudioFormat::~SuiteAudioFormat()
@@ -1027,7 +1166,7 @@ void SuiteAudioFormat::Test()
 SuiteMsgProcessor::SuiteMsgProcessor()
     : Suite("IMsgProcessor tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgProcessor::~SuiteMsgProcessor()
@@ -1041,10 +1180,16 @@ void SuiteMsgProcessor::Test()
     // lots of code duplication here.
     // If we factored out the repeating block of code, any failures would be in a common method so pretty meaningless
     const TUint kDataBytes = 256;
-    TByte encodedAudioData[kDataBytes];
-    (void)memset(encodedAudioData, 0xab, kDataBytes);
-    Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    TByte audioData[kDataBytes];
+    (void)memset(audioData, 0xab, kDataBytes);
+    Brn audioBuf(audioData, kDataBytes);
+    
+    MsgAudioEncoded* audioEncoded = iMsgFactory->CreateMsgAudioEncoded(audioBuf);
+    TEST(audioEncoded == static_cast<Msg*>(audioEncoded)->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgAudioEncoded);
+    audioEncoded->RemoveRef();
+
+    MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, 2, 44100, 8, EMediaDataLittleEndian, 0);
     TEST(audioPcm == static_cast<Msg*>(audioPcm)->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgAudioPcm);
     MsgPlayable* playable = audioPcm->CreatePlayable();
@@ -1102,6 +1247,12 @@ ProcessorMsgType::ProcessorMsgType()
 ProcessorMsgType::EMsgType ProcessorMsgType::LastMsgType() const
 {
     return iLastMsgType;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgAudioEncoded;
+    return aMsg;
 }
 
 Msg* ProcessorMsgType::ProcessMsg(MsgAudioPcm* aMsg)
@@ -1164,7 +1315,7 @@ Msg* ProcessorMsgType::ProcessMsg(MsgQuit* aMsg)
 SuiteMsgQueue::SuiteMsgQueue()
     : Suite("MsgQueue tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgQueue::~SuiteMsgQueue()
@@ -1262,7 +1413,7 @@ void SuiteMsgQueue::Test()
 SuiteMsgQueueJiffies::SuiteMsgQueueJiffies()
     : Suite("MsgQueueJiffies tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgQueueJiffies::~SuiteMsgQueueJiffies()
@@ -1487,6 +1638,7 @@ void TestMsg()
 {
     Runner runner("Basic Msg tests\n");
     runner.Add(new SuiteAllocator());
+    runner.Add(new SuiteMsgAudioEncoded());
     runner.Add(new SuiteMsgAudio());
     runner.Add(new SuiteMsgPlayable());
     runner.Add(new SuiteRamp());

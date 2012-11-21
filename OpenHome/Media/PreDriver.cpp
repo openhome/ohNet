@@ -112,6 +112,12 @@ Msg* PreDriver::AddPlayable(MsgPlayable* aPlayable)
     return ret;
 }
 
+Msg* PreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
+}
+
 Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iHalted = false;

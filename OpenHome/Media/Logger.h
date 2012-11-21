@@ -18,16 +18,17 @@ class Logger : public IPipelineElementUpstream, private IMsgProcessor, private I
 public:
     enum EMsgType
     {
-        EMsgAudioPcm    = 1<<0
-       ,EMsgSilence     = 1<<1
-       ,EMsgPlayable    = 1<<2
-       ,EMsgAudioFormat = 1<<3
-       ,EMsgTrack       = 1<<4
-       ,EMsgMetaText    = 1<<5
-       ,EMsgHalt        = 1<<6
-       ,EMsgFlush       = 1<<7
-       ,EMsgQuit        = 1<<8
-       ,EMsgAll         = 0x7fffffff
+        EMsgAudioEncoded = 1<<0
+       ,EMsgAudioPcm     = 1<<1
+       ,EMsgSilence      = 1<<2
+       ,EMsgPlayable     = 1<<3
+       ,EMsgAudioFormat  = 1<<4
+       ,EMsgTrack        = 1<<5
+       ,EMsgMetaText     = 1<<6
+       ,EMsgHalt         = 1<<7
+       ,EMsgFlush        = 1<<8
+       ,EMsgQuit         = 1<<9
+       ,EMsgAll          = 0x7fffffff
     };
 public:
     Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
@@ -37,6 +38,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);

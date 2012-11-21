@@ -30,6 +30,7 @@ public:
     ~SuiteAudioReservoir();
     void Test();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -93,7 +94,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     , iSemUpstreamComplete("TRSV", 0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iReservoir = new AudioReservoir(kReservoirSize);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
@@ -247,6 +248,12 @@ MsgAudio* SuiteAudioReservoir::CreateAudio()
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
 }
 
 Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioPcm* aMsg)

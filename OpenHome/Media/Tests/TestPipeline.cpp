@@ -75,6 +75,7 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyAudioFormat(const AudioFormat& aFormat);
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -491,6 +492,12 @@ void SuitePipeline::NotifyAudioFormat(const AudioFormat& aFormat)
     Print(aFormat.CodecName());
     Print("; trackLength=%llx, lossless=%u}\n", aFormat.TrackLength(), aFormat.Lossless());
 #endif
+}
+
+Msg* SuitePipeline::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
 }
 
 Msg* SuitePipeline::ProcessMsg(MsgAudioPcm* /*aMsg*/)

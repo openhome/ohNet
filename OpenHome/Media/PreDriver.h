@@ -29,6 +29,7 @@ private:
     Msg* NextStoredMsg();
     Msg* AddPlayable(MsgPlayable* aPlayable);
 private: // IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);

@@ -35,6 +35,7 @@ public:
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -101,7 +102,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iTrackOffset(0)
     , iBuffering(false)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize);
 }
 
@@ -307,6 +308,12 @@ MsgAudio* SuiteStarvationMonitor::CreateAudio()
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioPcm* aMsg)

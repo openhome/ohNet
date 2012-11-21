@@ -22,6 +22,12 @@ Msg* Splitter::Pull()
     return msg;
 }
 
+Msg* Splitter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
+}
+
 Msg* Splitter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     return aMsg->Clone();

@@ -47,6 +47,8 @@ public:
 class PipelineManager : private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
+    static const TUint kMsgCountEncodedAudio    = 512;
+    static const TUint kMsgCountAudioEncoded    = 768;
     static const TUint kMsgCountDecodedAudio    = 512;
     static const TUint kMsgCountAudioPcm        = 768;
     static const TUint kMsgCountSilence         = 512;

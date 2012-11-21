@@ -135,6 +135,12 @@ void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
     aMsg->RemoveRef();
 }
 
+Msg* DriverSongcastSender::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* DriverSongcastSender::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();

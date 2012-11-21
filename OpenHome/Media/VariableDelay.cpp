@@ -144,6 +144,12 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     iRemainingRampSize -= aMsg->Jiffies();
 }
 
+Msg* VariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
 {
     return DoProcessAudioMsg(aMsg);

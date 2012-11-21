@@ -61,6 +61,7 @@ public:
 private: // from Thread
     void Run();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
@@ -253,6 +254,12 @@ void DriverAudioCheck::Run()
         Thread::Sleep(1); // nasty but don't seem able to rely on highest priority thread always being scheduled
     } while (!iQuit);
     Log::Print("Expected %u bytes, got %u\n", iExpectedAudio.Bytes(), iPos);
+}
+
+Msg* DriverAudioCheck::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
 }
 
 Msg* DriverAudioCheck::ProcessMsg(MsgAudioPcm* /*aMsg*/)
