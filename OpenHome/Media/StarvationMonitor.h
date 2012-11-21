@@ -25,7 +25,7 @@ Fixed buffer which implements a delay (poss ~100ms) to allow time for songcast s
 - On exit from buffering mode, ramps up iff ramped down before buffering.
 */
     
-class StarvationMonitor : private MsgQueueJiffies, public IPipelineElementUpstream
+class StarvationMonitor : private MsgQueueFlushable, public IPipelineElementUpstream
 {
     friend class SuiteStarvationMonitor;
 public:
@@ -48,7 +48,7 @@ private:
     MsgAudio* DoProcessMsgOut(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, TUint aRampDuration, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
-private: // from MsgQueueJiffies
+private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);

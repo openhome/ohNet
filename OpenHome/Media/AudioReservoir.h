@@ -17,7 +17,7 @@ Discards all data when a Flush msg is queued.
 FIXME - no handling of Halt
 */
     
-class AudioReservoir : private MsgQueueJiffies, public IPipelineElementUpstream, public IPipelineElementDownstream
+class AudioReservoir : private MsgQueueFlushable, public IPipelineElementUpstream, public IPipelineElementDownstream
 {
     friend class SuiteAudioReservoir;
 public:
@@ -29,7 +29,7 @@ public: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private:
     TBool Enqueue(Msg* aMsg); // returns true if was blocked
-private: // from MsgQueueJiffies
+private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgFlush* aMsg);
     Msg* ProcessMsgOut(MsgFlush* aMsg);
 private:

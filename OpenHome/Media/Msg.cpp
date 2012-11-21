@@ -1486,276 +1486,307 @@ TBool MsgQueue::IsEmpty() const
 }
 
 
-// MsgQueueJiffies
+// MsgQueueFlushable
 
-MsgQueueJiffies::MsgQueueJiffies()
+MsgQueueFlushable::MsgQueueFlushable()
     : iLock("MQJF")
     , iJiffies(0)
+    , iEncodedBytes(0)
+    , iFlushing(false)
 {
 }
 
-MsgQueueJiffies::~MsgQueueJiffies()
+MsgQueueFlushable::~MsgQueueFlushable()
 {
 }
 
-void MsgQueueJiffies::DoEnqueue(Msg* aMsg)
+void MsgQueueFlushable::DoEnqueue(Msg* aMsg)
 {
     ProcessorQueueIn procIn(*this);
     Msg* msg = aMsg->Process(procIn);
     iQueue.Enqueue(msg);
 }
 
-Msg* MsgQueueJiffies::DoDequeue()
+Msg* MsgQueueFlushable::DoDequeue()
 {
     Msg* msg;
     do {
         msg = iQueue.Dequeue();
         ProcessorQueueOut procOut(*this);
         msg = msg->Process(procOut);
+        iLock.Wait();
+        if (iFlushing) {
+            msg->RemoveRef();
+            msg = NULL;
+        }
+        iLock.Signal();
     } while (msg == NULL);
     return msg;
 }
 
-void MsgQueueJiffies::EnqueueAtHead(Msg* aMsg)
+void MsgQueueFlushable::EnqueueAtHead(Msg* aMsg)
 {
     ProcessorQueueIn procIn(*this);
     Msg* msg = aMsg->Process(procIn);
     iQueue.EnqueueAtHead(msg);
 }
 
-TUint MsgQueueJiffies::Jiffies() const
+TUint MsgQueueFlushable::Jiffies() const
 {
     return iJiffies;
 }
 
-TBool MsgQueueJiffies::IsEmpty() const
+TUint MsgQueueFlushable::EncodedBytes() const
+{
+    return iEncodedBytes;
+}
+
+TBool MsgQueueFlushable::IsEmpty() const
 {
     return iQueue.IsEmpty();
 }
 
-void MsgQueueJiffies::AddJiffies(TUint aJiffies)
+void MsgQueueFlushable::Add(TUint& aValue, TUint aAdded)
 {
     iLock.Wait();
-    iJiffies += aJiffies;
+    aValue += aAdded;
     iLock.Signal();
 }
 
-void MsgQueueJiffies::RemoveJiffies(TUint aJiffies)
+void MsgQueueFlushable::Remove(TUint& aValue, TUint aRemoved)
 {
     iLock.Wait();
-    ASSERT(iJiffies >= aJiffies);
-    iJiffies -= aJiffies;
+    ASSERT(aValue >= aRemoved);
+    aValue -= aRemoved;
     iLock.Signal();
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
+void MsgQueueFlushable::StartFlushing()
+{
+    iLock.Wait();
+    iFlushing = true;
+    iLock.Signal();
+}
+
+void MsgQueueFlushable::StopFlushing()
+{
+    iLock.Wait();
+    iFlushing = false;
+    iLock.Signal();
+}
+
+void MsgQueueFlushable::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgSilence* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgSilence* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgAudioFormat* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgAudioFormat* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgTrack* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgMetaText* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgMetaText* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgHalt* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgFlush* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgFlush* /*aMsg*/)
 {
 }
 
-void MsgQueueJiffies::ProcessMsgIn(MsgQuit* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
 }
 
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioEncoded* aMsg)
-{
-    return aMsg;
-}
-
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioPcm* aMsg)
-{
-    return aMsg;
-}
-
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgSilence* aMsg)
-{
-    return aMsg;
-}
-
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgAudioFormat* aMsg)
-{
-    return aMsg;
-}
-
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgTrack* aMsg)
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgAudioEncoded* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgMetaText* aMsg)
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgHalt* aMsg)
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgSilence* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgFlush* aMsg)
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgAudioFormat* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessMsgOut(MsgQuit* aMsg)
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgHalt* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgFlush* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgQuit* aMsg)
 {
     return aMsg;
 }
 
 
-// MsgQueueJiffies::ProcessorQueueIn
+// MsgQueueFlushable::ProcessorQueueIn
 
-MsgQueueJiffies::ProcessorQueueIn::ProcessorQueueIn(MsgQueueJiffies& aQueue)
+MsgQueueFlushable::ProcessorQueueIn::ProcessorQueueIn(MsgQueueFlushable& aQueue)
     : iQueue(aQueue)
 {
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
+    iQueue.Add(iQueue.iEncodedBytes, aMsg->Bytes());
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
-    iQueue.AddJiffies(aMsg->Jiffies());
+    iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgSilence* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgSilence* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
-    iQueue.AddJiffies(aMsg->Jiffies());
+    iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgPlayable* /*aMsg*/)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioFormat* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgHalt* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgHalt* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgFlush* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgFlush* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    iQueue.StartFlushing();
+    return aMsg;
+}
+
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgQuit* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueIn::ProcessMsg(MsgQuit* aMsg)
-{
-    iQueue.ProcessMsgIn(aMsg);
-    return aMsg;
-}
 
+// MsgQueueFlushable::ProcessorQueueOut
 
-// MsgQueueJiffies::ProcessorQueueOut
-
-MsgQueueJiffies::ProcessorQueueOut::ProcessorQueueOut(MsgQueueJiffies& aQueue)
+MsgQueueFlushable::ProcessorQueueOut::ProcessorQueueOut(MsgQueueFlushable& aQueue)
     : iQueue(aQueue)
 {
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 {
+    iQueue.Remove(iQueue.iEncodedBytes, aMsg->Bytes());
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iQueue.RemoveJiffies(aMsg->Jiffies());
+    iQueue.Remove(iQueue.iJiffies, aMsg->Jiffies());
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
 {
-    iQueue.RemoveJiffies(aMsg->Jiffies());
+    iQueue.Remove(iQueue.iJiffies, aMsg->Jiffies());
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgPlayable* /*aMsg*/)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgAudioFormat* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgHalt* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgHalt* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
 {
+    iQueue.StopFlushing();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueJiffies::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }

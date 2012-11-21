@@ -554,19 +554,22 @@ private:
     Msg* iTail;
 };
 
-class MsgQueueJiffies
+class MsgQueueFlushable
 {
 protected:
-    MsgQueueJiffies();
-    virtual ~MsgQueueJiffies();
+    MsgQueueFlushable();
+    virtual ~MsgQueueFlushable();
     void DoEnqueue(Msg* aMsg);
     Msg* DoDequeue();
     void EnqueueAtHead(Msg* aMsg);
     TUint Jiffies() const;
+    TUint EncodedBytes() const;
     TBool IsEmpty() const;
 private:
-    void AddJiffies(TUint aJiffies);
-    void RemoveJiffies(TUint aJiffies);
+    void Add(TUint& aValue, TUint aAdded);
+    void Remove(TUint& aValue, TUint aRemoved);
+    void StartFlushing();
+    void StopFlushing();
 private:
     virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
     virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
@@ -590,7 +593,7 @@ private:
     class ProcessorQueueIn : public IMsgProcessor, private INonCopyable
     {
     public:
-        ProcessorQueueIn(MsgQueueJiffies& aQueue);
+        ProcessorQueueIn(MsgQueueFlushable& aQueue);
     private:
         Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -603,12 +606,12 @@ private:
         Msg* ProcessMsg(MsgFlush* aMsg);
         Msg* ProcessMsg(MsgQuit* aMsg);
     private:
-        MsgQueueJiffies& iQueue;
+        MsgQueueFlushable& iQueue;
     };
     class ProcessorQueueOut : public IMsgProcessor, private INonCopyable
     {
     public:
-        ProcessorQueueOut(MsgQueueJiffies& aQueue);
+        ProcessorQueueOut(MsgQueueFlushable& aQueue);
     private:
         Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -621,12 +624,14 @@ private:
         Msg* ProcessMsg(MsgFlush* aMsg);
         Msg* ProcessMsg(MsgQuit* aMsg);
     private:
-        MsgQueueJiffies& iQueue;
+        MsgQueueFlushable& iQueue;
     };
 private:
     Mutex iLock;
     MsgQueue iQueue;
+    TUint iEncodedBytes;
     TUint iJiffies;
+    TBool iFlushing;
 };
 
 class AutoMsgRef : private INonCopyable
