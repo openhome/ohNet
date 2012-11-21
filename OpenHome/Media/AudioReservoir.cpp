@@ -14,7 +14,6 @@ AudioReservoir::AudioReservoir(TUint aMaxSize)
     : iMaxSize(aMaxSize)
     , iLock("ARES")
     , iSem("ARES", 0)
-    , iStatus(ERunning)
 {
 }
 
@@ -28,14 +27,9 @@ Msg* AudioReservoir::Pull()
     do {
         iLock.Wait();
         TUint sizeBefore = Jiffies();
-        TBool flushing = (iStatus == EFlushing);
         iLock.Signal();
         msg = DoDequeue();
         iLock.Wait();
-        if (flushing && (iStatus == EFlushing)) {
-            msg->RemoveRef();
-            msg = NULL;
-        }
         TUint sizeAfter = Jiffies();
         if (sizeBefore >= iMaxSize && sizeAfter < iMaxSize) {
             iSem.Signal();
@@ -64,19 +58,4 @@ TBool AudioReservoir::Enqueue(Msg* aMsg)
         iSem.Wait();
     }
     return full;
-}
-
-void AudioReservoir::ProcessMsgIn(MsgFlush* /*aMsg*/)
-{
-    iLock.Wait();
-    iStatus = EFlushing;
-    iLock.Signal();
-}
-
-Msg* AudioReservoir::ProcessMsgOut(MsgFlush* aMsg)
-{
-    iLock.Wait();
-    iStatus = ERunning;
-    iLock.Signal();
-    return aMsg;
 }

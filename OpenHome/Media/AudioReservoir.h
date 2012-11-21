@@ -29,20 +29,10 @@ public: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private:
     TBool Enqueue(Msg* aMsg); // returns true if was blocked
-private: // from MsgQueueFlushable
-    void ProcessMsgIn(MsgFlush* aMsg);
-    Msg* ProcessMsgOut(MsgFlush* aMsg);
-private:
-    enum EStatus
-    {
-        ERunning
-       ,EFlushing
-    };
 private:
     TUint iMaxSize;
     Mutex iLock;
     Semaphore iSem;
-    EStatus iStatus;
 };
 
 } // namespace Media
