@@ -2,37 +2,18 @@
 #define HEADER_PIPELINE_DECODED_AUDIO_RESERVOIR
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Private/Standard.h>
-#include <OpenHome/Private/Thread.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/AudioReservoir.h>
 
 namespace OpenHome {
 namespace Media {
 
-/*
-Element which buffers [0..MaxSize] jiffies of decoded audio.
-Msgs can be pulled whenever available.
-Blocks further data being enqueued when size is greater that MaxSize.
-Discards all data when a Flush msg is queued.
-FIXME - no handling of Halt
-*/
-    
-class DecodedAudioReservoir : private MsgQueueFlushable, public IPipelineElementUpstream, public IPipelineElementDownstream
+class DecodedAudioReservoir : public AudioReservoir
 {
     friend class SuiteDecodedAudioReservoir;
 public:
     DecodedAudioReservoir(TUint aMaxSize);
-    ~DecodedAudioReservoir();
-public: // from IPipelineElementUpstream
-    Msg* Pull();
-public: // from IPipelineElementDownstream
-    void Push(Msg* aMsg);
-private:
-    TBool Enqueue(Msg* aMsg); // returns true if was blocked
-private:
-    TUint iMaxSize;
-    Mutex iLock;
-    Semaphore iSem;
+private: // from AudioReservoir
+    TUint Size() const;
 };
 
 } // namespace Media

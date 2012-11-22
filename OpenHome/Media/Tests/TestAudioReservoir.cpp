@@ -1,4 +1,5 @@
 #include <OpenHome/Private/TestFramework.h>
+#include <OpenHome/Media/AudioReservoir.h>
 #include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
@@ -15,7 +16,7 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteDecodedAudioReservoir : public Suite, private IMsgProcessor
+class SuiteAudioReservoir : public Suite, private IMsgProcessor
 {
     static const TUint kDecodedAudioCount = 512;
     static const TUint kMsgAudioPcmCount  = 512;
@@ -26,8 +27,8 @@ class SuiteDecodedAudioReservoir : public Suite, private IMsgProcessor
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
 public:
-    SuiteDecodedAudioReservoir();
-    ~SuiteDecodedAudioReservoir();
+    SuiteAudioReservoir();
+    ~SuiteAudioReservoir();
     void Test();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
@@ -70,7 +71,7 @@ private:
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
-    DecodedAudioReservoir* iReservoir;
+    AudioReservoir* iReservoir;
     ThreadFunctor* iThread;
     EMsgGenerationState iMsgGenerationState;
     EMsgType iNextGeneratedMsg;
@@ -85,9 +86,9 @@ private:
 } // namespace OpenHome
 
 
-// SuiteDecodedAudioReservoir
+// SuiteAudioReservoir
 
-SuiteDecodedAudioReservoir::SuiteDecodedAudioReservoir()
+SuiteAudioReservoir::SuiteAudioReservoir()
     : Suite("Decoded Audio Reservoir tests")
     , iLastMsg(ENone)
     , iSemUpstream("TRSV", 0)
@@ -96,12 +97,12 @@ SuiteDecodedAudioReservoir::SuiteDecodedAudioReservoir()
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iReservoir = new DecodedAudioReservoir(kReservoirSize);
-    iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteDecodedAudioReservoir::MsgEnqueueThread));
+    iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
     iSemUpstreamComplete.Wait();
 }
 
-SuiteDecodedAudioReservoir::~SuiteDecodedAudioReservoir()
+SuiteAudioReservoir::~SuiteAudioReservoir()
 {
     iMsgGenerationState = EExit;
     iSemUpstream.Signal();
@@ -110,7 +111,7 @@ SuiteDecodedAudioReservoir::~SuiteDecodedAudioReservoir()
     delete iMsgFactory;
 }
 
-void SuiteDecodedAudioReservoir::Test()
+void SuiteAudioReservoir::Test()
 {
     /*
     Test goes something like
@@ -164,24 +165,24 @@ void SuiteDecodedAudioReservoir::Test()
     TEST(iReservoir->Jiffies() == 0);
 }
 
-void SuiteDecodedAudioReservoir::GenerateMsg(EMsgType aType)
+void SuiteAudioReservoir::GenerateMsg(EMsgType aType)
 {
     Generate(EGenerateSingle, aType);
 }
 
-void SuiteDecodedAudioReservoir::GenerateMsgs(EMsgType aType)
+void SuiteAudioReservoir::GenerateMsgs(EMsgType aType)
 {
     Generate(EFillReservoir, aType);
 }
 
-void SuiteDecodedAudioReservoir::Generate(EMsgGenerationState aState, EMsgType aType)
+void SuiteAudioReservoir::Generate(EMsgGenerationState aState, EMsgType aType)
 {
     iMsgGenerationState = aState;
     iNextGeneratedMsg = aType;
     iSemUpstream.Signal();
 }
 
-void SuiteDecodedAudioReservoir::MsgEnqueueThread()
+void SuiteAudioReservoir::MsgEnqueueThread()
 {
     for (;;) {
         iSemUpstreamComplete.Signal();
@@ -201,7 +202,7 @@ void SuiteDecodedAudioReservoir::MsgEnqueueThread()
     }
 }
 
-TBool SuiteDecodedAudioReservoir::EnqueueMsg(EMsgType aType)
+TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
 {
     Msg* msg = NULL;
     switch (aType)
@@ -239,7 +240,7 @@ TBool SuiteDecodedAudioReservoir::EnqueueMsg(EMsgType aType)
     return iReservoir->Enqueue(msg);
 }
 
-MsgAudio* SuiteDecodedAudioReservoir::CreateAudio()
+MsgAudio* SuiteAudioReservoir::CreateAudio()
 {
     static const TUint kDataBytes = 3 * 1024;
     TByte encodedAudioData[kDataBytes];
@@ -250,13 +251,13 @@ MsgAudio* SuiteDecodedAudioReservoir::CreateAudio()
     return audio;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
     return NULL;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsg = EMsgAudioPcm;
     MsgPlayable* playable = aMsg->CreatePlayable();
@@ -277,49 +278,49 @@ Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgAudioPcm* aMsg)
     return NULL;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgSilence* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgSilence* aMsg)
 {
     iLastMsg = EMsgSilence;
     return aMsg;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgPlayable* /*aMsg*/)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not used in this test
     return NULL;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioFormat* aMsg)
 {
     iLastMsg = EMsgAudioFormat;
     return aMsg;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgTrack* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     return aMsg;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgMetaText* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsg = EMsgMetaText;
     return aMsg;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgHalt* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgHalt* aMsg)
 {
     iLastMsg = EMsgHalt;
     return aMsg;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgFlush* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgFlush* aMsg)
 {
     iLastMsg = EMsgFlush;
     return aMsg;
 }
 
-Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgQuit* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)
 {
     iLastMsg = EMsgQuit;
     return aMsg;
@@ -330,7 +331,7 @@ Msg* SuiteDecodedAudioReservoir::ProcessMsg(MsgQuit* aMsg)
 void TestAudioReservoir()
 {
     Runner runner("Decoded Audio Reservoir tests\n");
-    runner.Add(new SuiteDecodedAudioReservoir());
+    runner.Add(new SuiteAudioReservoir());
     runner.Run();
 }
 
