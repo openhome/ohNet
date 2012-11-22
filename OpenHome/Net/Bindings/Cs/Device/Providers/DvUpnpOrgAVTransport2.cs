@@ -93,6 +93,13 @@ namespace OpenHome.Net.Device.Providers
         {
             List<String> allowedValues = new List<String>();
             allowedValues.Add("OK");
+            allowedValues.Add("UNKNOWN");
+            allowedValues.Add("PROCESSING_CONTENT_KEY");
+            allowedValues.Add("CONTENT_KEY_FAILURE");
+            allowedValues.Add("ATTEMPTING_AUTHENTICATION");
+            allowedValues.Add("FAILED_AUTHENTICATION");
+            allowedValues.Add("NOT_AUTHENTICATED");
+            allowedValues.Add("DEVICE_REVOCATION");
             iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues));
             AddProperty(iPropertyDRMState);
             allowedValues.Clear();
@@ -198,7 +205,13 @@ namespace OpenHome.Net.Device.Providers
             action.AddOutputParameter(new ParameterString("NextURIMetaData", allowedValues));
             action.AddOutputParameter(new ParameterString("PlayMedium", allowedValues));
             action.AddOutputParameter(new ParameterString("RecordMedium", allowedValues));
+            allowedValues.Add("WRITABLE");
+            allowedValues.Add("PROTECTED");
+            allowedValues.Add("NOT_WRITABLE");
+            allowedValues.Add("UNKNOWN");
+            allowedValues.Add("NOT_IMPLEMENTED");
             action.AddOutputParameter(new ParameterString("WriteStatus", allowedValues));
+            allowedValues.Clear();
             iDelegateGetMediaInfo = new ActionDelegate(DoGetMediaInfo);
             EnableAction(action, iDelegateGetMediaInfo, GCHandle.ToIntPtr(iGch));
         }
@@ -226,7 +239,13 @@ namespace OpenHome.Net.Device.Providers
             action.AddOutputParameter(new ParameterString("NextURIMetaData", allowedValues));
             action.AddOutputParameter(new ParameterString("PlayMedium", allowedValues));
             action.AddOutputParameter(new ParameterString("RecordMedium", allowedValues));
+            allowedValues.Add("WRITABLE");
+            allowedValues.Add("PROTECTED");
+            allowedValues.Add("NOT_WRITABLE");
+            allowedValues.Add("UNKNOWN");
+            allowedValues.Add("NOT_IMPLEMENTED");
             action.AddOutputParameter(new ParameterString("WriteStatus", allowedValues));
+            allowedValues.Clear();
             iDelegateGetMediaInfo_Ext = new ActionDelegate(DoGetMediaInfo_Ext);
             EnableAction(action, iDelegateGetMediaInfo_Ext, GCHandle.ToIntPtr(iGch));
         }
@@ -241,17 +260,9 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetTransportInfo");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("STOPPED");
-            allowedValues.Add("PLAYING");
             action.AddOutputParameter(new ParameterString("CurrentTransportState", allowedValues));
-            allowedValues.Clear();
-            allowedValues.Add("OK");
-            allowedValues.Add("ERROR_OCCURRED");
             action.AddOutputParameter(new ParameterString("CurrentTransportStatus", allowedValues));
-            allowedValues.Clear();
-            allowedValues.Add("1");
             action.AddOutputParameter(new ParameterString("CurrentSpeed", allowedValues));
-            allowedValues.Clear();
             iDelegateGetTransportInfo = new ActionDelegate(DoGetTransportInfo);
             EnableAction(action, iDelegateGetTransportInfo, GCHandle.ToIntPtr(iGch));
         }
@@ -306,6 +317,12 @@ namespace OpenHome.Net.Device.Providers
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("NORMAL");
+            allowedValues.Add("SHUFFLE");
+            allowedValues.Add("REPEAT_ONE");
+            allowedValues.Add("REPEAT_ALL");
+            allowedValues.Add("RANDOM");
+            allowedValues.Add("DIRECT_1");
+            allowedValues.Add("INTRO");
             action.AddOutputParameter(new ParameterString("PlayMode", allowedValues));
             allowedValues.Clear();
             action.AddOutputParameter(new ParameterString("RecQualityMode", allowedValues));
@@ -336,9 +353,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Play");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("1");
             action.AddInputParameter(new ParameterString("Speed", allowedValues));
-            allowedValues.Clear();
             iDelegatePlay = new ActionDelegate(DoPlay);
             EnableAction(action, iDelegatePlay, GCHandle.ToIntPtr(iGch));
         }
@@ -379,7 +394,14 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Seek");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
+            allowedValues.Add("ABS_TIME");
+            allowedValues.Add("REL_TIME");
+            allowedValues.Add("ABS_COUNT");
+            allowedValues.Add("REL_COUNT");
             allowedValues.Add("TRACK_NR");
+            allowedValues.Add("CHANNEL_FREQ");
+            allowedValues.Add("TAPE-INDEX");
+            allowedValues.Add("FRAME");
             action.AddInputParameter(new ParameterString("Unit", allowedValues));
             allowedValues.Clear();
             action.AddInputParameter(new ParameterString("Target", allowedValues));
@@ -424,6 +446,12 @@ namespace OpenHome.Net.Device.Providers
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("NORMAL");
+            allowedValues.Add("SHUFFLE");
+            allowedValues.Add("REPEAT_ONE");
+            allowedValues.Add("REPEAT_ALL");
+            allowedValues.Add("RANDOM");
+            allowedValues.Add("DIRECT_1");
+            allowedValues.Add("INTRO");
             action.AddInputParameter(new ParameterString("NewPlayMode", allowedValues));
             allowedValues.Clear();
             iDelegateSetPlayMode = new ActionDelegate(DoSetPlayMode);

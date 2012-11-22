@@ -768,10 +768,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionSelectPreset = new OpenHome.Net.Core.Action("SelectPreset");
             param = new ParameterUint("InstanceID");
             iActionSelectPreset.AddInputParameter(param);
-            allowedValues.Add("FactoryDefaults");
             param = new ParameterString("PresetName", allowedValues);
             iActionSelectPreset.AddInputParameter(param);
-            allowedValues.Clear();
 
             iActionGetBrightness = new OpenHome.Net.Core.Action("GetBrightness");
             param = new ParameterUint("InstanceID");
@@ -812,13 +810,13 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetRedVideoGain = new OpenHome.Net.Core.Action("GetRedVideoGain");
             param = new ParameterUint("InstanceID");
             iActionGetRedVideoGain.AddInputParameter(param);
-            param = new ParameterUint("CurrentRedVideoGain");
+            param = new ParameterUint("CurrentRedVideoGain", 0, 2147483647, 1);
             iActionGetRedVideoGain.AddOutputParameter(param);
 
             iActionSetRedVideoGain = new OpenHome.Net.Core.Action("SetRedVideoGain");
             param = new ParameterUint("InstanceID");
             iActionSetRedVideoGain.AddInputParameter(param);
-            param = new ParameterUint("DesiredRedVideoGain");
+            param = new ParameterUint("DesiredRedVideoGain", 0, 2147483647, 1);
             iActionSetRedVideoGain.AddInputParameter(param);
 
             iActionGetGreenVideoGain = new OpenHome.Net.Core.Action("GetGreenVideoGain");
@@ -920,70 +918,56 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetMute = new OpenHome.Net.Core.Action("GetMute");
             param = new ParameterUint("InstanceID");
             iActionGetMute.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionGetMute.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterBool("CurrentMute");
             iActionGetMute.AddOutputParameter(param);
 
             iActionSetMute = new OpenHome.Net.Core.Action("SetMute");
             param = new ParameterUint("InstanceID");
             iActionSetMute.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionSetMute.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterBool("DesiredMute");
             iActionSetMute.AddInputParameter(param);
 
             iActionGetVolume = new OpenHome.Net.Core.Action("GetVolume");
             param = new ParameterUint("InstanceID");
             iActionGetVolume.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionGetVolume.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterUint("CurrentVolume", 0, 2147483647, 1);
             iActionGetVolume.AddOutputParameter(param);
 
             iActionSetVolume = new OpenHome.Net.Core.Action("SetVolume");
             param = new ParameterUint("InstanceID");
             iActionSetVolume.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionSetVolume.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterUint("DesiredVolume", 0, 2147483647, 1);
             iActionSetVolume.AddInputParameter(param);
 
             iActionGetVolumeDB = new OpenHome.Net.Core.Action("GetVolumeDB");
             param = new ParameterUint("InstanceID");
             iActionGetVolumeDB.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionGetVolumeDB.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterInt("CurrentVolume");
             iActionGetVolumeDB.AddOutputParameter(param);
 
             iActionSetVolumeDB = new OpenHome.Net.Core.Action("SetVolumeDB");
             param = new ParameterUint("InstanceID");
             iActionSetVolumeDB.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionSetVolumeDB.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterInt("DesiredVolume");
             iActionSetVolumeDB.AddInputParameter(param);
 
             iActionGetVolumeDBRange = new OpenHome.Net.Core.Action("GetVolumeDBRange");
             param = new ParameterUint("InstanceID");
             iActionGetVolumeDBRange.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionGetVolumeDBRange.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterInt("MinValue");
             iActionGetVolumeDBRange.AddOutputParameter(param);
             param = new ParameterInt("MaxValue");
@@ -992,20 +976,16 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetLoudness = new OpenHome.Net.Core.Action("GetLoudness");
             param = new ParameterUint("InstanceID");
             iActionGetLoudness.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionGetLoudness.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterBool("CurrentLoudness");
             iActionGetLoudness.AddOutputParameter(param);
 
             iActionSetLoudness = new OpenHome.Net.Core.Action("SetLoudness");
             param = new ParameterUint("InstanceID");
             iActionSetLoudness.AddInputParameter(param);
-            allowedValues.Add("Master");
             param = new ParameterString("Channel", allowedValues);
             iActionSetLoudness.AddInputParameter(param);
-            allowedValues.Clear();
             param = new ParameterBool("DesiredLoudness");
             iActionSetLoudness.AddInputParameter(param);
 

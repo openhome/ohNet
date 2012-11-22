@@ -192,9 +192,6 @@ feature provided by your editor.
 			<name>A_ARG_TYPE_Channel</name>
 			<sendEventsAttribute>no</sendEventsAttribute>
 			<dataType>string</dataType>
-			<allowedValueList>
-				<allowedValue>Master</allowedValue>
-			</allowedValueList>
 		</stateVariable>
 
 		<stateVariable>
@@ -207,9 +204,6 @@ feature provided by your editor.
 			<name>A_ARG_TYPE_PresetName</name>
 			<sendEventsAttribute>no</sendEventsAttribute>
 			<dataType>string</dataType>
-			<allowedValueList>
-				<allowedValue>FactoryDefaults</allowedValue>
-			</allowedValueList>
 		</stateVariable>
 
 		<stateVariable>

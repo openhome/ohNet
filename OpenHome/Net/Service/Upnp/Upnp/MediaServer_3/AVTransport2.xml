@@ -17,20 +17,12 @@ feature provided by your editor.
 			<name>TransportState</name>
 			<sendEventsAttribute>no</sendEventsAttribute>
 			<dataType>string</dataType>
-			<allowedValueList>
-				<allowedValue>STOPPED</allowedValue>
-				<allowedValue>PLAYING</allowedValue>
-			</allowedValueList>
 		</stateVariable>
 
 		<stateVariable>
 			<name>TransportStatus</name>
 			<sendEventsAttribute>no</sendEventsAttribute>
 			<dataType>string</dataType>
-			<allowedValueList>
-				<allowedValue>OK</allowedValue>
-				<allowedValue>ERROR_OCCURRED</allowedValue>
-			</allowedValueList>
 		</stateVariable>
 
 		<stateVariable>
@@ -74,6 +66,12 @@ feature provided by your editor.
 			<dataType>string</dataType>
 			<allowedValueList>
 				<allowedValue>NORMAL</allowedValue>
+        <allowedValue>SHUFFLE</allowedValue>
+        <allowedValue>REPEAT_ONE</allowedValue>
+        <allowedValue>REPEAT_ALL</allowedValue>
+        <allowedValue>RANDOM</allowedValue>
+        <allowedValue>DIRECT_1</allowedValue>
+        <allowedValue>INTRO</allowedValue>
 			</allowedValueList>
 			<defaultValue>NORMAL</defaultValue>
 		</stateVariable>
@@ -82,9 +80,6 @@ feature provided by your editor.
 			<name>TransportPlaySpeed</name>
 			<sendEventsAttribute>no</sendEventsAttribute>
 			<dataType>string</dataType>
-			<allowedValueList>
-				<allowedValue>1</allowedValue>
-			</allowedValueList>
 			<defaultValue>1</defaultValue>
 		</stateVariable>
 
@@ -92,6 +87,13 @@ feature provided by your editor.
 			<name>RecordMediumWriteStatus</name>
 			<sendEventsAttribute>no</sendEventsAttribute>
 			<dataType>string</dataType>
+      <allowedValueList>
+        <allowedValue>WRITABLE</allowedValue>
+        <allowedValue>PROTECTED</allowedValue>
+        <allowedValue>NOT_WRITABLE</allowedValue>
+        <allowedValue>UNKNOWN</allowedValue>
+        <allowedValue>NOT_IMPLEMENTED</allowedValue>
+      </allowedValueList>
 		</stateVariable>
 
 		<stateVariable>
@@ -217,6 +219,13 @@ feature provided by your editor.
 			<dataType>string</dataType>
 			<allowedValueList>
 				<allowedValue>OK</allowedValue>
+        <allowedValue>UNKNOWN</allowedValue>
+        <allowedValue>PROCESSING_CONTENT_KEY</allowedValue>
+        <allowedValue>CONTENT_KEY_FAILURE</allowedValue>
+        <allowedValue>ATTEMPTING_AUTHENTICATION</allowedValue>
+        <allowedValue>FAILED_AUTHENTICATION</allowedValue>
+        <allowedValue>NOT_AUTHENTICATED</allowedValue>
+        <allowedValue>DEVICE_REVOCATION</allowedValue>
 			</allowedValueList>
 			<defaultValue>UNKNOWN</defaultValue>
 		</stateVariable>
@@ -226,7 +235,14 @@ feature provided by your editor.
 			<sendEventsAttribute>no</sendEventsAttribute>
 			<dataType>string</dataType>
 			<allowedValueList>
-				<allowedValue>TRACK_NR</allowedValue>
+        <allowedValue>ABS_TIME</allowedValue>
+        <allowedValue>REL_TIME</allowedValue>
+        <allowedValue>ABS_COUNT</allowedValue>
+        <allowedValue>REL_COUNT</allowedValue>
+        <allowedValue>TRACK_NR</allowedValue>
+        <allowedValue>CHANNEL_FREQ</allowedValue>
+        <allowedValue>TAPE-INDEX</allowedValue>
+        <allowedValue>FRAME</allowedValue>
 			</allowedValueList>
 		</stateVariable>
 

@@ -24,6 +24,13 @@ var CpProxySchemasUpnpOrgAVTransport2 = function(udn){
                   
     this.DRMStateAllowedValues = [];
     this.DRMStateAllowedValues.push("OK");
+    this.DRMStateAllowedValues.push("UNKNOWN");
+    this.DRMStateAllowedValues.push("PROCESSING_CONTENT_KEY");
+    this.DRMStateAllowedValues.push("CONTENT_KEY_FAILURE");
+    this.DRMStateAllowedValues.push("ATTEMPTING_AUTHENTICATION");
+    this.DRMStateAllowedValues.push("FAILED_AUTHENTICATION");
+    this.DRMStateAllowedValues.push("NOT_AUTHENTICATED");
+    this.DRMStateAllowedValues.push("DEVICE_REVOCATION");
 
 }
 

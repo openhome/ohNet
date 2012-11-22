@@ -53,9 +53,16 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnablePropertyDRMState()
 {
     TChar** allowedValues;
     TUint index = 0;
-    allowedValues = new TChar*[1];
+    allowedValues = new TChar*[8];
     allowedValues[index++] = (TChar*)"OK";
-    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1));
+    allowedValues[index++] = (TChar*)"UNKNOWN";
+    allowedValues[index++] = (TChar*)"PROCESSING_CONTENT_KEY";
+    allowedValues[index++] = (TChar*)"CONTENT_KEY_FAILURE";
+    allowedValues[index++] = (TChar*)"ATTEMPTING_AUTHENTICATION";
+    allowedValues[index++] = (TChar*)"FAILED_AUTHENTICATION";
+    allowedValues[index++] = (TChar*)"NOT_AUTHENTICATED";
+    allowedValues[index++] = (TChar*)"DEVICE_REVOCATION";
+    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 8));
     delete[] allowedValues;
     iService->AddProperty(iPropertyDRMState); // passes ownership
 }
@@ -83,6 +90,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionSetNextAVTransportURI()
 void DvProviderUpnpOrgAVTransport2Cpp::EnableActionGetMediaInfo()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMediaInfo");
+    TChar** allowedValues;
+    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
     action->AddOutputParameter(new ParameterString("MediaDuration"));
@@ -92,7 +101,15 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionGetMediaInfo()
     action->AddOutputParameter(new ParameterString("NextURIMetaData"));
     action->AddOutputParameter(new ParameterString("PlayMedium"));
     action->AddOutputParameter(new ParameterString("RecordMedium"));
-    action->AddOutputParameter(new ParameterString("WriteStatus"));
+    index = 0;
+    allowedValues = new TChar*[5];
+    allowedValues[index++] = (TChar*)"WRITABLE";
+    allowedValues[index++] = (TChar*)"PROTECTED";
+    allowedValues[index++] = (TChar*)"NOT_WRITABLE";
+    allowedValues[index++] = (TChar*)"UNKNOWN";
+    allowedValues[index++] = (TChar*)"NOT_IMPLEMENTED";
+    action->AddOutputParameter(new ParameterString("WriteStatus", allowedValues, 5));
+    delete[] allowedValues;
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo);
     iService->AddAction(action, functor);
 }
@@ -118,7 +135,15 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionGetMediaInfo_Ext()
     action->AddOutputParameter(new ParameterString("NextURIMetaData"));
     action->AddOutputParameter(new ParameterString("PlayMedium"));
     action->AddOutputParameter(new ParameterString("RecordMedium"));
-    action->AddOutputParameter(new ParameterString("WriteStatus"));
+    index = 0;
+    allowedValues = new TChar*[5];
+    allowedValues[index++] = (TChar*)"WRITABLE";
+    allowedValues[index++] = (TChar*)"PROTECTED";
+    allowedValues[index++] = (TChar*)"NOT_WRITABLE";
+    allowedValues[index++] = (TChar*)"UNKNOWN";
+    allowedValues[index++] = (TChar*)"NOT_IMPLEMENTED";
+    action->AddOutputParameter(new ParameterString("WriteStatus", allowedValues, 5));
+    delete[] allowedValues;
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2Cpp::DoGetMediaInfo_Ext);
     iService->AddAction(action, functor);
 }
@@ -126,26 +151,10 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionGetMediaInfo_Ext()
 void DvProviderUpnpOrgAVTransport2Cpp::EnableActionGetTransportInfo()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTransportInfo");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[2];
-    allowedValues[index++] = (TChar*)"STOPPED";
-    allowedValues[index++] = (TChar*)"PLAYING";
-    action->AddOutputParameter(new ParameterString("CurrentTransportState", allowedValues, 2));
-    delete[] allowedValues;
-    index = 0;
-    allowedValues = new TChar*[2];
-    allowedValues[index++] = (TChar*)"OK";
-    allowedValues[index++] = (TChar*)"ERROR_OCCURRED";
-    action->AddOutputParameter(new ParameterString("CurrentTransportStatus", allowedValues, 2));
-    delete[] allowedValues;
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"1";
-    action->AddOutputParameter(new ParameterString("CurrentSpeed", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterString("CurrentTransportState"));
+    action->AddOutputParameter(new ParameterString("CurrentTransportStatus"));
+    action->AddOutputParameter(new ParameterString("CurrentSpeed"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportInfo);
     iService->AddAction(action, functor);
 }
@@ -184,9 +193,15 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionGetTransportSettings()
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
     index = 0;
-    allowedValues = new TChar*[1];
+    allowedValues = new TChar*[7];
     allowedValues[index++] = (TChar*)"NORMAL";
-    action->AddOutputParameter(new ParameterString("PlayMode", allowedValues, 1));
+    allowedValues[index++] = (TChar*)"SHUFFLE";
+    allowedValues[index++] = (TChar*)"REPEAT_ONE";
+    allowedValues[index++] = (TChar*)"REPEAT_ALL";
+    allowedValues[index++] = (TChar*)"RANDOM";
+    allowedValues[index++] = (TChar*)"DIRECT_1";
+    allowedValues[index++] = (TChar*)"INTRO";
+    action->AddOutputParameter(new ParameterString("PlayMode", allowedValues, 7));
     delete[] allowedValues;
     action->AddOutputParameter(new ParameterString("RecQualityMode"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2Cpp::DoGetTransportSettings);
@@ -204,14 +219,8 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionStop()
 void DvProviderUpnpOrgAVTransport2Cpp::EnableActionPlay()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Play");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"1";
-    action->AddInputParameter(new ParameterString("Speed", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Speed"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2Cpp::DoPlay);
     iService->AddAction(action, functor);
 }
@@ -239,9 +248,16 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionSeek()
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
     index = 0;
-    allowedValues = new TChar*[1];
+    allowedValues = new TChar*[8];
+    allowedValues[index++] = (TChar*)"ABS_TIME";
+    allowedValues[index++] = (TChar*)"REL_TIME";
+    allowedValues[index++] = (TChar*)"ABS_COUNT";
+    allowedValues[index++] = (TChar*)"REL_COUNT";
     allowedValues[index++] = (TChar*)"TRACK_NR";
-    action->AddInputParameter(new ParameterString("Unit", allowedValues, 1));
+    allowedValues[index++] = (TChar*)"CHANNEL_FREQ";
+    allowedValues[index++] = (TChar*)"TAPE-INDEX";
+    allowedValues[index++] = (TChar*)"FRAME";
+    action->AddInputParameter(new ParameterString("Unit", allowedValues, 8));
     delete[] allowedValues;
     action->AddInputParameter(new ParameterString("Target"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2Cpp::DoSeek);
@@ -271,9 +287,15 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnableActionSetPlayMode()
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
     index = 0;
-    allowedValues = new TChar*[1];
+    allowedValues = new TChar*[7];
     allowedValues[index++] = (TChar*)"NORMAL";
-    action->AddInputParameter(new ParameterString("NewPlayMode", allowedValues, 1));
+    allowedValues[index++] = (TChar*)"SHUFFLE";
+    allowedValues[index++] = (TChar*)"REPEAT_ONE";
+    allowedValues[index++] = (TChar*)"REPEAT_ALL";
+    allowedValues[index++] = (TChar*)"RANDOM";
+    allowedValues[index++] = (TChar*)"DIRECT_1";
+    allowedValues[index++] = (TChar*)"INTRO";
+    action->AddInputParameter(new ParameterString("NewPlayMode", allowedValues, 7));
     delete[] allowedValues;
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2Cpp::DoSetPlayMode);
     iService->AddAction(action, functor);

@@ -898,10 +898,8 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iActionSelectPreset = new Action("SelectPreset");
         param = new ParameterUint("InstanceID");
         iActionSelectPreset.addInputParameter(param);
-        allowedValues.add("FactoryDefaults");
         param = new ParameterString("PresetName", allowedValues);
         iActionSelectPreset.addInputParameter(param);
-        allowedValues.clear();
 
         iActionGetBrightness = new Action("GetBrightness");
         param = new ParameterUint("InstanceID");
@@ -1050,70 +1048,56 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iActionGetMute = new Action("GetMute");
         param = new ParameterUint("InstanceID");
         iActionGetMute.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionGetMute.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterBool("CurrentMute");
         iActionGetMute.addOutputParameter(param);
 
         iActionSetMute = new Action("SetMute");
         param = new ParameterUint("InstanceID");
         iActionSetMute.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionSetMute.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterBool("DesiredMute");
         iActionSetMute.addInputParameter(param);
 
         iActionGetVolume = new Action("GetVolume");
         param = new ParameterUint("InstanceID");
         iActionGetVolume.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionGetVolume.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterUint("CurrentVolume", 0, 2147483647, 1);
         iActionGetVolume.addOutputParameter(param);
 
         iActionSetVolume = new Action("SetVolume");
         param = new ParameterUint("InstanceID");
         iActionSetVolume.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionSetVolume.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterUint("DesiredVolume", 0, 2147483647, 1);
         iActionSetVolume.addInputParameter(param);
 
         iActionGetVolumeDB = new Action("GetVolumeDB");
         param = new ParameterUint("InstanceID");
         iActionGetVolumeDB.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionGetVolumeDB.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterInt("CurrentVolume");
         iActionGetVolumeDB.addOutputParameter(param);
 
         iActionSetVolumeDB = new Action("SetVolumeDB");
         param = new ParameterUint("InstanceID");
         iActionSetVolumeDB.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionSetVolumeDB.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterInt("DesiredVolume");
         iActionSetVolumeDB.addInputParameter(param);
 
         iActionGetVolumeDBRange = new Action("GetVolumeDBRange");
         param = new ParameterUint("InstanceID");
         iActionGetVolumeDBRange.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionGetVolumeDBRange.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterInt("MinValue");
         iActionGetVolumeDBRange.addOutputParameter(param);
         param = new ParameterInt("MaxValue");
@@ -1122,20 +1106,16 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
         iActionGetLoudness = new Action("GetLoudness");
         param = new ParameterUint("InstanceID");
         iActionGetLoudness.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionGetLoudness.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterBool("CurrentLoudness");
         iActionGetLoudness.addOutputParameter(param);
 
         iActionSetLoudness = new Action("SetLoudness");
         param = new ParameterUint("InstanceID");
         iActionSetLoudness.addInputParameter(param);
-        allowedValues.add("Master");
         param = new ParameterString("Channel", allowedValues);
         iActionSetLoudness.addInputParameter(param);
-        allowedValues.clear();
         param = new ParameterBool("DesiredLoudness");
         iActionSetLoudness.addInputParameter(param);
 

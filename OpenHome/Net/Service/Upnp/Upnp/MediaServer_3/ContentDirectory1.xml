@@ -20,7 +20,7 @@
     <stateVariable>
       <name>A_ARG_TYPE_BrowseFlag</name> <sendEventsAttribute>no</sendEventsAttribute>
       <dataType>string</dataType>
-<allowedValueList>
+      <allowedValueList>
         <allowedValue>BrowseMetadata</allowedValue>
         <allowedValue>BrowseDirectChildren</allowedValue>
       </allowedValueList>

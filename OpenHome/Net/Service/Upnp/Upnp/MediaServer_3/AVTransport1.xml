@@ -7,6 +7,11 @@
             <allowedValueList>
                 <allowedValue>STOPPED</allowedValue>
                 <allowedValue>PLAYING</allowedValue>
+                <allowedValue>TRANSITIONING</allowedValue>
+                <allowedValue>PAUSED_PLAYBACK</allowedValue>
+                <allowedValue>PAUSED_RECORDING</allowedValue>
+                <allowedValue>RECORDING</allowedValue>
+                <allowedValue>NO_MEDIA_PRESENT</allowedValue>
             </allowedValueList>
         </stateVariable>
         <stateVariable>
@@ -51,7 +56,7 @@
             <name>TransportPlaySpeed</name>
             <sendEventsAttribute>no</sendEventsAttribute>
             <dataType>string</dataType>
-	<allowedValueList>
+          	<allowedValueList>
                 <allowedValue>1</allowedValue>
             </allowedValueList>
         </stateVariable>
@@ -59,7 +64,14 @@
             <sendEventsAttribute>no</sendEventsAttribute>
             <name>RecordMediumWriteStatus </name>
             <dataType>string</dataType>
-         </stateVariable>
+            <allowedValueList>
+                <allowedValue>WRITABLE</allowedValue>
+                <allowedValue>PROTECTED</allowedValue>
+                <allowedValue>NOT_WRITABLE</allowedValue>
+                <allowedValue>UNKNOWN</allowedValue>
+                <allowedValue>NOT_IMPLEMENTED</allowedValue>
+            </allowedValueList>
+        </stateVariable>
         <stateVariable>
             <name>CurrentRecordQualityMode</name>
             <sendEventsAttribute>no</sendEventsAttribute>
@@ -74,25 +86,25 @@
             <name>NumberOfTracks</name>
             <sendEventsAttribute>no</sendEventsAttribute>
             <dataType>ui4</dataType>
-		<allowedValueRange>
-			<minimum>0</minimum>
-		</allowedValueRange>
+		        <allowedValueRange>
+			        <minimum>0</minimum>
+		        </allowedValueRange>
          </stateVariable>
         <stateVariable>
             <name>CurrentTrack</name>
             <sendEventsAttribute>no</sendEventsAttribute>
             <dataType>ui4</dataType>
-		<allowedValueRange>
-			<minimum>0</minimum>
-			<step>1</step>
-		</allowedValueRange>
+		        <allowedValueRange>
+			        <minimum>0</minimum>
+			        <step>1</step>
+		        </allowedValueRange>
         </stateVariable>
         <stateVariable>
             <name>CurrentTrackDuration</name>
             <sendEventsAttribute>no</sendEventsAttribute>
             <dataType>string</dataType>
         </stateVariable>
-	  <stateVariable>
+    	  <stateVariable>
             <name>CurrentMediaDuration</name>
             <sendEventsAttribute>no</sendEventsAttribute>
             <dataType>string</dataType>
@@ -163,7 +175,14 @@
             <sendEventsAttribute>no</sendEventsAttribute>
             <dataType>string</dataType>
             <allowedValueList>
-                 <allowedValue>TRACK_NR</allowedValue>
+                <allowedValue>TRACK_NR</allowedValue>
+                <allowedValue>ABS_TIME</allowedValue>
+                <allowedValue>REL_TIME</allowedValue>
+                <allowedValue>ABS_COUNT</allowedValue>
+                <allowedValue>REL_COUNT</allowedValue>
+                <allowedValue>CHANNEL_FREQ</allowedValue>
+                <allowedValue>TAPE-INDEX</allowedValue>
+                <allowedValue>FRAME</allowedValue>
             </allowedValueList>
         </stateVariable>
         <stateVariable>

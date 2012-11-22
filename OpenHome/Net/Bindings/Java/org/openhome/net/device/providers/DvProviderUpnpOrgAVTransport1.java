@@ -364,7 +364,13 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
         action.addOutputParameter(new ParameterString("NextURIMetaData", allowedValues));
         action.addOutputParameter(new ParameterString("PlayMedium", allowedValues));
         action.addOutputParameter(new ParameterString("RecordMedium", allowedValues));
+        allowedValues.add("WRITABLE");
+        allowedValues.add("PROTECTED");
+        allowedValues.add("NOT_WRITABLE");
+        allowedValues.add("UNKNOWN");
+        allowedValues.add("NOT_IMPLEMENTED");
         action.addOutputParameter(new ParameterString("WriteStatus", allowedValues));
+        allowedValues.clear();
         iDelegateGetMediaInfo = new DoGetMediaInfo();
         enableAction(action, iDelegateGetMediaInfo);
     }
@@ -381,6 +387,11 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
         action.addInputParameter(new ParameterUint("InstanceID"));
         allowedValues.add("STOPPED");
         allowedValues.add("PLAYING");
+        allowedValues.add("TRANSITIONING");
+        allowedValues.add("PAUSED_PLAYBACK");
+        allowedValues.add("PAUSED_RECORDING");
+        allowedValues.add("RECORDING");
+        allowedValues.add("NO_MEDIA_PRESENT");
         action.addOutputParameter(new ParameterString("CurrentTransportState", allowedValues));
         allowedValues.clear();
         allowedValues.add("OK");
@@ -521,6 +532,13 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
         Action action = new Action("Seek");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
         allowedValues.add("TRACK_NR");
+        allowedValues.add("ABS_TIME");
+        allowedValues.add("REL_TIME");
+        allowedValues.add("ABS_COUNT");
+        allowedValues.add("REL_COUNT");
+        allowedValues.add("CHANNEL_FREQ");
+        allowedValues.add("TAPE-INDEX");
+        allowedValues.add("FRAME");
         action.addInputParameter(new ParameterString("Unit", allowedValues));
         allowedValues.clear();
         action.addInputParameter(new ParameterString("Target", allowedValues));

@@ -1008,8 +1008,14 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
         iActionGetMediaInfo.addOutputParameter(param);
         param = new ParameterString("RecordMedium", allowedValues);
         iActionGetMediaInfo.addOutputParameter(param);
+        allowedValues.add("WRITABLE");
+        allowedValues.add("PROTECTED");
+        allowedValues.add("NOT_WRITABLE");
+        allowedValues.add("UNKNOWN");
+        allowedValues.add("NOT_IMPLEMENTED");
         param = new ParameterString("WriteStatus", allowedValues);
         iActionGetMediaInfo.addOutputParameter(param);
+        allowedValues.clear();
 
         iActionGetMediaInfo_Ext = new Action("GetMediaInfo_Ext");
         param = new ParameterUint("InstanceID");
@@ -1036,26 +1042,24 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
         iActionGetMediaInfo_Ext.addOutputParameter(param);
         param = new ParameterString("RecordMedium", allowedValues);
         iActionGetMediaInfo_Ext.addOutputParameter(param);
+        allowedValues.add("WRITABLE");
+        allowedValues.add("PROTECTED");
+        allowedValues.add("NOT_WRITABLE");
+        allowedValues.add("UNKNOWN");
+        allowedValues.add("NOT_IMPLEMENTED");
         param = new ParameterString("WriteStatus", allowedValues);
         iActionGetMediaInfo_Ext.addOutputParameter(param);
+        allowedValues.clear();
 
         iActionGetTransportInfo = new Action("GetTransportInfo");
         param = new ParameterUint("InstanceID");
         iActionGetTransportInfo.addInputParameter(param);
-        allowedValues.add("STOPPED");
-        allowedValues.add("PLAYING");
         param = new ParameterString("CurrentTransportState", allowedValues);
         iActionGetTransportInfo.addOutputParameter(param);
-        allowedValues.clear();
-        allowedValues.add("OK");
-        allowedValues.add("ERROR_OCCURRED");
         param = new ParameterString("CurrentTransportStatus", allowedValues);
         iActionGetTransportInfo.addOutputParameter(param);
-        allowedValues.clear();
-        allowedValues.add("1");
         param = new ParameterString("CurrentSpeed", allowedValues);
         iActionGetTransportInfo.addOutputParameter(param);
-        allowedValues.clear();
 
         iActionGetPositionInfo = new Action("GetPositionInfo");
         param = new ParameterUint("InstanceID");
@@ -1091,6 +1095,12 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
         param = new ParameterUint("InstanceID");
         iActionGetTransportSettings.addInputParameter(param);
         allowedValues.add("NORMAL");
+        allowedValues.add("SHUFFLE");
+        allowedValues.add("REPEAT_ONE");
+        allowedValues.add("REPEAT_ALL");
+        allowedValues.add("RANDOM");
+        allowedValues.add("DIRECT_1");
+        allowedValues.add("INTRO");
         param = new ParameterString("PlayMode", allowedValues);
         iActionGetTransportSettings.addOutputParameter(param);
         allowedValues.clear();
@@ -1104,10 +1114,8 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
         iActionPlay = new Action("Play");
         param = new ParameterUint("InstanceID");
         iActionPlay.addInputParameter(param);
-        allowedValues.add("1");
         param = new ParameterString("Speed", allowedValues);
         iActionPlay.addInputParameter(param);
-        allowedValues.clear();
 
         iActionPause = new Action("Pause");
         param = new ParameterUint("InstanceID");
@@ -1120,7 +1128,14 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
         iActionSeek = new Action("Seek");
         param = new ParameterUint("InstanceID");
         iActionSeek.addInputParameter(param);
+        allowedValues.add("ABS_TIME");
+        allowedValues.add("REL_TIME");
+        allowedValues.add("ABS_COUNT");
+        allowedValues.add("REL_COUNT");
         allowedValues.add("TRACK_NR");
+        allowedValues.add("CHANNEL_FREQ");
+        allowedValues.add("TAPE-INDEX");
+        allowedValues.add("FRAME");
         param = new ParameterString("Unit", allowedValues);
         iActionSeek.addInputParameter(param);
         allowedValues.clear();
@@ -1139,6 +1154,12 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
         param = new ParameterUint("InstanceID");
         iActionSetPlayMode.addInputParameter(param);
         allowedValues.add("NORMAL");
+        allowedValues.add("SHUFFLE");
+        allowedValues.add("REPEAT_ONE");
+        allowedValues.add("REPEAT_ALL");
+        allowedValues.add("RANDOM");
+        allowedValues.add("DIRECT_1");
+        allowedValues.add("INTRO");
         param = new ParameterString("NewPlayMode", allowedValues);
         iActionSetPlayMode.addInputParameter(param);
         allowedValues.clear();
@@ -1159,6 +1180,13 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
         param = new ParameterUint("InstanceID");
         iActionGetDRMState.addInputParameter(param);
         allowedValues.add("OK");
+        allowedValues.add("UNKNOWN");
+        allowedValues.add("PROCESSING_CONTENT_KEY");
+        allowedValues.add("CONTENT_KEY_FAILURE");
+        allowedValues.add("ATTEMPTING_AUTHENTICATION");
+        allowedValues.add("FAILED_AUTHENTICATION");
+        allowedValues.add("NOT_AUTHENTICATED");
+        allowedValues.add("DEVICE_REVOCATION");
         param = new ParameterString("CurrentDRMState", allowedValues);
         iActionGetDRMState.addOutputParameter(param);
         allowedValues.clear();

@@ -646,8 +646,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetMediaInfo.AddOutputParameter(param);
             param = new ParameterString("RecordMedium", allowedValues);
             iActionGetMediaInfo.AddOutputParameter(param);
+            allowedValues.Add("WRITABLE");
+            allowedValues.Add("PROTECTED");
+            allowedValues.Add("NOT_WRITABLE");
+            allowedValues.Add("UNKNOWN");
+            allowedValues.Add("NOT_IMPLEMENTED");
             param = new ParameterString("WriteStatus", allowedValues);
             iActionGetMediaInfo.AddOutputParameter(param);
+            allowedValues.Clear();
 
             iActionGetMediaInfo_Ext = new OpenHome.Net.Core.Action("GetMediaInfo_Ext");
             param = new ParameterUint("InstanceID");
@@ -674,26 +680,24 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetMediaInfo_Ext.AddOutputParameter(param);
             param = new ParameterString("RecordMedium", allowedValues);
             iActionGetMediaInfo_Ext.AddOutputParameter(param);
+            allowedValues.Add("WRITABLE");
+            allowedValues.Add("PROTECTED");
+            allowedValues.Add("NOT_WRITABLE");
+            allowedValues.Add("UNKNOWN");
+            allowedValues.Add("NOT_IMPLEMENTED");
             param = new ParameterString("WriteStatus", allowedValues);
             iActionGetMediaInfo_Ext.AddOutputParameter(param);
+            allowedValues.Clear();
 
             iActionGetTransportInfo = new OpenHome.Net.Core.Action("GetTransportInfo");
             param = new ParameterUint("InstanceID");
             iActionGetTransportInfo.AddInputParameter(param);
-            allowedValues.Add("STOPPED");
-            allowedValues.Add("PLAYING");
             param = new ParameterString("CurrentTransportState", allowedValues);
             iActionGetTransportInfo.AddOutputParameter(param);
-            allowedValues.Clear();
-            allowedValues.Add("OK");
-            allowedValues.Add("ERROR_OCCURRED");
             param = new ParameterString("CurrentTransportStatus", allowedValues);
             iActionGetTransportInfo.AddOutputParameter(param);
-            allowedValues.Clear();
-            allowedValues.Add("1");
             param = new ParameterString("CurrentSpeed", allowedValues);
             iActionGetTransportInfo.AddOutputParameter(param);
-            allowedValues.Clear();
 
             iActionGetPositionInfo = new OpenHome.Net.Core.Action("GetPositionInfo");
             param = new ParameterUint("InstanceID");
@@ -729,6 +733,12 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterUint("InstanceID");
             iActionGetTransportSettings.AddInputParameter(param);
             allowedValues.Add("NORMAL");
+            allowedValues.Add("SHUFFLE");
+            allowedValues.Add("REPEAT_ONE");
+            allowedValues.Add("REPEAT_ALL");
+            allowedValues.Add("RANDOM");
+            allowedValues.Add("DIRECT_1");
+            allowedValues.Add("INTRO");
             param = new ParameterString("PlayMode", allowedValues);
             iActionGetTransportSettings.AddOutputParameter(param);
             allowedValues.Clear();
@@ -742,10 +752,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionPlay = new OpenHome.Net.Core.Action("Play");
             param = new ParameterUint("InstanceID");
             iActionPlay.AddInputParameter(param);
-            allowedValues.Add("1");
             param = new ParameterString("Speed", allowedValues);
             iActionPlay.AddInputParameter(param);
-            allowedValues.Clear();
 
             iActionPause = new OpenHome.Net.Core.Action("Pause");
             param = new ParameterUint("InstanceID");
@@ -758,7 +766,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionSeek = new OpenHome.Net.Core.Action("Seek");
             param = new ParameterUint("InstanceID");
             iActionSeek.AddInputParameter(param);
+            allowedValues.Add("ABS_TIME");
+            allowedValues.Add("REL_TIME");
+            allowedValues.Add("ABS_COUNT");
+            allowedValues.Add("REL_COUNT");
             allowedValues.Add("TRACK_NR");
+            allowedValues.Add("CHANNEL_FREQ");
+            allowedValues.Add("TAPE-INDEX");
+            allowedValues.Add("FRAME");
             param = new ParameterString("Unit", allowedValues);
             iActionSeek.AddInputParameter(param);
             allowedValues.Clear();
@@ -777,6 +792,12 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterUint("InstanceID");
             iActionSetPlayMode.AddInputParameter(param);
             allowedValues.Add("NORMAL");
+            allowedValues.Add("SHUFFLE");
+            allowedValues.Add("REPEAT_ONE");
+            allowedValues.Add("REPEAT_ALL");
+            allowedValues.Add("RANDOM");
+            allowedValues.Add("DIRECT_1");
+            allowedValues.Add("INTRO");
             param = new ParameterString("NewPlayMode", allowedValues);
             iActionSetPlayMode.AddInputParameter(param);
             allowedValues.Clear();
@@ -797,6 +818,13 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterUint("InstanceID");
             iActionGetDRMState.AddInputParameter(param);
             allowedValues.Add("OK");
+            allowedValues.Add("UNKNOWN");
+            allowedValues.Add("PROCESSING_CONTENT_KEY");
+            allowedValues.Add("CONTENT_KEY_FAILURE");
+            allowedValues.Add("ATTEMPTING_AUTHENTICATION");
+            allowedValues.Add("FAILED_AUTHENTICATION");
+            allowedValues.Add("NOT_AUTHENTICATED");
+            allowedValues.Add("DEVICE_REVOCATION");
             param = new ParameterString("CurrentDRMState", allowedValues);
             iActionGetDRMState.AddOutputParameter(param);
             allowedValues.Clear();

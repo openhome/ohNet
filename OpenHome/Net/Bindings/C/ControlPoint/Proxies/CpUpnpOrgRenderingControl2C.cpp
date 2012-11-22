@@ -1042,8 +1042,6 @@ CpProxyUpnpOrgRenderingControl2C::CpProxyUpnpOrgRenderingControl2C(CpDeviceC aDe
     , iLock("MPCS")
 {
     OpenHome::Net::Parameter* param;
-    TChar** allowedValues;
-    TUint index;
 
     iActionListPresets = new Action("ListPresets");
     param = new OpenHome::Net::ParameterUint("InstanceID");
@@ -1054,12 +1052,8 @@ CpProxyUpnpOrgRenderingControl2C::CpProxyUpnpOrgRenderingControl2C(CpDeviceC aDe
     iActionSelectPreset = new Action("SelectPreset");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSelectPreset->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"FactoryDefaults";
-    param = new OpenHome::Net::ParameterString("PresetName", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("PresetName");
     iActionSelectPreset->AddInputParameter(param);
-    delete[] allowedValues;
 
     iActionGetBrightness = new Action("GetBrightness");
     param = new OpenHome::Net::ParameterUint("InstanceID");
@@ -1208,84 +1202,56 @@ CpProxyUpnpOrgRenderingControl2C::CpProxyUpnpOrgRenderingControl2C(CpDeviceC aDe
     iActionGetMute = new Action("GetMute");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetMute->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionGetMute->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterBool("CurrentMute");
     iActionGetMute->AddOutputParameter(param);
 
     iActionSetMute = new Action("SetMute");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetMute->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionSetMute->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterBool("DesiredMute");
     iActionSetMute->AddInputParameter(param);
 
     iActionGetVolume = new Action("GetVolume");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetVolume->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionGetVolume->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterUint("CurrentVolume", 0, 2147483647, 1);
     iActionGetVolume->AddOutputParameter(param);
 
     iActionSetVolume = new Action("SetVolume");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetVolume->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionSetVolume->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterUint("DesiredVolume", 0, 2147483647, 1);
     iActionSetVolume->AddInputParameter(param);
 
     iActionGetVolumeDB = new Action("GetVolumeDB");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetVolumeDB->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionGetVolumeDB->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterInt("CurrentVolume");
     iActionGetVolumeDB->AddOutputParameter(param);
 
     iActionSetVolumeDB = new Action("SetVolumeDB");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetVolumeDB->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionSetVolumeDB->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterInt("DesiredVolume");
     iActionSetVolumeDB->AddInputParameter(param);
 
     iActionGetVolumeDBRange = new Action("GetVolumeDBRange");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetVolumeDBRange->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionGetVolumeDBRange->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterInt("MinValue");
     iActionGetVolumeDBRange->AddOutputParameter(param);
     param = new OpenHome::Net::ParameterInt("MaxValue");
@@ -1294,24 +1260,16 @@ CpProxyUpnpOrgRenderingControl2C::CpProxyUpnpOrgRenderingControl2C(CpDeviceC aDe
     iActionGetLoudness = new Action("GetLoudness");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetLoudness->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionGetLoudness->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterBool("CurrentLoudness");
     iActionGetLoudness->AddOutputParameter(param);
 
     iActionSetLoudness = new Action("SetLoudness");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetLoudness->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel");
     iActionSetLoudness->AddInputParameter(param);
-    delete[] allowedValues;
     param = new OpenHome::Net::ParameterBool("DesiredLoudness");
     iActionSetLoudness->AddInputParameter(param);
 

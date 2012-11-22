@@ -399,6 +399,13 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     {
         List<String> allowedValues = new LinkedList<String>();
         allowedValues.add("OK");
+        allowedValues.add("UNKNOWN");
+        allowedValues.add("PROCESSING_CONTENT_KEY");
+        allowedValues.add("CONTENT_KEY_FAILURE");
+        allowedValues.add("ATTEMPTING_AUTHENTICATION");
+        allowedValues.add("FAILED_AUTHENTICATION");
+        allowedValues.add("NOT_AUTHENTICATED");
+        allowedValues.add("DEVICE_REVOCATION");
         iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues));
         addProperty(iPropertyDRMState);
             allowedValues.clear();
@@ -498,7 +505,13 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
         action.addOutputParameter(new ParameterString("NextURIMetaData", allowedValues));
         action.addOutputParameter(new ParameterString("PlayMedium", allowedValues));
         action.addOutputParameter(new ParameterString("RecordMedium", allowedValues));
+        allowedValues.add("WRITABLE");
+        allowedValues.add("PROTECTED");
+        allowedValues.add("NOT_WRITABLE");
+        allowedValues.add("UNKNOWN");
+        allowedValues.add("NOT_IMPLEMENTED");
         action.addOutputParameter(new ParameterString("WriteStatus", allowedValues));
+        allowedValues.clear();
         iDelegateGetMediaInfo = new DoGetMediaInfo();
         enableAction(action, iDelegateGetMediaInfo);
     }
@@ -526,7 +539,13 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
         action.addOutputParameter(new ParameterString("NextURIMetaData", allowedValues));
         action.addOutputParameter(new ParameterString("PlayMedium", allowedValues));
         action.addOutputParameter(new ParameterString("RecordMedium", allowedValues));
+        allowedValues.add("WRITABLE");
+        allowedValues.add("PROTECTED");
+        allowedValues.add("NOT_WRITABLE");
+        allowedValues.add("UNKNOWN");
+        allowedValues.add("NOT_IMPLEMENTED");
         action.addOutputParameter(new ParameterString("WriteStatus", allowedValues));
+        allowedValues.clear();
         iDelegateGetMediaInfo_Ext = new DoGetMediaInfo_Ext();
         enableAction(action, iDelegateGetMediaInfo_Ext);
     }
@@ -541,17 +560,9 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     {
         Action action = new Action("GetTransportInfo");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
-        allowedValues.add("STOPPED");
-        allowedValues.add("PLAYING");
         action.addOutputParameter(new ParameterString("CurrentTransportState", allowedValues));
-        allowedValues.clear();
-        allowedValues.add("OK");
-        allowedValues.add("ERROR_OCCURRED");
         action.addOutputParameter(new ParameterString("CurrentTransportStatus", allowedValues));
-        allowedValues.clear();
-        allowedValues.add("1");
         action.addOutputParameter(new ParameterString("CurrentSpeed", allowedValues));
-        allowedValues.clear();
         iDelegateGetTransportInfo = new DoGetTransportInfo();
         enableAction(action, iDelegateGetTransportInfo);
     }
@@ -606,6 +617,12 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
         Action action = new Action("GetTransportSettings");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
         allowedValues.add("NORMAL");
+        allowedValues.add("SHUFFLE");
+        allowedValues.add("REPEAT_ONE");
+        allowedValues.add("REPEAT_ALL");
+        allowedValues.add("RANDOM");
+        allowedValues.add("DIRECT_1");
+        allowedValues.add("INTRO");
         action.addOutputParameter(new ParameterString("PlayMode", allowedValues));
         allowedValues.clear();
         action.addOutputParameter(new ParameterString("RecQualityMode", allowedValues));
@@ -637,9 +654,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     {
         Action action = new Action("Play");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
-        allowedValues.add("1");
         action.addInputParameter(new ParameterString("Speed", allowedValues));
-        allowedValues.clear();
         iDelegatePlay = new DoPlay();
         enableAction(action, iDelegatePlay);
     }
@@ -682,7 +697,14 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     {
         Action action = new Action("Seek");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
+        allowedValues.add("ABS_TIME");
+        allowedValues.add("REL_TIME");
+        allowedValues.add("ABS_COUNT");
+        allowedValues.add("REL_COUNT");
         allowedValues.add("TRACK_NR");
+        allowedValues.add("CHANNEL_FREQ");
+        allowedValues.add("TAPE-INDEX");
+        allowedValues.add("FRAME");
         action.addInputParameter(new ParameterString("Unit", allowedValues));
         allowedValues.clear();
         action.addInputParameter(new ParameterString("Target", allowedValues));
@@ -729,6 +751,12 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
         Action action = new Action("SetPlayMode");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
         allowedValues.add("NORMAL");
+        allowedValues.add("SHUFFLE");
+        allowedValues.add("REPEAT_ONE");
+        allowedValues.add("REPEAT_ALL");
+        allowedValues.add("RANDOM");
+        allowedValues.add("DIRECT_1");
+        allowedValues.add("INTRO");
         action.addInputParameter(new ParameterString("NewPlayMode", allowedValues));
         allowedValues.clear();
         iDelegateSetPlayMode = new DoSetPlayMode();

@@ -138,9 +138,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SelectPreset");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("FactoryDefaults");
             action.AddInputParameter(new ParameterString("PresetName", allowedValues));
-            allowedValues.Clear();
             iDelegateSelectPreset = new ActionDelegate(DoSelectPreset);
             EnableAction(action, iDelegateSelectPreset, GCHandle.ToIntPtr(iGch));
         }
@@ -491,9 +489,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetMute");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddOutputParameter(new ParameterBool("CurrentMute"));
             iDelegateGetMute = new ActionDelegate(DoGetMute);
             EnableAction(action, iDelegateGetMute, GCHandle.ToIntPtr(iGch));
@@ -509,9 +505,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetMute");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddInputParameter(new ParameterBool("DesiredMute"));
             iDelegateSetMute = new ActionDelegate(DoSetMute);
             EnableAction(action, iDelegateSetMute, GCHandle.ToIntPtr(iGch));
@@ -527,9 +521,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetVolume");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddOutputParameter(new ParameterUint("CurrentVolume", 0, 0, 1));
             iDelegateGetVolume = new ActionDelegate(DoGetVolume);
             EnableAction(action, iDelegateGetVolume, GCHandle.ToIntPtr(iGch));
@@ -545,9 +537,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetVolume");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddInputParameter(new ParameterUint("DesiredVolume", 0, 0, 1));
             iDelegateSetVolume = new ActionDelegate(DoSetVolume);
             EnableAction(action, iDelegateSetVolume, GCHandle.ToIntPtr(iGch));
@@ -563,9 +553,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetVolumeDB");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddOutputParameter(new ParameterInt("CurrentVolume"));
             iDelegateGetVolumeDB = new ActionDelegate(DoGetVolumeDB);
             EnableAction(action, iDelegateGetVolumeDB, GCHandle.ToIntPtr(iGch));
@@ -581,9 +569,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetVolumeDB");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddInputParameter(new ParameterInt("DesiredVolume"));
             iDelegateSetVolumeDB = new ActionDelegate(DoSetVolumeDB);
             EnableAction(action, iDelegateSetVolumeDB, GCHandle.ToIntPtr(iGch));
@@ -599,9 +585,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetVolumeDBRange");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddOutputParameter(new ParameterInt("MinValue"));
             action.AddOutputParameter(new ParameterInt("MaxValue"));
             iDelegateGetVolumeDBRange = new ActionDelegate(DoGetVolumeDBRange);
@@ -618,9 +602,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetLoudness");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddOutputParameter(new ParameterBool("CurrentLoudness"));
             iDelegateGetLoudness = new ActionDelegate(DoGetLoudness);
             EnableAction(action, iDelegateGetLoudness, GCHandle.ToIntPtr(iGch));
@@ -636,9 +618,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetLoudness");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("Master");
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            allowedValues.Clear();
             action.AddInputParameter(new ParameterBool("DesiredLoudness"));
             iDelegateSetLoudness = new ActionDelegate(DoSetLoudness);
             EnableAction(action, iDelegateSetLoudness, GCHandle.ToIntPtr(iGch));

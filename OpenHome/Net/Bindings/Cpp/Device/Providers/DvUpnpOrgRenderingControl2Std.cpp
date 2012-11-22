@@ -46,14 +46,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionListPresets()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSelectPreset()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SelectPreset");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"FactoryDefaults";
-    action->AddInputParameter(new ParameterString("PresetName", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("PresetName"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSelectPreset);
     iService->AddAction(action, functor);
 }
@@ -277,14 +271,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVerticalKeystone()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetMute()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMute");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddOutputParameter(new ParameterBool("CurrentMute"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetMute);
     iService->AddAction(action, functor);
@@ -293,14 +281,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetMute()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetMute()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetMute");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddInputParameter(new ParameterBool("DesiredMute"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetMute);
     iService->AddAction(action, functor);
@@ -309,14 +291,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetMute()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolume()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolume");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddOutputParameter(new ParameterUint("CurrentVolume", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolume);
     iService->AddAction(action, functor);
@@ -325,14 +301,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolume()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolume()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVolume");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddInputParameter(new ParameterUint("DesiredVolume", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolume);
     iService->AddAction(action, functor);
@@ -341,14 +311,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolume()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDB()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolumeDB");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddOutputParameter(new ParameterInt("CurrentVolume"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDB);
     iService->AddAction(action, functor);
@@ -357,14 +321,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDB()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolumeDB()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVolumeDB");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddInputParameter(new ParameterInt("DesiredVolume"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolumeDB);
     iService->AddAction(action, functor);
@@ -373,14 +331,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolumeDB()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDBRange()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolumeDBRange");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddOutputParameter(new ParameterInt("MinValue"));
     action->AddOutputParameter(new ParameterInt("MaxValue"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange);
@@ -390,14 +342,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDBRange()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetLoudness()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetLoudness");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddOutputParameter(new ParameterBool("CurrentLoudness"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetLoudness);
     iService->AddAction(action, functor);
@@ -406,14 +352,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetLoudness()
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetLoudness()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetLoudness");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"Master";
-    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Channel"));
     action->AddInputParameter(new ParameterBool("DesiredLoudness"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetLoudness);
     iService->AddAction(action, functor);
