@@ -29,7 +29,7 @@ class PostActions():
         if ret != 0:
             print ret
             sys.exit(10)
-        ret = rem.rsync('hudson-rsync','openhome.org','Build/Docs/','~/build/nightly/docs')
+        ret = rem.rsync_gc('hudson-rsync','openhome.org','Build/Docs/','~/build/nightly/docs')
         if ret != 0:
             print ret
             sys.exit(10)
