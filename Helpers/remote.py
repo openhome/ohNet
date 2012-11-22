@@ -49,6 +49,13 @@ class remote():
 			ret = subprocess.call(cmd)
 			return ret
 
+		# garbage collect (delete) outdated items at destination
+		def rsync_gc(self, username, host, src, dst):
+			cmd = self._rsync_cmd(username, host, src, dst)
+			cmd[1:1] = ['--itemize-changes', '--checksum', '--delete']
+			ret = subprocess.call(cmd)
+			return ret
+
 		def check_rsync(self, username, host, src, dst):
 			cmd = self._rsync_cmd(username, host, src, dst)
 			ret = subprocess.check_call(cmd)
