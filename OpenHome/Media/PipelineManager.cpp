@@ -1,7 +1,7 @@
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Media/AudioReservoir.h>
+#include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/VariableDelay.h>
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
@@ -22,7 +22,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     : iSupplier(aSupplier)
     , iObserver(aObserver)
     , iLock("PLMG")
-    , iLoggerAudioReservoir(NULL)
+    , iLoggerDecodedAudioReservoir(NULL)
     , iLoggerVariableDelay(NULL)
     , iLoggerStopper(NULL)
     , iLoggerReporter(NULL)
@@ -42,9 +42,9 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountAudioFormat,
                                  kMsgCountTrack, kMsgCountMetaText, kMsgCountHalt,
                                  kMsgCountFlush, kMsgCountQuit);
-    iAudioReservoir = new AudioReservoir(kDecodedReservoirSize);
-    iLoggerAudioReservoir = new Logger(*iAudioReservoir, "Audio Reservoir");
-    iVariableDelay = new VariableDelay(*iMsgFactory, /**iAudioReservoir*/*iLoggerAudioReservoir, kVariableDelayRampDuration);
+    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
+    iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Audio Reservoir");
+    iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
     iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *this, kStopperRampDuration);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
@@ -58,9 +58,9 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iMsgFactory, /**iStarvationMonitor*/*iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
-    iSupplier.Initialise(*iMsgFactory, *iAudioReservoir);
+    iSupplier.Initialise(*iMsgFactory, *iDecodedAudioReservoir);
 
-    //iLoggerAudioReservoir->SetEnabled(true);
+    //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerVariableDelay->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
@@ -68,7 +68,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
-    //iLoggerAudioReservoir->SetFilter(Logger::EMsgAll);
+    //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
@@ -94,8 +94,8 @@ PipelineManager::~PipelineManager()
     delete iStopper;
     delete iLoggerVariableDelay;
     delete iVariableDelay;
-    delete iLoggerAudioReservoir;
-    delete iAudioReservoir;
+    delete iLoggerDecodedAudioReservoir;
+    delete iDecodedAudioReservoir;
     delete iMsgFactory;
 }
 

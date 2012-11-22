@@ -1,5 +1,5 @@
-#ifndef HEADER_PIPELINE_AUDIO_RESERVOIR
-#define HEADER_PIPELINE_AUDIO_RESERVOIR
+#ifndef HEADER_PIPELINE_DECODED_AUDIO_RESERVOIR
+#define HEADER_PIPELINE_DECODED_AUDIO_RESERVOIR
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Standard.h>
@@ -17,12 +17,12 @@ Discards all data when a Flush msg is queued.
 FIXME - no handling of Halt
 */
     
-class AudioReservoir : private MsgQueueFlushable, public IPipelineElementUpstream, public IPipelineElementDownstream
+class DecodedAudioReservoir : private MsgQueueFlushable, public IPipelineElementUpstream, public IPipelineElementDownstream
 {
-    friend class SuiteAudioReservoir;
+    friend class SuiteDecodedAudioReservoir;
 public:
-    AudioReservoir(TUint aMaxSize);
-    ~AudioReservoir();
+    DecodedAudioReservoir(TUint aMaxSize);
+    ~DecodedAudioReservoir();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 public: // from IPipelineElementDownstream
@@ -38,4 +38,4 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_AUDIO_RESERVOIR
+#endif // HEADER_PIPELINE_DECODED_AUDIO_RESERVOIR

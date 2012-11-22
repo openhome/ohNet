@@ -4,7 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/AudioReservoir.h>
+#include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/VariableDelay.h>
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
@@ -104,8 +104,8 @@ private:
     IPipelineObserver& iObserver;
     Mutex iLock;
     MsgFactory* iMsgFactory;
-    AudioReservoir* iAudioReservoir;
-    Logger* iLoggerAudioReservoir;
+    DecodedAudioReservoir* iDecodedAudioReservoir;
+    Logger* iLoggerDecodedAudioReservoir;
     VariableDelay* iVariableDelay;
     Logger* iLoggerVariableDelay;
     Stopper* iStopper;

@@ -82,7 +82,7 @@ def build(bld):
                 'OpenHome/Av/Songcast/OhmReceiver.cpp',
                 'OpenHome/Av/Songcast/OhmSender.cpp',
                 'OpenHome/Av/Songcast/OhmSocket.cpp',
-                'OpenHome/Media/AudioReservoir.cpp',
+                'OpenHome/Media/DecodedAudioReservoir.cpp',
                 'OpenHome/Media/Logger.cpp',
                 'OpenHome/Media/Msg.cpp',
                 'OpenHome/Media/PreDriver.cpp',
@@ -119,9 +119,9 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStopper')
     bld.program(
-            source='OpenHome/Media/Tests/TestAudioReservoir.cpp',
+            source='OpenHome/Media/Tests/TestDecodedAudioReservoir.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestAudioReservoir')
+            target='TestDecodedAudioReservoir')
     bld.program(
             source='OpenHome/Media/Tests/TestVariableDelay.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -172,7 +172,7 @@ def build(bld):
 
 def test(tst):
     for t, a, when in [['TestMsg', [], True]
-                      ,['TestAudioReservoir', [], True]
+                      ,['TestDecodedAudioReservoir', [], True]
                       ,['TestVariableDelay', [], True]
                       ,['TestStopper', [], True]
                       ,['TestReporter', [], True]

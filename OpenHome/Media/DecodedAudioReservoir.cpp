@@ -1,4 +1,4 @@
-#include <OpenHome/Media/AudioReservoir.h>
+#include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
@@ -8,20 +8,20 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-// AudioReservoir
+// DecodedAudioReservoir
 
-AudioReservoir::AudioReservoir(TUint aMaxSize)
+DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize)
     : iMaxSize(aMaxSize)
     , iLock("ARES")
     , iSem("ARES", 0)
 {
 }
 
-AudioReservoir::~AudioReservoir()
+DecodedAudioReservoir::~DecodedAudioReservoir()
 {
 }
 
-Msg* AudioReservoir::Pull()
+Msg* DecodedAudioReservoir::Pull()
 {
     Msg* msg;
     do {
@@ -39,12 +39,12 @@ Msg* AudioReservoir::Pull()
     return msg;
 }
 
-void AudioReservoir::Push(Msg* aMsg)
+void DecodedAudioReservoir::Push(Msg* aMsg)
 {
     (void)Enqueue(aMsg);
 }
 
-TBool AudioReservoir::Enqueue(Msg* aMsg)
+TBool DecodedAudioReservoir::Enqueue(Msg* aMsg)
 {
     // Queue the next msg before checking how much data we already have in the buffer
     // This risks us going over the nominal max size for the buffer but guarantees that
