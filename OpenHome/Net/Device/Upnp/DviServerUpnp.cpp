@@ -669,7 +669,12 @@ void DviSessionUpnp::Subscribe()
     iHeaderCallback.Log();
     LOG(kDvEvent, "\n");
     if (iHeaderSid.Received()) {
-        Renew();
+        try {
+            Renew();
+        }
+        catch (DvSubscriptionError&) {
+            iErrorStatus = &HttpStatus::kPreconditionFailed;
+        }
         return;
     }
 
