@@ -96,6 +96,8 @@ def build(bld):
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
+                'OpenHome/Media/Codec/Container.cpp',
+                'OpenHome/Media/Codec/Id3v2.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
