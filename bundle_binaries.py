@@ -48,17 +48,17 @@ ALL_TARGETS = {
         BuildTarget("Linux",   "armel", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "armhf", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
 
-        BuildTarget("Mac",     "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac/Debug"),
-        BuildTarget("Mac",     "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac/Debug"),
-        BuildTarget("Mac",     "x86",   "Release"): BuildInfo(builddir="Build/Obj/Mac/Release"),
-        BuildTarget("Mac",     "x64",   "Release"): BuildInfo(builddir="Build/Obj/Mac/Release"),
+        BuildTarget("Mac",     "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac-x86/Debug"),
+        BuildTarget("Mac",     "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac-x64/Debug"),
+        BuildTarget("Mac",     "x86",   "Release"): BuildInfo(builddir="Build/Obj/Mac-x86/Release"),
+        BuildTarget("Mac",     "x64",   "Release"): BuildInfo(builddir="Build/Obj/Mac-x64/Release"),
 
-        BuildTarget("iOs",     "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac/arm/Debug"),
-        BuildTarget("iOs",     "armv6", "Debug"):   BuildInfo(builddir="Build/Obj/Mac/arm/Debug"),
-        BuildTarget("iOs",     "armv7", "Debug"):   BuildInfo(builddir="Build/Obj/Mac/arm/Debug"),
-        BuildTarget("iOs",     "x86",   "Release"): BuildInfo(builddir="Build/Obj/Mac/arm/Release"),
-        BuildTarget("iOs",     "armv6", "Release"): BuildInfo(builddir="Build/Obj/Mac/arm/Release"),
-        BuildTarget("iOs",     "armv7", "Release"): BuildInfo(builddir="Build/Obj/Mac/arm/Release"),
+        BuildTarget("iOs",     "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/iOs-x86/Debug"),
+        BuildTarget("iOs",     "armv6", "Debug"):   BuildInfo(builddir="Build/Obj/iOs-armv6/Debug"),
+        BuildTarget("iOs",     "armv7", "Debug"):   BuildInfo(builddir="Build/Obj/iOs-armv7/Debug"),
+        BuildTarget("iOs",     "x86",   "Release"): BuildInfo(builddir="Build/Obj/iOs-x86/Release"),
+        BuildTarget("iOs",     "armv6", "Release"): BuildInfo(builddir="Build/Obj/iOs-armv6/Release"),
+        BuildTarget("iOs",     "armv7", "Release"): BuildInfo(builddir="Build/Obj/iOs-armv7/Release"),
     }
 
 ALL_SYSTEMS = set(tgt.system for tgt in ALL_TARGETS.keys())
