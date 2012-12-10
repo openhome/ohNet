@@ -67,7 +67,7 @@ namespace OpenHome.Net.Device
         {
             lock (this)
             {
-                if (aDevice.Udn() == DeviceBasic.gDeviceName)
+                if (iDeviceList.Count == 0 && aDevice.Udn() == DeviceBasic.gDeviceName)
                 {
                     aDevice.AddRef();
                     iDeviceList.Add(aDevice);
@@ -77,7 +77,12 @@ namespace OpenHome.Net.Device
 
         private void DeviceRemoved(CpDeviceList aList, CpDevice aDevice)
         {
-            lock (this)
+            /* The device stack sends byebyes then alives for each newly enabled device.
+               These can be interleaved with responses to a msearch and can cause tests to misbehave,
+               thinking a device has been removed.  The simplest way to work around this is to say
+               our test guarantees that a device remains available as long as its needed then take
+               advantage of this by ignoring device removed callbacks. */
+            /*lock (this)
             {
                 string udn = aDevice.Udn();
                 int count = iDeviceList.Count;
@@ -89,7 +94,7 @@ namespace OpenHome.Net.Device
                         iDeviceList[i].RemoveRef();
                     }
                 }
-            }
+            }*/
         }
     }
 }

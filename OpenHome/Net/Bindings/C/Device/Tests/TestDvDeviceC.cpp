@@ -47,9 +47,14 @@ static void STDCALL added(void* aPtr, CpDeviceC aDevice)
     reinterpret_cast<DeviceList*>(aPtr)->Added(aDevice);
 }
 
-static void STDCALL removed(void* aPtr, CpDeviceC aDevice)
+static void STDCALL removed(void* /*aPtr*/, CpDeviceC /*aDevice*/)
 {
-    reinterpret_cast<DeviceList*>(aPtr)->Removed(aDevice);
+    /* The device stack sends byebyes then alives for each newly enabled device.
+       These can be interleaved with responses to a msearch and can cause tests to misbehave,
+       thinking a device has been removed.  The simplest way to work around this is to say
+       our test guarantees that a device remains available as long as its needed then take
+       advantage of this by ignoring device removed callbacks. */
+    //reinterpret_cast<DeviceList*>(aPtr)->Removed(aDevice);
 }
 
 
@@ -80,15 +85,22 @@ void DeviceList::TestActions()
 
 void DeviceList::TestSubscriptions()
 {
-    ASSERT(iList.size() == 1);
+    size_t size = iList.size();
+    if (size != 1)
+    {
+        Print("TestDvDeviceC - Assertion failed. Expected to find 1 device, but got %d.\n", size);
+    }	    
+    ASSERT(size == 1);
     TestBasicCpC::TestSubscriptions(iList[0]);
 }
 
 void DeviceList::Added(CpDeviceC aDevice)
 {
     AutoMutex a(iLock);
-    iList.push_back(aDevice);
-    CpDeviceCAddRef(aDevice);
+    if (iList.size() == 0) {
+        iList.push_back(aDevice);
+        CpDeviceCAddRef(aDevice);
+    }
     iAddedSem.Signal();
 }
 
@@ -100,6 +112,7 @@ void DeviceList::Removed(CpDeviceC aDevice)
     for (TUint i=0; i<count; i++) {
         CpDeviceC device = iList[i];
         if (0 == strcmp(CpDeviceCUdn(device), udn)) {
+            Print("Received byebye, removing device %s from list\n", udn);
             iList.erase(iList.begin()+i);
             CpDeviceCRemoveRef(device);
             break;
@@ -124,16 +137,16 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 
     Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceBasicC* device = new DeviceBasicC(DeviceBasicC::eProtocolUpnp);
-    DeviceList* deviceList = new DeviceList(*sem);;
+    DeviceList* deviceList = new DeviceList(*sem);
     HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("openhome.org", "TestBasic", 1,
                                                                added, deviceList, removed, deviceList);
-    sem->Wait(30*1000); // allow up to 30 seconds to fine our one device
-    delete sem;
+    sem->Wait(30*1000); // allow up to 30 seconds to find our one device
 
     deviceList->TestActions();
     deviceList->TestSubscriptions();
 
     CpDeviceListDestroy(dlh);
+    delete sem;
     delete deviceList;
     delete device;
 
