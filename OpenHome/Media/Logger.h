@@ -19,15 +19,16 @@ public:
     enum EMsgType
     {
         EMsgAudioEncoded = 1<<0
-       ,EMsgAudioPcm     = 1<<1
-       ,EMsgSilence      = 1<<2
-       ,EMsgPlayable     = 1<<3
-       ,EMsgAudioFormat  = 1<<4
-       ,EMsgTrack        = 1<<5
-       ,EMsgMetaText     = 1<<6
-       ,EMsgHalt         = 1<<7
-       ,EMsgFlush        = 1<<8
-       ,EMsgQuit         = 1<<9
+       ,EMsgAudioDecoded = 1<<1
+       ,EMsgAudioPcm     = 1<<2
+       ,EMsgSilence      = 1<<3
+       ,EMsgPlayable     = 1<<4
+       ,EMsgAudioFormat  = 1<<5
+       ,EMsgTrack        = 1<<6
+       ,EMsgMetaText     = 1<<7
+       ,EMsgHalt         = 1<<8
+       ,EMsgFlush        = 1<<9
+       ,EMsgQuit         = 1<<10
        ,EMsgAll          = 0x7fffffff
     };
 public:

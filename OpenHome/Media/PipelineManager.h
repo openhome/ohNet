@@ -4,6 +4,9 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/EncodedAudioReservoir.h>
+#include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/VariableDelay.h>
 #include <OpenHome/Media/Stopper.h>
@@ -61,6 +64,7 @@ class PipelineManager : private IStopperObserver, private IPipelinePropertyObser
     static const TUint kMsgCountFlush           = 1;
     static const TUint kMsgCountQuit            = 1;
 
+    static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
     static const TUint kDecodedReservoirSize                 = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kVariableDelayRampDuration            = Jiffies::kJiffiesPerMs * 200;
     static const TUint kStopperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
@@ -104,6 +108,12 @@ private:
     IPipelineObserver& iObserver;
     Mutex iLock;
     MsgFactory* iMsgFactory;
+    EncodedAudioReservoir* iEncodedAudioReservoir;
+    Logger* iLoggerEncodedAudioReservoir;
+    Codec::Container* iContainer;
+    Logger* iLoggerContainer;
+    Codec::CodecController* iCodecController;
+    Logger* iLoggerCodecController;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
     VariableDelay* iVariableDelay;

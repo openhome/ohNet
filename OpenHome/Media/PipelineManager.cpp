@@ -22,6 +22,9 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     : iSupplier(aSupplier)
     , iObserver(aObserver)
     , iLock("PLMG")
+    , iLoggerEncodedAudioReservoir(NULL)
+    , iLoggerContainer(NULL)
+    , iLoggerCodecController(NULL)
     , iLoggerDecodedAudioReservoir(NULL)
     , iLoggerVariableDelay(NULL)
     , iLoggerStopper(NULL)
@@ -42,8 +45,16 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountAudioFormat,
                                  kMsgCountTrack, kMsgCountMetaText, kMsgCountHalt,
                                  kMsgCountFlush, kMsgCountQuit);
+
+    iEncodedAudioReservoir = NULL;//new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
+    //iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
+    iContainer = NULL;//new Codec::Container(/**iEncodedAudioReservoir*/*iLoggerEncodedAudioReservoir);
+    //iLoggerContainer = new Logger(*iContainer, "Codec Container");
+    iCodecController = NULL;//new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer);
+    //iLoggerCodecController = new Logger(*iCodecController, "Codec Controller");
+    // FIXME - no connection between codecs & decoded pipeline
     iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
-    iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Audio Reservoir");
+    iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
     iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
     iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *this, kStopperRampDuration);
@@ -60,6 +71,9 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     iSupplier.Initialise(*iMsgFactory, *iDecodedAudioReservoir);
 
+    //iLoggerEncodedAudioReservoir->SetEnabled(true);
+    //iLoggerContainer->SetEnabled(true);
+    //iLoggerCodecController->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerVariableDelay->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
@@ -68,6 +82,9 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
+    //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
+    //iLoggerContainer->SetFilter(Logger::EMsgAll);
+    //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
@@ -96,6 +113,12 @@ PipelineManager::~PipelineManager()
     delete iVariableDelay;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
+    delete iLoggerCodecController;
+    delete iCodecController;
+    delete iLoggerContainer;
+    delete iContainer;
+    delete iLoggerEncodedAudioReservoir;
+    delete iEncodedAudioReservoir;
     delete iMsgFactory;
 }
 

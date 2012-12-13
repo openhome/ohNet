@@ -36,7 +36,7 @@ public:
     
 class CodecBase
 {
-    friend class CodecContainer;
+    friend class CodecController;
 public:
     virtual ~CodecBase();
 public:
@@ -52,11 +52,11 @@ protected:
     MsgFactory* iMsgFactory;
 };
 
-class CodecContainer : public IPipelineElementUpstream, private ICodecController, private IMsgProcessor, private INonCopyable
+class CodecController : public IPipelineElementUpstream, private ICodecController, private IMsgProcessor, private INonCopyable
 {
 public:
-    CodecContainer(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory);
-    ~CodecContainer();
+    CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
+    ~CodecController();
     void AddCodec(CodecBase* aCodec);
 public: // from IPipelineElementUpstream
     Msg* Pull();
