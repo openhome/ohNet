@@ -1,0 +1,234 @@
+#include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Codec/Id3v2.h>
+
+using namespace OpenHome;
+using namespace OpenHome::Media;
+using namespace OpenHome::Media::Codec;
+
+// CodecBase
+
+CodecBase::~CodecBase()
+{
+}
+
+void CodecBase::StreamCompleted()
+{
+}
+
+CodecBase::CodecBase()
+    : iController(NULL)
+{
+}
+
+void CodecBase::Construct(ICodecController& aController, MsgFactory& aMsgFactory)
+{
+    iController = &aController;
+    iMsgFactory = &aMsgFactory;
+}
+
+
+// CodecContainer
+
+CodecContainer::CodecContainer(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory)
+    : iUpstreamElement(aUpstreamElement)
+    , iMsgFactory(aMsgFactory)
+    , iActiveCodec(NULL)
+    , iQueueTrackData(false)
+    , iQuit(false)
+    , iAudioEncoded(NULL)
+{
+    iDecoderThread = new ThreadFunctor("CDEC", MakeFunctor(*this, &CodecContainer::CodecThread));
+    iDecoderThread->Start();
+}
+
+CodecContainer::~CodecContainer()
+{
+    delete iDecoderThread;
+    while (!iQueue.IsEmpty()) {
+        iQueue.Dequeue()->RemoveRef();
+    }
+    if (iAudioEncoded != NULL) {
+        iAudioEncoded->RemoveRef();
+    }
+}
+
+void CodecContainer::AddCodec(CodecBase* aCodec)
+{
+    aCodec->Construct(*this, iMsgFactory);
+    iCodecs.push_back(aCodec);
+}
+
+Msg* CodecContainer::Pull()
+{
+    return iQueue.Dequeue();
+}
+
+void CodecContainer::CodecThread()
+{
+    while (!iQuit) {
+        try {
+            iQueueTrackData = false;
+            iActiveCodec = NULL;
+            try {
+                for (;;) {
+                    PullMsg();
+                }
+            }
+            catch (CodecStreamStart&) {
+                iQueueTrackData = false;
+            }
+
+            try {
+                do {
+                    PullMsg();
+                } while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < kMaxRecogniseBytes);
+
+                /* we can only CopyTo a max of kMaxRecogniseBytes bytes.  If we have more data than this, 
+                   split the msg, select a codec then add the fragments back together before processing */
+                MsgAudioEncoded* remaining = NULL;
+                if (iAudioEncoded->Bytes() > kMaxRecogniseBytes) {
+                    remaining = iAudioEncoded->Split(kMaxRecogniseBytes);
+                }
+                iAudioEncoded->CopyTo(iReadBuf);
+                Brn recogBuf(iReadBuf, kMaxRecogniseBytes);
+                for (size_t i=0; i<iCodecs.size(); i++) {
+                    CodecBase* codec = iCodecs[i];
+                    if (codec->Recognise(recogBuf)) {
+                        iActiveCodec = codec;
+                        break;
+                    }
+                }
+                iAudioEncoded->Add(remaining);
+
+                // FIXME - handle iActiveCodec being NULL (i.e. unsupported data)
+                iActiveCodec->Process();
+            }
+            catch (CodecStreamStart) {
+                // FIXME
+            }
+            catch (CodecStreamCorrupt) {
+                // FIXME
+            }
+        }
+        catch (CodecStreamEnded) {
+            // FIXME
+        }
+        catch (CodecStreamFlush) {
+            // FIXME
+        }
+    }
+}
+
+void CodecContainer::PullMsg()
+{
+    Msg* msg = iUpstreamElement.Pull();
+    msg = msg->Process(*this);
+    ASSERT_DEBUG(msg == NULL);
+}
+
+void CodecContainer::Read(Bwx& aBuf, TUint aBytes)
+{
+    while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes) {
+        PullMsg();
+    }
+    MsgAudioEncoded* remaining = NULL;
+    if (iAudioEncoded->Bytes() > aBytes) {
+        remaining = iAudioEncoded->Split(aBytes);
+    }
+    ASSERT(aBuf.Bytes() + aBytes <= aBuf.MaxBytes());
+    TByte* ptr = const_cast<TByte*>(aBuf.Ptr()) + aBuf.Bytes();
+    iAudioEncoded->CopyTo(ptr);
+    aBuf.SetBytes(aBuf.Bytes() + aBytes);
+    iAudioEncoded = remaining;
+}
+
+void CodecContainer::Output(MsgAudioFormat* aMsg)
+{
+    iQueue.Enqueue(aMsg);
+}
+
+void CodecContainer::Output(MsgAudioPcm* aMsg)
+{
+    iQueue.Enqueue(aMsg);
+}
+
+Msg* CodecContainer::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    if (!iQueueTrackData) {
+        aMsg->RemoveRef();
+    }
+    else if (iAudioEncoded == NULL) {
+        iAudioEncoded = aMsg;
+    }
+    else {
+        iAudioEncoded->Add(aMsg);
+    }
+    return NULL;
+}
+
+Msg* CodecContainer::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    ASSERTS(); // not expected at this stage of the pipeline
+    return NULL;
+}
+
+Msg* CodecContainer::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS(); // not expected at this stage of the pipeline
+    return NULL;
+}
+
+Msg* CodecContainer::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS(); // not expected at this stage of the pipeline
+    return NULL;
+}
+
+Msg* CodecContainer::ProcessMsg(MsgAudioFormat* /*aMsg*/)
+{
+    ASSERTS(); // expect this to be generated by a codec
+    // FIXME - volkano has containers which also generate this
+    return NULL;
+}
+
+Msg* CodecContainer::ProcessMsg(MsgTrack* aMsg)
+{
+    iQueue.Enqueue(aMsg);
+    THROW(CodecStreamStart);
+}
+
+Msg* CodecContainer::ProcessMsg(MsgMetaText* aMsg)
+{
+    if (!iQueueTrackData) {
+        aMsg->RemoveRef();
+    }
+    else {
+        iQueue.Enqueue(aMsg);
+    }
+    return NULL;
+}
+
+Msg* CodecContainer::ProcessMsg(MsgHalt* aMsg)
+{
+    iQueue.Enqueue(aMsg);
+    return NULL;
+}
+
+Msg* CodecContainer::ProcessMsg(MsgFlush* aMsg)
+{
+    iQueue.Enqueue(aMsg);
+    THROW(CodecStreamFlush);
+}
+
+Msg* CodecContainer::ProcessMsg(MsgQuit* aMsg)
+{
+    iQuit = true;
+    iQueue.Enqueue(aMsg);
+    THROW(CodecStreamEnded);
+}

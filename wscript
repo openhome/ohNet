@@ -98,9 +98,51 @@ def build(bld):
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
                 'OpenHome/Media/Codec/Container.cpp',
                 'OpenHome/Media/Codec/Id3v2.cpp',
+                'OpenHome/Media/Codec/CodecController.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
+
+    # Wav
+    bld.stlib(
+            source=['OpenHome/Media/Codec/Wav.cpp'],
+            use=['OHNET'],
+            target='CodecWav')
+
+    # Ogg
+    bld.stlib(
+            source=[
+                'libogg-1.1.3/src/bitwise.c',
+                'libogg-1.1.3/src/framing.c'
+            ],
+            includes = ['libogg-1.1.3/include'],
+            target='libOgg')
+
+    # Flac
+    bld.stlib(
+            source=[
+                'OpenHome/Media/Codec/Flac.cpp',
+                'flac-1.2.1/src/libFLAC/bitreader.c',
+                'flac-1.2.1/src/libFLAC/bitmath.c',
+                'flac-1.2.1/src/libFLAC/cpu.c',
+                'flac-1.2.1/src/libFLAC/crc.c',
+                'flac-1.2.1/src/libFLAC/fixed.c',
+                'flac-1.2.1/src/libFLAC/format.c',
+                'flac-1.2.1/src/libFLAC/lpc.c',
+                'flac-1.2.1/src/libFLAC/md5.c',
+                'flac-1.2.1/src/libFLAC/memory.c',
+                'flac-1.2.1/src/libFLAC/stream_decoder.c',
+                'flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
+                'flac-1.2.1/src/libFLAC/ogg_mapping.c',
+            ],
+            defines = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL'],
+            includes = [
+                'flac-1.2.1/src/libFLAC/include',
+                'flac-1.2.1/include',
+                'libogg-1.1.3/include'
+            ],
+            use=['OHNET'],
+            target='CodecFlac')
 
     # Tests
     bld.stlib(
