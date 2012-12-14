@@ -7,10 +7,12 @@
 namespace OpenHome {
 namespace Media {
 
-class EncodedAudioReservoir : public AudioReservoir
+class EncodedAudioReservoir : public AudioReservoir, public IPipelineElementDownstream
 {
 public:
     EncodedAudioReservoir(TUint aMaxSize);
+public: // from IPipelineElementDownstream
+    void Push(Msg* aMsg);
 private: // from AudioReservoir
     TUint Size() const;
 };

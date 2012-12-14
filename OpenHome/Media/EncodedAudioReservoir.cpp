@@ -11,6 +11,11 @@ EncodedAudioReservoir::EncodedAudioReservoir(TUint aMaxSize)
 {
 }
 
+void EncodedAudioReservoir::Push(Msg* aMsg)
+{
+    (void)Enqueue(aMsg);
+}
+
 TUint EncodedAudioReservoir::Size() const
 {
     return EncodedBytes();

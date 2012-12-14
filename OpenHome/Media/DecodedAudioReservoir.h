@@ -11,9 +11,18 @@ class DecodedAudioReservoir : public AudioReservoir
 {
     friend class SuiteDecodedAudioReservoir;
 public:
-    DecodedAudioReservoir(TUint aMaxSize);
+    DecodedAudioReservoir(IPipelineElementUpstream& aUpstreamElement, TUint aMaxSize);
+    ~DecodedAudioReservoir();
 private: // from AudioReservoir
     TUint Size() const;
+private: // from MsgQueueFlushable
+    void ProcessMsgIn(MsgQuit* aMsg);
+private:
+    void PullerThread();
+private:
+    IPipelineElementUpstream& iUpstreamElement;
+    ThreadFunctor* iThread;
+    TBool iQuit;
 };
 
 } // namespace Media

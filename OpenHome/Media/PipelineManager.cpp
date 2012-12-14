@@ -46,14 +46,13 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
                                  kMsgCountTrack, kMsgCountMetaText, kMsgCountHalt,
                                  kMsgCountFlush, kMsgCountQuit);
 
-    iEncodedAudioReservoir = NULL;//new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
-    //iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
-    iContainer = NULL;//new Codec::Container(/**iEncodedAudioReservoir*/*iLoggerEncodedAudioReservoir);
-    //iLoggerContainer = new Logger(*iContainer, "Codec Container");
-    iCodecController = NULL;//new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer);
-    //iLoggerCodecController = new Logger(*iCodecController, "Codec Controller");
-    // FIXME - no connection between codecs & decoded pipeline
-    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
+    iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
+    iContainer = new Codec::Container(/**iEncodedAudioReservoir*/*iLoggerEncodedAudioReservoir);
+    iLoggerContainer = new Logger(*iContainer, "Codec Container");
+    iCodecController = new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer);
+    iLoggerCodecController = new Logger(*iCodecController, "Codec Controller");
+    iDecodedAudioReservoir = new DecodedAudioReservoir(/**iCodecController*/*iLoggerCodecController, kDecodedReservoirSize);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
     iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
@@ -69,7 +68,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iMsgFactory, /**iStarvationMonitor*/*iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
-    iSupplier.Initialise(*iMsgFactory, *iDecodedAudioReservoir);
+    iSupplier.Initialise(*iMsgFactory, *iEncodedAudioReservoir);
 
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
