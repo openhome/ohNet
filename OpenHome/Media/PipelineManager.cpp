@@ -24,7 +24,6 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     , iLock("PLMG")
     , iLoggerEncodedAudioReservoir(NULL)
     , iLoggerContainer(NULL)
-    , iLoggerCodecController(NULL)
     , iLoggerDecodedAudioReservoir(NULL)
     , iLoggerVariableDelay(NULL)
     , iLoggerStopper(NULL)
@@ -48,12 +47,16 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
 
     iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
+
+    // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
+    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
+    iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
+
     iContainer = new Codec::Container(/**iEncodedAudioReservoir*/*iLoggerEncodedAudioReservoir);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
-    iCodecController = new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer);
-    iLoggerCodecController = new Logger(*iCodecController, "Codec Controller");
-    iDecodedAudioReservoir = new DecodedAudioReservoir(/**iCodecController*/*iLoggerCodecController, kDecodedReservoirSize);
-    iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
+    iCodecController = new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer, *iDecodedAudioReservoir);
+    // no iLoggerCodecController since CodecController pushes to its right and Logger only pulls
+
     iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
     iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *this, kStopperRampDuration);
@@ -72,7 +75,6 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
 
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
-    //iLoggerCodecController->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerVariableDelay->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
@@ -83,7 +85,6 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
 
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
-    //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
@@ -112,13 +113,17 @@ PipelineManager::~PipelineManager()
     delete iVariableDelay;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
-    delete iLoggerCodecController;
     delete iCodecController;
     delete iLoggerContainer;
     delete iContainer;
     delete iLoggerEncodedAudioReservoir;
     delete iEncodedAudioReservoir;
     delete iMsgFactory;
+}
+
+void PipelineManager::AddCodec(Codec::CodecBase* aCodec)
+{
+    iCodecController->AddCodec(aCodec);
 }
 
 void PipelineManager::Quit()

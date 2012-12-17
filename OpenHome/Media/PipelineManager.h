@@ -75,6 +75,7 @@ class PipelineManager : private IStopperObserver, private IPipelinePropertyObser
 public:
     PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier& aSupplier, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes);
     ~PipelineManager();
+    void AddCodec(Codec::CodecBase* aCodec);
     MsgFactory& Factory();
     IPipelineElementUpstream& FinalElement();
     void Play();
@@ -113,7 +114,6 @@ private:
     Codec::Container* iContainer;
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
-    Logger* iLoggerCodecController;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
     VariableDelay* iVariableDelay;

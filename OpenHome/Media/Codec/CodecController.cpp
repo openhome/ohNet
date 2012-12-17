@@ -35,9 +35,10 @@ void CodecBase::Construct(ICodecController& aController, MsgFactory& aMsgFactory
 
 // CodecController
 
-CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
+CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iDownstreamElement(aDownstreamElement)
     , iActiveCodec(NULL)
     , iQueueTrackData(false)
     , iQuit(false)
@@ -50,9 +51,6 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
 CodecController::~CodecController()
 {
     delete iDecoderThread;
-    while (!iQueue.IsEmpty()) {
-        iQueue.Dequeue()->RemoveRef();
-    }
     if (iAudioEncoded != NULL) {
         iAudioEncoded->RemoveRef();
     }
@@ -62,11 +60,6 @@ void CodecController::AddCodec(CodecBase* aCodec)
 {
     aCodec->Construct(*this, iMsgFactory);
     iCodecs.push_back(aCodec);
-}
-
-Msg* CodecController::Pull()
-{
-    return iQueue.Dequeue();
 }
 
 void CodecController::CodecThread()
@@ -81,7 +74,7 @@ void CodecController::CodecThread()
                 }
             }
             catch (CodecStreamStart&) {
-                iQueueTrackData = false;
+                iQueueTrackData = true;
             }
 
             try {
@@ -132,6 +125,11 @@ void CodecController::PullMsg()
     ASSERT_DEBUG(msg == NULL);
 }
 
+void CodecController::Queue(Msg* aMsg)
+{
+    iDownstreamElement.Push(aMsg);
+}
+
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
     while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes) {
@@ -145,17 +143,18 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
     TByte* ptr = const_cast<TByte*>(aBuf.Ptr()) + aBuf.Bytes();
     iAudioEncoded->CopyTo(ptr);
     aBuf.SetBytes(aBuf.Bytes() + aBytes);
+    iAudioEncoded->RemoveRef();
     iAudioEncoded = remaining;
 }
 
 void CodecController::Output(MsgAudioFormat* aMsg)
 {
-    iQueue.Enqueue(aMsg);
+    Queue(aMsg);
 }
 
 void CodecController::Output(MsgAudioPcm* aMsg)
 {
-    iQueue.Enqueue(aMsg);
+    Queue(aMsg);
 }
 
 Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
@@ -199,7 +198,7 @@ Msg* CodecController::ProcessMsg(MsgAudioFormat* /*aMsg*/)
 
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
-    iQueue.Enqueue(aMsg);
+    Queue(aMsg);
     THROW(CodecStreamStart);
 }
 
@@ -209,26 +208,26 @@ Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
         aMsg->RemoveRef();
     }
     else {
-        iQueue.Enqueue(aMsg);
+        Queue(aMsg);
     }
     return NULL;
 }
 
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
-    iQueue.Enqueue(aMsg);
+    Queue(aMsg);
     return NULL;
 }
 
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 {
-    iQueue.Enqueue(aMsg);
+    Queue(aMsg);
     THROW(CodecStreamFlush);
 }
 
 Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
 {
     iQuit = true;
-    iQueue.Enqueue(aMsg);
+    Queue(aMsg);
     THROW(CodecStreamEnded);
 }

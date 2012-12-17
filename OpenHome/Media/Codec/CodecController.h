@@ -52,17 +52,16 @@ protected:
     MsgFactory* iMsgFactory;
 };
 
-class CodecController : public IPipelineElementUpstream, private ICodecController, private IMsgProcessor, private INonCopyable
+class CodecController : private ICodecController, private IMsgProcessor, private INonCopyable
 {
 public:
-    CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
+    CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement);
     ~CodecController();
     void AddCodec(CodecBase* aCodec);
-public: // from IPipelineElementUpstream
-    Msg* Pull();
 private:
     void CodecThread();
     void PullMsg();
+    void Queue(Msg* aMsg);
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
     void Output(MsgAudioFormat* aMsg);
@@ -81,6 +80,7 @@ private: // IMsgProcessor
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
     IPipelineElementUpstream& iUpstreamElement;
+    IPipelineElementDownstream& iDownstreamElement;
     MsgFactory& iMsgFactory;
     std::vector<CodecBase*> iCodecs;
     ThreadFunctor* iDecoderThread;

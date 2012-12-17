@@ -39,6 +39,11 @@ Msg* AudioReservoir::Pull()
     return msg;
 }
 
+void AudioReservoir::Push(Msg* aMsg)
+{
+    (void)Enqueue(aMsg);
+}
+
 TBool AudioReservoir::Enqueue(Msg* aMsg)
 {
     // Queue the next msg before checking how much data we already have in the buffer
