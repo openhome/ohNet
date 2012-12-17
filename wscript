@@ -185,9 +185,14 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline')
     bld.program(
-            source='OpenHome/Media/Tests/WavSender.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='WavSender')
+            source='OpenHome/Media/Tests/FileSender.cpp',
+            includes = [
+                'flac-1.2.1/src/libFLAC/include',
+                'flac-1.2.1/include',
+                'libogg-1.1.3/include'
+            ],
+            use=['OHNET', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
+            target='FileSender')
     bld.program(
             source='OpenHome/Media/Tests/TestPipeline2.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

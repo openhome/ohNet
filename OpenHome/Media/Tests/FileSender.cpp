@@ -3,6 +3,8 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/Codec/Flac.h>
+#include <OpenHome/Media/Codec/Wav.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
@@ -48,19 +50,19 @@ int mygetch()
 namespace OpenHome {
 namespace Media {
 
-class SupplierWav : public Thread, public ISupplier
+class SupplierFile : public Thread, public ISupplier
 {
     static const size_t kFileHeaderBytes = 44;
 public:
-    SupplierWav();
-    ~SupplierWav();
+    SupplierFile();
+    ~SupplierFile();
     TBool LoadFile(const Brx& aFileName);
     void Block();
     void Unblock();
 private: // from Thread
     void Run();
 private:
-    MsgAudio* CreateAudio();
+    MsgAudioEncoded* CreateAudio();
 private: // from ISupplier
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement);
     void Play();
@@ -78,18 +80,14 @@ private:
     TByte iBuf[DecodedAudio::kMaxBytes];
     TUint iDataSize;
     TUint iBytesRemaining;
-    TUint iNumChannels;
-    TUint iSampleRate;
-    TUint iBitDepth;
-    TUint64 iTrackOffset;
 };
 
-class WavSender : private IPipelineObserver
+class FileSender : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
-    WavSender(const Brx& aWavFile, TUint aAdapterIndex, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-    ~WavSender();
+    FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    ~FileSender();
     int Run();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
@@ -98,12 +96,12 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyAudioFormat(const AudioFormat& aFormat);
 private:
-    SupplierWav* iSupplier;
+    SupplierFile* iSupplier;
     AllocatorInfoLogger iInfoAggregator;
     PipelineManager* iPipeline;
     Net::DvDeviceStandard* iDevice;
     DriverSongcastSender* iDriver;
-    Brh iWavFileName;
+    Brh iFileName;
 };
 
 } // namespace Media
@@ -114,106 +112,67 @@ using namespace OpenHome::TestFramework;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 
-// SupplierWav
+// SupplierFile
 
-SupplierWav::SupplierWav()
-    : Thread("SWAV")
-    , iLock("SWAV")
-    , iBlocker("SWAV", 0)
+SupplierFile::SupplierFile()
+    : Thread("SFIL")
+    , iLock("SFIL")
+    , iBlocker("SFIL", 0)
     , iMsgFactory(NULL)
     , iPipeline(NULL)
     , iPendingMsg(NULL)
     , iBlock(true)
     , iQuit(false)
-    , iTrackOffset(0)
 {
 }
 
-SupplierWav::~SupplierWav()
+SupplierFile::~SupplierFile()
 {
     Join();
     (void)fclose(iFh);
 }
 
-TBool SupplierWav::LoadFile(const Brx& aFileName)
+TBool SupplierFile::LoadFile(const Brx& aFileName)
 {
 	Brhz file(aFileName);
     if (file.Bytes() == 0) {
-    	printf("ERROR: No wav file specified\n");
+    	printf("ERROR: No file specified\n");
     	return false;
     }
     iFh = fopen(file.CString(), "rb");
     if (iFh == NULL) {
-    	printf("ERROR: Unable to open specified wav file\n");
+    	printf("ERROR: Unable to open specified file\n");
     	return false;
     }
-    TByte header[kFileHeaderBytes];
-    if (fread(header, 1, kFileHeaderBytes, iFh) != kFileHeaderBytes) {
-    	printf("ERROR: Failed to read wav file header\n");
+
+    if (fseek(iFh, 0L, SEEK_END) == -1) {
+    	printf("ERROR: Unable to seek to end of file\n");
     	return false;
     }
-    if (header[0] != 'R' || header[1] != 'I' || header[2] != 'F' || header[3] != 'F') {
-    	printf("ERROR: Invalid wav file\n");
+    iDataSize = ftell(iFh);
+    if (fseek(iFh, 0L, SEEK_SET) == -1) {
+    	printf("ERROR: Unable to seek back to start of file\n");
     	return false;
     }
-    // skip reading next 4 bytes (chunk size)
-    if (header[8] != 'W' || header[9] != 'A' || header[10] != 'V' || header[11] != 'E') {
-    	printf("ERROR: Invalid wav file\n");
-    	return false;
-    }
-    if (header[12] != 'f' || header[13] != 'm' || header[14] != 't' || header[15] != ' ') {
-    	printf("ERROR: Invalid wav file\n");
-    	return false;
-    }
-    const TUint subChunk1Size = header[16] | (header[17] << 8) | (header[18] << 16) | (header[19] << 24);
-    if (subChunk1Size != 16) {
-    	printf("ERROR: Unsupported wav file\n");
-    	return false;
-    }
-    const TUint audioFormat = header[20] | (header[21] << 8);
-    if (audioFormat != 1) {
-    	printf("ERROR: Unsupported wav file\n");
-    	return false;
-    }
-    iNumChannels = header[22] | (header[23] << 8);
-    iSampleRate = header[24] | (header[25] << 8) | (header[26] << 16) | (header[27] << 24);
-    //const TUint byteRate = header[28] | (header[29] << 8) | (header[30] << 16) | (header[31] << 24);
-    //const TUint blockAlign = header[32] | (header[33] << 8);
-    iBitDepth = header[34] | (header[35] << 8);
-    if (header[36] != 'd' || header[37] != 'a' || header[38] != 't' || header[39] != 'a') {
-    	printf("ERROR: Invalid wav file\n");
-    	return false;
-    }
-    iDataSize = header[40] | (header[41] << 8) | (header[42] << 16) | (header[43] << 24);
-    iBytesRemaining = iDataSize;
-    
-//    printf("numChannels=%u, sampleRate=%u, byteRate=%u, blockAlign=%u, bitsDepth=%u, subChunk2Size=%u\n",
-//           iNumChannels, iSampleRate, byteRate, blockAlign, iBitDepth, iDataBytes);
 
     return true;
 }
 
-void SupplierWav::Block()
+void SupplierFile::Block()
 {
     iBlock = true;
     (void)iBlocker.Clear();
 }
 
-void SupplierWav::Unblock()
+void SupplierFile::Unblock()
 {
     iBlocker.Signal();
     iBlock = false;
 }
 
-void SupplierWav::Run()
+void SupplierFile::Run()
 {
     Msg* msg = iMsgFactory->CreateMsgTrack();
-    iPipeline->Push(msg);
-    const TUint bitRate = iSampleRate * iBitDepth * iNumChannels;
-    ASSERT(iDataSize % (iNumChannels * (iBitDepth/8)) == 0);
-    const TUint numSamples = iDataSize / (iNumChannels * (iBitDepth/8));
-    const TUint64 trackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / iSampleRate;
-    msg = iMsgFactory->CreateMsgAudioFormat(bitRate, iBitDepth, iSampleRate, iNumChannels, Brn("WAV"), trackLengthJiffies, true);
     iPipeline->Push(msg);
     while (!iQuit) {
         if (iBlock) {
@@ -243,35 +202,33 @@ void SupplierWav::Run()
     }
 }
 
-MsgAudio* SupplierWav::CreateAudio()
+MsgAudioEncoded* SupplierFile::CreateAudio()
 {
-    TUint bytes = DecodedAudio::kMaxBytes / (iBitDepth/8);
+    TUint bytes = EncodedAudio::kMaxBytes;
     if (iBytesRemaining < bytes) {
         bytes = iBytesRemaining;
     }
     if (fread(iBuf, 1, bytes, iFh) != bytes) {
-    	printf("ERROR: Unable to read wav file data\n");
+    	printf("ERROR: Unable to read file data\n");
     	ASSERTS();
     }
     iBytesRemaining -= bytes;
     Brn encodedAudioBuf(iBuf, bytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
-    iTrackOffset += audio->Jiffies();
-    return audio;
+    return iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
 }
 
-void SupplierWav::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
+void SupplierFile::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
 {
     iMsgFactory = &aMsgFactory;
     iPipeline = &aDownstreamElement;
 }
 
-void SupplierWav::Play()
+void SupplierFile::Play()
 {
     Unblock();
 }
 
-void SupplierWav::Flush(Msg* aMsg)
+void SupplierFile::Flush(Msg* aMsg)
 {
     iLock.Wait();
     iPendingMsg = aMsg;
@@ -280,7 +237,7 @@ void SupplierWav::Flush(Msg* aMsg)
     iLock.Signal();
 }
 
-void SupplierWav::Quit(Msg* aMsg)
+void SupplierFile::Quit(Msg* aMsg)
 {
     iLock.Wait();
     iPendingMsg = aMsg;
@@ -292,13 +249,15 @@ void SupplierWav::Quit(Msg* aMsg)
 }
 
 
-// WavSender
+// FileSender
 
-WavSender::WavSender(const Brx& aWavFile, TUint aAdapterIndex, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
-    : iWavFileName(aWavFile)
+FileSender::FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+    : iFileName(aFileName)
 {
-    iSupplier = new SupplierWav();
+    iSupplier = new SupplierFile();
     iPipeline = new PipelineManager(iInfoAggregator, *iSupplier, *this, kMaxDriverJiffies);
+    iPipeline->AddCodec(new Codec::CodecFlac());
+    iPipeline->AddCodec(new Codec::CodecWav());
 
     InitialisationParams* initParams = InitialisationParams::Create();
 	UpnpLibrary::Initialise(initParams);
@@ -327,8 +286,8 @@ WavSender::WavSender(const Brx& aWavFile, TUint aAdapterIndex, const Brx& aSende
     iDevice->SetAttribute("Upnp.FriendlyName", aSenderFriendlyName);
     iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
     iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer WavSender");
-    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer WavSender");
+    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer FileSender");
+    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer FileSender");
     iDevice->SetAttribute("Upnp.ModelNumber", "1");
     iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
     iDevice->SetAttribute("Upnp.SerialNumber", "");
@@ -338,7 +297,7 @@ WavSender::WavSender(const Brx& aWavFile, TUint aAdapterIndex, const Brx& aSende
     iDevice->SetEnabled();
 }
 
-WavSender::~WavSender()
+FileSender::~FileSender()
 {
     delete iPipeline;
     delete iSupplier;
@@ -347,9 +306,9 @@ WavSender::~WavSender()
 	UpnpLibrary::Close();
 }
 
-int WavSender::Run()
+int FileSender::Run()
 {
-    if (!iSupplier->LoadFile(iWavFileName)) {
+    if (!iSupplier->LoadFile(iFileName)) {
         return 1;
     }
     iSupplier->Start();
@@ -408,7 +367,7 @@ int WavSender::Run()
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void WavSender::NotifyPipelineState(EPipelineState aState)
+void FileSender::NotifyPipelineState(EPipelineState aState)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     const char* state = "";
@@ -433,14 +392,14 @@ void WavSender::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void WavSender::NotifyTrack()
+void FileSender::NotifyTrack()
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK\n");
 #endif
 }
 
-void WavSender::NotifyMetaText(const Brx& aText)
+void FileSender::NotifyMetaText(const Brx& aText)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: METATEXT {");
@@ -449,14 +408,14 @@ void WavSender::NotifyMetaText(const Brx& aText)
 #endif
 }
 
-void WavSender::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
+void FileSender::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TIME {secs=%u; duration=%u}\n", aSeconds, aTrackDurationSeconds);
 #endif
 }
 
-void WavSender::NotifyAudioFormat(const AudioFormat& aFormat)
+void FileSender::NotifyAudioFormat(const AudioFormat& aFormat)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
@@ -472,11 +431,11 @@ void WavSender::NotifyAudioFormat(const AudioFormat& aFormat)
 int CDECL main(int aArgc, char* aArgv[])
 {
     OptionParser parser;
-    OptionString optionFile("-f", "--file", Brn(""), "[file] wav file to play");
+    OptionString optionFile("-f", "--file", Brn("c:\\test.wav"), "[file] wav file to play");
     parser.AddOption(&optionFile);
     OptionString optionUdn("-u", "--udn", Brn("PipelineWavSender"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("Pipeline WavSender"), "[name] name of the sender");
+    OptionString optionName("-n", "--name", Brn("Pipeline FileSender"), "[name] name of the sender");
     parser.AddOption(&optionName);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
@@ -487,9 +446,9 @@ int CDECL main(int aArgc, char* aArgv[])
         return 1;
     }
 
-    WavSender* wavSender = new WavSender(optionFile.Value(), optionAdapter.Value(), optionUdn.Value(), optionName.CString(), optionChannel.Value());
-    const int ret = wavSender->Run();
-    delete wavSender;
+    FileSender* fileSender = new FileSender(optionFile.Value(), optionAdapter.Value(), optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    const int ret = fileSender->Run();
+    delete fileSender;
 
     return ret;
 }
