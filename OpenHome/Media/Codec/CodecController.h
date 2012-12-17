@@ -79,9 +79,9 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
+    MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IPipelineElementDownstream& iDownstreamElement;
-    MsgFactory& iMsgFactory;
     std::vector<CodecBase*> iCodecs;
     ThreadFunctor* iDecoderThread;
     CodecBase* iActiveCodec;

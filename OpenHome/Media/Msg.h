@@ -679,8 +679,8 @@ private:
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
     Allocator<EncodedAudio> iAllocatorEncodedAudio;
-    Allocator<DecodedAudio> iAllocatorDecodedAudio;
     Allocator<MsgAudioEncoded> iAllocatorMsgAudioEncoded;
+    Allocator<DecodedAudio> iAllocatorDecodedAudio;
     Allocator<MsgAudioPcm> iAllocatorMsgAudioPcm;
     Allocator<MsgSilence> iAllocatorMsgSilence;
     Allocator<MsgPlayablePcm> iAllocatorMsgPlayablePcm;

@@ -1490,8 +1490,8 @@ TBool MsgQueue::IsEmpty() const
 
 MsgQueueFlushable::MsgQueueFlushable()
     : iLock("MQJF")
-    , iJiffies(0)
     , iEncodedBytes(0)
+    , iJiffies(0)
     , iFlushing(false)
 {
 }
