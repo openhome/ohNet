@@ -292,9 +292,8 @@ void SuitePipeline::Test()
     iSupplier->Block();
     PullUntilEnd(ERampDownDeferred);
     TEST(iPipelineState == EPipelineBuffering);
-//    TEST((iJiffies >= PipelineManager::kStarvationMonitorStarvationThreshold) &&
-//         (iJiffies <  PipelineManager::kStarvationMonitorStarvationThreshold + iLastMsgJiffies));
-//    Print("Expected [%08x..%08x], got %08x (~%ums)\n", PipelineManager::kStarvationMonitorStarvationThreshold, PipelineManager::kStarvationMonitorStarvationThreshold + iLastMsgJiffies, iJiffies, iJiffies/Jiffies::kJiffiesPerMs);
+    TEST((iJiffies >= PipelineManager::kStarvationMonitorStarvationThreshold) &&
+         (iJiffies <=  PipelineManager::kStarvationMonitorStarvationThreshold + iLastMsgJiffies + kDriverMaxAudioJiffies));
 
     // Push audio again.  Check that it ramps up in PipelineManager::kStarvationMonitorRampUpDuration.
     Print("\nRecover from starvation\n");
@@ -530,9 +529,6 @@ Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
     const TUint bytesPerSample = (iBitDepth/8) * iNumChannels;
     ASSERT(bytes % bytesPerSample == 0);
     const TUint numSamples = bytes / bytesPerSample;
-//    if (iLastMsgJiffies != 0 && (Jiffies::JiffiesPerSample(iSampleRate) * numSamples) != iLastMsgJiffies) {
-//        Log::Print("WARNING: iLastMsgJiffies changed from %08x to %08x\n", iLastMsgJiffies, Jiffies::JiffiesPerSample(iSampleRate) * numSamples);
-//    }
     iLastMsgJiffies = Jiffies::JiffiesPerSample(iSampleRate) * numSamples;
     iJiffies += iLastMsgJiffies;
     return NULL;
