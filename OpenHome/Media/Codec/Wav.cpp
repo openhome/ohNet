@@ -40,6 +40,7 @@ void CodecWav::Process()
         chunkSize = sizeof(iReadBuf);
     }
     while (audioBytes > 0) {
+        iReadBuf.SetBytes(0);
         const TUint bytes = (chunkSize < audioBytes? chunkSize : audioBytes);
         iController->Read(iReadBuf, bytes);
         Brn encodedAudioBuf(iReadBuf.Ptr(), bytes);
