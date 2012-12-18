@@ -243,7 +243,7 @@ FLAC__StreamDecoderLengthStatus CodecFlac::CallbackLength(const FLAC__StreamDeco
 
 TBool CodecFlac::CallbackEof(const FLAC__StreamDecoder* /*aDecoder*/)
 {
-    return true;
+    return false;
 }
 
 FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecoder* /*aDecoder*/,
