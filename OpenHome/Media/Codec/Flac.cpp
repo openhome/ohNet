@@ -222,6 +222,7 @@ FLAC__StreamDecoderReadStatus CodecFlac::CallbackRead(const FLAC__StreamDecoder*
 {
     Bwn buf(aBuffer, *aBytes);
     iController->Read(buf, *aBytes);
+    *aBytes = buf.Bytes();
     return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 }
 
@@ -267,10 +268,12 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
     }
     
     const TUint maxSamples = sizeof(iBuf) / ((bitDepth/8) * channels);
+    TUint startI=0, endI;
     while (samplesToWrite > 0) {
         const TUint samples = (samplesToWrite > maxSamples? maxSamples : samplesToWrite);
         TByte* p = iBuf;
-        for (TUint i=0; i<samples; i++) {
+        endI = startI + samples;
+        for (TUint i=startI; i<endI; i++) {
             for (TUint j=0; j<channels; j++) {
                 TUint subsample = aBuffer[j][i];
                 // pipeline audio data is big endian so we might as well convert to that here
@@ -300,6 +303,7 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
         iTrackOffset += audio->Jiffies();
         iController->Output(audio);
         samplesToWrite -= samples;
+        startI = endI;
     }
     
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;

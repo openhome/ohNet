@@ -136,16 +136,18 @@ void CodecController::Queue(Msg* aMsg)
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
     while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes) {
+        // FIXME - need to break out of this loop on MsgTrack, MsgHalt, MsgFlush, MsgQuit
         PullMsg();
     }
     MsgAudioEncoded* remaining = NULL;
     if (iAudioEncoded->Bytes() > aBytes) {
         remaining = iAudioEncoded->Split(aBytes);
     }
-    ASSERT(aBuf.Bytes() + aBytes <= aBuf.MaxBytes());
+    const TUint bytes = iAudioEncoded->Bytes();
+    ASSERT(aBuf.Bytes() + bytes <= aBuf.MaxBytes());
     TByte* ptr = const_cast<TByte*>(aBuf.Ptr()) + aBuf.Bytes();
     iAudioEncoded->CopyTo(ptr);
-    aBuf.SetBytes(aBuf.Bytes() + aBytes);
+    aBuf.SetBytes(aBuf.Bytes() + bytes);
     iAudioEncoded->RemoveRef();
     iAudioEncoded = remaining;
 }

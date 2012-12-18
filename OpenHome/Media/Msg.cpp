@@ -695,7 +695,7 @@ TUint MsgAudioEncoded::Bytes() const
     TUint bytes = iSize;
     MsgAudioEncoded* next = iNextAudio;
     while (next != NULL) {
-        bytes += iNextAudio->iSize;
+        bytes += next->iSize;
         next = next->iNextAudio;
     }
     return bytes;
@@ -784,7 +784,7 @@ TUint MsgAudio::Jiffies() const
     TUint jiffies = iSize;
     MsgAudio* next = iNextAudio;
     while (next != NULL) {
-        jiffies += iNextAudio->iSize;
+        jiffies += next->iSize;
         next = next->iNextAudio;
     }
     return jiffies;
