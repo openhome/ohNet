@@ -52,7 +52,6 @@ namespace Media {
 
 class SupplierFile : public Thread, public ISupplier
 {
-    static const size_t kFileHeaderBytes = 44;
 public:
     SupplierFile();
     ~SupplierFile();
@@ -154,6 +153,7 @@ TBool SupplierFile::LoadFile(const Brx& aFileName)
     	printf("ERROR: Unable to seek back to start of file\n");
     	return false;
     }
+    iBytesRemaining = iDataSize;
 
     return true;
 }
@@ -232,7 +232,7 @@ void SupplierFile::Flush(Msg* aMsg)
 {
     iLock.Wait();
     iPendingMsg = aMsg;
-    ASSERT(0 == fseek(iFh, kFileHeaderBytes, SEEK_SET));
+    ASSERT(0 == fseek(iFh, 0, SEEK_SET));
     iBytesRemaining = iDataSize;
     iLock.Signal();
 }
