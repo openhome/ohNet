@@ -14,6 +14,7 @@ from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, gue
 def options(opt):
     opt.load('msvc')
     opt.load('compiler_cxx')
+    opt.load('compiler_c')
     opt.add_option('--ohnet-include-dir', action='store', default=None)
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
     opt.add_option('--ohnet', action='store', default=None)
