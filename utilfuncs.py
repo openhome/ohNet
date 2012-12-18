@@ -78,22 +78,29 @@ def configure_toolchain(conf):
     conf.env.MSVC_TARGETS = ['x86']
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.load('msvc')
-        conf.env.append_value('CXXFLAGS',['/W4', '/WX', '/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+platform_info['endian']+'_ENDIAN', '/D_CRT_SECURE_NO_WARNINGS'])
+        conf.env.append_value('CXXFLAGS',['/EHsc', '/DDEFINE_TRACE', '/DDEFINE_'+platform_info['endian']+'_ENDIAN', '/D_CRT_SECURE_NO_WARNINGS'])
         if conf.options.debugmode == 'Debug':
             conf.env.append_value('CXXFLAGS',['/MTd', '/Z7', '/Od', '/RTC1', '/DDEFINE_DEBUG'])
             conf.env.append_value('LINKFLAGS', ['/debug'])
         else:
             conf.env.append_value('CXXFLAGS',['/MT', '/Ox'])
+        conf.env.append_value('CFLAGS', conf.env['CXXFLAGS'])
+        # Only enable warnings for C++ code as C code si typically third party and often generates many warnings
+        conf.env.append_value('CXXFLAGS',['/W4', '/WX'])
     else:
         conf.load('compiler_cxx')
+        conf.load('compiler_c')
         conf.env.append_value('CXXFLAGS', [
-                '-fexceptions', '-Wall', '-pipe',
-                '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_'+platform_info['endian']+'_ENDIAN',
-                '-DDEFINE_TRACE', '-fvisibility=hidden', '-Werror'])
+                '-pipe', '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_TRACE',
+                '-DDEFINE_'+platform_info['endian']+'_ENDIAN', '-fvisibility=hidden',])
         if conf.options.debugmode == 'Debug':
             conf.env.append_value('CXXFLAGS',['-g','-O0', '-DDEFINE_DEBUG'])
         else:
             conf.env.append_value('CXXFLAGS',['-O2'])
+        conf.env.append_value('CFLAGS', conf.env['CXXFLAGS'])
+        # Don't enable warnings for C code as its typically third party and written to different standards
+        conf.env.append_value('CXXFLAGS', [
+                '-fexceptions', '-Wall', '-Werror'])
         conf.env.append_value('LINKFLAGS', ['-pthread'])
         if conf.options.dest_platform in ['Linux-x86']:
             conf.env.append_value('VALGRIND_ENABLE', ['1'])
