@@ -285,7 +285,7 @@ void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::v
 void DviDevice::GetUriBase(Bwx& aUriBase, TIpAddress aInterface, TUint aPort, IDvProtocol& aProtocol)
 {
     const Brx& name = aProtocol.ProtocolName();
-    aUriBase.Append(Http::kUriPrefix);
+    aUriBase.Append(Http::kSchemeHttp);
     Endpoint endpt(aPort, aInterface);
     Endpoint::EndpointBuf buf;
     endpt.AppendEndpoint(buf);

@@ -82,7 +82,7 @@ public:
     static const Brn kHeaderExpires;
     static const Brn kHeaderLastModified;
     // other constants
-    static const Brn kUriPrefix;
+    static const Brn kSchemeHttp;
     static const Brn kValueZero;
     static const Brn kHeaderSeparator;
     static const Brn kHeaderTerminator;

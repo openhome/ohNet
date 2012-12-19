@@ -170,7 +170,7 @@ void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperati
 void CpiSubscription::DoSubscribe()
 {
     Bws<Uri::kMaxUriBytes> uri;
-    uri.Append(Http::kUriPrefix);
+    uri.Append(Http::kSchemeHttp);
     NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe");
     if (nif == NULL) {
         THROW(NetworkError);

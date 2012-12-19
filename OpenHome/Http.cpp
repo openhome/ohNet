@@ -73,7 +73,7 @@ const Brn Http::kHeaderLastModified("Last-Modified");
 
 // Http Constants
 
-const Brn Http::kUriPrefix("http://");
+const Brn Http::kSchemeHttp("http://");
 const Brn Http::kValueZero("0");
 const Brn Http::kHeaderSeparator(": ");
 const Brn Http::kHeaderTerminator("\r\n");
