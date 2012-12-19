@@ -6,8 +6,8 @@
  * indicated by returning an error code instead.
  */
 
-#ifndef HEADER_LINN_OS_C
-#define HEADER_LINN_OS_C
+#ifndef HEADER_OS_C
+#define HEADER_OS_C
 
 #include <OpenHome/OsTypes.h>
 
@@ -665,4 +665,4 @@ void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* 
 } // extern "C"
 #endif
 
-#endif // HEADER_LINN_OS_C
+#endif // HEADER_OS_C

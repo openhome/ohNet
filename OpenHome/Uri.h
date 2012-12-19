@@ -1,5 +1,5 @@
-#ifndef HEADER_LINN_ASCII_URI
-#define HEADER_LINN_ASCII_URI
+#ifndef HEADER_URI
+#define HEADER_URI
 
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/OhNetTypes.h>
@@ -65,4 +65,4 @@ private:
 
 } // namespace OpenHome
 
-#endif  // HEADER_LINN_ASCII_URI
+#endif  // HEADER_URI
