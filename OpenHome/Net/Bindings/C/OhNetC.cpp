@@ -366,6 +366,13 @@ TIpAddress STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif)
     return nif->Subnet();
 }
 
+TIpAddress STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif)
+{
+    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
+    ASSERT(nif != NULL);
+    return nif->Mask();
+}
+
 const char* STDCALL OhNetNetworkAdapterName(OhNetHandleNetworkAdapter aNif)
 {
     NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);

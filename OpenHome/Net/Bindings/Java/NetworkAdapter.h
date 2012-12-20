@@ -25,6 +25,14 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAda
 
 /*
  * Class:     org_openhome_net_core_NetworkAdapter
+ * Method:    OhNetNetworkAdapterMask
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAdapterMask
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_core_NetworkAdapter
  * Method:    OhNetNetworkAdapterName
  * Signature: (J)Ljava/lang/String;
  */
