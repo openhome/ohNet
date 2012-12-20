@@ -103,6 +103,7 @@ public:
 
     static TBool ContainsWhitespace(const Brx& aBuffer);
     static TBool Contains(const Brx& aBuffer, TChar aValue);
+    static TBool Contains(const Brx& aBuffer, const Brx& aValue);
     static TUint IndexOf(const Brx& aBuffer, TChar aValue);    // returns index of aValue (or aBuffer.Bytes() if not in)
     static void  Substitute(Bwx& aBuffer, TChar aSearch, TChar aReplace);
 
