@@ -913,6 +913,14 @@ void SuiteAscii::Test()
     TEST(!Ascii::Contains(Brn("abcdefg"), 'l'));
     TEST(!Ascii::Contains(Brn("abcdefg"), 'm'));
     TEST(!Ascii::Contains(Brn("abcdefg"), 'n'));
+    TEST(Ascii::Contains(Brn("abcdefg"), Brn("a")));
+    TEST(Ascii::Contains(Brn("abcdefg"), Brn("ab")));
+    TEST(Ascii::Contains(Brn("abcdefg"), Brn("abcdefg")));
+    TEST(Ascii::Contains(Brn("abcdefg"), Brn("b")));
+    TEST(Ascii::Contains(Brn("abcdefg"), Brn("bc")));
+    TEST(Ascii::Contains(Brn("abcdefg"), Brn("bcdefg")));
+    TEST(!Ascii::Contains(Brn("abcdefg"), Brn("h")));
+    TEST(!Ascii::Contains(Brn("abcdefg"), Brn("abcdefgh")));
     
     TEST(Ascii::ContainsWhitespace(Brn(" A  collection   of words ")));
     TEST(Ascii::ContainsWhitespace(Brn("A  collection   of words ")));
