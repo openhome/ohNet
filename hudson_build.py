@@ -97,8 +97,8 @@ class JenkinsBuild():
         platforms = { 
                 'Linux-x86': { 'os':'linux', 'arch':'x86', 'publish':True, 'system':'Linux'},
                 'Linux-x64': { 'os':'linux', 'arch':'x64', 'publish':True, 'system':'Linux'},
-                'Windows-x86': { 'os': 'windows', 'arch':'x86', 'publish':True, 'system':'Linux'},
-                'Windows-x64': { 'os': 'windows', 'arch':'x64', 'publish':True, 'system':'Linux'},
+                'Windows-x86': { 'os': 'windows', 'arch':'x86', 'publish':True, 'system':'Windows'},
+                'Windows-x64': { 'os': 'windows', 'arch':'x64', 'publish':True, 'system':'Windows'},
                 'Macos-x64': { 'os': 'macos', 'arch':'x86', 'publish':False, 'system':'Mac'}, # Old Jenkins label
                 'Mac-x64': { 'os': 'macos', 'arch':'x64', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
