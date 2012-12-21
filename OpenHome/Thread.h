@@ -175,6 +175,7 @@ private:
     TBool     iKill;
     TUint     iStackBytes;
     TUint     iPriority;
+    mutable Mutex iKillMutex;
 };
 
 /**

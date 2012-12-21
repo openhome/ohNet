@@ -2,7 +2,6 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/OsWrapper.h>
 #include <exception>
-#include <OpenHome/Net/Private/Stack.h>
 
 using namespace OpenHome;
 
@@ -108,6 +107,7 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     , iKill(false)
     , iStackBytes(aStackBytes)
     , iPriority(aPriority)
+    , iKillMutex("KMTX")
 {
     ASSERT(aName != NULL);
     iName.SetBytes(iName.MaxBytes());
@@ -210,9 +210,8 @@ TBool Thread::SupportsPriorities()
 
 void Thread::CheckForKill() const
 {
-    Net::Stack::Mutex().Wait();
+    AutoMutex _amtx(iKillMutex);
     TBool kill = iKill;
-    Net::Stack::Mutex().Signal();
     if (kill) {
         THROW(ThreadKill);
     }
@@ -221,9 +220,8 @@ void Thread::CheckForKill() const
 void Thread::Kill()
 {
     LOG(kThread, "Thread::Kill() called for thread: %p\n", this);
-    Net::Stack::Mutex().Wait();
+    AutoMutex _amtx(iKillMutex);
     iKill = true;
-    Net::Stack::Mutex().Signal();
     Signal();
 }
 
