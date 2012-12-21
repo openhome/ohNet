@@ -75,6 +75,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern uint OhNetNetworkAdapterMask(IntPtr aNif);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern IntPtr OhNetNetworkAdapterName(IntPtr aNif);
 #if IOS
         [DllImport("__Internal")]
@@ -130,6 +136,15 @@ namespace OpenHome.Net.Core
         public uint Subnet()
         {
             return OhNetNetworkAdapterSubnet(iHandle);
+        }
+
+        /// <summary>
+        /// Get the netmask for the network interface.
+        /// </summary>
+        /// <returns>IPv4 netmask in network byte order.</returns>
+        public uint Mask()
+        {
+            return OhNetNetworkAdapterMask(iHandle);
         }
 
         /// <summary>

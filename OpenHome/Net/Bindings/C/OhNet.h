@@ -627,6 +627,15 @@ DllExport TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapte
 DllExport TIpAddress STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif);
 
 /**
+ * Query the netmask that a network interface is available on
+ *
+ * @param[in] aNif             Network interface handle
+ *
+ * @return  IpV4 address as network order uint32
+ */
+DllExport TIpAddress STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif);
+
+/**
  * Query the name of a network interface
  *
  * @param[in] aNif             Network interface handle

@@ -45,6 +45,24 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAda
 
 /*
  * Class:     org_openhome_net_core_NetworkAdapter
+ * Method:    OhNetNetworkAdapterMask
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAdapterMask
+  (JNIEnv *aEnv, jclass aClass, jlong aNif)
+{
+	TIpAddress ipAddr;
+	OhNetHandleNetworkAdapter adapter = (OhNetHandleNetworkAdapter) (size_t)aNif;
+	aEnv = aEnv;
+	aClass = aClass;
+
+	ipAddr = OhNetNetworkAdapterMask(adapter);
+	
+	return (jint) ipAddr;
+}
+
+/*
+ * Class:     org_openhome_net_core_NetworkAdapter
  * Method:    OhNetNetworkAdapterName
  * Signature: (J)Ljava/lang/String;
  */

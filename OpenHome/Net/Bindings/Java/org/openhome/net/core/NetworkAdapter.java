@@ -11,6 +11,7 @@ public class NetworkAdapter
 {
 	private static native int OhNetNetworkAdapterAddress(long aNif);
 	private static native int OhNetNetworkAdapterSubnet(long aNif);
+	private static native int OhNetNetworkAdapterMask(long aNif);
 	private static native String OhNetNetworkAdapterName(long aNif);
 	private static native String OhNetNetworkAdapterFullName(long aNif);
 	
@@ -93,6 +94,27 @@ public class NetworkAdapter
 	public Inet4Address getSubnet()
 	{
 		int intAddr = OhNetNetworkAdapterSubnet(iHandle);
+
+		byte[] addr = ipv4IntToByteArray(intAddr);
+		
+		try
+		{
+			return (Inet4Address) InetAddress.getByAddress(addr);
+		}
+		catch (UnknownHostException uhe)
+		{
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the netmask for a given network interface.
+	 * 
+	 * @return	IPv4 address
+	 */
+	public Inet4Address getMask()
+	{
+		int intAddr = OhNetNetworkAdapterMask(iHandle);
 
 		byte[] addr = ipv4IntToByteArray(intAddr);
 		
