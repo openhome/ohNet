@@ -15,7 +15,7 @@ debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
 openhome_configuration = Debug
 else
-debug_specific_cflags = -O2
+debug_specific_cflags = -g -O2
 debug_csharp = /optimize+
 build_dir = Release
 openhome_configuration = Release
@@ -150,16 +150,15 @@ endif
 
 ifeq ($(platform), Core)
 	# platform == Core
-	freertoslwipdir ?= ${FREERTOSLWIP}
-	platform_cflags = -I$(freertoslwipdir)/include/ -I$(freertoslwipdir)/include/FreeRTOS/ -I$(freertoslwipdir)/include/lwip/ -mcpu=403
-	platform_linkflags = -B$(freertoslwipdir)/lib/ -specs bsp_specs -mcpu=403
+	libosadir ?= ${LIBOSA}
+	platform_cflags = -I$(libosadir)/include/ -I$(libosadir)/include/FreeRTOS/ -I$(libosadir)/include/lwip/ -mcpu=${CROSS_CPU}
+	platform_linkflags = -B$(libosadir)/lib/ -specs bsp_specs -mcpu=${CROSS_CPU}}
 	linkopts_ohNet =
 	osbuilddir = Volkano2
 	osdir = Volkano2
-	endian = BIG
+	endian = ${CROSS_ENDIAN}
 	native_only = yes
 endif
-
 
 ifneq (,$(findstring $(platform),Core Vanilla))
   ifeq ($(gcc4_1), yes)
