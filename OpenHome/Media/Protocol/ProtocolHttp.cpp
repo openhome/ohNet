@@ -513,7 +513,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
             
             Brn format(aHeader.Read(1));
             if (format.BeginsWith(Brn("<"))) {
-                Parser parser(aHeader.ReadUntil('>', false)); // read first tag
+                Parser parser(aHeader.ReadUntil('>')); // read first tag
                 if (!Ascii::CaseInsensitiveEquals(parser.Next('='), Brn("asx version"))) {
                     continue;
                 }
@@ -568,7 +568,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
                 }
             }
             else if (format.BeginsWith(Brn("["))) {            // alternative format
-                Parser parser(aHeader.ReadUntil(']', false));    // read first tag
+                Parser parser(aHeader.ReadUntil(']'));    // read first tag
                 for (;;) {
                     Brn line(EntityReadLine(aHeader));
                     Brn ref(line.Ptr(), 3);                
@@ -662,9 +662,16 @@ void ProtocolHttp::ProcessXml(ReaderBuffer& aHeader)
 
 Brn ProtocolHttp::EntityReadLine(ReaderBuffer& aHeader)
 {
-    for (;;) {
+    TBool done = false;
+    while (!done) {
         Brn line;
-        line.Set(Ascii::Trim(aHeader.ReadUntil(Ascii::kLf, true))); // treat eof as a valid line termination
+        try {
+            line.Set(Ascii::Trim(aHeader.ReadUntil(Ascii::kLf)));
+        }
+        catch (ReaderError&) {
+            line.Set(aHeader.ReadRemaining());
+            done = true;
+        }
         if (line.Bytes() > 0) {
             LOG(kMedia, line);
             LOG(kMedia, "\n");
@@ -672,12 +679,13 @@ Brn ProtocolHttp::EntityReadLine(ReaderBuffer& aHeader)
             return line;
         }
     }
+    return Brx::Empty();
 }
 
 Brn ProtocolHttp::EntityReadTag(ReaderBuffer& aHeader)
 {
-    aHeader.ReadUntil('<', false);
-    return aHeader.ReadUntil('>', false);
+    aHeader.ReadUntil('<');
+    return aHeader.ReadUntil('>');
 }
 
 
