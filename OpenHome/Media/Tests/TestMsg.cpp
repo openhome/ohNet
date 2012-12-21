@@ -865,7 +865,7 @@ void SuiteRamp::Test()
     ramp.Reset();
     TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
     RampApplicator applicator(ramp);
-    TUint prevSampleVal = 0x7f, sampleVal;
+    TUint prevSampleVal = 0x7f, sampleVal = 0;
     TByte sample[DecodedAudio::kMaxNumChannels * 3];
     TUint numSamples = applicator.Start(audioBuf, 8, 2);
     for (TUint i=0; i<numSamples; i++) {
