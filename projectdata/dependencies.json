@@ -2,9 +2,9 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.365",
-        "archive-suffix": "-dev-${debugmode}",
-        "main-dir": "${dest}${name}-${platform}-${debugmode}-dev",
+        "version": "1.0.498",
+        "archive-suffix": "-${debugmode}",
+        "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
             "--ohnet-lib-dir", "${main-dir}/lib",
             "--ohnet-include-dir", "${main-dir}/include/ohnet"
