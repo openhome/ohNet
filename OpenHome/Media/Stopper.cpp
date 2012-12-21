@@ -138,6 +138,13 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Stopper::ProcessMsg(MsgAudioStream* aMsg)
+{
+    iRemainingRampSize = 0;
+    iCurrentRampValue = Ramp::kRampMax;
+    return aMsg;
+}
+
 Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
 {
     return aMsg;

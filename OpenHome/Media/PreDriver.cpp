@@ -173,6 +173,12 @@ Msg* PreDriver::ProcessMsg(MsgTrack* aMsg)
     return NULL;
 }
 
+Msg* PreDriver::ProcessMsg(MsgAudioStream* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* PreDriver::ProcessMsg(MsgMetaText* aMsg)
 {
     aMsg->RemoveRef();

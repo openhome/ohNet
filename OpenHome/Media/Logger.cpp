@@ -96,6 +96,18 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Logger::ProcessMsg(MsgAudioStream* aMsg)
+{
+    if (IsEnabled(EMsgAudioFormat)) {
+        Log::Print("Pipeline (%s): metaText {", iId);
+        Log::Print(aMsg->Uri());
+        Log::Print(", ");
+        Log::Print(aMsg->MetaText());
+        Log::Print("}\n");
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgMetaText* aMsg)
 {
     if (IsEnabled(EMsgMetaText)) {

@@ -86,6 +86,15 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Reporter::ProcessMsg(MsgAudioStream* aMsg)
+{
+    iSeconds = 0;
+    iJiffies = 0;
+    iObserver.NotifyTrack();
+    iObserver.NotifyMetaText(aMsg->MetaText());
+    return aMsg;
+}
+
 Msg* Reporter::ProcessMsg(MsgMetaText* aMsg)
 {
     iObserver.NotifyMetaText(aMsg->MetaText());

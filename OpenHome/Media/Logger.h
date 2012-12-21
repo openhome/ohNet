@@ -25,10 +25,11 @@ public:
        ,EMsgPlayable     = 1<<4
        ,EMsgAudioFormat  = 1<<5
        ,EMsgTrack        = 1<<6
-       ,EMsgMetaText     = 1<<7
-       ,EMsgHalt         = 1<<8
-       ,EMsgFlush        = 1<<9
-       ,EMsgQuit         = 1<<10
+       ,EMsgAudioStream  = 1<<7
+       ,EMsgMetaText     = 1<<8
+       ,EMsgHalt         = 1<<9
+       ,EMsgFlush        = 1<<10
+       ,EMsgQuit         = 1<<11
        ,EMsgAll          = 0x7fffffff
     };
 public:
@@ -45,6 +46,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgAudioStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);

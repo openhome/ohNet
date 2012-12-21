@@ -37,6 +37,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgAudioStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -50,6 +51,7 @@ private:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
+       ,EMsgAudioStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -95,7 +97,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     , iSemUpstreamComplete("TRSV", 0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iReservoir = new DecodedAudioReservoir(kReservoirSize);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
@@ -129,8 +131,8 @@ void SuiteAudioReservoir::Test()
     TEST(iLastMsg == EMsgAudioPcm);
     ASSERT(msg == NULL);
 
-    // Check that Silence, Track, MetaText, Quit & Halt msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgMetaText, EMsgHalt, EMsgQuit };
+    // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
+    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgAudioStream, EMsgMetaText, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         GenerateMsg(types[0]);
         msg = iReservoir->Pull();
@@ -224,6 +226,9 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgTrack:
         msg = iMsgFactory->CreateMsgTrack();
         break;
+    case EMsgAudioStream:
+        msg = iMsgFactory->CreateMsgAudioStream(Brn("http://127.0.0.1:65535"), Brn("metatext"));
+        break;
     case EMsgMetaText:
         msg = iMsgFactory->CreateMsgMetaText(Brn("metatext"));
         break;
@@ -299,6 +304,12 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioFormat* aMsg)
 Msg* SuiteAudioReservoir::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioStream* aMsg)
+{
+    iLastMsg = EMsgAudioStream;
     return aMsg;
 }
 

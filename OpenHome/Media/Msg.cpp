@@ -1345,6 +1345,43 @@ Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
 }
 
 
+// MsgAudioStream
+
+MsgAudioStream::MsgAudioStream(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+const Brx& MsgAudioStream::Uri() const
+{
+    return iUri;
+}
+
+const Brx& MsgAudioStream::MetaText() const
+{
+    return iMetaText;
+}
+
+void MsgAudioStream::Initialise(const Brx& aUri, const Brx& aMetaText)
+{
+    iUri.Replace(aUri);
+    iMetaText.Replace(aMetaText);
+}
+
+void MsgAudioStream::Clear()
+{
+#ifdef DEFINE_DEBUG
+    iUri.SetBytes(0);
+    iMetaText.SetBytes(0);
+#endif
+}
+
+Msg* MsgAudioStream::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
 // MsgMetaText
 
 MsgMetaText::MsgMetaText(AllocatorBase& aAllocator)
@@ -1595,6 +1632,10 @@ void MsgQueueFlushable::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
 
+void MsgQueueFlushable::ProcessMsgIn(MsgAudioStream* /*aMsg*/)
+{
+}
+
 void MsgQueueFlushable::ProcessMsgIn(MsgMetaText* /*aMsg*/)
 {
 }
@@ -1632,6 +1673,11 @@ Msg* MsgQueueFlushable::ProcessMsgOut(MsgAudioFormat* aMsg)
 }
 
 Msg* MsgQueueFlushable::ProcessMsgOut(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgAudioStream* aMsg)
 {
     return aMsg;
 }
@@ -1698,6 +1744,12 @@ Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioFormat* aMsg)
 }
 
 Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioStream* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
@@ -1770,6 +1822,11 @@ Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
     return iQueue.ProcessMsgOut(aMsg);
 }
 
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgAudioStream* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
 Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
@@ -1811,8 +1868,8 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                        TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgAudioFormatCount,
-                       TUint aMsgTrackCount, TUint aMsgMetaTextCount, TUint aMsgHaltCount,
-                       TUint aMsgFlushCount, TUint aMsgQuitCount)
+                       TUint aMsgTrackCount, TUint aMsgAudioStreamCount, TUint aMsgMetaTextCount,
+                       TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgQuitCount)
     : iAllocatorEncodedAudio("EncodedAudio", aEncodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioEncoded("MsgAudioEncoded", aMsgAudioEncodedCount, aInfoAggregator)
     , iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
@@ -1822,6 +1879,7 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     , iAllocatorMsgPlayableSilence("MsgPlayableSilence", aMsgPlayableSilenceCount, aInfoAggregator)
     , iAllocatorMsgAudioFormat("MsgAudioFormat", aMsgAudioFormatCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aMsgTrackCount, aInfoAggregator)
+    , iAllocatorMsgAudioStream("MsgAudioStream", aMsgAudioStreamCount, aInfoAggregator)
     , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
     , iAllocatorMsgHalt("MsgHalt", aMsgHaltCount, aInfoAggregator)
     , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
@@ -1862,6 +1920,13 @@ MsgAudioFormat* MsgFactory::CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth
 MsgTrack* MsgFactory::CreateMsgTrack()
 {
     return iAllocatorMsgTrack.Allocate();
+}
+
+MsgAudioStream* MsgFactory::CreateMsgAudioStream(const Brx& aUri, const Brx& aMetaText)
+{
+    MsgAudioStream* msg = iAllocatorMsgAudioStream.Allocate();
+    msg->Initialise(aUri, aMetaText);
+    return msg;
 }
 
 MsgMetaText* MsgFactory::CreateMsgMetaText(const Brx& aMetaText)

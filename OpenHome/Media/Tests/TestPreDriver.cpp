@@ -34,6 +34,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgAudioStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -47,6 +48,7 @@ private:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
+       ,EMsgAudioStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -78,7 +80,7 @@ SuitePreDriver::SuitePreDriver()
     , iLastMsg(ENone)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1, 1);
     MsgAudioPcm* audio = CreateAudio();
     iAudioMsgSizeJiffies = audio->Jiffies();
     audio->RemoveRef();
@@ -100,7 +102,7 @@ void SuitePreDriver::Test()
         Send Audio; check it is passed on.
         Send Silence; check it is passed on.
         Send Quit; check it is passed on.
-        Send Track than MetaText; check neither are passed on.
+        Send Track, AudioStream, MetaText; check neither are passed on.
         Send Format with same sample rate + bit depth.  Check it isn't passed on (we move on to Silence instead).
         Send Halt; check it is passed on.
         Send Audio then Format with different sample rate.  Check Halt is delivered before Format.
@@ -132,8 +134,11 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgQuit);
 
-    // Send Track than MetaText; check neither are passed on.
+    // Send Track, AudioStream, MetaText; check neither are passed on.
     iNextGeneratedMsg = EMsgTrack;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgPlayable);
+    iNextGeneratedMsg = EMsgAudioStream;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
     iNextGeneratedMsg = EMsgMetaText;
@@ -194,6 +199,9 @@ Msg* SuitePreDriver::Pull()
         iNextGeneratedMsg = EMsgAudioPcm; // msg will be discarded by PreDriver which will immediately Pull again.
                                           // Ensure we have something different to deliver to avoid an infinite loop.
         return iMsgFactory->CreateMsgTrack();
+    case EMsgAudioStream:
+        iNextGeneratedMsg = EMsgAudioPcm;
+        return iMsgFactory->CreateMsgAudioStream(Brn("http://1.2.3.4:5"), Brn("metatext"));
     case EMsgMetaText:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
@@ -250,6 +258,12 @@ Msg* SuitePreDriver::ProcessMsg(MsgAudioFormat* aMsg)
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgAudioStream* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

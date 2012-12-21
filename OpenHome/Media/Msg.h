@@ -436,6 +436,26 @@ private:
     // track uri & meta data
 };
 
+class MsgAudioStream : public Msg
+{
+    friend class MsgFactory;
+public:
+    static const TUint kMaxUriBytes = 1024;
+    static const TUint kMaxMetaTextBytes = 1024;
+public:
+    MsgAudioStream(AllocatorBase& aAllocator);
+    const Brx& Uri() const;
+    const Brx& MetaText() const;
+private:
+    void Initialise(const Brx& aUri, const Brx& aMetaText);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    Bws<kMaxUriBytes> iUri;
+    Bws<kMaxMetaTextBytes> iMetaText;
+};
+
 class MsgMetaText : public Msg
 {
     friend class MsgFactory;
@@ -486,6 +506,7 @@ public:
     virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgAudioFormat* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgAudioStream* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgHalt* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgFlush* aMsg) = 0;
@@ -576,6 +597,7 @@ private:
     virtual void ProcessMsgIn(MsgSilence* aMsg);
     virtual void ProcessMsgIn(MsgAudioFormat* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
+    virtual void ProcessMsgIn(MsgAudioStream* aMsg);
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
     virtual void ProcessMsgIn(MsgHalt* aMsg);
     virtual void ProcessMsgIn(MsgFlush* aMsg);
@@ -585,6 +607,7 @@ private:
     virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioFormat* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
+    virtual Msg* ProcessMsgOut(MsgAudioStream* aMsg);
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
     virtual Msg* ProcessMsgOut(MsgHalt* aMsg);
     virtual Msg* ProcessMsgOut(MsgFlush* aMsg);
@@ -601,6 +624,7 @@ private:
         Msg* ProcessMsg(MsgPlayable* aMsg);
         Msg* ProcessMsg(MsgAudioFormat* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
+        Msg* ProcessMsg(MsgAudioStream* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
@@ -619,6 +643,7 @@ private:
         Msg* ProcessMsg(MsgPlayable* aMsg);
         Msg* ProcessMsg(MsgAudioFormat* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
+        Msg* ProcessMsg(MsgAudioStream* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
@@ -662,14 +687,15 @@ public:
                TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgAudioFormatCount,
-               TUint aMsgTrackCount, TUint aMsgMetaTextCount, TUint aMsgHaltCount,
-               TUint aMsgFlushCount, TUint aMsgQuitCount);
+               TUint aMsgTrackCount, TUint aMsgAudioStreamCount, TUint aMsgMetaTextCount,
+               TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgQuitCount);
     //
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgAudioFormat* CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
     MsgTrack* CreateMsgTrack();
+    MsgAudioStream* CreateMsgAudioStream(const Brx& aUri, const Brx& aMetaText);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt();
     MsgFlush* CreateMsgFlush();
@@ -687,6 +713,7 @@ private:
     Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
     Allocator<MsgAudioFormat> iAllocatorMsgAudioFormat;
     Allocator<MsgTrack> iAllocatorMsgTrack;
+    Allocator<MsgAudioStream> iAllocatorMsgAudioStream;
     Allocator<MsgMetaText> iAllocatorMsgMetaText;
     Allocator<MsgHalt> iAllocatorMsgHalt;
     Allocator<MsgFlush> iAllocatorMsgFlush;

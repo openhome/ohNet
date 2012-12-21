@@ -56,6 +56,12 @@ Msg* Splitter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Splitter::ProcessMsg(MsgAudioStream* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
 Msg* Splitter::ProcessMsg(MsgMetaText* aMsg)
 {
     aMsg->AddRef();

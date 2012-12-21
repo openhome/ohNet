@@ -59,6 +59,7 @@ class PipelineManager : private IStopperObserver, private IPipelinePropertyObser
     static const TUint kMsgCountPlayableSilence = 1024;
     static const TUint kMsgCountAudioFormat     = 20;
     static const TUint kMsgCountTrack           = 20;
+    static const TUint kMsgCountAudioStream     = 20;
     static const TUint kMsgCountMetaText        = 20;
     static const TUint kMsgCountHalt            = 20;
     static const TUint kMsgCountFlush           = 1;

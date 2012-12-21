@@ -8,10 +8,8 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
 
-namespace OpenHome
-{
-namespace Media
-{
+namespace OpenHome {
+namespace Media {
 
 class IProtocolManager
 {
@@ -70,9 +68,9 @@ protected:
 	IReader& Reader();
 	IWriter& Writer();
 protected: // from Protocol
-    virtual TBool DoStream(const Brx& aUri);
-    virtual TBool DoRestream(TUint64 aOffset);
-    virtual void DoInterrupt();
+    TBool DoStream(const Brx& aUri);
+    TBool DoRestream(TUint64 aOffset);
+    void DoInterrupt();
 private:
     void Open();
     void Close();

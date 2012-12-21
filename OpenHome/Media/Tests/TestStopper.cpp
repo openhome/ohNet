@@ -40,6 +40,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgAudioStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -53,6 +54,7 @@ private:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
+       ,EMsgAudioStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -102,7 +104,7 @@ SuiteStopper::SuiteStopper()
     , iFlushThreadExit("HACK", 0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iStopper = new Stopper(*iMsgFactory, *this, *this, kRampDuration);
 }
 
@@ -153,8 +155,8 @@ void SuiteStopper::Test()
     TEST(iLastMsg == EMsgAudioPcm);
     TEST(iStopper->iQueue.IsEmpty());
 
-    // Deliver Silence, Track, Metatext, Quit msgs.  Check they're passed through.
-    EMsgType expected[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgMetaText, EMsgQuit };
+    // Deliver Silence, Track, AudioStream, Metatext, Quit msgs.  Check they're passed through.
+    EMsgType expected[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgAudioStream, EMsgMetaText, EMsgQuit };
     for (TUint i=0; i<sizeof(expected)/sizeof(expected[0]); i++) {
         iNextGeneratedMsg = expected[i];
         msg = iStopper->Pull();
@@ -288,6 +290,8 @@ Msg* SuiteStopper::Pull()
         return iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
+    case EMsgAudioStream:
+        return iMsgFactory->CreateMsgAudioStream(Brn("http://1.2.3.4:5"), Brn("metatext"));
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgHalt:
@@ -383,6 +387,12 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioFormat* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuiteStopper::ProcessMsg(MsgAudioStream* aMsg)
+{
+    iLastMsg = EMsgAudioStream;
     return aMsg;
 }
 

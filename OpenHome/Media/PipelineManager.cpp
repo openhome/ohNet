@@ -42,8 +42,8 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
                                  kMsgCountEncodedAudio, kMsgCountAudioEncoded,
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountAudioFormat,
-                                 kMsgCountTrack, kMsgCountMetaText, kMsgCountHalt,
-                                 kMsgCountFlush, kMsgCountQuit);
+                                 kMsgCountTrack, kMsgCountAudioStream, kMsgCountMetaText,
+                                 kMsgCountHalt, kMsgCountFlush, kMsgCountQuit);
 
     iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");

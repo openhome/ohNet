@@ -93,6 +93,12 @@ Msg* Container::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Container::ProcessMsg(MsgAudioStream* aMsg)
+{
+    iCheckForContainer = true;
+    return aMsg;
+}
+
 Msg* Container::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS(); // only expect encoded audio at this stage of the pipeline

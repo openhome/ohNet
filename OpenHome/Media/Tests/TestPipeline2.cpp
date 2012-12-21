@@ -67,6 +67,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgAudioStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -296,6 +297,12 @@ Msg* DriverAudioCheck::ProcessMsg(MsgAudioFormat* aMsg)
 }
 
 Msg* DriverAudioCheck::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* DriverAudioCheck::ProcessMsg(MsgAudioStream* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

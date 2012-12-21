@@ -177,6 +177,12 @@ Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* DriverSongcastSender::ProcessMsg(MsgAudioStream* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* DriverSongcastSender::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();

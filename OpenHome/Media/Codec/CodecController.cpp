@@ -207,6 +207,12 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
     THROW(CodecStreamStart);
 }
 
+Msg* CodecController::ProcessMsg(MsgAudioStream* aMsg)
+{
+    Queue(aMsg);
+    THROW(CodecStreamStart);
+}
+
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
     if (!iQueueTrackData) {

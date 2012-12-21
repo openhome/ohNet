@@ -177,6 +177,11 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* VariableDelay::ProcessMsg(MsgAudioStream* aMsg)
+{
+    return aMsg;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgMetaText* aMsg)
 {
     return aMsg;

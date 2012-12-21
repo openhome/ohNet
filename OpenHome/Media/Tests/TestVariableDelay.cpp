@@ -40,6 +40,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgAudioStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -53,6 +54,7 @@ private:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
+       ,EMsgAudioStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -86,7 +88,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     , iAudioMsgSizeJiffies(0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kRampDuration);
 }
 
@@ -153,8 +155,8 @@ void SuiteVariableDelay::Test()
     TEST(iLastMsg == EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 
-    // Check that Silence, Track, MetaText, Halt, Flush & Quit msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgQuit };
+    // Check that Silence, Track, AudioStream, MetaText, Halt, Flush & Quit msgs are passed through.
+    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgAudioStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         iNextGeneratedMsg = types[i];
         msg = iVariableDelay->Pull();
@@ -214,6 +216,8 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
+    case EMsgAudioStream:
+        return iMsgFactory->CreateMsgAudioStream(Brn("http://1.2.3.4:5"), Brn("metatext"));
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgHalt:
@@ -303,6 +307,12 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgAudioFormat* aMsg)
 Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgAudioStream* aMsg)
+{
+    iLastMsg = EMsgAudioStream;
     return aMsg;
 }
 

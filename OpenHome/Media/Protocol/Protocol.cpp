@@ -3,7 +3,7 @@
 #include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Media; // FIXME - needed?
+using namespace OpenHome::Media;
 
 EXCEPTION(ProtocolRedirect); // FIXME - unusual to have an exception declared in a .cpp.  Is this deliberate here?
 
