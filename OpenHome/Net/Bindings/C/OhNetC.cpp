@@ -426,6 +426,31 @@ void STDCALL OhNetSubnetListDestroy(OhNetHandleNetworkAdapterList aList)
     UpnpLibrary::DestroySubnetList(list);
 }
 
+OhNetHandleNetworkAdapterList STDCALL OhNetNetworkAdapterListCreate()
+{
+    return (OhNetHandleNetworkAdapterList)UpnpLibrary::CreateNetworkAdapterList();
+}
+
+uint32_t STDCALL OhNetNetworkAdapterListSize(OhNetHandleNetworkAdapterList aList)
+{
+    std::vector<NetworkAdapter*>* list = reinterpret_cast<std::vector<NetworkAdapter*>*>(aList);
+    ASSERT(list != NULL);
+    return (TUint)list->size();
+}
+
+OhNetHandleNetworkAdapter STDCALL OhNetNetworkAdapterAt(OhNetHandleNetworkAdapterList aList, uint32_t aIndex)
+{
+    std::vector<NetworkAdapter*>* list = reinterpret_cast<std::vector<NetworkAdapter*>*>(aList);
+    ASSERT(list != NULL);
+    return (OhNetHandleNetworkAdapter)(*list)[aIndex];
+}
+
+void STDCALL OhNetNetworkAdapterListDestroy(OhNetHandleNetworkAdapterList aList)
+{
+    std::vector<NetworkAdapter*>* list = reinterpret_cast<std::vector<NetworkAdapter*>*>(aList);
+    UpnpLibrary::DestroyNetworkAdapterList(list);
+}
+
 void STDCALL OhNetSetCurrentSubnet(uint32_t aSubnet)
 {
     UpnpLibrary::SetCurrentSubnet(aSubnet);

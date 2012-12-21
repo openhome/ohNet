@@ -70,6 +70,26 @@ void NetworkAdapterList::DestroySubnetList(std::vector<NetworkAdapter*>* aList)
     }
 }
 
+std::vector<NetworkAdapter*>* NetworkAdapterList::CreateNetworkAdapterList() const
+{
+    iListLock.Wait();
+
+    std::vector<NetworkAdapter*>* list = new std::vector<NetworkAdapter*>;
+    for (TUint i=0; i<iNetworkAdapters->size(); i++) {
+        NetworkAdapter* nif = (*iNetworkAdapters)[i];
+        nif->AddRef("NetworkAdapterList");
+        list->push_back(nif);
+    }
+
+    iListLock.Signal();
+    return list;
+}
+
+void NetworkAdapterList::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aList)
+{
+    DestroySubnetList(aList);
+}
+
 void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
 {
     iListLock.Wait();

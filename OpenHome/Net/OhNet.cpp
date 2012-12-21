@@ -580,6 +580,16 @@ void UpnpLibrary::DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList)
     NetworkAdapterList::DestroySubnetList(aSubnetList);
 }
 
+std::vector<NetworkAdapter*>* UpnpLibrary::CreateNetworkAdapterList()
+{
+    return Stack::NetworkAdapterList().CreateNetworkAdapterList();
+}
+
+void UpnpLibrary::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetworkAdapterList)
+{
+    NetworkAdapterList::DestroyNetworkAdapterList(aNetworkAdapterList);
+}
+
 void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
 {
     Stack::NetworkAdapterList().SetCurrentSubnet(aSubnet);
