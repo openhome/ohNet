@@ -113,7 +113,7 @@ ifeq ($(platform),iOS)
 	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -I$(sdkroot)/usr/include/c++/4.2.1/armv7-apple-darwin10/ 
 	# TODO: Support i386 (x86) for simulator and armv6 for old devices
 	osbuilddir = iOs-armv7
-	objdir = Build/Obj/Mac/arm/$(build_dir)/
+	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv7  -L$(sdkroot)/usr/lib/system
 	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv7 -isysroot $(sdkroot) -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
