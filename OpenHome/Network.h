@@ -76,7 +76,7 @@ protected:
     void Bind(const Endpoint& aEndpoint);
     void GetPort(TUint& aPort);
     void Listen(TUint aSlots);
-    THandle Accept();
+    THandle Accept(Endpoint& aClientEndpoint);
 private:
     void Log(const char* aPrefix, const Brx& aBuffer);
 protected:
@@ -158,6 +158,7 @@ protected:
     SocketTcpSession();
     virtual void Run() = 0;
     virtual ~SocketTcpSession();
+    Endpoint ClientEndpoint() const;
 private:
     void Add(SocketTcpServer& aServer, const TChar* aName, TUint aPriority, TUint aStackBytes);
     void Start();
@@ -168,6 +169,7 @@ private:
     TBool iOpen;
     SocketTcpServer* iServer;
     ThreadFunctor* iThread;
+    Endpoint iClientEndpoint;
 };
 
 // Tcp Server
@@ -185,7 +187,7 @@ public:
     ~SocketTcpServer(); // Closes the server
 private:
     TBool Terminating();            // indicates server is in process of being destroyed
-    THandle Accept();               // accept a connection and return the session handle
+    THandle Accept(Endpoint& aClientEndpoint); // accept a connection and return the session handle
 private:
     Mutex iMutex;                   // allows one thread to accept at a time
     TUint iSessionPriority;         // priority given to all session threads

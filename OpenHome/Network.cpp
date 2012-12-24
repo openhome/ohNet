@@ -338,10 +338,10 @@ void Socket::Listen(TUint aSlots)
     }
 }
 
-THandle Socket::Accept()
+THandle Socket::Accept(Endpoint& aClientEndpoint)
 {
     LOGF(kNetwork, "Socket::Accept H = %d\n", iHandle);
-    THandle handle = OpenHome::Os::NetworkAccept(iHandle);
+    THandle handle = OpenHome::Os::NetworkAccept(iHandle, aClientEndpoint);
     LOGF(kNetwork,"Socket::Accept Accepted Handle = %d\n", handle);
     if(handle == kHandleNull) {
         LOG2F(kNetwork, kError, "Socket::Accept H = %d\n", handle);
@@ -537,7 +537,7 @@ void SocketTcpServer::Add(const TChar* aName, SocketTcpSession* aSession, TInt a
     }
 }
 
-THandle SocketTcpServer::Accept()
+THandle SocketTcpServer::Accept(Endpoint& aClientEndpoint)
 {
     LOGF(kNetwork, "SocketTcpServer::Accept\n");
     iMutex.Wait();                                    // wait to become the single accepting thread
@@ -548,7 +548,7 @@ THandle SocketTcpServer::Accept()
 
     THandle handle;
     try {
-        handle = Socket::Accept();    // accept the connection
+        handle = Socket::Accept(aClientEndpoint);    // accept the connection
         iMutex.Signal();
         return (handle);
     }
@@ -602,7 +602,7 @@ void SocketTcpSession::Start()
     LOGF(kNetwork, ">SocketTcpSession::Start()\n");
     for (;;) {
         try {
-            Open(iServer->Accept());            // accept a connection for this session
+            Open(iServer->Accept(iClientEndpoint));            // accept a connection for this session
         } catch (NetworkError&) {                // server is being destroyed
             LOG2F(kNetwork, kError, "-SocketTcpSession::Start() Network Accept Exception\n");
             break;
@@ -637,6 +637,11 @@ void SocketTcpSession::Open(THandle aHandle)
         THROW(NetworkError);
     }
     iMutex.Signal();
+}
+
+Endpoint SocketTcpSession::ClientEndpoint() const
+{
+    return iClientEndpoint;
 }
 
 void SocketTcpSession::Close()

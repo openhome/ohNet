@@ -1,6 +1,7 @@
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
 #include <OpenHome/Net/Private/DviService.h>
+#include <OpenHome/Private/Network.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -23,4 +24,11 @@ TIpAddress DvInvocationStd::Adapter() const
 const char* DvInvocationStd::ResourceUriPrefix() const
 {
     return iInvocation.ResourceUriPrefix();
+}
+
+void DvInvocationStd::GetClientEndpoint(TIpAddress& aClientAddress, uint32_t& aClientPort) const
+{
+    Endpoint ep = iInvocation.ClientEndpoint();
+    aClientAddress = ep.Address();
+    aClientPort = ep.Port();
 }

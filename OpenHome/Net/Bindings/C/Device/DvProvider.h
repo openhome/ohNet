@@ -225,6 +225,15 @@ DllExport void STDCALL DvInvocationGetAdapter(DvInvocationC aInvocation, TIpAddr
 DllExport void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const char** aPrefix, uint32_t* aLen);
 
 /**
+ * Get client socket's address.
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation.
+ * @param[out] aAddress     IPv4 address in network byte order.
+ * @param[out] aLen         Port [1..65535].
+ */
+DllExport void STDCALL DvInvocationGetClientEndpoint(DvInvocationC aInvocation, TIpAddress* aAddress, uint32_t* aPort);
+
+/**
  * Begin reading (input arguments for) an invocation
  *
  * Must be called before the values of any input arguments are read.

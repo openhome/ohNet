@@ -59,6 +59,16 @@ TInt Os::NetworkPort(THandle aHandle, TUint& aPort)
     return ret;
 }
 
+THandle Os::NetworkAccept(THandle aHandle, Endpoint& aClient)
+{
+    TIpAddress clientAddress;
+    TUint32 clientPort;
+    THandle handle = OsNetworkAccept(aHandle, &clientAddress, &clientPort);
+    aClient.SetAddress(clientAddress);
+    aClient.SetPort(clientPort);
+    return handle;
+}
+
 TUint32 OpenHome::Os::NetworkGetHostByName(const Brx& aAddress)
 {
     TUint32 addr;

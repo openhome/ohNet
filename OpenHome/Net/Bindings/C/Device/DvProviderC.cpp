@@ -183,6 +183,14 @@ void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const c
     }
 }
 
+void STDCALL DvInvocationGetClientEndpoint(DvInvocationC aInvocation, TIpAddress* aAddress, uint32_t* aPort)
+{
+    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+    Endpoint ep = invocation->ClientEndpoint();
+    *aAddress = ep.Address();
+    *aPort = ep.Port();
+}
+
 int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);

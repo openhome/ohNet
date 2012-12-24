@@ -299,6 +299,12 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <returns>The prefix to resource uris.</returns>
         string ResourceUriPrefix();
+        /// <summary>
+        /// Get the endpoint of the client.
+        /// </summary>
+        /// <param name="aAddress">IPv4 address in network byte order</param>
+        /// <param name="aPort">Client's port [1..65535]</param>
+        void GetClientEndpoint(out uint aAddress, out uint aPort);
     }
 
     /// <summary>
@@ -325,6 +331,12 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
 #endif
         static extern unsafe void DvInvocationGetResourceUriPrefix(IntPtr aInvocation, IntPtr* aPrefix, uint* aLen);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
+        static extern unsafe void DvInvocationGetClientEndpoint(IntPtr aInvocation, uint* aAddress, uint* aPort);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -487,6 +499,18 @@ namespace OpenHome.Net.Device
             DvInvocationGetResourceUriPrefix(iHandle, &cPrefix, &len);
             String prefix = InteropUtils.PtrToStringUtf8(cPrefix, len);
             return prefix;
+        }
+        /// <summary>
+        /// Get the endpoint of the client.
+        /// </summary>
+        /// <param name="aAddress">IPv4 address in network byte order</param>
+        /// <param name="aPort">Client's port [1..65535]</param>
+        public unsafe void GetClientEndpoint(out uint aAddress, out uint aPort)
+        {
+            uint address, port;
+            DvInvocationGetClientEndpoint(iHandle, &address, &port);
+            aAddress = address;
+            aPort = port;
         }
         /// <summary>
         /// Begin reading (input arguments for) an invocation

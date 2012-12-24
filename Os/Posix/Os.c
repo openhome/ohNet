@@ -841,9 +841,11 @@ int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots)
     return err;
 }
 
-THandle OsNetworkAccept(THandle aHandle)
+THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* aClientPort)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    *aClientAddress = 0;
+    *aClientPort = 0;
     if (SocketInterrupted(handle)) {
         return kHandleNull;
     }
@@ -879,6 +881,8 @@ THandle OsNetworkAccept(THandle aHandle)
         return kHandleNull;
     }
 
+    *aClientAddress = addr.sin_addr.s_addr;
+    *aClientPort = SwapEndian16(addr.sin_port);
     return (THandle)newHandle;
 }
 

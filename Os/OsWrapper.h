@@ -56,7 +56,7 @@ public:
     inline static TInt NetworkInterrupt(THandle aHandle, TBool aInterrupt);
     inline static TInt NetworkClose(THandle aHandle);
     inline static TInt NetworkListen(THandle aHandle, TUint aSlots);
-    inline static THandle NetworkAccept(THandle aHandle);
+    static THandle NetworkAccept(THandle aHandle, Endpoint& aClient);
     static TIpAddress NetworkGetHostByName(const Brx& aAddress);
     static void NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes);
     static void NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aBytes);

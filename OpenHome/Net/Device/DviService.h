@@ -28,6 +28,7 @@ public:
     virtual TUint Version() const = 0;
     virtual TIpAddress Adapter() const = 0;
     virtual const char* ResourceUriPrefix() const = 0;
+    virtual Endpoint ClientEndpoint() const = 0;
 
     virtual void InvocationReadStart() = 0;
     virtual TBool InvocationReadBool(const TChar* aName) = 0;
@@ -120,6 +121,7 @@ public:
     virtual void EndResponse();
     virtual TIpAddress Adapter() const;
     virtual const char* ResourceUriPrefix() const;
+    virtual Endpoint ClientEndpoint() const;
 private:
     IDviInvocation& iInvocation;
 };

@@ -939,6 +939,12 @@ const char* DviSessionUpnp::ResourceUriPrefix() const
     return (const char*)iResourceUriPrefix.Ptr();
 }
 
+Endpoint DviSessionUpnp::ClientEndpoint() const
+{
+    Endpoint ep(SocketTcpSession::ClientEndpoint());
+    return ep;
+}
+
 void DviSessionUpnp::InvocationReadStart()
 {
     try {
