@@ -55,8 +55,8 @@ static const Brn kUserAgentString("Linn DS"); // FIXME
 
 ProtocolHttp::ProtocolHttp(ProtocolManager& aManager)
     : ProtocolNetwork(aManager)
-    , iWriterRequest(Writer())
-    , iReaderResponse(Reader())
+    , iWriterRequest(iWriterBuf)
+    , iReaderResponse(iReaderBuf)
     , iTotalBytes(0)
     , iSeekable(false)
     , iSnaffling(false)
@@ -128,7 +128,7 @@ void ProtocolHttp::Stream()
     iTotalBytes = iHeaderContentLength.ContentLength();
     // Check for success seekable
     if (code == HttpStatus::kPartialContent.Code()) {
-        if(iTotalBytes > 0) {
+        if (iTotalBytes > 0) {
             iSeekable = true;
         }
         LOG(kMedia, "ProtocolHttp::Connect 'Partial Content' seekable=%d (%lld bytes)\n", iSeekable, iTotalBytes);
@@ -202,10 +202,10 @@ void ProtocolHttp::ProcessContentType()
     try {
         ReaderBuffer preview;
         TUint peekBytes = 1024;
-        if(iTotalBytes > 0 && (iTotalBytes < peekBytes)) {
+        if (iTotalBytes > 0 && (iTotalBytes < peekBytes)) {
             peekBytes = (TUint)iTotalBytes;
         }
-        preview.Set(Reader().Peek(peekBytes, 0, true));  // examine start of file only
+        preview.Set(iReaderBuf.Peek(peekBytes)); // examine start of file only
 
         if (iHeaderContentType.Received()) {
             LOG(kMedia, "ProtocolHttp::ProcessContentType ");
@@ -213,7 +213,7 @@ void ProtocolHttp::ProcessContentType()
             LOG(kMedia, "\n");
 
             const Brx& contentType = iHeaderContentType.Type();
-            if(Ascii::CaseInsensitiveEquals(contentType, Brn("audio/x-scpls"))) {
+            if (Ascii::CaseInsensitiveEquals(contentType, Brn("audio/x-scpls"))) {
                 ProcessPls(preview);
                 return;
             }
@@ -283,12 +283,12 @@ void ProtocolHttp::ProcessContentType()
 void ProtocolHttp::ExtractMetadata()
 {
 #if 0 // FIXME - need to bring across DidlLite class
-    Brn metadata = Reader().Read(1);
+    Brn metadata = iReaderBuf.Read(1);
     TUint metadataBytes = metadata[0] * 16;
     Bws<kIcyMetadataBytes> newMetadata;
     DidlLite didl;
     if (metadataBytes != 0) {
-        Parser data(Reader().Read(metadataBytes));
+        Parser data(iReaderBuf.Read(metadataBytes));
         while(!data.Finished()) {
             Brn name = data.Next('=');
             if (name == Brn("StreamTitle")) {
@@ -296,7 +296,7 @@ void ProtocolHttp::ExtractMetadata()
                 // may contain single quote characters so seek to the semicolon and discard the trailing single quote
                 data.Next('\'');
                 Brn title = data.Next(';');
-                if(title.Bytes() > 1) {
+                if (title.Bytes() > 1) {
                     didl.SetTitle(Brn(title.Ptr(), title.Bytes()-1));
                 }
                 didl.SetClass(DidlLite::eObjectItem);
@@ -305,7 +305,7 @@ void ProtocolHttp::ExtractMetadata()
         }
         didl.Create(newMetadata);
         // if the message has changed put it into the pipeline
-        if(newMetadata != iIcyMetadata) {
+        if (newMetadata != iIcyMetadata) {
             iIcyMetadata.Replace(newMetadata);
             OutputMetadata(iIcyMetadata);
         }
@@ -329,11 +329,11 @@ void ProtocolHttp::ProcessAudio()
         }
         try {
             TUint required;
-            if(iHeaderIcyMetadata.Received()) {
-                if(dataBytes == 0) {
+            if (iHeaderIcyMetadata.Received()) {
+                if (dataBytes == 0) {
                     dataBytes = iHeaderIcyMetadata.Bytes();
                 }
-                if(dataBytes > kAudioBytes) {
+                if (dataBytes > kAudioBytes) {
                     required = kAudioBytes;
                 }
                 else {
@@ -357,7 +357,7 @@ void ProtocolHttp::ProcessAudio()
                 bytes -= required;
             }
             
-            OutputData(Reader().Read(required));
+            OutputData(iReaderBuf.Read(required));
 
             if (iHeaderIcyMetadata.Received() && dataBytes == 0) { // at start of metadata
                 ExtractMetadata();
@@ -578,7 +578,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
                         Brn value = parser.NextToEnd();
                         if (value.Bytes()) {
                             // When the payload format is [Reference] translate http uri to mms
-                            if(iAsxUri.Scheme() == Brn("http")) {
+                            if (iAsxUri.Scheme() == Brn("http")) {
                                 LOG(kMedia, " replace http scheme with mms\n");
                                 iMmsUri.Replace(Brn("mms"));
                                 iMmsUri.Append(iAsxUri.AbsoluteUri().Split(4));
@@ -617,11 +617,11 @@ void ProtocolHttp::ProcessXml(ReaderBuffer& aHeader)
                 for (;;) {
                     Parser parser(EntityReadTag(aHeader));
                     Brn name = parser.Next();
-                    if(!Ascii::CaseInsensitiveEquals(name, Brn("outline"))) {
+                    if (!Ascii::CaseInsensitiveEquals(name, Brn("outline"))) {
                         continue;
                     }
                     Brn att = parser.Next('=');            
-                    if(!Ascii::CaseInsensitiveEquals(att, Brn("type"))) {
+                    if (!Ascii::CaseInsensitiveEquals(att, Brn("type"))) {
                         continue;
                     }
                     parser.Next('"');

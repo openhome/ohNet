@@ -65,8 +65,6 @@ protected:
 protected:
 	ProtocolNetwork(IProtocolManager& aManager);
     TBool Connect(TUint aDefaultPort);
-	IReader& Reader();
-	IWriter& Writer();
 protected: // from Protocol
     TBool DoStream(const Brx& aUri);
     TBool DoRestream(TUint64 aOffset);
@@ -74,11 +72,12 @@ protected: // from Protocol
 private:
     void Open();
     void Close();
+protected:
+    Srs<kReadBufferBytes> iReaderBuf;
+    Sws<kWriteBufferBytes> iWriterBuf;
 private:
     SocketTcpClient iTcpClient;
     SocketTcp iTcpSocketStream;
-    Srs<kReadBufferBytes> iReaderBuf;
-    Sws<kWriteBufferBytes> iWriterBuf;
     TBool iSocketIsOpen;
 };
 

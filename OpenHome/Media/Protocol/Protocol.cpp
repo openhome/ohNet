@@ -165,16 +165,6 @@ TBool ProtocolNetwork::Connect(TUint aDefaultPort)
     return true;
 }
 
-IReader& ProtocolNetwork::Reader()
-{
-    return iReaderBuf;
-}
-
-IWriter& ProtocolNetwork::Writer()
-{
-    return iWriterBuf;
-}
-
 // Returns true if protocol enabled
 TBool ProtocolNetwork::DoStream(const Brx& aUri)
 {
