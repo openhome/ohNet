@@ -111,6 +111,17 @@ void Srx::ReadInterrupt()
     iSource.ReadInterrupt();
 }
 
+Brn Srx::Peek(TUint aBytes)
+{
+    TUint offset= iOffset;
+    Brn buf = Read(aBytes);
+    if (offset < iOffset)
+        iOffset = offset;
+    else
+        iOffset = 0;
+    return buf;
+}
+
 Brn Srx::Snaffle()
 {
     Brn rem(Ptr() + iOffset, iBytes - iOffset);

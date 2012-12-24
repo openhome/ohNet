@@ -58,6 +58,7 @@ public:
     virtual Brn ReadUntil(TByte aSeparator);
     virtual void ReadFlush();
     virtual void ReadInterrupt();
+    Brn Peek(TUint aBytes);
     Brn Snaffle();
 protected:
     Srx(TUint aMaxBytes, IReaderSource& aSource);
