@@ -12,6 +12,7 @@ public:
     virtual uint32_t Version() const = 0;
     virtual TIpAddress Adapter() const = 0;
     virtual const char* ResourceUriPrefix() const = 0;
+    virtual void GetClientEndpoint(TIpAddress& aClientAddress, uint32_t& aClientPort) const = 0;
     virtual ~IDvInvocationStd() {}
 };
 
@@ -24,6 +25,7 @@ private:
     uint32_t Version() const;
     TIpAddress Adapter() const;
     const char* ResourceUriPrefix() const;
+    void GetClientEndpoint(TIpAddress& aClientAddress, uint32_t& aClientPort) const;
 private:
     DvInvocationStd(const DvInvocationStd &);
     void operator=(const DvInvocationStd &);

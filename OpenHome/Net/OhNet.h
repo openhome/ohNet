@@ -450,6 +450,23 @@ public:
     static void DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList);
 
     /**
+     * Create a vector of the available network adapters.
+     *
+     * The returned vector and all its pointers are allocated.  Use DestroyNetworkAdapterList
+     * to later free this memory.
+     *
+     * @return  A newly allocated vector containing the list of available network adapters.
+     */
+    static std::vector<NetworkAdapter*>* CreateNetworkAdapterList();
+
+    /**
+     * Destroy a network adapter list created using CreateNetworkAdapterList().
+     *
+     * @param aNetworkAdapterList  Returned by CreateNetworkAdapterList().
+     */
+    static void DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetworkAdapterList);
+
+    /**
      * Set which subnet the library should use.
      * Device lists and subscriptions will be automatically updated.
      * No other subnet will be selected if aSubnet is not available

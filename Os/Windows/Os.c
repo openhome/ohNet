@@ -689,7 +689,7 @@ int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots)
     return err;
 }
 
-THandle OsNetworkAccept(THandle aHandle)
+THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* aClientPort)
 {
     SOCKET h;
     OsNetworkHandle* newHandle;
@@ -697,10 +697,15 @@ THandle OsNetworkAccept(THandle aHandle)
     WSAEVENT event;
     HANDLE handles[2];
     DWORD ret;
+    struct sockaddr_in addr;
+    socklen_t len = sizeof(addr);
 
+    *aClientAddress = 0;
+    *aClientPort = 0;
     if (SocketInterrupted(handle)) {
         return kHandleNull;
     }
+    sockaddrFromEndpoint(&addr, 0, 0);
     event = WSACreateEvent();
     if (NULL == event) {
         return kHandleNull;
@@ -710,13 +715,13 @@ THandle OsNetworkAccept(THandle aHandle)
         return kHandleNull;
     }
 
-    h = accept(handle->iSocket, NULL, NULL);
+    h = accept(handle->iSocket, (struct sockaddr*)&addr, &len);
     if (INVALID_SOCKET==h && WSAEWOULDBLOCK==WSAGetLastError()) {
         handles[0] = event;
         handles[1] = handle->iEvent;
         ret = WSAWaitForMultipleEvents(2, &handles[0], FALSE, INFINITE, FALSE);
         if (WAIT_OBJECT_0 == ret) {
-            h = accept(handle->iSocket, NULL, NULL);
+            h = accept(handle->iSocket, (struct sockaddr*)&addr, &len);
         }
     }
     SetSocketBlocking(handle->iSocket);
@@ -730,6 +735,8 @@ THandle OsNetworkAccept(THandle aHandle)
         return kHandleNull;
     }
 
+    *aClientAddress = addr.sin_addr.s_addr;
+    *aClientPort = SwapEndian16(addr.sin_port);
     return (THandle)newHandle;
 }
 

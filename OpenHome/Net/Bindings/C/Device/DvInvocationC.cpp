@@ -39,3 +39,10 @@ const char* DvInvocationCPrivate::ResourceUriPrefix(void* aPtr)
 {
     return DvInvocationCPrivate::Invocation(aPtr).ResourceUriPrefix();
 }
+
+void DvInvocationCPrivate::ClientEndpoint(void* aPtr, TIpAddress* aClientAddress, uint32_t* aClientPort)
+{
+    Endpoint ep = DvInvocationCPrivate::Invocation(aPtr).ClientEndpoint();
+    *aClientAddress = ep.Address();
+    *aClientPort = ep.Port();
+}

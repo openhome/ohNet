@@ -297,6 +297,11 @@ const char* DviInvocation::ResourceUriPrefix() const
     return iInvocation.ResourceUriPrefix();
 }
 
+Endpoint DviInvocation::ClientEndpoint() const
+{
+    return iInvocation.ClientEndpoint();
+}
+
 
 // DviInvocationResponseBool
 

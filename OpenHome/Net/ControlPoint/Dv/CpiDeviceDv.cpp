@@ -185,6 +185,11 @@ const char* InvocationDv::ResourceUriPrefix() const
     return NULL;
 }
 
+Endpoint InvocationDv::ClientEndpoint() const
+{
+    return Endpoint(0, 0);
+}
+
 void InvocationDv::InvocationReadStart()
 {
     iReadIndex = 0;

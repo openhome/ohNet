@@ -80,8 +80,6 @@ inline TInt Os::NetworkClose(THandle aHandle)
 { return OsNetworkClose(aHandle); }
 inline TInt Os::NetworkListen(THandle aHandle, TUint aSlots)
 { return OsNetworkListen(aHandle, aSlots); }
-inline THandle Os::NetworkAccept(THandle aHandle)
-{ return OsNetworkAccept(aHandle); }
 void Os::NetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)
 { OsNetworkSetInterfaceChangedObserver(aCallback, aArg); }
 

@@ -37,6 +37,8 @@ public:
     const std::vector<NetworkAdapter*>& List() const;
     std::vector<NetworkAdapter*>* CreateSubnetList() const;
     static void DestroySubnetList(std::vector<NetworkAdapter*>* aList);
+    std::vector<NetworkAdapter*>* CreateNetworkAdapterList() const;
+    static void DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aList);
     void SetCurrentSubnet(TIpAddress aSubnet);
     TUint AddCurrentChangeListener(Functor aFunctor);
     void RemoveCurrentChangeListener(TUint aId);

@@ -59,6 +59,7 @@ private: // IDviInvocation
     TUint Version() const;
     TIpAddress Adapter() const;
     const char* ResourceUriPrefix() const;
+    Endpoint ClientEndpoint() const;
 
     void InvocationReadStart();
     TBool InvocationReadBool(const TChar* aName);

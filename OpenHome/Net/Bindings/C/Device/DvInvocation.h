@@ -36,6 +36,17 @@ typedef TIpAddress (STDCALL *DvInvocationAdapter)(void* aPtr);
 typedef const char* (STDCALL *DvInvocationResourceUriPrefix)(void* aPtr);
 
 /**
+ * Read the address of the client socket which has invoked this action.
+ *
+ * @param[in]  aPtr  aInvocationPtr passed to the action
+ * @param[out] aClientAddress  IPv4 address of client; 0 if this cannot be determined.
+ * @param[out] aClientPort     Port [1..65535] of client; 0 if this cannot be determined.
+ *
+ * @return  The prefix to resource uris.
+ */
+typedef void (STDCALL *DvInvocationClientEndpoint)(void* aPtr, TIpAddress* aClientAddress, uint32_t* aClientPort);
+
+/**
  * Table of function pointers passed to invoked actions.
  */
 typedef struct IDvInvocationC
@@ -43,6 +54,7 @@ typedef struct IDvInvocationC
     DvInvocationVersion iVersion;
     DvInvocationAdapter iAdapter;
     DvInvocationResourceUriPrefix iResourceUriPrefix;
+    DvInvocationClientEndpoint iClientEndpoint;
 }
 IDvInvocationC;
 
