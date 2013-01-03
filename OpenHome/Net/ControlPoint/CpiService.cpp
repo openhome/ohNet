@@ -18,7 +18,7 @@ using namespace OpenHome::Net;
 // CpiService
 
 CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice)
-    : Service(aDomain, aName, aVersion)
+    : Service(aDevice.CpStack().Stack(), aDomain, aName, aVersion)
     , iDevice(aDevice)
     , iLock("SRVM")
     , iPendingInvocations(0)
@@ -27,14 +27,15 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
     , iSubscription(NULL)
 {
     iDevice.AddRef();
-    Stack::AddObject(this);
+    iDevice.CpStack().Stack().AddObject(this);
 }
 
 CpiService::~CpiService()
 {
     iInterrupt = true;
     try {
-        InvocationManager::Interrupt(*this);
+        InvocationManager& invocationMgr = iDevice.CpStack().InvocationManager();
+        invocationMgr.Interrupt(*this);
     }
     catch (NetworkError&) {}
     Unsubscribe();
@@ -46,8 +47,9 @@ CpiService::~CpiService()
     if (wait) {
         iShutdownSignal.Wait();
     }
+    Stack& stack = iDevice.CpStack().Stack();
     iDevice.RemoveRef();
-    Stack::RemoveObject(this);
+    stack.RemoveObject(this);
 }
 
 Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor)
@@ -55,7 +57,8 @@ Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor
     iLock.Wait();
     iPendingInvocations++;
     iLock.Signal();
-    OpenHome::Net::Invocation* invocation = InvocationManager::Invocation();
+    InvocationManager& invocationMgr = iDevice.CpStack().InvocationManager();
+    OpenHome::Net::Invocation* invocation = invocationMgr.Invocation();
     invocation->Set(*this, aAction, iDevice, aFunctor);
     return invocation;
 }
@@ -66,7 +69,7 @@ TBool CpiService::Subscribe(IEventProcessor& aEventProcessor)
     if (iDevice.IsRemoved()) {
         return false;
     }
-    iSubscription = CpiSubscriptionManager::NewSubscription(iDevice, aEventProcessor, iServiceType);
+    iSubscription = iDevice.CpStack().SubscriptionManager().NewSubscription(iDevice, aEventProcessor, iServiceType);
     return true;
 }
 
@@ -362,7 +365,7 @@ void OpenHome::Net::Invocation::SignalCompleted()
     iCompleted = !Error();
     // log completion before running the client callback as that may transfer the content of ArgumentStrings
     if (iCompleted) {
-        FunctorAsync& asyncEndHandler = Stack::InitParams().AsyncEndHandler();
+        FunctorAsync& asyncEndHandler = iCpStack.Stack().InitParams().AsyncEndHandler();
         if (asyncEndHandler) {
             asyncEndHandler(*this);
         }
@@ -373,7 +376,7 @@ void OpenHome::Net::Invocation::SignalCompleted()
         }
         catch(ProxyError&)
         {
-            FunctorAsync& asyncErrorHandler = Stack::InitParams().AsyncErrorHandler();
+            FunctorAsync& asyncErrorHandler = iCpStack.Stack().InitParams().AsyncErrorHandler();
             if (asyncErrorHandler) {
                 asyncErrorHandler(*this);
             }
@@ -411,7 +414,7 @@ void OpenHome::Net::Invocation::Set(CpiService& aService, const OpenHome::Net::A
     iAction = &aAction;
     iDevice = &aDevice;
     iFunctor = aFunctor;
-    iSequenceNumber = Stack::SequenceNumber();
+    iSequenceNumber = iCpStack.Stack().SequenceNumber();
 }
 
 void OpenHome::Net::Invocation::AddInput(Argument* aArgument)
@@ -471,7 +474,7 @@ CpiDevice& OpenHome::Net::Invocation::Device()
 void OpenHome::Net::Invocation::Output(IAsyncOutput& aConsole)
 {
     AutoMutex a(iLock); /* using iLock doesn't prevent logging for multiple invocations overlapping
-                           Using Stack::Mutex() causes problems though as the call to
+                           Using iCpStack.Stack().Mutex() causes problems though as the call to
                            ServiceType().FullName() below also uses the Stack's mutex and we can't
                            easily use a different mutex there.
                            If we later want to prevent overlapped output, it'd be best to add a
@@ -570,8 +573,9 @@ TUint OpenHome::Net::Invocation::Type() const
     return eInvocation;
 }
 
-OpenHome::Net::Invocation::Invocation(Fifo<OpenHome::Net::Invocation*>& aFree)
-    : iLock("MINV")
+OpenHome::Net::Invocation::Invocation(CpStack& aCpStack, Fifo<OpenHome::Net::Invocation*>& aFree)
+    : iCpStack(aCpStack)
+    , iLock("MINV")
     , iFree(aFree)
     , iService(NULL)
     , iAction(NULL)
@@ -698,25 +702,26 @@ void Invoker::Run()
 
 // InvocationManager
 
-InvocationManager::InvocationManager()
+InvocationManager::InvocationManager(CpStack& aCpStack)
     : Thread("INVM")
+    , iCpStack(aCpStack)
     , iLock("INVM")
-    , iFreeInvocations(Stack::InitParams().NumInvocations())
-    , iWaitingInvocations(Stack::InitParams().NumInvocations())
-    , iFreeInvokers(Stack::InitParams().NumActionInvokerThreads())
+    , iFreeInvocations(aCpStack.Stack().InitParams().NumInvocations())
+    , iWaitingInvocations(aCpStack.Stack().InitParams().NumInvocations())
+    , iFreeInvokers(aCpStack.Stack().InitParams().NumActionInvokerThreads())
 {
     TUint i;
     TChar thName[5] = "IN  ";
-    iInvokers = (Invoker**)malloc(sizeof(*iInvokers) * Stack::InitParams().NumActionInvokerThreads());
-    for (i=0; i<Stack::InitParams().NumActionInvokerThreads(); i++) {
+    iInvokers = (Invoker**)malloc(sizeof(*iInvokers) * iCpStack.Stack().InitParams().NumActionInvokerThreads());
+    for (i=0; i<iCpStack.Stack().InitParams().NumActionInvokerThreads(); i++) {
         thName[3] = (TChar)('0'+i);
         iInvokers[i] = new Invoker(&thName[0], iFreeInvokers);
         iFreeInvokers.Write(iInvokers[i]);
         iInvokers[i]->Start();
     }
 
-    for (i=0; i<Stack::InitParams().NumInvocations(); i++) {
-        iFreeInvocations.Write(new OpenHome::Net::Invocation(iFreeInvocations));
+    for (i=0; i<iCpStack.Stack().InitParams().NumInvocations(); i++) {
+        iFreeInvocations.Write(new OpenHome::Net::Invocation(iCpStack, iFreeInvocations));
     }
     iActive = true;
     Start();
@@ -733,12 +738,12 @@ InvocationManager::~InvocationManager()
     Join();
 
     TUint i;
-    for (i=0; i<Stack::InitParams().NumActionInvokerThreads(); i++) {
+    for (i=0; i<iCpStack.Stack().InitParams().NumActionInvokerThreads(); i++) {
         delete iInvokers[i];
     }
     free(iInvokers);
 
-    for (i=0; i<Stack::InitParams().NumInvocations(); i++) {
+    for (i=0; i<iCpStack.Stack().InitParams().NumInvocations(); i++) {
         OpenHome::Net::Invocation* invocation = iFreeInvocations.Read();
         delete invocation;
     }
@@ -746,37 +751,29 @@ InvocationManager::~InvocationManager()
 
 OpenHome::Net::Invocation* InvocationManager::Invocation()
 {
-    InvocationManager& self = Self();
-    AutoMutex a(self.iLock);
-    if (!self.iActive) {
+    AutoMutex a(iLock);
+    if (!iActive) {
         return NULL;
     }
-    OpenHome::Net::Invocation* invocation = self.iFreeInvocations.Read();
-    return invocation;
+    return iFreeInvocations.Read();
 }
 
 void InvocationManager::Invoke(OpenHome::Net::Invocation* aInvocation)
 {
-    FunctorAsync& asyncBeginHandler = Stack::InitParams().AsyncBeginHandler();
+    FunctorAsync& asyncBeginHandler = iCpStack.Stack().InitParams().AsyncBeginHandler();
     if (asyncBeginHandler) {
         asyncBeginHandler(*aInvocation);
     }
-    InvocationManager& self = Self();
-    self.iWaitingInvocations.Write(aInvocation);
-    self.Signal();
+    iWaitingInvocations.Write(aInvocation);
+    Signal();
 }
 
 void InvocationManager::Interrupt(const Service& aService)
 {
-    InvocationManager& self = Self();
-    for (TUint i=0; i<Stack::InitParams().NumActionInvokerThreads(); i++) {
-        self.iInvokers[i]->Interrupt(aService);
+    const TUint numThreads = iCpStack.Stack().InitParams().NumActionInvokerThreads();
+    for (TUint i=0; i<numThreads; i++) {
+        iInvokers[i]->Interrupt(aService);
     }
-}
-
-InvocationManager& InvocationManager::Self()
-{
-    return CpiStack::InvocationManager();
 }
 
 void InvocationManager::Run()

@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Cpp/FunctorCpDevice.h>
 #include <OpenHome/Net/Cpp/CpOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Core/CpProxy.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <stdlib.h>
 #include <vector>
@@ -53,7 +54,7 @@ PerformanceTests::PerformanceTests(uint32_t aTimeoutSecs)
     , iDeviceList(NULL)
     , iDevice(NULL)
 {
-    iTimer = new Timer(MakeFunctor(*this, &PerformanceTests::TimerExpired));
+    iTimer = new Timer(*gStack, MakeFunctor(*this, &PerformanceTests::TimerExpired));
 }
 
 PerformanceTests::~PerformanceTests()

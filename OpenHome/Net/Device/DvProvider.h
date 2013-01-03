@@ -4,11 +4,13 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/DviDevice.h>
+#include <OpenHome/Private/Standard.h>
 
 namespace OpenHome {
 namespace Net {
 
 class DviService;
+class DvStack;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -22,7 +24,7 @@ class PropertyBinary;
  * offer 0..n actions and 0..n properties.
  * @ingroup Device
  */
-class DllExportClass DvProvider
+class DllExportClass DvProvider : protected INonCopyable
 {
 public:
     /**
@@ -106,6 +108,7 @@ private:
     void TryPublishUpdate();
 protected:
     DviService* iService;
+    DvStack& iDvStack;
 private:
     TBool iDelayPropertyUpdates;
     TBool iPropertyChanged;

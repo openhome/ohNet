@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Private/Maths.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
 #include <stdlib.h>
 #include <vector>
@@ -23,16 +24,16 @@ static Bwh gNameDevice1_1("device1_1");
 static Bwh gNameDevice1_2("device1_2");
 static Bwh gNameDevice2("device2");
 
-static void RandomiseUdn(Bwh& aUdn)
+static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
 {
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    std::vector<NetworkAdapter*>* subnetList = Stack::NetworkAdapterList().CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = aDvStack.Stack().NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
-    TUint seed = DviStack::ServerUpnp().Port((*subnetList)[0]->Address());
+    TUint seed = aDvStack.ServerUpnp().Port((*subnetList)[0]->Address());
     SetRandomSeed(seed);
-    Stack::NetworkAdapterList().DestroySubnetList(subnetList);
+    aDvStack.Stack().NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();
@@ -48,55 +49,55 @@ static void AddService(DviDevice* aDevice, DviService* aService)
 class DvDevices
 {
 public:
-    DvDevices();
+    DvDevices(DvStack& aDvStack);
     ~DvDevices();
 private:
     DviDeviceStandard* iDevices[2];
 };
 
-DvDevices::DvDevices()
+DvDevices::DvDevices(DvStack& aDvStack)
 {
-    RandomiseUdn(gNameDevice1);
-    RandomiseUdn(gNameDevice1_1);
-    RandomiseUdn(gNameDevice1_2);
-    RandomiseUdn(gNameDevice2);
+    RandomiseUdn(aDvStack, gNameDevice1);
+    RandomiseUdn(aDvStack, gNameDevice1_1);
+    RandomiseUdn(aDvStack, gNameDevice1_2);
+    RandomiseUdn(aDvStack, gNameDevice2);
 
-    DviDeviceStandard* device = new DviDeviceStandard(Brn(gNameDevice1));
+    DviDeviceStandard* device = new DviDeviceStandard(aDvStack, Brn(gNameDevice1));
     iDevices[0] = device;
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "test1");
     device->SetAttribute("Upnp.Version", "1");
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice1.Ptr());
-    AddService(device, new DviService("a.b.c", "service1", 1));
+    AddService(device, new DviService(aDvStack, "a.b.c", "service1", 1));
 
-    device = new DviDeviceStandard(Brn(gNameDevice1_1));
+    device = new DviDeviceStandard(aDvStack, Brn(gNameDevice1_1));
     iDevices[0]->AddDevice(device);
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "test3");
     device->SetAttribute("Upnp.Version", "1");
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice1_1.Ptr());
-    AddService(device, new DviService("a.b.c", "service2", 1));
-    AddService(device, new DviService("a.b.c", "service3", 1));
+    AddService(device, new DviService(aDvStack, "a.b.c", "service2", 1));
+    AddService(device, new DviService(aDvStack, "a.b.c", "service3", 1));
     device->SetEnabled();
 
-    device = new DviDeviceStandard(Brn(gNameDevice1_2));
+    device = new DviDeviceStandard(aDvStack, Brn(gNameDevice1_2));
     iDevices[0]->AddDevice(device);
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "test4");
     device->SetAttribute("Upnp.Version", "1");
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice1_2.Ptr());
-    AddService(device, new DviService("a.b.c", "service4", 1));
+    AddService(device, new DviService(aDvStack, "a.b.c", "service4", 1));
     device->SetEnabled();
     iDevices[0]->SetEnabled();
 
-    device = new DviDeviceStandard(Brn(gNameDevice2));
+    device = new DviDeviceStandard(aDvStack, Brn(gNameDevice2));
     iDevices[1] = device;
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "test2");
     device->SetAttribute("Upnp.Version", "1");
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice2.Ptr());
-    AddService(device, new DviService("a.b.c", "service1", 1));
-    AddService(device, new DviService("a.b.c", "service2", 1));
+    AddService(device, new DviService(aDvStack, "a.b.c", "service1", 1));
+    AddService(device, new DviService(aDvStack, "a.b.c", "service2", 1));
     iDevices[1]->SetEnabled();
 }
 
@@ -204,9 +205,9 @@ void CpDevices::Removed(CpDevice& /*aDevice*/)
 
 
 
-void TestDviDeviceList()
+void TestDviDeviceList(CpStack& aCpStack, DvStack& aDvStack)
 {
-    InitialisationParams& initParams = Stack::InitParams();
+    InitialisationParams& initParams = aDvStack.Stack().InitParams();
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(1);
 
@@ -214,7 +215,7 @@ void TestDviDeviceList()
 
     Print("TestDviDeviceList - starting\n");
 
-    DvDevices* devices = new DvDevices;
+    DvDevices* devices = new DvDevices(aDvStack);
     CpDevices* deviceList = new CpDevices;
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &CpDevices::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &CpDevices::Removed);
@@ -224,7 +225,7 @@ void TestDviDeviceList()
     Brn serviceType("service1");
     TUint ver = 1;
     CpDeviceListUpnpServiceType* list =
-                new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
+                new CpDeviceListUpnpServiceType(aCpStack, domainName, serviceType, ver, added, removed);
     std::vector<const char*> udns;
     udns.push_back((const char*)gNameDevice1.Ptr());
     udns.push_back((const char*)gNameDevice2.Ptr());
@@ -235,7 +236,7 @@ void TestDviDeviceList()
 
     Print("Count devices implementing service2\n");
     serviceType.Set("service2");
-    list = new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
+    list = new CpDeviceListUpnpServiceType(aCpStack, domainName, serviceType, ver, added, removed);
     udns.push_back((const char*)gNameDevice1_1.Ptr());
     udns.push_back((const char*)gNameDevice2.Ptr());
     deviceList->Validate(udns);

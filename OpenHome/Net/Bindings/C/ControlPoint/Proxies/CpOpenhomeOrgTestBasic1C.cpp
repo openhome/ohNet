@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -663,19 +664,19 @@ CpProxyOpenhomeOrgTestBasic1C::CpProxyOpenhomeOrgTestBasic1C(CpDeviceC aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1C::VarUintPropertyChanged);
-    iVarUint = new PropertyUint("VarUint", functor);
+    iVarUint = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "VarUint", functor);
     AddProperty(iVarUint);
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1C::VarIntPropertyChanged);
-    iVarInt = new PropertyInt("VarInt", functor);
+    iVarInt = new PropertyInt(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "VarInt", functor);
     AddProperty(iVarInt);
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1C::VarBoolPropertyChanged);
-    iVarBool = new PropertyBool("VarBool", functor);
+    iVarBool = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "VarBool", functor);
     AddProperty(iVarBool);
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1C::VarStrPropertyChanged);
-    iVarStr = new PropertyString("VarStr", functor);
+    iVarStr = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "VarStr", functor);
     AddProperty(iVarStr);
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1C::VarBinPropertyChanged);
-    iVarBin = new PropertyBinary("VarBin", functor);
+    iVarBin = new PropertyBinary(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "VarBin", functor);
     AddProperty(iVarBin);
 }
 

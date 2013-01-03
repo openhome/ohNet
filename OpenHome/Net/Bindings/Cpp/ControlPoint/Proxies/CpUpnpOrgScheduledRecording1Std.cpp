@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 #include <string>
 
@@ -595,7 +596,7 @@ CpProxyUpnpOrgScheduledRecording1Cpp::CpProxyUpnpOrgScheduledRecording1Cpp(CpDev
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgScheduledRecording1Cpp::LastChangePropertyChanged);
-    iLastChange = new PropertyString("LastChange", functor);
+    iLastChange = new PropertyString(aDevice.Device().CpStack().Stack(), "LastChange", functor);
     AddProperty(iLastChange);
 }
 

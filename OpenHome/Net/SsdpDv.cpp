@@ -15,45 +15,46 @@ using namespace OpenHome::Net;
 
 // Ssdp (fragments)
 
-void Ssdp::WriteBootId(IWriterHttpHeader& aWriter)
+void Ssdp::WriteBootId(DvStack& aDvStack, IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderBootId);
-    stream.WriteUint(DviStack::BootId());
+    stream.WriteUint(aDvStack.BootId());
     stream.WriteFlush();
 }
 
-void Ssdp::WriteNextBootId(IWriterHttpHeader& aWriter)
+void Ssdp::WriteNextBootId(DvStack& aDvStack, IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderNextBootId);
-    stream.WriteUint(DviStack::NextBootId());
+    stream.WriteUint(aDvStack.NextBootId());
     stream.WriteFlush();
 }
 
 
 // SsdpNotifier
 
-SsdpNotifier::SsdpNotifier(TIpAddress aInterface, TUint aConfigId)
-    : iSocket(0, aInterface)
+SsdpNotifier::SsdpNotifier(DvStack& aDvStack, TIpAddress aInterface, TUint aConfigId)
+    : iDvStack(aDvStack)
+    , iSocket(0, aInterface)
     , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocketWriter)
     , iWriter(iBuffer)
     , iInterface(aInterface)
     , iConfigId(aConfigId)
 {
-    iSocket.SetTtl(Stack::InitParams().MsearchTtl()); 
+    iSocket.SetTtl(iDvStack.Stack().InitParams().MsearchTtl()); 
 }
 
 void SsdpNotifier::SsdpNotify(const Brx& aUri, ENotificationType aNotificationType)
 {
     Ssdp::WriteMethodNotify(iWriter);
     Ssdp::WriteHost(iWriter);
-    Ssdp::WriteBootId(iWriter);
+    Ssdp::WriteBootId(iDvStack, iWriter);
     Ssdp::WriteConfigId(iWriter, iConfigId);
     switch (aNotificationType)
     {
     case EAlive:
-        Ssdp::WriteServer(iWriter);
-        Ssdp::WriteMaxAge(iWriter);
+        Ssdp::WriteServer(iDvStack.Stack(), iWriter);
+        Ssdp::WriteMaxAge(iDvStack.Stack(), iWriter);
         Ssdp::WriteLocation(iWriter, aUri);
         Ssdp::WriteSubTypeAlive(iWriter);
         // !!!! Ssdp::WriteSearchPort(iWriter, ????);
@@ -62,7 +63,7 @@ void SsdpNotifier::SsdpNotify(const Brx& aUri, ENotificationType aNotificationTy
         Ssdp::WriteSubTypeByeBye(iWriter);
         break;
     case EUpdate:
-        Ssdp::WriteNextBootId(iWriter);
+        Ssdp::WriteNextBootId(iDvStack, iWriter);
         break;
     }
 }
@@ -186,8 +187,9 @@ void SsdpNotifierUpdate::SsdpNotifyServiceType(const Brx& aDomain, const Brx& aT
 
 // SsdpMsearchResponder
 
-SsdpMsearchResponder::SsdpMsearchResponder(TUint aConfigId)
-    : iBuffer(iResponse)
+SsdpMsearchResponder::SsdpMsearchResponder(DvStack& aDvStack, TUint aConfigId)
+    : iDvStack(aDvStack)
+    , iBuffer(iResponse)
     , iWriter(iBuffer)
     , iConfigId(aConfigId)
 {
@@ -201,11 +203,11 @@ void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint)
 void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)
 {
     Ssdp::WriteStatus(iWriter);
-    Ssdp::WriteServer(iWriter);
-    Ssdp::WriteMaxAge(iWriter);
+    Ssdp::WriteServer(iDvStack.Stack(), iWriter);
+    Ssdp::WriteMaxAge(iDvStack.Stack(), iWriter);
     Ssdp::WriteExt(iWriter);
     Ssdp::WriteLocation(iWriter, aUri);
-    Ssdp::WriteBootId(iWriter);
+    Ssdp::WriteBootId(iDvStack, iWriter);
     Ssdp::WriteConfigId(iWriter, iConfigId);
     // !!!! Ssdp::WriteSearchPort(iWriter, ????);
 }

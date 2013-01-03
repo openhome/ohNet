@@ -7,6 +7,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -51,9 +52,9 @@ public:
                 catch (ReaderError&) {}
                 break;
             }
-            Net::Stack::Mutex().Wait();
+            Net::gStack->Mutex().Wait();
             iTestDone = true;
-            Net::Stack::Mutex().Signal();
+            Net::gStack->Mutex().Signal();
             iControllerSem.Signal();
         }
         LOG(kNetwork, "<TestServerSession::Run\n");
@@ -78,9 +79,9 @@ public:
 
     TBool TestDone()
     {
-        Net::Stack::Mutex().Wait();
+        Net::gStack->Mutex().Wait();
         TBool done = iTestDone;
-        Net::Stack::Mutex().Signal();
+        Net::gStack->Mutex().Signal();
         return done;
     }
     const Brx& Buffer() { return iBuffer; }
@@ -723,7 +724,7 @@ void TestNetwork(const std::vector<Brn>& aArgs)
         return;
     }
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(Net::InitialisationParams::ELoopbackUse, "TestNetwork");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*Net::gStack, Net::InitialisationParams::ELoopbackUse, "TestNetwork");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {

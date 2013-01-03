@@ -8,9 +8,9 @@ using namespace OpenHome::Net;
 
 // DvDevice
 
-DvDevice::DvDevice(const Brx& aUdn)
+DvDevice::DvDevice(DvStack& aDvStack, const Brx& aUdn)
 {
-    iDevice = new DviDevice(aUdn);
+    iDevice = new DviDevice(aDvStack, aUdn);
 }
 
 DvDevice::DvDevice()
@@ -63,14 +63,14 @@ void DvDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
 
 // DvDeviceStandard
 
-DvDeviceStandard::DvDeviceStandard(const Brx& aUdn)
+DvDeviceStandard::DvDeviceStandard(DvStack& aDvStack, const Brx& aUdn)
 {
-    iDevice = new DviDeviceStandard(aUdn);
+    iDevice = new DviDeviceStandard(aDvStack, aUdn);
 }
 
-DvDeviceStandard::DvDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager)
+DvDeviceStandard::DvDeviceStandard(DvStack& aDvStack, const Brx& aUdn, IResourceManager& aResourceManager)
 {
-    iDevice = new DviDeviceStandard(aUdn, aResourceManager);
+    iDevice = new DviDeviceStandard(aDvStack, aUdn, aResourceManager);
 }
 
 void DvDeviceStandard::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri)

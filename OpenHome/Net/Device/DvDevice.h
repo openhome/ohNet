@@ -24,6 +24,7 @@ public:
 };
 
 class DviDevice;
+class DvStack;
 /**
  * Device
  *
@@ -42,10 +43,11 @@ public:
      * Constructor.  Creates a device ready to have services or attributes added.
      * Addition of any protocols to operate over is the responsibility of any sub-classes.
      *
-     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
-     *                    calculating/assigning this
+     * @param[in] aDvStack  Returned from UpnpLibrary::StartDv().
+     * @param[in] aUdn      Universally unique identifier.  The caller is responsible for
+     *                      calculating/assigning this
      */
-    DvDevice(const Brx& aUdn);
+    DvDevice(DvStack& aDvStack, const Brx& aUdn);
     /**
      * Destructor.  Can be called regardless of whether the device is enabled or disabled.
      */
@@ -123,19 +125,21 @@ public:
      * Constructor.  Creates a device capable of operating on any of the protocols the device
      * stack supports as standard but with no services or attributes as yet
      *
-     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
-     *                    calculating/assigning this
+     * @param[in] aDvStack  Returned from UpnpLibrary::StartDv().
+     * @param[in] aUdn      Universally unique identifier.  The caller is responsible for
+     *                      calculating/assigning this
      */
-    DvDeviceStandard(const Brx& aUdn);
+    DvDeviceStandard(DvStack& aDvStack, const Brx& aUdn);
     /**
      * Constructor.  Creates a device capable of serving UI files and of operating on any of the
      * protocols the device stack supports as standard but with no services or attributes as yet
      *
-     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
-     *                    calculating/assigning this
+     * @param[in] aDvStack  Returned from UpnpLibrary::StartDv().
+     * @param[in] aUdn      Universally unique identifier.  The caller is responsible for
+     *                      calculating/assigning this
      * @param[in] aResourceManager  Allows the owner of a device to serve UI files
      */
-    DvDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager);
+    DvDeviceStandard(DvStack& aDvStack, const Brx& aUdn, IResourceManager& aResourceManager);
     /**
      * Query the base uri for the resource manager.
      *

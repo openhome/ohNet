@@ -8,10 +8,12 @@
 namespace OpenHome {
 namespace Net {
 
+class Stack;
+
 class MdnsProvider : public IMdnsProvider
 {
 public:
-    MdnsProvider(const TChar* aHost);
+    MdnsProvider(Stack& aStack, const TChar* aHost);
     virtual ~MdnsProvider();
     virtual void MdnsSetHostName(const TChar* aName);
     virtual TUint MdnsCreateService();

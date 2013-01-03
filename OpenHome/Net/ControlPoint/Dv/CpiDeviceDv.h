@@ -20,7 +20,7 @@ class IEventProcessor;
 class CpiDeviceDv : private INonCopyable, private ICpiProtocol, private ICpiDeviceObserver, private IPropertyWriterFactory
 {
 public:
-    CpiDeviceDv(DviDevice& aDevice);
+    CpiDeviceDv(CpStack& aCpStack, DviDevice& aDevice);
     CpiDevice& Device();
     virtual ~CpiDeviceDv() {}
 private: // ICpiProtocol

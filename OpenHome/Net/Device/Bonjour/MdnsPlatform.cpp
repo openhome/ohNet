@@ -50,8 +50,9 @@ TBool MdnsPlatform::Nif::ContainsAddress(TIpAddress aAddress) const
 }
 
 
-MdnsPlatform::MdnsPlatform(const TChar* aHost)
-    : iHost(aHost)
+MdnsPlatform::MdnsPlatform(Stack& aStack, const TChar* aHost)
+    : iStack(aStack)
+    , iHost(aHost)
     , iMutex("BNJ1")
     , iMulticast(5353, Brn("224.0.0.251"))
     , iReader(0, iMulticast)
@@ -62,7 +63,7 @@ MdnsPlatform::MdnsPlatform(const TChar* aHost)
     , iStop(false)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
-    iTimer = new Timer(MakeFunctor(*this, &MdnsPlatform::TimerExpired));
+    iTimer = new Timer(iStack, MakeFunctor(*this, &MdnsPlatform::TimerExpired));
     iThreadListen = new ThreadFunctor("BONJ", MakeFunctor(*this, &MdnsPlatform::Listen));
     iNextServiceIndex = 0;
     iMdns = new mDNS();
@@ -77,7 +78,7 @@ MdnsPlatform::MdnsPlatform(const TChar* aHost)
 
 MdnsPlatform::~MdnsPlatform()
 {
-    Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iStack.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     mDNS_Close(iMdns);
     delete iMdns;
     delete iTimer;
@@ -95,7 +96,7 @@ void MdnsPlatform::TimerExpired()
 void MdnsPlatform::SubnetListChanged()
 {
     iInterfacesLock.Wait();
-    NetworkAdapterList& nifList = Stack::NetworkAdapterList();
+    NetworkAdapterList& nifList = iStack.NetworkAdapterList();
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
         if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
@@ -361,7 +362,7 @@ MdnsPlatform::Status MdnsPlatform::Init()
 
     iInterfacesLock.Wait();
     Status status = mStatus_NoError;
-    NetworkAdapterList& nifList = Stack::NetworkAdapterList();
+    NetworkAdapterList& nifList = iStack.NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &MdnsPlatform::SubnetListChanged);
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();

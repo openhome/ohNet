@@ -11,13 +11,15 @@
 namespace OpenHome {
 namespace Net {
 
+class DvStack;
+
 class DviServer
 {
 public:
     virtual ~DviServer();
     TUint Port(TIpAddress aInterface);
 protected:
-    DviServer();
+    DviServer(DvStack& aDvStack);
     void Initialise();
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif) = 0;
 private:
@@ -38,6 +40,8 @@ private:
         SocketTcpServer* iServer;
         NetworkAdapter& iNif;
     };
+protected:
+    DvStack& iDvStack;
 private:
     Mutex iLock;
     std::vector<DviServer::Server*> iServers;

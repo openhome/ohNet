@@ -40,9 +40,10 @@ AutoPropertiesLock::~AutoPropertiesLock()
 
 // DviSubscription
 
-DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
+DviSubscription::DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
                                  IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs)
-    : iLock("MDSB")
+    : iDvStack(aDvStack)
+    , iLock("MDSB")
     , iRefCount(1)
     , iDevice(aDevice)
     , iWriterFactory(aWriterFactory)
@@ -54,7 +55,7 @@ DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWr
     aSid.TransferTo(iSid);
     iWriterFactory.NotifySubscriptionCreated(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
-    iTimer = new Timer(functor);
+    iTimer = new Timer(iDvStack.Stack(), functor);
     DoRenew(aDurationSecs);
 }
 
@@ -84,29 +85,29 @@ void DviSubscription::Stop()
 
 void DviSubscription::AddRef()
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     iRefCount++;
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
 }
 
 TBool DviSubscription::TryAddRef()
 {
     TBool added = false;
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     if (iRefCount != 0) {
         iRefCount++;
         added = true;
     }
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
     return added;
 }
 
 void DviSubscription::RemoveRef()
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
     if (dead) {
         delete this;
     }
@@ -139,7 +140,7 @@ void DviSubscription::Renew(TUint& aSeconds)
 
 void DviSubscription::DoRenew(TUint& aSeconds)
 {
-    const TUint maxDuration = Stack::InitParams().DvMaxUpdateTimeSecs();
+    const TUint maxDuration = iDvStack.Stack().InitParams().DvMaxUpdateTimeSecs();
     if (aSeconds == 0 || aSeconds > maxDuration) {
         aSeconds = maxDuration;
     }
@@ -389,12 +390,13 @@ void Publisher::Run()
 
 // DviSubscriptionManager
 
-DviSubscriptionManager::DviSubscriptionManager()
+DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
     : Thread("DVSM")
+    , iDvStack(aDvStack)
     , iLock("DSBM")
-    , iFree(Stack::InitParams().DvNumPublisherThreads())
+    , iFree(aDvStack.Stack().InitParams().DvNumPublisherThreads())
 {
-    const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
+    const TUint numPublisherThreads = iDvStack.Stack().InitParams().DvNumPublisherThreads();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
     TChar thName[5];
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
@@ -416,7 +418,7 @@ DviSubscriptionManager::~DviSubscriptionManager()
     Join();
     iLock.Signal();
 
-    const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
+    const TUint numPublisherThreads = iDvStack.Stack().InitParams().DvNumPublisherThreads();
     for (TUint i=0; i<numPublisherThreads; i++) {
         delete iPublishers[i];
     }
@@ -426,53 +428,44 @@ DviSubscriptionManager::~DviSubscriptionManager()
 
 void DviSubscriptionManager::AddSubscription(DviSubscription& aSubscription)
 {
-    DviSubscriptionManager& self = DviSubscriptionManager::Self();
-    self.iLock.Wait();
+    iLock.Wait();
     Brn sid(aSubscription.Sid());
-    self.iMap.insert(std::pair<Brn,DviSubscription*>(sid, &aSubscription));
-    self.iLock.Signal();
+    iMap.insert(std::pair<Brn,DviSubscription*>(sid, &aSubscription));
+    iLock.Signal();
 }
 
 void DviSubscriptionManager::RemoveSubscription(DviSubscription& aSubscription)
 {
-    DviSubscriptionManager& self = DviSubscriptionManager::Self();
-    self.iLock.Wait();
+    iLock.Wait();
     Brn sid(aSubscription.Sid());
-    Map::iterator it = self.iMap.find(sid);
-    if (it != self.iMap.end()) {
-        self.iMap.erase(it);
+    Map::iterator it = iMap.find(sid);
+    if (it != iMap.end()) {
+        iMap.erase(it);
     }
-    self.iLock.Signal();
+    iLock.Signal();
 }
 
 DviSubscription* DviSubscriptionManager::Find(const Brx& aSid)
 {
     DviSubscription* subs = NULL;
-    DviSubscriptionManager& self = DviSubscriptionManager::Self();
-    self.iLock.Wait();
+    iLock.Wait();
     Brn sid(aSid);
-    Map::iterator it = self.iMap.find(sid);
-    if (it != self.iMap.end()) {
+    Map::iterator it = iMap.find(sid);
+    if (it != iMap.end()) {
         subs = it->second;
     }
-    self.iLock.Signal();
+    iLock.Signal();
     return subs;
 }
 
 void DviSubscriptionManager::QueueUpdate(DviSubscription& aSubscription)
 {
-    DviSubscriptionManager& self = DviSubscriptionManager::Self();
     ASSERT(aSubscription.PropertiesInitialised());
     aSubscription.AddRef();
-    self.iLock.Wait();
-    self.iList.push_back(&aSubscription);
-    self.Signal();
-    self.iLock.Signal();
-}
-
-DviSubscriptionManager& DviSubscriptionManager::Self()
-{
-    return DviStack::SubscriptionManager();
+    iLock.Wait();
+    iList.push_back(&aSubscription);
+    Signal();
+    iLock.Signal();
 }
 
 void DviSubscriptionManager::Run()

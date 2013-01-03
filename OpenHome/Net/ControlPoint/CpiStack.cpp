@@ -9,18 +9,19 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-// CpiStack
+// CpStack
 
-CpiStack::CpiStack()
+CpStack::CpStack(OpenHome::Net::Stack& aStack)
+    : iStack(aStack)
 {
-    Stack::SetCpiStack(this);
-    iInvocationManager = new OpenHome::Net::InvocationManager;
-    iXmlFetchManager = new OpenHome::Net::XmlFetchManager;
-    iSubscriptionManager = new CpiSubscriptionManager;
-    iDeviceListUpdater = new CpiDeviceListUpdater;
+    iStack.SetCpStack(this);
+    iInvocationManager = new OpenHome::Net::InvocationManager(*this);
+    iXmlFetchManager = new OpenHome::Net::XmlFetchManager(*this);
+    iSubscriptionManager = new CpiSubscriptionManager(*this);
+    iDeviceListUpdater = new CpiDeviceListUpdater();
 }
 
-CpiStack::~CpiStack()
+CpStack::~CpStack()
 {
     delete iDeviceListUpdater;
     delete iSubscriptionManager;
@@ -28,31 +29,22 @@ CpiStack::~CpiStack()
     delete iInvocationManager;
 }
 
-InvocationManager& CpiStack::InvocationManager()
+InvocationManager& CpStack::InvocationManager()
 {
-    CpiStack* self = CpiStack::Self();
-    return *(self->iInvocationManager);
+    return *iInvocationManager;
 }
 
-OpenHome::Net::XmlFetchManager& CpiStack::XmlFetchManager()
+OpenHome::Net::XmlFetchManager& CpStack::XmlFetchManager()
 {
-    CpiStack* self = CpiStack::Self();
-    return *(self->iXmlFetchManager);
+    return *iXmlFetchManager;
 }
 
-CpiSubscriptionManager& CpiStack::SubscriptionManager()
+CpiSubscriptionManager& CpStack::SubscriptionManager()
 {
-    CpiStack* self = CpiStack::Self();
-    return *(self->iSubscriptionManager);
+    return *iSubscriptionManager;
 }
 
-CpiDeviceListUpdater& CpiStack::DeviceListUpdater()
+CpiDeviceListUpdater& CpStack::DeviceListUpdater()
 {
-    CpiStack* self = CpiStack::Self();
-    return *(self->iDeviceListUpdater);
-}
-
-CpiStack* CpiStack::Self()
-{
-    return (CpiStack*)Stack::CpiStack();
+    return *iDeviceListUpdater;
 }

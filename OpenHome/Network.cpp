@@ -159,6 +159,7 @@ TBool Endpoint::Equals(const Endpoint& aEndpoint) const
 // Socket
 
 Socket::Socket()
+    : iLogLock("SKLL")
 {
     iHandle = kHandleNull;
     iLog = kLogNone;
@@ -350,12 +351,12 @@ THandle Socket::Accept(Endpoint& aClientEndpoint)
     return handle;
 }
 
-void Socket::Log(const char* aPrefix, const Brx& aBuffer)
+void Socket::Log(const char* aPrefix, const Brx& aBuffer) const
 {
     if (iLog == kLogNone) {
         return;
     }
-    AutoMutex a(Net::Stack::Mutex());
+    AutoMutex a(iLogLock);
     if (iLog == kLogPlainText) {
         Log::Print("%s", aPrefix);
         TUint bytes = aBuffer.Bytes();

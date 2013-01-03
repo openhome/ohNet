@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -64,19 +65,19 @@ void DvProviderUpnpOrgConnectionManager1::Construct()
 
 void DvProviderUpnpOrgConnectionManager1::EnablePropertySourceProtocolInfo()
 {
-    iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"));
+    iPropertySourceProtocolInfo = new PropertyString(iDvStack.Stack(), new ParameterString("SourceProtocolInfo"));
     iService->AddProperty(iPropertySourceProtocolInfo); // passes ownership
 }
 
 void DvProviderUpnpOrgConnectionManager1::EnablePropertySinkProtocolInfo()
 {
-    iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"));
+    iPropertySinkProtocolInfo = new PropertyString(iDvStack.Stack(), new ParameterString("SinkProtocolInfo"));
     iService->AddProperty(iPropertySinkProtocolInfo); // passes ownership
 }
 
 void DvProviderUpnpOrgConnectionManager1::EnablePropertyCurrentConnectionIDs()
 {
-    iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"));
+    iPropertyCurrentConnectionIDs = new PropertyString(iDvStack.Stack(), new ParameterString("CurrentConnectionIDs"));
     iService->AddProperty(iPropertyCurrentConnectionIDs); // passes ownership
 }
 

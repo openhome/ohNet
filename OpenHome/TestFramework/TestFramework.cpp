@@ -180,10 +180,10 @@ TInt OpenHome::TestFramework::PrintHex(const Brx& aB)
 
 // Blocker
 
-Blocker::Blocker()
+Blocker::Blocker(Net::Stack& aStack)
     : iSem("SBLK", 0)
 {
-    iTimer = new Timer(MakeFunctor(*this, &Blocker::TimerExpired));
+    iTimer = new Timer(aStack, MakeFunctor(*this, &Blocker::TimerExpired));
 }
 
 Blocker::~Blocker()

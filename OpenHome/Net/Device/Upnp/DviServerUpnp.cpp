@@ -302,11 +302,12 @@ void SubscriptionDataUpnp::Release()
 
 // PropertyWriterUpnp
 
-PropertyWriterUpnp::PropertyWriterUpnp(const Endpoint& aPublisher, const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                                       const Brx& aSid, TUint aSequenceNumber)
+PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
+                                       const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber)
+    : iDvStack(aDvStack)
 {
     iSocket.Open();
-    iSocket.Connect(aSubscriber, Stack::InitParams().TcpConnectTimeoutMs());
+    iSocket.Connect(aSubscriber, aDvStack.Stack().InitParams().TcpConnectTimeoutMs());
     iWriterChunked = new WriterHttpChunked(iSocket);
     iWriteBuffer = new Sws<kMaxRequestBytes>(*iWriterChunked);
     iWriterEvent = new WriterHttpRequest(*iWriteBuffer);
@@ -357,7 +358,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
     iWriteBuffer->WriteFlush();
 
     Srs<kMaxResponseBytes> readBuffer(iSocket);
-    ReaderHttpResponse readerResponse(readBuffer);
+    ReaderHttpResponse readerResponse(iDvStack.Stack(), readBuffer);
     readerResponse.Read(kReadTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
@@ -370,8 +371,9 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 
 // PropertyWriterFactory
 
-PropertyWriterFactory::PropertyWriterFactory(TIpAddress aAdapter, TUint aPort)
+PropertyWriterFactory::PropertyWriterFactory(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort)
     : iRefCount(1)
+    , iDvStack(aDvStack)
     , iEnabled(true)
     , iAdapter(aAdapter)
     , iPort(aPort)
@@ -390,9 +392,9 @@ void PropertyWriterFactory::SubscriptionAdded(DviSubscription& aSubscription)
 
 void PropertyWriterFactory::Disable()
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     iEnabled = false;
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
     iSubscriptionMapLock.Wait();
     std::vector<DviSubscription*> subscriptions;
     SubscriptionMap::iterator it = iSubscriptionMap.begin();
@@ -414,15 +416,15 @@ void PropertyWriterFactory::Disable()
 
 IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber)
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     TBool enabled = iEnabled;
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
     if (!enabled) {
         return NULL;
     }
     Endpoint publisher(iPort, iAdapter);
     const SubscriptionDataUpnp* data = reinterpret_cast<const SubscriptionDataUpnp*>(aUserData->Data());
-    return new PropertyWriterUpnp(publisher, data->Subscriber(), data->SubscriberPath(), aSid, aSequenceNumber);
+    return new PropertyWriterUpnp(iDvStack, publisher, data->Subscriber(), data->SubscriberPath(), aSid, aSequenceNumber);
 }
 
 void PropertyWriterFactory::NotifySubscriptionCreated(const Brx& /*aSid*/)
@@ -453,17 +455,17 @@ PropertyWriterFactory::~PropertyWriterFactory()
 
 void PropertyWriterFactory::AddRef()
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     iRefCount++;
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
 }
 
 void PropertyWriterFactory::RemoveRef()
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
     if (dead) {
         delete this;
     }
@@ -472,14 +474,15 @@ void PropertyWriterFactory::RemoveRef()
 
 // DviSessionUpnp
 
-DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& aRedirector)
-    : iInterface(aInterface)
+DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort, IRedirector& aRedirector)
+    : iDvStack(aDvStack)
+    , iInterface(aInterface)
     , iPort(aPort)
     , iRedirector(aRedirector)
     , iShutdownSem("DSUS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(aDvStack.Stack(), *iReadBuffer);
     iWriterChunked = new WriterHttpChunked(*this);
     iWriterBuffer = new Sws<kMaxResponseBytes>(*iWriterChunked);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
@@ -501,7 +504,7 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& 
     iReaderRequest->AddHeader(iHeaderCallback);
     iReaderRequest->AddHeader(iHeaderAcceptLanguage);
 
-    iPropertyWriterFactory = new PropertyWriterFactory(aInterface, aPort);
+    iPropertyWriterFactory = new PropertyWriterFactory(iDvStack, aInterface, aPort);
 }
 
 DviSessionUpnp::~DviSessionUpnp()
@@ -538,13 +541,13 @@ void DviSessionUpnp::Run()
         const Brx& method = iReaderRequest->Method();
         iReaderRequest->UnescapeUri();
 
-        Stack::Mutex().Wait();
+        iDvStack.Stack().Mutex().Wait();
         LOG(kDvDevice, "Method: ");
         LOG(kDvDevice, method);
         LOG(kDvDevice, ", uri: ");
         LOG(kDvDevice, iReaderRequest->Uri());
         LOG(kDvDevice, "\n");
-        Stack::Mutex().Signal();
+        iDvStack.Stack().Mutex().Signal();
 
         iResponseStarted = false;
         iResponseEnded = false;
@@ -606,7 +609,7 @@ void DviSessionUpnp::Get()
 
     Brn redirectTo;
     if (!iRedirector.RedirectUri(iReaderRequest->Uri(), redirectTo)) {
-        DviStack::DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, iHeaderAcceptLanguage.LanguageList(), *this);
+        iDvStack.DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, iHeaderAcceptLanguage.LanguageList(), *this);
     }
     else {
         iResponseStarted = true;
@@ -691,9 +694,9 @@ void DviSessionUpnp::Subscribe()
     Brh sid;
     device->CreateSid(sid);
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri());
-    DviSubscription* subscription = new DviSubscription(*device, *iPropertyWriterFactory, data, sid, duration);
+    DviSubscription* subscription = new DviSubscription(iDvStack, *device, *iPropertyWriterFactory, data, sid, duration);
     iPropertyWriterFactory->SubscriptionAdded(*subscription);
-    DviSubscriptionManager::AddSubscription(*subscription);
+    iDvStack.SubscriptionManager().AddSubscription(*subscription);
 
     if (iHeaderExpect.Continue()) {
         iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
@@ -743,7 +746,7 @@ void DviSessionUpnp::Unsubscribe()
         LOG2(kDvEvent, kError, "Unsubscribe failed - device=%p, service=%p\n", device, service);
         Error(HttpStatus::kPreconditionFailed);
     }
-    DviSubscription* subscription = DviSubscriptionManager::Find(iHeaderSid.Sid());
+    DviSubscription* subscription = iDvStack.SubscriptionManager().Find(iHeaderSid.Sid());
     if (subscription == NULL) {
         LOG2(kDvEvent, kError, "Unsubscribe failed - couldn't match sid ");
         LOG2(kDvEvent, kError, iHeaderSid.Sid());
@@ -784,7 +787,7 @@ void DviSessionUpnp::Renew()
         Error(HttpStatus::kPreconditionFailed);
     }
 
-    DviSubscription* subscription = DviSubscriptionManager::Find(iHeaderSid.Sid());
+    DviSubscription* subscription = iDvStack.SubscriptionManager().Find(iHeaderSid.Sid());
     if (subscription == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }
@@ -819,7 +822,7 @@ void DviSessionUpnp::ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, D
         Error(HttpStatus::kPreconditionFailed);
     }
     Brn udn = parser.Next('/');
-    DviDevice* device = DviDeviceMap::Find(udn);
+    DviDevice* device = iDvStack.DeviceMap().Find(udn);
     *aDevice = device;
     if (device == NULL) {
         Error(HttpStatus::kPreconditionFailed);
@@ -849,7 +852,7 @@ void DviSessionUpnp::WriteServerHeader(IWriterHttpHeader& aWriter)
     stream.Write('.');
     stream.WriteUint(minor);
     stream.Write(Brn(" UPnP/1.1 ohNet/"));
-    Stack::GetVersion(major, minor);
+    iDvStack.Stack().GetVersion(major, minor);
     stream.WriteUint(major);
     stream.Write('.');
     stream.WriteUint(minor);
@@ -1221,8 +1224,9 @@ void DviSessionUpnp::InvocationWriteEnd()
 
 // DviServerUpnp
 
-DviServerUpnp::DviServerUpnp(TUint aPort)
-    : iPort(aPort)
+DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
+    : DviServer(aDvStack)
+    , iPort(aPort)
 {
     Initialise();
 }
@@ -1230,20 +1234,20 @@ DviServerUpnp::DviServerUpnp(TUint aPort)
 void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo)
 {
     // could store a vector of redirections if required
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     iRedirectUriRequested.Set(aUriRequested);
     iRedirectUriRedirectedTo.Set(aUriRedirectedTo);
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
 }
 
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer("DSVU", iPort, aNif.Address());
     TChar thName[5];
-    const TUint numWsThreads = Stack::InitParams().DvNumServerThreads();
+    const TUint numWsThreads = iDvStack.Stack().InitParams().DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "DS%2lu", (unsigned long)i);
-        server->Add(&thName[0], new DviSessionUpnp(aNif.Address(), server->Port(), *this));
+        server->Add(&thName[0], new DviSessionUpnp(iDvStack, aNif.Address(), server->Port(), *this));
     }
     return server;
 }

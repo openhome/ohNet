@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -45,7 +46,7 @@ DvProviderUpnpOrgAVTransport2Cpp::DvProviderUpnpOrgAVTransport2Cpp(DvDeviceStd& 
 
 void DvProviderUpnpOrgAVTransport2Cpp::EnablePropertyLastChange()
 {
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iPropertyLastChange = new PropertyString(iDvStack.Stack(), new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 
@@ -62,7 +63,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnablePropertyDRMState()
     allowedValues[index++] = (TChar*)"FAILED_AUTHENTICATION";
     allowedValues[index++] = (TChar*)"NOT_AUTHENTICATED";
     allowedValues[index++] = (TChar*)"DEVICE_REVOCATION";
-    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 8));
+    iPropertyDRMState = new PropertyString(iDvStack.Stack(), new ParameterString("DRMState", allowedValues, 8));
     delete[] allowedValues;
     iService->AddProperty(iPropertyDRMState); // passes ownership
 }

@@ -22,6 +22,7 @@ class DviMsgScheduler;
 class DviProtocolUpnpDeviceXmlWriter;
 class BonjourWebPage;
 class DviProtocolUpnpAdapterSpecificData;
+class DvStack;
 
 class IUpnpMsearchHandler
 {
@@ -108,6 +109,7 @@ private: // from IUpnpMsearchHandler
     void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
     DviDevice& iDevice;
+    DvStack& iDvStack;
     AttributeMap iAttributeMap;
     Mutex iLock;
     std::vector<DviProtocolUpnpAdapterSpecificData*> iAdapters;
@@ -126,7 +128,7 @@ class DviProtocolUpnpAdapterSpecificData : public ISsdpMsearchHandler, public IN
 {
 //    friend class DviProtocolUpnp;
 public:
-    DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort);
+    DviProtocolUpnpAdapterSpecificData(DvStack& aDvStack, IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort);
     void Destroy();
     TIpAddress Interface() const;
     TIpAddress Subnet() const;
@@ -153,6 +155,7 @@ private: // from ISsdpMsearchHandler
     void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
     TUint iRefCount;
+    DvStack& iDvStack;
     IUpnpMsearchHandler* iMsearchHandler;
     SsdpListenerMulticast* iListener;
     TInt iId;
@@ -215,27 +218,27 @@ class DviMsgScheduler : private INonCopyable
     static const TUint kMsgIntervalMsByeBye = 10;
     static const TUint kMsgIntervalMsUpdate = 20;
 public:
-    static DviMsgScheduler* NewMsearchAll(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+    static DviMsgScheduler* NewMsearchAll(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                           const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewMsearchRoot(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+    static DviMsgScheduler* NewMsearchRoot(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                            const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewMsearchUuid(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+    static DviMsgScheduler* NewMsearchUuid(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                            const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewMsearchDeviceType(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+    static DviMsgScheduler* NewMsearchDeviceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                                  const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewMsearchServiceType(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener, const Endpoint& aRemote,
+    static DviMsgScheduler* NewMsearchServiceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener, const Endpoint& aRemote,
                                                   TUint aMx, const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewNotifyAlive(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+    static DviMsgScheduler* NewNotifyAlive(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                            TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewNotifyByeBye(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+    static DviMsgScheduler* NewNotifyByeBye(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                             TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted);
-    static DviMsgScheduler* NewNotifyUpdate(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+    static DviMsgScheduler* NewNotifyUpdate(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                             TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted);
     ~DviMsgScheduler();
     void Stop();
 private:
-    DviMsgScheduler(IUpnpMsgListener& aListener, TUint aMx);
-    DviMsgScheduler(IUpnpMsgListener& aListener);
+    DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener, TUint aMx);
+    DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener);
     void Construct();
     void SetDuration(TUint aDuration);
     void NextMsg();
@@ -243,6 +246,7 @@ private:
 private:
     DviMsg* iMsg;
     Timer* iTimer;
+    DvStack& iDvStack;
     TUint iEndTimeMs;
     IUpnpMsgListener& iListener;
     TBool iStop;
@@ -270,7 +274,7 @@ private:
 class DviMsgMsearch : public DviMsg
 {
 protected:
-    DviMsgMsearch(IUpnpAnnouncementData& aAnnouncementData,
+    DviMsgMsearch(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                   const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
 };
 
@@ -278,7 +282,7 @@ class DviMsgMsearchAll : public DviMsgMsearch
 {
 private:
     friend class DviMsgScheduler;
-    DviMsgMsearchAll(IUpnpAnnouncementData& aAnnouncementData,
+    DviMsgMsearchAll(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                      const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
 };
 
@@ -286,7 +290,7 @@ class DviMsgMsearchRoot : public DviMsgMsearch
 {
 private:
     friend class DviMsgScheduler;
-    DviMsgMsearchRoot(IUpnpAnnouncementData& aAnnouncementData,
+    DviMsgMsearchRoot(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                       const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
 private: // from DviMsg
     TUint TotalMsgCount() const;
@@ -297,7 +301,7 @@ class DviMsgMsearchUuid : public DviMsgMsearch
 {
 private:
     friend class DviMsgScheduler;
-    DviMsgMsearchUuid(IUpnpAnnouncementData& aAnnouncementData,
+    DviMsgMsearchUuid(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                       const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
 private: // from DviMsg
     TUint TotalMsgCount() const;
@@ -308,7 +312,7 @@ class DviMsgMsearchDeviceType : public DviMsgMsearch
 {
 private:
     friend class DviMsgScheduler;
-    DviMsgMsearchDeviceType(IUpnpAnnouncementData& aAnnouncementData,
+    DviMsgMsearchDeviceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                             const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
 private: // from DviMsg
     TUint TotalMsgCount() const;
@@ -319,7 +323,7 @@ class DviMsgMsearchServiceType : public DviMsgMsearch
 {
 private:
     friend class DviMsgScheduler;
-    DviMsgMsearchServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote,
+    DviMsgMsearchServiceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote,
                              const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
 private: // from DviMsg
     TUint TotalMsgCount() const;
@@ -332,13 +336,13 @@ class DviMsgNotify : public DviMsg
 {
 private:
     friend class DviMsgScheduler;
-    static DviMsgNotify* NewAlive(IUpnpAnnouncementData& aAnnouncementData,
+    static DviMsgNotify* NewAlive(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-    static DviMsgNotify* NewByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
+    static DviMsgNotify* NewByeBye(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
                                    Bwh& aUri, TUint aConfigId, Functor& aCompleted);
-    static DviMsgNotify* NewUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
+    static DviMsgNotify* NewUpdate(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
                                    Bwh& aUri, TUint aConfigId, Functor& aCompleted);
-    DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
+    DviMsgNotify(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
     ~DviMsgNotify();
 private:

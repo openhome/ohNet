@@ -212,7 +212,7 @@ class DviService;
 class DviSessionWebSocket : public SocketTcpSession, private IPropertyWriterFactory
 {
 public:
-    DviSessionWebSocket(TIpAddress aInterface, TUint aPort);
+    DviSessionWebSocket(DvStack& aDvStack, TIpAddress aInterface, TUint aPort);
     ~DviSessionWebSocket();
     void QueuePropertyUpdate(Brh* aUpdate);
 private:
@@ -264,6 +264,7 @@ public:
     static const TUint kMaxPropertyUpdates = 20;
     static const TUint kReadTimeoutMs = 5 * 1000;
 private:
+    DvStack& iDvStack;
     Endpoint iEndpoint;
     Srs<kMaxRequestBytes>* iReadBuffer;
     ReaderHttpRequest* iReaderRequest;
@@ -292,7 +293,7 @@ private:
 class DviServerWebSocket : public DviServer
 {
 public:
-    DviServerWebSocket();
+    DviServerWebSocket(DvStack& aDvStack);
 protected:
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
 };

@@ -9,6 +9,8 @@
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Net/Private/DviStack.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -132,11 +134,11 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    std::vector<NetworkAdapter*>* subnetList = Stack::NetworkAdapterList().CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = gStack->NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
-    TUint seed = DviStack::ServerUpnp().Port((*subnetList)[0]->Address());
+    TUint seed = gDvStack->ServerUpnp().Port((*subnetList)[0]->Address());
     SetRandomSeed(seed);
-    Stack::NetworkAdapterList().DestroySubnetList(subnetList);
+    gStack->NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();

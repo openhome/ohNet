@@ -11,67 +11,67 @@ using namespace OpenHome::Net;
 
 // CpDeviceListUpnpAll
 
-CpDeviceListUpnpAll::CpDeviceListUpnpAll(FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
+CpDeviceListUpnpAll::CpDeviceListUpnpAll(CpStack& aCpStack, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
     : CpDeviceList(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpAll(added, removed);
+    iList = new CpiDeviceListUpnpAll(aCpStack, added, removed);
     iList->Start();
 }
 
 
 // CpDeviceListUpnpRoot
 
-CpDeviceListUpnpRoot::CpDeviceListUpnpRoot(FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
+CpDeviceListUpnpRoot::CpDeviceListUpnpRoot(CpStack& aCpStack, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
     : CpDeviceList(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpRoot(added, removed);
+    iList = new CpiDeviceListUpnpRoot(aCpStack, added, removed);
     iList->Start();
 }
 
 
 // CpDeviceListUpnpUuid
 
-CpDeviceListUpnpUuid::CpDeviceListUpnpUuid(const Brx& aUuid, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
+CpDeviceListUpnpUuid::CpDeviceListUpnpUuid(CpStack& aCpStack, const Brx& aUuid, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
     : CpDeviceList(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpUuid(aUuid, added, removed);
+    iList = new CpiDeviceListUpnpUuid(aCpStack, aUuid, added, removed);
     iList->Start();
 }
 
 
 // CpDeviceListUpnpDeviceType
 
-CpDeviceListUpnpDeviceType::CpDeviceListUpnpDeviceType(const Brx& aDomainName, const Brx& aDeviceType, TUint aVersion,
-                                                       FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
+CpDeviceListUpnpDeviceType::CpDeviceListUpnpDeviceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aDeviceType,
+                                                       TUint aVersion, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
     : CpDeviceList(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpDeviceType(aDomainName, aDeviceType, aVersion, added, removed);
+    iList = new CpiDeviceListUpnpDeviceType(aCpStack, aDomainName, aDeviceType, aVersion, added, removed);
     iList->Start();
 }
 
 
 // CpDeviceListUpnpServiceType
 
-CpDeviceListUpnpServiceType::CpDeviceListUpnpServiceType(const Brx& aDomainName, const Brx& aServiceType, TUint aVersion,
-                                                         FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
+CpDeviceListUpnpServiceType::CpDeviceListUpnpServiceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aServiceType,
+                                                         TUint aVersion, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
     : CpDeviceList(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpServiceType(aDomainName, aServiceType, aVersion, added, removed);
+    iList = new CpiDeviceListUpnpServiceType(aCpStack, aDomainName, aServiceType, aVersion, added, removed);
     iList->Start();
 
 }

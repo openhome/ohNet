@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Net/Private/DviStack.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
 #include <vector>
 
@@ -43,7 +44,7 @@ private:
 class DeviceBasic
 {
 public:
-    DeviceBasic();
+    DeviceBasic(DvStack& aDvStack);
     ~DeviceBasic();
     DvDevice& Device();
 private:
@@ -220,14 +221,14 @@ void ProviderTestBasic::GetBinary(IDvInvocation& aInvocation, IDvInvocationRespo
 
 static Bwh gDeviceName("device");
 
-static void RandomiseUdn(Bwh& aUdn)
+static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
 {
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("TestCpDeviceDv");
+    NetworkAdapter* nif = aDvStack.Stack().NetworkAdapterList().CurrentAdapter("TestCpDeviceDv");
     TUint max = nif->Address();
-    TUint seed = DviStack::ServerUpnp().Port(nif->Address());
+    TUint seed = aDvStack.ServerUpnp().Port(nif->Address());
     SetRandomSeed(seed);
     nif->RemoveRef("TestCpDeviceDv");
     (void)Ascii::AppendDec(buf, Random(max));
@@ -235,10 +236,10 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.PtrZ();
 }
 
-DeviceBasic::DeviceBasic()
+DeviceBasic::DeviceBasic(DvStack& aDvStack)
 {
-    RandomiseUdn(gDeviceName);
-    iDevice = new DvDevice(gDeviceName);
+    RandomiseUdn(aDvStack, gDeviceName);
+    iDevice = new DvDevice(aDvStack, gDeviceName);
     iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -423,12 +424,12 @@ static void TestSubscription(CpDevice& aDevice)
     delete proxy; // automatically unsubscribes
 }
 
-void TestCpDeviceDv()
+void TestCpDeviceDv(CpStack& aCpStack, DvStack& aDvStack)
 {
     Print("TestCpDeviceDv - starting\n");
 
-    DeviceBasic* device = new DeviceBasic;
-    CpDeviceDv* cpDevice = CpDeviceDv::New(device->Device());
+    DeviceBasic* device = new DeviceBasic(aDvStack);
+    CpDeviceDv* cpDevice = CpDeviceDv::New(aCpStack, device->Device());
     TestInvocation(*cpDevice);
     TestSubscription(*cpDevice);
     cpDevice->RemoveRef();

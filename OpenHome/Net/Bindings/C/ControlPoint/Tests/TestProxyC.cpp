@@ -15,6 +15,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -123,7 +124,7 @@ void DeviceList::InvokeSync()
 
 void DeviceList::PollInvoke()
 {
-    Timer timer(MakeFunctor(*this, &DeviceList::TimerExpired));
+    Timer timer(*gStack, MakeFunctor(*this, &DeviceList::TimerExpired));
     for (TUint i=0; i<iList.size(); i++) {
         CpDeviceC device = iList[i];
         TUint countBefore = gActionCount;
@@ -131,7 +132,7 @@ void DeviceList::PollInvoke()
         iConnMgr = CpProxyUpnpOrgConnectionManager1Create(device);
         iStopTimeMs = Os::TimeInMs() + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
-        for (TUint j=0; j<Stack::InitParams().NumActionInvokerThreads(); j++) {
+        for (TUint j=0; j<gStack->InitParams().NumActionInvokerThreads(); j++) {
             CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(iConnMgr, getProtocolInfoComplete, this);
         }
         iPollStop.Wait();
@@ -254,7 +255,7 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     DeviceList* deviceList = new DeviceList;
     HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("upnp.org", "ConnectionManager", 1,
                                                                added, deviceList, removed, deviceList);
-    Blocker* blocker = new Blocker;
+    Blocker* blocker = new Blocker(*gStack);
     blocker->Wait(OhNetInitParamsMsearchTimeSecs(aInitParams));
     delete blocker;
     deviceList->Stop();

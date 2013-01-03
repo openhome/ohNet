@@ -21,6 +21,8 @@ namespace OpenHome {
 class SocketTcpClient;
 namespace Net {
 
+class CpStack;
+
 class XmlFetch : public Async
 {
 public:
@@ -34,7 +36,7 @@ public:
     void Interrupt();
     TBool Interrupted() const;
 private:
-    XmlFetch();
+    XmlFetch(CpStack& aCpStack);
     TBool Error() const;
     void WriteRequest(SocketTcpClient& aSocket);
     void Read(SocketTcpClient& aSocket);
@@ -43,6 +45,7 @@ private:
 private:
     static const TUint kRwBufferLength = 16*1024;
     static const TUint kResponseTimeoutMs = 60 * 1000;
+    CpStack& iCpStack;
     OpenHome::Uri* iUri;
     FunctorAsync iFunctor;
     TUint iSequenceNumber;
@@ -69,17 +72,19 @@ private:
     XmlFetch* iFetch;
 };
 
+class CpStack;
+
 class XmlFetchManager : public Thread
 {
 public:
-    XmlFetchManager();
+    XmlFetchManager(CpStack& aCpStack);
     ~XmlFetchManager();
-    static XmlFetch* Fetch();
-    static void Fetch(XmlFetch* aFetch);
+    XmlFetch* Fetch();
+    void Fetch(XmlFetch* aFetch);
 private:
-    static XmlFetchManager& Self();
     void Run();
 private:
+    CpStack& iCpStack;
     OpenHome::Mutex iLock;
     std::list<XmlFetch*> iList;
     Fifo<XmlFetcher*> iFree;

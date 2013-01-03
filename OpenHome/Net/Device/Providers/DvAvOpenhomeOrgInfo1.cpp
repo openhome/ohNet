@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -181,73 +182,73 @@ void DvProviderAvOpenhomeOrgInfo1::Construct()
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyTrackCount()
 {
-    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
+    iPropertyTrackCount = new PropertyUint(iDvStack.Stack(), new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyDetailsCount()
 {
-    iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"));
+    iPropertyDetailsCount = new PropertyUint(iDvStack.Stack(), new ParameterUint("DetailsCount"));
     iService->AddProperty(iPropertyDetailsCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyMetatextCount()
 {
-    iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"));
+    iPropertyMetatextCount = new PropertyUint(iDvStack.Stack(), new ParameterUint("MetatextCount"));
     iService->AddProperty(iPropertyMetatextCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyUri()
 {
-    iPropertyUri = new PropertyString(new ParameterString("Uri"));
+    iPropertyUri = new PropertyString(iDvStack.Stack(), new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyMetadata()
 {
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
+    iPropertyMetadata = new PropertyString(iDvStack.Stack(), new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyDuration()
 {
-    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
+    iPropertyDuration = new PropertyUint(iDvStack.Stack(), new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyBitRate()
 {
-    iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"));
+    iPropertyBitRate = new PropertyUint(iDvStack.Stack(), new ParameterUint("BitRate"));
     iService->AddProperty(iPropertyBitRate); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyBitDepth()
 {
-    iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"));
+    iPropertyBitDepth = new PropertyUint(iDvStack.Stack(), new ParameterUint("BitDepth"));
     iService->AddProperty(iPropertyBitDepth); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertySampleRate()
 {
-    iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"));
+    iPropertySampleRate = new PropertyUint(iDvStack.Stack(), new ParameterUint("SampleRate"));
     iService->AddProperty(iPropertySampleRate); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyLossless()
 {
-    iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"));
+    iPropertyLossless = new PropertyBool(iDvStack.Stack(), new ParameterBool("Lossless"));
     iService->AddProperty(iPropertyLossless); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyCodecName()
 {
-    iPropertyCodecName = new PropertyString(new ParameterString("CodecName"));
+    iPropertyCodecName = new PropertyString(iDvStack.Stack(), new ParameterString("CodecName"));
     iService->AddProperty(iPropertyCodecName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1::EnablePropertyMetatext()
 {
-    iPropertyMetatext = new PropertyString(new ParameterString("Metatext"));
+    iPropertyMetatext = new PropertyString(iDvStack.Stack(), new ParameterString("Metatext"));
     iService->AddProperty(iPropertyMetatext); // passes ownership
 }
 

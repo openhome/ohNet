@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -483,13 +484,13 @@ CpProxyUpnpOrgContentDirectory1::CpProxyUpnpOrgContentDirectory1(CpDevice& aDevi
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory1::TransferIDsPropertyChanged);
-    iTransferIDs = new PropertyString("TransferIDs", functor);
+    iTransferIDs = new PropertyString(aDevice.Device().CpStack().Stack(), "TransferIDs", functor);
     AddProperty(iTransferIDs);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory1::SystemUpdateIDPropertyChanged);
-    iSystemUpdateID = new PropertyUint("SystemUpdateID", functor);
+    iSystemUpdateID = new PropertyUint(aDevice.Device().CpStack().Stack(), "SystemUpdateID", functor);
     AddProperty(iSystemUpdateID);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory1::ContainerUpdateIDsPropertyChanged);
-    iContainerUpdateIDs = new PropertyString("ContainerUpdateIDs", functor);
+    iContainerUpdateIDs = new PropertyString(aDevice.Device().CpStack().Stack(), "ContainerUpdateIDs", functor);
     AddProperty(iContainerUpdateIDs);
 }
 

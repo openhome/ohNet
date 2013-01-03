@@ -14,6 +14,7 @@
 namespace OpenHome {
 namespace Net {
 
+class DvStack;
 class DviPropertyUpdateCollection;
     
 class DviProviderSubscriptionLongPoll : public DvProviderOpenhomeOrgSubscriptionLongPoll1
@@ -64,6 +65,7 @@ private:
     static const Brn kErrorDescTooManyRequests;
     friend class AutoGetPropertyUpdatesComplete;
 private:
+    DvStack& iDvStack;
     DviPropertyUpdateCollection& iPropertyUpdateCollection;
     Mutex iLock;
     std::vector<UpdateReadySignal> iUpdateReady;

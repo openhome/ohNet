@@ -32,6 +32,7 @@ static const TChar kAttributeKeyVersionMinor[] = "Version.Minor";
 
 DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     : iDevice(aDevice)
+    , iDvStack(aDevice.DvStack())
     , iLock("DMUP")
     , iUpdateCount(0)
     , iSuppressScheduledEvents(false)
@@ -39,13 +40,13 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     SetAttribute(kAttributeKeyVersionMajor, "1");
     SetAttribute(kAttributeKeyVersionMinor, "1");
     iLock.Wait();
-    iServer = &DviStack::ServerUpnp();
-    NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
+    iServer = &(iDvStack.ServerUpnp());
+    NetworkAdapterList& adapterList = iDvStack.Stack().NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::HandleInterfaceChange);
     iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
     iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
     std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
-    AutoNetworkAdapterRef ref("DviProtocolUpnp ctor");
+    AutoNetworkAdapterRef ref(iDvStack.Stack(), "DviProtocolUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         AddInterface(*current);
@@ -68,7 +69,7 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
         }
     }
     NetworkAdapterList::DestroySubnetList(subnetList);
-    iAliveTimer = new Timer(MakeFunctor(*this, &DviProtocolUpnp::SendAliveNotifications));
+    iAliveTimer = new Timer(iDvStack.Stack(), MakeFunctor(*this, &DviProtocolUpnp::SendAliveNotifications));
     iLock.Signal();
 }
 
@@ -76,8 +77,8 @@ DviProtocolUpnp::~DviProtocolUpnp()
 {
     delete iAliveTimer;
     iLock.Wait();
-    Stack::NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
-    Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iDvStack.Stack().NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
+    iDvStack.Stack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iAdapters.size(); i++) {
         iAdapters[i]->Destroy();
     }
@@ -166,7 +167,7 @@ DviProtocolUpnpAdapterSpecificData* DviProtocolUpnp::AddInterface(const NetworkA
     TUint port = iServer->Port(addr);
     DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
     root->GetUriBase(uriBase, addr, port, *this);
-    DviProtocolUpnpAdapterSpecificData* adapter = new DviProtocolUpnpAdapterSpecificData(*this, aAdapter, uriBase, port);
+    DviProtocolUpnpAdapterSpecificData* adapter = new DviProtocolUpnpAdapterSpecificData(iDvStack, *this, aAdapter, uriBase, port);
     iAdapters.push_back(adapter);
     return adapter;
 }
@@ -177,8 +178,8 @@ void DviProtocolUpnp::HandleInterfaceChange()
     std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
     {
         AutoMutex a(iLock);
-        NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
-        AutoNetworkAdapterRef ref("DviProtocolUpnp::HandleInterfaceChange");
+        NetworkAdapterList& adapterList = iDvStack.Stack().NetworkAdapterList();
+        AutoNetworkAdapterRef ref(iDvStack.Stack(), "DviProtocolUpnp::HandleInterfaceChange");
         const NetworkAdapter* current = ref.Adapter();
         TUint i = 0;
         if (current != 0) {
@@ -367,7 +368,7 @@ void DviProtocolUpnp::Enable()
             adapter->BonjourRegister(name, iDevice.Udn(), kProtocolName, iDevice.kResourceDir);
             GetAttribute("MdnsHostName", &name);
             if (name != 0) {
-                DviStack::MdnsProvider()->MdnsSetHostName(name);
+                iDvStack.MdnsProvider()->MdnsSetHostName(name);
                 Bwh redirectedPath(iDevice.Udn().Bytes() + kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 4);
                 redirectedPath.Append('/');
                 Uri::Escape(redirectedPath, iDevice.Udn());
@@ -376,7 +377,7 @@ void DviProtocolUpnp::Enable()
                 redirectedPath.Append('/');
                 redirectedPath.Append(iDevice.kResourceDir);
                 redirectedPath.Append('/');
-                DviStack::ServerUpnp().Redirect(Brn("/"), redirectedPath);
+                iDvStack.ServerUpnp().Redirect(Brn("/"), redirectedPath);
             }
         }
     }
@@ -401,7 +402,7 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
         LogMulticastNotification("byebye");
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
-        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyByeBye(*this, *this, iAdapters[i]->Interface(),
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyByeBye(iDvStack, *this, *this, iAdapters[i]->Interface(),
                                                                   uri, iDevice.ConfigId(), functor));
     }
     for (TUint i=0; i<iAdapters.size(); i++) {
@@ -410,7 +411,7 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     const TChar* name = 0;
     GetAttribute("MdnsHostName", &name);
     if (name != 0) {
-        DviStack::MdnsProvider()->MdnsSetHostName("");
+        iDvStack.MdnsProvider()->MdnsSetHostName("");
     }
 }
 
@@ -427,7 +428,7 @@ void DviProtocolUpnp::SetAttribute(const TChar* aKey, const TChar* aValue)
     }
     if (strcmp(aKey, "MdnsHostName") == 0) {
         ASSERT(iDevice.ResourceManager() != 0);
-        ASSERT(DviStack::MdnsProvider() != 0);
+        ASSERT(iDvStack.MdnsProvider() != 0);
     }
 
     iAttributeMap.Set(aKey, aValue);
@@ -500,7 +501,7 @@ void DviProtocolUpnp::SendAliveNotifications()
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
         try {
-            iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyAlive(*this, *this, iAdapters[i]->Interface(),
+            iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyAlive(iDvStack, *this, *this, iAdapters[i]->Interface(),
                                                                      uri, iDevice.ConfigId()));
         }
         catch (NetworkError&) {}
@@ -510,7 +511,7 @@ void DviProtocolUpnp::SendAliveNotifications()
 
 void DviProtocolUpnp::QueueAliveTimer()
 {
-    TUint maxUpdateTimeMs = Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
+    TUint maxUpdateTimeMs = iDvStack.Stack().InitParams().DvMaxUpdateTimeSecs() * 1000;
     TUint updateTimeMs = Random(maxUpdateTimeMs/2, maxUpdateTimeMs/4);
     iAliveTimer->FireIn(updateTimeMs);
 }
@@ -520,13 +521,13 @@ void DviProtocolUpnp::SendUpdateNotifications()
     LogMulticastNotification("update");
     iAliveTimer->Cancel();
     AutoMutex a(iLock);
-    DviStack::UpdateBootId();
+    iDvStack.UpdateBootId();
     iUpdateCount += (TUint)iAdapters.size(); // its possible this'll be called while previous updates are still being processed
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetUpdated);
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
-        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyUpdate(*this, *this, iAdapters[i]->Interface(),
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyUpdate(iDvStack, *this, *this, iAdapters[i]->Interface(),
                                                                   uri, iDevice.ConfigId(), functor));
     }
 }
@@ -536,7 +537,7 @@ void DviProtocolUpnp::SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Func
     Bwh uri;
     GetUriDeviceXml(uri, aUriBase);
     try {
-        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyByeBye(*this, *this, aAdapter, uri,
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyByeBye(iDvStack, *this, *this, aAdapter, uri,
                                                                   iDevice.ConfigId(), aCompleted));
     }
     catch (NetworkError& ) {}
@@ -548,7 +549,7 @@ void DviProtocolUpnp::SendAlives(TIpAddress aAdapter, const Brx& aUriBase)
     Bwh uri;
     GetUriDeviceXml(uri, aUriBase);
     try {
-        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyAlive(*this, *this, aAdapter, uri, iDevice.ConfigId()));
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyAlive(iDvStack, *this, *this, aAdapter, uri, iDevice.ConfigId()));
     }
     catch (NetworkError&) {}
 }
@@ -571,20 +572,20 @@ void DviProtocolUpnp::GetDeviceXml(Brh& aXml, TIpAddress aAdapter)
 
 void DviProtocolUpnp::LogUnicastNotification(const char* aType)
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     LOG(kDvDevice, "Device ");
     LOG(kDvDevice, iDevice.Udn());
     LOG(kDvDevice, " starting response to msearch type \'%s\'\n", aType);
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
 }
 
 void DviProtocolUpnp::LogMulticastNotification(const char* aType)
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     LOG(kDvDevice, "Device ");
     LOG(kDvDevice, iDevice.Udn());
     LOG(kDvDevice, " starting to send %s notifications.\n", aType);
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
 }
 
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)
@@ -596,7 +597,7 @@ void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAdd
             LogUnicastNotification("all");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchAll(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
+            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchAll(iDvStack, *this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
     }
 }
@@ -610,7 +611,7 @@ void DviProtocolUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAd
             LogUnicastNotification("root");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchRoot(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
+            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchRoot(iDvStack, *this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
     }
 }
@@ -624,7 +625,7 @@ void DviProtocolUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAd
             LogUnicastNotification("uuid");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchUuid(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
+            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchUuid(iDvStack, *this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
     }
 }
@@ -638,7 +639,7 @@ void DviProtocolUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx,
             LogUnicastNotification("device");
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchDeviceType(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
+            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchDeviceType(iDvStack, *this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
     }
 }
@@ -656,7 +657,7 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
                     LogUnicastNotification("service");
                     Bwh uri;
                     GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-                    iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchServiceType(*this, *this, aEndpoint, aMx, serviceType,
+                    iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchServiceType(iDvStack, *this, *this, aEndpoint, aMx, serviceType,
                                                                                     uri, iDevice.ConfigId()));
                 }
                 break;
@@ -668,8 +669,9 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
 
 // DviProtocolUpnpAdapterSpecificData
 
-DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort)
+DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(DvStack& aDvStack, IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort)
     : iRefCount(1)
+    , iDvStack(aDvStack)
     , iMsearchHandler(&aMsearchHandler)
     , iId(0x7fffffff)
     , iSubnet(aAdapter.Subnet())
@@ -679,7 +681,7 @@ DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsea
     , iBonjourWebPage(0)
     , iDevice(NULL)
 {
-    iListener = &Stack::MulticastListenerClaim(aAdapter.Address());
+    iListener = &(iDvStack.Stack().MulticastListenerClaim(aAdapter.Address()));
     iId = iListener->AddMsearchHandler(this);
 }
 
@@ -699,7 +701,7 @@ DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
         delete iBonjourWebPage;
     }
     iListener->RemoveMsearchHandler(iId);
-    Stack::MulticastListenerRelease(iAdapter);
+    iDvStack.Stack().MulticastListenerRelease(iAdapter);
 }
 
 TIpAddress DviProtocolUpnpAdapterSpecificData::Interface() const
@@ -751,16 +753,16 @@ void DviProtocolUpnpAdapterSpecificData::ClearDeviceXml()
 
 void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     iMsearchHandler = 0;
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
 }
 
 void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
 {
     if (aName != 0) {
         if (iBonjourWebPage == 0) {
-            IMdnsProvider* mdnsProvider = DviStack::MdnsProvider();
+            IMdnsProvider* mdnsProvider = iDvStack.MdnsProvider();
             if (mdnsProvider != 0) {
                 iBonjourWebPage = new BonjourWebPage(*mdnsProvider);
             }
@@ -807,9 +809,9 @@ void DviProtocolUpnpAdapterSpecificData::ByeByesComplete()
 
 IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 {
-    Stack::Mutex().Wait();
+    iDvStack.Stack().Mutex().Wait();
     IUpnpMsearchHandler* device = iMsearchHandler;
-    Stack::Mutex().Signal();
+    iDvStack.Stack().Mutex().Signal();
     return device;
 }
 
@@ -1296,58 +1298,58 @@ void DviProtocolUpnpServiceXmlWriter::WriteTechnicalStateVariables(IWriter& aWri
 
 // DviMsgScheduler
 
-DviMsgScheduler* DviMsgScheduler::NewMsearchAll(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+DviMsgScheduler* DviMsgScheduler::NewMsearchAll(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                                 const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId)
 {
-    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
-    self->iMsg = new DviMsgMsearchAll(aAnnouncementData, aRemote, aUri, aConfigId);
+    DviMsgScheduler* self = new DviMsgScheduler(aDvStack, aListener, aMx);
+    self->iMsg = new DviMsgMsearchAll(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId);
     self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
     return self;
 }
 
-DviMsgScheduler* DviMsgScheduler::NewMsearchRoot(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+DviMsgScheduler* DviMsgScheduler::NewMsearchRoot(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                                  const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId)
 {
-    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
-    self->iMsg = new DviMsgMsearchRoot(aAnnouncementData, aRemote, aUri, aConfigId);
+    DviMsgScheduler* self = new DviMsgScheduler(aDvStack, aListener, aMx);
+    self->iMsg = new DviMsgMsearchRoot(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId);
     self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
     return self;
 }
 
-DviMsgScheduler* DviMsgScheduler::NewMsearchUuid(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+DviMsgScheduler* DviMsgScheduler::NewMsearchUuid(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                                  const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId)
 {
-    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
-    self->iMsg = new DviMsgMsearchUuid(aAnnouncementData, aRemote, aUri, aConfigId);
+    DviMsgScheduler* self = new DviMsgScheduler(aDvStack, aListener, aMx);
+    self->iMsg = new DviMsgMsearchUuid(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId);
     self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
     return self;
 }
 
-DviMsgScheduler* DviMsgScheduler::NewMsearchDeviceType(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+DviMsgScheduler* DviMsgScheduler::NewMsearchDeviceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                                        const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId)
 {
-    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
-    self->iMsg = new DviMsgMsearchDeviceType(aAnnouncementData, aRemote, aUri, aConfigId);
+    DviMsgScheduler* self = new DviMsgScheduler(aDvStack, aListener, aMx);
+    self->iMsg = new DviMsgMsearchDeviceType(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId);
     self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
     return self;
 }
 
-DviMsgScheduler* DviMsgScheduler::NewMsearchServiceType(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
-                                                        const Endpoint& aRemote, TUint aMx,
+DviMsgScheduler* DviMsgScheduler::NewMsearchServiceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
+                                                        IUpnpMsgListener& aListener, const Endpoint& aRemote, TUint aMx,
                                                         const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId)
 {
-    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
-    self->iMsg = new DviMsgMsearchServiceType(aAnnouncementData, aRemote, aServiceType, aUri, aConfigId);
+    DviMsgScheduler* self = new DviMsgScheduler(aDvStack, aListener, aMx);
+    self->iMsg = new DviMsgMsearchServiceType(aDvStack, aAnnouncementData, aRemote, aServiceType, aUri, aConfigId);
     self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
     return self;
 }
 
-DviMsgScheduler* DviMsgScheduler::NewNotifyAlive(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+DviMsgScheduler* DviMsgScheduler::NewNotifyAlive(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
 {
-    DviMsgScheduler* self = new DviMsgScheduler(aListener);
+    DviMsgScheduler* self = new DviMsgScheduler(aDvStack, aListener);
     try {
-        self->iMsg = DviMsgNotify::NewAlive(aAnnouncementData, aAdapter, aUri, aConfigId);
+        self->iMsg = DviMsgNotify::NewAlive(aDvStack, aAnnouncementData, aAdapter, aUri, aConfigId);
     }
     catch (NetworkError&) {
         delete self;
@@ -1359,12 +1361,12 @@ DviMsgScheduler* DviMsgScheduler::NewNotifyAlive(IUpnpAnnouncementData& aAnnounc
     return self;
 }
 
-DviMsgScheduler* DviMsgScheduler::NewNotifyByeBye(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+DviMsgScheduler* DviMsgScheduler::NewNotifyByeBye(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted)
 {
-    DviMsgScheduler* self = new DviMsgScheduler(aListener);
+    DviMsgScheduler* self = new DviMsgScheduler(aDvStack, aListener);
     try {
-        self->iMsg = DviMsgNotify::NewByeBye(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+        self->iMsg = DviMsgNotify::NewByeBye(aDvStack, aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
     }
     catch (NetworkError&) {
         delete self;
@@ -1376,12 +1378,12 @@ DviMsgScheduler* DviMsgScheduler::NewNotifyByeBye(IUpnpAnnouncementData& aAnnoun
     return self;
 }
 
-DviMsgScheduler* DviMsgScheduler::NewNotifyUpdate(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+DviMsgScheduler* DviMsgScheduler::NewNotifyUpdate(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
                                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted)
 {
-    DviMsgScheduler* self = new DviMsgScheduler(aListener);
+    DviMsgScheduler* self = new DviMsgScheduler(aDvStack, aListener);
     try {
-        self->iMsg = DviMsgNotify::NewUpdate(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+        self->iMsg = DviMsgNotify::NewUpdate(aDvStack, aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
     }
     catch (NetworkError&) {
         delete self;
@@ -1409,17 +1411,19 @@ void DviMsgScheduler::Stop()
     iStop = true;
 }
 
-DviMsgScheduler::DviMsgScheduler(IUpnpMsgListener& aListener, TUint aMx)
+DviMsgScheduler::DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener, TUint aMx)
     : iMsg(NULL)
     , iEndTimeMs(Os::TimeInMs() + (900 * aMx))
+    , iDvStack(aDvStack)
     , iListener(aListener)
 {
     Construct();
 }
 
-DviMsgScheduler::DviMsgScheduler(IUpnpMsgListener& aListener)
+DviMsgScheduler::DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener)
     : iMsg(NULL)
     , iEndTimeMs(0)
+    , iDvStack(aDvStack)
     , iListener(aListener)
 {
     Construct();
@@ -1429,7 +1433,7 @@ void DviMsgScheduler::Construct()
 {
     iStop = false;
     Functor functor = MakeFunctor(*this, &DviMsgScheduler::NextMsg);
-    iTimer = new Timer(functor);
+    iTimer = new Timer(iDvStack.Stack(), functor);
 }
 
 void DviMsgScheduler::SetDuration(TUint aDuration)
@@ -1459,7 +1463,7 @@ void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
     TInt remaining = iEndTimeMs - Os::TimeInMs();
-    TInt maxUpdateTimeMs = (TInt)Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
+    TInt maxUpdateTimeMs = (TInt)iDvStack.Stack().InitParams().DvMaxUpdateTimeSecs() * 1000;
     ASSERT(remaining <= maxUpdateTimeMs);
     TInt maxInterval = remaining / (TInt)aRemainingMsgs;
     if (maxInterval < kMinTimerIntervalMs) {
@@ -1522,11 +1526,11 @@ DviMsg::DviMsg(IUpnpAnnouncementData& aAnnouncementData, Bwh& aUri)
 
 // DviMsgMsearch
 
-DviMsgMsearch::DviMsgMsearch(IUpnpAnnouncementData& aAnnouncementData,
+DviMsgMsearch::DviMsgMsearch(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                              const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
     : DviMsg(aAnnouncementData, aUri)
 {
-    SsdpMsearchResponder* responder = new SsdpMsearchResponder(aConfigId);
+    SsdpMsearchResponder* responder = new SsdpMsearchResponder(aDvStack, aConfigId);
     responder->SetRemote(aRemote);
     iNotifier = responder;
 }
@@ -1534,18 +1538,18 @@ DviMsgMsearch::DviMsgMsearch(IUpnpAnnouncementData& aAnnouncementData,
 
 // DviMsgMsearchAll
 
-DviMsgMsearchAll::DviMsgMsearchAll(IUpnpAnnouncementData& aAnnouncementData,
+DviMsgMsearchAll::DviMsgMsearchAll(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                                    const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
-    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
+    : DviMsgMsearch(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId)
 {
 }
 
 
 // DviMsgMsearchRoot
 
-DviMsgMsearchRoot::DviMsgMsearchRoot(IUpnpAnnouncementData& aAnnouncementData,
+DviMsgMsearchRoot::DviMsgMsearchRoot(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                                      const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
-    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
+    : DviMsgMsearch(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId)
 {
     ASSERT(aAnnouncementData.IsRoot());
 }
@@ -1564,9 +1568,9 @@ TUint DviMsgMsearchRoot::NextMsg()
 
 // DviMsgMsearchUuid
 
-DviMsgMsearchUuid::DviMsgMsearchUuid(IUpnpAnnouncementData& aAnnouncementData,
+DviMsgMsearchUuid::DviMsgMsearchUuid(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                                      const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
-    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
+    : DviMsgMsearch(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId)
 {
 }
 
@@ -1584,9 +1588,9 @@ TUint DviMsgMsearchUuid::NextMsg()
 
 // DviMsgMsearchDeviceType
 
-DviMsgMsearchDeviceType::DviMsgMsearchDeviceType(IUpnpAnnouncementData& aAnnouncementData,
+DviMsgMsearchDeviceType::DviMsgMsearchDeviceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                                                  const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
-    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
+    : DviMsgMsearch(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId)
 {
 }
 
@@ -1604,9 +1608,9 @@ TUint DviMsgMsearchDeviceType::NextMsg()
 
 // DviMsgMsearchServiceType
 
-DviMsgMsearchServiceType::DviMsgMsearchServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote,
+DviMsgMsearchServiceType::DviMsgMsearchServiceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote,
                                                    const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId)
-    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
+    : DviMsgMsearch(aDvStack, aAnnouncementData, aRemote, aUri, aConfigId)
     , iServiceType(aServiceType)
 {
 }
@@ -1625,35 +1629,35 @@ TUint DviMsgMsearchServiceType::NextMsg()
 
 // DviMsgNotify
 
-DviMsgNotify* DviMsgNotify::NewAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
+DviMsgNotify* DviMsgNotify::NewAlive(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
 {
-    DviMsgNotify* self = new DviMsgNotify(aAnnouncementData, aAdapter, aUri, aConfigId);
+    DviMsgNotify* self = new DviMsgNotify(aDvStack, aAnnouncementData, aAdapter, aUri, aConfigId);
     self->iNotifier = new SsdpNotifierAlive(self->iSsdpNotifier);
     return self;
 }
 
-DviMsgNotify* DviMsgNotify::NewByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
+DviMsgNotify* DviMsgNotify::NewByeBye(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
                                       Bwh& aUri, TUint aConfigId, Functor& aCompleted)
 {
-    DviMsgNotify* self = new DviMsgNotify(aAnnouncementData, aAdapter, aUri, aConfigId);
+    DviMsgNotify* self = new DviMsgNotify(aDvStack, aAnnouncementData, aAdapter, aUri, aConfigId);
     self->iNotifier = new SsdpNotifierByeBye(self->iSsdpNotifier);
     self->iCompleted = aCompleted;
     return self;
 }
 
-DviMsgNotify* DviMsgNotify::NewUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
+DviMsgNotify* DviMsgNotify::NewUpdate(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
                                       Bwh& aUri, TUint aConfigId, Functor& aCompleted)
 {
-    DviMsgNotify* self = new DviMsgNotify(aAnnouncementData, aAdapter, aUri, aConfigId);
+    DviMsgNotify* self = new DviMsgNotify(aDvStack, aAnnouncementData, aAdapter, aUri, aConfigId);
     self->iNotifier = new SsdpNotifierUpdate(self->iSsdpNotifier);
     self->iCompleted = aCompleted;
     return self;
 }
 
-DviMsgNotify::DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
+DviMsgNotify::DviMsgNotify(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
                            TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
     : DviMsg(aAnnouncementData, aUri)
-    , iSsdpNotifier(aAdapter, aConfigId)
+    , iSsdpNotifier(aDvStack, aAdapter, aConfigId)
 {
 }
 

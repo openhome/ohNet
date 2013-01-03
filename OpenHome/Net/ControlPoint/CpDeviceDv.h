@@ -8,6 +8,7 @@ namespace Net {
 
 class DvDevice;
 class CpiDeviceDv;
+class CpStack;
 
 /**
  * Control point device which communicates directly with a device stack's device
@@ -21,7 +22,7 @@ public:
      *
      * @param[in] aDevice  The device stack device to control
      */
-    static CpDeviceDv* New(DvDevice& aDevice);
+    static CpDeviceDv* New(CpStack& aCpStack, DvDevice& aDevice);
 private:
     /**
      * Not for external use.  Use CpDeviceDv::New() instead

@@ -8,17 +8,16 @@
 #define HEADER_STACK
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Private/Thread.h>
-#include <OpenHome/Private/Timer.h>
 #include <OpenHome/OsWrapper.h>
-#include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Private/Discovery.h>
-#include <OpenHome/Net/Core/OhNet.h>
-#include <OpenHome/Private/Printer.h>
 
 #include <vector>
+#include <map>
 
 namespace OpenHome {
+class TimerManager;
+class Mutex;
+class NetworkAdapterList;
 namespace Net {
 
 class IStack
@@ -27,44 +26,42 @@ public:
     virtual ~IStack() {}
 };
 
+class InitialisationParams;
+
 class Stack
 {
-    friend class CpiStack;
-    friend class DviStack;
+    friend class CpStack;
+    friend class DvStack;
 public:
     Stack();
     Stack(InitialisationParams* aInitParams);
-    static void Destroy();
-    static TBool IsInitialised();
-    static void GetVersion(TUint& aMajor, TUint& aMinor);
-    static OpenHome::TimerManager& TimerManager();
+    ~Stack();
+
+    void GetVersion(TUint& aMajor, TUint& aMinor);
+    OpenHome::TimerManager& TimerManager();
     /**
      * Intended for /very/ short operations only
      */
-    static OpenHome::Mutex& Mutex();
+    OpenHome::Mutex& Mutex();
 
-    static OpenHome::NetworkAdapterList& NetworkAdapterList();
-    static SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
-    static void MulticastListenerRelease(TIpAddress aInterface);
-    static TUint SequenceNumber();
-    static InitialisationParams& InitParams();
-    static void AddObject(IStackObject* aObject);
-    static void RemoveObject(IStackObject* aObject);
-    static void ListObjects();
-    static IStack* CpiStack();
-    static IStack* DviStack();
+    OpenHome::NetworkAdapterList& NetworkAdapterList();
+    SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
+    void MulticastListenerRelease(TIpAddress aInterface);
+    TUint SequenceNumber();
+    InitialisationParams& InitParams();
+    void AddObject(IStackObject* aObject);
+    void RemoveObject(IStackObject* aObject);
+    void ListObjects();
+    IStack* CpiStack();
+    IStack* DviStack();
 private:
-    ~Stack();
-    static void SetCpiStack(IStack* aStack);
-    static void SetDviStack(IStack* aStack);
-    void DoAddObject(IStackObject* aObject);
-    void DoRemoveObject(IStackObject* aObject);
-    void DoListObjects();
+    void SetCpStack(IStack* aStack);
+    void SetDvStack(IStack* aStack);
 private:
     class MListener
     {
     public:
-        MListener(TIpAddress aInterface);
+        MListener(Stack& aStack, TIpAddress aInterface);
         ~MListener();
         SsdpListenerMulticast& Listener();
         TIpAddress Interface() const;

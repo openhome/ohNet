@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -229,19 +230,19 @@ CpProxyAvOpenhomeOrgSender1C::CpProxyAvOpenhomeOrgSender1C(CpDeviceC aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1C::PresentationUrlPropertyChanged);
-    iPresentationUrl = new PropertyString("PresentationUrl", functor);
+    iPresentationUrl = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "PresentationUrl", functor);
     AddProperty(iPresentationUrl);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1C::MetadataPropertyChanged);
-    iMetadata = new PropertyString("Metadata", functor);
+    iMetadata = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Metadata", functor);
     AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1C::AudioPropertyChanged);
-    iAudio = new PropertyBool("Audio", functor);
+    iAudio = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Audio", functor);
     AddProperty(iAudio);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1C::StatusPropertyChanged);
-    iStatus = new PropertyString("Status", functor);
+    iStatus = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Status", functor);
     AddProperty(iStatus);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1C::AttributesPropertyChanged);
-    iAttributes = new PropertyString("Attributes", functor);
+    iAttributes = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Attributes", functor);
     AddProperty(iAttributes);
 }
 

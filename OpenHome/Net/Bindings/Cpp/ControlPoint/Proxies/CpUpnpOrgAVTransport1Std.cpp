@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 #include <string>
 
@@ -618,7 +619,7 @@ CpProxyUpnpOrgAVTransport1Cpp::CpProxyUpnpOrgAVTransport1Cpp(CpDeviceCpp& aDevic
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgAVTransport1Cpp::LastChangePropertyChanged);
-    iLastChange = new PropertyString("LastChange", functor);
+    iLastChange = new PropertyString(aDevice.Device().CpStack().Stack(), "LastChange", functor);
     AddProperty(iLastChange);
 }
 

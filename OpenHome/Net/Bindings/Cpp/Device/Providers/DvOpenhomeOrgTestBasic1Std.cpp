@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -84,31 +85,31 @@ DvProviderOpenhomeOrgTestBasic1Cpp::DvProviderOpenhomeOrgTestBasic1Cpp(DvDeviceS
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarUint()
 {
-    iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
+    iPropertyVarUint = new PropertyUint(iDvStack.Stack(), new ParameterUint("VarUint"));
     iService->AddProperty(iPropertyVarUint); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarInt()
 {
-    iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
+    iPropertyVarInt = new PropertyInt(iDvStack.Stack(), new ParameterInt("VarInt"));
     iService->AddProperty(iPropertyVarInt); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarBool()
 {
-    iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
+    iPropertyVarBool = new PropertyBool(iDvStack.Stack(), new ParameterBool("VarBool"));
     iService->AddProperty(iPropertyVarBool); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarStr()
 {
-    iPropertyVarStr = new PropertyString(new ParameterString("VarStr"));
+    iPropertyVarStr = new PropertyString(iDvStack.Stack(), new ParameterString("VarStr"));
     iService->AddProperty(iPropertyVarStr); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarBin()
 {
-    iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
+    iPropertyVarBin = new PropertyBinary(iDvStack.Stack(), new ParameterBinary("VarBin"));
     iService->AddProperty(iPropertyVarBin); // passes ownership
 }
 

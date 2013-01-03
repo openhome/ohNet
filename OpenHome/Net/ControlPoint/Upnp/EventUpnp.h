@@ -11,11 +11,12 @@ namespace OpenHome {
 namespace Net {
 
 class Subscription;
+class CpStack;
 
 class EventSessionUpnp : public SocketTcpSession
 {
 public:
-    EventSessionUpnp();
+    EventSessionUpnp(CpStack& aCpStack);
     ~EventSessionUpnp();
 private:
     void Error(const HttpStatus& aStatus);
@@ -29,6 +30,7 @@ private:
     static const Brn kExpectedNt;
     static const Brn kExpectedNts;
 private:
+    CpStack& iCpStack;
     Srs<kMaxReadBytes>* iReadBuffer;
     ReaderHttpRequest* iReaderRequest;
     HeaderNt iHeaderNt;
@@ -44,7 +46,7 @@ private:
 class EventServerUpnp
 {
 public:
-    EventServerUpnp(TIpAddress aInterface);
+    EventServerUpnp(CpStack& aCpStack, TIpAddress aInterface);
     TUint Port() const { return iTcpServer.Port(); }
 private:
     SocketTcpServer iTcpServer;

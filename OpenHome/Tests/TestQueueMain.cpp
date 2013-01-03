@@ -4,7 +4,7 @@ extern void TestQueue();
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    Net::UpnpLibrary::Initialise(aInitParams);
+    Net::Library* lib = new Net::Library(aInitParams);
     TestQueue();
-    Net::UpnpLibrary::Close();
+    delete lib;
 }

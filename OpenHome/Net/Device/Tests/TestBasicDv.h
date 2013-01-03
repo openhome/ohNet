@@ -38,7 +38,7 @@ private:
 class DeviceBasic
 {
 public:
-    DeviceBasic();
+    DeviceBasic(DvStack& aDvStack);
     ~DeviceBasic();
     const Brx& Udn() const;
 private:

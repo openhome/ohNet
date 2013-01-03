@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 #include <string>
 
@@ -218,13 +219,13 @@ CpProxyUpnpOrgConnectionManager2Cpp::CpProxyUpnpOrgConnectionManager2Cpp(CpDevic
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2Cpp::SourceProtocolInfoPropertyChanged);
-    iSourceProtocolInfo = new PropertyString("SourceProtocolInfo", functor);
+    iSourceProtocolInfo = new PropertyString(aDevice.Device().CpStack().Stack(), "SourceProtocolInfo", functor);
     AddProperty(iSourceProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2Cpp::SinkProtocolInfoPropertyChanged);
-    iSinkProtocolInfo = new PropertyString("SinkProtocolInfo", functor);
+    iSinkProtocolInfo = new PropertyString(aDevice.Device().CpStack().Stack(), "SinkProtocolInfo", functor);
     AddProperty(iSinkProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2Cpp::CurrentConnectionIDsPropertyChanged);
-    iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs", functor);
+    iCurrentConnectionIDs = new PropertyString(aDevice.Device().CpStack().Stack(), "CurrentConnectionIDs", functor);
     AddProperty(iCurrentConnectionIDs);
 }
 

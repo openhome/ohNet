@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
 #include <OpenHome/Net/Private/XmlParser.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -73,8 +74,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         DeviceListLogger logger;
         FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
         FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);
-        CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(domainName, type, ver, added, removed);
-        Blocker* blocker = new Blocker;
+        CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(*gCpStack, domainName, type, ver, added, removed);
+        Blocker* blocker = new Blocker(*gStack);
         blocker->Wait(aInitParams->MsearchTimeSecs());
         delete blocker;
         delete deviceList;

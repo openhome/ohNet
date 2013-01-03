@@ -11,17 +11,18 @@ using namespace OpenHome;
 
 // NetworkAdapterList
 
-NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
-    : iListLock("MNIL")
+NetworkAdapterList::NetworkAdapterList(Net::Stack& aStack, TIpAddress aDefaultSubnet)
+    : iStack(aStack)
+    , iListLock("MNIL")
     , iListenerLock("MNIO")
     , iCurrent(NULL)
     , iNextListenerId(1)
 {
-    Net::Stack::AddObject(this);
+    iStack.AddObject(this);
     iDefaultSubnet = aDefaultSubnet;
     iNotifierThread = new NetworkAdapterChangeNotifier(*this);
     iNotifierThread->Start();
-    iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
+    iNetworkAdapters = Os::NetworkListAdapters(iStack, iStack.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
     for (size_t i=0; i<iSubnets->size(); i++) {
@@ -34,7 +35,7 @@ NetworkAdapterList::~NetworkAdapterList()
     delete iNotifierThread;
     DestroySubnetList(iNetworkAdapters);
     DestroySubnetList(iSubnets);
-    Net::Stack::RemoveObject(this);
+    iStack.RemoveObject(this);
 }
 
 NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
@@ -97,7 +98,7 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     iDefaultSubnet = aSubnet;
     UpdateCurrentAdapter();
     iListLock.Signal();
-    const TBool started = (Net::Stack::CpiStack() != NULL || Net::Stack::DviStack() != NULL);
+    const TBool started = (iStack.CpiStack() != NULL || iStack.DviStack() != NULL);
     if (started && aSubnet != oldSubnet) {
         iNotifierThread->QueueCurrentChanged();
     }
@@ -279,7 +280,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 {
     static const char* kRemovedAdapterCookie = "RemovedAdapter";
     iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(Net::Stack::InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iStack, iStack.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;

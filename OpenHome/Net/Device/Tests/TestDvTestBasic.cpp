@@ -17,7 +17,7 @@ using namespace OpenHome::TestFramework;
 class DeviceTestBasic : public IResourceManager
 {
 public:
-    DeviceTestBasic(const Brx& aConfigDir);
+    DeviceTestBasic(DvStack& aDvStack, const Brx& aConfigDir);
     ~DeviceTestBasic();
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
@@ -29,10 +29,10 @@ private:
 
 
 
-DeviceTestBasic::DeviceTestBasic(const Brx& aConfigDir)
+DeviceTestBasic::DeviceTestBasic(DvStack& aDvStack, const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
 {
-    iDevice = new DvDeviceStandard(Brn("device-ohNetTestBasic"), *this);
+    iDevice = new DvDeviceStandard(aDvStack, Brn("device-ohNetTestBasic"), *this);
     iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -130,17 +130,17 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     aInitParams->SetDvNumWebSocketThreads(5);
     aInitParams->SetDvWebSocketPort(54320);
     aInitParams->SetDvUpnpServerPort(0);
-    UpnpLibrary::Initialise(aInitParams);
+    Library* lib = new Library(aInitParams);
     Debug::SetLevel(Debug::kDvWebSocket | Debug::kError | Debug::kDvInvocation | Debug::kDvEvent | Debug::kDvDevice);
-    UpnpLibrary::StartDv();
+    DvStack* dvStack = lib->StartDv();
 
     Print("TestDvTestBasic - starting ('q' to quit)\n");
-    DeviceTestBasic* device = new DeviceTestBasic(config.Value());
+    DeviceTestBasic* device = new DeviceTestBasic(*dvStack, config.Value());
     while (getchar() != 'q') {
         ;
     }
     delete device;
     Print("TestDvTestBasic - exiting\n");
 
-    UpnpLibrary::Close();
+    delete lib;
 }

@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -128,16 +129,16 @@ CpProxyAvOpenhomeOrgNetworkMonitor1C::CpProxyAvOpenhomeOrgNetworkMonitor1C(CpDev
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1C::NamePropertyChanged);
-    iName = new PropertyString("Name", functor);
+    iName = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Name", functor);
     AddProperty(iName);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1C::SenderPropertyChanged);
-    iSender = new PropertyUint("Sender", functor);
+    iSender = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Sender", functor);
     AddProperty(iSender);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1C::ReceiverPropertyChanged);
-    iReceiver = new PropertyUint("Receiver", functor);
+    iReceiver = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Receiver", functor);
     AddProperty(iReceiver);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1C::ResultsPropertyChanged);
-    iResults = new PropertyUint("Results", functor);
+    iResults = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Results", functor);
     AddProperty(iResults);
 }
 

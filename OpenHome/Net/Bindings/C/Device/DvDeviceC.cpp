@@ -2,6 +2,7 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include "DviDeviceC.h"
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -11,7 +12,7 @@ using namespace OpenHome::Net;
 DviDeviceC::DviDeviceC(const char* aUdn)
 {
     Brn udn(aUdn);
-    iDevice = new DvDevice(udn);
+    iDevice = new DvDevice(*gDvStack, udn);
     iResourceManager = NULL;
     iCallbackArg = NULL;
 }
@@ -84,13 +85,13 @@ int32_t STDCALL DviDeviceC::WriteResourceEnd(void* aPtr)
 DviDeviceStandardC::DviDeviceStandardC(const char* aUdn)
 {
     Brn udn(aUdn);
-    iDevice = new DvDeviceStandard(udn);
+    iDevice = new DvDeviceStandard(*gDvStack, udn);
 }
 
 DviDeviceStandardC::DviDeviceStandardC(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr)
 {
     Brn udn(aUdn);
-    iDevice = new DvDeviceStandard(udn, *this);
+    iDevice = new DvDeviceStandard(*gDvStack, udn, *this);
     iResourceManager = aResourceManager;
     iCallbackArg = aPtr;
 }

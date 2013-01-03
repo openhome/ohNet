@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Private/Standard.h>
 
 EXCEPTION(HttpError);
 EXCEPTION(HttpInvalidResponse);
@@ -223,15 +224,21 @@ private:
     TBool iReceived;
 };
 
-class ReaderHttpHeader
+namespace Net {
+    class Stack;
+} // namespace Net
+
+class ReaderHttpHeader : protected INonCopyable
 {
 public:
     IHttpHeader& Header() const;
     void AddHeader(IHttpHeader& aHeader);
 protected:
-    ReaderHttpHeader();
+    ReaderHttpHeader(Net::Stack& aStack);
     void ResetHeaders();
     void ProcessHeader(const Brx& aField, const Brx& aValue);
+protected:
+    Net::Stack& iStack;
 private:
     IHttpHeader* iHeader;
     std::vector<IHttpHeader*> iHeaders;
@@ -242,7 +249,7 @@ class ReaderHttpRequest : public ReaderHttpHeader
     static const TUint kMaxMethodBytes = 20;
     static const TUint kMaxUriBytes = 200;
 public:    
-    ReaderHttpRequest(IReader& aReader);
+    ReaderHttpRequest(Net::Stack& aStack, IReader& aReader);
     void Read(TUint aTimeoutMs = 0);
     void Flush();
     void Interrupt();
@@ -270,7 +277,7 @@ public:
     static const TUint kMaxDescriptionBytes = 100;
     static const TUint kMaxUriBytes = 200;
 public:
-    ReaderHttpResponse(IReader& aReader);
+    ReaderHttpResponse(Net::Stack& aStack, IReader& aReader);
     void Read(TUint aTimeoutMs = 0);
     void Flush();
     void Interrupt();

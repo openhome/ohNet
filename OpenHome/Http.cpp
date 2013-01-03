@@ -260,7 +260,8 @@ const HttpStatus HttpStatus::kHttpVersionNotSupported = HttpStatusMaker(505, Brn
 
 // ReaderHttpHeader
 
-ReaderHttpHeader::ReaderHttpHeader()
+ReaderHttpHeader::ReaderHttpHeader(Net::Stack& aStack)
+    : iStack(aStack)
 {
 }
 
@@ -301,8 +302,9 @@ void ReaderHttpHeader::ProcessHeader(const Brx& aField, const Brx& aValue)
 
 // ReaderHttpRequest
 
-ReaderHttpRequest::ReaderHttpRequest(IReader& aReader)
-    : iReader(aReader)
+ReaderHttpRequest::ReaderHttpRequest(Net::Stack& aStack, IReader& aReader)
+    : ReaderHttpHeader(aStack)
+    , iReader(aReader)
 {
 }
 
@@ -315,7 +317,7 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
     for (;;) {
         Brn line;
         {
-            Timer timer(MakeFunctor(*this, &ReaderHttpRequest::ReadTimeout));
+            Timer timer(iStack, MakeFunctor(*this, &ReaderHttpRequest::ReadTimeout));
             if (aTimeoutMs > 0) {
                 timer.FireIn(aTimeoutMs);
             }
@@ -432,8 +434,9 @@ void ReaderHttpRequest::Interrupt()
 
 // ReaderHttpResponse
 
-ReaderHttpResponse::ReaderHttpResponse(IReader& aReader)
-    : iReader(aReader)
+ReaderHttpResponse::ReaderHttpResponse(Net::Stack& aStack, IReader& aReader)
+    : ReaderHttpHeader(aStack)
+    , iReader(aReader)
 {
 }
 
@@ -455,7 +458,7 @@ void ReaderHttpResponse::Read(TUint aTimeoutMs)
     for (;;) {
         Brn line;
         {
-            Timer timer(MakeFunctor(*this, &ReaderHttpResponse::ReadTimeout));
+            Timer timer(iStack, MakeFunctor(*this, &ReaderHttpResponse::ReadTimeout));
             if (aTimeoutMs > 0) {
                 timer.FireIn(aTimeoutMs);
             }

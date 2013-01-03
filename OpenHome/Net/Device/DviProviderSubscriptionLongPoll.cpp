@@ -18,7 +18,8 @@ const Brn DviProviderSubscriptionLongPoll::kErrorDescTooManyRequests("Too many l
 
 DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDevice)
     : DvProviderOpenhomeOrgSubscriptionLongPoll1(aDevice)
-    , iPropertyUpdateCollection(DviStack::PropertyUpdateCollection())
+    , iDvStack(aDevice.DvStack())
+    , iPropertyUpdateCollection(iDvStack.PropertyUpdateCollection())
     , iLock("LPMX")
     , iShutdown("LPSH", 0)
     , iExit(false)
@@ -30,7 +31,7 @@ DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDev
     EnableActionGetPropertyUpdates();
 
     iShutdown.Signal();
-    iMaxClientCount = Stack::InitParams().DvNumServerThreads() / 2;
+    iMaxClientCount = iDvStack.Stack().InitParams().DvNumServerThreads() / 2;
     ASSERT(iMaxClientCount > 0);
     UpdateReadySignal empty;
     for (TUint i=0; i<iMaxClientCount; i++) {
@@ -54,7 +55,7 @@ void DviProviderSubscriptionLongPoll::Subscribe(IDvInvocation& aInvocation, cons
         aRequestedDuration = kTimeoutLongPollSecs;
     }
 
-    DviDevice* device = DviStack::DeviceMap().Find(aUdn);
+    DviDevice* device = iDvStack.DeviceMap().Find(aUdn);
     if (device == NULL) {
         aInvocation.Error(kErrorCodeBadDevice, kErrorDescBadDevice);
     }
@@ -73,7 +74,7 @@ void DviProviderSubscriptionLongPoll::Subscribe(IDvInvocation& aInvocation, cons
     Brh sid;
     device->CreateSid(sid);
     TUint timeout = aRequestedDuration;
-    DviSubscription* subscription = new DviSubscription(*device, iPropertyUpdateCollection, NULL, sid, timeout);
+    DviSubscription* subscription = new DviSubscription(iDvStack, *device, iPropertyUpdateCollection, NULL, sid, timeout);
 
     aInvocation.StartResponse();
     aSid.Write(subscription->Sid());
@@ -83,7 +84,7 @@ void DviProviderSubscriptionLongPoll::Subscribe(IDvInvocation& aInvocation, cons
 
     // Start subscription, prompting availability of the first update (covering all state variables)
     iPropertyUpdateCollection.AddSubscription(aClientId, subscription);
-    DviSubscriptionManager::AddSubscription(*subscription);
+    iDvStack.SubscriptionManager().AddSubscription(*subscription);
     service->AddSubscription(subscription);
 }
 
@@ -96,7 +97,7 @@ void DviProviderSubscriptionLongPoll::Unsubscribe(IDvInvocation& aInvocation, co
 
 void DviProviderSubscriptionLongPoll::Renew(IDvInvocation& aInvocation, const Brx& aSid, TUint aRequestedDuration, IDvInvocationResponseUint& aDuration)
 {
-    DviSubscription* subscription = DviSubscriptionManager::Find(aSid);
+    DviSubscription* subscription = iDvStack.SubscriptionManager().Find(aSid);
     if (subscription == NULL) {
         aInvocation.Error(kErrorCodeBadSubscription, kErrorDescBadSubscription);
     }

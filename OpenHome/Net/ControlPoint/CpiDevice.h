@@ -24,13 +24,13 @@
 namespace OpenHome {
 namespace Net {
 
-
 class CpiDeviceList;
 class Invocation;
 class ServiceType;
 class CpiSubscription;
 class Property;
 class IPropertyProcessor;
+class CpStack;
 typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
 
 class IInvocable
@@ -69,7 +69,7 @@ public:
     /**
      * Sets the ref count to 1
      */
-    CpiDevice(const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserver& aObserver, void* aOwnerData);
+    CpiDevice(CpStack& aStack, const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserver& aObserver, void* aOwnerData);
     
     /**
      * Return the Unique Device Name
@@ -84,6 +84,7 @@ public:
     
     TBool operator==(const CpiDevice& aDevice) const;
     TBool operator!=(const CpiDevice& aDevice) const;
+    OpenHome::Net::CpStack& CpStack();
     void* OwnerData();
 
     /**
@@ -147,6 +148,7 @@ private:
      */
     virtual ~CpiDevice();
 private:
+    OpenHome::Net::CpStack& iCpStack;
     Brhz iUdn;
     OpenHome::Mutex iLock;
     ICpiProtocol& iProtocol;
@@ -215,7 +217,7 @@ protected:
      * Construct the list but don't start populating it yet.
      * Population is deferred until Start() is called.
      */
-    CpiDeviceList(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
 
     /**
      * Add a device to the list.  Relies on aDevice being newly constructed
@@ -265,6 +267,7 @@ private:
 private: // from IStackObject
     void ListObjectDetails() const;
 protected:
+    CpStack& iCpStack;
     TBool iActive; // true if Start() has been called
     TBool iRefreshing;
     Map iMap;
@@ -283,9 +286,9 @@ class CpiDeviceListUpdater : public Thread
 public:
     CpiDeviceListUpdater();
     ~CpiDeviceListUpdater();
-    static void QueueAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
-    static void QueueRemoved(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
-    static void QueueRefreshed(IDeviceListUpdater& aUpdater);
+    void QueueAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
+    void QueueRemoved(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
+    void QueueRefreshed(IDeviceListUpdater& aUpdater);
 private:
     class UpdateBase : private INonCopyable
     {
@@ -325,7 +328,7 @@ private:
         void Update();
     };
 private:
-    static void Queue(UpdateBase* aUpdate);
+    void Queue(UpdateBase* aUpdate);
     void Run();
 private:
     OpenHome::Mutex iLock;

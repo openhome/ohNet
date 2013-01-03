@@ -17,7 +17,7 @@ void XmlFetch::Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
 {
     iUri = aUri;
     iFunctor = aFunctor;
-    iSequenceNumber = Stack::SequenceNumber();
+    iSequenceNumber = iCpStack.Stack().SequenceNumber();
 }
 
 XmlFetch::~XmlFetch()
@@ -32,7 +32,7 @@ const OpenHome::Uri& XmlFetch::Uri() const
 
 void XmlFetch::SignalCompleted()
 {
-    FunctorAsync& asyncEndHandler = Stack::InitParams().AsyncEndHandler();
+    FunctorAsync& asyncEndHandler = iCpStack.Stack().InitParams().AsyncEndHandler();
     if (asyncEndHandler) {
         asyncEndHandler(*this);
     }
@@ -41,7 +41,7 @@ void XmlFetch::SignalCompleted()
         iFunctor(*this);
     }
     catch(XmlFetchError&) {
-        FunctorAsync& asyncErrorHandler = Stack::InitParams().AsyncErrorHandler();
+        FunctorAsync& asyncErrorHandler = iCpStack.Stack().InitParams().AsyncErrorHandler();
         if (asyncErrorHandler) {
             asyncErrorHandler(*this);
         }
@@ -81,7 +81,7 @@ void XmlFetch::Fetch()
     iLock.Signal();
     try {
         Endpoint endpoint(iUri->Port(), iUri->Host());
-        TUint timeout = Stack::InitParams().TcpConnectTimeoutMs();
+        TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
         socket.Connect(endpoint, timeout);
     }
     catch (NetworkTimeout&) {
@@ -128,8 +128,9 @@ Bwh& XmlFetch::Xml(IAsync& aAsync)
     return self.iXml;
 }
 
-XmlFetch::XmlFetch()
-    : iUri(NULL)
+XmlFetch::XmlFetch(CpStack& aCpStack)
+    : iCpStack(aCpStack)
+    , iUri(NULL)
     , iSequenceNumber(0)
     , iLock("XMLM")
     , iInterrupted(false)
@@ -152,7 +153,7 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
 void XmlFetch::Read(SocketTcpClient& aSocket)
 {
     Srd readBuffer(kRwBufferLength, aSocket);
-    ReaderHttpResponse readerResponse(readBuffer);
+    ReaderHttpResponse readerResponse(iCpStack.Stack(), readBuffer);
     HttpHeaderContentLength headerContentLength;
     HttpHeaderTransferEncoding headerTransferEncoding;
 
@@ -203,7 +204,7 @@ void XmlFetch::Read(SocketTcpClient& aSocket)
 
 void XmlFetch::Output(IAsyncOutput& aConsole)
 {
-    Mutex& lock = Stack::Mutex();
+    Mutex& lock = iCpStack.Stack().Mutex();
     lock.Wait();
     Bws<Ascii::kMaxUintStringBytes+1> buf;
     (void)Ascii::AppendDec(buf, iSequenceNumber);
@@ -299,17 +300,19 @@ void XmlFetcher::Run()
 
 // XmlFetchManager
 
-XmlFetchManager::XmlFetchManager()
+XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
     : Thread("FETM")
+    , iCpStack(aCpStack)
     , iLock("FETL")
-    , iFree(Stack::InitParams().NumXmlFetcherThreads())
+    , iFree(iCpStack.Stack().InitParams().NumXmlFetcherThreads())
 {
-    iFetchers = (XmlFetcher**)malloc(sizeof(*iFetchers) * Stack::InitParams().NumXmlFetcherThreads());
+    const TUint numThreads = iCpStack.Stack().InitParams().NumXmlFetcherThreads();
+    iFetchers = (XmlFetcher**)malloc(sizeof(*iFetchers) * numThreads);
     TChar thName[5] = "FET ";
 #ifndef _WIN32
-    ASSERT(Stack::InitParams().NumXmlFetcherThreads() <= 9);
+    ASSERT(numThreads <= 9);
 #endif
-    for (TUint i=0; i<Stack::InitParams().NumXmlFetcherThreads(); i++) {
+    for (TUint i=0; i<numThreads; i++) {
         thName[3] = (TChar)('0'+i);
         iFetchers[i] = new XmlFetcher(&thName[0], iFree);
         iFree.Write(iFetchers[i]);
@@ -332,7 +335,7 @@ XmlFetchManager::~XmlFetchManager()
 
     iFree.ReadInterrupt();
 
-    for (TUint i=0; i<Stack::InitParams().NumXmlFetcherThreads(); i++) {
+    for (TUint i=0; i<iCpStack.Stack().InitParams().NumXmlFetcherThreads(); i++) {
         delete iFetchers[i];
     }
     free(iFetchers);
@@ -352,36 +355,30 @@ XmlFetchManager::~XmlFetchManager()
 
 XmlFetch* XmlFetchManager::Fetch()
 {
-    return new XmlFetch;
+    return new XmlFetch(iCpStack);
 }
 
 void XmlFetchManager::Fetch(XmlFetch* aFetch)
 {
-    XmlFetchManager& self = Self();
     LOG(kXmlFetch, "Fetch for ");
     LOG(kXmlFetch, aFetch->Uri().AbsoluteUri());
     LOG(kXmlFetch, "\n");
 
-    FunctorAsync& asyncBeginHandler = Stack::InitParams().AsyncBeginHandler();
+    FunctorAsync& asyncBeginHandler = iCpStack.Stack().InitParams().AsyncBeginHandler();
     if (asyncBeginHandler) {
         asyncBeginHandler(*aFetch);
     }
 
-    AutoMutex a(self.iLock);
-    if (!self.iActive) {
+    AutoMutex a(iLock);
+    if (!iActive) {
         aFetch->SetError(Error::eAsync, Error::eCodeShutdown,
                          Error::kDescriptionAsyncShutdown);
         aFetch->SignalCompleted();
         delete aFetch;
         return;
     }
-    self.iList.push_back(aFetch);
-    self.Signal();
-}
-
-XmlFetchManager& XmlFetchManager::Self()
-{
-    return CpiStack::XmlFetchManager();;
+    iList.push_back(aFetch);
+    Signal();
 }
 
 void XmlFetchManager::Run()

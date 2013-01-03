@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Net/Core/CpProxy.h>
@@ -20,11 +21,12 @@ const Brn EventSessionUpnp::kExpectedNts("upnp:propchange");
 
 // EventSessionUpnp
 
-EventSessionUpnp::EventSessionUpnp()
-    : iShutdownSem("EVSD", 1)
+EventSessionUpnp::EventSessionUpnp(CpStack& aCpStack)
+    : iCpStack(aCpStack)
+    , iShutdownSem("EVSD", 1)
 {
     iReadBuffer = new Srs<kMaxReadBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(aCpStack.Stack(), *iReadBuffer);
 
     iReaderRequest->AddMethod(kMethodNotify);
     iReaderRequest->AddHeader(iHeaderNt);
@@ -89,14 +91,14 @@ void EventSessionUpnp::Run()
         }
 
         const Brx& sid = iHeaderSid.Sid();
-        subscription = CpiSubscriptionManager::FindSubscription(sid);
+        subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
         if (subscription == NULL) {
             /* the UPnP spec contains a potential race condition where the first NOTIFY
                message can be processed ahead of the SUBSCRIBE reply which provides
                the sid.  Wait until any in-progress subscriptions complete and try
                again in case that's what has happened here */
-            CpiSubscriptionManager::WaitForPendingAdd(sid);
-            subscription = CpiSubscriptionManager::FindSubscription(sid);
+            iCpStack.SubscriptionManager().WaitForPendingAdd(sid);
+            subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
             if (subscription == NULL) {
                 LOG2(kEvent, kError, "notification for unexpected device - ")
                 LOG2(kEvent, kError, iHeaderSid.Sid());
@@ -221,16 +223,17 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
 
 // EventServerUpnp
 
-EventServerUpnp::EventServerUpnp(TIpAddress aInterface)
-    : iTcpServer("EVNT", Stack::InitParams().CpUpnpEventServerPort(), aInterface)
+EventServerUpnp::EventServerUpnp(CpStack& aCpStack, TIpAddress aInterface)
+    : iTcpServer("EVNT", aCpStack.Stack().InitParams().CpUpnpEventServerPort(), aInterface)
 {
     TChar name[5] = "ESS ";
+    const TUint numThread = aCpStack.Stack().InitParams().NumEventSessionThreads();
 #ifndef _WIN32
     // nothing terribly bad would happen if this assertion failed so its not worth a separate Windows implementation
-    ASSERT(Stack::InitParams().NumEventSessionThreads() < 10);
+    ASSERT(numThread < 10);
 #endif
-    for (TUint i=0; i<Stack::InitParams().NumEventSessionThreads(); i++) {
+    for (TUint i=0; i<numThread; i++) {
         name[3] = (TChar)('0' + i);
-        iTcpServer.Add(&name[0], new EventSessionUpnp());
+        iTcpServer.Add(&name[0], new EventSessionUpnp(aCpStack));
     }
 }

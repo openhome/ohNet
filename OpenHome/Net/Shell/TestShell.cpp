@@ -10,19 +10,21 @@ using namespace OpenHome::Net;
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
+    Library* lib = new Library(aInitParams);
+    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     TIpAddress addr = (*subnetList)[0]->Address();
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
     endpt.AppendAddress(buf);
     Print("Connect to %s.%u then 'help' for options\n\n", buf.Ptr(), Shell::kServerPort);
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCombined(subnet);
+    Library::DestroySubnetList(subnetList);
+    CpStack* cpStack = NULL;
+    DvStack* dvStack = NULL;
+    lib->StartCombined(subnet, cpStack, dvStack);
 
     Shell* shell = new Shell();
-    ShellCommandRun* cmdRun = new ShellCommandRun(*shell);
+    ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     Semaphore* blocker = new Semaphore("BLCK", 0);
     blocker->Wait();
@@ -32,5 +34,5 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     delete cmdRun;
     delete shell;
 
-    UpnpLibrary::Close();
+    delete lib;
 }

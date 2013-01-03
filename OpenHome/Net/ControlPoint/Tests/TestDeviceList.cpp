@@ -12,6 +12,7 @@
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/CpiStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -68,7 +69,7 @@ void DeviceListLogger::PrintDeviceInfo(const char* aPrologue, const CpDevice& aD
 }
 
 
-void TestDeviceList(const std::vector<Brn>& aArgs)
+void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs)
 {
     OptionParser parser;
     OptionUint mx("-mx", "--mx", 1, "[1..5] number of second to spread response over");
@@ -93,15 +94,15 @@ void TestDeviceList(const std::vector<Brn>& aArgs)
     FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);
     if (all.Value()) {
-        deviceList = new CpDeviceListUpnpAll(added, removed);
+        deviceList = new CpDeviceListUpnpAll(aCpStack, added, removed);
     }
     else if (root.Value()) {
         Print("Search root...\n");
-        deviceList = new CpDeviceListUpnpRoot(added, removed);
+        deviceList = new CpDeviceListUpnpRoot(aCpStack, added, removed);
     }
     else if (uuid.Value().Bytes() > 0) {
         Print("Search uuid...\n");
-        deviceList = new CpDeviceListUpnpUuid(uuid.Value(), added, removed);
+        deviceList = new CpDeviceListUpnpUuid(aCpStack, uuid.Value(), added, removed);
     }
     else if (urn.Value().Bytes() > 0) {
         Print("Search device/service...\n");
@@ -109,10 +110,10 @@ void TestDeviceList(const std::vector<Brn>& aArgs)
         Brn type;
         TUint ver;
         if (OpenHome::Net::Ssdp::ParseUrnDevice(urn.Value(), domainName, type, ver)) {
-            deviceList = new CpDeviceListUpnpDeviceType(domainName, type, ver, added, removed);
+            deviceList = new CpDeviceListUpnpDeviceType(aCpStack, domainName, type, ver, added, removed);
         }
         else if (OpenHome::Net::Ssdp::ParseUrnService(urn.Value(), domainName, type, ver)) {
-            deviceList = new CpDeviceListUpnpServiceType(domainName, type, ver, added, removed);
+            deviceList = new CpDeviceListUpnpServiceType(aCpStack, domainName, type, ver, added, removed);
         }
         else {
             parser.DisplayHelp();
@@ -122,14 +123,15 @@ void TestDeviceList(const std::vector<Brn>& aArgs)
         parser.DisplayHelp();
     }
 
-    Blocker* blocker = new Blocker;
+    Stack& stack = aCpStack.Stack();
+    Blocker* blocker = new Blocker(stack);
     if (deviceList != NULL) {
-        blocker->Wait(Stack::InitParams().MsearchTimeSecs());
+        blocker->Wait(stack.InitParams().MsearchTimeSecs());
     }
     if (refresh.Value()) {
         Print("\nRefreshing...\n\n");
         deviceList->Refresh();
-        blocker->Wait(Stack::InitParams().MsearchTimeSecs());
+        blocker->Wait(stack.InitParams().MsearchTimeSecs());
     }
     delete blocker;
     delete deviceList;

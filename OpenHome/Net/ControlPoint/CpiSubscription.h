@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Net/Private/EventUpnp.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/CpProxy.h> // for IEventProcessor
@@ -27,7 +28,7 @@ namespace Net {
  * Unsubscribe().  The class will then effectively delete itself when it releases
  * its operation reference after completing the unsubscription.
  */
-class CpiSubscription : public IEventProcessor, private IStackObject
+class CpiSubscription : public IEventProcessor, private IStackObject, private INonCopyable
 {
 public:
     /**
@@ -170,12 +171,12 @@ private:
 class CpiSubscriptionManager : public Thread
 {
 public:
-    CpiSubscriptionManager();
+    CpiSubscriptionManager(CpStack& aCpStack);
     /**
      * Destructor.  Blocks until all subscriptions have been deleted.
      */
     ~CpiSubscriptionManager();
-    static CpiSubscription* NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType);
+    CpiSubscription* NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType);
     
     /**
      * The UPnP specification contains a race condition where it is possible to
@@ -191,8 +192,8 @@ public:
      * streams of (un)subscribe requests.)  After this completes, FindSubscription()
      * should be tried again before treating the notification as an error.
      */
-    static void WaitForPendingAdd(const Brx& aSid);
-    static void Add(CpiSubscription& aSubscription);
+    void WaitForPendingAdd(const Brx& aSid);
+    void Add(CpiSubscription& aSubscription);
 
     /**
      * Returns the subscription with unique id aSid, or NULL if the subscription
@@ -201,12 +202,11 @@ public:
      *
      * See also WaitForPendingAdds()
      */
-    static CpiSubscription* FindSubscription(const Brx& aSid);
-    static void Remove(CpiSubscription& aSubscription);
-    static void Schedule(CpiSubscription& aSubscription);
-    static TUint EventServerPort();
+    CpiSubscription* FindSubscription(const Brx& aSid);
+    void Remove(CpiSubscription& aSubscription);
+    void Schedule(CpiSubscription& aSubscription);
+    TUint EventServerPort();
 private:
-    static CpiSubscriptionManager* Self();
     void RemovePendingAdd(const Brx& aSid);
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
@@ -223,6 +223,7 @@ private:
         Semaphore iSem;
     };
 private:
+    CpStack& iCpStack;
     OpenHome::Mutex iLock;
     std::list<CpiSubscription*> iList;
     Fifo<Subscriber*> iFree;

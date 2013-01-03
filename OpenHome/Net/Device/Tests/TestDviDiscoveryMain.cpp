@@ -8,7 +8,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-extern void TestDviDiscovery();
+extern void TestDviDiscovery(DvStack& aDvStack);
 
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
@@ -22,14 +22,14 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
         aInitParams->SetUseLoopbackNetworkAdapter();
     }
     aInitParams->SetDvUpnpServerPort(0);
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
+    Library* lib = new Library(aInitParams);
+    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::SetCurrentSubnet(subnet);
-    UpnpLibrary::StartDv();
+    Library::DestroySubnetList(subnetList);
+    lib->SetCurrentSubnet(subnet);
+    DvStack* dvStack = lib->StartDv();
 
-    TestDviDiscovery();
+    TestDviDiscovery(*dvStack);
 
-    UpnpLibrary::Close();
+    delete lib;
 }

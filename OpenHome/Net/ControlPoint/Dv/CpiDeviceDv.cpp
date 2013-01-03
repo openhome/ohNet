@@ -8,6 +8,8 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Core/CpProxy.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/Stack.h>
 
 using namespace OpenHome;
@@ -15,13 +17,13 @@ using namespace OpenHome::Net;
 
 // CpiDeviceDv
 
-CpiDeviceDv::CpiDeviceDv(DviDevice& aDevice)
+CpiDeviceDv::CpiDeviceDv(CpStack& aCpStack, DviDevice& aDevice)
     : iDeviceDv(aDevice)
     , iSubscriptionDv(NULL)
     , iSubscriptionCp(NULL)
 {
     iDeviceDv.AddWeakRef();
-    iDeviceCp = new CpiDevice(iDeviceDv.Udn(), *this, *this, NULL);
+    iDeviceCp = new CpiDevice(aCpStack, iDeviceDv.Udn(), *this, *this, NULL);
     iDeviceCp->SetReady();
 }
 
@@ -64,10 +66,10 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
     Brn tmp(sid);
     Brh transfer(tmp);
     aSubscription.SetSid(transfer);
-    TUint durationSecs = Stack::InitParams().SubscriptionDurationSecs();
-    iSubscriptionDv = new DviSubscription(iDeviceDv, *this, NULL, sid, durationSecs);
+    TUint durationSecs = iDeviceCp->CpStack().Stack().InitParams().SubscriptionDurationSecs();
+    iSubscriptionDv = new DviSubscription(iDeviceDv.DvStack(), iDeviceDv, *this, NULL, sid, durationSecs);
     iSubscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
-    DviSubscriptionManager::AddSubscription(*iSubscriptionDv);
+    iDeviceDv.DvStack().SubscriptionManager().AddSubscription(*iSubscriptionDv);
     DviService* service = iDeviceDv.ServiceReference(aSubscription.ServiceType());
     ASSERT(service != NULL);
     service->AddSubscription(iSubscriptionDv);
@@ -77,7 +79,7 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
 
 TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
 {
-    TUint durationSecs = Stack::InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDeviceCp->CpStack().Stack().InitParams().SubscriptionDurationSecs();
     iSubscriptionDv->Renew(durationSecs);
     return durationSecs;
 }

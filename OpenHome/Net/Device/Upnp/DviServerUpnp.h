@@ -101,7 +101,8 @@ private:
 class PropertyWriterUpnp : public PropertyWriter
 {
 public:
-    PropertyWriterUpnp(const Endpoint& aPublisher, const Endpoint& aSubscriber, const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber);
+    PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
+                       const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber);
 private: // IPropertyWriter
     ~PropertyWriterUpnp();
     void PropertyWriteEnd();
@@ -109,16 +110,19 @@ private:
     static const TUint kMaxRequestBytes = 12*1024;
     static const TUint kMaxResponseBytes = 128;
     static const TUint kReadTimeoutMs = 5 * 1000;
+    DvStack& iDvStack;
     SocketTcpClient iSocket;
     Sws<kMaxRequestBytes>* iWriteBuffer;
     WriterHttpRequest* iWriterEvent;
     WriterHttpChunked* iWriterChunked;
 };
 
+class DvStack;
+
 class PropertyWriterFactory : public IPropertyWriterFactory
 {
 public:
-    PropertyWriterFactory(TIpAddress aAdapter, TUint aPort);
+    PropertyWriterFactory(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort);
     void SubscriptionAdded(DviSubscription& aSubscription);
     void Disable();
 private: // IPropertyWriterFactory
@@ -132,6 +136,7 @@ private:
     void RemoveRef();
 private:
     TUint iRefCount;
+    DvStack& iDvStack;
     TBool iEnabled;
     TIpAddress iAdapter;
     TUint iPort;
@@ -144,7 +149,7 @@ private:
 class DviSessionUpnp : public SocketTcpSession, private IResourceWriter, private IDviInvocation
 {
 public:
-    DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& aRedirector);
+    DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort, IRedirector& aRedirector);
     ~DviSessionUpnp();
 private:
     void Run();
@@ -193,6 +198,7 @@ private:
     static const TUint kMaxResponseBytes = 4*1024;
     static const TUint kReadTimeoutMs = 5 * 1000;
 private:
+    DvStack& iDvStack;
     TIpAddress iInterface;
     TUint iPort;
     IRedirector& iRedirector;
@@ -223,10 +229,11 @@ private:
     Semaphore iShutdownSem;
 };
 
+
 class DviServerUpnp : public DviServer, private IRedirector
 {
 public:
-    DviServerUpnp(TUint aPort = 0);
+    DviServerUpnp(DvStack& aDvStack, TUint aPort = 0);
     void Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo);
 protected:
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif);

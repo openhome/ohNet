@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Net/Private/CpiSubscription.h>
 #include <OpenHome/Net/Private/Subscription.h>
 
@@ -13,10 +14,11 @@ using namespace OpenHome::Net;
 
 // InvocationUpnp
 
-InvocationUpnp::InvocationUpnp(Invocation& aInvocation)
-    : iInvocation(aInvocation)
+InvocationUpnp::InvocationUpnp(CpStack& aCpStack, Invocation& aInvocation)
+    : iCpStack(aCpStack)
+    , iInvocation(aInvocation)
     , iReadBuffer(iSocket)
-    , iReaderResponse(iReadBuffer)
+    , iReaderResponse(aCpStack.Stack(), iReadBuffer)
 {
 }
 
@@ -56,7 +58,7 @@ void InvocationUpnp::WriteRequest(const Uri& aUri)
 
     try {
         Endpoint endpoint(aUri.Port(), aUri.Host());
-        TUint timeout = Stack::InitParams().TcpConnectTimeoutMs();
+        TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
         iSocket.Connect(endpoint, timeout);
     }
     catch (NetworkTimeout&) {
@@ -282,8 +284,9 @@ void InvocationBodyWriter::ProcessBinary(const Brx& aVal)
 
 // EventUpnp
 
-EventUpnp::EventUpnp(CpiSubscription& aSubscription)
-    : iSubscription(aSubscription)
+EventUpnp::EventUpnp(CpStack& aCpStack, CpiSubscription& aSubscription)
+    : iCpStack(aCpStack)
+    , iSubscription(aSubscription)
 {
 }
 
@@ -298,7 +301,7 @@ void EventUpnp::Subscribe(const Uri& aPublisher, const Uri& aSubscriber, TUint& 
     iSocket.Open();
     iSubscription.SetInterruptHandler(this);
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = Stack::InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     SubscribeWriteRequest(aPublisher, aSubscriber, aDurationSecs);
@@ -312,7 +315,7 @@ void EventUpnp::RenewSubscription(const Uri& aPublisher, TUint& aDurationSecs)
     iSocket.Open();
     iSubscription.SetInterruptHandler(this);
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = Stack::InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     RenewSubscriptionWriteRequest(aPublisher, aDurationSecs);
@@ -327,7 +330,7 @@ void EventUpnp::Unsubscribe(const Uri& aPublisher, const Brx& aSid)
 {
     iSocket.Open();
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = Stack::InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     UnsubscribeWriteRequest(aPublisher, aSid);
@@ -372,7 +375,7 @@ void EventUpnp::SubscribeWriteRequest(const Uri& aPublisher, const Uri& aSubscri
 void EventUpnp::SubscribeReadResponse(Brh& aSid, TUint& aDurationSecs)
 {
     Srs<1024> readBuffer(iSocket);
-    ReaderHttpResponse readerResponse(readBuffer);
+    ReaderHttpResponse readerResponse(iCpStack.Stack(), readBuffer);
     HeaderSid headerSid;
     HeaderTimeout headerTimeout;
 
@@ -434,7 +437,7 @@ void EventUpnp::UnsubscribeWriteRequest(const Uri& aPublisher, const Brx& aSid)
 void EventUpnp::UnsubscribeReadResponse()
 {
     Srs<1024> readBuffer(iSocket);
-    ReaderHttpResponse readerResponse(readBuffer);
+    ReaderHttpResponse readerResponse(iCpStack.Stack(), readBuffer);
     readerResponse.Read(kUnsubscribeTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {

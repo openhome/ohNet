@@ -13,6 +13,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Cpp/FunctorCpDevice.h>
 #include <OpenHome/Net/Cpp/CpUpnpOrgConnectionManager1.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string>
 #include <vector>
@@ -98,7 +99,7 @@ void DeviceList::TestSync()
 
 void DeviceList::Poll()
 {
-    Timer timer(MakeFunctor(*this, &DeviceList::TimerExpired));
+    Timer timer(*gStack, MakeFunctor(*this, &DeviceList::TimerExpired));
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceList::GetProtocolInfoComplete);
     const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
@@ -108,7 +109,7 @@ void DeviceList::Poll()
         iConnMgr = new CpProxyUpnpOrgConnectionManager1Cpp(*device);
         iStopTimeMs = Os::TimeInMs() + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
-        for (TUint j=0; j<Stack::InitParams().NumActionInvokerThreads(); j++) {
+        for (TUint j=0; j<gStack->InitParams().NumActionInvokerThreads(); j++) {
             iConnMgr->BeginGetProtocolInfo(callback);
         }
         iPollStop.Wait();
@@ -212,7 +213,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     const std::string uuid("896659847466-8000600fe800-737837");
     CpDeviceListCppUpnpUuid* list = new CpDeviceListCppUpnpUuid(uuid, added, removed);
 #endif
-    Blocker* blocker = new Blocker;
+    Blocker* blocker = new Blocker(*gStack);
     blocker->Wait(aInitParams->MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();

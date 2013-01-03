@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/C/DvInvocation.h>
 #include <OpenHome/Net/C/DvInvocationPrivate.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -211,37 +212,37 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::GetPropertyTracksMax(TUint& aValu
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyMetadata()
 {
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
+    iPropertyMetadata = new PropertyString(iDvStack.Stack(), new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyImagesXml()
 {
-    iPropertyImagesXml = new PropertyString(new ParameterString("ImagesXml"));
+    iPropertyImagesXml = new PropertyString(iDvStack.Stack(), new ParameterString("ImagesXml"));
     iService->AddProperty(iPropertyImagesXml); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyIdArray()
 {
-    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
+    iPropertyIdArray = new PropertyBinary(iDvStack.Stack(), new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyTokenArray()
 {
-    iPropertyTokenArray = new PropertyBinary(new ParameterBinary("TokenArray"));
+    iPropertyTokenArray = new PropertyBinary(iDvStack.Stack(), new ParameterBinary("TokenArray"));
     iService->AddProperty(iPropertyTokenArray); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyPlaylistsMax()
 {
-    iPropertyPlaylistsMax = new PropertyUint(new ParameterUint("PlaylistsMax"));
+    iPropertyPlaylistsMax = new PropertyUint(iDvStack.Stack(), new ParameterUint("PlaylistsMax"));
     iService->AddProperty(iPropertyPlaylistsMax); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1C::EnablePropertyTracksMax()
 {
-    iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
+    iPropertyTracksMax = new PropertyUint(iDvStack.Stack(), new ParameterUint("TracksMax"));
     iService->AddProperty(iPropertyTracksMax); // passes ownership
 }
 

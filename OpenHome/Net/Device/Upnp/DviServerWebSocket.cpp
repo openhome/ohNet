@@ -512,15 +512,16 @@ void WsProtocol80::Close(TUint16 aCode)
 
 // DviSessionWebSocket
 
-DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
-    : iEndpoint(aPort, aInterface)
+DviSessionWebSocket::DviSessionWebSocket(DvStack& aDvStack, TIpAddress aInterface, TUint aPort)
+    : iDvStack(aDvStack)
+    , iEndpoint(aPort, aInterface)
     , iExit(false)
     , iInterruptLock("WSIM")
     , iShutdownSem("WSIS", 1)
     , iPropertyUpdates(kMaxPropertyUpdates)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(iDvStack.Stack(), *iReadBuffer);
     iWriterBuffer = new Sws<kMaxWriteBytes>(*this);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
@@ -825,7 +826,7 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     }
     timeout += 10;
 
-    DviDevice* device = DviStack::DeviceMap().Find(udn);
+    DviDevice* device = iDvStack.DeviceMap().Find(udn);
     if (device == NULL) {
         THROW(WebSocketError);
     }
@@ -843,7 +844,7 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     }
     Brh sid;
     device->CreateSid(sid);
-    DviSubscription* subscription = new DviSubscription(*device, *this, NULL, sid, timeout);
+    DviSubscription* subscription = new DviSubscription(iDvStack, *device, *this, NULL, sid, timeout);
     Brn sidBuf(subscription->Sid());
 
     try {
@@ -855,7 +856,7 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     }
 
     // Start subscription, prompting delivery of the first update (covering all state variables)
-    DviSubscriptionManager::AddSubscription(*subscription);
+    iDvStack.SubscriptionManager().AddSubscription(*subscription);
     DviSessionWebSocket::SubscriptionWrapper* wrapper = new DviSessionWebSocket::SubscriptionWrapper(*subscription, sidBuf, *service);
     service->AddSubscription(subscription);
     Brn key(wrapper->Sid());
@@ -989,21 +990,22 @@ DviSessionWebSocket::SubscriptionWrapper::~SubscriptionWrapper()
 
 // DviServerWebSocket
 
-DviServerWebSocket::DviServerWebSocket()
+DviServerWebSocket::DviServerWebSocket(DvStack& aDvStack)
+    : DviServer(aDvStack)
 {
-    if (Stack::InitParams().DvNumWebSocketThreads() > 0) {
+    if (iDvStack.Stack().InitParams().DvNumWebSocketThreads() > 0) {
         Initialise();
     }
 }
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("WSSV", Stack::InitParams().DvWebSocketPort(), aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer("WSSV", iDvStack.Stack().InitParams().DvWebSocketPort(), aNif.Address());
     TChar thName[5];
-    const TUint numWsThreads = Stack::InitParams().DvNumWebSocketThreads();
+    const TUint numWsThreads = iDvStack.Stack().InitParams().DvNumWebSocketThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "WS%2lu", (unsigned long)i);
-        server->Add(&thName[0], new DviSessionWebSocket(aNif.Address(), server->Port()));
+        server->Add(&thName[0], new DviSessionWebSocket(iDvStack, aNif.Address(), server->Port()));
     }
     return server;
 }

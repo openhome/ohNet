@@ -10,6 +10,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Cpp/CpDeviceUpnp.h>
 #include <OpenHome/Net/Cpp/FunctorCpDevice.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string>
 
@@ -126,7 +127,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         parser.DisplayHelp();
     }
 
-    Blocker* blocker = new Blocker;
+    Blocker* blocker = new Blocker(*gStack);
     if (deviceList != NULL) {
         blocker->Wait(aInitParams->MsearchTimeSecs());
     }

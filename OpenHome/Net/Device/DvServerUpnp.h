@@ -8,6 +8,7 @@ namespace Net {
 
 class DvDevice;
 class DviServerUpnp;
+class DvStack;
     
 /**
  * UPnP device server.
@@ -27,8 +28,10 @@ class DvServerUpnp
 public:
     /**
      * Constructor
+     *
+     * @param[in] aDvStack   Returned by UpnpLibrary::StartDv().
      */
-    DvServerUpnp();
+    DvServerUpnp(DvStack& aDvStack);
     /**
      * Destructor
      *

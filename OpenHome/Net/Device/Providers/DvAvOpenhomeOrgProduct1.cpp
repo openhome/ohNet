@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -259,109 +260,109 @@ void DvProviderAvOpenhomeOrgProduct1::Construct()
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyManufacturerName()
 {
-    iPropertyManufacturerName = new PropertyString(new ParameterString("ManufacturerName"));
+    iPropertyManufacturerName = new PropertyString(iDvStack.Stack(), new ParameterString("ManufacturerName"));
     iService->AddProperty(iPropertyManufacturerName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyManufacturerInfo()
 {
-    iPropertyManufacturerInfo = new PropertyString(new ParameterString("ManufacturerInfo"));
+    iPropertyManufacturerInfo = new PropertyString(iDvStack.Stack(), new ParameterString("ManufacturerInfo"));
     iService->AddProperty(iPropertyManufacturerInfo); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyManufacturerUrl()
 {
-    iPropertyManufacturerUrl = new PropertyString(new ParameterString("ManufacturerUrl"));
+    iPropertyManufacturerUrl = new PropertyString(iDvStack.Stack(), new ParameterString("ManufacturerUrl"));
     iService->AddProperty(iPropertyManufacturerUrl); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyManufacturerImageUri()
 {
-    iPropertyManufacturerImageUri = new PropertyString(new ParameterString("ManufacturerImageUri"));
+    iPropertyManufacturerImageUri = new PropertyString(iDvStack.Stack(), new ParameterString("ManufacturerImageUri"));
     iService->AddProperty(iPropertyManufacturerImageUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyModelName()
 {
-    iPropertyModelName = new PropertyString(new ParameterString("ModelName"));
+    iPropertyModelName = new PropertyString(iDvStack.Stack(), new ParameterString("ModelName"));
     iService->AddProperty(iPropertyModelName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyModelInfo()
 {
-    iPropertyModelInfo = new PropertyString(new ParameterString("ModelInfo"));
+    iPropertyModelInfo = new PropertyString(iDvStack.Stack(), new ParameterString("ModelInfo"));
     iService->AddProperty(iPropertyModelInfo); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyModelUrl()
 {
-    iPropertyModelUrl = new PropertyString(new ParameterString("ModelUrl"));
+    iPropertyModelUrl = new PropertyString(iDvStack.Stack(), new ParameterString("ModelUrl"));
     iService->AddProperty(iPropertyModelUrl); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyModelImageUri()
 {
-    iPropertyModelImageUri = new PropertyString(new ParameterString("ModelImageUri"));
+    iPropertyModelImageUri = new PropertyString(iDvStack.Stack(), new ParameterString("ModelImageUri"));
     iService->AddProperty(iPropertyModelImageUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyProductRoom()
 {
-    iPropertyProductRoom = new PropertyString(new ParameterString("ProductRoom"));
+    iPropertyProductRoom = new PropertyString(iDvStack.Stack(), new ParameterString("ProductRoom"));
     iService->AddProperty(iPropertyProductRoom); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyProductName()
 {
-    iPropertyProductName = new PropertyString(new ParameterString("ProductName"));
+    iPropertyProductName = new PropertyString(iDvStack.Stack(), new ParameterString("ProductName"));
     iService->AddProperty(iPropertyProductName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyProductInfo()
 {
-    iPropertyProductInfo = new PropertyString(new ParameterString("ProductInfo"));
+    iPropertyProductInfo = new PropertyString(iDvStack.Stack(), new ParameterString("ProductInfo"));
     iService->AddProperty(iPropertyProductInfo); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyProductUrl()
 {
-    iPropertyProductUrl = new PropertyString(new ParameterString("ProductUrl"));
+    iPropertyProductUrl = new PropertyString(iDvStack.Stack(), new ParameterString("ProductUrl"));
     iService->AddProperty(iPropertyProductUrl); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyProductImageUri()
 {
-    iPropertyProductImageUri = new PropertyString(new ParameterString("ProductImageUri"));
+    iPropertyProductImageUri = new PropertyString(iDvStack.Stack(), new ParameterString("ProductImageUri"));
     iService->AddProperty(iPropertyProductImageUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyStandby()
 {
-    iPropertyStandby = new PropertyBool(new ParameterBool("Standby"));
+    iPropertyStandby = new PropertyBool(iDvStack.Stack(), new ParameterBool("Standby"));
     iService->AddProperty(iPropertyStandby); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertySourceIndex()
 {
-    iPropertySourceIndex = new PropertyUint(new ParameterUint("SourceIndex"));
+    iPropertySourceIndex = new PropertyUint(iDvStack.Stack(), new ParameterUint("SourceIndex"));
     iService->AddProperty(iPropertySourceIndex); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertySourceCount()
 {
-    iPropertySourceCount = new PropertyUint(new ParameterUint("SourceCount"));
+    iPropertySourceCount = new PropertyUint(iDvStack.Stack(), new ParameterUint("SourceCount"));
     iService->AddProperty(iPropertySourceCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertySourceXml()
 {
-    iPropertySourceXml = new PropertyString(new ParameterString("SourceXml"));
+    iPropertySourceXml = new PropertyString(iDvStack.Stack(), new ParameterString("SourceXml"));
     iService->AddProperty(iPropertySourceXml); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgProduct1::EnablePropertyAttributes()
 {
-    iPropertyAttributes = new PropertyString(new ParameterString("Attributes"));
+    iPropertyAttributes = new PropertyString(iDvStack.Stack(), new ParameterString("Attributes"));
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }
 
