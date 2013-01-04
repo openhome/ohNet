@@ -30,7 +30,6 @@ class ServiceType;
 class CpiSubscription;
 class Property;
 class IPropertyProcessor;
-class CpStack;
 typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
 
 class IInvocable
@@ -84,7 +83,7 @@ public:
     
     TBool operator==(const CpiDevice& aDevice) const;
     TBool operator!=(const CpiDevice& aDevice) const;
-    OpenHome::Net::CpStack& CpStack();
+    OpenHome::Net::CpStack& GetCpStack();
     void* OwnerData();
 
     /**

@@ -31,7 +31,7 @@ DvProviderUpnpOrgScheduledRecording2Cpp::DvProviderUpnpOrgScheduledRecording2Cpp
 
 void DvProviderUpnpOrgScheduledRecording2Cpp::EnablePropertyLastChange()
 {
-    iPropertyLastChange = new PropertyString(iDvStack.Stack(), new ParameterString("LastChange"));
+    iPropertyLastChange = new PropertyString(iDvStack.GetStack(), new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

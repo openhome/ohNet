@@ -85,19 +85,19 @@ void DvProviderAvOpenhomeOrgTime1C::GetPropertySeconds(TUint& aValue)
 
 void DvProviderAvOpenhomeOrgTime1C::EnablePropertyTrackCount()
 {
-    iPropertyTrackCount = new PropertyUint(iDvStack.Stack(), new ParameterUint("TrackCount"));
+    iPropertyTrackCount = new PropertyUint(iDvStack.GetStack(), new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgTime1C::EnablePropertyDuration()
 {
-    iPropertyDuration = new PropertyUint(iDvStack.Stack(), new ParameterUint("Duration"));
+    iPropertyDuration = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgTime1C::EnablePropertySeconds()
 {
-    iPropertySeconds = new PropertyUint(iDvStack.Stack(), new ParameterUint("Seconds"));
+    iPropertySeconds = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Seconds"));
     iService->AddProperty(iPropertySeconds); // passes ownership
 }
 

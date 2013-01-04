@@ -55,7 +55,7 @@ DviSubscription::DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropert
     aSid.TransferTo(iSid);
     iWriterFactory.NotifySubscriptionCreated(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
-    iTimer = new Timer(iDvStack.Stack(), functor);
+    iTimer = new Timer(iDvStack.GetStack(), functor);
     DoRenew(aDurationSecs);
 }
 
@@ -85,29 +85,29 @@ void DviSubscription::Stop()
 
 void DviSubscription::AddRef()
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     iRefCount++;
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
 }
 
 TBool DviSubscription::TryAddRef()
 {
     TBool added = false;
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     if (iRefCount != 0) {
         iRefCount++;
         added = true;
     }
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
     return added;
 }
 
 void DviSubscription::RemoveRef()
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
     if (dead) {
         delete this;
     }
@@ -140,7 +140,7 @@ void DviSubscription::Renew(TUint& aSeconds)
 
 void DviSubscription::DoRenew(TUint& aSeconds)
 {
-    const TUint maxDuration = iDvStack.Stack().InitParams().DvMaxUpdateTimeSecs();
+    const TUint maxDuration = iDvStack.GetStack().InitParams().DvMaxUpdateTimeSecs();
     if (aSeconds == 0 || aSeconds > maxDuration) {
         aSeconds = maxDuration;
     }
@@ -394,9 +394,9 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
     : Thread("DVSM")
     , iDvStack(aDvStack)
     , iLock("DSBM")
-    , iFree(aDvStack.Stack().InitParams().DvNumPublisherThreads())
+    , iFree(aDvStack.GetStack().InitParams().DvNumPublisherThreads())
 {
-    const TUint numPublisherThreads = iDvStack.Stack().InitParams().DvNumPublisherThreads();
+    const TUint numPublisherThreads = iDvStack.GetStack().InitParams().DvNumPublisherThreads();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
     TChar thName[5];
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
@@ -418,7 +418,7 @@ DviSubscriptionManager::~DviSubscriptionManager()
     Join();
     iLock.Signal();
 
-    const TUint numPublisherThreads = iDvStack.Stack().InitParams().DvNumPublisherThreads();
+    const TUint numPublisherThreads = iDvStack.GetStack().InitParams().DvNumPublisherThreads();
     for (TUint i=0; i<numPublisherThreads; i++) {
         delete iPublishers[i];
     }

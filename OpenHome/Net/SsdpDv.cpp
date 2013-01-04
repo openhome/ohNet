@@ -41,7 +41,7 @@ SsdpNotifier::SsdpNotifier(DvStack& aDvStack, TIpAddress aInterface, TUint aConf
     , iInterface(aInterface)
     , iConfigId(aConfigId)
 {
-    iSocket.SetTtl(iDvStack.Stack().InitParams().MsearchTtl()); 
+    iSocket.SetTtl(iDvStack.GetStack().InitParams().MsearchTtl()); 
 }
 
 void SsdpNotifier::SsdpNotify(const Brx& aUri, ENotificationType aNotificationType)
@@ -53,8 +53,8 @@ void SsdpNotifier::SsdpNotify(const Brx& aUri, ENotificationType aNotificationTy
     switch (aNotificationType)
     {
     case EAlive:
-        Ssdp::WriteServer(iDvStack.Stack(), iWriter);
-        Ssdp::WriteMaxAge(iDvStack.Stack(), iWriter);
+        Ssdp::WriteServer(iDvStack.GetStack(), iWriter);
+        Ssdp::WriteMaxAge(iDvStack.GetStack(), iWriter);
         Ssdp::WriteLocation(iWriter, aUri);
         Ssdp::WriteSubTypeAlive(iWriter);
         // !!!! Ssdp::WriteSearchPort(iWriter, ????);
@@ -203,8 +203,8 @@ void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint)
 void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)
 {
     Ssdp::WriteStatus(iWriter);
-    Ssdp::WriteServer(iDvStack.Stack(), iWriter);
-    Ssdp::WriteMaxAge(iDvStack.Stack(), iWriter);
+    Ssdp::WriteServer(iDvStack.GetStack(), iWriter);
+    Ssdp::WriteMaxAge(iDvStack.GetStack(), iWriter);
     Ssdp::WriteExt(iWriter);
     Ssdp::WriteLocation(iWriter, aUri);
     Ssdp::WriteBootId(iDvStack, iWriter);

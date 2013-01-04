@@ -22,7 +22,7 @@ CpiDevice::CpiDevice(OpenHome::Net::CpStack& aCpStack, const Brx& aUdn, ICpiProt
     , iExpired(false)
     , iRemoved(false)
 {
-    iCpStack.Stack().AddObject(this);
+    iCpStack.GetStack().AddObject(this);
 }
 
 const Brx& CpiDevice::Udn() const
@@ -45,7 +45,7 @@ TBool CpiDevice::operator!=(const CpiDevice& aDevice) const
     return (&aDevice != this);
 }
 
-OpenHome::Net::CpStack& CpiDevice::CpStack()
+CpStack& CpiDevice::GetCpStack()
 {
     return iCpStack;
 }
@@ -147,7 +147,7 @@ CpiDevice::~CpiDevice()
     LOG(kDevice, iUdn);
     LOG(kDevice, "\n");
     ASSERT(iRefCount == 0);
-    iCpStack.Stack().RemoveObject(this);
+    iCpStack.GetStack().RemoveObject(this);
 }
 
 
@@ -187,24 +187,24 @@ CpiDeviceList::CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, Functor
 {
     ASSERT(iAdded);
     ASSERT(iRemoved);
-    iCpStack.Stack().AddObject(this);
+    iCpStack.GetStack().AddObject(this);
 }
 
 CpiDeviceList::~CpiDeviceList()
 {
     TBool wait = false;
-    iCpStack.Stack().Mutex().Wait();
+    iCpStack.GetStack().Mutex().Wait();
     if (iRefCount > 0) {
         wait = true;
         iShutdownSem.Clear();
     }
-    iCpStack.Stack().Mutex().Signal();
+    iCpStack.GetStack().Mutex().Signal();
     if (wait) {
         iShutdownSem.Wait();
     }
     ClearMap(iMap);
     ClearMap(iRefreshMap);
-    iCpStack.Stack().RemoveObject(this);
+    iCpStack.GetStack().RemoveObject(this);
 }
 
 void CpiDeviceList::Add(CpiDevice* aDevice)
@@ -311,18 +311,18 @@ void CpiDeviceList::ClearMap(Map& aMap)
 
 void CpiDeviceList::AddRef()
 {
-    iCpStack.Stack().Mutex().Wait();
+    iCpStack.GetStack().Mutex().Wait();
     ++iRefCount;
-    iCpStack.Stack().Mutex().Signal();
+    iCpStack.GetStack().Mutex().Signal();
 }
 
 void CpiDeviceList::RemoveRef()
 {
-    iCpStack.Stack().Mutex().Wait();
+    iCpStack.GetStack().Mutex().Wait();
     if (--iRefCount == 0) {
         iShutdownSem.Signal();
     }
-    iCpStack.Stack().Mutex().Signal();
+    iCpStack.GetStack().Mutex().Signal();
 }
 
 void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)

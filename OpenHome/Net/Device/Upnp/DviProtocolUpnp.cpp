@@ -32,7 +32,7 @@ static const TChar kAttributeKeyVersionMinor[] = "Version.Minor";
 
 DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     : iDevice(aDevice)
-    , iDvStack(aDevice.DvStack())
+    , iDvStack(aDevice.GetDvStack())
     , iLock("DMUP")
     , iUpdateCount(0)
     , iSuppressScheduledEvents(false)
@@ -41,12 +41,12 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     SetAttribute(kAttributeKeyVersionMinor, "1");
     iLock.Wait();
     iServer = &(iDvStack.ServerUpnp());
-    NetworkAdapterList& adapterList = iDvStack.Stack().NetworkAdapterList();
+    NetworkAdapterList& adapterList = iDvStack.GetStack().NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::HandleInterfaceChange);
     iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
     iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
     std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
-    AutoNetworkAdapterRef ref(iDvStack.Stack(), "DviProtocolUpnp ctor");
+    AutoNetworkAdapterRef ref(iDvStack.GetStack(), "DviProtocolUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         AddInterface(*current);
@@ -69,7 +69,7 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
         }
     }
     NetworkAdapterList::DestroySubnetList(subnetList);
-    iAliveTimer = new Timer(iDvStack.Stack(), MakeFunctor(*this, &DviProtocolUpnp::SendAliveNotifications));
+    iAliveTimer = new Timer(iDvStack.GetStack(), MakeFunctor(*this, &DviProtocolUpnp::SendAliveNotifications));
     iLock.Signal();
 }
 
@@ -77,8 +77,8 @@ DviProtocolUpnp::~DviProtocolUpnp()
 {
     delete iAliveTimer;
     iLock.Wait();
-    iDvStack.Stack().NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
-    iDvStack.Stack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iDvStack.GetStack().NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
+    iDvStack.GetStack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iAdapters.size(); i++) {
         iAdapters[i]->Destroy();
     }
@@ -178,8 +178,8 @@ void DviProtocolUpnp::HandleInterfaceChange()
     std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
     {
         AutoMutex a(iLock);
-        NetworkAdapterList& adapterList = iDvStack.Stack().NetworkAdapterList();
-        AutoNetworkAdapterRef ref(iDvStack.Stack(), "DviProtocolUpnp::HandleInterfaceChange");
+        NetworkAdapterList& adapterList = iDvStack.GetStack().NetworkAdapterList();
+        AutoNetworkAdapterRef ref(iDvStack.GetStack(), "DviProtocolUpnp::HandleInterfaceChange");
         const NetworkAdapter* current = ref.Adapter();
         TUint i = 0;
         if (current != 0) {
@@ -511,7 +511,7 @@ void DviProtocolUpnp::SendAliveNotifications()
 
 void DviProtocolUpnp::QueueAliveTimer()
 {
-    TUint maxUpdateTimeMs = iDvStack.Stack().InitParams().DvMaxUpdateTimeSecs() * 1000;
+    TUint maxUpdateTimeMs = iDvStack.GetStack().InitParams().DvMaxUpdateTimeSecs() * 1000;
     TUint updateTimeMs = Random(maxUpdateTimeMs/2, maxUpdateTimeMs/4);
     iAliveTimer->FireIn(updateTimeMs);
 }
@@ -572,20 +572,20 @@ void DviProtocolUpnp::GetDeviceXml(Brh& aXml, TIpAddress aAdapter)
 
 void DviProtocolUpnp::LogUnicastNotification(const char* aType)
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     LOG(kDvDevice, "Device ");
     LOG(kDvDevice, iDevice.Udn());
     LOG(kDvDevice, " starting response to msearch type \'%s\'\n", aType);
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
 }
 
 void DviProtocolUpnp::LogMulticastNotification(const char* aType)
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     LOG(kDvDevice, "Device ");
     LOG(kDvDevice, iDevice.Udn());
     LOG(kDvDevice, " starting to send %s notifications.\n", aType);
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
 }
 
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)
@@ -681,7 +681,7 @@ DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(DvStack& 
     , iBonjourWebPage(0)
     , iDevice(NULL)
 {
-    iListener = &(iDvStack.Stack().MulticastListenerClaim(aAdapter.Address()));
+    iListener = &(iDvStack.GetStack().MulticastListenerClaim(aAdapter.Address()));
     iId = iListener->AddMsearchHandler(this);
 }
 
@@ -701,7 +701,7 @@ DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
         delete iBonjourWebPage;
     }
     iListener->RemoveMsearchHandler(iId);
-    iDvStack.Stack().MulticastListenerRelease(iAdapter);
+    iDvStack.GetStack().MulticastListenerRelease(iAdapter);
 }
 
 TIpAddress DviProtocolUpnpAdapterSpecificData::Interface() const
@@ -753,9 +753,9 @@ void DviProtocolUpnpAdapterSpecificData::ClearDeviceXml()
 
 void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     iMsearchHandler = 0;
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
 }
 
 void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
@@ -809,9 +809,9 @@ void DviProtocolUpnpAdapterSpecificData::ByeByesComplete()
 
 IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     IUpnpMsearchHandler* device = iMsearchHandler;
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
     return device;
 }
 
@@ -1413,8 +1413,8 @@ void DviMsgScheduler::Stop()
 
 DviMsgScheduler::DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener, TUint aMx)
     : iMsg(NULL)
-    , iEndTimeMs(Os::TimeInMs() + (900 * aMx))
     , iDvStack(aDvStack)
+    , iEndTimeMs(Os::TimeInMs() + (900 * aMx))
     , iListener(aListener)
 {
     Construct();
@@ -1422,8 +1422,8 @@ DviMsgScheduler::DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener,
 
 DviMsgScheduler::DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener)
     : iMsg(NULL)
-    , iEndTimeMs(0)
     , iDvStack(aDvStack)
+    , iEndTimeMs(0)
     , iListener(aListener)
 {
     Construct();
@@ -1433,7 +1433,7 @@ void DviMsgScheduler::Construct()
 {
     iStop = false;
     Functor functor = MakeFunctor(*this, &DviMsgScheduler::NextMsg);
-    iTimer = new Timer(iDvStack.Stack(), functor);
+    iTimer = new Timer(iDvStack.GetStack(), functor);
 }
 
 void DviMsgScheduler::SetDuration(TUint aDuration)
@@ -1463,7 +1463,7 @@ void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
     TInt remaining = iEndTimeMs - Os::TimeInMs();
-    TInt maxUpdateTimeMs = (TInt)iDvStack.Stack().InitParams().DvMaxUpdateTimeSecs() * 1000;
+    TInt maxUpdateTimeMs = (TInt)iDvStack.GetStack().InitParams().DvMaxUpdateTimeSecs() * 1000;
     ASSERT(remaining <= maxUpdateTimeMs);
     TInt maxInterval = remaining / (TInt)aRemainingMsgs;
     if (maxInterval < kMinTimerIntervalMs) {

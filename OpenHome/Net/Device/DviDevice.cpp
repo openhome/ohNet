@@ -37,7 +37,7 @@ DviDevice::DviDevice(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn, IResourc
 
 void DviDevice::Construct(const Brx& aUdn)
 {
-    iDvStack.Stack().AddObject(this);
+    iDvStack.GetStack().AddObject(this);
     iRefCount = 1;
     iUdn.Set(aUdn);
     iEnabled = eDisabled;
@@ -58,7 +58,7 @@ void DviDevice::AddProtocol(IDvProtocol* aProtocol)
 
 DviDevice::~DviDevice()
 {
-    iDvStack.Stack().RemoveObject(this);
+    iDvStack.GetStack().RemoveObject(this);
 }
 
 void DviDevice::Destroy()
@@ -323,7 +323,7 @@ IResourceManager* DviDevice::ResourceManager()
     return iResourceManager;
 }
 
-OpenHome::Net::DvStack& DviDevice::DvStack()
+DvStack& DviDevice::GetDvStack()
 {
     return iDvStack;
 }

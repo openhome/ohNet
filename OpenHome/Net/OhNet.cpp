@@ -569,7 +569,7 @@ Library::~Library()
     gStack = NULL;
 }
 
-OpenHome::Net::Stack& Library::Stack()
+OpenHome::Net::Stack& Library::GetStack()
 {
     return *iStack;
 }

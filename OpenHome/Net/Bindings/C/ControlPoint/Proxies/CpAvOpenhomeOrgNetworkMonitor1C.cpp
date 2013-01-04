@@ -129,16 +129,16 @@ CpProxyAvOpenhomeOrgNetworkMonitor1C::CpProxyAvOpenhomeOrgNetworkMonitor1C(CpDev
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1C::NamePropertyChanged);
-    iName = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Name", functor);
+    iName = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Name", functor);
     AddProperty(iName);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1C::SenderPropertyChanged);
-    iSender = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Sender", functor);
+    iSender = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Sender", functor);
     AddProperty(iSender);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1C::ReceiverPropertyChanged);
-    iReceiver = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Receiver", functor);
+    iReceiver = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Receiver", functor);
     AddProperty(iReceiver);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1C::ResultsPropertyChanged);
-    iResults = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Results", functor);
+    iResults = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Results", functor);
     AddProperty(iResults);
 }
 

@@ -659,25 +659,25 @@ CpProxyAvOpenhomeOrgPlaylist1Cpp::CpProxyAvOpenhomeOrgPlaylist1Cpp(CpDeviceCpp& 
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1Cpp::TransportStatePropertyChanged);
-    iTransportState = new PropertyString(aDevice.Device().CpStack().Stack(), "TransportState", functor);
+    iTransportState = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "TransportState", functor);
     AddProperty(iTransportState);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1Cpp::RepeatPropertyChanged);
-    iRepeat = new PropertyBool(aDevice.Device().CpStack().Stack(), "Repeat", functor);
+    iRepeat = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "Repeat", functor);
     AddProperty(iRepeat);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1Cpp::ShufflePropertyChanged);
-    iShuffle = new PropertyBool(aDevice.Device().CpStack().Stack(), "Shuffle", functor);
+    iShuffle = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "Shuffle", functor);
     AddProperty(iShuffle);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1Cpp::IdPropertyChanged);
-    iId = new PropertyUint(aDevice.Device().CpStack().Stack(), "Id", functor);
+    iId = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Id", functor);
     AddProperty(iId);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1Cpp::IdArrayPropertyChanged);
-    iIdArray = new PropertyBinary(aDevice.Device().CpStack().Stack(), "IdArray", functor);
+    iIdArray = new PropertyBinary(aDevice.Device().GetCpStack().GetStack(), "IdArray", functor);
     AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1Cpp::TracksMaxPropertyChanged);
-    iTracksMax = new PropertyUint(aDevice.Device().CpStack().Stack(), "TracksMax", functor);
+    iTracksMax = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "TracksMax", functor);
     AddProperty(iTracksMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1Cpp::ProtocolInfoPropertyChanged);
-    iProtocolInfo = new PropertyString(aDevice.Device().CpStack().Stack(), "ProtocolInfo", functor);
+    iProtocolInfo = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProtocolInfo", functor);
     AddProperty(iProtocolInfo);
 }
 

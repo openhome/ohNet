@@ -18,7 +18,7 @@ const Brn DviProviderSubscriptionLongPoll::kErrorDescTooManyRequests("Too many l
 
 DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDevice)
     : DvProviderOpenhomeOrgSubscriptionLongPoll1(aDevice)
-    , iDvStack(aDevice.DvStack())
+    , iDvStack(aDevice.GetDvStack())
     , iPropertyUpdateCollection(iDvStack.PropertyUpdateCollection())
     , iLock("LPMX")
     , iShutdown("LPSH", 0)
@@ -31,7 +31,7 @@ DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDev
     EnableActionGetPropertyUpdates();
 
     iShutdown.Signal();
-    iMaxClientCount = iDvStack.Stack().InitParams().DvNumServerThreads() / 2;
+    iMaxClientCount = iDvStack.GetStack().InitParams().DvNumServerThreads() / 2;
     ASSERT(iMaxClientCount > 0);
     UpdateReadySignal empty;
     for (TUint i=0; i<iMaxClientCount; i++) {

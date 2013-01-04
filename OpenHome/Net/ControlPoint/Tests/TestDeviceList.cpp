@@ -123,7 +123,7 @@ void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs)
         parser.DisplayHelp();
     }
 
-    Stack& stack = aCpStack.Stack();
+    Stack& stack = aCpStack.GetStack();
     Blocker* blocker = new Blocker(stack);
     if (deviceList != NULL) {
         blocker->Wait(stack.InitParams().MsearchTimeSecs());

@@ -33,7 +33,7 @@ const Brx& CpiSubscription::Sid() const
 
 void CpiSubscription::AddRef()
 {
-    Mutex& lock = iDevice.CpStack().Stack().Mutex();
+    Mutex& lock = iDevice.GetCpStack().GetStack().Mutex();
     lock.Wait();
     iRefCount++;
     lock.Signal();
@@ -42,7 +42,7 @@ void CpiSubscription::AddRef()
 void CpiSubscription::RemoveRef()
 {
     TBool dead;
-    Mutex& lock = iDevice.CpStack().Stack().Mutex();
+    Mutex& lock = iDevice.GetCpStack().GetStack().Mutex();
     lock.Wait();
     ASSERT(iRefCount != 0);
     dead = (--iRefCount == 0);
@@ -91,7 +91,7 @@ void CpiSubscription::SetInterruptHandler(IInterruptHandler* aHandler)
 
 void CpiSubscription::SetSid(Brh& aSid)
 {
-    Mutex& lock = iDevice.CpStack().Stack().Mutex();
+    Mutex& lock = iDevice.GetCpStack().GetStack().Mutex();
     lock.Wait();
     aSid.TransferTo(iSid);
     lock.Signal();
@@ -105,7 +105,7 @@ const OpenHome::Net::ServiceType& CpiSubscription::ServiceType() const
 void CpiSubscription::RunInSubscriber()
 {
     AutoMutex a(iSubscriberLock);
-    Mutex& lock = iDevice.CpStack().Stack().Mutex();
+    Mutex& lock = iDevice.GetCpStack().GetStack().Mutex();
     lock.Wait();
     EOperation op = iPendingOperation;
     iPendingOperation = eNone;
@@ -140,18 +140,18 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     , iRefCount(1)
     , iInterruptHandler(NULL)
 {
-    iTimer = new Timer(aDevice.CpStack().Stack(), MakeFunctor(*this, &CpiSubscription::Renew));
+    iTimer = new Timer(aDevice.GetCpStack().GetStack(), MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
     iRejectFutureOperations = false;
     Schedule(eSubscribe);
-    iDevice.CpStack().Stack().AddObject(this);
+    iDevice.GetCpStack().GetStack().AddObject(this);
 }
 
 CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
     ASSERT(iSid.Bytes() == 0);
-    Stack& stack = iDevice.CpStack().Stack();
+    Stack& stack = iDevice.GetCpStack().GetStack();
     iDevice.RemoveRef();
     delete iTimer;
     stack.RemoveObject(this);
@@ -159,8 +159,8 @@ CpiSubscription::~CpiSubscription()
 
 void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperations)
 {
-    CpStack& cpStack = iDevice.CpStack();
-    Mutex& lock = cpStack.Stack().Mutex();
+    CpStack& cpStack = iDevice.GetCpStack();
+    Mutex& lock = cpStack.GetStack().Mutex();
     lock.Wait();
     if (iRejectFutureOperations) {
         lock.Signal();
@@ -177,10 +177,10 @@ void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperati
 
 void CpiSubscription::DoSubscribe()
 {
-    CpStack& cpStack = iDevice.CpStack();
+    CpStack& cpStack = iDevice.GetCpStack();
     Bws<Uri::kMaxUriBytes> uri;
     uri.Append(Http::kSchemeHttp);
-    NetworkAdapter* nif = cpStack.Stack().NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe");
+    NetworkAdapter* nif = cpStack.GetStack().NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe");
     if (nif == NULL) {
         THROW(NetworkError);
     }
@@ -211,13 +211,13 @@ void CpiSubscription::DoSubscribe()
             deviceXml.Set("[missing]");
         }
         const Brx& udn = iDevice.Udn();
-        cpStack.Stack().Mutex().Wait();
+        cpStack.GetStack().Mutex().Wait();
         Log::Print("XmlError attempting to subscribe to device ");
         Log::Print(udn);
         Log::Print(", with xml\n\n");
         Log::Print(deviceXml);
         Log::Print("\n\n");
-        cpStack.Stack().Mutex().Signal();
+        cpStack.GetStack().Mutex().Signal();
         THROW(XmlError);
     }
 
@@ -285,12 +285,12 @@ void CpiSubscription::DoUnsubscribe()
         LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
         return;
     }
-    CpStack& cpStack = iDevice.CpStack();
+    CpStack& cpStack = iDevice.GetCpStack();
     cpStack.SubscriptionManager().Remove(*this);
     Brh sid;
-    cpStack.Stack().Mutex().Wait();
+    cpStack.GetStack().Mutex().Wait();
     iSid.TransferTo(sid);
-    cpStack.Stack().Mutex().Signal();
+    cpStack.GetStack().Mutex().Signal();
     iDevice.Unsubscribe(*this, sid);
     LOG(kEvent, "Unsubscribed sid ");
     LOG(kEvent, sid);
@@ -430,13 +430,13 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     : Thread("SBSM")
     , iCpStack(aCpStack)
     , iLock("SBSL")
-    , iFree(aCpStack.Stack().InitParams().NumSubscriberThreads())
+    , iFree(aCpStack.GetStack().InitParams().NumSubscriberThreads())
     , iWaiter("SBSS", 0)
     , iWaiters(0)
     , iShutdownSem("SBMS", 0)
 {
-    NetworkAdapterList& ifList = iCpStack.Stack().NetworkAdapterList();
-    AutoNetworkAdapterRef ref(aCpStack.Stack(), "CpiSubscriptionManager ctor");
+    NetworkAdapterList& ifList = iCpStack.GetStack().NetworkAdapterList();
+    AutoNetworkAdapterRef ref(aCpStack.GetStack(), "CpiSubscriptionManager ctor");
     const NetworkAdapter* currentInterface = ref.Adapter();
     Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::CurrentNetworkAdapterChanged);
     iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
@@ -453,9 +453,9 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
 
     TChar thName[5] = "SBS ";
 #ifndef _WIN32
-    ASSERT(iCpStack.Stack().InitParams().NumSubscriberThreads() <= 9);
+    ASSERT(iCpStack.GetStack().InitParams().NumSubscriberThreads() <= 9);
 #endif
-    const TUint numThreads = iCpStack.Stack().InitParams().NumSubscriberThreads();
+    const TUint numThreads = iCpStack.GetStack().InitParams().NumSubscriberThreads();
     iSubscribers = (Subscriber**)malloc(sizeof(*iSubscribers) * numThreads);
     for (TUint i=0; i<numThreads; i++) {
         thName[3] = (TChar)('0'+i);
@@ -485,20 +485,20 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
         }
         catch(Timeout&) {
             Log::Print("WARNING: Subscription manager failed to shutdown cleanly\n");
-            iCpStack.Stack().ListObjects();
+            iCpStack.GetStack().ListObjects();
         }
     }
 
     Kill();
     Join();
 
-    for (TUint i=0; i<iCpStack.Stack().InitParams().NumSubscriberThreads(); i++) {
+    for (TUint i=0; i<iCpStack.GetStack().InitParams().NumSubscriberThreads(); i++) {
         delete iSubscribers[i];
     }
     free(iSubscribers);
 
-    iCpStack.Stack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListenerId);
-    iCpStack.Stack().NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceListListenerId);
+    iCpStack.GetStack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListenerId);
+    iCpStack.GetStack().NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceListListenerId);
     delete iEventServer;
 
     LOG(kEvent, "< ~CpiSubscriptionManager()\n");
@@ -516,7 +516,7 @@ void CpiSubscriptionManager::WaitForPendingAdd(const Brx& aSid)
     iPendingSubscriptions.push_back(pending);
     iLock.Signal();
     try {
-        pending->iSem.Wait(iCpStack.Stack().InitParams().PendingSubscriptionTimeoutMs());
+        pending->iSem.Wait(iCpStack.GetStack().InitParams().PendingSubscriptionTimeoutMs());
     }
     catch(Timeout&) {
         iLock.Wait();
@@ -623,7 +623,7 @@ void CpiSubscriptionManager::HandleInterfaceChange()
 
     // recreate the event server on the new interface
     delete server;
-    AutoNetworkAdapterRef ref(iCpStack.Stack(), "CpiSubscriptionManager::HandleInterfaceChange");
+    AutoNetworkAdapterRef ref(iCpStack.GetStack(), "CpiSubscriptionManager::HandleInterfaceChange");
     const NetworkAdapter* currentInterface = ref.Adapter();
     if (currentInterface != NULL) {
         iEventServer = new EventServerUpnp(iCpStack, currentInterface->Address());

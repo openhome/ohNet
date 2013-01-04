@@ -61,19 +61,19 @@ DvProviderUpnpOrgConnectionManager2Cpp::DvProviderUpnpOrgConnectionManager2Cpp(D
 
 void DvProviderUpnpOrgConnectionManager2Cpp::EnablePropertySourceProtocolInfo()
 {
-    iPropertySourceProtocolInfo = new PropertyString(iDvStack.Stack(), new ParameterString("SourceProtocolInfo"));
+    iPropertySourceProtocolInfo = new PropertyString(iDvStack.GetStack(), new ParameterString("SourceProtocolInfo"));
     iService->AddProperty(iPropertySourceProtocolInfo); // passes ownership
 }
 
 void DvProviderUpnpOrgConnectionManager2Cpp::EnablePropertySinkProtocolInfo()
 {
-    iPropertySinkProtocolInfo = new PropertyString(iDvStack.Stack(), new ParameterString("SinkProtocolInfo"));
+    iPropertySinkProtocolInfo = new PropertyString(iDvStack.GetStack(), new ParameterString("SinkProtocolInfo"));
     iService->AddProperty(iPropertySinkProtocolInfo); // passes ownership
 }
 
 void DvProviderUpnpOrgConnectionManager2Cpp::EnablePropertyCurrentConnectionIDs()
 {
-    iPropertyCurrentConnectionIDs = new PropertyString(iDvStack.Stack(), new ParameterString("CurrentConnectionIDs"));
+    iPropertyCurrentConnectionIDs = new PropertyString(iDvStack.GetStack(), new ParameterString("CurrentConnectionIDs"));
     iService->AddProperty(iPropertyCurrentConnectionIDs); // passes ownership
 }
 

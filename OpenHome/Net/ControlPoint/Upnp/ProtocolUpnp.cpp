@@ -18,7 +18,7 @@ InvocationUpnp::InvocationUpnp(CpStack& aCpStack, Invocation& aInvocation)
     : iCpStack(aCpStack)
     , iInvocation(aInvocation)
     , iReadBuffer(iSocket)
-    , iReaderResponse(aCpStack.Stack(), iReadBuffer)
+    , iReaderResponse(aCpStack.GetStack(), iReadBuffer)
 {
 }
 
@@ -58,7 +58,7 @@ void InvocationUpnp::WriteRequest(const Uri& aUri)
 
     try {
         Endpoint endpoint(aUri.Port(), aUri.Host());
-        TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
+        TUint timeout = iCpStack.GetStack().InitParams().TcpConnectTimeoutMs();
         iSocket.Connect(endpoint, timeout);
     }
     catch (NetworkTimeout&) {
@@ -301,7 +301,7 @@ void EventUpnp::Subscribe(const Uri& aPublisher, const Uri& aSubscriber, TUint& 
     iSocket.Open();
     iSubscription.SetInterruptHandler(this);
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.GetStack().InitParams().TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     SubscribeWriteRequest(aPublisher, aSubscriber, aDurationSecs);
@@ -315,7 +315,7 @@ void EventUpnp::RenewSubscription(const Uri& aPublisher, TUint& aDurationSecs)
     iSocket.Open();
     iSubscription.SetInterruptHandler(this);
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.GetStack().InitParams().TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     RenewSubscriptionWriteRequest(aPublisher, aDurationSecs);
@@ -330,7 +330,7 @@ void EventUpnp::Unsubscribe(const Uri& aPublisher, const Brx& aSid)
 {
     iSocket.Open();
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = iCpStack.Stack().InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.GetStack().InitParams().TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     UnsubscribeWriteRequest(aPublisher, aSid);
@@ -375,7 +375,7 @@ void EventUpnp::SubscribeWriteRequest(const Uri& aPublisher, const Uri& aSubscri
 void EventUpnp::SubscribeReadResponse(Brh& aSid, TUint& aDurationSecs)
 {
     Srs<1024> readBuffer(iSocket);
-    ReaderHttpResponse readerResponse(iCpStack.Stack(), readBuffer);
+    ReaderHttpResponse readerResponse(iCpStack.GetStack(), readBuffer);
     HeaderSid headerSid;
     HeaderTimeout headerTimeout;
 
@@ -437,7 +437,7 @@ void EventUpnp::UnsubscribeWriteRequest(const Uri& aPublisher, const Brx& aSid)
 void EventUpnp::UnsubscribeReadResponse()
 {
     Srs<1024> readBuffer(iSocket);
-    ReaderHttpResponse readerResponse(iCpStack.Stack(), readBuffer);
+    ReaderHttpResponse readerResponse(iCpStack.GetStack(), readBuffer);
     readerResponse.Read(kUnsubscribeTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {

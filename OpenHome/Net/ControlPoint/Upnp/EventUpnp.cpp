@@ -26,7 +26,7 @@ EventSessionUpnp::EventSessionUpnp(CpStack& aCpStack)
     , iShutdownSem("EVSD", 1)
 {
     iReadBuffer = new Srs<kMaxReadBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(aCpStack.Stack(), *iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(aCpStack.GetStack(), *iReadBuffer);
 
     iReaderRequest->AddMethod(kMethodNotify);
     iReaderRequest->AddHeader(iHeaderNt);
@@ -224,10 +224,10 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
 // EventServerUpnp
 
 EventServerUpnp::EventServerUpnp(CpStack& aCpStack, TIpAddress aInterface)
-    : iTcpServer("EVNT", aCpStack.Stack().InitParams().CpUpnpEventServerPort(), aInterface)
+    : iTcpServer("EVNT", aCpStack.GetStack().InitParams().CpUpnpEventServerPort(), aInterface)
 {
     TChar name[5] = "ESS ";
-    const TUint numThread = aCpStack.Stack().InitParams().NumEventSessionThreads();
+    const TUint numThread = aCpStack.GetStack().InitParams().NumEventSessionThreads();
 #ifndef _WIN32
     // nothing terribly bad would happen if this assertion failed so its not worth a separate Windows implementation
     ASSERT(numThread < 10);

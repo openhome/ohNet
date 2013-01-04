@@ -67,7 +67,7 @@ FunctorDviInvocation DvAction::Functor() const
 // DviService
 
 DviService::DviService(DvStack& aDvStack, const TChar* aDomain, const TChar* aName, TUint aVersion)
-    : Service(aDvStack.Stack(), aDomain, aName, aVersion)
+    : Service(aDvStack.GetStack(), aDomain, aName, aVersion)
     , iDvStack(aDvStack)
     , iLock("DVSM")
     , iRefCount(1)
@@ -77,7 +77,7 @@ DviService::DviService(DvStack& aDvStack, const TChar* aDomain, const TChar* aNa
     , iDisabledSem("DVSS", 0)
 {
     iDisabledSem.Signal();
-    iDvStack.Stack().AddObject(this);
+    iDvStack.GetStack().AddObject(this);
 }
 
 DviService::~DviService()
@@ -92,7 +92,7 @@ DviService::~DviService()
         delete iProperties[i];
     }
     iLock.Signal();
-    iDvStack.Stack().RemoveObject(this);
+    iDvStack.GetStack().RemoveObject(this);
 }
 
 void DviService::StopSubscriptions()
@@ -110,17 +110,17 @@ void DviService::StopSubscriptions()
 
 void DviService::AddRef()
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     iRefCount++;
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
 }
 
 void DviService::RemoveRef()
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
     if (dead) {
         delete this;
     }

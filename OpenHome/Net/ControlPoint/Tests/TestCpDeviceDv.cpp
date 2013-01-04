@@ -226,7 +226,7 @@ static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = aDvStack.Stack().NetworkAdapterList().CurrentAdapter("TestCpDeviceDv");
+    NetworkAdapter* nif = aDvStack.GetStack().NetworkAdapterList().CurrentAdapter("TestCpDeviceDv");
     TUint max = nif->Address();
     TUint seed = aDvStack.ServerUpnp().Port(nif->Address());
     SetRandomSeed(seed);

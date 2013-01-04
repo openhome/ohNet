@@ -602,22 +602,22 @@ CpProxyAvOpenhomeOrgPlaylistManager1Cpp::CpProxyAvOpenhomeOrgPlaylistManager1Cpp
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1Cpp::MetadataPropertyChanged);
-    iMetadata = new PropertyString(aDevice.Device().CpStack().Stack(), "Metadata", functor);
+    iMetadata = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Metadata", functor);
     AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1Cpp::ImagesXmlPropertyChanged);
-    iImagesXml = new PropertyString(aDevice.Device().CpStack().Stack(), "ImagesXml", functor);
+    iImagesXml = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ImagesXml", functor);
     AddProperty(iImagesXml);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1Cpp::IdArrayPropertyChanged);
-    iIdArray = new PropertyBinary(aDevice.Device().CpStack().Stack(), "IdArray", functor);
+    iIdArray = new PropertyBinary(aDevice.Device().GetCpStack().GetStack(), "IdArray", functor);
     AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1Cpp::TokenArrayPropertyChanged);
-    iTokenArray = new PropertyBinary(aDevice.Device().CpStack().Stack(), "TokenArray", functor);
+    iTokenArray = new PropertyBinary(aDevice.Device().GetCpStack().GetStack(), "TokenArray", functor);
     AddProperty(iTokenArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PlaylistsMaxPropertyChanged);
-    iPlaylistsMax = new PropertyUint(aDevice.Device().CpStack().Stack(), "PlaylistsMax", functor);
+    iPlaylistsMax = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "PlaylistsMax", functor);
     AddProperty(iPlaylistsMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1Cpp::TracksMaxPropertyChanged);
-    iTracksMax = new PropertyUint(aDevice.Device().CpStack().Stack(), "TracksMax", functor);
+    iTracksMax = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "TracksMax", functor);
     AddProperty(iTracksMax);
 }
 

@@ -46,7 +46,7 @@ DvProviderUpnpOrgAVTransport2Cpp::DvProviderUpnpOrgAVTransport2Cpp(DvDeviceStd& 
 
 void DvProviderUpnpOrgAVTransport2Cpp::EnablePropertyLastChange()
 {
-    iPropertyLastChange = new PropertyString(iDvStack.Stack(), new ParameterString("LastChange"));
+    iPropertyLastChange = new PropertyString(iDvStack.GetStack(), new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 
@@ -63,7 +63,7 @@ void DvProviderUpnpOrgAVTransport2Cpp::EnablePropertyDRMState()
     allowedValues[index++] = (TChar*)"FAILED_AUTHENTICATION";
     allowedValues[index++] = (TChar*)"NOT_AUTHENTICATED";
     allowedValues[index++] = (TChar*)"DEVICE_REVOCATION";
-    iPropertyDRMState = new PropertyString(iDvStack.Stack(), new ParameterString("DRMState", allowedValues, 8));
+    iPropertyDRMState = new PropertyString(iDvStack.GetStack(), new ParameterString("DRMState", allowedValues, 8));
     delete[] allowedValues;
     iService->AddProperty(iPropertyDRMState); // passes ownership
 }

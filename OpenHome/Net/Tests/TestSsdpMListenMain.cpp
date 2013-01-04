@@ -13,6 +13,6 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
 {
     Net::Library* lib = new Net::Library(aInitParams);
     std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
-    TestSsdpMListen(lib->Stack(), args);
+    TestSsdpMListen(lib->GetStack(), args);
     delete lib;
 }

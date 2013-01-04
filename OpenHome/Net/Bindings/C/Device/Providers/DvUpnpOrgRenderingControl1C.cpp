@@ -187,7 +187,7 @@ void DvProviderUpnpOrgRenderingControl1C::GetPropertyLastChange(Brhz& aValue)
 
 void DvProviderUpnpOrgRenderingControl1C::EnablePropertyLastChange()
 {
-    iPropertyLastChange = new PropertyString(iDvStack.Stack(), new ParameterString("LastChange"));
+    iPropertyLastChange = new PropertyString(iDvStack.GetStack(), new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

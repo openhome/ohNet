@@ -197,7 +197,7 @@ void DeviceListTI::Removed(CpDevice& aDevice)
 void TestInvocation(CpStack& aCpStack)
 {
     gActionCount = 0; // reset this here in case we're run multiple times via TestShell
-    Stack& stack = aCpStack.Stack();
+    Stack& stack = aCpStack.GetStack();
     FunctorAsync dummy;
     /* Set an empty handler for errors to avoid test output being swamped by expected
        errors from invocations we interrupt at the end of each device's 1s timeslice */

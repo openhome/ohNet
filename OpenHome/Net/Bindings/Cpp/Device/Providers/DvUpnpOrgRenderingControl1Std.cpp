@@ -31,7 +31,7 @@ DvProviderUpnpOrgRenderingControl1Cpp::DvProviderUpnpOrgRenderingControl1Cpp(DvD
 
 void DvProviderUpnpOrgRenderingControl1Cpp::EnablePropertyLastChange()
 {
-    iPropertyLastChange = new PropertyString(iDvStack.Stack(), new ParameterString("LastChange"));
+    iPropertyLastChange = new PropertyString(iDvStack.GetStack(), new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

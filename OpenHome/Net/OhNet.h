@@ -436,7 +436,7 @@ public:
      *
      * @return  Stack instance
      */
-    OpenHome::Net::Stack& Stack();
+    Stack& GetStack();
 
     /**
      * Create a vector of the available subnets.

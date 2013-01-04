@@ -12,18 +12,18 @@ using namespace OpenHome::Net;
 void DvProvider::PropertiesLock()
 {
     iService->PropertiesLock();
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     iDelayPropertyUpdates = true;
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
 }
 
 void DvProvider::PropertiesUnlock()
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     TBool report = iPropertyChanged;
     iPropertyChanged = false;
     iDelayPropertyUpdates = false;
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
     iService->PropertiesUnlock();
     if (report) {
         iService->PublishPropertyUpdates();
@@ -31,7 +31,7 @@ void DvProvider::PropertiesUnlock()
 }
 
 DvProvider::DvProvider(DviDevice& aDevice, const TChar* aDomain, const TChar* aType, TUint aVersion)
-    : iDvStack(aDevice.DvStack())
+    : iDvStack(aDevice.GetDvStack())
     , iDelayPropertyUpdates(false)
     , iPropertyChanged(false)
 {
@@ -92,12 +92,12 @@ bool DvProvider::SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue)
 
 void DvProvider::TryPublishUpdate()
 {
-    iDvStack.Stack().Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     TBool publish = !iDelayPropertyUpdates;
     if (iDelayPropertyUpdates) {
         iPropertyChanged = true;
     }
-    iDvStack.Stack().Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
     if (publish) {
         iService->PublishPropertyUpdates();
     }

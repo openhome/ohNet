@@ -657,25 +657,25 @@ CpProxyAvOpenhomeOrgPlaylist1::CpProxyAvOpenhomeOrgPlaylist1(CpDevice& aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1::TransportStatePropertyChanged);
-    iTransportState = new PropertyString(aDevice.Device().CpStack().Stack(), "TransportState", functor);
+    iTransportState = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "TransportState", functor);
     AddProperty(iTransportState);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1::RepeatPropertyChanged);
-    iRepeat = new PropertyBool(aDevice.Device().CpStack().Stack(), "Repeat", functor);
+    iRepeat = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "Repeat", functor);
     AddProperty(iRepeat);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1::ShufflePropertyChanged);
-    iShuffle = new PropertyBool(aDevice.Device().CpStack().Stack(), "Shuffle", functor);
+    iShuffle = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "Shuffle", functor);
     AddProperty(iShuffle);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1::IdPropertyChanged);
-    iId = new PropertyUint(aDevice.Device().CpStack().Stack(), "Id", functor);
+    iId = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Id", functor);
     AddProperty(iId);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1::IdArrayPropertyChanged);
-    iIdArray = new PropertyBinary(aDevice.Device().CpStack().Stack(), "IdArray", functor);
+    iIdArray = new PropertyBinary(aDevice.Device().GetCpStack().GetStack(), "IdArray", functor);
     AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1::TracksMaxPropertyChanged);
-    iTracksMax = new PropertyUint(aDevice.Device().CpStack().Stack(), "TracksMax", functor);
+    iTracksMax = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "TracksMax", functor);
     AddProperty(iTracksMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1::ProtocolInfoPropertyChanged);
-    iProtocolInfo = new PropertyString(aDevice.Device().CpStack().Stack(), "ProtocolInfo", functor);
+    iProtocolInfo = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProtocolInfo", functor);
     AddProperty(iProtocolInfo);
 }
 

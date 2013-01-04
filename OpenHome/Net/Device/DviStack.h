@@ -27,7 +27,7 @@ class DvStack : private IStack, private INonCopyable
 {
 public:
     DvStack(Stack& aStack);
-    OpenHome::Net::Stack& Stack() { return iStack; }
+    Stack& GetStack() { return iStack; }
     TUint BootId();
     TUint NextBootId();
     void UpdateBootId();

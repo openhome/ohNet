@@ -7,7 +7,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/MimeTypes.h>
-#include <Openhome/Private/Timer.h>
+#include <OpenHome/Private/Timer.h>
 
 #include <time.h>
 

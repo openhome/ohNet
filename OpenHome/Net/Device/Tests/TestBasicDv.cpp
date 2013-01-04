@@ -9,6 +9,7 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string>
 
 using namespace OpenHome;
@@ -212,11 +213,11 @@ static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    std::vector<NetworkAdapter*>* subnetList = aDvStack.Stack().NetworkAdapterList().CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = aDvStack.GetStack().NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
     TUint seed = aDvStack.ServerUpnp().Port((*subnetList)[0]->Address());
     SetRandomSeed(seed);
-    aDvStack.Stack().NetworkAdapterList().DestroySubnetList(subnetList);
+    aDvStack.GetStack().NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();

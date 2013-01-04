@@ -137,7 +137,7 @@ void CpDevices::Removed(CpDevice& /*aDevice*/)
 
 void TestDvInvocation(CpStack& aCpStack, DvStack& aDvStack)
 {
-    InitialisationParams& initParams = aDvStack.Stack().InitParams();
+    InitialisationParams& initParams = aDvStack.GetStack().InitParams();
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(1);
     Print("TestDvInvocation - starting\n");

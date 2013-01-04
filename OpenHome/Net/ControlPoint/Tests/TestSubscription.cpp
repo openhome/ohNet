@@ -152,7 +152,7 @@ void TestSubscription(CpStack& aCpStack)
     const Brn uuid("896659847466-a4badbeaacbc-737837");
     CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(aCpStack, uuid, added, removed);
 #endif
-    Stack& stack = aCpStack.Stack();
+    Stack& stack = aCpStack.GetStack();
     Blocker* blocker = new Blocker(stack);
     blocker->Wait(stack.InitParams().MsearchTimeSecs());
     delete blocker;

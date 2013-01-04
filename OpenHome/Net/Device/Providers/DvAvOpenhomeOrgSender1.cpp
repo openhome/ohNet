@@ -91,19 +91,19 @@ void DvProviderAvOpenhomeOrgSender1::Construct()
 
 void DvProviderAvOpenhomeOrgSender1::EnablePropertyPresentationUrl()
 {
-    iPropertyPresentationUrl = new PropertyString(iDvStack.Stack(), new ParameterString("PresentationUrl"));
+    iPropertyPresentationUrl = new PropertyString(iDvStack.GetStack(), new ParameterString("PresentationUrl"));
     iService->AddProperty(iPropertyPresentationUrl); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgSender1::EnablePropertyMetadata()
 {
-    iPropertyMetadata = new PropertyString(iDvStack.Stack(), new ParameterString("Metadata"));
+    iPropertyMetadata = new PropertyString(iDvStack.GetStack(), new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgSender1::EnablePropertyAudio()
 {
-    iPropertyAudio = new PropertyBool(iDvStack.Stack(), new ParameterBool("Audio"));
+    iPropertyAudio = new PropertyBool(iDvStack.GetStack(), new ParameterBool("Audio"));
     iService->AddProperty(iPropertyAudio); // passes ownership
 }
 
@@ -115,14 +115,14 @@ void DvProviderAvOpenhomeOrgSender1::EnablePropertyStatus()
     allowedValues[index++] = (TChar*)"Enabled";
     allowedValues[index++] = (TChar*)"Disabled";
     allowedValues[index++] = (TChar*)"Blocked";
-    iPropertyStatus = new PropertyString(iDvStack.Stack(), new ParameterString("Status", allowedValues, 3));
+    iPropertyStatus = new PropertyString(iDvStack.GetStack(), new ParameterString("Status", allowedValues, 3));
     delete[] allowedValues;
     iService->AddProperty(iPropertyStatus); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgSender1::EnablePropertyAttributes()
 {
-    iPropertyAttributes = new PropertyString(iDvStack.Stack(), new ParameterString("Attributes"));
+    iPropertyAttributes = new PropertyString(iDvStack.GetStack(), new ParameterString("Attributes"));
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }
 

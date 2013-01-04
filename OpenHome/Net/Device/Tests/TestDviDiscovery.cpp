@@ -234,7 +234,7 @@ static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = aDvStack.Stack().NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    NetworkAdapter* nif = aDvStack.GetStack().NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TUint max = nif->Address();
     TUint seed = aDvStack.ServerUpnp().Port(nif->Address());
     SetRandomSeed(seed);
@@ -260,7 +260,7 @@ SuiteAlive::~SuiteAlive()
 
 void SuiteAlive::Test()
 {
-    Stack& stack = iDvStack.Stack();
+    Stack& stack = iDvStack.GetStack();
     Blocker* blocker = new Blocker(stack);
     CpListenerBasic* listener = new CpListenerBasic;
     NetworkAdapter* nif = stack.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
@@ -498,7 +498,7 @@ SuiteMsearch::SuiteMsearch(DvStack& aDvStack)
     RandomiseUdn(iDvStack, gNameDevice1);
     RandomiseUdn(iDvStack, gNameDevice2);
     RandomiseUdn(iDvStack, gNameDevice2Embedded1);
-    Stack& stack = iDvStack.Stack();
+    Stack& stack = iDvStack.GetStack();
     iBlocker = new Blocker(stack);
     iListener = new CpListenerMsearch(stack);
     NetworkAdapter* nif = stack.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
@@ -569,7 +569,7 @@ void SuiteMsearch::Test()
 
 void SuiteMsearch::Wait()
 {
-    iBlocker->Wait(iDvStack.Stack().InitParams().MsearchTimeSecs() + 1);
+    iBlocker->Wait(iDvStack.GetStack().InitParams().MsearchTimeSecs() + 1);
 }
 
 void SuiteMsearch::TestMsearchAll()
@@ -737,7 +737,7 @@ void SuiteMsearch::TestMsearchServiceType()
 
 void TestDviDiscovery(DvStack& aDvStack)
 {
-    InitialisationParams& initParams = aDvStack.Stack().InitParams();
+    InitialisationParams& initParams = aDvStack.GetStack().InitParams();
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
 

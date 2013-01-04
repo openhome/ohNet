@@ -831,25 +831,25 @@ CpProxyAvOpenhomeOrgPlaylist1C::CpProxyAvOpenhomeOrgPlaylist1C(CpDeviceC aDevice
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1C::TransportStatePropertyChanged);
-    iTransportState = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "TransportState", functor);
+    iTransportState = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "TransportState", functor);
     AddProperty(iTransportState);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1C::RepeatPropertyChanged);
-    iRepeat = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Repeat", functor);
+    iRepeat = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Repeat", functor);
     AddProperty(iRepeat);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1C::ShufflePropertyChanged);
-    iShuffle = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Shuffle", functor);
+    iShuffle = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Shuffle", functor);
     AddProperty(iShuffle);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1C::IdPropertyChanged);
-    iId = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "Id", functor);
+    iId = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Id", functor);
     AddProperty(iId);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1C::IdArrayPropertyChanged);
-    iIdArray = new PropertyBinary(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "IdArray", functor);
+    iIdArray = new PropertyBinary(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "IdArray", functor);
     AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1C::TracksMaxPropertyChanged);
-    iTracksMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "TracksMax", functor);
+    iTracksMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "TracksMax", functor);
     AddProperty(iTracksMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylist1C::ProtocolInfoPropertyChanged);
-    iProtocolInfo = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "ProtocolInfo", functor);
+    iProtocolInfo = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "ProtocolInfo", functor);
     AddProperty(iProtocolInfo);
 }
 

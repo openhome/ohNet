@@ -31,7 +31,7 @@ DvProviderUpnpOrgAVTransport1Cpp::DvProviderUpnpOrgAVTransport1Cpp(DvDeviceStd& 
 
 void DvProviderUpnpOrgAVTransport1Cpp::EnablePropertyLastChange()
 {
-    iPropertyLastChange = new PropertyString(iDvStack.Stack(), new ParameterString("LastChange"));
+    iPropertyLastChange = new PropertyString(iDvStack.GetStack(), new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

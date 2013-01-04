@@ -186,7 +186,7 @@ void CpDevices::UpdatesComplete()
 
 void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack)
 {
-    Stack& stack = aDvStack.Stack();
+    Stack& stack = aDvStack.GetStack();
     InitialisationParams& initParams = stack.InitParams();
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(1);

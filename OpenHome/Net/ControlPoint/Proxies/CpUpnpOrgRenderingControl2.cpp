@@ -1089,7 +1089,7 @@ CpProxyUpnpOrgRenderingControl2::CpProxyUpnpOrgRenderingControl2(CpDevice& aDevi
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgRenderingControl2::LastChangePropertyChanged);
-    iLastChange = new PropertyString(aDevice.Device().CpStack().Stack(), "LastChange", functor);
+    iLastChange = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "LastChange", functor);
     AddProperty(iLastChange);
 }
 

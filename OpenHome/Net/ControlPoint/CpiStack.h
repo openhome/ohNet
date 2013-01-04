@@ -25,7 +25,7 @@ class CpStack : public IStack, private INonCopyable
 {
 public:
     CpStack(Stack& aStack);
-    OpenHome::Net::Stack& Stack() { return iStack; }
+    Stack& GetStack() { return iStack; }
     OpenHome::Net::InvocationManager& InvocationManager();
     OpenHome::Net::XmlFetchManager& XmlFetchManager();
     CpiSubscriptionManager& SubscriptionManager();

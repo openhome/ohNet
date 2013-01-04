@@ -617,7 +617,7 @@ CpProxyUpnpOrgAVTransport1::CpProxyUpnpOrgAVTransport1(CpDevice& aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgAVTransport1::LastChangePropertyChanged);
-    iLastChange = new PropertyString(aDevice.Device().CpStack().Stack(), "LastChange", functor);
+    iLastChange = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "LastChange", functor);
     AddProperty(iLastChange);
 }
 

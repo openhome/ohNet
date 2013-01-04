@@ -85,31 +85,31 @@ DvProviderOpenhomeOrgTestBasic1Cpp::DvProviderOpenhomeOrgTestBasic1Cpp(DvDeviceS
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarUint()
 {
-    iPropertyVarUint = new PropertyUint(iDvStack.Stack(), new ParameterUint("VarUint"));
+    iPropertyVarUint = new PropertyUint(iDvStack.GetStack(), new ParameterUint("VarUint"));
     iService->AddProperty(iPropertyVarUint); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarInt()
 {
-    iPropertyVarInt = new PropertyInt(iDvStack.Stack(), new ParameterInt("VarInt"));
+    iPropertyVarInt = new PropertyInt(iDvStack.GetStack(), new ParameterInt("VarInt"));
     iService->AddProperty(iPropertyVarInt); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarBool()
 {
-    iPropertyVarBool = new PropertyBool(iDvStack.Stack(), new ParameterBool("VarBool"));
+    iPropertyVarBool = new PropertyBool(iDvStack.GetStack(), new ParameterBool("VarBool"));
     iService->AddProperty(iPropertyVarBool); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarStr()
 {
-    iPropertyVarStr = new PropertyString(iDvStack.Stack(), new ParameterString("VarStr"));
+    iPropertyVarStr = new PropertyString(iDvStack.GetStack(), new ParameterString("VarStr"));
     iService->AddProperty(iPropertyVarStr); // passes ownership
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnablePropertyVarBin()
 {
-    iPropertyVarBin = new PropertyBinary(iDvStack.Stack(), new ParameterBinary("VarBin"));
+    iPropertyVarBin = new PropertyBinary(iDvStack.GetStack(), new ParameterBinary("VarBin"));
     iService->AddProperty(iPropertyVarBin); // passes ownership
 }
 

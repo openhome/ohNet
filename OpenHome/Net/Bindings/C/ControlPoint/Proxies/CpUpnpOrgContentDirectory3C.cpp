@@ -799,16 +799,16 @@ CpProxyUpnpOrgContentDirectory3C::CpProxyUpnpOrgContentDirectory3C(CpDeviceC aDe
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory3C::SystemUpdateIDPropertyChanged);
-    iSystemUpdateID = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "SystemUpdateID", functor);
+    iSystemUpdateID = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "SystemUpdateID", functor);
     AddProperty(iSystemUpdateID);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory3C::ContainerUpdateIDsPropertyChanged);
-    iContainerUpdateIDs = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "ContainerUpdateIDs", functor);
+    iContainerUpdateIDs = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "ContainerUpdateIDs", functor);
     AddProperty(iContainerUpdateIDs);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory3C::LastChangePropertyChanged);
-    iLastChange = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "LastChange", functor);
+    iLastChange = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "LastChange", functor);
     AddProperty(iLastChange);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory3C::TransferIDsPropertyChanged);
-    iTransferIDs = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->CpStack().Stack(), "TransferIDs", functor);
+    iTransferIDs = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "TransferIDs", functor);
     AddProperty(iTransferIDs);
 }
 

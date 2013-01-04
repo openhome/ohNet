@@ -15,7 +15,7 @@ using namespace OpenHome::Net;
 DviServer::~DviServer()
 {
     iLock.Wait();
-    iDvStack.Stack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iDvStack.GetStack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iServers.size(); i++) {
         delete iServers[i];
     }
@@ -45,7 +45,7 @@ DviServer::DviServer(DvStack& aDvStack)
 void DviServer::Initialise()
 {
     Functor functor = MakeFunctor(*this, &DviServer::SubnetListChanged);
-    NetworkAdapterList& nifList = iDvStack.Stack().NetworkAdapterList();
+    NetworkAdapterList& nifList = iDvStack.GetStack().NetworkAdapterList();
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     AutoMutex a(iLock);
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
@@ -71,8 +71,8 @@ void DviServer::SubnetListChanged()
        any device listeners are run. */
 
     AutoMutex a(iLock);
-    NetworkAdapterList& adapterList = iDvStack.Stack().NetworkAdapterList();
-    AutoNetworkAdapterRef ref(iDvStack.Stack(), "DviServer::SubnetListChanged");
+    NetworkAdapterList& adapterList = iDvStack.GetStack().NetworkAdapterList();
+    AutoNetworkAdapterRef ref(iDvStack.GetStack(), "DviServer::SubnetListChanged");
     NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         TInt i;

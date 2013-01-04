@@ -26,7 +26,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     }
     Library* lib = new Net::Library(aInitParams);
 
-    TestSsdpUListen(lib->Stack(), args);
+    TestSsdpUListen(lib->GetStack(), args);
 
     delete lib;
 }

@@ -60,7 +60,7 @@ public:
     TUint ConfigId();
     void CreateSid(Brh& aSid);
     IResourceManager* ResourceManager();
-    OpenHome::Net::DvStack& DvStack();
+    DvStack& GetDvStack();
     void SetCustomData(const TChar* aProtocol, const TChar* Tag, void* aData);
     void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri);
 protected:

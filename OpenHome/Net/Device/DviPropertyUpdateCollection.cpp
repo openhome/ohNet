@@ -425,7 +425,7 @@ void DviPropertyUpdateCollection::NotifySubscriptionExpired(const Brx& aSid)
         // ...and calling it again will cause a recursive lock.
         // use of Timer::IsInManagerThread is nasty.  We have no way of knowing that this'll only be called recursively or in a timer callback.
         // Note that this also turns out to be a handy way of avoiding problems inside ~DviPropertyUpdateCollection
-        if (Timer::IsInManagerThread(iDvStack.Stack())) {
+        if (Timer::IsInManagerThread(iDvStack.GetStack())) {
             RemoveSubscription(aSid, true);
         }
     }
