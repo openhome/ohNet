@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -184,16 +185,16 @@ CpProxyAvOpenhomeOrgReceiver1::CpProxyAvOpenhomeOrgReceiver1(CpDevice& aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgReceiver1::UriPropertyChanged);
-    iUri = new PropertyString("Uri", functor);
+    iUri = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Uri", functor);
     AddProperty(iUri);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgReceiver1::MetadataPropertyChanged);
-    iMetadata = new PropertyString("Metadata", functor);
+    iMetadata = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Metadata", functor);
     AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgReceiver1::TransportStatePropertyChanged);
-    iTransportState = new PropertyString("TransportState", functor);
+    iTransportState = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "TransportState", functor);
     AddProperty(iTransportState);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgReceiver1::ProtocolInfoPropertyChanged);
-    iProtocolInfo = new PropertyString("ProtocolInfo", functor);
+    iProtocolInfo = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProtocolInfo", functor);
     AddProperty(iProtocolInfo);
 }
 

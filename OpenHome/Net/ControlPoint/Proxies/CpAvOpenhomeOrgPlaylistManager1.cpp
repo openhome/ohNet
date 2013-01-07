@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -599,22 +600,22 @@ CpProxyAvOpenhomeOrgPlaylistManager1::CpProxyAvOpenhomeOrgPlaylistManager1(CpDev
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1::MetadataPropertyChanged);
-    iMetadata = new PropertyString("Metadata", functor);
+    iMetadata = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Metadata", functor);
     AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1::ImagesXmlPropertyChanged);
-    iImagesXml = new PropertyString("ImagesXml", functor);
+    iImagesXml = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ImagesXml", functor);
     AddProperty(iImagesXml);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1::IdArrayPropertyChanged);
-    iIdArray = new PropertyBinary("IdArray", functor);
+    iIdArray = new PropertyBinary(aDevice.Device().GetCpStack().GetStack(), "IdArray", functor);
     AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1::TokenArrayPropertyChanged);
-    iTokenArray = new PropertyBinary("TokenArray", functor);
+    iTokenArray = new PropertyBinary(aDevice.Device().GetCpStack().GetStack(), "TokenArray", functor);
     AddProperty(iTokenArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1::PlaylistsMaxPropertyChanged);
-    iPlaylistsMax = new PropertyUint("PlaylistsMax", functor);
+    iPlaylistsMax = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "PlaylistsMax", functor);
     AddProperty(iPlaylistsMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1::TracksMaxPropertyChanged);
-    iTracksMax = new PropertyUint("TracksMax", functor);
+    iTracksMax = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "TracksMax", functor);
     AddProperty(iTracksMax);
 }
 

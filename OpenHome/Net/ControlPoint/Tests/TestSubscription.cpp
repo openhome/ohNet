@@ -11,6 +11,7 @@
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
 #include <OpenHome/Net/Core/CpUpnpOrgConnectionManager1.h>
@@ -134,7 +135,7 @@ void DeviceList::Removed(CpDevice& aDevice)
 }
 
 
-void TestSubscription()
+void TestSubscription(CpStack& aCpStack)
 {
     gSubscriptionCount = 0; // reset this here in case we're run multiple times via TestShell
     Debug::SetLevel(Debug::kNone);
@@ -146,13 +147,14 @@ void TestSubscription()
 #if 1
     const TUint ver = 1;
     CpDeviceListUpnpServiceType* list =
-                new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
+                new CpDeviceListUpnpServiceType(aCpStack, domainName, serviceType, ver, added, removed);
 #else
     const Brn uuid("896659847466-a4badbeaacbc-737837");
-    CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(uuid, added, removed);
+    CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(aCpStack, uuid, added, removed);
 #endif
-    Blocker* blocker = new Blocker;
-    blocker->Wait(Stack::InitParams().MsearchTimeSecs());
+    Stack& stack = aCpStack.GetStack();
+    Blocker* blocker = new Blocker(stack);
+    blocker->Wait(stack.InitParams().MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();
 

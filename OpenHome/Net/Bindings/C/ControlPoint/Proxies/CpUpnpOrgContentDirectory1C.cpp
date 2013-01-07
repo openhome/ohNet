@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -587,13 +588,13 @@ CpProxyUpnpOrgContentDirectory1C::CpProxyUpnpOrgContentDirectory1C(CpDeviceC aDe
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory1C::TransferIDsPropertyChanged);
-    iTransferIDs = new PropertyString("TransferIDs", functor);
+    iTransferIDs = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "TransferIDs", functor);
     AddProperty(iTransferIDs);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory1C::SystemUpdateIDPropertyChanged);
-    iSystemUpdateID = new PropertyUint("SystemUpdateID", functor);
+    iSystemUpdateID = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "SystemUpdateID", functor);
     AddProperty(iSystemUpdateID);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory1C::ContainerUpdateIDsPropertyChanged);
-    iContainerUpdateIDs = new PropertyString("ContainerUpdateIDs", functor);
+    iContainerUpdateIDs = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "ContainerUpdateIDs", functor);
     AddProperty(iContainerUpdateIDs);
 }
 

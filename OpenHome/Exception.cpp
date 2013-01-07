@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <stdio.h>
 
@@ -31,12 +32,12 @@ void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
 
 static void CallFatalErrorHandler(const char* aMsg)
 {
-    if (Net::Stack::IsInitialised()) {
-        FunctorMsg& handler = Net::Stack::InitParams().FatalErrorHandler();
-        handler(aMsg);
+    if (Net::gStack == NULL) {
+        Os::ConsoleWrite(aMsg);
     }
     else {
-        Os::ConsoleWrite(aMsg);
+        FunctorMsg& handler = Net::gStack->InitParams().FatalErrorHandler();
+        handler(aMsg);
     }
 }
 
@@ -114,12 +115,10 @@ Exception::Exception(const TChar* aMsg, const TChar* aFile, TUint aLine)
     , iLine(aLine)
 {
 #if EXCEPTION_LOGGING_LEVEL > 0
-    Net::Stack::Mutex().Wait();
     Log::Print("THROW %s from %s:%u", aMsg, aFile, aLine);
     Log::Print(" (th=");
     Log::Print(Thread::CurrentThreadName());
     Log::Print(")\n");
-    Net::Stack::Mutex().Signal();
 #endif
     iStackTrace = Os::StackTraceInitialise();
 }
@@ -131,12 +130,10 @@ Exception::Exception(const TChar* aMsg)
     , iLine(0)
 {
 #if EXCEPTION_LOGGING_LEVEL > 0
-    Net::Stack::Mutex().Wait();
     Log::Print("THROW %s", aMsg);
     Log::Print(" (th=");
     Log::Print(Thread::CurrentThreadName());
     Log::Print(")\n");
-    Net::Stack::Mutex().Signal();
 #endif
     iStackTrace = Os::StackTraceInitialise();
 }

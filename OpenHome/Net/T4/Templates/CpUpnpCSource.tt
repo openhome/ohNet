@@ -62,6 +62,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -196,7 +197,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
     functor = MakeFunctor(*this, &<#=className#>C::<#=s.name#>PropertyChanged);
-    i<#=s.name#> = new <#=propType[s.type]#>("<#=s.name#>", functor);
+    i<#=s.name#> = new <#=propType[s.type]#>(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "<#=s.name#>", functor);
     AddProperty(i<#=s.name#>);
 <#  } #>
 }

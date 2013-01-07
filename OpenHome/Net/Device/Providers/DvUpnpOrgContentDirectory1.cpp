@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -64,19 +65,19 @@ void DvProviderUpnpOrgContentDirectory1::Construct()
 
 void DvProviderUpnpOrgContentDirectory1::EnablePropertyTransferIDs()
 {
-    iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
+    iPropertyTransferIDs = new PropertyString(iDvStack.GetStack(), new ParameterString("TransferIDs"));
     iService->AddProperty(iPropertyTransferIDs); // passes ownership
 }
 
 void DvProviderUpnpOrgContentDirectory1::EnablePropertySystemUpdateID()
 {
-    iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
+    iPropertySystemUpdateID = new PropertyUint(iDvStack.GetStack(), new ParameterUint("SystemUpdateID"));
     iService->AddProperty(iPropertySystemUpdateID); // passes ownership
 }
 
 void DvProviderUpnpOrgContentDirectory1::EnablePropertyContainerUpdateIDs()
 {
-    iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
+    iPropertyContainerUpdateIDs = new PropertyString(iDvStack.GetStack(), new ParameterString("ContainerUpdateIDs"));
     iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
 }
 

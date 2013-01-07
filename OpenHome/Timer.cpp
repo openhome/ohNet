@@ -42,8 +42,9 @@ TInt Time::TimeToWaitFor(TUint aTime)
 
 // Timer
 
-Timer::Timer(Functor aFunctor)
-: iFunctor(aFunctor)
+Timer::Timer(Net::Stack& aStack, Functor aFunctor)
+    : iMgr(aStack.TimerManager())
+    , iFunctor(aFunctor)
 {
 }
 
@@ -57,36 +58,39 @@ void Timer::FireIn(TUint aTime)
 void Timer::FireAt(TUint aTime)
 {
     LOG(kTimer, ">Timer::FireAt(%d)\n", aTime);
-    TimerManager& manager = OpenHome::Net::Stack::TimerManager();
-    manager.Remove(*this);
+    iMgr.Remove(*this);
     iTime = aTime;
-    manager.Add(*this);
+    iMgr.Add(*this);
     LOG(kTimer, "<Timer::FireAt(%d)\n", aTime);
 }
 
 void Timer::Cancel()
 {
     LOG(kTimer, ">Timer::Cancel()\n");
-    TimerManager& mgr = Net::Stack::TimerManager();
-    TBool lock = !IsInManagerThread();
+    TBool lock = !IsInManagerThread(iMgr);
     if (lock) {
-        mgr.CallbackLock();
+        iMgr.CallbackLock();
     }
-    OpenHome::Net::Stack::TimerManager().Remove(*this);
+    iMgr.Remove(*this);
     if (lock) {
-        mgr.CallbackUnlock();
+        iMgr.CallbackUnlock();
     }
     LOG(kTimer, "<Timer::Cancel()\n");
 }
 
-TBool Timer::IsInManagerThread()
-{
+TBool Timer::IsInManagerThread(OpenHome::Net::Stack& aStack)
+{ // static
+    return IsInManagerThread(aStack.TimerManager());
+}
+
+TBool Timer::IsInManagerThread(TimerManager& aMgr)
+{ // static
     Thread* current = NULL;
     try {
         current = Thread::Current();
     }
     catch (ThreadUnknown&) {}
-    return (current == Net::Stack::TimerManager().Thread());
+    return (current == aMgr.Thread());
 }
 
 Timer::~Timer()

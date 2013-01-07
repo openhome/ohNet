@@ -8,7 +8,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-extern void TestSsdpUListen(const std::vector<Brn>& aArgs);
+extern void TestSsdpUListen(Stack& aStack, const std::vector<Brn>& aArgs);
 
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
@@ -24,13 +24,9 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     if (mx.Value() != 0) {
         aInitParams->SetMsearchTime(mx.Value());
     }
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCp(subnet);
+    Library* lib = new Net::Library(aInitParams);
 
-    TestSsdpUListen(args);
+    TestSsdpUListen(lib->GetStack(), args);
 
-    UpnpLibrary::Close();
+    delete lib;
 }

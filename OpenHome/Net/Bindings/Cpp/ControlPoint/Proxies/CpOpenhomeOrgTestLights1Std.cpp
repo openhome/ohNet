@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 #include <string>
 

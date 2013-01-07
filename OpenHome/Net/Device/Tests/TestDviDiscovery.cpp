@@ -8,6 +8,8 @@
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/DviStack.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
+#include <OpenHome/Private/Standard.h>
 
 #include <stdlib.h>
 #include <vector>
@@ -44,7 +46,7 @@ private:
 class CpListenerMsearch : public ISsdpNotifyHandler
 {
 public:
-    CpListenerMsearch();
+    CpListenerMsearch(Stack& aStack);
     ~CpListenerMsearch();
     TUint TotalMessages() const { return iTotal; }
     TUint RootDeviceCount() const {return iRoot; }
@@ -68,6 +70,7 @@ private:
     void SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
+    Stack& iStack;
     Mutex iLock;
     TUint iTotal;
     TUint iRoot;
@@ -87,16 +90,17 @@ class SuiteAlive : public Suite
 public:
     static Bwh gNameDevice1;
 public:
-    SuiteAlive();
+    SuiteAlive(DvStack& aDvStack);
     ~SuiteAlive();
     void Test();
 private:
     void Disabled();
 private:
+    DvStack& iDvStack;
     Semaphore iSem;
 };
 
-class SuiteMsearch : public Suite
+class SuiteMsearch : public Suite, private INonCopyable
 {
 public:
     static Bwh gNameDevice1;
@@ -104,7 +108,7 @@ public:
     static Bwh gNameDevice2Embedded1;
     static const Brn kNameDummy;
 public:
-    SuiteMsearch();
+    SuiteMsearch(DvStack& aDvStack);
     ~SuiteMsearch();
     void Test();
 private:
@@ -115,6 +119,7 @@ private:
     void TestMsearchDeviceType();
     void TestMsearchServiceType();
 private:
+    DvStack& iDvStack;
     DviDevice* iDevices[2];
     Blocker* iBlocker;
     CpListenerMsearch* iListener;
@@ -224,14 +229,14 @@ void CpListenerBasic::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& /
 }
 
 
-static void RandomiseUdn(Bwh& aUdn)
+static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
 {
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    NetworkAdapter* nif = aDvStack.GetStack().NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TUint max = nif->Address();
-    TUint seed = DviStack::ServerUpnp().Port(nif->Address());
+    TUint seed = aDvStack.ServerUpnp().Port(nif->Address());
     SetRandomSeed(seed);
     nif->RemoveRef(kAdapterCookie);
     (void)Ascii::AppendDec(buf, Random(max));
@@ -241,11 +246,12 @@ static void RandomiseUdn(Bwh& aUdn)
 
 // SuiteAlive
 
-SuiteAlive::SuiteAlive()
+SuiteAlive::SuiteAlive(DvStack& aDvStack)
     : Suite("Alive / ByeBye / Update")
+    , iDvStack(aDvStack)
     , iSem("SALV", 0)
 {
-    RandomiseUdn(gNameDevice1);
+    RandomiseUdn(iDvStack, gNameDevice1);
 }
 
 SuiteAlive::~SuiteAlive()
@@ -254,19 +260,20 @@ SuiteAlive::~SuiteAlive()
 
 void SuiteAlive::Test()
 {
-    Blocker* blocker = new Blocker;
+    Stack& stack = iDvStack.GetStack();
+    Blocker* blocker = new Blocker(stack);
     CpListenerBasic* listener = new CpListenerBasic;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
-    SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(nif->Address());
+    NetworkAdapter* nif = stack.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(stack, nif->Address());
     nif->RemoveRef(kAdapterCookie);
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
     listenerMulticast->Start();
-    DviDevice* device = new DviDeviceStandard(gNameDevice1);
+    DviDevice* device = new DviDeviceStandard(iDvStack, gNameDevice1);
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "type1");
     device->SetAttribute("Upnp.Version", "1");
-    AddService(device, new DviService("a.b.c", "service1", 1));
-    AddService(device, new DviService("a.b.c", "service2", 1));
+    AddService(device, new DviService(iDvStack, "a.b.c", "service1", 1));
+    AddService(device, new DviService(iDvStack, "a.b.c", "service2", 1));
     device->SetEnabled();
     blocker->Wait(1);
     /* we expect 5 messages but linux sometimes reports multicast messages from
@@ -318,8 +325,9 @@ void SuiteAlive::Disabled()
 
 // CpListenerMsearch
 
-CpListenerMsearch::CpListenerMsearch()
-    : iLock("LMMX")
+CpListenerMsearch::CpListenerMsearch(Stack& aStack)
+    : iStack(aStack)
+    , iLock("LMMX")
 {
     iDev1Type = iDev2Type = iDev21Type = NULL;
     Reset();
@@ -362,7 +370,7 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
 {
     Uri uri(aLocation);
     Endpoint endpt(0, uri.Host());
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    NetworkAdapter* nif = iStack.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
     nif->RemoveRef(kAdapterCookie);
     if (!correctSubnet) {
@@ -483,16 +491,18 @@ void CpListenerMsearch::SsdpNotifyServiceTypeByeBye(const Brx& /*aUuid*/, const 
 
 // SuiteMsearch
 
-SuiteMsearch::SuiteMsearch()
+SuiteMsearch::SuiteMsearch(DvStack& aDvStack)
     : Suite("Msearches")
+    , iDvStack(aDvStack)
 {
-    RandomiseUdn(gNameDevice1);
-    RandomiseUdn(gNameDevice2);
-    RandomiseUdn(gNameDevice2Embedded1);
-    iBlocker = new Blocker;
-    iListener = new CpListenerMsearch;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter(kAdapterCookie);
-    iListenerUnicast = new SsdpListenerUnicast(*iListener, nif->Address());
+    RandomiseUdn(iDvStack, gNameDevice1);
+    RandomiseUdn(iDvStack, gNameDevice2);
+    RandomiseUdn(iDvStack, gNameDevice2Embedded1);
+    Stack& stack = iDvStack.GetStack();
+    iBlocker = new Blocker(stack);
+    iListener = new CpListenerMsearch(stack);
+    NetworkAdapter* nif = stack.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    iListenerUnicast = new SsdpListenerUnicast(stack, *iListener, nif->Address());
     nif->RemoveRef(kAdapterCookie);
     iListenerUnicast->Start();
 }
@@ -508,44 +518,44 @@ SuiteMsearch::~SuiteMsearch()
 
 void SuiteMsearch::Test()
 {
-    DviDevice* device = new DviDeviceStandard(gNameDevice1);
+    DviDevice* device = new DviDeviceStandard(iDvStack, gNameDevice1);
     iDevices[0] = device;
     device->SetAttribute("Upnp.Domain", "upnp.org");
     device->SetAttribute("Upnp.Type", "test1");
     device->SetAttribute("Upnp.Version", "1");
-    AddService(device, new DviService("upnp.org", "service1", 1));
-    AddService(device, new DviService("openhome.org", "service2", 3));
-    AddService(device, new DviService("upnp.org", "service3", 1));
-    DviService* service = new DviService("upnp.org", "service1", 1);
+    AddService(device, new DviService(iDvStack, "upnp.org", "service1", 1));
+    AddService(device, new DviService(iDvStack, "openhome.org", "service2", 3));
+    AddService(device, new DviService(iDvStack, "upnp.org", "service3", 1));
+    DviService* service = new DviService(iDvStack, "upnp.org", "service1", 1);
     TEST_THROWS(device->AddService(service), AssertionFailed);
     service->RemoveRef();
     device->SetEnabled();
-    service = new DviService("upnp.org", "service4", 1);
+    service = new DviService(iDvStack, "upnp.org", "service4", 1);
     TEST_THROWS(device->AddService(service), AssertionFailed);
     service->RemoveRef();
 
-    device = new DviDeviceStandard(gNameDevice2);
+    device = new DviDeviceStandard(iDvStack, gNameDevice2);
     iDevices[1] = device;
     device->SetAttribute("Upnp.Domain", "openhome.org");
     device->SetAttribute("Upnp.Type", "test2");
     device->SetAttribute("Upnp.Version", "2");
-    AddService(device, new DviService("openhome.org", "service4", 2));
-    AddService(device, new DviService("openhome.org", "service5", 1));
+    AddService(device, new DviService(iDvStack, "openhome.org", "service4", 2));
+    AddService(device, new DviService(iDvStack, "openhome.org", "service5", 1));
 
-    device = new DviDeviceStandard(gNameDevice2Embedded1);
+    device = new DviDeviceStandard(iDvStack, gNameDevice2Embedded1);
     iDevices[1]->AddDevice(device);
     device->SetAttribute("Upnp.Domain", "openhome.org");
     device->SetAttribute("Upnp.Type", "test3");
     device->SetAttribute("Upnp.Version", "1");
-    AddService(device, new DviService("upnp.org", "service1", 1));
-    AddService(device, new DviService("openhome.org", "service6", 1));
-    AddService(device, new DviService("openhome.org", "service2", 3));
-    service = new DviService("openhome.org", "service5", 1);
+    AddService(device, new DviService(iDvStack, "upnp.org", "service1", 1));
+    AddService(device, new DviService(iDvStack, "openhome.org", "service6", 1));
+    AddService(device, new DviService(iDvStack, "openhome.org", "service2", 3));
+    service = new DviService(iDvStack, "openhome.org", "service5", 1);
     TEST_THROWS(device->AddService(service), AssertionFailed);
     service->RemoveRef();
     iDevices[1]->SetEnabled();
     device->SetEnabled();
-    device = new DviDeviceStandard(kNameDummy);
+    device = new DviDeviceStandard(iDvStack, kNameDummy);
     TEST_THROWS(iDevices[1]->AddDevice(device), AssertionFailed);
     device->Destroy();
     //Wait(); // allow time for initial annoucements to be delivered
@@ -559,7 +569,7 @@ void SuiteMsearch::Test()
 
 void SuiteMsearch::Wait()
 {
-    iBlocker->Wait(Stack::InitParams().MsearchTimeSecs() + 1);
+    iBlocker->Wait(iDvStack.GetStack().InitParams().MsearchTimeSecs() + 1);
 }
 
 void SuiteMsearch::TestMsearchAll()
@@ -725,16 +735,16 @@ void SuiteMsearch::TestMsearchServiceType()
 }
 
 
-void TestDviDiscovery()
+void TestDviDiscovery(DvStack& aDvStack)
 {
-    InitialisationParams& initParams = Stack::InitParams();
+    InitialisationParams& initParams = aDvStack.GetStack().InitParams();
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
 
     //Debug::SetLevel(Debug::kNetwork);
     Runner runner("SSDP discovery\n");
-    runner.Add(new SuiteAlive());
-    runner.Add(new SuiteMsearch());
+    runner.Add(new SuiteAlive(aDvStack));
+    runner.Add(new SuiteMsearch(aDvStack));
     runner.Run();
 
     initParams.SetMsearchTime(oldMsearchTime);

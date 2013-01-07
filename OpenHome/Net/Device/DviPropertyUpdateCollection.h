@@ -89,10 +89,12 @@ private:
     Semaphore* iSem;
 };
 
+class DvStack;
+
 class DviPropertyUpdateCollection : public IPropertyWriterFactory, private IPropertyUpdateMerger
 {
 public:
-    DviPropertyUpdateCollection();
+    DviPropertyUpdateCollection(DvStack& aDvStack);
     ~DviPropertyUpdateCollection();
     void AddSubscription(const Brx& aClientId, DviSubscription* aSubscription);
     void RemoveSubscription(const Brx& aSid);
@@ -112,6 +114,7 @@ private: // IPropertyWriterFactory
 private: // IPropertyUpdateMerger
     PropertyUpdate* MergeUpdate(PropertyUpdate* aUpdate);
 private:
+    DvStack& iDvStack;
     Mutex iLock;
     std::vector<PropertyUpdatesFlattened*> iUpdates;
 };

@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string>
 
@@ -31,7 +32,7 @@ using namespace OpenHome::Net;
 DvDeviceStd::DvDeviceStd(const std::string& aUdn)
 {
     Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
-    iDevice = new DviDevice(buf);
+    iDevice = new DviDevice(*gDvStack, buf);
     SetUdn(aUdn);
 }
     
@@ -104,7 +105,7 @@ void DvResourceManagerStd::WriteResource(const Brx& aUriTail, TIpAddress aInterf
 DvDeviceStdStandard::DvDeviceStdStandard(const std::string& aUdn)
 {
     Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
-    iDevice = new DviDeviceStandard(buf);
+    iDevice = new DviDeviceStandard(*gDvStack, buf);
     SetUdn(aUdn);
     iResourceManager = NULL;
 }
@@ -113,7 +114,7 @@ DvDeviceStdStandard::DvDeviceStdStandard(const std::string& aUdn, IResourceManag
 {
     iResourceManager = new DvResourceManagerStd(aResourceManager);
     Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
-    iDevice = new DviDeviceStandard(buf, *iResourceManager);
+    iDevice = new DviDeviceStandard(*gDvStack, buf, *iResourceManager);
     SetUdn(aUdn);
 }
 

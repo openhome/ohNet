@@ -8,7 +8,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-extern void TestDeviceList(const std::vector<Brn>& aArgs);
+extern void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs);
 
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
@@ -24,13 +24,13 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     if (mx.Value() != 0) {
         aInitParams->SetMsearchTime(mx.Value());
     }
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
+    Library* lib = new Library(aInitParams);
+    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCp(subnet);
+    Library::DestroySubnetList(subnetList);
+    CpStack* cpStack = lib->StartCp(subnet);
 
-    TestDeviceList(args);
+    TestDeviceList(*cpStack, args);
 
-    UpnpLibrary::Close();
+    delete lib;
 }

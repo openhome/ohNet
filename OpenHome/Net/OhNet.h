@@ -25,6 +25,10 @@ public:
     virtual void ListObjectDetails() const = 0;
 };
 
+namespace Net {
+    class Stack;
+} // namespace Net
+
 /**
  * Auto ptr for NetworkAdapter references.
  * @ingroup Core
@@ -32,7 +36,7 @@ public:
 class AutoNetworkAdapterRef
 {
 public:
-    AutoNetworkAdapterRef(const char* aCookie); // creates ref to stack's current adapter
+    AutoNetworkAdapterRef(Net::Stack& aStack, const char* aCookie); // creates ref to stack's current adapter
     AutoNetworkAdapterRef(NetworkAdapter* aAdapter, const char* aCookie);
     ~AutoNetworkAdapterRef();
     NetworkAdapter* Adapter();
@@ -54,6 +58,7 @@ public:
      *
      * Not intended for external use
      *
+     * @param[in] aStack    Returned by UpnpLibrary::Initialise().
      * @param[in] aAddress  IPv4 address for the interface (in network byte order)
      * @param[in] aNetMask  IPv4 net mask for the interface (in network byte order)
      * @param[in] aName     Name for the interface.  Will be copied inside this function
@@ -63,7 +68,7 @@ public:
      *                      leaked NetworkAdapter references.  The later matching call
      *                      to RemoveRef must use the same cookie.
      */
-    NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie);
+    NetworkAdapter(Net::Stack& aStack, TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie);
     /**
      * Add a reference.  This NetworkAdapter instance won't be deleted until the last reference is removed.
      *
@@ -129,6 +134,7 @@ private:
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
+    Net::Stack* iStack;
     TUint iRefCount;
     TIpAddress iAddress;
     TIpAddress iNetMask;
@@ -375,6 +381,125 @@ private:
     bool iEnableBonjour;
 };
 
+class Stack;
+class CpStack;
+class DvStack;
+
+/**
+ * Initialisation and finalisation of this library
+ * @ingroup Core
+ */
+class DllExportClass Library
+{
+public:
+    /**
+     * Constructor.
+     *
+     * @param aInitParams  Initialisation options.  Ownership of these passes to the library.
+     */
+    Library(InitialisationParams* aInitParams);
+
+    /**
+     * Destructor.  No library function may be called after this.
+     */
+    ~Library();
+
+    /**
+     * Start the library as a UPnP control point stack
+     *
+     * @param aSubnet    The subnet to use.  Likely to be the Subnet() from a
+     *                   NetworkAdapter returned by SubnetList.
+     *
+     * @return  Opaque pointer required by various other library functions.
+     */
+    CpStack* StartCp(TIpAddress aSubnet);
+
+    /**
+     * Start the library as a UPnP device stack
+     *
+     * @return  Opaque pointer required by various other library functions.
+     */
+    DvStack* StartDv();
+
+    /**
+     * Start the library as both UPnP control point and device stacks
+     *
+     * @param aSubnet    The subnet to use for both control point and device stacks.
+     *                   Likely to be the Subnet() from a NetworkAdapter returned by SubnetList.
+     * @param aCpStack   Opaque pointer required by various other library functions.
+     * @param aDvStack   Opaque pointer required by various other library functions.
+     */
+    void StartCombined(TIpAddress aSubnet, CpStack*& aCpStack, DvStack*& aDvStack);
+
+    /**
+     * For internal use only
+     *
+     * @return  Stack instance
+     */
+    Stack& GetStack();
+
+    /**
+     * Create a vector of the available subnets.
+     *
+     * The returned vector and all its pointers are allocated.  Use DestroySubnetList
+     * to later free this memory.
+     *
+     * @return  A newly allocated vector containing the adapter judged most suitable for
+     *          each available subnet.
+     */
+    std::vector<NetworkAdapter*>* CreateSubnetList();
+
+    /**
+     * Destroy a subnet list created using CreateSubnetList().
+     *
+     * @param aSubnetList  Returned by CreateSubnetList().
+     */
+    static void DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList);
+
+    /**
+     * Create a vector of the available network adapters.
+     *
+     * The returned vector and all its pointers are allocated.  Use DestroyNetworkAdapterList
+     * to later free this memory.
+     *
+     * @return  A newly allocated vector containing the list of available network adapters.
+     */
+    std::vector<NetworkAdapter*>* CreateNetworkAdapterList();
+
+    /**
+     * Destroy a network adapter list created using CreateNetworkAdapterList().
+     *
+     * @param aNetworkAdapterList  Returned by CreateNetworkAdapterList().
+     */
+    static void DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetworkAdapterList);
+
+    /**
+     * Set which subnet the library should use.
+     * Device lists and subscriptions will be automatically updated.
+     * No other subnet will be selected if aSubnet is not available
+     *
+     * @param aSubnet    The subnet to use.  Likely to be the Subnet() from a
+     *                   NetworkAdapter returned by CreateSubnetList.
+     */
+    void SetCurrentSubnet(TIpAddress aSubnet);
+
+    /**
+     * Query which network adapter is currently selected.
+     *
+     * @param[in] aCookie   String identifying the caller.  Needn't be unique although a
+     *                      recognisable string will help in debugging the cause of any
+     *                      leaked NetworkAdapter references.  The later matching call
+     *                      to RemoveRef must use the same cookie.
+     *
+     * @return  A pointer to the currently selected adapter with a reference claimed.
+     *          Or NULL if there is no currently selected adapter.
+     */
+    NetworkAdapter* CurrentSubnetAdapter(const char* aCookie);
+private:
+    OpenHome::Net::Stack* iStack;
+};
+
+
 /**
  * Initialisation and finalisation of this library
  * @ingroup Core
@@ -390,7 +515,7 @@ public:
      *
      * @param aInitParams  Initialisation options.  Ownership of these passes to the library.
      */
-    static void Initialise(InitialisationParams* aInitParams);
+    static Stack* Initialise(InitialisationParams* aInitParams);
 
     /**
      * Lightweight alternative to UpnpLibraryInitialise.
@@ -401,7 +526,7 @@ public:
      * @param aInitParams  Initialisation options.  Only ILogOutput will be used.
      *                     Ownership of these passes to the library.
      */
-    static void InitialiseMinimal(InitialisationParams* aInitParams);
+    static Stack* InitialiseMinimal(InitialisationParams* aInitParams);
 
     /**
      * Start the library as a UPnP control point stack

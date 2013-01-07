@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -748,22 +749,22 @@ CpProxyAvOpenhomeOrgPlaylistManager1C::CpProxyAvOpenhomeOrgPlaylistManager1C(CpD
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1C::MetadataPropertyChanged);
-    iMetadata = new PropertyString("Metadata", functor);
+    iMetadata = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Metadata", functor);
     AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1C::ImagesXmlPropertyChanged);
-    iImagesXml = new PropertyString("ImagesXml", functor);
+    iImagesXml = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "ImagesXml", functor);
     AddProperty(iImagesXml);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1C::IdArrayPropertyChanged);
-    iIdArray = new PropertyBinary("IdArray", functor);
+    iIdArray = new PropertyBinary(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "IdArray", functor);
     AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1C::TokenArrayPropertyChanged);
-    iTokenArray = new PropertyBinary("TokenArray", functor);
+    iTokenArray = new PropertyBinary(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "TokenArray", functor);
     AddProperty(iTokenArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1C::PlaylistsMaxPropertyChanged);
-    iPlaylistsMax = new PropertyUint("PlaylistsMax", functor);
+    iPlaylistsMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "PlaylistsMax", functor);
     AddProperty(iPlaylistsMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgPlaylistManager1C::TracksMaxPropertyChanged);
-    iTracksMax = new PropertyUint("TracksMax", functor);
+    iTracksMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "TracksMax", functor);
     AddProperty(iTracksMax);
 }
 

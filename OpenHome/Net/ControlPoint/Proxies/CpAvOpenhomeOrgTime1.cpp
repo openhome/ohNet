@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -52,13 +53,13 @@ CpProxyAvOpenhomeOrgTime1::CpProxyAvOpenhomeOrgTime1(CpDevice& aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgTime1::TrackCountPropertyChanged);
-    iTrackCount = new PropertyUint("TrackCount", functor);
+    iTrackCount = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "TrackCount", functor);
     AddProperty(iTrackCount);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgTime1::DurationPropertyChanged);
-    iDuration = new PropertyUint("Duration", functor);
+    iDuration = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Duration", functor);
     AddProperty(iDuration);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgTime1::SecondsPropertyChanged);
-    iSeconds = new PropertyUint("Seconds", functor);
+    iSeconds = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Seconds", functor);
     AddProperty(iSeconds);
 }
 

@@ -7,12 +7,12 @@
 
 using namespace OpenHome;
 
-extern void TestSsdpMListen(const std::vector<Brn>& aArgs);
+extern void TestSsdpMListen(Net::Stack& aStack, const std::vector<Brn>& aArgs);
 
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
-    Net::UpnpLibrary::Initialise(aInitParams);
+    Net::Library* lib = new Net::Library(aInitParams);
     std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
-    TestSsdpMListen(args);
-    Net::UpnpLibrary::Close();
+    TestSsdpMListen(lib->GetStack(), args);
+    delete lib;
 }

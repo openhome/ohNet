@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -38,7 +39,7 @@ void DvProviderUpnpOrgRenderingControl1::Construct()
 
 void DvProviderUpnpOrgRenderingControl1::EnablePropertyLastChange()
 {
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iPropertyLastChange = new PropertyString(iDvStack.GetStack(), new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

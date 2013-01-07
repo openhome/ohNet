@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -75,13 +76,13 @@ DvProviderAvOpenhomeOrgReceiver1Cpp::DvProviderAvOpenhomeOrgReceiver1Cpp(DvDevic
 
 void DvProviderAvOpenhomeOrgReceiver1Cpp::EnablePropertyUri()
 {
-    iPropertyUri = new PropertyString(new ParameterString("Uri"));
+    iPropertyUri = new PropertyString(iDvStack.GetStack(), new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgReceiver1Cpp::EnablePropertyMetadata()
 {
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
+    iPropertyMetadata = new PropertyString(iDvStack.GetStack(), new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
 }
 
@@ -94,14 +95,14 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::EnablePropertyTransportState()
     allowedValues[index++] = (TChar*)"Playing";
     allowedValues[index++] = (TChar*)"Waiting";
     allowedValues[index++] = (TChar*)"Buffering";
-    iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4));
+    iPropertyTransportState = new PropertyString(iDvStack.GetStack(), new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgReceiver1Cpp::EnablePropertyProtocolInfo()
 {
-    iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo"));
+    iPropertyProtocolInfo = new PropertyString(iDvStack.GetStack(), new ParameterString("ProtocolInfo"));
     iService->AddProperty(iPropertyProtocolInfo); // passes ownership
 }
 

@@ -8,6 +8,7 @@ namespace Net {
 
 class DvDeviceStd;
 class CpiDeviceDv;
+class CpStack;
 
 /**
  * Control point device which communicates directly with a device stack's device

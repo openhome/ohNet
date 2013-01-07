@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -101,37 +102,37 @@ DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DvProviderAvOpenhomeOrgPlaylistManag
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnablePropertyMetadata()
 {
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
+    iPropertyMetadata = new PropertyString(iDvStack.GetStack(), new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnablePropertyImagesXml()
 {
-    iPropertyImagesXml = new PropertyString(new ParameterString("ImagesXml"));
+    iPropertyImagesXml = new PropertyString(iDvStack.GetStack(), new ParameterString("ImagesXml"));
     iService->AddProperty(iPropertyImagesXml); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnablePropertyIdArray()
 {
-    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
+    iPropertyIdArray = new PropertyBinary(iDvStack.GetStack(), new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnablePropertyTokenArray()
 {
-    iPropertyTokenArray = new PropertyBinary(new ParameterBinary("TokenArray"));
+    iPropertyTokenArray = new PropertyBinary(iDvStack.GetStack(), new ParameterBinary("TokenArray"));
     iService->AddProperty(iPropertyTokenArray); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnablePropertyPlaylistsMax()
 {
-    iPropertyPlaylistsMax = new PropertyUint(new ParameterUint("PlaylistsMax"));
+    iPropertyPlaylistsMax = new PropertyUint(iDvStack.GetStack(), new ParameterUint("PlaylistsMax"));
     iService->AddProperty(iPropertyPlaylistsMax); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnablePropertyTracksMax()
 {
-    iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
+    iPropertyTracksMax = new PropertyUint(iDvStack.GetStack(), new ParameterUint("TracksMax"));
     iService->AddProperty(iPropertyTracksMax); // passes ownership
 }
 

@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -135,7 +136,7 @@ CpProxyUpnpOrgSwitchPower1C::CpProxyUpnpOrgSwitchPower1C(CpDeviceC aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgSwitchPower1C::StatusPropertyChanged);
-    iStatus = new PropertyBool("Status", functor);
+    iStatus = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Status", functor);
     AddProperty(iStatus);
 }
 

@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -54,19 +55,19 @@ DvProviderAvOpenhomeOrgTime1Cpp::DvProviderAvOpenhomeOrgTime1Cpp(DvDeviceStd& aD
 
 void DvProviderAvOpenhomeOrgTime1Cpp::EnablePropertyTrackCount()
 {
-    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
+    iPropertyTrackCount = new PropertyUint(iDvStack.GetStack(), new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgTime1Cpp::EnablePropertyDuration()
 {
-    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
+    iPropertyDuration = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgTime1Cpp::EnablePropertySeconds()
 {
-    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
+    iPropertySeconds = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Seconds"));
     iService->AddProperty(iPropertySeconds); // passes ownership
 }
 

@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -293,8 +294,9 @@ void PropertyUpdatesFlattened::WriteUpdates(IWriter& aWriter)
 
 // DviPropertyUpdateCollection
 
-DviPropertyUpdateCollection::DviPropertyUpdateCollection()
-    : iLock("MPUC")
+DviPropertyUpdateCollection::DviPropertyUpdateCollection(DvStack& aDvStack)
+    : iDvStack(aDvStack)
+    , iLock("MPUC")
 {
 }
 
@@ -423,7 +425,7 @@ void DviPropertyUpdateCollection::NotifySubscriptionExpired(const Brx& aSid)
         // ...and calling it again will cause a recursive lock.
         // use of Timer::IsInManagerThread is nasty.  We have no way of knowing that this'll only be called recursively or in a timer callback.
         // Note that this also turns out to be a handy way of avoiding problems inside ~DviPropertyUpdateCollection
-        if (Timer::IsInManagerThread()) {
+        if (Timer::IsInManagerThread(iDvStack.GetStack())) {
             RemoveSubscription(aSid, true);
         }
     }

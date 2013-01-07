@@ -9,6 +9,8 @@
 namespace OpenHome {
 namespace Net {
 
+class CpStack;
+
 /**
  * CpDevice::GetAttribute supports the following keys for devices created by
  * one of the lists below:
@@ -28,7 +30,7 @@ namespace Net {
 class DllExportClass CpDeviceListUpnpAll : public CpDeviceList
 {
 public:
-    DllExport CpDeviceListUpnpAll(FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
+    DllExport CpDeviceListUpnpAll(CpStack& aCpStack, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
 };
 
 /**
@@ -38,7 +40,7 @@ public:
 class DllExportClass CpDeviceListUpnpRoot : public CpDeviceList
 {
 public:
-    DllExport CpDeviceListUpnpRoot(FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
+    DllExport CpDeviceListUpnpRoot(CpStack& aCpStack, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
 };
 
 /**
@@ -48,7 +50,7 @@ public:
 class DllExportClass CpDeviceListUpnpUuid : public CpDeviceList
 {
 public:
-    DllExport CpDeviceListUpnpUuid(const Brx& aUuid, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
+    DllExport CpDeviceListUpnpUuid(CpStack& aCpStack, const Brx& aUuid, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
 };
 
 /**
@@ -58,8 +60,8 @@ public:
 class DllExportClass CpDeviceListUpnpDeviceType : public CpDeviceList
 {
 public:
-    DllExport CpDeviceListUpnpDeviceType(const Brx& aDomainName, const Brx& aDeviceType, TUint aVersion,
-                                         FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
+    DllExport CpDeviceListUpnpDeviceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aDeviceType,
+                                         TUint aVersion, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
 };
 
 /**
@@ -69,8 +71,8 @@ public:
 class DllExportClass CpDeviceListUpnpServiceType : public CpDeviceList
 {
 public:
-    DllExport CpDeviceListUpnpServiceType(const Brx& aDomainName, const Brx& aServiceType, TUint aVersion,
-                                          FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
+    DllExport CpDeviceListUpnpServiceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aServiceType,
+                                          TUint aVersion, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
 };
 
 } // namespace Net

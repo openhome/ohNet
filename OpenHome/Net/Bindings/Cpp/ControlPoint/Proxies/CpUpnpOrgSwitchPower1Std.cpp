@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 #include <string>
 
@@ -98,7 +99,7 @@ CpProxyUpnpOrgSwitchPower1Cpp::CpProxyUpnpOrgSwitchPower1Cpp(CpDeviceCpp& aDevic
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgSwitchPower1Cpp::StatusPropertyChanged);
-    iStatus = new PropertyBool("Status", functor);
+    iStatus = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "Status", functor);
     AddProperty(iStatus);
 }
 

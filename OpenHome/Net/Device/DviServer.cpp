@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Core/OhNet.h>
 
@@ -14,7 +15,7 @@ using namespace OpenHome::Net;
 DviServer::~DviServer()
 {
     iLock.Wait();
-    Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iDvStack.GetStack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iServers.size(); i++) {
         delete iServers[i];
     }
@@ -34,8 +35,9 @@ TUint DviServer::Port(TIpAddress aInterface)
     return 0;
 }
 
-DviServer::DviServer()
-    : iLock("DSUM")
+DviServer::DviServer(DvStack& aDvStack)
+    : iDvStack(aDvStack)
+    , iLock("DSUM")
     , iSubnetListChangeListenerId(NetworkAdapterList::kListenerIdNull)
 {
 }
@@ -43,7 +45,7 @@ DviServer::DviServer()
 void DviServer::Initialise()
 {
     Functor functor = MakeFunctor(*this, &DviServer::SubnetListChanged);
-    NetworkAdapterList& nifList = Stack::NetworkAdapterList();
+    NetworkAdapterList& nifList = iDvStack.GetStack().NetworkAdapterList();
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     AutoMutex a(iLock);
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
@@ -69,8 +71,8 @@ void DviServer::SubnetListChanged()
        any device listeners are run. */
 
     AutoMutex a(iLock);
-    NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
-    AutoNetworkAdapterRef ref("DviServer::SubnetListChanged");
+    NetworkAdapterList& adapterList = iDvStack.GetStack().NetworkAdapterList();
+    AutoNetworkAdapterRef ref(iDvStack.GetStack(), "DviServer::SubnetListChanged");
     NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         TInt i;

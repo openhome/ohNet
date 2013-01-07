@@ -184,15 +184,16 @@ void CpDevices::UpdatesComplete()
 }
 
 
-void TestDvSubscription()
+void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack)
 {
-    InitialisationParams& initParams = Stack::InitParams();
+    Stack& stack = aDvStack.GetStack();
+    InitialisationParams& initParams = stack.InitParams();
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(1);
     Print("TestDvSubscription - starting\n");
 
     Semaphore* sem = new Semaphore("SEM1", 0);
-    DeviceBasic* device = new DeviceBasic;
+    DeviceBasic* device = new DeviceBasic(aDvStack);
     CpDevices* deviceList = new CpDevices(*sem, device->Udn());
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &CpDevices::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &CpDevices::Removed);
@@ -200,7 +201,7 @@ void TestDvSubscription()
     Brn serviceType("TestBasic");
     TUint ver = 1;
     CpDeviceListUpnpServiceType* list =
-                new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
+                new CpDeviceListUpnpServiceType(aCpStack, domainName, serviceType, ver, added, removed);
     sem->Wait(30*1000); // allow up to 30 seconds to issue the msearch and receive a response
     delete sem;
     deviceList->Test();

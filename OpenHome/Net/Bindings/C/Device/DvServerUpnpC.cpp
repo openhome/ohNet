@@ -1,13 +1,14 @@
 #include <OpenHome/Net/C/DvServerUpnp.h>
 #include <OpenHome/Net/Core/DvServerUpnp.h>
 #include "DviDeviceC.h"
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
 THandle STDCALL DvServerUpnpCreate()
 {
-    return new DvServerUpnp();
+    return new DvServerUpnp(*gDvStack);
 }
 
 void STDCALL DvServerUpnpDestroy(THandle aServer)

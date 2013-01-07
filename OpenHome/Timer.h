@@ -27,17 +27,25 @@ protected:
     TUint iTime;  // Absolute (milliseconds from startup)
 };
 
+namespace Net {
+    class Stack;
+} // namespace Net
+class TimerManager;
+
 class Timer : public QueueSortedEntryTimer
 {
     friend class TimerManager;
 public:
-    Timer(Functor aFunctor);
+    Timer(Net::Stack& aStack, Functor aFunctor);
     void FireIn(TUint aTime); // Relative (milliseconds from now)
     void FireAt(TUint aTime); // Absolute (at specified millisecond)
     void Cancel();
     ~Timer();
-    static TBool IsInManagerThread();
+    static TBool IsInManagerThread(OpenHome::Net::Stack& aStack);
 private:
+    static TBool IsInManagerThread(TimerManager& aMgr);
+private:
+    TimerManager& iMgr;
     Functor iFunctor;
 };
 

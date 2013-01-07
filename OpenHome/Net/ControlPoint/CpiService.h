@@ -21,6 +21,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Net/Private/CpiStack.h>
 
 #include <vector>
 #include <map>
@@ -370,13 +371,14 @@ public:
     void SetInvoker(IInvocable& aInvocable);
     IInvocable& Invoker();
 private:
-    Invocation(Fifo<OpenHome::Net::Invocation*>& aFree);
+    Invocation(CpStack& aCpStack, Fifo<OpenHome::Net::Invocation*>& aFree);
     Invocation& operator=(const Invocation& aInvocation);
     ~Invocation();
     void Clear();
     static void OutputArgument(IAsyncOutput& aConsole, const TChar* aKey, const Argument& aArgument);
     virtual TUint Type() const;
 private:
+    CpStack& iCpStack;
     OpenHome::Mutex iLock;
     Fifo<OpenHome::Net::Invocation*>& iFree;
     CpiService* iService;
@@ -428,24 +430,23 @@ private:
  */
 class InvocationManager : public Thread
 {
+    friend class CpiService;
 public:
-    InvocationManager();
+    InvocationManager(CpStack& aCpStack);
     ~InvocationManager();
-    static void Invoke(OpenHome::Net::Invocation* aInvocation);
-    static void Interrupt(const Service& aService);
+    void Invoke(OpenHome::Net::Invocation* aInvocation);
+    void Interrupt(const Service& aService);
 private:
-    static OpenHome::Net::Invocation* Invocation();
-    static InvocationManager& Self();
+    OpenHome::Net::Invocation* Invocation();
     void Run();
 private:
+    CpStack& iCpStack;
     OpenHome::Mutex iLock;
     Fifo<OpenHome::Net::Invocation*> iFreeInvocations;
     Fifo<OpenHome::Net::Invocation*> iWaitingInvocations;
     Fifo<Invoker*> iFreeInvokers;
     Invoker** iInvokers;
     TBool iActive;
-private:
-    friend class CpiService;
 };
 
 } // namespace Net

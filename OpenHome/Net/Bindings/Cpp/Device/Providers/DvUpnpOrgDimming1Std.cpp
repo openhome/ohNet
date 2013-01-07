@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -80,31 +81,31 @@ DvProviderUpnpOrgDimming1Cpp::DvProviderUpnpOrgDimming1Cpp(DvDeviceStd& aDevice)
 
 void DvProviderUpnpOrgDimming1Cpp::EnablePropertyLoadLevelStatus()
 {
-    iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));
+    iPropertyLoadLevelStatus = new PropertyUint(iDvStack.GetStack(), new ParameterUint("LoadLevelStatus", 0, 100));
     iService->AddProperty(iPropertyLoadLevelStatus); // passes ownership
 }
 
 void DvProviderUpnpOrgDimming1Cpp::EnablePropertyStepDelta()
 {
-    iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100));
+    iPropertyStepDelta = new PropertyUint(iDvStack.GetStack(), new ParameterUint("StepDelta", 1, 100));
     iService->AddProperty(iPropertyStepDelta); // passes ownership
 }
 
 void DvProviderUpnpOrgDimming1Cpp::EnablePropertyRampRate()
 {
-    iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100));
+    iPropertyRampRate = new PropertyUint(iDvStack.GetStack(), new ParameterUint("RampRate", 0, 100));
     iService->AddProperty(iPropertyRampRate); // passes ownership
 }
 
 void DvProviderUpnpOrgDimming1Cpp::EnablePropertyIsRamping()
 {
-    iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"));
+    iPropertyIsRamping = new PropertyBool(iDvStack.GetStack(), new ParameterBool("IsRamping"));
     iService->AddProperty(iPropertyIsRamping); // passes ownership
 }
 
 void DvProviderUpnpOrgDimming1Cpp::EnablePropertyRampPaused()
 {
-    iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"));
+    iPropertyRampPaused = new PropertyBool(iDvStack.GetStack(), new ParameterBool("RampPaused"));
     iService->AddProperty(iPropertyRampPaused); // passes ownership
 }
 

@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 #include <string>
 
@@ -418,58 +419,58 @@ CpProxyAvOpenhomeOrgProduct1Cpp::CpProxyAvOpenhomeOrgProduct1Cpp(CpDeviceCpp& aD
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ManufacturerNamePropertyChanged);
-    iManufacturerName = new PropertyString("ManufacturerName", functor);
+    iManufacturerName = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ManufacturerName", functor);
     AddProperty(iManufacturerName);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ManufacturerInfoPropertyChanged);
-    iManufacturerInfo = new PropertyString("ManufacturerInfo", functor);
+    iManufacturerInfo = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ManufacturerInfo", functor);
     AddProperty(iManufacturerInfo);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ManufacturerUrlPropertyChanged);
-    iManufacturerUrl = new PropertyString("ManufacturerUrl", functor);
+    iManufacturerUrl = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ManufacturerUrl", functor);
     AddProperty(iManufacturerUrl);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ManufacturerImageUriPropertyChanged);
-    iManufacturerImageUri = new PropertyString("ManufacturerImageUri", functor);
+    iManufacturerImageUri = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ManufacturerImageUri", functor);
     AddProperty(iManufacturerImageUri);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ModelNamePropertyChanged);
-    iModelName = new PropertyString("ModelName", functor);
+    iModelName = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ModelName", functor);
     AddProperty(iModelName);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ModelInfoPropertyChanged);
-    iModelInfo = new PropertyString("ModelInfo", functor);
+    iModelInfo = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ModelInfo", functor);
     AddProperty(iModelInfo);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ModelUrlPropertyChanged);
-    iModelUrl = new PropertyString("ModelUrl", functor);
+    iModelUrl = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ModelUrl", functor);
     AddProperty(iModelUrl);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ModelImageUriPropertyChanged);
-    iModelImageUri = new PropertyString("ModelImageUri", functor);
+    iModelImageUri = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ModelImageUri", functor);
     AddProperty(iModelImageUri);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ProductRoomPropertyChanged);
-    iProductRoom = new PropertyString("ProductRoom", functor);
+    iProductRoom = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProductRoom", functor);
     AddProperty(iProductRoom);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ProductNamePropertyChanged);
-    iProductName = new PropertyString("ProductName", functor);
+    iProductName = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProductName", functor);
     AddProperty(iProductName);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ProductInfoPropertyChanged);
-    iProductInfo = new PropertyString("ProductInfo", functor);
+    iProductInfo = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProductInfo", functor);
     AddProperty(iProductInfo);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ProductUrlPropertyChanged);
-    iProductUrl = new PropertyString("ProductUrl", functor);
+    iProductUrl = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProductUrl", functor);
     AddProperty(iProductUrl);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::ProductImageUriPropertyChanged);
-    iProductImageUri = new PropertyString("ProductImageUri", functor);
+    iProductImageUri = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProductImageUri", functor);
     AddProperty(iProductImageUri);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::StandbyPropertyChanged);
-    iStandby = new PropertyBool("Standby", functor);
+    iStandby = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "Standby", functor);
     AddProperty(iStandby);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::SourceIndexPropertyChanged);
-    iSourceIndex = new PropertyUint("SourceIndex", functor);
+    iSourceIndex = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "SourceIndex", functor);
     AddProperty(iSourceIndex);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::SourceCountPropertyChanged);
-    iSourceCount = new PropertyUint("SourceCount", functor);
+    iSourceCount = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "SourceCount", functor);
     AddProperty(iSourceCount);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::SourceXmlPropertyChanged);
-    iSourceXml = new PropertyString("SourceXml", functor);
+    iSourceXml = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "SourceXml", functor);
     AddProperty(iSourceXml);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgProduct1Cpp::AttributesPropertyChanged);
-    iAttributes = new PropertyString("Attributes", functor);
+    iAttributes = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Attributes", functor);
     AddProperty(iAttributes);
 }
 

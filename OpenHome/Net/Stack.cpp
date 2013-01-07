@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/MimeTypes.h>
+#include <OpenHome/Private/Timer.h>
 
 #include <time.h>
 
@@ -27,9 +28,6 @@ const char kOhNetMimeTypePng[]  = "image/png";
 
 // Stack
 
-TUint gStackInitCount = 0;
-Stack* gStack = NULL;
-
 static const TUint kVersionMajor = 1;
 static const TUint kVersionMinor = 0;
 
@@ -43,9 +41,6 @@ Stack::Stack()
     , iDvStack(NULL)
     , iPrivateLock("SOML")
 {
-    ASSERT(gStackInitCount == 0);
-    gStack = this;
-    gStackInitCount++;
 }
 
 Stack::Stack(InitialisationParams* aInitParams)
@@ -58,12 +53,9 @@ Stack::Stack(InitialisationParams* aInitParams)
     , iPrivateLock("SOML")
 {
     SetAssertHandler(AssertHandlerDefault);
-    ASSERT(gStackInitCount == 0);
-    gStack = this;
-    gStackInitCount++;
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
     iTimerManager = new OpenHome::TimerManager();
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(0);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, 0);
     Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
     if (subnetListChangeListener) {
         iNetworkAdapterList->AddSubnetListChangeListener(subnetListChangeListener);
@@ -82,15 +74,8 @@ Stack::Stack(InitialisationParams* aInitParams)
     }
 }
 
-void Stack::Destroy()
-{
-    delete gStack;
-}
-
 Stack::~Stack()
 {
-    ASSERT(gStackInitCount == 1);
-    gStackInitCount = 0;
     iPublicLock.Wait();
     iPublicLock.Signal();
     delete iCpStack;
@@ -99,17 +84,11 @@ Stack::~Stack()
     if (iObjectMap.size() != 0) {
         Log::Print("ERROR: destroying stack before some owned objects\n");
         Log::Print("...leaked objects are\n");
-        DoListObjects();
+        ListObjects();
         ASSERTS();
     }
     delete iTimerManager;
     delete iInitParams;
-    gStack = NULL;
-}
-
-TBool Stack::IsInitialised()
-{
-    return (gStack != NULL);
 }
 
 void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
@@ -120,91 +99,68 @@ void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
 
 OpenHome::TimerManager& Stack::TimerManager()
 {
-    return *(gStack->iTimerManager);
+    return *iTimerManager;
 }
 
 OpenHome::Mutex& Stack::Mutex()
 {
-    return gStack->iPublicLock;
+    return iPublicLock;
 }
 
 NetworkAdapterList& Stack::NetworkAdapterList()
 {
-    return *(gStack->iNetworkAdapterList);
+    return *iNetworkAdapterList;
 }
 
 SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 {
-    AutoMutex a(gStack->iPrivateLock);
-    const TInt count = (TUint)gStack->iMulticastListeners.size();
+    AutoMutex a(iPrivateLock);
+    const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
-        Stack::MListener* listener = gStack->iMulticastListeners[i];
+        Stack::MListener* listener = iMulticastListeners[i];
         if (listener->Interface() == aInterface) {
             listener->AddRef();
             return listener->Listener();
         }
     }
     // first request on this interface; create a shared multicast listener for it
-    MListener* listener = new MListener(aInterface);
-    gStack->iMulticastListeners.push_back(listener);
+    MListener* listener = new MListener(*this, aInterface);
+    iMulticastListeners.push_back(listener);
     listener->Listener().Start();
     return listener->Listener();
 }
 
 void Stack::MulticastListenerRelease(TIpAddress aInterface)
 {
-    gStack->iPrivateLock.Wait();
-    const TInt count = (TUint)gStack->iMulticastListeners.size();
+    iPrivateLock.Wait();
+    const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
-        Stack::MListener* listener = gStack->iMulticastListeners[i];
+        Stack::MListener* listener = iMulticastListeners[i];
         if (listener->Interface() == aInterface) {
             if (listener->RemoveRef()) {
                 delete listener;
-                gStack->iMulticastListeners.erase(gStack->iMulticastListeners.begin() + i);
+                iMulticastListeners.erase(iMulticastListeners.begin() + i);
                 break;
             }
         }
     }
-    gStack->iPrivateLock.Signal();
+    iPrivateLock.Signal();
 }
 
 TUint Stack::SequenceNumber()
 {
-    TUint seq;
-    OpenHome::Mutex& lock = Stack::Mutex();
-    lock.Wait();
-    seq = gStack->iSequenceNumber++;
-    lock.Signal();
+    iPrivateLock.Wait();
+    TUint seq = iSequenceNumber++;
+    iPrivateLock.Signal();
     return seq;
 }
 
 InitialisationParams& Stack::InitParams()
 {
-    return *(gStack->iInitParams);
+    return *iInitParams;
 }
 
 void Stack::AddObject(IStackObject* aObject)
-{
-    if (gStack != NULL)  {
-        gStack->DoAddObject(aObject);
-    }
-}
-
-void Stack::RemoveObject(IStackObject* aObject)
-{
-    if (gStack != NULL)  {
-        gStack->DoRemoveObject(aObject);
-    }
-}
-
-void Stack::ListObjects()
-{
-    if (gStack != NULL)  {
-        gStack->DoListObjects();
-    }
-}
-
-void Stack::DoAddObject(IStackObject* aObject)
 {
     iPrivateLock.Wait();
     ObjectMap::iterator it = iObjectMap.find(aObject);
@@ -213,7 +169,7 @@ void Stack::DoAddObject(IStackObject* aObject)
     iPrivateLock.Signal();
 }
 
-void Stack::DoRemoveObject(IStackObject* aObject)
+void Stack::RemoveObject(IStackObject* aObject)
 {
     iPrivateLock.Wait();
     ObjectMap::iterator it = iObjectMap.find(aObject);
@@ -223,7 +179,7 @@ void Stack::DoRemoveObject(IStackObject* aObject)
     iPrivateLock.Signal();
 }
 
-void Stack::DoListObjects()
+void Stack::ListObjects()
 {
     iPrivateLock.Wait();
     ObjectMap::iterator it = iObjectMap.begin();
@@ -234,31 +190,31 @@ void Stack::DoListObjects()
     iPrivateLock.Signal();
 }
 
-void Stack::SetCpiStack(IStack* aStack)
+void Stack::SetCpStack(IStack* aStack)
 {
-    gStack->iCpStack = aStack;
+    iCpStack = aStack;
 }
 
-void Stack::SetDviStack(IStack* aStack)
+void Stack::SetDvStack(IStack* aStack)
 {
-    gStack->iDvStack = aStack;
+    iDvStack = aStack;
 }
 
 IStack* Stack::CpiStack()
 {
-    return gStack->iCpStack;
+    return iCpStack;
 }
 
 IStack* Stack::DviStack()
 {
-    return gStack->iDvStack;
+    return iDvStack;
 }
 
 
 // Stack::MListener
 
-Stack::MListener::MListener(TIpAddress aInterface)
-    : iListener(aInterface)
+Stack::MListener::MListener(Stack& aStack, TIpAddress aInterface)
+    : iListener(aStack, aInterface)
     , iRefCount(1)
 {
 }

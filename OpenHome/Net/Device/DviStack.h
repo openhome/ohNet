@@ -16,28 +16,30 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Bonjour.h>
 #include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
+#include <OpenHome/Private/Standard.h>
 
 #include <vector>
 
 namespace OpenHome {
 namespace Net {
 
-class DviStack : private IStack
+class DvStack : private IStack, private INonCopyable
 {
 public:
-    DviStack();
-    static TUint BootId();
-    static TUint NextBootId();
-    static void UpdateBootId();
-    static DviServerUpnp& ServerUpnp();
-    static DviDeviceMap& DeviceMap();
-    static DviSubscriptionManager& SubscriptionManager();
-    static IMdnsProvider* MdnsProvider();
-    static DviPropertyUpdateCollection& PropertyUpdateCollection();
+    DvStack(Stack& aStack);
+    Stack& GetStack() { return iStack; }
+    TUint BootId();
+    TUint NextBootId();
+    void UpdateBootId();
+    DviServerUpnp& ServerUpnp();
+    DviDeviceMap& DeviceMap();
+    DviSubscriptionManager& SubscriptionManager();
+    IMdnsProvider* MdnsProvider();
+    DviPropertyUpdateCollection& PropertyUpdateCollection();
 private:
-    ~DviStack();
-    static DviStack* Self();
+    ~DvStack();
 private:
+    OpenHome::Net::Stack& iStack;
     TUint iBootId;
     TUint iNextBootId;
     DviServerUpnp* iDviServerUpnp;

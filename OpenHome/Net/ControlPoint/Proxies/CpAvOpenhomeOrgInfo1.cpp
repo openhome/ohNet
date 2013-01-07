@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -157,40 +158,40 @@ CpProxyAvOpenhomeOrgInfo1::CpProxyAvOpenhomeOrgInfo1(CpDevice& aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::TrackCountPropertyChanged);
-    iTrackCount = new PropertyUint("TrackCount", functor);
+    iTrackCount = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "TrackCount", functor);
     AddProperty(iTrackCount);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::DetailsCountPropertyChanged);
-    iDetailsCount = new PropertyUint("DetailsCount", functor);
+    iDetailsCount = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "DetailsCount", functor);
     AddProperty(iDetailsCount);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::MetatextCountPropertyChanged);
-    iMetatextCount = new PropertyUint("MetatextCount", functor);
+    iMetatextCount = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "MetatextCount", functor);
     AddProperty(iMetatextCount);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::UriPropertyChanged);
-    iUri = new PropertyString("Uri", functor);
+    iUri = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Uri", functor);
     AddProperty(iUri);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::MetadataPropertyChanged);
-    iMetadata = new PropertyString("Metadata", functor);
+    iMetadata = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Metadata", functor);
     AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::DurationPropertyChanged);
-    iDuration = new PropertyUint("Duration", functor);
+    iDuration = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Duration", functor);
     AddProperty(iDuration);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::BitRatePropertyChanged);
-    iBitRate = new PropertyUint("BitRate", functor);
+    iBitRate = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "BitRate", functor);
     AddProperty(iBitRate);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::BitDepthPropertyChanged);
-    iBitDepth = new PropertyUint("BitDepth", functor);
+    iBitDepth = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "BitDepth", functor);
     AddProperty(iBitDepth);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::SampleRatePropertyChanged);
-    iSampleRate = new PropertyUint("SampleRate", functor);
+    iSampleRate = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "SampleRate", functor);
     AddProperty(iSampleRate);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::LosslessPropertyChanged);
-    iLossless = new PropertyBool("Lossless", functor);
+    iLossless = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "Lossless", functor);
     AddProperty(iLossless);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::CodecNamePropertyChanged);
-    iCodecName = new PropertyString("CodecName", functor);
+    iCodecName = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "CodecName", functor);
     AddProperty(iCodecName);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgInfo1::MetatextPropertyChanged);
-    iMetatext = new PropertyString("Metatext", functor);
+    iMetatext = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Metatext", functor);
     AddProperty(iMetatext);
 }
 

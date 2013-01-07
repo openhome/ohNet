@@ -8,10 +8,10 @@ using namespace OpenHome::Net;
 
 // SsdpSocketReader
 
-SsdpSocketReader::SsdpSocketReader(TIpAddress aInterface, const Endpoint& aMulticast)
+SsdpSocketReader::SsdpSocketReader(Stack& aStack, TIpAddress aInterface, const Endpoint& aMulticast)
     : SocketUdpMulticast(aInterface, aMulticast)
 {
-    SetTtl(Stack::InitParams().MsearchTtl()); 
+    SetTtl(aStack.InitParams().MsearchTtl()); 
     iReader = new UdpReader(*this);
 }
 
@@ -52,13 +52,13 @@ SsdpListener::SsdpListener()
 // Reader chain: Multicast Socket -> Srs -> ReaderHttpRequest -> this -> aMsearch
 //                                                                    -> aNotify
 
-SsdpListenerMulticast::SsdpListenerMulticast(TIpAddress aInterface)
+SsdpListenerMulticast::SsdpListenerMulticast(Stack& aStack, TIpAddress aInterface)
     : iLock("LMCM")
     , iNextHandlerId(0)
     , iInterface(aInterface)
-    , iSocket(aInterface, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
+    , iSocket(aStack, aInterface, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocket)
-    , iReaderRequest(iBuffer)
+    , iReaderRequest(aStack, iBuffer)
     , iExiting(false)
 {
     try
@@ -410,18 +410,19 @@ void SsdpListenerMulticast::EraseDisabled(VectorMsearchHandler& aVector)
 // Reader chain: Multicast Socket -> Srs -> ReaderHttpRequest -> this -> aMsearch
 //                                                                    -> aNotify
 
-SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
-    : iNotifyHandler(aNotifyHandler)
+SsdpListenerUnicast::SsdpListenerUnicast(Stack& aStack, ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
+    : iStack(aStack)
+    , iNotifyHandler(aNotifyHandler)
     , iSocket(0, aInterface)
     , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iSocketReader(iSocket)
     , iWriteBuffer(iSocketWriter)
     , iWriter(iWriteBuffer)
     , iReadBuffer(iSocketReader)
-    , iReaderResponse(iReadBuffer)
+    , iReaderResponse(aStack, iReadBuffer)
     , iExiting(false)
 {
-    iSocket.SetTtl(Stack::InitParams().MsearchTtl());
+    iSocket.SetTtl(aStack.InitParams().MsearchTtl());
     try
     {
         iSocket.SetRecvBufBytes(kRecvBufBytes);
@@ -556,5 +557,5 @@ void SsdpListenerUnicast::MsearchAll()
 
 TUint SsdpListenerUnicast::MsearchDurationSeconds() const
 {
-    return Stack::InitParams().MsearchTimeSecs();
+    return iStack.InitParams().MsearchTimeSecs();
 }

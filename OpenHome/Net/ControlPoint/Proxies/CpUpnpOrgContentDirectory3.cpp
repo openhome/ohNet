@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -659,16 +660,16 @@ CpProxyUpnpOrgContentDirectory3::CpProxyUpnpOrgContentDirectory3(CpDevice& aDevi
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory3::SystemUpdateIDPropertyChanged);
-    iSystemUpdateID = new PropertyUint("SystemUpdateID", functor);
+    iSystemUpdateID = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "SystemUpdateID", functor);
     AddProperty(iSystemUpdateID);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory3::ContainerUpdateIDsPropertyChanged);
-    iContainerUpdateIDs = new PropertyString("ContainerUpdateIDs", functor);
+    iContainerUpdateIDs = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ContainerUpdateIDs", functor);
     AddProperty(iContainerUpdateIDs);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory3::LastChangePropertyChanged);
-    iLastChange = new PropertyString("LastChange", functor);
+    iLastChange = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "LastChange", functor);
     AddProperty(iLastChange);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgContentDirectory3::TransferIDsPropertyChanged);
-    iTransferIDs = new PropertyString("TransferIDs", functor);
+    iTransferIDs = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "TransferIDs", functor);
     AddProperty(iTransferIDs);
 }
 

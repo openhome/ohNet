@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -275,13 +276,13 @@ CpProxyUpnpOrgConnectionManager2C::CpProxyUpnpOrgConnectionManager2C(CpDeviceC a
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2C::SourceProtocolInfoPropertyChanged);
-    iSourceProtocolInfo = new PropertyString("SourceProtocolInfo", functor);
+    iSourceProtocolInfo = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "SourceProtocolInfo", functor);
     AddProperty(iSourceProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2C::SinkProtocolInfoPropertyChanged);
-    iSinkProtocolInfo = new PropertyString("SinkProtocolInfo", functor);
+    iSinkProtocolInfo = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "SinkProtocolInfo", functor);
     AddProperty(iSinkProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2C::CurrentConnectionIDsPropertyChanged);
-    iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs", functor);
+    iCurrentConnectionIDs = new PropertyString(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "CurrentConnectionIDs", functor);
     AddProperty(iCurrentConnectionIDs);
 }
 

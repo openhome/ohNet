@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -34,7 +35,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
 
     Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(Net::InitialisationParams::ELoopbackExclude, "TestMulticast");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*Net::gStack, Net::InitialisationParams::ELoopbackExclude, "TestMulticast");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {

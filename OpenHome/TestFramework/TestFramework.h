@@ -102,7 +102,7 @@ private:
 class Blocker
 {
 public:
-    Blocker();
+    Blocker(Net::Stack& aStack);
     ~Blocker();
     void Wait(TUint aSecs);
 private:

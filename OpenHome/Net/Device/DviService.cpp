@@ -66,8 +66,9 @@ FunctorDviInvocation DvAction::Functor() const
 
 // DviService
 
-DviService::DviService(const TChar* aDomain, const TChar* aName, TUint aVersion)
-    : Service(aDomain, aName, aVersion)
+DviService::DviService(DvStack& aDvStack, const TChar* aDomain, const TChar* aName, TUint aVersion)
+    : Service(aDvStack.GetStack(), aDomain, aName, aVersion)
+    , iDvStack(aDvStack)
     , iLock("DVSM")
     , iRefCount(1)
     , iPropertiesLock("SPRM")
@@ -76,7 +77,7 @@ DviService::DviService(const TChar* aDomain, const TChar* aName, TUint aVersion)
     , iDisabledSem("DVSS", 0)
 {
     iDisabledSem.Signal();
-    Stack::AddObject(this);
+    iDvStack.GetStack().AddObject(this);
 }
 
 DviService::~DviService()
@@ -91,7 +92,7 @@ DviService::~DviService()
         delete iProperties[i];
     }
     iLock.Signal();
-    Stack::RemoveObject(this);
+    iDvStack.GetStack().RemoveObject(this);
 }
 
 void DviService::StopSubscriptions()
@@ -100,7 +101,7 @@ void DviService::StopSubscriptions()
     for (TUint i=0; i<iSubscriptions.size(); i++) {
         DviSubscription* subscription = iSubscriptions[i];
         subscription->Stop();
-        DviSubscriptionManager::RemoveSubscription(*subscription);
+        iDvStack.SubscriptionManager().RemoveSubscription(*subscription);
         subscription->RemoveRef();
     }
     iSubscriptions.clear();
@@ -109,17 +110,17 @@ void DviService::StopSubscriptions()
 
 void DviService::AddRef()
 {
-    Stack::Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     iRefCount++;
-    Stack::Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
 }
 
 void DviService::RemoveRef()
 {
-    Stack::Mutex().Wait();
+    iDvStack.GetStack().Mutex().Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    Stack::Mutex().Signal();
+    iDvStack.GetStack().Mutex().Signal();
     if (dead) {
         delete this;
     }
@@ -221,7 +222,7 @@ void DviService::PublishPropertyUpdates()
 {
     iLock.Wait();
     for (TUint i=0; i<iSubscriptions.size(); i++) {
-        DviSubscriptionManager::QueueUpdate(*(iSubscriptions[i]));
+        iDvStack.SubscriptionManager().QueueUpdate(*(iSubscriptions[i]));
     }
     iLock.Signal();
 }
@@ -232,7 +233,7 @@ void DviService::AddSubscription(DviSubscription* aSubscription)
     iLock.Wait();
     iSubscriptions.push_back(aSubscription);
     iLock.Signal();
-    DviSubscriptionManager::QueueUpdate(*aSubscription);
+    iDvStack.SubscriptionManager().QueueUpdate(*aSubscription);
 }
 
 void DviService::RemoveSubscription(const Brx& aSid)
@@ -241,7 +242,7 @@ void DviService::RemoveSubscription(const Brx& aSid)
     for (TUint i=0; i<iSubscriptions.size(); i++) {
         DviSubscription* subscription = iSubscriptions[i];
         if (subscription->Sid() == aSid) {
-            DviSubscriptionManager::RemoveSubscription(*subscription);
+            iDvStack.SubscriptionManager().RemoveSubscription(*subscription);
             iSubscriptions.erase(iSubscriptions.begin() + i);
             iLock.Signal();
             subscription->Stop();

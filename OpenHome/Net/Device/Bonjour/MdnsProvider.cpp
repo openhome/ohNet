@@ -4,8 +4,8 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-MdnsProvider::MdnsProvider(const TChar* aHost)
-    : iPlatform(aHost)
+MdnsProvider::MdnsProvider(Stack& aStack, const TChar* aHost)
+    : iPlatform(aStack, aHost)
 {
 }
 

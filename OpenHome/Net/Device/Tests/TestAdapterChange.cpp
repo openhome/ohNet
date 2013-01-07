@@ -12,6 +12,7 @@
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>
 #include "TestBasicDv.h"
 #include <OpenHome/Private/Maths.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string.h>
 
@@ -76,7 +77,7 @@ void CpDevices::Start()
     Brn domainName("openhome.org");
     Brn serviceType("TestBasic");
     TUint ver = 1;
-    iDeviceList = new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
+    iDeviceList = new CpDeviceListUpnpServiceType(*gCpStack, domainName, serviceType, ver, added, removed);
     WaitForDeviceDiscovery();
 }
 
@@ -168,7 +169,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     UpnpLibrary::StartCombined(subnet);
 
     Semaphore* sem = new Semaphore("TEST", 0);
-    DeviceBasic* dvDevice = new DeviceBasic();
+    DeviceBasic* dvDevice = new DeviceBasic(*gDvStack);
     CpDevices* cpDevice = new CpDevices(*sem, dvDevice->Udn());
     LogSubnet("Starting", subnet);
     cpDevice->Start();

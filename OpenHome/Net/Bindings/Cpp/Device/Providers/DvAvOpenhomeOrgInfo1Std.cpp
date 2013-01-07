@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -179,73 +180,73 @@ DvProviderAvOpenhomeOrgInfo1Cpp::DvProviderAvOpenhomeOrgInfo1Cpp(DvDeviceStd& aD
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyTrackCount()
 {
-    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
+    iPropertyTrackCount = new PropertyUint(iDvStack.GetStack(), new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyDetailsCount()
 {
-    iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"));
+    iPropertyDetailsCount = new PropertyUint(iDvStack.GetStack(), new ParameterUint("DetailsCount"));
     iService->AddProperty(iPropertyDetailsCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyMetatextCount()
 {
-    iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"));
+    iPropertyMetatextCount = new PropertyUint(iDvStack.GetStack(), new ParameterUint("MetatextCount"));
     iService->AddProperty(iPropertyMetatextCount); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyUri()
 {
-    iPropertyUri = new PropertyString(new ParameterString("Uri"));
+    iPropertyUri = new PropertyString(iDvStack.GetStack(), new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyMetadata()
 {
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
+    iPropertyMetadata = new PropertyString(iDvStack.GetStack(), new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyDuration()
 {
-    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
+    iPropertyDuration = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyBitRate()
 {
-    iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"));
+    iPropertyBitRate = new PropertyUint(iDvStack.GetStack(), new ParameterUint("BitRate"));
     iService->AddProperty(iPropertyBitRate); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyBitDepth()
 {
-    iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"));
+    iPropertyBitDepth = new PropertyUint(iDvStack.GetStack(), new ParameterUint("BitDepth"));
     iService->AddProperty(iPropertyBitDepth); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertySampleRate()
 {
-    iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"));
+    iPropertySampleRate = new PropertyUint(iDvStack.GetStack(), new ParameterUint("SampleRate"));
     iService->AddProperty(iPropertySampleRate); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyLossless()
 {
-    iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"));
+    iPropertyLossless = new PropertyBool(iDvStack.GetStack(), new ParameterBool("Lossless"));
     iService->AddProperty(iPropertyLossless); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyCodecName()
 {
-    iPropertyCodecName = new PropertyString(new ParameterString("CodecName"));
+    iPropertyCodecName = new PropertyString(iDvStack.GetStack(), new ParameterString("CodecName"));
     iService->AddProperty(iPropertyCodecName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnablePropertyMetatext()
 {
-    iPropertyMetatext = new PropertyString(new ParameterString("Metatext"));
+    iPropertyMetatext = new PropertyString(iDvStack.GetStack(), new ParameterString("Metatext"));
     iService->AddProperty(iPropertyMetatext); // passes ownership
 }
 

@@ -22,6 +22,7 @@ namespace OpenHome {
 namespace Net {
 
 class CpiDeviceListUpnp;
+class CpStack;
 /**
  * UPnP-specific device
  *
@@ -32,7 +33,7 @@ class CpiDeviceListUpnp;
 class CpiDeviceUpnp : private ICpiProtocol, private ICpiDeviceObserver
 {
 public:
-    CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList);
+    CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList);
     const Brx& Udn() const;
     const Brx& Location() const;
     CpiDevice& Device();
@@ -99,7 +100,7 @@ class CpiDeviceListUpnp : public CpiDeviceList, public ISsdpNotifyHandler
 public:
     void XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError);
 protected:
-    CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnp();
 
     void StopListeners();
@@ -159,7 +160,7 @@ private:
 class CpiDeviceListUpnpAll : public CpiDeviceListUpnp
 {
 public:
-    CpiDeviceListUpnpAll(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    CpiDeviceListUpnpAll(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnpAll();
     void Start();
     void SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
@@ -173,7 +174,7 @@ public:
 class CpiDeviceListUpnpRoot : public CpiDeviceListUpnp
 {
 public:
-    CpiDeviceListUpnpRoot(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    CpiDeviceListUpnpRoot(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnpRoot();
     void Start();
     void SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
@@ -187,7 +188,7 @@ public:
 class CpiDeviceListUpnpUuid : public CpiDeviceListUpnp
 {
 public:
-    CpiDeviceListUpnpUuid(const Brx& aUuid, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    CpiDeviceListUpnpUuid(CpStack& aCpStack, const Brx& aUuid, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnpUuid();
     void Start();
     void SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
@@ -203,8 +204,8 @@ private:
 class CpiDeviceListUpnpDeviceType : public CpiDeviceListUpnp
 {
 public:
-    CpiDeviceListUpnpDeviceType(const Brx& aDomainName, const Brx& aDeviceType, TUint aVersion,
-                                FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    CpiDeviceListUpnpDeviceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aDeviceType,
+                                TUint aVersion, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnpDeviceType();
     void Start();
     void SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion,
@@ -223,8 +224,8 @@ private:
 class CpiDeviceListUpnpServiceType : public CpiDeviceListUpnp
 {
 public:
-    CpiDeviceListUpnpServiceType(const Brx& aDomainName, const Brx& aServiceType, TUint aVersion,
-                                 FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
+    CpiDeviceListUpnpServiceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aServiceType,
+                                 TUint aVersion, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnpServiceType();
     void Start();
     void SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion,

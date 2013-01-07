@@ -1,6 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Maths.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -12,7 +13,7 @@ using namespace OpenHome::TestFramework;
 class MyTimer : public Timer
 {
 public:
-    MyTimer() : Timer(MakeFunctor(*this, &MyTimer::Run)), iCount(0), iSemaphore("TIMR", 0) {}
+    MyTimer() : Timer(*Net::gStack, MakeFunctor(*this, &MyTimer::Run)), iCount(0), iSemaphore("TIMR", 0) {}
     void Wait() { iSemaphore.Wait(); }
     TUint Count() { return (iCount); }
     ~MyTimer() { iCount = 0xffffffff; }
@@ -26,7 +27,7 @@ private:
 class MicrosecondTimer
 {
 public:
-    MicrosecondTimer() : iTimer(MakeFunctor(*this, &MicrosecondTimer::Expired)), iSemaphore("MICR", 0) {}
+    MicrosecondTimer() : iTimer(*Net::gStack, MakeFunctor(*this, &MicrosecondTimer::Expired)), iSemaphore("MICR", 0) {}
     void Calibrate();
     void FireIn(TUint aMicroseconds);
 private:
@@ -205,7 +206,7 @@ void SuiteTimerThrash::Test()
     Functor f = MakeFunctor(*this, &SuiteTimerThrash::Fire);
     
     for (TUint i = 0; i < 10000; i++) {
-        iTimers[i] = new Timer(f);
+        iTimers[i] = new Timer(*Net::gStack, f);
     }
     
     Print("Firing 10000 timers over 10 seconds\n");

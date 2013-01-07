@@ -15,8 +15,9 @@ using namespace OpenHome::Net;
 
 const Brn DviDevice::kResourceDir("resource");
 
-DviDevice::DviDevice(const Brx& aUdn)
-    : iLock("DDVM")
+DviDevice::DviDevice(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn)
+    : iDvStack(aDvStack)
+    , iLock("DDVM")
     , iServiceLock("DVM2")
     , iResourceManager(NULL)
     , iShutdownSem("DVSD", 1)
@@ -24,8 +25,9 @@ DviDevice::DviDevice(const Brx& aUdn)
     Construct(aUdn);
 }
 
-DviDevice::DviDevice(const Brx& aUdn, IResourceManager& aResourceManager)
-    : iLock("DDVM")
+DviDevice::DviDevice(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn, IResourceManager& aResourceManager)
+    : iDvStack(aDvStack)
+    , iLock("DDVM")
     , iServiceLock("DVM2")
     , iResourceManager(&aResourceManager)
     , iShutdownSem("DVSD", 1)
@@ -35,7 +37,7 @@ DviDevice::DviDevice(const Brx& aUdn, IResourceManager& aResourceManager)
 
 void DviDevice::Construct(const Brx& aUdn)
 {
-    Stack::AddObject(this);
+    iDvStack.GetStack().AddObject(this);
     iRefCount = 1;
     iUdn.Set(aUdn);
     iEnabled = eDisabled;
@@ -45,7 +47,7 @@ void DviDevice::Construct(const Brx& aUdn)
     iProtocolDisableCount = 0;
     iSubscriptionId = 0;
     iProviderSubscriptionLongPoll = NULL;
-    DviDeviceMap::Add(*this);
+    iDvStack.DeviceMap().Add(*this);
 }
 
 void DviDevice::AddProtocol(IDvProtocol* aProtocol)
@@ -56,13 +58,13 @@ void DviDevice::AddProtocol(IDvProtocol* aProtocol)
 
 DviDevice::~DviDevice()
 {
-    Stack::RemoveObject(this);
+    iDvStack.GetStack().RemoveObject(this);
 }
 
 void DviDevice::Destroy()
 {
     iLock.Wait();
-    DviDeviceMap::Remove(*this);
+    iDvStack.DeviceMap().Remove(*this);
     for (TUint i=0; i<iDevices.size(); i++) {
         iDevices[i]->Destroy();
     }
@@ -321,6 +323,11 @@ IResourceManager* DviDevice::ResourceManager()
     return iResourceManager;
 }
 
+DvStack& DviDevice::GetDvStack()
+{
+    return iDvStack;
+}
+
 void DviDevice::SetCustomData(const TChar* aProtocol, const TChar* aTag, void* aData)
 {
     Brn protocolName(aProtocol);
@@ -514,14 +521,14 @@ void AttributeMap::Set(const TChar* aKey, const TChar* aValue)
 
 // DviDeviceStandard
 
-DviDeviceStandard::DviDeviceStandard(const Brx& aUdn)
-    : DviDevice(aUdn)
+DviDeviceStandard::DviDeviceStandard(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn)
+    : DviDevice(aDvStack, aUdn)
 {
     Construct();
 }
 
-DviDeviceStandard::DviDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager)
-    : DviDevice(aUdn, aResourceManager)
+DviDeviceStandard::DviDeviceStandard(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn, IResourceManager& aResourceManager)
+    : DviDevice(aDvStack, aUdn, aResourceManager)
 {
     Construct();
 }
@@ -570,36 +577,33 @@ DviDeviceMap::~DviDeviceMap()
 
 void DviDeviceMap::Add(DviDevice& aDevice)
 {
-    DviDeviceMap& self = DviStack::DeviceMap();
-    self.iLock.Wait();
+    iLock.Wait();
     Brn udn(aDevice.Udn());
-    self.iMap.insert(std::pair<Brn,DviDevice*>(udn, &aDevice));
-    self.iLock.Signal();
+    iMap.insert(std::pair<Brn,DviDevice*>(udn, &aDevice));
+    iLock.Signal();
 }
 
 void DviDeviceMap::Remove(DviDevice& aDevice)
 {
-    DviDeviceMap& self = DviStack::DeviceMap();
-    self.iLock.Wait();
+    iLock.Wait();
     Brn udn(aDevice.Udn());
-    Map::iterator it = self.iMap.find(udn);
-    if (it != self.iMap.end()) {
-        self.iMap.erase(it);
+    Map::iterator it = iMap.find(udn);
+    if (it != iMap.end()) {
+        iMap.erase(it);
     }
-    self.iLock.Signal();
+    iLock.Signal();
 }
 
 DviDevice* DviDeviceMap::Find(const Brx& aUdn)
 {
     DviDevice* device = NULL;
-    DviDeviceMap& self = DviStack::DeviceMap();
-    self.iLock.Wait();
+    iLock.Wait();
     Brn udn(aUdn);
-    Map::iterator it = self.iMap.find(udn);
-    if (it != self.iMap.end()) {
+    Map::iterator it = iMap.find(udn);
+    if (it != iMap.end()) {
         device = it->second;
     }
-    self.iLock.Signal();
+    iLock.Signal();
     return device;
 }
 

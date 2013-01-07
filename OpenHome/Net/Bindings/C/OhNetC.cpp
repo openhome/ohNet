@@ -4,6 +4,7 @@
 #include <OpenHome/FunctorMsg.h>
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <stdlib.h>
 
@@ -12,7 +13,7 @@ using namespace OpenHome::Net;
 
 int32_t STDCALL OhNetLibraryInitialise(OhNetHandleInitParams aInitParams)
 {
-    if (Stack::IsInitialised()) {
+    if (gStack != NULL) {
         return -1;
     }
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aInitParams);
@@ -27,7 +28,7 @@ int32_t STDCALL OhNetLibraryInitialise(OhNetHandleInitParams aInitParams)
 
 int32_t STDCALL OhNetLibraryInitialiseMinimal(OhNetHandleInitParams aInitParams)
 {
-    if (Stack::IsInitialised()) {
+    if (gStack != NULL) {
         return -1;
     }
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aInitParams);
@@ -463,7 +464,7 @@ OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter(const char* aCookie)
 
 void STDCALL OhNetFreeExternal(void* aPtr)
 {
-    OhNetCallbackFreeExternal cb = Stack::InitParams().FreeExternal();
+    OhNetCallbackFreeExternal cb = gStack->InitParams().FreeExternal();
     if (cb != NULL) {
         cb(aPtr);
     }

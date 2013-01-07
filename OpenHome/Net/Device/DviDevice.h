@@ -29,12 +29,14 @@ public:
 
 class DviSubscription;
 class DviProviderSubscriptionLongPoll;
+class DvStack;
+
 class DviDevice : public IResourceManager, private IStackObject
 {
 public:
     static const Brn kResourceDir;
 public:
-    DviDevice(const Brx& aUdn);
+    DviDevice(DvStack& aDvStack, const Brx& aUdn);
     void Destroy();
     void AddWeakRef();
     void RemoveWeakRef();
@@ -58,10 +60,11 @@ public:
     TUint ConfigId();
     void CreateSid(Brh& aSid);
     IResourceManager* ResourceManager();
+    DvStack& GetDvStack();
     void SetCustomData(const TChar* aProtocol, const TChar* Tag, void* aData);
     void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri);
 protected:
-    DviDevice(const Brx& aUdn, IResourceManager& aResourceManager);
+    DviDevice(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn, IResourceManager& aResourceManager);
     ~DviDevice();
     void AddProtocol(IDvProtocol* aProtocol);
 private:
@@ -84,6 +87,7 @@ private:
        ,eEnabled
     };
 private:
+    OpenHome::Net::DvStack& iDvStack;
     mutable Mutex iLock;
     Mutex iServiceLock;
     TUint iRefCount;
@@ -106,8 +110,8 @@ private:
 class DviDeviceStandard : public DviDevice
 {
 public:
-    DviDeviceStandard(const Brx& aUdn);
-    DviDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager);
+    DviDeviceStandard(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn);
+    DviDeviceStandard(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn, IResourceManager& aResourceManager);
 private:
     void Construct();
 };
@@ -142,9 +146,9 @@ class DviDeviceMap : public IResourceManager
 public:
     DviDeviceMap();
     ~DviDeviceMap();
-    static void Add(DviDevice& aDevice);
-    static void Remove(DviDevice& aDevice);
-    static DviDevice* Find(const Brx& aUdn);
+    void Add(DviDevice& aDevice);
+    void Remove(DviDevice& aDevice);
+    DviDevice* Find(const Brx& aUdn);
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private:
     typedef std::map<Brn,DviDevice*,BufferCmp> Map;

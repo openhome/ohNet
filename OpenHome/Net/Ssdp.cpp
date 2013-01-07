@@ -200,7 +200,7 @@ void Ssdp::WriteSearchTypeAll(IWriterHttpHeader& aWriter)
     aWriter.WriteHeader(Ssdp::kHeaderSt, kMsearchAll);
 }
 
-void Ssdp::WriteServer(IWriterHttpHeader& aWriter)
+void Ssdp::WriteServer(Stack& aStack, IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderServer);
     TUint major, minor;
@@ -211,21 +211,21 @@ void Ssdp::WriteServer(IWriterHttpHeader& aWriter)
     stream.Write('.');
     stream.WriteUint(minor);
     stream.Write(Brn(" UPnP/1.1 ohNet/"));
-    Stack::GetVersion(major, minor);
+    aStack.GetVersion(major, minor);
     stream.WriteUint(major);
     stream.Write('.');
     stream.WriteUint(minor);
     stream.WriteFlush();
 }
 
-void Ssdp::WriteMaxAge(IWriterHttpHeader& aWriter)
+void Ssdp::WriteMaxAge(Stack& aStack, IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderCacheControl);
     stream.Write(kSsdpMaxAge);
     stream.Write(Ascii::kSp);
     stream.Write(kSsdpMaxAgeSeparator);
     stream.Write(Ascii::kSp);
-    stream.WriteUint(Stack::InitParams().DvMaxUpdateTimeSecs());
+    stream.WriteUint(aStack.InitParams().DvMaxUpdateTimeSecs());
     stream.WriteFlush();
 }
 

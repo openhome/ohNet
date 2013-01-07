@@ -68,6 +68,7 @@ objects_core = \
 	$(objdir)EventUpnp.$(objext) \
 	$(objdir)Exception.$(objext) \
 	$(objdir)Fifo.$(objext) \
+	$(objdir)Globals.$(objext) \
 	$(objdir)Http.$(objext) \
 	$(objdir)DNSCommon.$(objext) \
 	$(objdir)DNSDigest.$(objext) \
@@ -307,6 +308,8 @@ $(objdir)Exception.$(objext) : OpenHome/Exception.cpp $(headers)
 	$(compiler)Exception.$(objext) -c $(cflags) $(includes) OpenHome/Exception.cpp
 $(objdir)Fifo.$(objext) : OpenHome/Fifo.cpp $(headers)
 	$(compiler)Fifo.$(objext) -c $(cflags) $(includes) OpenHome/Fifo.cpp
+$(objdir)Globals.$(objext) : OpenHome/Net/Globals.cpp $(headers)
+	$(compiler)Globals.$(objext) -c $(cflags) $(includes) OpenHome/Net/Globals.cpp
 $(objdir)Http.$(objext) : OpenHome/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cflags) $(includes) OpenHome/Http.cpp
 $(objdir)DNSCommon.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c $(headers)

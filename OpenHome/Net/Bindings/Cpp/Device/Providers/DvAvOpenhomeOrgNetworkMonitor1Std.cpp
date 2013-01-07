@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -69,25 +70,25 @@ DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::DvProviderAvOpenhomeOrgNetworkMonitor
 
 void DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::EnablePropertyName()
 {
-    iPropertyName = new PropertyString(new ParameterString("Name"));
+    iPropertyName = new PropertyString(iDvStack.GetStack(), new ParameterString("Name"));
     iService->AddProperty(iPropertyName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::EnablePropertySender()
 {
-    iPropertySender = new PropertyUint(new ParameterUint("Sender"));
+    iPropertySender = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Sender"));
     iService->AddProperty(iPropertySender); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::EnablePropertyReceiver()
 {
-    iPropertyReceiver = new PropertyUint(new ParameterUint("Receiver"));
+    iPropertyReceiver = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Receiver"));
     iService->AddProperty(iPropertyReceiver); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgNetworkMonitor1Cpp::EnablePropertyResults()
 {
-    iPropertyResults = new PropertyUint(new ParameterUint("Results"));
+    iPropertyResults = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Results"));
     iService->AddProperty(iPropertyResults); // passes ownership
 }
 

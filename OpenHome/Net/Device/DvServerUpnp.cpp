@@ -6,9 +6,9 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-DvServerUpnp::DvServerUpnp()
+DvServerUpnp::DvServerUpnp(DvStack& aDvStack)
 {
-    iServer = new DviServerUpnp();
+    iServer = new DviServerUpnp(aDvStack);
 }
 
 DvServerUpnp::~DvServerUpnp()

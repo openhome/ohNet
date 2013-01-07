@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/Cpp/DvInvocation.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -28,7 +29,7 @@ DvProviderUpnpOrgSwitchPower1Cpp::DvProviderUpnpOrgSwitchPower1Cpp(DvDeviceStd& 
 
 void DvProviderUpnpOrgSwitchPower1Cpp::EnablePropertyStatus()
 {
-    iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
+    iPropertyStatus = new PropertyBool(iDvStack.GetStack(), new ParameterBool("Status"));
     iService->AddProperty(iPropertyStatus); // passes ownership
 }
 

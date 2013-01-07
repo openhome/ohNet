@@ -8,17 +8,17 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-extern void TestSubscription();
+extern void TestSubscription(CpStack& aCpStack);
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
+    Library* lib = new Library(aInitParams);
+    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCp(subnet);
+    Library::DestroySubnetList(subnetList);
+    CpStack* cpStack = lib->StartCp(subnet);
 
-    TestSubscription();
+    TestSubscription(*cpStack);
 
-    UpnpLibrary::Close();
+    delete lib;
 }

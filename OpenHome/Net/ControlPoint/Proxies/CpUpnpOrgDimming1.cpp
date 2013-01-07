@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Net/Private/CpiDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -564,19 +565,19 @@ CpProxyUpnpOrgDimming1::CpProxyUpnpOrgDimming1(CpDevice& aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1::LoadLevelStatusPropertyChanged);
-    iLoadLevelStatus = new PropertyUint("LoadLevelStatus", functor);
+    iLoadLevelStatus = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "LoadLevelStatus", functor);
     AddProperty(iLoadLevelStatus);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1::StepDeltaPropertyChanged);
-    iStepDelta = new PropertyUint("StepDelta", functor);
+    iStepDelta = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "StepDelta", functor);
     AddProperty(iStepDelta);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1::RampRatePropertyChanged);
-    iRampRate = new PropertyUint("RampRate", functor);
+    iRampRate = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "RampRate", functor);
     AddProperty(iRampRate);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1::IsRampingPropertyChanged);
-    iIsRamping = new PropertyBool("IsRamping", functor);
+    iIsRamping = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "IsRamping", functor);
     AddProperty(iIsRamping);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1::RampPausedPropertyChanged);
-    iRampPaused = new PropertyBool("RampPaused", functor);
+    iRampPaused = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "RampPaused", functor);
     AddProperty(iRampPaused);
 }
 

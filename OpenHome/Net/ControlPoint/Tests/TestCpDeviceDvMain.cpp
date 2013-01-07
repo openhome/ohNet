@@ -7,18 +7,20 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-extern void TestCpDeviceDv();
+extern void TestCpDeviceDv(CpStack& aCpStack, DvStack& aDvStack);
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     aInitParams->SetUseLoopbackNetworkAdapter();
-    UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
+    Library* lib = new Library(aInitParams);
+    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::StartCombined(subnet);
+    Library::DestroySubnetList(subnetList);
+    CpStack* cpStack = NULL;
+    DvStack* dvStack = NULL;
+    lib->StartCombined(subnet, cpStack, dvStack);
 
-    TestCpDeviceDv();
+    TestCpDeviceDv(*cpStack, *dvStack);
 
-    UpnpLibrary::Close();
+    delete lib;
 }

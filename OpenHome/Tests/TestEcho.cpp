@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -54,7 +55,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     Net::UpnpLibrary::Initialise(aInitParams);
 //    Debug::SetLevel(Debug::kNetwork);
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(Net::InitialisationParams::ELoopbackExclude, "TestEcho");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*Net::gStack, Net::InitialisationParams::ELoopbackExclude, "TestEcho");
     ASSERT(ifs->size() > 0);
     TIpAddress addr = (*ifs)[0]->Address();
     Endpoint endpt(0, addr);

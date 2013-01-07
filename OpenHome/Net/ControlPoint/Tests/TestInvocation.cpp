@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
 #include <OpenHome/Net/Core/CpUpnpOrgConnectionManager1.h>
@@ -27,7 +28,7 @@ static TUint gActionCount = 0;
 class DeviceListTI
 {
 public:
-    DeviceListTI();
+    DeviceListTI(Stack& aStack);
     ~DeviceListTI();
     void Stop();
     void TestSync();
@@ -39,6 +40,7 @@ private:
     void TimerExpired();
     void GetProtocolInfoComplete(IAsync& aAsync);
 private:
+    Stack& iStack;
     Mutex iLock;
     std::vector<CpDevice*> iList;
     TBool iStopped;
@@ -49,8 +51,9 @@ private:
 };
 
 
-DeviceListTI::DeviceListTI()
-    : iLock("DLMX")
+DeviceListTI::DeviceListTI(Stack& aStack)
+    : iStack(aStack)
+    , iLock("DLMX")
     , iStopped(false)
     , iPollStop("SDPS", 0)
 {
@@ -101,7 +104,7 @@ void DeviceListTI::TestSync()
 
 void DeviceListTI::Poll()
 {
-    Timer timer(MakeFunctor(*this, &DeviceListTI::TimerExpired));
+    Timer timer(iStack, MakeFunctor(*this, &DeviceListTI::TimerExpired));
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceListTI::GetProtocolInfoComplete);
     Brh tmp;
     const TUint count = (TUint)iList.size();
@@ -113,7 +116,7 @@ void DeviceListTI::Poll()
         iConnMgr = new CpProxyUpnpOrgConnectionManager1(*device);
         iStopTimeMs = Os::TimeInMs() + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
-        for (TUint j=0; j<Stack::InitParams().NumActionInvokerThreads(); j++) {
+        for (TUint j=0; j<iStack.InitParams().NumActionInvokerThreads(); j++) {
             iConnMgr->BeginGetProtocolInfo(callback);
         }
         iPollStop.Wait();
@@ -191,16 +194,17 @@ void DeviceListTI::Removed(CpDevice& aDevice)
 }
 
 
-void TestInvocation()
+void TestInvocation(CpStack& aCpStack)
 {
     gActionCount = 0; // reset this here in case we're run multiple times via TestShell
+    Stack& stack = aCpStack.GetStack();
     FunctorAsync dummy;
     /* Set an empty handler for errors to avoid test output being swamped by expected
        errors from invocations we interrupt at the end of each device's 1s timeslice */
-    Stack::InitParams().SetAsyncErrorHandler(dummy);
+    stack.InitParams().SetAsyncErrorHandler(dummy);
 
     Debug::SetLevel(Debug::kNone);
-    DeviceListTI* deviceList = new DeviceListTI;
+    DeviceListTI* deviceList = new DeviceListTI(stack);
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &DeviceListTI::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &DeviceListTI::Removed);
     const Brn domainName("upnp.org");
@@ -208,13 +212,13 @@ void TestInvocation()
 #if 1
     const TUint ver = 1;
     CpDeviceListUpnpServiceType* list =
-                new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
+                new CpDeviceListUpnpServiceType(aCpStack, domainName, serviceType, ver, added, removed);
 #else
     const Brn uuid("7076436f-6e65-1063-8074-000da201f542");
-    CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(uuid, added, removed);
+    CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(aCpStack, uuid, added, removed);
 #endif
-    Blocker* blocker = new Blocker;
-    blocker->Wait(Stack::InitParams().MsearchTimeSecs());
+    Blocker* blocker = new Blocker(stack);
+    blocker->Wait(stack.InitParams().MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();
 

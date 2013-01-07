@@ -16,6 +16,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -184,26 +185,28 @@ void MSearchLogger::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, 
 class SuiteListen : public Suite
 {
 public:
-    SuiteListen(TUint aDurationSeconds, TUint aInterfaceIndex);
+    SuiteListen(Stack& aStack, TUint aDurationSeconds, TUint aInterfaceIndex);
     ~SuiteListen();
     void Test();
 private:
-    static TIpAddress NetworkIf(TUint aIndex);
+    static TIpAddress NetworkIf(Stack& aStack, TUint aIndex);
     void TimerExpired();
 private:
+    Stack& iStack;
     Semaphore iSem;
     Timer* iTimer;
     TUint iDuration;
     TUint iInterfaceIndex;
 };
 
-SuiteListen::SuiteListen(TUint aDurationSeconds, TUint aInterfaceIndex)
+SuiteListen::SuiteListen(Stack& aStack, TUint aDurationSeconds, TUint aInterfaceIndex)
     : Suite("multicast listener")
+    , iStack(aStack)
     , iSem("SBLK", 0)
     , iDuration(1000 * aDurationSeconds)
     , iInterfaceIndex(aInterfaceIndex)
 {
-    iTimer = new Timer(MakeFunctor(*this, &SuiteListen::TimerExpired));
+    iTimer = new Timer(aStack, MakeFunctor(*this, &SuiteListen::TimerExpired));
 }
 
 SuiteListen::~SuiteListen()
@@ -211,9 +214,9 @@ SuiteListen::~SuiteListen()
     delete iTimer;
 }
 
-TIpAddress SuiteListen::NetworkIf(TUint aIndex)
+TIpAddress SuiteListen::NetworkIf(Stack& aStack, TUint aIndex)
 {
-    const std::vector<NetworkAdapter*>& ifs = Stack::NetworkAdapterList().List();
+    const std::vector<NetworkAdapter*>& ifs = aStack.NetworkAdapterList().List();
     ASSERT(ifs.size() > 0 && aIndex < ifs.size());
     TIpAddress addr = ifs[aIndex]->Address();
     Endpoint endpt(0, addr);
@@ -228,7 +231,7 @@ void SuiteListen::Test()
 //    Debug::SetLevel(Debug::kSsdpMulticast);
     SsdpNotifyLoggerM notifyLogger;
     MSearchLogger msearchLogger;
-    SsdpListenerMulticast mListener(NetworkIf(iInterfaceIndex));
+    SsdpListenerMulticast mListener(iStack, NetworkIf(iStack, iInterfaceIndex));
     TInt notifyId = mListener.AddNotifyHandler(&notifyLogger);
     TInt msearchId = mListener.AddMsearchHandler(&msearchLogger);
     mListener.Start();
@@ -244,7 +247,7 @@ void SuiteListen::TimerExpired()
 }
 
 
-void TestSsdpMListen(const std::vector<Brn>& aArgs)
+void TestSsdpMListen(Stack& aStack, const std::vector<Brn>& aArgs)
 {
     OptionParser parser;
     OptionUint duration("-d", "--duration", 30, "Number of seconds to listen for.  Defaults to 30");
@@ -256,6 +259,6 @@ void TestSsdpMListen(const std::vector<Brn>& aArgs)
     }
 
     Runner runner("SSDP multicast listener\n");
-    runner.Add(new SuiteListen(duration.Value(), adapter.Value()));
+    runner.Add(new SuiteListen(aStack, duration.Value(), adapter.Value()));
     runner.Run();
 }

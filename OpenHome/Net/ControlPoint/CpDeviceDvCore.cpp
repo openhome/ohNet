@@ -5,9 +5,9 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-CpDeviceDv* CpDeviceDv::New(DvDevice& aDevice)
+CpDeviceDv* CpDeviceDv::New(CpStack& aCpStack, DvDevice& aDevice)
 {
-    CpiDeviceDv* device = new CpiDeviceDv(aDevice.Device());
+    CpiDeviceDv* device = new CpiDeviceDv(aCpStack, aDevice.Device());
     CpDeviceDv* self = new CpDeviceDv(*device);
     self->Device().RemoveRef();
     return self;

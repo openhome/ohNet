@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/CpiDeviceUpnp.h>
 #include <OpenHome/Net/Cpp/FunctorCpDevice.h>
 #include <OpenHome/Net/Private/FunctorCpiDevice.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -17,7 +18,7 @@ CpDeviceListCppUpnpAll::CpDeviceListCppUpnpAll(FunctorCpDeviceCpp aAdded, Functo
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpAll(added, removed);
+    iList = new CpiDeviceListUpnpAll(*gCpStack, added, removed);
     iList->Start();
 }
 
@@ -30,7 +31,7 @@ CpDeviceListCppUpnpRoot::CpDeviceListCppUpnpRoot(FunctorCpDeviceCpp aAdded, Func
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpRoot(added, removed);
+    iList = new CpiDeviceListUpnpRoot(*gCpStack, added, removed);
     iList->Start();
 }
 
@@ -44,7 +45,7 @@ CpDeviceListCppUpnpUuid::CpDeviceListCppUpnpUuid(const std::string& aUuid, Funct
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpUuid(uuid, added, removed);
+    iList = new CpiDeviceListUpnpUuid(*gCpStack, uuid, added, removed);
     iList->Start();
 }
 
@@ -60,7 +61,7 @@ CpDeviceListCppUpnpDeviceType::CpDeviceListCppUpnpDeviceType(const std::string& 
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpDeviceType(domain, type, aVersion, added, removed);
+    iList = new CpiDeviceListUpnpDeviceType(*gCpStack, domain, type, aVersion, added, removed);
     iList->Start();
 }
 
@@ -76,7 +77,7 @@ CpDeviceListCppUpnpServiceType::CpDeviceListCppUpnpServiceType(const std::string
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
     GetRemovedFunctor(removed);
-    iList = new CpiDeviceListUpnpServiceType(domain, type, aVersion, added, removed);
+    iList = new CpiDeviceListUpnpServiceType(*gCpStack, domain, type, aVersion, added, removed);
     iList->Start();
 
 }

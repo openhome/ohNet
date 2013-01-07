@@ -10,8 +10,9 @@ using namespace OpenHome::Net;
 
 // CpiDevice
 
-CpiDevice::CpiDevice(const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserver& aObserver, void* aOwnerData)
-    : iUdn(aUdn)
+CpiDevice::CpiDevice(OpenHome::Net::CpStack& aCpStack, const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserver& aObserver, void* aOwnerData)
+    : iCpStack(aCpStack)
+    , iUdn(aUdn)
     , iLock("CDVM")
     , iProtocol(aProtocol)
     , iObserver(aObserver)
@@ -21,7 +22,7 @@ CpiDevice::CpiDevice(const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserve
     , iExpired(false)
     , iRemoved(false)
 {
-    Stack::AddObject(this);
+    iCpStack.GetStack().AddObject(this);
 }
 
 const Brx& CpiDevice::Udn() const
@@ -42,6 +43,11 @@ TBool CpiDevice::operator==(const CpiDevice& aDevice) const
 TBool CpiDevice::operator!=(const CpiDevice& aDevice) const
 {
     return (&aDevice != this);
+}
+
+CpStack& CpiDevice::GetCpStack()
+{
+    return iCpStack;
 }
 
 void* CpiDevice::OwnerData()
@@ -141,7 +147,7 @@ CpiDevice::~CpiDevice()
     LOG(kDevice, iUdn);
     LOG(kDevice, "\n");
     ASSERT(iRefCount == 0);
-    Stack::RemoveObject(this);
+    iCpStack.GetStack().RemoveObject(this);
 }
 
 
@@ -169,8 +175,9 @@ CpiDevice* CpiDeviceList::RefDeviceLocked(const Brx& aUdn)
     return device;
 }
 
-CpiDeviceList::CpiDeviceList(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
-    : iActive(false)
+CpiDeviceList::CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
+    : iCpStack(aCpStack)
+    , iActive(false)
     , iRefreshing(false)
     , iLock("CDLM")
     , iAdded(aAdded)
@@ -180,24 +187,24 @@ CpiDeviceList::CpiDeviceList(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
 {
     ASSERT(iAdded);
     ASSERT(iRemoved);
-    Stack::AddObject(this);
+    iCpStack.GetStack().AddObject(this);
 }
 
 CpiDeviceList::~CpiDeviceList()
 {
     TBool wait = false;
-    Stack::Mutex().Wait();
+    iCpStack.GetStack().Mutex().Wait();
     if (iRefCount > 0) {
         wait = true;
         iShutdownSem.Clear();
     }
-    Stack::Mutex().Signal();
+    iCpStack.GetStack().Mutex().Signal();
     if (wait) {
         iShutdownSem.Wait();
     }
     ClearMap(iMap);
     ClearMap(iRefreshMap);
-    Stack::RemoveObject(this);
+    iCpStack.GetStack().RemoveObject(this);
 }
 
 void CpiDeviceList::Add(CpiDevice* aDevice)
@@ -254,7 +261,7 @@ void CpiDeviceList::Remove(const Brx& aUdn)
     CpiDevice* device = RefDeviceLocked(aUdn);
     iMap.erase(it);
     iPendingRemove.push_back(device);
-    CpiDeviceListUpdater::QueueRemoved(*this, *device);
+    iCpStack.DeviceListUpdater().QueueRemoved(*this, *device);
     device->RemoveRef();
     iLock.Signal();
 }
@@ -276,7 +283,7 @@ TBool CpiDeviceList::StartRefresh()
 
 void CpiDeviceList::RefreshComplete()
 {
-    CpiDeviceListUpdater::QueueRefreshed(*this);
+    iCpStack.DeviceListUpdater().QueueRefreshed(*this);
 }
 
 void CpiDeviceList::CancelRefresh()
@@ -288,7 +295,7 @@ void CpiDeviceList::CancelRefresh()
 void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
 {
     aDevice.SetReady();
-    CpiDeviceListUpdater::QueueAdded(*this, aDevice);
+    iCpStack.DeviceListUpdater().QueueAdded(*this, aDevice);
 }
 
 void CpiDeviceList::ClearMap(Map& aMap)
@@ -304,18 +311,18 @@ void CpiDeviceList::ClearMap(Map& aMap)
 
 void CpiDeviceList::AddRef()
 {
-    Stack::Mutex().Wait();
+    iCpStack.GetStack().Mutex().Wait();
     ++iRefCount;
-    Stack::Mutex().Signal();
+    iCpStack.GetStack().Mutex().Signal();
 }
 
 void CpiDeviceList::RemoveRef()
 {
-    Stack::Mutex().Wait();
+    iCpStack.GetStack().Mutex().Wait();
     if (--iRefCount == 0) {
         iShutdownSem.Signal();
     }
-    Stack::Mutex().Signal();
+    iCpStack.GetStack().Mutex().Signal();
 }
 
 void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
@@ -463,27 +470,26 @@ CpiDeviceListUpdater::~CpiDeviceListUpdater()
 }
 
 void CpiDeviceListUpdater::QueueAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice)
-{ // static
-    CpiDeviceListUpdater::Queue(new UpdateAdded(aUpdater, aDevice));
+{
+    Queue(new UpdateAdded(aUpdater, aDevice));
 }
 
 void CpiDeviceListUpdater::QueueRemoved(IDeviceListUpdater& aUpdater, CpiDevice& aDevice)
-{ // static
+{
     CpiDeviceListUpdater::Queue(new UpdateRemoved(aUpdater, aDevice));
 }
 
 void CpiDeviceListUpdater::QueueRefreshed(IDeviceListUpdater& aUpdater)
-{ // static
-    CpiDeviceListUpdater::Queue(new UpdateRefresh(aUpdater));
+{
+    Queue(new UpdateRefresh(aUpdater));
 }
 
 void CpiDeviceListUpdater::Queue(UpdateBase* aUpdate)
-{ // static
-    CpiDeviceListUpdater& self = CpiStack::DeviceListUpdater();
-    self.iLock.Wait();
-    self.iList.push_back(aUpdate);
-    self.iLock.Signal();
-    self.Signal();
+{
+    iLock.Wait();
+    iList.push_back(aUpdate);
+    iLock.Signal();
+    Signal();
 }
 
 void CpiDeviceListUpdater::Run()

@@ -10,6 +10,9 @@
 namespace OpenHome {
 namespace Net {
 
+class Stack;
+class DvStack;
+
 enum ESsdpTarget
 {
     eSsdpUnknown,
@@ -66,8 +69,8 @@ public:
     static void WriteSearchTypeDeviceType(IWriterHttpHeader& aWriter, const Brx& aDomain, const Brx& aType, TUint aVersion);
     static void WriteSearchTypeServiceType(IWriterHttpHeader& aWriter, const Brx& aDomain, const Brx& aType, TUint aVersion);
     static void WriteSearchTypeAll(IWriterHttpHeader& aWriter);
-    static void WriteServer(IWriterHttpHeader& aWriter);
-    static void WriteMaxAge(IWriterHttpHeader& aWriter);
+    static void WriteServer(Stack& aStack, IWriterHttpHeader& aWriter);
+    static void WriteMaxAge(Stack& aStack, IWriterHttpHeader& aWriter);
     static void WriteLocation(IWriterHttpHeader& aWriter, const Brx& aUrl);
     static void WriteSubTypeAlive(IWriterHttpHeader& aWriter);
     static void WriteSubTypeByeBye(IWriterHttpHeader& aWriter);
@@ -81,8 +84,8 @@ public:
     static void WriteUsnUuid(IWriterHttpHeader& aWriter, const Brx& aUuid);
     static void WriteUsnDeviceType(IWriterHttpHeader& aWriter, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aUuid);
     static void WriteUsnServiceType(IWriterHttpHeader& aWriter, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aUuid);
-    static void WriteBootId(IWriterHttpHeader& aWriter);
-    static void WriteNextBootId(IWriterHttpHeader& aWriter);
+    static void WriteBootId(DvStack& aDvStack, IWriterHttpHeader& aWriter);
+    static void WriteNextBootId(DvStack& aDvStack, IWriterHttpHeader& aWriter);
     static void WriteConfigId(IWriterHttpHeader& aWriter, TUint aConfigId);
     static void WriteSearchPort(IWriterHttpHeader& aWriter, TUint aPort);
     static TBool ParseUrnDevice(const Brx& aUrn, Brn& aDomainName, Brn& aDeviceType, TUint& aVer);
@@ -256,7 +259,7 @@ public:
        ,EUpdate
     };
 public:
-    SsdpNotifier(TIpAddress aInterface, TUint aConfigId);
+    SsdpNotifier(DvStack& aDvStack, TIpAddress aInterface, TUint aConfigId);
     // ISsdpNotify-based services
     void SsdpNotifyRoot(const Brx& aUuid, const Brx& aUri, ENotificationType aNotificationType);
     void SsdpNotifyUuid(const Brx& aUuid, const Brx& aUri, ENotificationType aNotificationType);
@@ -267,6 +270,7 @@ private:
 private:
     static const TUint kMaxBufferBytes = 1024;
 private:
+    DvStack& iDvStack;
     SocketUdp iSocket;
     UdpWriter iSocketWriter;
     Sws<kMaxBufferBytes> iBuffer;
@@ -327,7 +331,7 @@ private:
 class SsdpMsearchResponder : public ISsdpNotify
 {
 public:
-    SsdpMsearchResponder(TUint aConfigId);
+    SsdpMsearchResponder(DvStack& aDvStack, TUint aConfigId);
     void SetRemote(const Endpoint& aEndpoint);
     // ISsdpNotify
     void SsdpNotifyRoot(const Brx& aUuid, const Brx& aUri);
@@ -340,6 +344,7 @@ private:
 private:
     static const TUint kMaxBufferBytes = 1024;
 private:
+    DvStack& iDvStack;
     Bws<kMaxBufferBytes> iResponse;
     WriterBuffer iBuffer;
     WriterHttpResponse iWriter;

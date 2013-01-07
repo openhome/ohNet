@@ -17,12 +17,13 @@
 namespace OpenHome {
 namespace Net {
 
+class CpStack;
 class CpiSubscription;
 
 class InvocationUpnp : private IInterruptHandler
 {
 public:
-    InvocationUpnp(Invocation& aInvocation);
+    InvocationUpnp(CpStack& aCpStack, Invocation& aInvocation);
     ~InvocationUpnp();
     void Invoke(const Uri& aUri);
     static void WriteServiceType(IWriterAscii& aWriter, const Invocation& aInvocation);
@@ -35,6 +36,7 @@ private:
 private:
     static const TUint kMaxReadBytes = 4096;
     static const TUint kResponseTimeoutMs = 60 * 1000;
+    CpStack& iCpStack;
     Invocation& iInvocation;
     OpenHome::SocketTcpClient iSocket;
     Srs<kMaxReadBytes> iReadBuffer;
@@ -69,7 +71,7 @@ private:
 class EventUpnp : private IInterruptHandler, private INonCopyable
 {
 public:
-    EventUpnp(CpiSubscription& aSubscription);
+    EventUpnp(CpStack& aCpStack, CpiSubscription& aSubscription);
     ~EventUpnp();
     void Subscribe(const Uri& aPublisher, const Uri& aSubscriber, TUint& aDurationSecs);
     void RenewSubscription(const Uri& aPublisher, TUint& aDurationSecs);
@@ -88,6 +90,7 @@ private:
     static const TUint kSubscribeTimeoutMs   = 60 * 1000;
     static const TUint kUnsubscribeTimeoutMs =  5 * 1000;
 private:
+    CpStack& iCpStack;
     CpiSubscription& iSubscription;
     OpenHome::SocketTcpClient iSocket;
 };

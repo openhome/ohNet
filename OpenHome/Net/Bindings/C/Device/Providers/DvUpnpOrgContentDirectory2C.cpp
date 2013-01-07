@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Net/C/DvInvocation.h>
 #include <OpenHome/Net/C/DvInvocationPrivate.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -148,19 +149,19 @@ void DvProviderUpnpOrgContentDirectory2C::GetPropertyTransferIDs(Brhz& aValue)
 
 void DvProviderUpnpOrgContentDirectory2C::EnablePropertySystemUpdateID()
 {
-    iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
+    iPropertySystemUpdateID = new PropertyUint(iDvStack.GetStack(), new ParameterUint("SystemUpdateID"));
     iService->AddProperty(iPropertySystemUpdateID); // passes ownership
 }
 
 void DvProviderUpnpOrgContentDirectory2C::EnablePropertyContainerUpdateIDs()
 {
-    iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
+    iPropertyContainerUpdateIDs = new PropertyString(iDvStack.GetStack(), new ParameterString("ContainerUpdateIDs"));
     iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
 }
 
 void DvProviderUpnpOrgContentDirectory2C::EnablePropertyTransferIDs()
 {
-    iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
+    iPropertyTransferIDs = new PropertyString(iDvStack.GetStack(), new ParameterString("TransferIDs"));
     iService->AddProperty(iPropertyTransferIDs); // passes ownership
 }
 

@@ -1,10 +1,16 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Net/Private/DviStack.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-void UpnpLibrary::StartDv()
+DvStack* Library::StartDv()
 {
-    new DviStack();
+    return new DvStack(*iStack);
+}
+
+void UpnpLibrary::StartDv()
+{ // static
+    gDvStack = new DvStack(*gStack);
 }
