@@ -55,14 +55,14 @@ __result; }))
 #endif
 
 
-typedef struct OsContext {
+struct OsContext {
     struct timeval iStartTime; /* Time OsCreate was called */
     struct timeval iPrevTime; /* Last time OsTimeInUs() was called */
     struct timeval iTimeAdjustment; /* Amount to adjust return for OsTimeInUs() by. 
                                        Will be 0 unless time ever jumps backwards. */
     THandle iMutex;
     pthread_key_t iThreadArgKey;
-} OsContext;
+};
 
 static void DestroyInterfaceChangedObserver(void);
 
