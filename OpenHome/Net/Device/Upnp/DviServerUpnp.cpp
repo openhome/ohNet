@@ -306,7 +306,7 @@ PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPubli
                                        const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber)
     : iDvStack(aDvStack)
 {
-    iSocket.Open();
+    iSocket.Open(aDvStack.GetStack());
     iSocket.Connect(aSubscriber, aDvStack.GetStack().InitParams().TcpConnectTimeoutMs());
     iWriterChunked = new WriterHttpChunked(iSocket);
     iWriteBuffer = new Sws<kMaxRequestBytes>(*iWriterChunked);
@@ -845,7 +845,7 @@ void DviSessionUpnp::WriteServerHeader(IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Brn("SERVER"));
     TUint major, minor;
-    Brn osName = Os::GetPlatformNameAndVersion(major, minor);
+    Brn osName = Os::GetPlatformNameAndVersion(iDvStack.GetStack().OsCtx(), major, minor);
     stream.Write(osName);
     stream.Write('/');
     stream.WriteUint(major);
@@ -1242,7 +1242,7 @@ void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirected
 
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("DSVU", iPort, aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer(iDvStack.GetStack(), "DSVU", iPort, aNif.Address());
     TChar thName[5];
     const TUint numWsThreads = iDvStack.GetStack().InitParams().DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {

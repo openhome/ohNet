@@ -64,7 +64,8 @@ void CpiDeviceUpnp::UpdateMaxAge(TUint aSeconds)
     TUint delayMs = aSeconds * 1000;
     delayMs += 100; /* allow slightly longer than maxAge to cope with devices which
                        send out Alive messages at the last possible moment */
-    TUint expiryTime = Os::TimeInMs() + delayMs;
+    OsContext* osCtx = iDevice->GetCpStack().GetStack().OsCtx();
+    TUint expiryTime = Os::TimeInMs(osCtx) + delayMs;
     if (expiryTime >= iExpiryTime) {
         iExpiryTime = expiryTime;
         iTimer->FireAt(iExpiryTime);

@@ -130,7 +130,7 @@ void DeviceList::PollInvoke()
         TUint countBefore = gActionCount;
         Print("Device %s", CpDeviceCUdn(device));
         iConnMgr = CpProxyUpnpOrgConnectionManager1Create(device);
-        iStopTimeMs = Os::TimeInMs() + kDevicePollMs;
+        iStopTimeMs = Os::TimeInMs(gStack->OsCtx()) + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
         for (TUint j=0; j<gStack->InitParams().NumActionInvokerThreads(); j++) {
             CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(iConnMgr, getProtocolInfoComplete, this);
@@ -152,7 +152,7 @@ void DeviceList::PollSubscribe()
         Print("Device %s", CpDeviceCUdn(device));
         THandle connMgr = CpProxyUpnpOrgConnectionManager1Create(device);
         CpProxySetPropertyChanged(connMgr, initialNotificationComplete, &sem);
-        TUint startTime = Os::TimeInMs();
+        TUint startTime = Os::TimeInMs(gStack->OsCtx());
         while(true) {
             CpProxySubscribe(connMgr);
             try {
@@ -160,7 +160,7 @@ void DeviceList::PollSubscribe()
             }
             catch(Timeout&) {}
             CpProxyUnsubscribe(connMgr);
-            if (Os::TimeInMs() - startTime > kDevicePollMs) {
+            if (Os::TimeInMs(gStack->OsCtx()) - startTime > kDevicePollMs) {
                 break;
             }
             gSubscriptionCount++;
@@ -210,7 +210,7 @@ void DeviceList::TimerExpired()
 
 void DeviceList::GetProtocolInfoComplete(OhNetHandleAsync aAsync)
 {
-    if (Os::TimeInMs() >= iStopTimeMs) {
+    if (Os::TimeInMs(gStack->OsCtx()) >= iStopTimeMs) {
         return;
     }
     CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(iConnMgr, getProtocolInfoComplete, this);
@@ -264,15 +264,15 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 
     Print("\n\n");
     const TUint count = deviceList->Count();
-    TUint startTime = Os::TimeInMs();
+    TUint startTime = Os::TimeInMs(gStack->OsCtx());
     deviceList->PollInvoke();
     Print("\n%u actions invoked on %u devices (avg %u) in %u seconds\n\n",
-                        gActionCount, count, (count==0? 0 : gActionCount/count), (Os::TimeInMs()-startTime+500)/1000);
+                        gActionCount, count, (count==0? 0 : gActionCount/count), (Os::TimeInMs(gStack->OsCtx())-startTime+500)/1000);
 
-    startTime = Os::TimeInMs();
+    startTime = Os::TimeInMs(gStack->OsCtx());
     deviceList->PollSubscribe();
     Print("\n%u subscriptions on %u devices (avg %u) in %u seconds\n",
-                        gSubscriptionCount, count, (count==0? 0 : gSubscriptionCount/count), (Os::TimeInMs()-startTime+500)/1000);
+                        gSubscriptionCount, count, (count==0? 0 : gSubscriptionCount/count), (Os::TimeInMs(gStack->OsCtx())-startTime+500)/1000);
 
     CpDeviceListDestroy(dlh);
     delete deviceList;

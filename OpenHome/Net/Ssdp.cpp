@@ -204,7 +204,7 @@ void Ssdp::WriteServer(Stack& aStack, IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderServer);
     TUint major, minor;
-    Brn osName = Os::GetPlatformNameAndVersion(major, minor);
+    Brn osName = Os::GetPlatformNameAndVersion(aStack.OsCtx(), major, minor);
     stream.Write(osName);
     stream.Write('/');
     stream.WriteUint(major);

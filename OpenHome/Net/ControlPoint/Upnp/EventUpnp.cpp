@@ -224,7 +224,7 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
 // EventServerUpnp
 
 EventServerUpnp::EventServerUpnp(CpStack& aCpStack, TIpAddress aInterface)
-    : iTcpServer("EVNT", aCpStack.GetStack().InitParams().CpUpnpEventServerPort(), aInterface)
+    : iTcpServer(aCpStack.GetStack(), "EVNT", aCpStack.GetStack().InitParams().CpUpnpEventServerPort(), aInterface)
 {
     TChar name[5] = "ESS ";
     const TUint numThread = aCpStack.GetStack().InitParams().NumEventSessionThreads();

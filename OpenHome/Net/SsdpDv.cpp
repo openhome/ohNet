@@ -34,7 +34,7 @@ void Ssdp::WriteNextBootId(DvStack& aDvStack, IWriterHttpHeader& aWriter)
 
 SsdpNotifier::SsdpNotifier(DvStack& aDvStack, TIpAddress aInterface, TUint aConfigId)
     : iDvStack(aDvStack)
-    , iSocket(0, aInterface)
+    , iSocket(aDvStack.GetStack(), 0, aInterface)
     , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocketWriter)
     , iWriter(iBuffer)
@@ -215,7 +215,7 @@ void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)
 void SsdpMsearchResponder::Flush()
 {
     iWriter.WriteFlush();
-    SocketUdp socket;
+    SocketUdp socket(iDvStack.GetStack());
     socket.Send(iResponse, iRemote);
     iBuffer.Flush();
 }

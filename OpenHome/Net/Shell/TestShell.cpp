@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/ShellCommandRun.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 #include <OpenHome/Private/TestFramework.h>
+#include <OpenHome/Net/Private/CpiStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -23,7 +24,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     DvStack* dvStack = NULL;
     lib->StartCombined(subnet, cpStack, dvStack);
 
-    Shell* shell = new Shell();
+    Shell* shell = new Shell(cpStack->GetStack());
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     Semaphore* blocker = new Semaphore("BLCK", 0);

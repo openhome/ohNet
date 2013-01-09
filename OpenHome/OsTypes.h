@@ -14,6 +14,11 @@ typedef void* THandle;
  */
 typedef uint32_t TIpAddress;
 
+/**
+ * Opaque handle to a singleton, setup before other Os functions are called
+ */
+typedef struct OsContext OsContext;
+
 /* Doxygen groups */
 /**
  * @defgroup Core          Core Services

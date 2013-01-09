@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/MimeTypes.h>
 #include <OpenHome/Private/Timer.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <time.h>
 
@@ -31,30 +32,30 @@ const char kOhNetMimeTypePng[]  = "image/png";
 static const TUint kVersionMajor = 1;
 static const TUint kVersionMinor = 0;
 
-Stack::Stack()
-    : iInitParams(NULL)
+Stack::Stack(OsContext* aOsContext)
+    : iOsContext(aOsContext)
+    , iInitParams(NULL)
     , iTimerManager(NULL)
-    , iPublicLock("GMUT")
     , iNetworkAdapterList(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
-    , iPrivateLock("SOML")
 {
+    Construct();
 }
 
-Stack::Stack(InitialisationParams* aInitParams)
-    : iInitParams(aInitParams)
-    , iPublicLock("GMUT")
+Stack::Stack(OsContext* aOsContext, InitialisationParams* aInitParams)
+    : iOsContext(aOsContext)
+    , iInitParams(aInitParams)
     , iNetworkAdapterList(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
-    , iPrivateLock("SOML")
 {
+    Construct();
     SetAssertHandler(AssertHandlerDefault);
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
-    iTimerManager = new OpenHome::TimerManager();
+    iTimerManager = new OpenHome::TimerManager(*this);
     iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, 0);
     Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
     if (subnetListChangeListener) {
@@ -74,10 +75,17 @@ Stack::Stack(InitialisationParams* aInitParams)
     }
 }
 
+void Stack::Construct()
+{
+    gStack = this;
+    iPublicLock = new OpenHome::Mutex("GMUT");
+    iPrivateLock = new OpenHome::Mutex("SOML");
+}
+
 Stack::~Stack()
 {
-    iPublicLock.Wait();
-    iPublicLock.Signal();
+    iPublicLock->Wait();
+    iPublicLock->Signal();
     delete iCpStack;
     delete iDvStack;
     delete iNetworkAdapterList;
@@ -89,6 +97,8 @@ Stack::~Stack()
     }
     delete iTimerManager;
     delete iInitParams;
+    delete iPublicLock;
+    delete iPrivateLock;
 }
 
 void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
@@ -104,7 +114,12 @@ OpenHome::TimerManager& Stack::TimerManager()
 
 OpenHome::Mutex& Stack::Mutex()
 {
-    return iPublicLock;
+    return *iPublicLock;
+}
+
+OsContext* Stack::OsCtx()
+{
+    return iOsContext;
 }
 
 NetworkAdapterList& Stack::NetworkAdapterList()
@@ -114,7 +129,7 @@ NetworkAdapterList& Stack::NetworkAdapterList()
 
 SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 {
-    AutoMutex a(iPrivateLock);
+    AutoMutex a(*iPrivateLock);
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         Stack::MListener* listener = iMulticastListeners[i];
@@ -132,7 +147,7 @@ SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 
 void Stack::MulticastListenerRelease(TIpAddress aInterface)
 {
-    iPrivateLock.Wait();
+    iPrivateLock->Wait();
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         Stack::MListener* listener = iMulticastListeners[i];
@@ -144,14 +159,14 @@ void Stack::MulticastListenerRelease(TIpAddress aInterface)
             }
         }
     }
-    iPrivateLock.Signal();
+    iPrivateLock->Signal();
 }
 
 TUint Stack::SequenceNumber()
 {
-    iPrivateLock.Wait();
+    iPrivateLock->Wait();
     TUint seq = iSequenceNumber++;
-    iPrivateLock.Signal();
+    iPrivateLock->Signal();
     return seq;
 }
 
@@ -162,32 +177,32 @@ InitialisationParams& Stack::InitParams()
 
 void Stack::AddObject(IStackObject* aObject)
 {
-    iPrivateLock.Wait();
+    iPrivateLock->Wait();
     ObjectMap::iterator it = iObjectMap.find(aObject);
     ASSERT(it == iObjectMap.end());
     iObjectMap.insert(std::pair<IStackObject*,IStackObject*>(aObject, aObject));
-    iPrivateLock.Signal();
+    iPrivateLock->Signal();
 }
 
 void Stack::RemoveObject(IStackObject* aObject)
 {
-    iPrivateLock.Wait();
+    iPrivateLock->Wait();
     ObjectMap::iterator it = iObjectMap.find(aObject);
     if (it != iObjectMap.end()) {
         iObjectMap.erase(it);
     }
-    iPrivateLock.Signal();
+    iPrivateLock->Signal();
 }
 
 void Stack::ListObjects()
 {
-    iPrivateLock.Wait();
+    iPrivateLock->Wait();
     ObjectMap::iterator it = iObjectMap.begin();
     while (it != iObjectMap.end()) {
         it->second->ListObjectDetails();
         it++;
     }
-    iPrivateLock.Signal();
+    iPrivateLock->Signal();
 }
 
 void Stack::SetCpStack(IStack* aStack)

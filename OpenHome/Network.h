@@ -139,12 +139,16 @@ protected:
     SocketTcp();
 };
 
+namespace Net {
+    class Stack;
+} // namespace Net
+
 /// Tcp client
 
 class SocketTcpClient : public SocketTcp
 {
 public:
-    void Open();                                                /// Open
+    void Open(Net::Stack& aStack);                              /// Open
     void Connect(const Endpoint& aEndpoint, TUint aTimeout);    /// Connect to a given IP address and port number (timeout in milliseconds)
 };
 
@@ -179,8 +183,9 @@ class SocketTcpServer : public Socket
 {
     friend class SocketTcpSession;
 public:
-    SocketTcpServer(const TChar* aName, TUint aPort, TIpAddress aInterface, TUint aSessionPriority = kPriorityHigh,
-                    TUint aSessionStackBytes = Thread::kDefaultStackBytes, TUint aSlots = 128);
+    SocketTcpServer(Net::Stack& aStack, const TChar* aName, TUint aPort, TIpAddress aInterface,
+                    TUint aSessionPriority = kPriorityHigh, TUint aSessionStackBytes = Thread::kDefaultStackBytes,
+                    TUint aSlots = 128);
     // Add is not thread safe, but why would you want that?
     void Add(const TChar* aName, SocketTcpSession* aSession, TInt aPriorityOffset = 0);
     TUint Port() const { return iPort; }
@@ -211,7 +216,7 @@ public:
     TUint Port() const;
     ~SocketUdpBase();
 protected:
-    SocketUdpBase();
+    SocketUdpBase(Net::Stack& aStack);
 protected:
     TUint iPort;
 };
@@ -219,9 +224,9 @@ protected:
 class SocketUdp : public SocketUdpBase
 {
 public:
-    SocketUdp(); // lets the os select a port
-    SocketUdp(TUint aPort); // stipulate a port
-    SocketUdp(TUint aPort, TIpAddress aInterface); // stipulate a port and an interface
+    SocketUdp(Net::Stack& aStack); // lets the os select a port
+    SocketUdp(Net::Stack& aStack, TUint aPort); // stipulate a port
+    SocketUdp(Net::Stack& aStack, TUint aPort, TIpAddress aInterface); // stipulate a port and an interface
 private:
     void Bind(TUint aPort, TIpAddress aInterface);
 };
@@ -230,7 +235,7 @@ private:
 class SocketUdpMulticast : public SocketUdpBase
 {
 public:
-    SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint);
+    SocketUdpMulticast(Net::Stack& aStack, TIpAddress aInterface, const Endpoint& aEndpoint);
     ~SocketUdpMulticast();
 private:
     TIpAddress iInterface;

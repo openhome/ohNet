@@ -24,7 +24,7 @@ NetworkAdapterList::NetworkAdapterList(Net::Stack& aStack, TIpAddress aDefaultSu
     iNotifierThread->Start();
     iNetworkAdapters = Os::NetworkListAdapters(iStack, iStack.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
-    Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
+    Os::NetworkSetInterfaceChangedObserver(iStack.OsCtx(), &InterfaceListChanged, this);
     for (size_t i=0; i<iSubnets->size(); i++) {
         TraceAdapter("NetworkAdapter added", *(*iSubnets)[i]);
     }

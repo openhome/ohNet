@@ -8,9 +8,9 @@ using namespace OpenHome;
 
 // Time
 
-TUint Time::Now()
+TUint Time::Now(Net::Stack& aStack)
 {
-    return Os::TimeInMs();
+    return Os::TimeInMs(aStack.OsCtx());
 };
 
 TBool Time::IsBeforeOrAt(TUint aQuestionableTime, TUint aTime)
@@ -25,19 +25,19 @@ TBool Time::IsAfter(TUint aQuestionableTime, TUint aTime)
     return (diff < 0);
 }
 
-TBool Time::IsInPastOrNow(TUint aTime)
+TBool Time::IsInPastOrNow(Net::Stack& aStack, TUint aTime)
 {
-    return (IsBeforeOrAt(aTime, Now()));
+    return (IsBeforeOrAt(aTime, Now(aStack)));
 }
 
-TBool Time::IsInFuture(TUint aTime)
+TBool Time::IsInFuture(Net::Stack& aStack, TUint aTime)
 {
-    return (IsAfter(aTime, Now()));
+    return (IsAfter(aTime, Now(aStack)));
 }
 
-TInt Time::TimeToWaitFor(TUint aTime)
+TInt Time::TimeToWaitFor(Net::Stack& aStack, TUint aTime)
 {
-    return (aTime - Os::TimeInMs());
+    return (aTime - Os::TimeInMs(aStack.OsCtx()));
 }
 
 // Timer
@@ -51,7 +51,7 @@ Timer::Timer(Net::Stack& aStack, Functor aFunctor)
 void Timer::FireIn(TUint aTime)
 {
     LOG(kTimer, ">Timer::FireIn(%d)\n", aTime);
-    FireAt(Time::Now() + aTime);
+    FireAt(Time::Now(iMgr.iStack) + aTime);
     LOG(kTimer, "<Timer::FireIn(%d)\n", aTime);
 }
 
@@ -90,7 +90,7 @@ TBool Timer::IsInManagerThread(TimerManager& aMgr)
         current = Thread::Current();
     }
     catch (ThreadUnknown&) {}
-    return (current == aMgr.Thread());
+    return (current == aMgr.MgrThread());
 }
 
 Timer::~Timer()
@@ -100,8 +100,9 @@ Timer::~Timer()
 
 // TimerManager
 
-TimerManager::TimerManager()
-    : iMutexNow("NOWM")
+TimerManager::TimerManager(Net::Stack& aStack)
+    : iStack(aStack)
+    , iMutexNow("NOWM")
     , iRemoving(false)
     , iSemaphore("TIMM", 0)
     , iMutex("TIMM")
@@ -201,7 +202,7 @@ void TimerManager::HeadChanged(QueueSortedEntry& aEntry)
 
 void TimerManager::Fire()
 {
-    TUint now = Os::TimeInMs();
+    TUint now = Os::TimeInMs(iStack.OsCtx());
     iMutexNow.Wait();
     iRemoving = true;
     iNow.iTime = now + 1; // will go after all the entries before or at now
@@ -232,7 +233,7 @@ void TimerManager::Fire()
     CallbackUnlock();
 }
 
-OpenHome::Thread* TimerManager::Thread() const
+Thread* TimerManager::MgrThread() const
 {
     return iThreadHandle;
 }
@@ -248,7 +249,7 @@ void TimerManager::Run()
     iSemaphore.Wait();
     iMutex.Wait();
     while (!iStop) {
-        TInt delay = Time::TimeToWaitFor(iNextTimer);
+        TInt delay = Time::TimeToWaitFor(iStack, iNextTimer);
         iMutex.Signal();
         if (delay <= 0) { // in the past or now
             Fire();

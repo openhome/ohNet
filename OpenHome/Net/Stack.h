@@ -33,8 +33,8 @@ class Stack
     friend class CpStack;
     friend class DvStack;
 public:
-    Stack();
-    Stack(InitialisationParams* aInitParams);
+    Stack(OsContext* aOsContext);
+    Stack(OsContext* aOsContext, InitialisationParams* aInitParams);
     ~Stack();
 
     void GetVersion(TUint& aMajor, TUint& aMinor);
@@ -44,6 +44,7 @@ public:
      */
     OpenHome::Mutex& Mutex();
 
+    OsContext* OsCtx();
     OpenHome::NetworkAdapterList& NetworkAdapterList();
     SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     void MulticastListenerRelease(TIpAddress aInterface);
@@ -55,6 +56,7 @@ public:
     IStack* CpiStack();
     IStack* DviStack();
 private:
+    void Construct();
     void SetCpStack(IStack* aStack);
     void SetDvStack(IStack* aStack);
 private:
@@ -72,9 +74,10 @@ private:
         TInt iRefCount;
     };
 private:
+    OsContext* iOsContext;
     InitialisationParams* iInitParams;
     OpenHome::TimerManager* iTimerManager;
-    OpenHome::Mutex iPublicLock;
+    OpenHome::Mutex* iPublicLock;
     OpenHome::NetworkAdapterList* iNetworkAdapterList;
     typedef std::vector<MListener*> MulticastListeners;
     MulticastListeners iMulticastListeners;
@@ -83,7 +86,7 @@ private:
     IStack* iDvStack;
     typedef std::map<IStackObject*,IStackObject*> ObjectMap;
     ObjectMap iObjectMap;
-    OpenHome::Mutex iPrivateLock;
+    OpenHome::Mutex* iPrivateLock;
 };
 
 } // namespace Net

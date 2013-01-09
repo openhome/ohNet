@@ -7,6 +7,8 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Net/Private/Stack.h>
 
 #include <stdlib.h>
 
@@ -132,12 +134,12 @@ void OpenHome::TestFramework::SucceedQuietly(const TChar* aFile, TUint aLine)
 
 TUint OpenHome::TestFramework::TimeStart()
 {
-    return OpenHome::Os::TimeInMs();
+    return OpenHome::Os::TimeInMs(Net::gStack->OsCtx());
 }
 
 TUint OpenHome::TestFramework::TimeStop(TUint aStartTime)
 {
-    TUint time = OpenHome::Os::TimeInMs();
+    TUint time = OpenHome::Os::TimeInMs(Net::gStack->OsCtx());
     return time - aStartTime;
 }
 

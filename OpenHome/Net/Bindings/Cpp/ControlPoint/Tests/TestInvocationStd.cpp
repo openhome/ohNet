@@ -107,7 +107,7 @@ void DeviceList::Poll()
         TUint countBefore = gActionCount;
         Print("Device %s", device->Udn().c_str());
         iConnMgr = new CpProxyUpnpOrgConnectionManager1Cpp(*device);
-        iStopTimeMs = Os::TimeInMs() + kDevicePollMs;
+        iStopTimeMs = Os::TimeInMs(gStack->OsCtx()) + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
         for (TUint j=0; j<gStack->InitParams().NumActionInvokerThreads(); j++) {
             iConnMgr->BeginGetProtocolInfo(callback);
@@ -131,7 +131,7 @@ void DeviceList::TimerExpired()
 
 void DeviceList::GetProtocolInfoComplete(IAsync& aAsync)
 {
-    if (Os::TimeInMs() > iStopTimeMs) {
+    if (Os::TimeInMs(gStack->OsCtx()) > iStopTimeMs) {
         return;
     }
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceList::GetProtocolInfoComplete);
@@ -218,13 +218,13 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     delete blocker;
     deviceList->Stop();
 
-    TUint startTime = Os::TimeInMs();
+    TUint startTime = Os::TimeInMs(gStack->OsCtx());
     deviceList->TestSync();
     deviceList->Poll();
 
     const TUint count = deviceList->Count();
     Print("\n%u actions invoked on %u devices (avg %u) in %u seconds\n",
-                        gActionCount, count, (count==0? 0 : gActionCount/count), (Os::TimeInMs()-startTime+500)/1000);
+                        gActionCount, count, (count==0? 0 : gActionCount/count), (Os::TimeInMs(gStack->OsCtx())-startTime+500)/1000);
 
     delete list;
     delete deviceList;

@@ -539,17 +539,19 @@ InitialisationParams::InitialisationParams()
 void InitialisationParams::FatalErrorHandlerDefault(const char* aMsg)
 {
     Log::Print(aMsg);
-    Os::Quit();
+    Os::Quit(gStack->OsCtx());
 }
 
 
 
-static void BaseInit(InitialisationParams* aInitParams)
+static OsContext* BaseInit(InitialisationParams* aInitParams)
 {
     Log::RegisterOutput(aInitParams->LogOutput());
-    if (0 != OpenHome::Os::Create()) {
+    OsContext* ctx = OpenHome::Os::Create();
+    if (ctx == NULL) {
         throw std::bad_alloc();
     }
+    return ctx;
 }
 
 
@@ -557,8 +559,8 @@ static void BaseInit(InitialisationParams* aInitParams)
 
 Library::Library(InitialisationParams* aInitParams)
 {
-    BaseInit(aInitParams);
-    iStack = new OpenHome::Net::Stack(aInitParams);
+    OsContext* ctx = BaseInit(aInitParams);
+    iStack = new OpenHome::Net::Stack(ctx, aInitParams);
     //Debug::SetLevel(Debug::kError);
     gStack = iStack; // Exception still references gStack
 }
@@ -610,8 +612,8 @@ NetworkAdapter* Library::CurrentSubnetAdapter(const char* aCookie)
 Stack* UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
     ASSERT(gStack == NULL);
-    BaseInit(aInitParams);
-    Stack* stack = new Stack(aInitParams);
+    OsContext* ctx = BaseInit(aInitParams);
+    Stack* stack = new Stack(ctx, aInitParams);
     //Debug::SetLevel(Debug::kError);
     gStack = stack;
     return stack;
@@ -619,17 +621,18 @@ Stack* UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 
 Stack* UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 {
-    BaseInit(aInitParams);
-    Stack* stack = new Stack();
+    OsContext* ctx = BaseInit(aInitParams);
+    Stack* stack = new Stack(ctx);
     gStack = stack;
     return stack;
 }
 
 void UpnpLibrary::Close()
 {
+    OsContext* ctx = gStack->OsCtx();
     delete gStack;
     gStack = NULL;
-    OpenHome::Os::Destroy();
+    OpenHome::Os::Destroy(ctx);
 }
 
 std::vector<NetworkAdapter*>* UpnpLibrary::CreateSubnetList()

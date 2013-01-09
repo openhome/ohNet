@@ -9,7 +9,7 @@ using namespace OpenHome::Net;
 // SsdpSocketReader
 
 SsdpSocketReader::SsdpSocketReader(Stack& aStack, TIpAddress aInterface, const Endpoint& aMulticast)
-    : SocketUdpMulticast(aInterface, aMulticast)
+    : SocketUdpMulticast(aStack, aInterface, aMulticast)
 {
     SetTtl(aStack.InitParams().MsearchTtl()); 
     iReader = new UdpReader(*this);
@@ -413,7 +413,7 @@ void SsdpListenerMulticast::EraseDisabled(VectorMsearchHandler& aVector)
 SsdpListenerUnicast::SsdpListenerUnicast(Stack& aStack, ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
     : iStack(aStack)
     , iNotifyHandler(aNotifyHandler)
-    , iSocket(0, aInterface)
+    , iSocket(aStack, 0, aInterface)
     , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iSocketReader(iSocket)
     , iWriteBuffer(iSocketWriter)

@@ -46,7 +46,7 @@ void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Assertion failed.  %s:%lu\n", aFile, (unsigned long)aLine);
     CallFatalErrorHandler(buf);
-    Os::Quit();
+    Os::Quit(OpenHome::Net::gStack->OsCtx());
 }
 
 static void GetThreadName(Bws<5>& aThName)
@@ -120,7 +120,7 @@ Exception::Exception(const TChar* aMsg, const TChar* aFile, TUint aLine)
     Log::Print(Thread::CurrentThreadName());
     Log::Print(")\n");
 #endif
-    iStackTrace = Os::StackTraceInitialise();
+    iStackTrace = Os::StackTraceInitialise(OpenHome::Net::gStack->OsCtx());
 }
 
 const TChar* kUnknown = "Release mode. File/line information unavailable";
@@ -135,7 +135,7 @@ Exception::Exception(const TChar* aMsg)
     Log::Print(Thread::CurrentThreadName());
     Log::Print(")\n");
 #endif
-    iStackTrace = Os::StackTraceInitialise();
+    iStackTrace = Os::StackTraceInitialise(OpenHome::Net::gStack->OsCtx());
 }
 
 Exception::Exception(const Exception& aException)

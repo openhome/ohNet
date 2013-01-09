@@ -66,7 +66,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     }
     Print("Using network interface %s\n\n", buf.Ptr());
     Semaphore sem("", 0);
-    SocketTcpServer* server = new SocketTcpServer("ECHO", 1025, addr);
+    SocketTcpServer* server = new SocketTcpServer(*Net::gStack, "ECHO", 1025, addr);
     server->Add("ECHO", new EchoSession(sem));
 
     sem.Wait();

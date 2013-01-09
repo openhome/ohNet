@@ -1000,7 +1000,7 @@ DviServerWebSocket::DviServerWebSocket(DvStack& aDvStack)
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("WSSV", iDvStack.GetStack().InitParams().DvWebSocketPort(), aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer(iDvStack.GetStack(), "WSSV", iDvStack.GetStack().InitParams().DvWebSocketPort(), aNif.Address());
     TChar thName[5];
     const TUint numWsThreads = iDvStack.GetStack().InitParams().DvNumWebSocketThreads();
     for (TUint i=0; i<numWsThreads; i++) {

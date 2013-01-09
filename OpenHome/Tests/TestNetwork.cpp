@@ -109,13 +109,13 @@ private:
 void SuiteTcpClient::Test()
 {
     Semaphore sem("TCPS", 0);
-    SocketTcpServer server("TSSV", 0, iInterface);
+    SocketTcpServer server(*Net::gStack, "TSSV", 0, iInterface);
     const TUint port = server.Port();
     TestServerSession* session = new TestServerSession(sem);
     server.Add("TSS1", session);
 
     SocketTcpClient client;
-    client.Open();
+    client.Open(*Net::gStack);
     client.Connect(Endpoint(port, iInterface), 1000);
 
     // Test 1 - test Receive(Bwx& , TUint ) interface
@@ -151,7 +151,7 @@ void SuiteTcpClient::Test()
     session->Close();
     sem.Wait();
 
-    client.Open();
+    client.Open(*Net::gStack);
     client.Connect(Endpoint(port, iInterface), 1000);
 
     // Test 3 - test Receive(Bwx& ) interface - start the Receive before the send
@@ -219,7 +219,7 @@ void SuiteSocketServer::Test()
     Bws<26> rx;
     Bws<26> tx("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-    SocketTcpServer server("TSSX", 0, iInterface);
+    SocketTcpServer server(*Net::gStack, "TSSX", 0, iInterface);
     Print("Server created\n");
     server.Add("TSS1", new TcpSessionEcho());
     Print("Session 1 added\n");
@@ -229,12 +229,12 @@ void SuiteSocketServer::Test()
     Endpoint endpoint = Endpoint(server.Port(), iInterface);
 
     SocketTcpClient client1;
-    client1.Open();
+    client1.Open(*Net::gStack);
     client1.Connect(endpoint, 1000);
     Print("Client 1 connected\n");
 
     SocketTcpClient client2;
-    client2.Open();
+    client2.Open(*Net::gStack);
     client2.Connect(endpoint, 1000);
     Print("Client 2 connected\n");
 
@@ -255,11 +255,11 @@ void SuiteSocketServer::Test()
 
     // Two clients accessing two sessions in parallel
     
-    client1.Open();
+    client1.Open(*Net::gStack);
     client1.Connect(endpoint, 1000);
     Print("Client 1 connected\n");
 
-    client2.Open();
+    client2.Open(*Net::gStack);
     client2.Connect(endpoint, 1000);
     Print("Client 2 connected\n");
 
@@ -276,7 +276,7 @@ void SuiteSocketServer::Test()
     
     // Send large message
     
-    client1.Open();
+    client1.Open(*Net::gStack);
     client1.Connect(endpoint, 1000);
     Print("Client 1 connected\n");
     
@@ -330,7 +330,7 @@ void SuiteSocketServer::Test()
     // receive buffer is > expected message
     Bws<50> rx4;
 
-    client1.Open();
+    client1.Open(*Net::gStack);
     client1.Connect(endpoint, 1000);
     Print("Client 1 connected\n");
 
@@ -347,7 +347,7 @@ void SuiteSocketServer::Test()
     TEST(rx4.Bytes() == 0);
     client1.Close();
 
-    client1.Open();
+    client1.Open(*Net::gStack);
     client1.Connect(endpoint, 1000);
     Print("Client 1 connected\n");
 
@@ -392,7 +392,7 @@ void SuiteTcpServerShutdown::Test()
     SocketTcpServer *server;
 
     // server thread priority > main thread priority - no sessions open
-    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityMore);
+    server = new SocketTcpServer(*Net::gStack, "TSSX", 0, iInterface, kPriorityNormal + kPriorityMore);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -404,7 +404,7 @@ void SuiteTcpServerShutdown::Test()
         return;
     }
 
-    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityLess);
+    server = new SocketTcpServer(*Net::gStack, "TSSX", 0, iInterface, kPriorityNormal + kPriorityLess);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -412,7 +412,7 @@ void SuiteTcpServerShutdown::Test()
     TEST(1==1);
 
     // server thread priority == main thread priority - no sessions open
-    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal);
+    server = new SocketTcpServer(*Net::gStack, "TSSX", 0, iInterface, kPriorityNormal);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -421,12 +421,12 @@ void SuiteTcpServerShutdown::Test()
 
 
     // server thread priority > main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityMore);
+    server = new SocketTcpServer(*Net::gStack, "TSSX", 0, iInterface, kPriorityNormal + kPriorityMore);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
 
     SocketTcpClient client1;
-    client1.Open();
+    client1.Open(*Net::gStack);
     client1.Connect(Endpoint(1995, iInterface), 1000);
     delete server;
     Thread::Sleep(500);
@@ -434,11 +434,11 @@ void SuiteTcpServerShutdown::Test()
     TEST(1==1);
 
     // server thread priority < main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityLess);
+    server = new SocketTcpServer(*Net::gStack, "TSSX", 0, iInterface, kPriorityNormal + kPriorityLess);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     SocketTcpClient client2;
-    client2.Open();
+    client2.Open(*Net::gStack);
     client2.Connect(Endpoint(server->Port(), iInterface), 1000);
     delete server;
     Thread::Sleep(500);
@@ -446,11 +446,11 @@ void SuiteTcpServerShutdown::Test()
     TEST(1==1);
 
     // server thread priority == main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal);
+    server = new SocketTcpServer(*Net::gStack, "TSSX", 0, iInterface, kPriorityNormal);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     SocketTcpClient client3;
-    client3.Open();
+    client3.Open(*Net::gStack);
     client3.Connect(Endpoint(server->Port(), iInterface), 1000);
     delete server;
     Thread::Sleep(500);
@@ -540,7 +540,7 @@ void SuiteMulticast::Test()
     iSender.Wait();
     iSender.Wait();
 
-    SocketUdp send;
+    SocketUdp send(*Net::gStack);
 
     Bwn buf(iExp);
     TUint i;
@@ -582,7 +582,7 @@ void SuiteMulticast::Test()
 void SuiteMulticast::Receiver()
 {
     iPortLock.Wait();
-    SocketUdpMulticast recv(0, Endpoint(iPort, kMulticastAddress));
+    SocketUdpMulticast recv(*Net::gStack, 0, Endpoint(iPort, kMulticastAddress));
     iPort = recv.Port();
     iPortLock.Signal();
 
@@ -630,11 +630,11 @@ private:
 SuiteUnicast::SuiteUnicast(TIpAddress aInterface)
     : Suite("Unicast Tests")
 {
-    iReceiver = new SocketUdp();
+    iReceiver = new SocketUdp(*Net::gStack);
     iReceiver->SetRecvBufBytes(kMsgBytes * kTestIterations * 2);
     iEndpoint = Endpoint(iReceiver->Port(), aInterface);
     Print("Receiver running at port %u\n", iReceiver->Port());
-    iSender = new SocketUdp();
+    iSender = new SocketUdp(*Net::gStack);
     iReceiverThread = new ThreadFunctor("UNIC", MakeFunctor(*this, &SuiteUnicast::Receiver));
     iReceiverThread->Start();
 }

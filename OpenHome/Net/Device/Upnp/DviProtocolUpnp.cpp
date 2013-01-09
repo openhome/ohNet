@@ -1414,7 +1414,7 @@ void DviMsgScheduler::Stop()
 DviMsgScheduler::DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener, TUint aMx)
     : iMsg(NULL)
     , iDvStack(aDvStack)
-    , iEndTimeMs(Os::TimeInMs() + (900 * aMx))
+    , iEndTimeMs(Os::TimeInMs(aDvStack.GetStack().OsCtx()) + (900 * aMx))
     , iListener(aListener)
 {
     Construct();
@@ -1438,7 +1438,7 @@ void DviMsgScheduler::Construct()
 
 void DviMsgScheduler::SetDuration(TUint aDuration)
 {
-    iEndTimeMs = Os::TimeInMs() + aDuration;
+    iEndTimeMs = Os::TimeInMs(iDvStack.GetStack().OsCtx()) + aDuration;
 }
 
 void DviMsgScheduler::NextMsg()
@@ -1462,7 +1462,7 @@ void DviMsgScheduler::NextMsg()
 void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
-    TInt remaining = iEndTimeMs - Os::TimeInMs();
+    TInt remaining = iEndTimeMs - Os::TimeInMs(iDvStack.GetStack().OsCtx());
     TInt maxUpdateTimeMs = (TInt)iDvStack.GetStack().InitParams().DvMaxUpdateTimeSecs() * 1000;
     ASSERT(remaining <= maxUpdateTimeMs);
     TInt maxInterval = remaining / (TInt)aRemainingMsgs;

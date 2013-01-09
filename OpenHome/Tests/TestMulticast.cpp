@@ -50,7 +50,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     Endpoint multicast(port.Value(), endpoint.Value());
     
     if (send.Value() == false) {
-        SocketUdpMulticast socket(addr, multicast);
+        SocketUdpMulticast socket(*Net::gStack, addr, multicast);
 
         Endpoint actual(socket.Port(), multicast.Address());
         Bws<100> buf2;
@@ -79,7 +79,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
             Print("Sending test message to %s\n", buf2.Ptr());
         
             //SocketUdpMulticast socket(addr, multicast);
-            SocketUdp socket(0, addr);
+            SocketUdp socket(*Net::gStack, 0, addr);
             
             socket.Send(Brn("Test message"), multicast);
         }

@@ -9,6 +9,8 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/Standard.h>
 
+#include <vector>
+
 EXCEPTION(HttpError);
 EXCEPTION(HttpInvalidResponse);
 

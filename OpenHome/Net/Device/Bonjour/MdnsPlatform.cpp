@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -55,9 +56,9 @@ MdnsPlatform::MdnsPlatform(Stack& aStack, const TChar* aHost)
     , iHost(aHost)
     , iMutex("BNJ1")
     , iMulticast(5353, Brn("224.0.0.251"))
-    , iReader(0, iMulticast)
+    , iReader(aStack, 0, iMulticast)
     , iReaderController(iReader)
-    , iClient(5353)
+    , iClient(aStack, 5353)
     , iInterfacesLock("BNJ2")
     , iServicesLock("BNJ3")
     , iStop(false)
@@ -571,14 +572,14 @@ mStatus mDNSPlatformTimeInit()
 
 mDNSs32  mDNSPlatformRawTime()
 {
-    TUint time = Os::TimeInMs();
+    TUint time = Os::TimeInMs(OpenHome::Net::gStack->OsCtx());
     LOG(kBonjour, "Bonjour             mDNSPlatformRawTime: %d\n", time);
     return time;
 }
 
 mDNSs32 mDNSPlatformUTC()
 {
-    TUint time = (Os::TimeInMs() / 1000) + 1229904000; // 1st Jan 2009
+    TUint time = (Os::TimeInMs(OpenHome::Net::gStack->OsCtx()) / 1000) + 1229904000; // 1st Jan 2009
     LOG(kBonjour, "Bonjour             mDNSPlatformUTC: %d\n", time);
     return time;
 }

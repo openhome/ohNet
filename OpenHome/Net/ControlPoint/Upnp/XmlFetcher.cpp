@@ -69,7 +69,7 @@ void XmlFetch::Fetch()
     LOG(kXmlFetch, "\n");
     
     OpenHome::SocketTcpClient socket;
-    socket.Open();
+    socket.Open(iCpStack.GetStack());
     AutoSocket a(socket);
     iLock.Wait();
     if (iInterrupted) {
