@@ -16,6 +16,7 @@ static const uint32_t kStackPaddingBytes = 1024 * 16;
 static const uint32_t kPriorityMin = 50;
 static const uint32_t kPriorityMax = 150;
 
+#define UNUSED(a) (a) = (a)
 
 typedef struct InterfaceChangeObserver
 {
@@ -33,7 +34,7 @@ typedef struct OsContext {
     uint64_t iPrevTime; /* Last time OsTimeInUs() was called */
     uint64_t iTimeAdjustment; /* Amount to adjust return for OsTimeInUs() by. 
                                  Will be 0 unless time ever jumps backwards. */
-    DWORD gTlsIndex;
+    DWORD iTlsIndex;
     THandle iMutex;
     InterfaceChangeObserver* iInterfaceChangeObserver;
     int32_t iTestInterfaceIndex;
@@ -69,19 +70,19 @@ OsContext* OsCreate()
     ctx->iTlsIndex = TlsAlloc();
     if (TLS_OUT_OF_INDEXES == ctx->iTlsIndex) {
         free(ctx);
-        return -1;
+        return NULL;
     }
-    ctx->iMutex = OsMutexCreate("");
+    ctx->iMutex = OsMutexCreate(ctx, "");
     if (kHandleNull == ctx->iMutex) {
         TlsFree(ctx->iTlsIndex);
         free(ctx);
-        return -1;
+        return NULL;
     }
     if (0 != WSAStartup(ver, &wsaData)) {
         OsMutexDestroy(ctx->iMutex);
         TlsFree(ctx->iTlsIndex);
         free(ctx);
-        return -1;
+        return NULL;
     }
     ctx->iDebugSymbolHandle = GetCurrentProcess();
     (void)SymInitialize(ctx->iDebugSymbolHandle, NULL, TRUE);
@@ -113,13 +114,15 @@ void OsDestroy(OsContext* aContext)
     free(aContext);
 }
 
-void OsQuit(OsContext* /*aContext*/)
+void OsQuit(OsContext* aContext)
 {
+    UNUSED(aContext);
     abort();
 }
 
-void OsBreakpoint(OsContext* /*aContext*/)
+void OsBreakpoint(OsContext* aContext)
 {
+    UNUSED(aContext);
 }
 
 #define STACK_TRACE_MAX_DEPTH 32
@@ -232,9 +235,10 @@ void OsConsoleWrite(const char* aStr)
     fflush(stderr);
 }
 
-void OsGetPlatformNameAndVersion(OsContext* /*aContext*/, char** aName, uint32_t* aMajor, uint32_t* aMinor)
+void OsGetPlatformNameAndVersion(OsContext* aContext, char** aName, uint32_t* aMajor, uint32_t* aMinor)
 {
     OSVERSIONINFO verInfo;
+    UNUSED(aContext);
     memset(&verInfo, 0, sizeof(verInfo));
     verInfo.dwOSVersionInfoSize = sizeof(verInfo);
     (void)GetVersionEx(&verInfo);
@@ -243,9 +247,10 @@ void OsGetPlatformNameAndVersion(OsContext* /*aContext*/, char** aName, uint32_t
     *aMinor = verInfo.dwMinorVersion;
 }
 
-THandle OsSemaphoreCreate(OsContext* /*aContext*/, const char* aName, uint32_t aCount)
+THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCount)
 {
-    aName = aName;
+    UNUSED(aContext);
+    UNUSED(aName);
     return (THandle)CreateSemaphore(NULL, aCount, INT32_MAX, NULL);
 }
 
@@ -296,10 +301,11 @@ typedef struct
     uint32_t         iCount;
 } Mutex;
 
-THandle OsMutexCreate(OsContext* /*aContext*/, const char* aName)
+THandle OsMutexCreate(OsContext* aContext, const char* aName)
 {
     Mutex* mutex = calloc(1, sizeof(*mutex));
-    aName = aName;
+    UNUSED(aContext);
+    UNUSED(aName);
     if (NULL == mutex) {
         return kHandleNull;
     }
@@ -418,8 +424,9 @@ void OsThreadDestroy(THandle aThread)
     free((ThreadData*)aThread);
 }
 
-int32_t OsThreadSupportsPriorities(OsContext* /*aContext*/)
+int32_t OsThreadSupportsPriorities(OsContext* aContext)
 {
+    UNUSED(aContext);
     // we do support priorities but can't manage the full range the library expects
     return 0;
 }
@@ -435,9 +442,9 @@ typedef struct OsNetworkHandle
 static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
 {
     int32_t interrupted;
-    OsMutexLock(handle->iMutex);
+    OsMutexLock(aHandle->iCtx->iMutex);
     interrupted = aHandle->iInterrupted;
-    OsMutexUnlock(handle->iMutex);
+    OsMutexUnlock(aHandle->iCtx->iMutex);
     return interrupted;
 }
 
@@ -680,7 +687,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 {
     int32_t err = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    OsMutexLock(handle->iMutex);
+    OsMutexLock(handle->iCtx->iMutex);
     handle->iInterrupted = aInterrupt;
     if (aInterrupt != 0) {
         (void)WSASetEvent(handle->iEvent);
@@ -688,7 +695,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
     else {
         (void)WSAResetEvent(handle->iEvent);
     }
-    OsMutexUnlock(handle->iMutex);
+    OsMutexUnlock(handle->iCtx->iMutex);
     return err;
 }
 
