@@ -32,7 +32,7 @@ class ProtocolHttp : public ProtocolNetwork
     static const TUint kIcyMetadataBytes = 255 * 16;
     static const TUint kMaxUriBytes = 1024;
 public:
-	ProtocolHttp(ProtocolManager& aManager);
+	ProtocolHttp(Environment& aEnv, ProtocolManager& aManager);
 public: // from Protocol	
     void Stream();
     TBool Restream(TUint64 aOffset);

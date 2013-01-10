@@ -8,16 +8,18 @@
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
 // DriverSongcastSender
 
-DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter)
+DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Environment& aEnv, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter)
     : Thread("DSCS")
     , iPipeline(aPipeline)
     , iMaxMsgSizeJiffies(aMaxMsgSizeJiffies)
+    , iEnv(aEnv)
     , iSampleRate(0)
     , iNumChannels(0)
     , iJiffiesToSend(aMaxMsgSizeJiffies)
@@ -29,11 +31,11 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iQuit(false)
 {
     ASSERT(aMaxMsgSizeJiffies % Jiffies::kJiffiesPerMs == 0);
-    iOhmSenderDriver = new Av::OhmSenderDriver();
+    iOhmSenderDriver = new Av::OhmSenderDriver(aEnv);
     Brn imageData(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender) / sizeof(kIconDriverSongcastSender[0]));
     Brn imageMime(kIconDriverSongcastSenderMimeType);
-    iOhmSender = new Av::OhmSender(aDevice, *iOhmSenderDriver, aName, aChannel, aAdapter, kSongcastTtl, kSongcastLatencyMs, false, true, imageData, imageMime, kSongcastPreset);
-    iTimer = new Timer(MakeFunctor(*this, &DriverSongcastSender::TimerCallback));
+    iOhmSender = new Av::OhmSender(iEnv, aDevice, *iOhmSenderDriver, aName, aChannel, aAdapter, kSongcastTtl, kSongcastLatencyMs, false, true, imageData, imageMime, kSongcastPreset);
+    iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback));
     Start();
     iTimer->FireIn(1); // first callback has special case behaviour so it doesn't really matter how soon we run
 }
@@ -52,7 +54,7 @@ void DriverSongcastSender::Run()
     Msg* msg = iPipeline.Pull();
     (void)msg->Process(*this);
 
-    TUint64 now = OsTimeInUs();
+    TUint64 now = OsTimeInUs(iEnv.OsCtx());
     do {
         if (iAudioSent) {
 		    // skip the first packet, and any time the clock value wraps
@@ -90,7 +92,7 @@ void DriverSongcastSender::Run()
             }
     		iLastTimeUs = now;
             Wait();
-            now = OsTimeInUs();
+            now = OsTimeInUs(iEnv.OsCtx());
             iAudioSent = false;
             iJiffiesToSend = iMaxMsgSizeJiffies;
         }

@@ -38,12 +38,13 @@ using namespace OpenHome::Av;
        
 
 
-OhmProtocolMulticast::OhmProtocolMulticast(IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory)
+OhmProtocolMulticast::OhmProtocolMulticast(Environment& aEnv, IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory)
     : iReceiver(&aReceiver)
 	, iFactory(&aFactory)
+    , iSocket(aEnv)
     , iReadBuffer(iSocket)
-    , iTimerJoin(MakeFunctor(*this, &OhmProtocolMulticast::SendJoin))
-    , iTimerListen(MakeFunctor(*this, &OhmProtocolMulticast::SendListen))
+    , iTimerJoin(aEnv, MakeFunctor(*this, &OhmProtocolMulticast::SendJoin))
+    , iTimerListen(aEnv, MakeFunctor(*this, &OhmProtocolMulticast::SendListen))
 {
 }
 

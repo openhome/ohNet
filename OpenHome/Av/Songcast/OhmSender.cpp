@@ -12,6 +12,7 @@
 #endif
 
 namespace OpenHome {
+class Environment;
 namespace Av {
 
 	class ProviderSender : public Net::DvProviderAvOpenhomeOrgSender1
@@ -20,7 +21,7 @@ namespace Av {
 	    static const TUint kTimeoutAudioPresentMs = 1000;
 	
 	public:
-	    ProviderSender(Net::DvDevice& aDevice);
+	    ProviderSender(Environment& aEnv, Net::DvDevice& aDevice);
 	    
 	    void SetMetadata(const Brx& aValue);
 	    
@@ -56,10 +57,10 @@ using namespace OpenHome::Av;
 
 // ProviderSender
 
-ProviderSender::ProviderSender(Net::DvDevice& aDevice)
+ProviderSender::ProviderSender(Environment& aEnv, Net::DvDevice& aDevice)
     : DvProviderAvOpenhomeOrgSender1(aDevice)
     , iMutex("PSND")
-    , iTimerAudioPresent(MakeFunctor(*this, &ProviderSender::TimerAudioPresentExpired))
+    , iTimerAudioPresent(aEnv, MakeFunctor(*this, &ProviderSender::TimerAudioPresentExpired))
 {
 	EnablePropertyPresentationUrl();
 	EnablePropertyMetadata();
@@ -166,7 +167,7 @@ void ProviderSender::TimerAudioPresentExpired()
 
 // OhmSenderDriver
 
-OhmSenderDriver::OhmSenderDriver()
+OhmSenderDriver::OhmSenderDriver(Environment& aEnv)
     : iMutex("OHMD")
 	, iEnabled(false)
     , iActive(false)
@@ -175,6 +176,7 @@ OhmSenderDriver::OhmSenderDriver()
     , iSamplesTotal(0)
     , iSampleStart(0)
 	, iLatency(100)
+    , iSocket(aEnv)
 	, iFactory(100, 10, 10)
 {
 }
@@ -421,8 +423,9 @@ void OhmSenderDriver::ResetLocked()
 
 // OhmSender
 
-OhmSender::OhmSender(Net::DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TUint aLatency, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType, TUint aPreset)
-    : iDevice(aDevice)
+OhmSender::OhmSender(Environment& aEnv, Net::DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TUint aLatency, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType, TUint aPreset)
+    : iEnv(aEnv)
+    , iDevice(aDevice)
     , iDriver(aDriver)
     , iName(aName)
     , iChannel(aChannel)
@@ -433,6 +436,8 @@ OhmSender::OhmSender(Net::DvDevice& aDevice, IOhmSenderDriver& aDriver, const Br
 	, iEnabled(false)
 	, iImage(aImage)
 	, iMimeType(aMimeType)
+    , iSocketOhm(aEnv)
+    , iSocketOhz(aEnv)
     , iRxBuffer(iSocketOhm)
 	, iRxZone(iSocketOhz)
     , iMutexStartStop("OHMS")
@@ -444,17 +449,17 @@ OhmSender::OhmSender(Net::DvDevice& aDevice, IOhmSenderDriver& aDriver, const Br
     , iActive(false)
     , iAliveJoined(false)
     , iAliveBlocked(false)
-    , iTimerAliveJoin(MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired))
-    , iTimerAliveAudio(MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired))
-    , iTimerExpiry(MakeFunctor(*this, &OhmSender::TimerExpiryExpired))
-    , iTimerZoneUri(MakeFunctor(*this, &OhmSender::TimerZoneUriExpired))
-    , iTimerPresetInfo(MakeFunctor(*this, &OhmSender::TimerPresetInfoExpired))
+    , iTimerAliveJoin(aEnv, MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired))
+    , iTimerAliveAudio(aEnv, MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired))
+    , iTimerExpiry(aEnv, MakeFunctor(*this, &OhmSender::TimerExpiryExpired))
+    , iTimerZoneUri(aEnv, MakeFunctor(*this, &OhmSender::TimerZoneUriExpired))
+    , iTimerPresetInfo(aEnv, MakeFunctor(*this, &OhmSender::TimerPresetInfoExpired))
     , iSequenceTrack(0)
     , iSequenceMetatext(0)
 	, iClientControllingTrackMetadata(false)
     , iPreset(aPreset)
 {
-    iProvider = new ProviderSender(iDevice);
+    iProvider = new ProviderSender(aEnv, iDevice);
  
     iDriver.SetTtl(iTtl);
 
@@ -473,9 +478,9 @@ OhmSender::OhmSender(Net::DvDevice& aDevice, IOhmSenderDriver& aDriver, const Br
     iThreadZone = new ThreadFunctor("MTXZ", MakeFunctor(*this, &OhmSender::RunZone), kThreadPriorityNetwork, kThreadStackBytesNetwork);
     iThreadZone->Start();    
 
-	iServer = new SocketTcpServer("OHMS", 0, iInterface);
+	iServer = new SocketTcpServer(aEnv, "OHMS", 0, iInterface);
 
-	iServer->Add("OHMS", new OhmSenderSession(*this));
+	iServer->Add("OHMS", new OhmSenderSession(iEnv, *this));
 
     // scope for AutoMutex
     {
@@ -556,8 +561,8 @@ void OhmSender::SetInterface(TIpAddress aValue)
 			StopZone();
 			delete (iServer);
 			iInterface = aValue;
-			iServer = new SocketTcpServer("OHMS", 0, iInterface);
-			iServer->Add("OHMS", new OhmSenderSession(*this));
+			iServer = new SocketTcpServer(iEnv, "OHMS", 0, iInterface);
+			iServer->Add("OHMS", new OhmSenderSession(iEnv, *this));
             // recreate server before UpdateMetadata() as that function requires the server port
 			UpdateMetadata();
 			StartZone();
@@ -991,7 +996,7 @@ void OhmSender::RunUnicast()
                                 if (slave >= iSlaveCount) {
                                     if (slave < kMaxSlaveCount) {
                                         iSlaveList[slave].Replace(sender);
-                                        iSlaveExpiry[slave] = Time::Now() + kTimerExpiryTimeoutMs;
+                                        iSlaveExpiry[slave] = Time::Now(iEnv) + kTimerExpiryTimeoutMs;
                                         iSlaveCount++;
 
                                         AutoMutex mutex(iMutexActive);
@@ -999,7 +1004,7 @@ void OhmSender::RunUnicast()
                                     }
                                 }
                                 else {
-                                    iSlaveExpiry[slave] = Time::Now() + kTimerExpiryTimeoutMs;
+                                    iSlaveExpiry[slave] = Time::Now(iEnv) + kTimerExpiryTimeoutMs;
                                 }
                             }
 
@@ -1023,13 +1028,13 @@ void OhmSender::RunUnicast()
                             else {
                                 TUint slave = FindSlave(sender);
                                 if (slave < iSlaveCount) {
-                                    iSlaveExpiry[slave] = Time::Now() + kTimerExpiryTimeoutMs;
+                                    iSlaveExpiry[slave] = Time::Now(iEnv) + kTimerExpiryTimeoutMs;
                                 }
                                 else {
                                     // unknown slave, probably temporarily physically disconnected receiver
                                     if (slave < kMaxSlaveCount) {
                                         iSlaveList[slave].Replace(sender);
-                                        iSlaveExpiry[slave] = Time::Now() + kTimerExpiryTimeoutMs;
+                                        iSlaveExpiry[slave] = Time::Now(iEnv) + kTimerExpiryTimeoutMs;
                                         iSlaveCount++;
 
                                         AutoMutex mutex(iMutexActive);
@@ -1378,7 +1383,7 @@ TBool OhmSender::CheckSlaveExpiry()
     TBool changed = false;
 
     for (TUint i = 0; i < iSlaveCount;) {
-        if (Time::IsInPastOrNow(iSlaveExpiry[i])) {
+        if (Time::IsInPastOrNow(iEnv, iSlaveExpiry[i])) {
             RemoveSlave(i);
             changed = true;
             continue;
@@ -1585,12 +1590,12 @@ void OhmSender::TimerPresetInfoExpired()
 
 // OhmSender must run an http server just to serve up the image that it is constructed with and that is reported in its metadata
 
-OhmSenderSession::OhmSenderSession(const OhmSender& aSender)
+OhmSenderSession::OhmSenderSession(Environment& aEnv, const OhmSender& aSender)
 	: iSender(aSender)
     , iSemaphore("OHMS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(aEnv, *iReadBuffer);
     iWriterBuffer = new Sws<kMaxResponseBytes>(*this);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
     iReaderRequest->AddMethod(Http::kMethodGet);

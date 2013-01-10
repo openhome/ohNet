@@ -15,6 +15,7 @@
 #include "OhmSenderDriver.h"
 
 namespace OpenHome {
+class Environment;
 namespace Av {
 
 class ProviderSender;
@@ -25,7 +26,7 @@ class OhmSenderDriver : public IOhmSenderDriver
 	static const TUint kMaxHistoryFrames = 100;
 
 public:
-    OhmSenderDriver();
+    OhmSenderDriver(Environment& aEnv);
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
     void SendAudio(const TByte* aData, TUint aBytes);
 
@@ -90,7 +91,7 @@ public:
 	static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
 
 public:
-    OhmSender(Net::DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TUint aLatency, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType, TUint aPreset);
+    OhmSender(Environment& aEnv, Net::DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TUint aLatency, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType, TUint aPreset);
     ~OhmSender();
 
 	const Brx& Image() const;
@@ -145,6 +146,7 @@ private:
     TBool CheckSlaveExpiry();
     
 private:
+    Environment& iEnv;
     Net::DvDevice& iDevice;
     IOhmSenderDriver& iDriver;
     Bws<kMaxNameBytes> iName;
@@ -206,7 +208,7 @@ class OhmSenderSession : public SocketTcpSession
     static const TUint kMaxRequestBytes = 4*1024;
     static const TUint kMaxResponseBytes = 4*1024;
 public:
-    OhmSenderSession(const OhmSender& aSender);
+    OhmSenderSession(Environment& aEnv, const OhmSender& aSender);
     ~OhmSenderSession();
 private:
     void Run();

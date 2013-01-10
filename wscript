@@ -100,8 +100,8 @@ def build(bld):
                 'OpenHome/Media/Codec/Container.cpp',
                 'OpenHome/Media/Codec/Id3v2.cpp',
                 'OpenHome/Media/Codec/CodecController.cpp',
-                'OpenHome/Media/Protocol/Protocol.cpp',
-                'OpenHome/Media/Protocol/ProtocolHttp.cpp',
+                #'OpenHome/Media/Protocol/Protocol.cpp',
+                #'OpenHome/Media/Protocol/ProtocolHttp.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')

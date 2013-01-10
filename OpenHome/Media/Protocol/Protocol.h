@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Thread.h>
 
 namespace OpenHome {
+class Environment;
 namespace Media {
 
 class IProtocolManager
@@ -32,7 +33,7 @@ class Protocol : public IProtocolManager
 {
     friend class ProtocolManager;
 protected:
-    Protocol(IProtocolManager& aManager);
+    Protocol(Environment& aEnv, IProtocolManager& aManager);
     const OpenHome::Uri& Uri() const;
 protected: // from IProtocolManager
     TBool Stream(const Brx& aUri);
@@ -50,6 +51,8 @@ protected:
     virtual TBool DoStream(const Brx& aUri);
     virtual TBool DoRestream(TUint64 aOffset);
     virtual void DoInterrupt();
+protected:
+    Environment* iEnv;
 private:
     IProtocolManager& iManager;
     TBool iEnabled;
@@ -63,7 +66,7 @@ protected:
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 3000;
 protected:
-	ProtocolNetwork(IProtocolManager& aManager);
+	ProtocolNetwork(Environment& aEnv, IProtocolManager& aManager);
     TBool Connect(TUint aDefaultPort);
 protected: // from Protocol
     TBool DoStream(const Brx& aUri);
@@ -92,7 +95,7 @@ public:
     virtual TBool Interrupt() = 0;
 };
 
-class ProtocolManager : public IProtocolManager
+class ProtocolManager : public IProtocolManager, private INonCopyable
 {
     static const TUint kMaxUriBytes = 1024;
 public:

@@ -95,6 +95,7 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyAudioFormat(const AudioFormat& aFormat);
 private:
+    Net::Library* iLibrary;
     SupplierFile* iSupplier;
     AllocatorInfoLogger iInfoAggregator;
     PipelineManager* iPipeline;
@@ -260,9 +261,9 @@ FileSender::FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSe
     iPipeline->AddCodec(new Codec::CodecWav());
 
     InitialisationParams* initParams = InitialisationParams::Create();
-	UpnpLibrary::Initialise(initParams);
-    UpnpLibrary::StartDv();
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
+	iLibrary = new Net::Library(initParams);
+    Net::DvStack* dvStack = iLibrary->StartDv();
+    std::vector<NetworkAdapter*>* subnetList = iLibrary->CreateSubnetList();
     if (subnetList->size() <= aAdapterIndex) {
 		printf("ERROR: adapter %d doesn't exist\n", aAdapterIndex);
 		ASSERTS();
@@ -274,12 +275,12 @@ FileSender::FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSe
     }
     TIpAddress subnet = (*subnetList)[aAdapterIndex]->Subnet();
     TIpAddress adapter = (*subnetList)[aAdapterIndex]->Address();
-    UpnpLibrary::DestroySubnetList(subnetList);
-    UpnpLibrary::SetCurrentSubnet(subnet);
+    Library::DestroySubnetList(subnetList);
+    iLibrary->SetCurrentSubnet(subnet);
 
     printf("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    iDevice = new DvDeviceStandard(aSenderUdn);
+    iDevice = new DvDeviceStandard(*dvStack, aSenderUdn);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Sender");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -293,7 +294,7 @@ FileSender::FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSe
     iDevice->SetAttribute("Upnp.SerialNumber", "");
     iDevice->SetAttribute("Upnp.Upc", "");
 
-    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, *iDevice, aSenderUdn, aSenderChannel, adapter);
+    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, iLibrary->Env(), *iDevice, aSenderUdn, aSenderChannel, adapter);
     iDevice->SetEnabled();
 }
 

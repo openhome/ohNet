@@ -53,8 +53,8 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
 static const Brn kM3uAppendix("\r\n");
 static const Brn kUserAgentString("Linn DS"); // FIXME
 
-ProtocolHttp::ProtocolHttp(ProtocolManager& aManager)
-    : ProtocolNetwork(aManager)
+ProtocolHttp::ProtocolHttp(Environment& aEnv, ProtocolManager& aManager)
+    : ProtocolNetwork(aEnv, aManager)
     , iWriterRequest(iWriterBuf)
     , iReaderResponse(iReaderBuf)
     , iTotalBytes(0)

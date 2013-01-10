@@ -13,6 +13,9 @@
 #include "OhmSocket.h"
 
 namespace OpenHome {
+
+class Environment;
+
 namespace Av {
 
 enum EOhmReceiverTransportState
@@ -67,7 +70,7 @@ class OhmProtocolMulticast
     static const TUint kTimerListenTimeoutMs = 10000;
     
 public:
-	OhmProtocolMulticast(IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory);
+	OhmProtocolMulticast(Environment& aEnv, IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory);
     void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
 	void Stop();
 	void RequestResend(const Brx& aFrames);
@@ -98,7 +101,7 @@ class OhmProtocolUnicast
 	static const TUint kMaxSlaveCount = 4;
     
 public:
-	OhmProtocolUnicast(IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory);
+	OhmProtocolUnicast(Environment& aEnv, IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory);
 	void SetInterface(TIpAddress aValue);
     void SetTtl(TUint aValue);
     void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
@@ -157,7 +160,7 @@ class OhmReceiver : public IOhmReceiver, public IOhmMsgProcessor
 	static const TUint kSubsequentRepairTimeoutMs = 30;
 
 public:
-    OhmReceiver(TIpAddress aInterface, TUint aTtl, IOhmReceiverDriver& aDriver);
+    OhmReceiver(Environment& aEnv, TIpAddress aInterface, TUint aTtl, IOhmReceiverDriver& aDriver);
 
 	TIpAddress Interface() const;
 	TUint Ttl() const;

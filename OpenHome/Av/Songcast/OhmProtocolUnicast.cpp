@@ -13,13 +13,14 @@ using namespace OpenHome::Av;
 
 // OhmProtocolUnicast
 
-OhmProtocolUnicast::OhmProtocolUnicast(IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory)
+OhmProtocolUnicast::OhmProtocolUnicast(Environment& aEnv, IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory)
     : iReceiver(&aReceiver)
 	, iFactory(&aFactory)
+    , iSocket(aEnv)
     , iReadBuffer(iSocket)
-    , iTimerJoin(MakeFunctor(*this, &OhmProtocolUnicast::SendJoin))
-    , iTimerListen(MakeFunctor(*this, &OhmProtocolUnicast::SendListen))
-    , iTimerLeave(MakeFunctor(*this, &OhmProtocolUnicast::TimerLeaveExpired))
+    , iTimerJoin(aEnv, MakeFunctor(*this, &OhmProtocolUnicast::SendJoin))
+    , iTimerListen(aEnv, MakeFunctor(*this, &OhmProtocolUnicast::SendListen))
+    , iTimerLeave(aEnv, MakeFunctor(*this, &OhmProtocolUnicast::TimerLeaveExpired))
 {
 }
 

@@ -14,7 +14,7 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 
-OhmReceiver::OhmReceiver(TIpAddress aInterface, TUint aTtl, IOhmReceiverDriver& aDriver)
+OhmReceiver::OhmReceiver(Environment& aEnv, TIpAddress aInterface, TUint aTtl, IOhmReceiverDriver& aDriver)
 	: iInterface(aInterface)
 	, iTtl(aTtl)
 	, iDriver(&aDriver)
@@ -30,14 +30,15 @@ OhmReceiver::OhmReceiver(TIpAddress aInterface, TUint aTtl, IOhmReceiverDriver& 
 	, iZoneMode(false)
 	, iTerminating(false)
 	, iEndpointNull(0, Brn("0.0.0.0"))
+    , iSocketZone(aEnv)
 	, iRxZone(iSocketZone)
-    , iTimerZoneQuery(MakeFunctor(*this, &OhmReceiver::SendZoneQuery))
+    , iTimerZoneQuery(aEnv, MakeFunctor(*this, &OhmReceiver::SendZoneQuery))
 	, iFactory(500, 10, 10)
 	, iRepairing(false)
-    , iTimerRepair(MakeFunctor(*this, &OhmReceiver::TimerRepairExpired))
+    , iTimerRepair(aEnv, MakeFunctor(*this, &OhmReceiver::TimerRepairExpired))
 {
-	iProtocolMulticast = new OhmProtocolMulticast(*this, iFactory);
-	iProtocolUnicast = new OhmProtocolUnicast(*this, iFactory);
+	iProtocolMulticast = new OhmProtocolMulticast(aEnv, *this, iFactory);
+	iProtocolUnicast = new OhmProtocolUnicast(aEnv, *this, iFactory);
     iThread = new ThreadFunctor("OHRT", MakeFunctor(*this, &OhmReceiver::Run), kThreadPriority, kThreadStackBytes);
     iThread->Start();
     iThreadZone = new ThreadFunctor("OHRZ", MakeFunctor(*this, &OhmReceiver::RunZone), kThreadZonePriority, kThreadZoneStackBytes);

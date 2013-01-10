@@ -11,7 +11,7 @@
 namespace OpenHome {
 namespace Av {
 
-class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1, private INonCopyable
+class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1
 {
 public:
     ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct);

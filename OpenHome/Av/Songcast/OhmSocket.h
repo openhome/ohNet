@@ -9,6 +9,7 @@
 #include "Ohm.h"
 
 namespace OpenHome {
+class Environment;
 namespace Av {
 
 class OhmSocket : public IReaderSource, public INonCopyable
@@ -17,7 +18,7 @@ class OhmSocket : public IReaderSource, public INonCopyable
     static const TUint kReceiveBufBytes = 16392;
 
 public:
-    OhmSocket();
+    OhmSocket(Environment& aEnv);
     void OpenUnicast(TIpAddress aInterface, TUint aTtl);
     void OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
     Endpoint This() const;
@@ -33,6 +34,7 @@ public:
     virtual void ReadInterrupt();
 
 private:
+    Environment& iEnv;
     SocketUdpBase* iRxSocket;
 	SocketUdpBase* iTxSocket;
     UdpReader* iReader;
@@ -44,7 +46,7 @@ class OhzSocket : public IReaderSource, public INonCopyable
     static const TUint kSendBufBytes = 1024;
 
 public:
-    OhzSocket();
+    OhzSocket(Environment& aEnv);
 
 	const Endpoint& This() const;
 	void Open(TIpAddress aInterface, TUint aTtl);
@@ -59,6 +61,7 @@ public:
     ~OhzSocket();
 
 private:
+    Environment& iEnv;
     SocketUdpMulticast* iRxSocket;
     SocketUdp* iTxSocket;
     Endpoint iEndpoint;

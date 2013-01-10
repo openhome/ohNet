@@ -7,8 +7,9 @@ using namespace OpenHome::Av;
 
 // Sends on same socket in Unicast mode, but different socket in Multicast mode
 
-OhmSocket::OhmSocket()
-    : iRxSocket(0)
+OhmSocket::OhmSocket(Environment& aEnv)
+    : iEnv(aEnv)
+    , iRxSocket(0)
 	, iTxSocket(0)
 	, iReader(0)
 {
@@ -19,7 +20,7 @@ void OhmSocket::OpenUnicast(TIpAddress aInterface, TUint aTtl)
     ASSERT(!iRxSocket);
     ASSERT(!iTxSocket);
     ASSERT(!iReader);
-    iRxSocket = new SocketUdp(0, aInterface);
+    iRxSocket = new SocketUdp(iEnv, 0, aInterface);
     iRxSocket->SetTtl(aTtl);
     iRxSocket->SetRecvBufBytes(kReceiveBufBytes);
     iRxSocket->SetSendBufBytes(kSendBufBytes);
@@ -32,9 +33,9 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
     ASSERT(!iRxSocket);
     ASSERT(!iTxSocket);
     ASSERT(!iReader);
-    iRxSocket = new SocketUdpMulticast(aInterface, aEndpoint);
+    iRxSocket = new SocketUdpMulticast(iEnv, aInterface, aEndpoint);
     iRxSocket->SetRecvBufBytes(kReceiveBufBytes);
-	iTxSocket = new SocketUdp(0, aInterface);
+	iTxSocket = new SocketUdp(iEnv, 0, aInterface);
     iTxSocket->SetTtl(aTtl);
     iTxSocket->SetSendBufBytes(kSendBufBytes);
     iReader = new UdpReader(*iRxSocket);
@@ -64,15 +65,15 @@ Endpoint OhmSocket::Sender() const
 
 void OhmSocket::Close()
 {
-    ASSERT(iReader);
-    delete (iReader);
-    iReader = 0;
-    ASSERT (iRxSocket);
-    delete (iRxSocket);
-    iRxSocket = 0;
-	if (iTxSocket) {
-		delete (iTxSocket);
-	    iTxSocket = 0;
+    ASSERT(iReader != NULL);
+    delete iReader;
+    iReader = NULL;
+    ASSERT(iRxSocket != NULL);
+    delete iRxSocket;
+    iRxSocket = NULL;
+	if (iTxSocket != NULL) {
+		delete iTxSocket;
+	    iTxSocket = NULL;
 	}
 }
     
@@ -104,8 +105,9 @@ OhmSocket::~OhmSocket()
 
 // OhzSocket
 
-OhzSocket::OhzSocket()
-	: iRxSocket(0)
+OhzSocket::OhzSocket(Environment& aEnv)
+	: iEnv(aEnv)
+    , iRxSocket(0)
 	, iTxSocket(0)
 	, iEndpoint(51972, Brn("239.255.255.250"))
 {
@@ -119,8 +121,8 @@ const Endpoint& OhzSocket::This() const
 void OhzSocket::Open(TIpAddress aInterface, TUint aTtl)
 {
     ASSERT(!iRxSocket);
-    iRxSocket = new SocketUdpMulticast(aInterface, iEndpoint);
-	iTxSocket = new SocketUdp(0, aInterface);
+    iRxSocket = new SocketUdpMulticast(iEnv, aInterface, iEndpoint);
+	iTxSocket = new SocketUdp(iEnv, 0, aInterface);
     iTxSocket->SetTtl(aTtl);
     iReader = new UdpReader(*iRxSocket);
 }

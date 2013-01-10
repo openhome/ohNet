@@ -8,6 +8,7 @@
 #include <OpenHome/Av/Songcast/OhmSender.h>
 
 namespace OpenHome {
+class Environment;
 class Timer;
 namespace Media {
     
@@ -17,7 +18,7 @@ class DriverSongcastSender : public Thread, private IMsgProcessor
     static const TUint kSongcastLatencyMs = 300;
     static const TUint kSongcastPreset = 0;
 public:
-    DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter);
+    DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Environment& aEnv, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter);
     ~DriverSongcastSender();
 private: // from Thread
     void Run();
@@ -39,6 +40,7 @@ private: // from IMsgProcessor
 private:
     IPipelineElementUpstream& iPipeline;
     TUint iMaxMsgSizeJiffies;
+    Environment& iEnv;
     Av::OhmSenderDriver* iOhmSenderDriver;
     Av::OhmSender* iOhmSender;
     Timer* iTimer;
