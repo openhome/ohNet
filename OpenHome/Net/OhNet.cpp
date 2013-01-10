@@ -629,10 +629,8 @@ Environment* UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 
 void UpnpLibrary::Close()
 {
-    OsContext* ctx = gEnv->OsCtx();
     delete gEnv;
     gEnv = NULL;
-    OpenHome::Os::Destroy(ctx);
 }
 
 std::vector<NetworkAdapter*>* UpnpLibrary::CreateSubnetList()

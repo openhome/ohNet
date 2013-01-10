@@ -99,6 +99,7 @@ Environment::~Environment()
     delete iInitParams;
     delete iPublicLock;
     delete iPrivateLock;
+    Os::Destroy(iOsContext);
 }
 
 void Environment::GetVersion(TUint& aMajor, TUint& aMinor)
