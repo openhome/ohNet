@@ -54,7 +54,6 @@ __result; }))
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
 
-
 struct OsContext {
     struct timeval iStartTime; /* Time OsCreate was called */
     struct timeval iPrevTime; /* Last time OsTimeInUs() was called */
@@ -62,9 +61,10 @@ struct OsContext {
                                        Will be 0 unless time ever jumps backwards. */
     THandle iMutex;
     pthread_key_t iThreadArgKey;
+    struct InterfaceChangedObserver* iInterfaceChangedObserver;
 };
 
-static void DestroyInterfaceChangedObserver(void);
+static void DestroyInterfaceChangedObserver(OsContext* aContext);
 
 
 OsContext* OsCreate()
@@ -83,13 +83,14 @@ OsContext* OsCreate()
         free(ctx);
         return NULL;
     }
+    ctx->iInterfaceChangedObserver = NULL;
     return ctx;
 }
 
 void OsDestroy(OsContext* aContext)
 {
     if (aContext != NULL) {
-        DestroyInterfaceChangedObserver();
+        DestroyInterfaceChangedObserver(aContext);
         pthread_key_delete(aContext->iThreadArgKey);
         OsMutexDestroy(aContext->iMutex);
         free(aContext);
@@ -1104,10 +1105,6 @@ typedef struct InterfaceChangedObserver
 
 #endif /* PLATFOTM_MACOSX_GNU */
 
-#ifndef PLATFORM_IOS
-static InterfaceChangedObserver* gInterfaceChangedObserver = NULL;
-#endif
-
 #if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
 
 static void InterfaceChangedDynamicStoreCallback(SCDynamicStoreRef aStore, CFArrayRef aChangedKeys, void* aInfo)
@@ -1119,31 +1116,31 @@ static void InterfaceChangedDynamicStoreCallback(SCDynamicStoreRef aStore, CFArr
     }
 }
 
-static void SetInterfaceChangedObserver_MacDesktop(InterfaceListChanged aCallback, void* aArg)
+static void SetInterfaceChangedObserver_MacDesktop(OsContext* aContext, InterfaceListChanged aCallback, void* aArg)
 {
     SCDynamicStoreContext context = {0, NULL, NULL, NULL, NULL};
     CFStringRef pattern = NULL;
     CFArrayRef patternList = NULL;
     CFRunLoopRef runLoop = NULL;
 
-    if (NULL != gInterfaceChangedObserver) {
+    if (NULL != aContext->iInterfaceChangedObserver) {
         return;
     }
 
-    gInterfaceChangedObserver = (InterfaceChangedObserver*)malloc(sizeof(*gInterfaceChangedObserver));
-    if (NULL == gInterfaceChangedObserver) {
+    aContext->iInterfaceChangedObserver = (InterfaceChangedObserver*)malloc(sizeof(*(aContext->iInterfaceChangedObserver)));
+    if (NULL == aContext->iInterfaceChangedObserver) {
         goto Error;
     }
 
-    gInterfaceChangedObserver->iCallback = aCallback;
-    gInterfaceChangedObserver->iArg = aArg;
-    gInterfaceChangedObserver->iStore = NULL;
-    gInterfaceChangedObserver->iRunLoopSource = NULL;
+    aContext->iInterfaceChangedObserver->iCallback = aCallback;
+    aContext->iInterfaceChangedObserver->iArg = aArg;
+    aContext->iInterfaceChangedObserver->iStore = NULL;
+    aContext->iInterfaceChangedObserver->iRunLoopSource = NULL;
 
-    context.info = gInterfaceChangedObserver;
+    context.info = aContext->iInterfaceChangedObserver;
 
-    gInterfaceChangedObserver->iStore = SCDynamicStoreCreate(NULL, CFSTR("AddIPAddressListChangeCallbackSCF"), &InterfaceChangedDynamicStoreCallback, &context);
-    if (NULL == gInterfaceChangedObserver->iStore) {
+    aContext->iInterfaceChangedObserver->iStore = SCDynamicStoreCreate(NULL, CFSTR("AddIPAddressListChangeCallbackSCF"), &InterfaceChangedDynamicStoreCallback, &context);
+    if (NULL == aContext->iInterfaceChangedObserver->iStore) {
         goto Error;
     }
 
@@ -1157,12 +1154,12 @@ static void SetInterfaceChangedObserver_MacDesktop(InterfaceListChanged aCallbac
         goto Error;
     }
 
-    if (false == SCDynamicStoreSetNotificationKeys(gInterfaceChangedObserver->iStore, NULL, patternList)) {
+    if (false == SCDynamicStoreSetNotificationKeys(aContext->iInterfaceChangedObserver->iStore, NULL, patternList)) {
         goto Error;
     }
 
-    gInterfaceChangedObserver->iRunLoopSource = SCDynamicStoreCreateRunLoopSource(NULL, gInterfaceChangedObserver->iStore, 0);
-    if (NULL == gInterfaceChangedObserver->iRunLoopSource) {
+    aContext->iInterfaceChangedObserver->iRunLoopSource = SCDynamicStoreCreateRunLoopSource(NULL, aContext->iInterfaceChangedObserver->iStore, 0);
+    if (NULL == aContext->iInterfaceChangedObserver->iRunLoopSource) {
         goto Error;
     }
 
@@ -1171,7 +1168,7 @@ static void SetInterfaceChangedObserver_MacDesktop(InterfaceListChanged aCallbac
         goto Error;
     }
 
-    CFRunLoopAddSource(runLoop, gInterfaceChangedObserver->iRunLoopSource, kCFRunLoopCommonModes);
+    CFRunLoopAddSource(runLoop, aContext->iInterfaceChangedObserver->iRunLoopSource, kCFRunLoopCommonModes);
     CFRelease(pattern);
     CFRelease(patternList);
     return;
@@ -1183,29 +1180,29 @@ Error:
     if (NULL != patternList) {
         CFRelease(patternList);
     }
-    if (NULL != gInterfaceChangedObserver)
+    if (NULL != aContext->iInterfaceChangedObserver)
     {
-        if (gInterfaceChangedObserver->iStore != NULL) {
-            CFRelease(gInterfaceChangedObserver->iStore);
+        if (aContext->iInterfaceChangedObserver->iStore != NULL) {
+            CFRelease(aContext->iInterfaceChangedObserver->iStore);
         }
-        if (gInterfaceChangedObserver->iRunLoopSource != NULL) {
-            CFRelease(gInterfaceChangedObserver->iRunLoopSource);
+        if (aContext->iInterfaceChangedObserver->iRunLoopSource != NULL) {
+            CFRelease(aContext->iInterfaceChangedObserver->iRunLoopSource);
         }
-        free(gInterfaceChangedObserver);
-        gInterfaceChangedObserver = NULL;
+        free(aContext->iInterfaceChangedObserver);
+        aContext->iInterfaceChangedObserver = NULL;
     }
 }
 
-static void DestroyInterfaceChangedObserver_MacDesktop()
+static void DestroyInterfaceChangedObserver_MacDesktop(OsContext* aContext)
 {
-    if (NULL != gInterfaceChangedObserver)
+    if (NULL != aContext->iInterfaceChangedObserver)
     {
         CFRunLoopRef runLoop = CFRunLoopGetMain();
-        CFRunLoopRemoveSource(runLoop, gInterfaceChangedObserver->iRunLoopSource, kCFRunLoopCommonModes);
-        CFRelease(gInterfaceChangedObserver->iStore);
-        CFRelease(gInterfaceChangedObserver->iRunLoopSource);
-        free(gInterfaceChangedObserver);
-        gInterfaceChangedObserver = NULL;
+        CFRunLoopRemoveSource(runLoop, aContext->iInterfaceChangedObserver->iRunLoopSource, kCFRunLoopCommonModes);
+        CFRelease(aContext->iInterfaceChangedObserver->iStore);
+        CFRelease(aContext->iInterfaceChangedObserver->iRunLoopSource);
+        free(aContext->iInterfaceChangedObserver);
+        aContext->iInterfaceChangedObserver = NULL;
     }
 }
 
@@ -1258,19 +1255,19 @@ static int32_t ThreadJoin(THandle aThread)
     return (status==0 ? 0 : -1);
 }
 
-static void DestroyInterfaceChangedObserver_Linux()
+static void DestroyInterfaceChangedObserver_Linux(OsContext* aContext)
 {
-    if (gInterfaceChangedObserver != NULL) {
-        if (gInterfaceChangedObserver->iThread != NULL) {
-            OsNetworkInterrupt(gInterfaceChangedObserver->netHnd, 1);
-            ThreadJoin(gInterfaceChangedObserver->iThread);
-            OsThreadDestroy(gInterfaceChangedObserver->iThread);
+    if (aContext->iInterfaceChangedObserver != NULL) {
+        if (aContext->iInterfaceChangedObserver->iThread != NULL) {
+            OsNetworkInterrupt(aContext->iInterfaceChangedObserver->netHnd, 1);
+            ThreadJoin(aContext->iInterfaceChangedObserver->iThread);
+            OsThreadDestroy(aContext->iInterfaceChangedObserver->iThread);
         }
                    
-        OsNetworkClose(gInterfaceChangedObserver->netHnd);
+        OsNetworkClose(aContext->iInterfaceChangedObserver->netHnd);
 
-        free(gInterfaceChangedObserver);
-        gInterfaceChangedObserver = NULL;
+        free(aContext->iInterfaceChangedObserver);
+        aContext->iInterfaceChangedObserver = NULL;
     }
 }
 
@@ -1279,8 +1276,8 @@ static void SetInterfaceChangedObserver_Linux(OsContext* aContext, InterfaceList
     struct sockaddr_nl addr;
     int sock = 0;
 
-    gInterfaceChangedObserver = (InterfaceChangedObserver*) calloc(1, sizeof(InterfaceChangedObserver));
-    if (gInterfaceChangedObserver == NULL) {
+    aContext->iInterfaceChangedObserver = (InterfaceChangedObserver*) calloc(1, sizeof(InterfaceChangedObserver));
+    if (aContext->iInterfaceChangedObserver == NULL) {
         goto Error;
     }
 
@@ -1296,37 +1293,37 @@ static void SetInterfaceChangedObserver_Linux(OsContext* aContext, InterfaceList
         goto Error;
     }
 
-    if ((gInterfaceChangedObserver->netHnd = CreateHandle(aContext, sock)) == NULL) {
+    if ((aContext->iInterfaceChangedObserver->netHnd = CreateHandle(aContext, sock)) == NULL) {
         close(sock);
         goto Error;
     }
 
-    gInterfaceChangedObserver->iCallback = aCallback;
-    gInterfaceChangedObserver->iArg = aArg;
-    if ((gInterfaceChangedObserver->iThread = DoThreadCreate(aContext,
-                                                        "AdapterChangeObserverThread",
-                                                        100, 16 * 1024, 1,
-                                                        adapterChangeObserverThread,
-                                                        gInterfaceChangedObserver)) == NULL) {
+    aContext->iInterfaceChangedObserver->iCallback = aCallback;
+    aContext->iInterfaceChangedObserver->iArg = aArg;
+    if ((aContext->iInterfaceChangedObserver->iThread = DoThreadCreate(aContext,
+                                                            "AdapterChangeObserverThread",
+                                                            100, 16 * 1024, 1,
+                                                            adapterChangeObserverThread,
+                                                            aContext->iInterfaceChangedObserver)) == NULL) {
         goto Error;
     }
     
     return;
 
 Error:
-    DestroyInterfaceChangedObserver_Linux();
+    DestroyInterfaceChangedObserver_Linux(aContext);
 }
 
 #endif /* !PLATFORM_MACOSX_GNU */
 
-static void DestroyInterfaceChangedObserver()
+static void DestroyInterfaceChangedObserver(OsContext* aContext)
 {
 #ifdef PLATFORM_MACOSX_GNU
 # ifndef PLATFORM_IOS
-    DestroyInterfaceChangedObserver_MacDesktop();
+    DestroyInterfaceChangedObserver_MacDesktop(aContext);
 # endif /* !PLATFORM_IOS */
 #else /* !PLATFOTM_MACOSX_GNU */
-    DestroyInterfaceChangedObserver_Linux();
+    DestroyInterfaceChangedObserver_Linux(aContext);
 #endif /* PLATFOTM_MACOSX_GNU */
 }
 
@@ -1335,7 +1332,7 @@ void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChan
 {
 #ifdef PLATFORM_MACOSX_GNU
 # ifndef PLATFORM_IOS
-    SetInterfaceChangedObserver_MacDesktop(aCallback, aArg);
+    SetInterfaceChangedObserver_MacDesktop(aContext, aCallback, aArg);
 # endif /* !PLATFORM_IOS */
 #else /* !PLATFOTM_MACOSX_GNU */
     SetInterfaceChangedObserver_Linux(aContext, aCallback, aArg);
