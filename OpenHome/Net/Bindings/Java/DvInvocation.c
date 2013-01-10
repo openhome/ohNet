@@ -62,6 +62,42 @@ JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocation
 
 /*
  * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetClientAddress
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetClientAddress
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
+{
+    DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
+    TIpAddress adapter;
+    uint32_t port;
+    aEnv = aEnv;
+    aClass = aClass;
+    
+    DvInvocationGetClientEndpoint(invocation, &adapter, &port);
+    return (jint) adapter;
+}
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetClientPort
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetClientPort
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
+{
+    DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
+    TIpAddress adapter;
+    uint32_t port;
+    aEnv = aEnv;
+    aClass = aClass;
+    
+    DvInvocationGetClientEndpoint(invocation, &adapter, &port);
+    return (jint) port;
+}
+
+/*
+<  * Class:     org_openhome_net_device_DvInvocation
  * Method:    DvInvocationReadStart
  * Signature: (J)I
  */

@@ -99,6 +99,8 @@ public class DvInvocation implements IDvInvocation
     private static native int DvInvocationGetVersion(long aInvocation);
     private static native int DvInvocationGetAdapter(long aInvocation);
     private static native String DvInvocationGetResourceUriPrefix(long aInvocation);
+    private static native int DvInvocationGetClientAddress(long aInvocation);
+    private static native int DvInvocationGetClientPort(long aInvocation);
 	private static native int DvInvocationReadStart(long aInvocation);
 	private native InvocationStatusInt DvInvocationReadInt(long aInvocation, String aName);
 	private native InvocationStatusUint DvInvocationReadUint(long aInvocation, String aName);
@@ -174,6 +176,26 @@ public class DvInvocation implements IDvInvocation
 		}
 		return result;
 	}
+   
+   /**
+    * Get the client address for this invocation.
+    *
+    * @return  The client address that invoked this action.
+    */
+   public int getClientAddress()
+   {
+       return DvInvocationGetClientAddress(iHandle);
+   }
+   
+   /**
+    * Get the client port for this invocation.
+    *
+    * @return  The client port that invoked this action.
+    */
+   public int getClientPort()
+   {
+       return DvInvocationGetClientPort(iHandle);
+   }
 	
 	/**
 	 * Begin reading (input arguments for) an invocation.

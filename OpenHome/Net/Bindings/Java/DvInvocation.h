@@ -33,6 +33,22 @@ JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocation
 
 /*
  * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetClientAddress
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetClientAddress
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetClientPort
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetClientPort
+  (JNIEnv *, jclass, jlong);
+
+/*
+<  * Class:     org_openhome_net_device_DvInvocation
  * Method:    DvInvocationReadStart
  * Signature: (J)I
  */

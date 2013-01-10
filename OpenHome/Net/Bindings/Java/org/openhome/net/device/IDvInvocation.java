@@ -22,4 +22,18 @@ public interface IDvInvocation
 	 * @return	The prefix to resource URIs.
 	 */
 	public String getResourceUriPrefix();
+    
+    /**
+     * Get the client address for this invocation.
+     *
+     * @return  The client address that invoked this action.
+     */
+    public int getClientAddress();
+    
+    /**
+     * Get the client port for this invocation.
+     *
+     * @return  The client port that invoked this action.
+     */
+    public int getClientPort();
 }
