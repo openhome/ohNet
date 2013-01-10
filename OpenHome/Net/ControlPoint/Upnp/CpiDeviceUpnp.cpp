@@ -1,7 +1,7 @@
 #include <OpenHome/Net/Private/CpiDeviceUpnp.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Net/Private/CpiService.h>
 #include <OpenHome/Private/Stream.h>
@@ -39,7 +39,7 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     , iRemoved(false)
 {
     iDevice = new CpiDevice(aCpStack, aUdn, *this, *this, this);
-    iTimer = new Timer(aCpStack.GetStack(), MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
+    iTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
     UpdateMaxAge(aMaxAgeSecs);
     iInvocable = new Invocable(*this);
 }
@@ -64,7 +64,7 @@ void CpiDeviceUpnp::UpdateMaxAge(TUint aSeconds)
     TUint delayMs = aSeconds * 1000;
     delayMs += 100; /* allow slightly longer than maxAge to cope with devices which
                        send out Alive messages at the last possible moment */
-    OsContext* osCtx = iDevice->GetCpStack().GetStack().OsCtx();
+    OsContext* osCtx = iDevice->GetCpStack().Env().OsCtx();
     TUint expiryTime = Os::TimeInMs(osCtx) + delayMs;
     if (expiryTime >= iExpiryTime) {
         iExpiryTime = expiryTime;
@@ -152,7 +152,7 @@ void CpiDeviceUpnp::InvokeAction(Invocation& aInvocation)
 
 TUint CpiDeviceUpnp::Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber)
 {
-    TUint durationSecs = iDevice->GetCpStack().GetStack().InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDevice->GetCpStack().Env().InitParams().SubscriptionDurationSecs();
     Uri uri;
     GetServiceUri(uri, "eventSubURL", aSubscription.ServiceType());
     EventUpnp eventUpnp(iDevice->GetCpStack(), aSubscription);
@@ -162,7 +162,7 @@ TUint CpiDeviceUpnp::Subscribe(CpiSubscription& aSubscription, const Uri& aSubsc
 
 TUint CpiDeviceUpnp::Renew(CpiSubscription& aSubscription)
 {
-    TUint durationSecs = iDevice->GetCpStack().GetStack().InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDevice->GetCpStack().Env().InitParams().SubscriptionDurationSecs();
     Uri uri;
     GetServiceUri(uri, "eventSubURL", aSubscription.ServiceType());
     EventUpnp eventUpnp(iDevice->GetCpStack(), aSubscription);
@@ -339,11 +339,11 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     , iSsdpLock("DLSM")
     , iStarted(false)
 {
-    NetworkAdapterList& ifList = aCpStack.GetStack().NetworkAdapterList();
-    AutoNetworkAdapterRef ref(aCpStack.GetStack(), "CpiDeviceListUpnp ctor");
+    NetworkAdapterList& ifList = aCpStack.Env().NetworkAdapterList();
+    AutoNetworkAdapterRef ref(aCpStack.Env(), "CpiDeviceListUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
-    iRefreshTimer = new Timer(aCpStack.GetStack(), MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
-    iNextRefreshTimer = new Timer(aCpStack.GetStack(), MakeFunctor(*this, &CpiDeviceListUpnp::NextRefreshDue));
+    iRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
+    iNextRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::NextRefreshDue));
     iPendingRefreshCount = 0;
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged));
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));
@@ -356,8 +356,8 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     }
     else {
         iInterface = current->Address();
-        iUnicastListener = new SsdpListenerUnicast(iCpStack.GetStack(), *this, iInterface);
-        iMulticastListener = &(iCpStack.GetStack().MulticastListenerClaim(iInterface));
+        iUnicastListener = new SsdpListenerUnicast(iCpStack.Env(), *this, iInterface);
+        iMulticastListener = &(iCpStack.Env().MulticastListenerClaim(iInterface));
         iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
     }
     iSsdpLock.Signal();
@@ -368,8 +368,8 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iLock.Wait();
     iActive = false;
     iLock.Signal();
-    iCpStack.GetStack().NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
-    iCpStack.GetStack().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iCpStack.Env().NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
+    iCpStack.Env().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     iLock.Wait();
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
@@ -392,7 +392,7 @@ void CpiDeviceListUpnp::StopListeners()
     if (iMulticastListener != NULL) {
         iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
         iNotifyHandlerId = 0;
-        iCpStack.GetStack().MulticastListenerRelease(iInterface);
+        iCpStack.Env().MulticastListenerRelease(iInterface);
         iMulticastListener = NULL;
     }
     iSsdpLock.Signal();
@@ -404,12 +404,12 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
         return false;
     }
     iLock.Wait();
-    iCpStack.GetStack().Mutex().Wait();
+    iCpStack.Env().Mutex().Wait();
     if (iRefreshing && iPendingRefreshCount > 1) {
         // we need at most one final msearch once a network card starts working following an adapter change
         iPendingRefreshCount = 1;
     }
-    iCpStack.GetStack().Mutex().Signal();
+    iCpStack.Env().Mutex().Signal();
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
@@ -457,7 +457,7 @@ void CpiDeviceListUpnp::Refresh()
         return;
     }
     Start();
-    TUint delayMs = iCpStack.GetStack().InitParams().MsearchTimeSecs() * 1000;
+    TUint delayMs = iCpStack.Env().InitParams().MsearchTimeSecs() * 1000;
     delayMs += 100; /* allow slightly longer to cope with devices which send
                        out Alive messages at the last possible moment */
     iRefreshTimer->FireIn(delayMs);
@@ -497,7 +497,7 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     }
     iLock.Wait();
     Endpoint endpt(0, uri.Host());
-    NetworkAdapter* nif = iCpStack.GetStack().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
+    NetworkAdapter* nif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
     if (nif != NULL) {
         if (nif->Address() == iInterface && nif->ContainsAddress(endpt.Address())) {
             reachable = true;
@@ -511,12 +511,12 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 void CpiDeviceListUpnp::RefreshTimerComplete()
 {
     RefreshComplete();
-    iCpStack.GetStack().Mutex().Wait();
+    iCpStack.Env().Mutex().Wait();
     if (iPendingRefreshCount > 0) {
-        iNextRefreshTimer->FireIn(iCpStack.GetStack().InitParams().MsearchTimeSecs() * 1000);
+        iNextRefreshTimer->FireIn(iCpStack.Env().InitParams().MsearchTimeSecs() * 1000);
         iPendingRefreshCount--;
     }
-    iCpStack.GetStack().Mutex().Signal();
+    iCpStack.Env().Mutex().Signal();
 }
 
 void CpiDeviceListUpnp::NextRefreshDue()
@@ -536,16 +536,16 @@ void CpiDeviceListUpnp::SubnetListChanged()
 
 void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 {
-    NetworkAdapter* current = iCpStack.GetStack().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange");
+    NetworkAdapter* current = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange");
     if (aNewSubnet && current != NULL && current->Address() == iInterface) {
         // list of subnets has changed but our interface is still available so there's nothing for us to do here
         current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
         return;
     }
     iNextRefreshTimer->Cancel();
-    iCpStack.GetStack().Mutex().Wait();
+    iCpStack.Env().Mutex().Wait();
     iPendingRefreshCount = 0;
-    iCpStack.GetStack().Mutex().Signal();
+    iCpStack.Env().Mutex().Signal();
     StopListeners();
 
     if (current == NULL) {
@@ -563,16 +563,16 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     iLock.Wait();
     iInterface = current->Address();
     iLock.Signal();
-    TUint msearchTime = iCpStack.GetStack().InitParams().MsearchTimeSecs();
-    iCpStack.GetStack().Mutex().Wait();
+    TUint msearchTime = iCpStack.Env().InitParams().MsearchTimeSecs();
+    iCpStack.Env().Mutex().Wait();
     iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-    iCpStack.GetStack().Mutex().Signal();
+    iCpStack.Env().Mutex().Signal();
     current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
     iSsdpLock.Wait();
-    iUnicastListener = new SsdpListenerUnicast(iCpStack.GetStack(), *this, iInterface);
+    iUnicastListener = new SsdpListenerUnicast(iCpStack.Env(), *this, iInterface);
     iUnicastListener->Start();
-    iMulticastListener = &(iCpStack.GetStack().MulticastListenerClaim(iInterface));
+    iMulticastListener = &(iCpStack.Env().MulticastListenerClaim(iInterface));
     iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
     iSsdpLock.Signal();
     Refresh();
@@ -584,9 +584,9 @@ void CpiDeviceListUpnp::RemoveAll()
     iNextRefreshTimer->Cancel();
     iLock.Wait();
     CancelRefresh();
-    iCpStack.GetStack().Mutex().Wait();
+    iCpStack.Env().Mutex().Wait();
     iPendingRefreshCount = 0;
-    iCpStack.GetStack().Mutex().Signal();
+    iCpStack.Env().Mutex().Signal();
     std::vector<CpiDevice*> devices;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {

@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Private/DviStack.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviServerUpnp.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
@@ -14,21 +14,21 @@ using namespace OpenHome::Net;
 
 // DvStack
 
-DvStack::DvStack(OpenHome::Net::Stack& aStack)
-    : iStack(aStack)
+DvStack::DvStack(OpenHome::Environment& aEnv)
+    : iEnv(aEnv)
     , iBootId(1)
     , iNextBootId(2)
     , iMdns(NULL)
 {
-    iStack.SetDvStack(this);
+    iEnv.SetDvStack(this);
     iPropertyUpdateCollection = new DviPropertyUpdateCollection(*this);
-    TUint port = iStack.InitParams().DvUpnpServerPort();
+    TUint port = iEnv.InitParams().DvUpnpServerPort();
     iDviServerUpnp = new DviServerUpnp(*this, port);
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager(*this);
     iDviServerWebSocket = new DviServerWebSocket(*this);
-    if (iStack.InitParams().DvIsBonjourEnabled()) {
-        iMdns = new OpenHome::Net::MdnsProvider(iStack, ""); // replace this to allow clients to set an alternative Bonjour implementation
+    if (iEnv.InitParams().DvIsBonjourEnabled()) {
+        iMdns = new OpenHome::Net::MdnsProvider(iEnv, ""); // replace this to allow clients to set an alternative Bonjour implementation
     }
 }
 
@@ -44,7 +44,7 @@ DvStack::~DvStack()
 
 TUint DvStack::BootId()
 {
-    OpenHome::Mutex& lock = iStack.Mutex();
+    OpenHome::Mutex& lock = iEnv.Mutex();
     lock.Wait();
     TUint id = iBootId;
     lock.Signal();
@@ -53,7 +53,7 @@ TUint DvStack::BootId()
 
 TUint DvStack::NextBootId()
 {
-    OpenHome::Mutex& lock = iStack.Mutex();
+    OpenHome::Mutex& lock = iEnv.Mutex();
     lock.Wait();
     TUint id = iNextBootId;
     lock.Signal();
@@ -62,7 +62,7 @@ TUint DvStack::NextBootId()
 
 void DvStack::UpdateBootId()
 {
-    OpenHome::Mutex& lock = iStack.Mutex();
+    OpenHome::Mutex& lock = iEnv.Mutex();
     lock.Wait();
     iBootId = iNextBootId;
     iNextBootId++;

@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Core/OhNet.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Private/Discovery.h>
@@ -27,12 +27,12 @@ const char kOhNetMimeTypeJpeg[] = "image/jpeg";
 const char kOhNetMimeTypePng[]  = "image/png";
 
 
-// Stack
+// Environment
 
 static const TUint kVersionMajor = 1;
 static const TUint kVersionMinor = 0;
 
-Stack::Stack(OsContext* aOsContext)
+Environment::Environment(OsContext* aOsContext)
     : iOsContext(aOsContext)
     , iInitParams(NULL)
     , iTimerManager(NULL)
@@ -44,7 +44,7 @@ Stack::Stack(OsContext* aOsContext)
     Construct();
 }
 
-Stack::Stack(OsContext* aOsContext, InitialisationParams* aInitParams)
+Environment::Environment(OsContext* aOsContext, InitialisationParams* aInitParams)
     : iOsContext(aOsContext)
     , iInitParams(aInitParams)
     , iNetworkAdapterList(NULL)
@@ -75,14 +75,14 @@ Stack::Stack(OsContext* aOsContext, InitialisationParams* aInitParams)
     }
 }
 
-void Stack::Construct()
+void Environment::Construct()
 {
-    gStack = this;
+    gEnv = this;
     iPublicLock = new OpenHome::Mutex("GMUT");
     iPrivateLock = new OpenHome::Mutex("SOML");
 }
 
-Stack::~Stack()
+Environment::~Environment()
 {
     iPublicLock->Wait();
     iPublicLock->Signal();
@@ -101,38 +101,38 @@ Stack::~Stack()
     delete iPrivateLock;
 }
 
-void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
+void Environment::GetVersion(TUint& aMajor, TUint& aMinor)
 {
     aMajor = kVersionMajor;
     aMinor = kVersionMinor;
 }
 
-OpenHome::TimerManager& Stack::TimerManager()
+OpenHome::TimerManager& Environment::TimerManager()
 {
     return *iTimerManager;
 }
 
-OpenHome::Mutex& Stack::Mutex()
+OpenHome::Mutex& Environment::Mutex()
 {
     return *iPublicLock;
 }
 
-OsContext* Stack::OsCtx()
+OsContext* Environment::OsCtx()
 {
     return iOsContext;
 }
 
-NetworkAdapterList& Stack::NetworkAdapterList()
+NetworkAdapterList& Environment::NetworkAdapterList()
 {
     return *iNetworkAdapterList;
 }
 
-SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
+Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(TIpAddress aInterface)
 {
     AutoMutex a(*iPrivateLock);
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
-        Stack::MListener* listener = iMulticastListeners[i];
+        Environment::MListener* listener = iMulticastListeners[i];
         if (listener->Interface() == aInterface) {
             listener->AddRef();
             return listener->Listener();
@@ -145,12 +145,12 @@ SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
     return listener->Listener();
 }
 
-void Stack::MulticastListenerRelease(TIpAddress aInterface)
+void Environment::MulticastListenerRelease(TIpAddress aInterface)
 {
     iPrivateLock->Wait();
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
-        Stack::MListener* listener = iMulticastListeners[i];
+        Environment::MListener* listener = iMulticastListeners[i];
         if (listener->Interface() == aInterface) {
             if (listener->RemoveRef()) {
                 delete listener;
@@ -162,7 +162,7 @@ void Stack::MulticastListenerRelease(TIpAddress aInterface)
     iPrivateLock->Signal();
 }
 
-TUint Stack::SequenceNumber()
+TUint Environment::SequenceNumber()
 {
     iPrivateLock->Wait();
     TUint seq = iSequenceNumber++;
@@ -170,12 +170,12 @@ TUint Stack::SequenceNumber()
     return seq;
 }
 
-InitialisationParams& Stack::InitParams()
+InitialisationParams& Environment::InitParams()
 {
     return *iInitParams;
 }
 
-void Stack::AddObject(IStackObject* aObject)
+void Environment::AddObject(IStackObject* aObject)
 {
     iPrivateLock->Wait();
     ObjectMap::iterator it = iObjectMap.find(aObject);
@@ -184,7 +184,7 @@ void Stack::AddObject(IStackObject* aObject)
     iPrivateLock->Signal();
 }
 
-void Stack::RemoveObject(IStackObject* aObject)
+void Environment::RemoveObject(IStackObject* aObject)
 {
     iPrivateLock->Wait();
     ObjectMap::iterator it = iObjectMap.find(aObject);
@@ -194,7 +194,7 @@ void Stack::RemoveObject(IStackObject* aObject)
     iPrivateLock->Signal();
 }
 
-void Stack::ListObjects()
+void Environment::ListObjects()
 {
     iPrivateLock->Wait();
     ObjectMap::iterator it = iObjectMap.begin();
@@ -205,55 +205,55 @@ void Stack::ListObjects()
     iPrivateLock->Signal();
 }
 
-void Stack::SetCpStack(IStack* aStack)
+void Environment::SetCpStack(IStack* aStack)
 {
     iCpStack = aStack;
 }
 
-void Stack::SetDvStack(IStack* aStack)
+void Environment::SetDvStack(IStack* aStack)
 {
     iDvStack = aStack;
 }
 
-IStack* Stack::CpiStack()
+IStack* Environment::CpiStack()
 {
     return iCpStack;
 }
 
-IStack* Stack::DviStack()
+IStack* Environment::DviStack()
 {
     return iDvStack;
 }
 
 
-// Stack::MListener
+// Environment::MListener
 
-Stack::MListener::MListener(Stack& aStack, TIpAddress aInterface)
-    : iListener(aStack, aInterface)
+Environment::MListener::MListener(Environment& aEnv, TIpAddress aInterface)
+    : iListener(aEnv, aInterface)
     , iRefCount(1)
 {
 }
 
-Stack::MListener::~MListener()
+Environment::MListener::~MListener()
 {
 }
 
-SsdpListenerMulticast& Stack::MListener::Listener()
+Net::SsdpListenerMulticast& Environment::MListener::Listener()
 {
     return iListener;
 }
 
-TIpAddress Stack::MListener::Interface() const
+TIpAddress Environment::MListener::Interface() const
 {
     return iListener.Interface();
 }
 
-void Stack::MListener::AddRef()
+void Environment::MListener::AddRef()
 {
     iRefCount++;
 }
 
-TBool Stack::MListener::RemoveRef()
+TBool Environment::MListener::RemoveRef()
 {
     iRefCount--;
     return (iRefCount == 0);

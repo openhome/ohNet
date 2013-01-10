@@ -24,7 +24,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     DvStack* dvStack = NULL;
     lib->StartCombined(subnet, cpStack, dvStack);
 
-    Shell* shell = new Shell(cpStack->GetStack());
+    Shell* shell = new Shell(cpStack->Env());
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     Semaphore* blocker = new Semaphore("BLCK", 0);

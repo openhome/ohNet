@@ -13,7 +13,7 @@ using namespace OpenHome::TestFramework;
 class MyTimer : public Timer
 {
 public:
-    MyTimer() : Timer(*Net::gStack, MakeFunctor(*this, &MyTimer::Run)), iCount(0), iSemaphore("TIMR", 0) {}
+    MyTimer() : Timer(*gEnv, MakeFunctor(*this, &MyTimer::Run)), iCount(0), iSemaphore("TIMR", 0) {}
     void Wait() { iSemaphore.Wait(); }
     TUint Count() { return (iCount); }
     ~MyTimer() { iCount = 0xffffffff; }
@@ -27,7 +27,7 @@ private:
 class MicrosecondTimer
 {
 public:
-    MicrosecondTimer() : iTimer(*Net::gStack, MakeFunctor(*this, &MicrosecondTimer::Expired)), iSemaphore("MICR", 0) {}
+    MicrosecondTimer() : iTimer(*gEnv, MakeFunctor(*this, &MicrosecondTimer::Expired)), iSemaphore("MICR", 0) {}
     void Calibrate();
     void FireIn(TUint aMicroseconds);
 private:
@@ -206,7 +206,7 @@ void SuiteTimerThrash::Test()
     Functor f = MakeFunctor(*this, &SuiteTimerThrash::Fire);
     
     for (TUint i = 0; i < 10000; i++) {
-        iTimers[i] = new Timer(*Net::gStack, f);
+        iTimers[i] = new Timer(*gEnv, f);
     }
     
     Print("Firing 10000 timers over 10 seconds\n");

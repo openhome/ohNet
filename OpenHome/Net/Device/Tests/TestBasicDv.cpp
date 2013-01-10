@@ -4,7 +4,7 @@
 #include <OpenHome/Net/Cpp/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Maths.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 
@@ -213,11 +213,11 @@ static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    std::vector<NetworkAdapter*>* subnetList = aDvStack.GetStack().NetworkAdapterList().CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = aDvStack.Env().NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
     TUint seed = aDvStack.ServerUpnp().Port((*subnetList)[0]->Address());
     SetRandomSeed(seed);
-    aDvStack.GetStack().NetworkAdapterList().DestroySubnetList(subnetList);
+    aDvStack.Env().NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();

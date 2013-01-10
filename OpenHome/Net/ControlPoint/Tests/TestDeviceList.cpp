@@ -11,7 +11,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 
 using namespace OpenHome;
@@ -123,15 +123,15 @@ void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs)
         parser.DisplayHelp();
     }
 
-    Stack& stack = aCpStack.GetStack();
-    Blocker* blocker = new Blocker(stack);
+    Environment& env = aCpStack.Env();
+    Blocker* blocker = new Blocker(env);
     if (deviceList != NULL) {
-        blocker->Wait(stack.InitParams().MsearchTimeSecs());
+        blocker->Wait(env.InitParams().MsearchTimeSecs());
     }
     if (refresh.Value()) {
         Print("\nRefreshing...\n\n");
         deviceList->Refresh();
-        blocker->Wait(stack.InitParams().MsearchTimeSecs());
+        blocker->Wait(env.InitParams().MsearchTimeSecs());
     }
     delete blocker;
     delete deviceList;

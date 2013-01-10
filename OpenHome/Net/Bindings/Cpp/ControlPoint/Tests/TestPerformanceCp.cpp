@@ -11,7 +11,7 @@
 #include <OpenHome/Net/Cpp/CpOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Core/CpProxy.h>
 #include <OpenHome/Net/Private/Globals.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 
 #include <stdlib.h>
 #include <vector>
@@ -55,7 +55,7 @@ PerformanceTests::PerformanceTests(uint32_t aTimeoutSecs)
     , iDeviceList(NULL)
     , iDevice(NULL)
 {
-    iTimer = new Timer(*gStack, MakeFunctor(*this, &PerformanceTests::TimerExpired));
+    iTimer = new Timer(*gEnv, MakeFunctor(*this, &PerformanceTests::TimerExpired));
 }
 
 PerformanceTests::~PerformanceTests()
@@ -89,7 +89,7 @@ void PerformanceTests::TestActions()
         for (uint32_t j=0; j<numThreads; j++) {
             threads[j] = new ThreadFunctor("", MakeFunctor(*this, &PerformanceTests::ActionThread));
         }
-        iTestStopTime = Os::TimeInMs(gStack->OsCtx()) + (iTimeoutSecs * 1000);
+        iTestStopTime = Os::TimeInMs(gEnv->OsCtx()) + (iTimeoutSecs * 1000);
         for (uint32_t j=0; j<numThreads; j++) {
             threads[j]->Start();
         }
@@ -107,7 +107,7 @@ void PerformanceTests::TestSubscriptions()
 {
     iCount = 0;
     Functor subscribed = MakeFunctor(*this, &PerformanceTests::Subscribed);
-    iTestStopTime = Os::TimeInMs(gStack->OsCtx()) + (iTimeoutSecs * 1000);
+    iTestStopTime = Os::TimeInMs(gEnv->OsCtx()) + (iTimeoutSecs * 1000);
     do {
         CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(*iDevice);
         proxy->SetPropertyInitialEvent(subscribed);
@@ -121,7 +121,7 @@ void PerformanceTests::TestSubscriptions()
 
 bool PerformanceTests::IncrementCount()
 {
-    if (Os::TimeInMs(gStack->OsCtx()) <= iTestStopTime) {
+    if (Os::TimeInMs(gEnv->OsCtx()) <= iTestStopTime) {
         iLock.Wait();
         iCount++;
         iLock.Signal();

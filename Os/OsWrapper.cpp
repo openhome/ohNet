@@ -4,7 +4,7 @@
 #include <OpenHome/Os.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 
@@ -178,12 +178,12 @@ void OpenHome::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddr
     }
 }
 
-std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Net::Stack& aStack,
+std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Environment& aEnv,
                                                                 Net::InitialisationParams::ELoopback aUseLoopback,
                                                                 const TChar* aCookie)
 {
     OsNetworkAdapter* cIfs = NULL;
-    int32_t err = OsNetworkListAdapters(aStack.OsCtx(), &cIfs, (uint32_t)aUseLoopback);
+    int32_t err = OsNetworkListAdapters(aEnv.OsCtx(), &cIfs, (uint32_t)aUseLoopback);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::NetworkListAdapters RETURN VALUE = %d\n", err);
         THROW(NetworkError);
@@ -191,7 +191,7 @@ std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Net::Stack& aSta
     std::vector<NetworkAdapter*>* ifs = new std::vector<NetworkAdapter*>;
     OsNetworkAdapter* ptr = cIfs;
     while (ptr != NULL) {
-        NetworkAdapter* iface = new NetworkAdapter(aStack, ptr->iAddress, ptr->iNetMask, ptr->iName, aCookie);
+        NetworkAdapter* iface = new NetworkAdapter(aEnv, ptr->iAddress, ptr->iNetMask, ptr->iName, aCookie);
         ifs->push_back(iface);
         ptr = ptr->iNext;
     }

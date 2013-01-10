@@ -2,7 +2,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 
 using namespace OpenHome;
@@ -22,7 +22,7 @@ CpiDevice::CpiDevice(OpenHome::Net::CpStack& aCpStack, const Brx& aUdn, ICpiProt
     , iExpired(false)
     , iRemoved(false)
 {
-    iCpStack.GetStack().AddObject(this);
+    iCpStack.Env().AddObject(this);
 }
 
 const Brx& CpiDevice::Udn() const
@@ -147,7 +147,7 @@ CpiDevice::~CpiDevice()
     LOG(kDevice, iUdn);
     LOG(kDevice, "\n");
     ASSERT(iRefCount == 0);
-    iCpStack.GetStack().RemoveObject(this);
+    iCpStack.Env().RemoveObject(this);
 }
 
 
@@ -187,24 +187,24 @@ CpiDeviceList::CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, Functor
 {
     ASSERT(iAdded);
     ASSERT(iRemoved);
-    iCpStack.GetStack().AddObject(this);
+    iCpStack.Env().AddObject(this);
 }
 
 CpiDeviceList::~CpiDeviceList()
 {
     TBool wait = false;
-    iCpStack.GetStack().Mutex().Wait();
+    iCpStack.Env().Mutex().Wait();
     if (iRefCount > 0) {
         wait = true;
         iShutdownSem.Clear();
     }
-    iCpStack.GetStack().Mutex().Signal();
+    iCpStack.Env().Mutex().Signal();
     if (wait) {
         iShutdownSem.Wait();
     }
     ClearMap(iMap);
     ClearMap(iRefreshMap);
-    iCpStack.GetStack().RemoveObject(this);
+    iCpStack.Env().RemoveObject(this);
 }
 
 void CpiDeviceList::Add(CpiDevice* aDevice)
@@ -311,18 +311,18 @@ void CpiDeviceList::ClearMap(Map& aMap)
 
 void CpiDeviceList::AddRef()
 {
-    iCpStack.GetStack().Mutex().Wait();
+    iCpStack.Env().Mutex().Wait();
     ++iRefCount;
-    iCpStack.GetStack().Mutex().Signal();
+    iCpStack.Env().Mutex().Signal();
 }
 
 void CpiDeviceList::RemoveRef()
 {
-    iCpStack.GetStack().Mutex().Wait();
+    iCpStack.Env().Mutex().Wait();
     if (--iRefCount == 0) {
         iShutdownSem.Signal();
     }
-    iCpStack.GetStack().Mutex().Signal();
+    iCpStack.Env().Mutex().Signal();
 }
 
 void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)

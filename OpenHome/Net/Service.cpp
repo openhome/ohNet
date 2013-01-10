@@ -3,7 +3,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Net/Private/Ssdp.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Thread.h>
 
 using namespace OpenHome;
@@ -253,8 +253,8 @@ TBool Property::ReportChanged()
     return false;
 }
 
-Property::Property(Stack& aStack, OpenHome::Net::Parameter* aParameter, Functor& aFunctor)
-    : iStack(aStack)
+Property::Property(Environment& aEnv, OpenHome::Net::Parameter* aParameter, Functor& aFunctor)
+    : iEnv(aEnv)
     , iParameter(aParameter)
     , iFunctor(aFunctor)
     , iChanged(true)
@@ -264,8 +264,8 @@ Property::Property(Stack& aStack, OpenHome::Net::Parameter* aParameter, Functor&
     ASSERT(iParameter->Type() != OpenHome::Net::Parameter::eTypeRelated);
 }
 
-Property::Property(Stack& aStack, OpenHome::Net::Parameter* aParameter)
-    : iStack(aStack)
+Property::Property(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
+    : iEnv(aEnv)
     , iParameter(aParameter)
     , iChanged(true)
     , iSequenceNumber(0)
@@ -291,13 +291,13 @@ Property::~Property()
 
 // PropertyString
 
-PropertyString::PropertyString(Stack& aStack, const TChar* aName, Functor& aFunctor)
-    : Property(aStack, new ParameterString(aName), aFunctor)
+PropertyString::PropertyString(Environment& aEnv, const TChar* aName, Functor& aFunctor)
+    : Property(aEnv, new ParameterString(aName), aFunctor)
 {
 }
 
-PropertyString::PropertyString(Stack& aStack, OpenHome::Net::Parameter* aParameter)
-    : Property(aStack, aParameter)
+PropertyString::PropertyString(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
+    : Property(aEnv, aParameter)
 {
 }
 
@@ -307,14 +307,14 @@ PropertyString::~PropertyString()
 
 const Brx& PropertyString::Value() const
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     ASSERT(iSequenceNumber > 0);
     return iValue;
 }
 
 void PropertyString::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     Brhz old;
     iValue.TransferTo(old);
     aProcessor.ProcessString(aBuffer, iValue);
@@ -326,7 +326,7 @@ void PropertyString::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyString::SetValue(const Brx& aValue)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue.Set(aValue);
         iSequenceNumber++;
@@ -343,13 +343,13 @@ void PropertyString::Write(IPropertyWriter& aWriter)
 
 // PropertyInt
 
-PropertyInt::PropertyInt(Stack& aStack, const TChar* aName, Functor& aFunctor)
-    : Property(aStack, new ParameterInt(aName), aFunctor)
+PropertyInt::PropertyInt(Environment& aEnv, const TChar* aName, Functor& aFunctor)
+    : Property(aEnv, new ParameterInt(aName), aFunctor)
 {
 }
 
-PropertyInt::PropertyInt(Stack& aStack, OpenHome::Net::Parameter* aParameter)
-    : Property(aStack, aParameter)
+PropertyInt::PropertyInt(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
+    : Property(aEnv, aParameter)
 {
 }
 
@@ -360,16 +360,16 @@ PropertyInt::~PropertyInt()
 TInt PropertyInt::Value() const
 {
     TInt val;
-    iStack.Mutex().Wait();
+    iEnv.Mutex().Wait();
     ASSERT(iSequenceNumber > 0);
     val = iValue;
-    iStack.Mutex().Signal();
+    iEnv.Mutex().Signal();
     return val;
 }
 
 void PropertyInt::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     TInt old = iValue;
     aProcessor.ProcessInt(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
@@ -380,7 +380,7 @@ void PropertyInt::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyInt::SetValue(TInt aValue)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue = aValue;
         iSequenceNumber++;
@@ -397,13 +397,13 @@ void PropertyInt::Write(IPropertyWriter& aWriter)
 
 // PropertyUint
 
-PropertyUint::PropertyUint(Stack& aStack, const TChar* aName, Functor& aFunctor)
-    : Property(aStack, new ParameterUint(aName), aFunctor)
+PropertyUint::PropertyUint(Environment& aEnv, const TChar* aName, Functor& aFunctor)
+    : Property(aEnv, new ParameterUint(aName), aFunctor)
 {
 }
 
-PropertyUint::PropertyUint(Stack& aStack, OpenHome::Net::Parameter* aParameter)
-    : Property(aStack, aParameter)
+PropertyUint::PropertyUint(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
+    : Property(aEnv, aParameter)
 {
 }
 
@@ -414,16 +414,16 @@ PropertyUint::~PropertyUint()
 TUint PropertyUint::Value() const
 {
     TInt val;
-    iStack.Mutex().Wait();
+    iEnv.Mutex().Wait();
     ASSERT(iSequenceNumber > 0);
     val = iValue;
-    iStack.Mutex().Signal();
+    iEnv.Mutex().Signal();
     return val;
 }
 
 void PropertyUint::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     TUint old = iValue;
     aProcessor.ProcessUint(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
@@ -434,7 +434,7 @@ void PropertyUint::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyUint::SetValue(TUint aValue)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue = aValue;
         iSequenceNumber++;
@@ -451,13 +451,13 @@ void PropertyUint::Write(IPropertyWriter& aWriter)
 
 // PropertyBool
 
-PropertyBool::PropertyBool(Stack& aStack, const TChar* aName, Functor& aFunctor)
-    : Property(aStack, new ParameterBool(aName), aFunctor)
+PropertyBool::PropertyBool(Environment& aEnv, const TChar* aName, Functor& aFunctor)
+    : Property(aEnv, new ParameterBool(aName), aFunctor)
 {
 }
 
-PropertyBool::PropertyBool(Stack& aStack, OpenHome::Net::Parameter* aParameter)
-    : Property(aStack, aParameter)
+PropertyBool::PropertyBool(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
+    : Property(aEnv, aParameter)
 {
 }
 
@@ -468,16 +468,16 @@ PropertyBool::~PropertyBool()
 TBool PropertyBool::Value() const
 {
     TInt val;
-    iStack.Mutex().Wait();
+    iEnv.Mutex().Wait();
     ASSERT(iSequenceNumber > 0);
     val = iValue;
-    iStack.Mutex().Signal();
+    iEnv.Mutex().Signal();
     return (val != 0);
 }
 
 void PropertyBool::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     TBool old = iValue;
     aProcessor.ProcessBool(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
@@ -488,7 +488,7 @@ void PropertyBool::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyBool::SetValue(TBool aValue)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue = aValue;
         iSequenceNumber++;
@@ -505,13 +505,13 @@ void PropertyBool::Write(IPropertyWriter& aWriter)
 
 // PropertyBinary
 
-PropertyBinary::PropertyBinary(Stack& aStack, const TChar* aName, Functor& aFunctor)
-    : Property(aStack, new ParameterBinary(aName), aFunctor)
+PropertyBinary::PropertyBinary(Environment& aEnv, const TChar* aName, Functor& aFunctor)
+    : Property(aEnv, new ParameterBinary(aName), aFunctor)
 {
 }
 
-PropertyBinary::PropertyBinary(Stack& aStack, OpenHome::Net::Parameter* aParameter)
-    : Property(aStack, aParameter)
+PropertyBinary::PropertyBinary(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
+    : Property(aEnv, aParameter)
 {
 }
 
@@ -521,14 +521,14 @@ PropertyBinary::~PropertyBinary()
 
 const Brx& PropertyBinary::Value() const
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     ASSERT(iSequenceNumber > 0);
     return iValue;
 }
 
 void PropertyBinary::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     Bwh old(iValue.Ptr(), iValue.Bytes());
     aProcessor.ProcessBinary(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
@@ -539,7 +539,7 @@ void PropertyBinary::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyBinary::SetValue(const Brx& aValue)
 {
-    AutoMutex a(iStack.Mutex());
+    AutoMutex a(iEnv.Mutex());
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue.Set(aValue);
         iSequenceNumber++;
@@ -603,8 +603,8 @@ const Brn OpenHome::Net::ServiceType::kUrn("urn:");
 const Brn OpenHome::Net::ServiceType::kService(":service:");
 const Brn OpenHome::Net::ServiceType::kServiceId(":serviceId:");
 
-OpenHome::Net::ServiceType::ServiceType(Stack& aStack, const TChar* aDomain, const TChar* aName, TUint aVersion)
-    : iStack(aStack)
+OpenHome::Net::ServiceType::ServiceType(Environment& aEnv, const TChar* aDomain, const TChar* aName, TUint aVersion)
+    : iEnv(aEnv)
     , iDomain(aDomain)
     , iName(aName)
     , iVersion(aVersion)
@@ -612,7 +612,7 @@ OpenHome::Net::ServiceType::ServiceType(Stack& aStack, const TChar* aDomain, con
 }
 
 OpenHome::Net::ServiceType::ServiceType(const ServiceType& aServiceType)
-    : iStack(aServiceType.iStack)
+    : iEnv(aServiceType.iEnv)
     , iVersion(aServiceType.iVersion)
     , iFullName(aServiceType.FullName())
 {
@@ -641,7 +641,7 @@ TUint OpenHome::Net::ServiceType::Version() const
 
 const Brx& OpenHome::Net::ServiceType::FullName() const
 {
-    iStack.Mutex().Wait();
+    iEnv.Mutex().Wait();
     if (iFullName.Bytes() == 0) {
         const TInt len = kUrn.Bytes() + iDomain.Bytes() + kService.Bytes() +
                              iName.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1;
@@ -654,13 +654,13 @@ const Brx& OpenHome::Net::ServiceType::FullName() const
         Ascii::AppendDec(iFullName, iVersion);
         iFullName.PtrZ();
     }
-    iStack.Mutex().Signal();
+    iEnv.Mutex().Signal();
     return iFullName;
 }
 
 const Brx& OpenHome::Net::ServiceType::FullNameUpnp() const
 {
-    iStack.Mutex().Wait();
+    iEnv.Mutex().Wait();
     if (iServiceType.Bytes() == 0) {
         Bwh upnpDomain(iDomain.Bytes() + 10);
         Ssdp::CanonicalDomainToUpnp(iDomain, upnpDomain);
@@ -675,13 +675,13 @@ const Brx& OpenHome::Net::ServiceType::FullNameUpnp() const
         Ascii::AppendDec(iServiceType, iVersion);
         iServiceType.PtrZ();
     }
-    iStack.Mutex().Signal();
+    iEnv.Mutex().Signal();
     return iServiceType;
 }
 
 const Brx& OpenHome::Net::ServiceType::PathUpnp() const
 {
-    iStack.Mutex().Wait();
+    iEnv.Mutex().Wait();
     if (iPathUpnp.Bytes() == 0) {
         const TInt len = iDomain.Bytes() + 1 + iName.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1;
         iPathUpnp.Grow(len);
@@ -692,13 +692,13 @@ const Brx& OpenHome::Net::ServiceType::PathUpnp() const
         Ascii::AppendDec(iPathUpnp, iVersion);
         iPathUpnp.PtrZ();
     }
-    iStack.Mutex().Signal();
+    iEnv.Mutex().Signal();
     return iPathUpnp;
 }
 
 const Brx& OpenHome::Net::ServiceType::ServiceId() const
 {
-    iStack.Mutex().Wait();
+    iEnv.Mutex().Wait();
     if (iServiceId.Bytes() == 0) {
         Bwh domain(iDomain);
         for (TUint i=0; i<domain.Bytes(); i++) {
@@ -714,15 +714,15 @@ const Brx& OpenHome::Net::ServiceType::ServiceId() const
         iServiceId.Append(iName);
         iServiceId.PtrZ();
     }
-    iStack.Mutex().Signal();
+    iEnv.Mutex().Signal();
     return iServiceId;
 }
 
 
 // Service
 
-Service::Service(Stack& aStack, const TChar* aDomain, const TChar* aName, TUint aVersion)
-    : iServiceType(aStack, aDomain, aName, aVersion)
+Service::Service(Environment& aEnv, const TChar* aDomain, const TChar* aName, TUint aVersion)
+    : iServiceType(aEnv, aDomain, aName, aVersion)
 {
 }
 

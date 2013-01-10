@@ -6,7 +6,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Maths.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/MimeTypes.h>
 #include <OpenHome/Net/Private/Globals.h>
 
@@ -219,11 +219,11 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    std::vector<NetworkAdapter*>* subnetList = gStack->NetworkAdapterList().CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = gEnv->NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
     TUint seed = gDvStack->ServerUpnp().Port((*subnetList)[0]->Address());
     SetRandomSeed(seed);
-    gStack->NetworkAdapterList().DestroySubnetList(subnetList);
+    gEnv->NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();

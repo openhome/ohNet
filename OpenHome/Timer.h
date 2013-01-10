@@ -9,19 +9,17 @@
 
 namespace OpenHome {
 
-namespace Net {
-    class Stack;
-} // namespace OpenHome
+class Environment;
 
 class Time
 {
 public:
-    static TUint Now(Net::Stack& aStack);
+    static TUint Now(Environment& aEnv);
     static TBool IsBeforeOrAt(TUint aQuestionableTime, TUint aTime);
     static TBool IsAfter(TUint aQuestionableTime, TUint aTime);
-    static TBool IsInPastOrNow(Net::Stack& aStack, TUint aTime);
-    static TBool IsInFuture(Net::Stack& aStack, TUint aTime);
-    static TInt TimeToWaitFor(Net::Stack& aStack, TUint aTime);
+    static TBool IsInPastOrNow(Environment& aEnv, TUint aTime);
+    static TBool IsInFuture(Environment& aEnv, TUint aTime);
+    static TInt TimeToWaitFor(Environment& aEnv, TUint aTime);
 };
 
 class QueueSortedEntryTimer : public QueueSortedEntry
@@ -37,12 +35,12 @@ class Timer : public QueueSortedEntryTimer
 {
     friend class TimerManager;
 public:
-    Timer(Net::Stack& aStack, Functor aFunctor);
+    Timer(Environment& aEnv, Functor aFunctor);
     void FireIn(TUint aTime); // Relative (milliseconds from now)
     void FireAt(TUint aTime); // Absolute (at specified millisecond)
     void Cancel();
     ~Timer();
-    static TBool IsInManagerThread(Net::Stack& aStack);
+    static TBool IsInManagerThread(Environment& aEnv);
 private:
     static TBool IsInManagerThread(TimerManager& aMgr);
 private:
@@ -54,7 +52,7 @@ class TimerManager : public QueueSorted<Timer>
 {
     friend class Timer;
 public:
-    TimerManager(Net::Stack& aStack);
+    TimerManager(Environment& aEnv);
     void Stop();
     ~TimerManager();
     void CallbackLock();
@@ -66,7 +64,7 @@ private:
     virtual void HeadChanged(QueueSortedEntry& aEntry);
     virtual TInt Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2);
 private:
-    Net::Stack& iStack;
+    Environment& iEnv;
     QueueSortedEntryTimer iNow;
     Mutex iMutexNow;
     TBool iRemoving;

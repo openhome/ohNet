@@ -89,7 +89,7 @@ objects_core = \
 	$(objdir)sha1.$(objext) \
 	$(objdir)Ssdp.$(objext) \
 	$(objdir)SsdpDv.$(objext) \
-	$(objdir)Stack.$(objext) \
+	$(objdir)Env.$(objext) \
 	$(objdir)Stream.$(objext) \
 	$(objdir)Subscription.$(objext) \
 	$(objdir)Thread.$(objext) \
@@ -165,7 +165,7 @@ headers = \
 	$(inc_build)/OpenHome/Net/Private/ProtocolUpnp.h \
 	$(inc_build)/OpenHome/Net/Private/Service.h \
 	$(inc_build)/OpenHome/Net/Private/Ssdp.h \
-	$(inc_build)/OpenHome/Net/Private/Stack.h \
+	$(inc_build)/OpenHome/Private/Env.h \
 	$(inc_build)/OpenHome/Net/Private/Subscription.h \
 	$(inc_build)/OpenHome/Net/Private/XmlFetcher.h \
 	$(inc_build)/OpenHome/Net/Private/XmlParser.h \
@@ -350,8 +350,8 @@ $(objdir)Ssdp.$(objext) : OpenHome/Net/Ssdp.cpp $(headers)
 	$(compiler)Ssdp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Ssdp.cpp
 $(objdir)SsdpDv.$(objext) : OpenHome/Net/SsdpDv.cpp $(headers)
 	$(compiler)SsdpDv.$(objext) -c $(cflags) $(includes) OpenHome/Net/SsdpDv.cpp
-$(objdir)Stack.$(objext) : OpenHome/Net/Stack.cpp $(headers)
-	$(compiler)Stack.$(objext) -c $(cflags) $(includes) OpenHome/Net/Stack.cpp
+$(objdir)Env.$(objext) : OpenHome/Env.cpp $(headers)
+	$(compiler)Env.$(objext) -c $(cflags) $(includes) OpenHome/Env.cpp
 $(objdir)Stream.$(objext) : OpenHome/Stream.cpp $(headers)
 	$(compiler)Stream.$(objext) -c $(cflags) $(includes) OpenHome/Stream.cpp
 $(objdir)Subscription.$(objext) : OpenHome/Net/Subscription.cpp $(headers)

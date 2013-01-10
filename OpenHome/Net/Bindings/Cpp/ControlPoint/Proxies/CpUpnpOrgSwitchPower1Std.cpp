@@ -99,7 +99,7 @@ CpProxyUpnpOrgSwitchPower1Cpp::CpProxyUpnpOrgSwitchPower1Cpp(CpDeviceCpp& aDevic
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgSwitchPower1Cpp::StatusPropertyChanged);
-    iStatus = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "Status", functor);
+    iStatus = new PropertyBool(aDevice.Device().GetCpStack().Env(), "Status", functor);
     AddProperty(iStatus);
 }
 

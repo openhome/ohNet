@@ -31,7 +31,7 @@ class NetworkAdapterList : private IStackObject, private INetworkAdapterChangeNo
 public:
     static const TUint kListenerIdNull = 0;
 public:
-    NetworkAdapterList(Net::Stack& aStack, TIpAddress aDefaultSubnet=0);
+    NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSubnet=0);
     virtual ~NetworkAdapterList();
     NetworkAdapter* CurrentAdapter(const char* aCookie) const;
     const std::vector<NetworkAdapter*>& List() const;
@@ -85,7 +85,7 @@ private: // from INetworkAdapterChangeNotifier
     void NotifyAdapterRemoved(NetworkAdapter& aAdapter);
     void NotifyAdapterChanged(NetworkAdapter& aAdapter);
 private:
-    Net::Stack& iStack;
+    Environment& iEnv;
     mutable Mutex iListLock;
     Mutex iListenerLock;
     std::vector<NetworkAdapter*>* iNetworkAdapters;

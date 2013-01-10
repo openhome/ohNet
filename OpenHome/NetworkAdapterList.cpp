@@ -2,7 +2,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <algorithm>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
@@ -11,20 +11,20 @@ using namespace OpenHome;
 
 // NetworkAdapterList
 
-NetworkAdapterList::NetworkAdapterList(Net::Stack& aStack, TIpAddress aDefaultSubnet)
-    : iStack(aStack)
+NetworkAdapterList::NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSubnet)
+    : iEnv(aEnv)
     , iListLock("MNIL")
     , iListenerLock("MNIO")
     , iCurrent(NULL)
     , iNextListenerId(1)
 {
-    iStack.AddObject(this);
+    iEnv.AddObject(this);
     iDefaultSubnet = aDefaultSubnet;
     iNotifierThread = new NetworkAdapterChangeNotifier(*this);
     iNotifierThread->Start();
-    iNetworkAdapters = Os::NetworkListAdapters(iStack, iStack.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
+    iNetworkAdapters = Os::NetworkListAdapters(iEnv, iEnv.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
-    Os::NetworkSetInterfaceChangedObserver(iStack.OsCtx(), &InterfaceListChanged, this);
+    Os::NetworkSetInterfaceChangedObserver(iEnv.OsCtx(), &InterfaceListChanged, this);
     for (size_t i=0; i<iSubnets->size(); i++) {
         TraceAdapter("NetworkAdapter added", *(*iSubnets)[i]);
     }
@@ -35,7 +35,7 @@ NetworkAdapterList::~NetworkAdapterList()
     delete iNotifierThread;
     DestroySubnetList(iNetworkAdapters);
     DestroySubnetList(iSubnets);
-    iStack.RemoveObject(this);
+    iEnv.RemoveObject(this);
 }
 
 NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
@@ -98,7 +98,7 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     iDefaultSubnet = aSubnet;
     UpdateCurrentAdapter();
     iListLock.Signal();
-    const TBool started = (iStack.CpiStack() != NULL || iStack.DviStack() != NULL);
+    const TBool started = (iEnv.CpiStack() != NULL || iEnv.DviStack() != NULL);
     if (started && aSubnet != oldSubnet) {
         iNotifierThread->QueueCurrentChanged();
     }
@@ -280,7 +280,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 {
     static const char* kRemovedAdapterCookie = "RemovedAdapter";
     iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iStack, iStack.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iEnv.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;

@@ -11,7 +11,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
 #include <OpenHome/Net/Core/CpUpnpOrgConnectionManager1.h>
 #include <OpenHome/Net/Core/CpAvOpenHomeOrgPlaylist1.h>

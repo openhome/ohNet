@@ -19,9 +19,11 @@
 EXCEPTION(ParameterValidationError);
 
 namespace OpenHome {
+
+class Environment;
+    
 namespace Net {
 
-class Stack;
 
 /**
  * Parameter.  Each action has 0..n of these
@@ -198,13 +200,13 @@ public:
     virtual void Process(IOutputProcessor& aProcessor, const Brx& aBuffer) = 0;
     virtual void Write(IPropertyWriter& aWriter) = 0;
 protected:
-    Property(Stack& aStack, OpenHome::Net::Parameter* aParameter, Functor& aFunctor);
-    Property(Stack& aStack, OpenHome::Net::Parameter* aParameter);
+    Property(Environment& aStack, OpenHome::Net::Parameter* aParameter, Functor& aFunctor);
+    Property(Environment& aStack, OpenHome::Net::Parameter* aParameter);
     void operator=(const Property &);
 private:
     void Construct(OpenHome::Net::Parameter* aParameter);
 protected:
-    Stack& iStack;
+    Environment& iEnv;
     OpenHome::Net::Parameter* iParameter;
     Functor iFunctor;
     TBool iChanged;
@@ -217,8 +219,8 @@ protected:
 class PropertyString : public Property
 {
 public:
-    DllExport PropertyString(Stack& aStack, const TChar* aName, Functor& aFunctor);
-    DllExport PropertyString(Stack& aStack, OpenHome::Net::Parameter* aParameter);
+    DllExport PropertyString(Environment& aStack, const TChar* aName, Functor& aFunctor);
+    DllExport PropertyString(Environment& aStack, OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyString();
     DllExport const Brx& Value() const; // !!!! threadsafe?
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -234,8 +236,8 @@ private:
 class PropertyInt : public Property
 {
 public:
-    DllExport PropertyInt(Stack& aStack, const TChar* aName, Functor& aFunctor);
-    DllExport PropertyInt(Stack& aStack, OpenHome::Net::Parameter* aParameter);
+    DllExport PropertyInt(Environment& aStack, const TChar* aName, Functor& aFunctor);
+    DllExport PropertyInt(Environment& aStack, OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyInt();
     DllExport TInt Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -251,8 +253,8 @@ private:
 class PropertyUint : public Property
 {
 public:
-    DllExport PropertyUint(Stack& aStack, const TChar* aName, Functor& aFunctor);
-    DllExport PropertyUint(Stack& aStack, OpenHome::Net::Parameter* aParameter);
+    DllExport PropertyUint(Environment& aStack, const TChar* aName, Functor& aFunctor);
+    DllExport PropertyUint(Environment& aStack, OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyUint();
     DllExport TUint Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -268,8 +270,8 @@ private:
 class PropertyBool : public Property
 {
 public:
-    DllExport PropertyBool(Stack& aStack, const TChar* aName, Functor& aFunctor);
-    DllExport PropertyBool(Stack& aStack, OpenHome::Net::Parameter* aParameter);
+    DllExport PropertyBool(Environment& aStack, const TChar* aName, Functor& aFunctor);
+    DllExport PropertyBool(Environment& aStack, OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyBool();
     DllExport TBool Value() const; // !!!! threadsafe?
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -285,8 +287,8 @@ private:
 class PropertyBinary : public Property
 {
 public:
-    DllExport PropertyBinary(Stack& aStack, const TChar* aName, Functor& aFunctor);
-    DllExport PropertyBinary(Stack& aStack, OpenHome::Net::Parameter* aParameter);
+    DllExport PropertyBinary(Environment& aStack, const TChar* aName, Functor& aFunctor);
+    DllExport PropertyBinary(Environment& aStack, OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyBinary();
     DllExport const Brx& Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -341,7 +343,7 @@ private:
 class ServiceType
 {
 public:
-    ServiceType(Stack& aStack, const TChar* aDomain, const TChar* aName, TUint aVersion);
+    ServiceType(Environment& aStack, const TChar* aDomain, const TChar* aName, TUint aVersion);
     ServiceType(const ServiceType& aServiceType);
     ~ServiceType();
     const Brx& Domain() const;
@@ -357,7 +359,7 @@ private:
     static const Brn kService;
     static const Brn kServiceId;
 private:
-    Stack& iStack;
+    Environment& iEnv;
     Brh iDomain;
     Brh iName;
     TUint iVersion;
@@ -382,7 +384,7 @@ public:
      */
     const OpenHome::Net::ServiceType& ServiceType() const;
 protected:
-    Service(Stack& aStack, const TChar* aDomain, const TChar* aName, TUint aVersion);
+    Service(Environment& aStack, const TChar* aDomain, const TChar* aName, TUint aVersion);
     virtual ~Service() {}
 protected:
     OpenHome::Net::ServiceType iServiceType;

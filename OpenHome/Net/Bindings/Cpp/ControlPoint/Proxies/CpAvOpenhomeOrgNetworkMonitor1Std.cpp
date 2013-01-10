@@ -82,16 +82,16 @@ CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::CpProxyAvOpenhomeOrgNetworkMonitor1Cpp(C
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::NamePropertyChanged);
-    iName = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Name", functor);
+    iName = new PropertyString(aDevice.Device().GetCpStack().Env(), "Name", functor);
     AddProperty(iName);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::SenderPropertyChanged);
-    iSender = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Sender", functor);
+    iSender = new PropertyUint(aDevice.Device().GetCpStack().Env(), "Sender", functor);
     AddProperty(iSender);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::ReceiverPropertyChanged);
-    iReceiver = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Receiver", functor);
+    iReceiver = new PropertyUint(aDevice.Device().GetCpStack().Env(), "Receiver", functor);
     AddProperty(iReceiver);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::ResultsPropertyChanged);
-    iResults = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Results", functor);
+    iResults = new PropertyUint(aDevice.Device().GetCpStack().Env(), "Results", functor);
     AddProperty(iResults);
 }
 

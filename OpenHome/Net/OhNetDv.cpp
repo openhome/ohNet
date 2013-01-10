@@ -7,10 +7,10 @@ using namespace OpenHome::Net;
 
 DvStack* Library::StartDv()
 {
-    return new DvStack(*iStack);
+    return new DvStack(*iEnv);
 }
 
 void UpnpLibrary::StartDv()
 { // static
-    gDvStack = new DvStack(*gStack);
+    gDvStack = new DvStack(*gEnv);
 }

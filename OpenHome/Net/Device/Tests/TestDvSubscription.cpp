@@ -10,7 +10,7 @@
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Maths.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 
 #include <vector>
@@ -186,8 +186,8 @@ void CpDevices::UpdatesComplete()
 
 void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack)
 {
-    Stack& stack = aDvStack.GetStack();
-    InitialisationParams& initParams = stack.InitParams();
+    Environment& env = aDvStack.Env();
+    InitialisationParams& initParams = env.InitParams();
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(1);
     Print("TestDvSubscription - starting\n");

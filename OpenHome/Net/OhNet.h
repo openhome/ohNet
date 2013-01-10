@@ -25,9 +25,7 @@ public:
     virtual void ListObjectDetails() const = 0;
 };
 
-namespace Net {
-    class Stack;
-} // namespace Net
+class Environment;
 
 /**
  * Auto ptr for NetworkAdapter references.
@@ -36,7 +34,7 @@ namespace Net {
 class AutoNetworkAdapterRef
 {
 public:
-    AutoNetworkAdapterRef(Net::Stack& aStack, const char* aCookie); // creates ref to stack's current adapter
+    AutoNetworkAdapterRef(Environment& aEnv, const char* aCookie); // creates ref to stack's current adapter
     AutoNetworkAdapterRef(NetworkAdapter* aAdapter, const char* aCookie);
     ~AutoNetworkAdapterRef();
     NetworkAdapter* Adapter();
@@ -58,7 +56,7 @@ public:
      *
      * Not intended for external use
      *
-     * @param[in] aStack    Returned by UpnpLibrary::Initialise().
+     * @param[in] aEnv      Returned by UpnpLibrary::Initialise().
      * @param[in] aAddress  IPv4 address for the interface (in network byte order)
      * @param[in] aNetMask  IPv4 net mask for the interface (in network byte order)
      * @param[in] aName     Name for the interface.  Will be copied inside this function
@@ -68,7 +66,7 @@ public:
      *                      leaked NetworkAdapter references.  The later matching call
      *                      to RemoveRef must use the same cookie.
      */
-    NetworkAdapter(Net::Stack& aStack, TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie);
+    NetworkAdapter(Environment& aEnv, TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie);
     /**
      * Add a reference.  This NetworkAdapter instance won't be deleted until the last reference is removed.
      *
@@ -134,7 +132,7 @@ private:
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
-    Net::Stack* iStack;
+    Environment* iEnv;
     TUint iRefCount;
     TIpAddress iAddress;
     TIpAddress iNetMask;
@@ -381,7 +379,6 @@ private:
     bool iEnableBonjour;
 };
 
-class Stack;
 class CpStack;
 class DvStack;
 
@@ -434,9 +431,9 @@ public:
     /**
      * For internal use only
      *
-     * @return  Stack instance
+     * @return  Environment instance
      */
-    Stack& GetStack();
+    Environment& Env();
 
     /**
      * Create a vector of the available subnets.
@@ -496,7 +493,7 @@ public:
      */
     NetworkAdapter* CurrentSubnetAdapter(const char* aCookie);
 private:
-    OpenHome::Net::Stack* iStack;
+    OpenHome::Environment* iEnv;
 };
 
 
@@ -515,7 +512,7 @@ public:
      *
      * @param aInitParams  Initialisation options.  Ownership of these passes to the library.
      */
-    static Stack* Initialise(InitialisationParams* aInitParams);
+    static Environment* Initialise(InitialisationParams* aInitParams);
 
     /**
      * Lightweight alternative to UpnpLibraryInitialise.
@@ -526,7 +523,7 @@ public:
      * @param aInitParams  Initialisation options.  Only ILogOutput will be used.
      *                     Ownership of these passes to the library.
      */
-    static Stack* InitialiseMinimal(InitialisationParams* aInitParams);
+    static Environment* InitialiseMinimal(InitialisationParams* aInitParams);
 
     /**
      * Start the library as a UPnP control point stack

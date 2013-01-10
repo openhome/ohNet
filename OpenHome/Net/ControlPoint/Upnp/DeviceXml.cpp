@@ -4,7 +4,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Private/Converter.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;

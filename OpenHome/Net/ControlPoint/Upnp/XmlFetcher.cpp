@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Private/XmlFetcher.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Http.h>
@@ -17,7 +17,7 @@ void XmlFetch::Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
 {
     iUri = aUri;
     iFunctor = aFunctor;
-    iSequenceNumber = iCpStack.GetStack().SequenceNumber();
+    iSequenceNumber = iCpStack.Env().SequenceNumber();
 }
 
 XmlFetch::~XmlFetch()
@@ -32,7 +32,7 @@ const OpenHome::Uri& XmlFetch::Uri() const
 
 void XmlFetch::SignalCompleted()
 {
-    FunctorAsync& asyncEndHandler = iCpStack.GetStack().InitParams().AsyncEndHandler();
+    FunctorAsync& asyncEndHandler = iCpStack.Env().InitParams().AsyncEndHandler();
     if (asyncEndHandler) {
         asyncEndHandler(*this);
     }
@@ -41,7 +41,7 @@ void XmlFetch::SignalCompleted()
         iFunctor(*this);
     }
     catch(XmlFetchError&) {
-        FunctorAsync& asyncErrorHandler = iCpStack.GetStack().InitParams().AsyncErrorHandler();
+        FunctorAsync& asyncErrorHandler = iCpStack.Env().InitParams().AsyncErrorHandler();
         if (asyncErrorHandler) {
             asyncErrorHandler(*this);
         }
@@ -69,7 +69,7 @@ void XmlFetch::Fetch()
     LOG(kXmlFetch, "\n");
     
     OpenHome::SocketTcpClient socket;
-    socket.Open(iCpStack.GetStack());
+    socket.Open(iCpStack.Env());
     AutoSocket a(socket);
     iLock.Wait();
     if (iInterrupted) {
@@ -81,7 +81,7 @@ void XmlFetch::Fetch()
     iLock.Signal();
     try {
         Endpoint endpoint(iUri->Port(), iUri->Host());
-        TUint timeout = iCpStack.GetStack().InitParams().TcpConnectTimeoutMs();
+        TUint timeout = iCpStack.Env().InitParams().TcpConnectTimeoutMs();
         socket.Connect(endpoint, timeout);
     }
     catch (NetworkTimeout&) {
@@ -153,7 +153,7 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
 void XmlFetch::Read(SocketTcpClient& aSocket)
 {
     Srd readBuffer(kRwBufferLength, aSocket);
-    ReaderHttpResponse readerResponse(iCpStack.GetStack(), readBuffer);
+    ReaderHttpResponse readerResponse(iCpStack.Env(), readBuffer);
     HttpHeaderContentLength headerContentLength;
     HttpHeaderTransferEncoding headerTransferEncoding;
 
@@ -204,7 +204,7 @@ void XmlFetch::Read(SocketTcpClient& aSocket)
 
 void XmlFetch::Output(IAsyncOutput& aConsole)
 {
-    Mutex& lock = iCpStack.GetStack().Mutex();
+    Mutex& lock = iCpStack.Env().Mutex();
     lock.Wait();
     Bws<Ascii::kMaxUintStringBytes+1> buf;
     (void)Ascii::AppendDec(buf, iSequenceNumber);
@@ -304,9 +304,9 @@ XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
     : Thread("FETM")
     , iCpStack(aCpStack)
     , iLock("FETL")
-    , iFree(iCpStack.GetStack().InitParams().NumXmlFetcherThreads())
+    , iFree(iCpStack.Env().InitParams().NumXmlFetcherThreads())
 {
-    const TUint numThreads = iCpStack.GetStack().InitParams().NumXmlFetcherThreads();
+    const TUint numThreads = iCpStack.Env().InitParams().NumXmlFetcherThreads();
     iFetchers = (XmlFetcher**)malloc(sizeof(*iFetchers) * numThreads);
     TChar thName[5] = "FET ";
 #ifndef _WIN32
@@ -335,7 +335,7 @@ XmlFetchManager::~XmlFetchManager()
 
     iFree.ReadInterrupt();
 
-    for (TUint i=0; i<iCpStack.GetStack().InitParams().NumXmlFetcherThreads(); i++) {
+    for (TUint i=0; i<iCpStack.Env().InitParams().NumXmlFetcherThreads(); i++) {
         delete iFetchers[i];
     }
     free(iFetchers);
@@ -364,7 +364,7 @@ void XmlFetchManager::Fetch(XmlFetch* aFetch)
     LOG(kXmlFetch, aFetch->Uri().AbsoluteUri());
     LOG(kXmlFetch, "\n");
 
-    FunctorAsync& asyncBeginHandler = iCpStack.GetStack().InitParams().AsyncBeginHandler();
+    FunctorAsync& asyncBeginHandler = iCpStack.Env().InitParams().AsyncBeginHandler();
     if (asyncBeginHandler) {
         asyncBeginHandler(*aFetch);
     }

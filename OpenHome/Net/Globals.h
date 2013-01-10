@@ -2,15 +2,17 @@
 #define OHNET_GLOBALS
 
 namespace OpenHome {
+
+class Environment;
+extern Environment* gEnv;
+
 namespace Net {
 
-class Stack;
 class CpStack;
 class DvStack;
 
-extern Stack* gStack;
-extern CpStack* gCpStack;
-extern DvStack* gDvStack;
+extern CpStack*     gCpStack;
+extern DvStack*     gDvStack;
 
 } // namespace Net
 } // namespace OpenHome

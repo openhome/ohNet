@@ -10,7 +10,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Net/Private/DviStack.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -66,7 +66,7 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
     Brn tmp(sid);
     Brh transfer(tmp);
     aSubscription.SetSid(transfer);
-    TUint durationSecs = iDeviceCp->GetCpStack().GetStack().InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams().SubscriptionDurationSecs();
     iSubscriptionDv = new DviSubscription(iDeviceDv.GetDvStack(), iDeviceDv, *this, NULL, sid, durationSecs);
     iSubscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
     iDeviceDv.GetDvStack().SubscriptionManager().AddSubscription(*iSubscriptionDv);
@@ -79,7 +79,7 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
 
 TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
 {
-    TUint durationSecs = iDeviceCp->GetCpStack().GetStack().InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams().SubscriptionDurationSecs();
     iSubscriptionDv->Renew(durationSecs);
     return durationSecs;
 }

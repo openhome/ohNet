@@ -8,9 +8,11 @@
 #include <OpenHome/Private/Network.h>
 
 namespace OpenHome {
+
+class Environment;
+    
 namespace Net {
 
-class Stack;
 class DvStack;
 
 enum ESsdpTarget
@@ -69,8 +71,8 @@ public:
     static void WriteSearchTypeDeviceType(IWriterHttpHeader& aWriter, const Brx& aDomain, const Brx& aType, TUint aVersion);
     static void WriteSearchTypeServiceType(IWriterHttpHeader& aWriter, const Brx& aDomain, const Brx& aType, TUint aVersion);
     static void WriteSearchTypeAll(IWriterHttpHeader& aWriter);
-    static void WriteServer(Stack& aStack, IWriterHttpHeader& aWriter);
-    static void WriteMaxAge(Stack& aStack, IWriterHttpHeader& aWriter);
+    static void WriteServer(Environment& aEnv, IWriterHttpHeader& aWriter);
+    static void WriteMaxAge(Environment& aEnv, IWriterHttpHeader& aWriter);
     static void WriteLocation(IWriterHttpHeader& aWriter, const Brx& aUrl);
     static void WriteSubTypeAlive(IWriterHttpHeader& aWriter);
     static void WriteSubTypeByeBye(IWriterHttpHeader& aWriter);

@@ -1,6 +1,6 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/OsWrapper.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Debug.h>
 
@@ -8,9 +8,9 @@ using namespace OpenHome;
 
 // Time
 
-TUint Time::Now(Net::Stack& aStack)
+TUint Time::Now(Environment& aEnv)
 {
-    return Os::TimeInMs(aStack.OsCtx());
+    return Os::TimeInMs(aEnv.OsCtx());
 };
 
 TBool Time::IsBeforeOrAt(TUint aQuestionableTime, TUint aTime)
@@ -25,25 +25,25 @@ TBool Time::IsAfter(TUint aQuestionableTime, TUint aTime)
     return (diff < 0);
 }
 
-TBool Time::IsInPastOrNow(Net::Stack& aStack, TUint aTime)
+TBool Time::IsInPastOrNow(Environment& aEnv, TUint aTime)
 {
-    return (IsBeforeOrAt(aTime, Now(aStack)));
+    return (IsBeforeOrAt(aTime, Now(aEnv)));
 }
 
-TBool Time::IsInFuture(Net::Stack& aStack, TUint aTime)
+TBool Time::IsInFuture(Environment& aEnv, TUint aTime)
 {
-    return (IsAfter(aTime, Now(aStack)));
+    return (IsAfter(aTime, Now(aEnv)));
 }
 
-TInt Time::TimeToWaitFor(Net::Stack& aStack, TUint aTime)
+TInt Time::TimeToWaitFor(Environment& aEnv, TUint aTime)
 {
-    return (aTime - Os::TimeInMs(aStack.OsCtx()));
+    return (aTime - Os::TimeInMs(aEnv.OsCtx()));
 }
 
 // Timer
 
-Timer::Timer(Net::Stack& aStack, Functor aFunctor)
-    : iMgr(aStack.TimerManager())
+Timer::Timer(Environment& aEnv, Functor aFunctor)
+    : iMgr(aEnv.TimerManager())
     , iFunctor(aFunctor)
 {
 }
@@ -51,7 +51,7 @@ Timer::Timer(Net::Stack& aStack, Functor aFunctor)
 void Timer::FireIn(TUint aTime)
 {
     LOG(kTimer, ">Timer::FireIn(%d)\n", aTime);
-    FireAt(Time::Now(iMgr.iStack) + aTime);
+    FireAt(Time::Now(iMgr.iEnv) + aTime);
     LOG(kTimer, "<Timer::FireIn(%d)\n", aTime);
 }
 
@@ -78,9 +78,9 @@ void Timer::Cancel()
     LOG(kTimer, "<Timer::Cancel()\n");
 }
 
-TBool Timer::IsInManagerThread(OpenHome::Net::Stack& aStack)
+TBool Timer::IsInManagerThread(OpenHome::Environment& aEnv)
 { // static
-    return IsInManagerThread(aStack.TimerManager());
+    return IsInManagerThread(aEnv.TimerManager());
 }
 
 TBool Timer::IsInManagerThread(TimerManager& aMgr)
@@ -100,8 +100,8 @@ Timer::~Timer()
 
 // TimerManager
 
-TimerManager::TimerManager(Net::Stack& aStack)
-    : iStack(aStack)
+TimerManager::TimerManager(Environment& aEnv)
+    : iEnv(aEnv)
     , iMutexNow("NOWM")
     , iRemoving(false)
     , iSemaphore("TIMM", 0)
@@ -202,7 +202,7 @@ void TimerManager::HeadChanged(QueueSortedEntry& aEntry)
 
 void TimerManager::Fire()
 {
-    TUint now = Os::TimeInMs(iStack.OsCtx());
+    TUint now = Os::TimeInMs(iEnv.OsCtx());
     iMutexNow.Wait();
     iRemoving = true;
     iNow.iTime = now + 1; // will go after all the entries before or at now
@@ -249,7 +249,7 @@ void TimerManager::Run()
     iSemaphore.Wait();
     iMutex.Wait();
     while (!iStop) {
-        TInt delay = Time::TimeToWaitFor(iStack, iNextTimer);
+        TInt delay = Time::TimeToWaitFor(iEnv, iNextTimer);
         iMutex.Signal();
         if (delay <= 0) { // in the past or now
             Fire();

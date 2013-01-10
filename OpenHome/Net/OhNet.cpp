@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Core/OhNet.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
@@ -14,10 +14,10 @@ using namespace OpenHome::Net;
 
 // AutoNetworkAdapterRef
     
-AutoNetworkAdapterRef::AutoNetworkAdapterRef(Net::Stack& aStack, const char* aCookie)
+AutoNetworkAdapterRef::AutoNetworkAdapterRef(Environment& aEnv, const char* aCookie)
     : iCookie(aCookie)
 {
-    iAdapter = aStack.NetworkAdapterList().CurrentAdapter(aCookie);
+    iAdapter = aEnv.NetworkAdapterList().CurrentAdapter(aCookie);
 }
 
 AutoNetworkAdapterRef::AutoNetworkAdapterRef(NetworkAdapter* aAdapter, const char* aCookie)
@@ -46,33 +46,33 @@ const NetworkAdapter* AutoNetworkAdapterRef::Adapter() const
 
 // NetworkAdapter
 
-NetworkAdapter::NetworkAdapter(Net::Stack& aStack, TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie)
-    : iStack(&aStack)
+NetworkAdapter::NetworkAdapter(Environment& aEnv, TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie)
+    : iEnv(&aEnv)
     , iRefCount(1)
     , iAddress(aAddress)
     , iNetMask(aNetMask)
     , iName(aName)
 {
-    iStack->AddObject(this);
+    iEnv->AddObject(this);
     iCookies.push_back(aCookie);
 }
 
 NetworkAdapter::~NetworkAdapter()
 {
-    iStack->RemoveObject(this);
+    iEnv->RemoveObject(this);
 }
 
 void NetworkAdapter::AddRef(const char* aCookie)
 {
-    iStack->Mutex().Wait();
+    iEnv->Mutex().Wait();
     iRefCount++;
     iCookies.push_back(aCookie);
-    iStack->Mutex().Signal();
+    iEnv->Mutex().Signal();
 }
 
 void NetworkAdapter::RemoveRef(const char* aCookie)
 {
-    iStack->Mutex().Wait();
+    iEnv->Mutex().Wait();
     TBool dead = (--iRefCount == 0);
     TBool foundCookie = false;
     for (TUint i=0; i<(TUint)iCookies.size(); i++) {
@@ -83,7 +83,7 @@ void NetworkAdapter::RemoveRef(const char* aCookie)
         }
     }
     ASSERT(foundCookie);
-    iStack->Mutex().Signal();
+    iEnv->Mutex().Signal();
     if (dead) {
         delete this;
     }
@@ -539,7 +539,7 @@ InitialisationParams::InitialisationParams()
 void InitialisationParams::FatalErrorHandlerDefault(const char* aMsg)
 {
     Log::Print(aMsg);
-    Os::Quit(gStack->OsCtx());
+    Os::Quit(gEnv->OsCtx());
 }
 
 
@@ -560,25 +560,25 @@ static OsContext* BaseInit(InitialisationParams* aInitParams)
 Library::Library(InitialisationParams* aInitParams)
 {
     OsContext* ctx = BaseInit(aInitParams);
-    iStack = new OpenHome::Net::Stack(ctx, aInitParams);
+    iEnv = new OpenHome::Environment(ctx, aInitParams);
     //Debug::SetLevel(Debug::kError);
-    gStack = iStack; // Exception still references gStack
+    gEnv = iEnv; // Exception still references gEnv
 }
 
 Library::~Library()
 {
-    delete iStack;
-    gStack = NULL;
+    delete iEnv;
+    gEnv = NULL;
 }
 
-OpenHome::Net::Stack& Library::GetStack()
+OpenHome::Environment& Library::Env()
 {
-    return *iStack;
+    return *iEnv;
 }
 
 std::vector<NetworkAdapter*>* Library::CreateSubnetList()
 {
-    return iStack->NetworkAdapterList().CreateSubnetList();
+    return iEnv->NetworkAdapterList().CreateSubnetList();
 }
 
 void Library::DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList)
@@ -588,7 +588,7 @@ void Library::DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList)
 
 std::vector<NetworkAdapter*>* Library::CreateNetworkAdapterList()
 {
-    return iStack->NetworkAdapterList().CreateNetworkAdapterList();
+    return iEnv->NetworkAdapterList().CreateNetworkAdapterList();
 }
 
 void Library::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetworkAdapterList)
@@ -598,46 +598,46 @@ void Library::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetworkAd
 
 void Library::SetCurrentSubnet(TIpAddress aSubnet)
 {
-    iStack->NetworkAdapterList().SetCurrentSubnet(aSubnet);
+    iEnv->NetworkAdapterList().SetCurrentSubnet(aSubnet);
 }
 
 NetworkAdapter* Library::CurrentSubnetAdapter(const char* aCookie)
 {
-    return iStack->NetworkAdapterList().CurrentAdapter(aCookie);
+    return iEnv->NetworkAdapterList().CurrentAdapter(aCookie);
 }
 
 
 // UpnpLibrary
 
-Stack* UpnpLibrary::Initialise(InitialisationParams* aInitParams)
+Environment* UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
-    ASSERT(gStack == NULL);
+    ASSERT(gEnv == NULL);
     OsContext* ctx = BaseInit(aInitParams);
-    Stack* stack = new Stack(ctx, aInitParams);
+    Environment* env = new Environment(ctx, aInitParams);
     //Debug::SetLevel(Debug::kError);
-    gStack = stack;
-    return stack;
+    gEnv = env;
+    return env;
 }
 
-Stack* UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
+Environment* UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 {
     OsContext* ctx = BaseInit(aInitParams);
-    Stack* stack = new Stack(ctx);
-    gStack = stack;
-    return stack;
+    Environment* env = new Environment(ctx);
+    gEnv = env;
+    return env;
 }
 
 void UpnpLibrary::Close()
 {
-    OsContext* ctx = gStack->OsCtx();
-    delete gStack;
-    gStack = NULL;
+    OsContext* ctx = gEnv->OsCtx();
+    delete gEnv;
+    gEnv = NULL;
     OpenHome::Os::Destroy(ctx);
 }
 
 std::vector<NetworkAdapter*>* UpnpLibrary::CreateSubnetList()
 {
-    return gStack->NetworkAdapterList().CreateSubnetList();
+    return gEnv->NetworkAdapterList().CreateSubnetList();
 }
 
 void UpnpLibrary::DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList)
@@ -647,7 +647,7 @@ void UpnpLibrary::DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList)
 
 std::vector<NetworkAdapter*>* UpnpLibrary::CreateNetworkAdapterList()
 {
-    return gStack->NetworkAdapterList().CreateNetworkAdapterList();
+    return gEnv->NetworkAdapterList().CreateNetworkAdapterList();
 }
 
 void UpnpLibrary::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetworkAdapterList)
@@ -657,10 +657,10 @@ void UpnpLibrary::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetwo
 
 void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
 {
-    gStack->NetworkAdapterList().SetCurrentSubnet(aSubnet);
+    gEnv->NetworkAdapterList().SetCurrentSubnet(aSubnet);
 }
 
 NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter(const char* aCookie)
 {
-    return gStack->NetworkAdapterList().CurrentAdapter(aCookie);
+    return gEnv->NetworkAdapterList().CurrentAdapter(aCookie);
 }

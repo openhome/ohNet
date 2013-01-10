@@ -8,7 +8,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Private/DviStack.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -34,14 +34,14 @@ void Ssdp::WriteNextBootId(DvStack& aDvStack, IWriterHttpHeader& aWriter)
 
 SsdpNotifier::SsdpNotifier(DvStack& aDvStack, TIpAddress aInterface, TUint aConfigId)
     : iDvStack(aDvStack)
-    , iSocket(aDvStack.GetStack(), 0, aInterface)
+    , iSocket(aDvStack.Env(), 0, aInterface)
     , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocketWriter)
     , iWriter(iBuffer)
     , iInterface(aInterface)
     , iConfigId(aConfigId)
 {
-    iSocket.SetTtl(iDvStack.GetStack().InitParams().MsearchTtl()); 
+    iSocket.SetTtl(iDvStack.Env().InitParams().MsearchTtl()); 
 }
 
 void SsdpNotifier::SsdpNotify(const Brx& aUri, ENotificationType aNotificationType)
@@ -53,8 +53,8 @@ void SsdpNotifier::SsdpNotify(const Brx& aUri, ENotificationType aNotificationTy
     switch (aNotificationType)
     {
     case EAlive:
-        Ssdp::WriteServer(iDvStack.GetStack(), iWriter);
-        Ssdp::WriteMaxAge(iDvStack.GetStack(), iWriter);
+        Ssdp::WriteServer(iDvStack.Env(), iWriter);
+        Ssdp::WriteMaxAge(iDvStack.Env(), iWriter);
         Ssdp::WriteLocation(iWriter, aUri);
         Ssdp::WriteSubTypeAlive(iWriter);
         // !!!! Ssdp::WriteSearchPort(iWriter, ????);
@@ -203,8 +203,8 @@ void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint)
 void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)
 {
     Ssdp::WriteStatus(iWriter);
-    Ssdp::WriteServer(iDvStack.GetStack(), iWriter);
-    Ssdp::WriteMaxAge(iDvStack.GetStack(), iWriter);
+    Ssdp::WriteServer(iDvStack.Env(), iWriter);
+    Ssdp::WriteMaxAge(iDvStack.Env(), iWriter);
     Ssdp::WriteExt(iWriter);
     Ssdp::WriteLocation(iWriter, aUri);
     Ssdp::WriteBootId(iDvStack, iWriter);
@@ -215,7 +215,7 @@ void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)
 void SsdpMsearchResponder::Flush()
 {
     iWriter.WriteFlush();
-    SocketUdp socket(iDvStack.GetStack());
+    SocketUdp socket(iDvStack.Env());
     socket.Send(iResponse, iRemote);
     iBuffer.Flush();
 }

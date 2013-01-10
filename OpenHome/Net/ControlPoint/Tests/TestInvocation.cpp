@@ -9,7 +9,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
@@ -28,7 +28,7 @@ static TUint gActionCount = 0;
 class DeviceListTI
 {
 public:
-    DeviceListTI(Stack& aStack);
+    DeviceListTI(Environment& aEnv);
     ~DeviceListTI();
     void Stop();
     void TestSync();
@@ -40,7 +40,7 @@ private:
     void TimerExpired();
     void GetProtocolInfoComplete(IAsync& aAsync);
 private:
-    Stack& iStack;
+    Environment& iEnv;
     Mutex iLock;
     std::vector<CpDevice*> iList;
     TBool iStopped;
@@ -51,8 +51,8 @@ private:
 };
 
 
-DeviceListTI::DeviceListTI(Stack& aStack)
-    : iStack(aStack)
+DeviceListTI::DeviceListTI(Environment& aEnv)
+    : iEnv(aEnv)
     , iLock("DLMX")
     , iStopped(false)
     , iPollStop("SDPS", 0)
@@ -104,7 +104,7 @@ void DeviceListTI::TestSync()
 
 void DeviceListTI::Poll()
 {
-    Timer timer(iStack, MakeFunctor(*this, &DeviceListTI::TimerExpired));
+    Timer timer(iEnv, MakeFunctor(*this, &DeviceListTI::TimerExpired));
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceListTI::GetProtocolInfoComplete);
     Brh tmp;
     const TUint count = (TUint)iList.size();
@@ -114,9 +114,9 @@ void DeviceListTI::Poll()
         Print("Device ");
         Print(device->Udn());
         iConnMgr = new CpProxyUpnpOrgConnectionManager1(*device);
-        iStopTimeMs = Os::TimeInMs(iStack.OsCtx()) + kDevicePollMs;
+        iStopTimeMs = Os::TimeInMs(iEnv.OsCtx()) + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
-        for (TUint j=0; j<iStack.InitParams().NumActionInvokerThreads(); j++) {
+        for (TUint j=0; j<iEnv.InitParams().NumActionInvokerThreads(); j++) {
             iConnMgr->BeginGetProtocolInfo(callback);
         }
         iPollStop.Wait();
@@ -138,7 +138,7 @@ void DeviceListTI::TimerExpired()
 
 void DeviceListTI::GetProtocolInfoComplete(IAsync& aAsync)
 {
-    if (Os::TimeInMs(iStack.OsCtx()) > iStopTimeMs) {
+    if (Os::TimeInMs(iEnv.OsCtx()) > iStopTimeMs) {
         return;
     }
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceListTI::GetProtocolInfoComplete);
@@ -197,14 +197,14 @@ void DeviceListTI::Removed(CpDevice& aDevice)
 void TestInvocation(CpStack& aCpStack)
 {
     gActionCount = 0; // reset this here in case we're run multiple times via TestShell
-    Stack& stack = aCpStack.GetStack();
+    Environment& env = aCpStack.Env();
     FunctorAsync dummy;
     /* Set an empty handler for errors to avoid test output being swamped by expected
        errors from invocations we interrupt at the end of each device's 1s timeslice */
-    stack.InitParams().SetAsyncErrorHandler(dummy);
+    env.InitParams().SetAsyncErrorHandler(dummy);
 
     Debug::SetLevel(Debug::kNone);
-    DeviceListTI* deviceList = new DeviceListTI(stack);
+    DeviceListTI* deviceList = new DeviceListTI(env);
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &DeviceListTI::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &DeviceListTI::Removed);
     const Brn domainName("upnp.org");
@@ -217,18 +217,18 @@ void TestInvocation(CpStack& aCpStack)
     const Brn uuid("7076436f-6e65-1063-8074-000da201f542");
     CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(aCpStack, uuid, added, removed);
 #endif
-    Blocker* blocker = new Blocker(stack);
-    blocker->Wait(stack.InitParams().MsearchTimeSecs());
+    Blocker* blocker = new Blocker(env);
+    blocker->Wait(env.InitParams().MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();
 
-    TUint startTime = Os::TimeInMs(stack.OsCtx());
+    TUint startTime = Os::TimeInMs(env.OsCtx());
     //deviceList->TestSync();
     deviceList->Poll();
 
     const TUint count = deviceList->Count();
     Print("\n%u actions invoked on %u devices (avg %u) in %u seconds\n",
-                        gActionCount, count, (count==0? 0 : gActionCount/count), (Os::TimeInMs(stack.OsCtx())-startTime+500)/1000);
+                        gActionCount, count, (count==0? 0 : gActionCount/count), (Os::TimeInMs(env.OsCtx())-startTime+500)/1000);
 
     delete list;
     delete deviceList;
