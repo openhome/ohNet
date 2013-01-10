@@ -178,7 +178,7 @@ for arg in sys.argv[1:]:
     elif arg == '-f' or arg == '--full':
         gFullTests = 1
     elif arg == '-i' or arg == '--incremental':
-        gIncremental = 1
+        gIncremental = 0 # FIXME - revert this once Stack.o has been removed from build slaves
     elif arg == '--java':
         gRunJavaTests = 1
     elif arg == '--js':
