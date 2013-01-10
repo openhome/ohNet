@@ -12,18 +12,20 @@ using namespace OpenHome::Net;
 void DvProvider::PropertiesLock()
 {
     iService->PropertiesLock();
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iDelayPropertyUpdates = true;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 void DvProvider::PropertiesUnlock()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     TBool report = iPropertyChanged;
     iPropertyChanged = false;
     iDelayPropertyUpdates = false;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     iService->PropertiesUnlock();
     if (report) {
         iService->PublishPropertyUpdates();
@@ -92,12 +94,13 @@ bool DvProvider::SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue)
 
 void DvProvider::TryPublishUpdate()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     TBool publish = !iDelayPropertyUpdates;
     if (iDelayPropertyUpdates) {
         iPropertyChanged = true;
     }
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     if (publish) {
         iService->PublishPropertyUpdates();
     }

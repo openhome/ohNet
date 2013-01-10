@@ -85,29 +85,32 @@ void DviSubscription::Stop()
 
 void DviSubscription::AddRef()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRefCount++;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 TBool DviSubscription::TryAddRef()
 {
     TBool added = false;
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     if (iRefCount != 0) {
         iRefCount++;
         added = true;
     }
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     return added;
 }
 
 void DviSubscription::RemoveRef()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     if (dead) {
         delete this;
     }

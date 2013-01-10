@@ -511,12 +511,13 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 void CpiDeviceListUpnp::RefreshTimerComplete()
 {
     RefreshComplete();
-    iCpStack.Env().Mutex().Wait();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
     if (iPendingRefreshCount > 0) {
         iNextRefreshTimer->FireIn(iCpStack.Env().InitParams().MsearchTimeSecs() * 1000);
         iPendingRefreshCount--;
     }
-    iCpStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 void CpiDeviceListUpnp::NextRefreshDue()
@@ -564,9 +565,10 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     iInterface = current->Address();
     iLock.Signal();
     TUint msearchTime = iCpStack.Env().InitParams().MsearchTimeSecs();
-    iCpStack.Env().Mutex().Wait();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
     iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-    iCpStack.Env().Mutex().Signal();
+    lock.Signal();
     current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
     iSsdpLock.Wait();
@@ -584,9 +586,10 @@ void CpiDeviceListUpnp::RemoveAll()
     iNextRefreshTimer->Cancel();
     iLock.Wait();
     CancelRefresh();
-    iCpStack.Env().Mutex().Wait();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
     iPendingRefreshCount = 0;
-    iCpStack.Env().Mutex().Signal();
+    lock.Signal();
     std::vector<CpiDevice*> devices;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {

@@ -391,9 +391,10 @@ void PropertyWriterFactory::SubscriptionAdded(DviSubscription& aSubscription)
 
 void PropertyWriterFactory::Disable()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iEnabled = false;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     iSubscriptionMapLock.Wait();
     std::vector<DviSubscription*> subscriptions;
     SubscriptionMap::iterator it = iSubscriptionMap.begin();
@@ -415,9 +416,10 @@ void PropertyWriterFactory::Disable()
 
 IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber)
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     TBool enabled = iEnabled;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     if (!enabled) {
         return NULL;
     }
@@ -454,17 +456,19 @@ PropertyWriterFactory::~PropertyWriterFactory()
 
 void PropertyWriterFactory::AddRef()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRefCount++;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 void PropertyWriterFactory::RemoveRef()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     if (dead) {
         delete this;
     }
@@ -540,13 +544,14 @@ void DviSessionUpnp::Run()
         const Brx& method = iReaderRequest->Method();
         iReaderRequest->UnescapeUri();
 
-        iDvStack.Env().Mutex().Wait();
+        Mutex& lock = iDvStack.Env().Mutex();
+        lock.Wait();
         LOG(kDvDevice, "Method: ");
         LOG(kDvDevice, method);
         LOG(kDvDevice, ", uri: ");
         LOG(kDvDevice, iReaderRequest->Uri());
         LOG(kDvDevice, "\n");
-        iDvStack.Env().Mutex().Signal();
+        lock.Signal();
 
         iResponseStarted = false;
         iResponseEnded = false;
@@ -1233,10 +1238,11 @@ DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
 void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo)
 {
     // could store a vector of redirections if required
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRedirectUriRequested.Set(aUriRequested);
     iRedirectUriRedirectedTo.Set(aUriRedirectedTo);
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)

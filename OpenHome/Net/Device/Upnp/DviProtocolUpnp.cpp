@@ -572,20 +572,22 @@ void DviProtocolUpnp::GetDeviceXml(Brh& aXml, TIpAddress aAdapter)
 
 void DviProtocolUpnp::LogUnicastNotification(const char* aType)
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     LOG(kDvDevice, "Device ");
     LOG(kDvDevice, iDevice.Udn());
     LOG(kDvDevice, " starting response to msearch type \'%s\'\n", aType);
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 void DviProtocolUpnp::LogMulticastNotification(const char* aType)
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     LOG(kDvDevice, "Device ");
     LOG(kDvDevice, iDevice.Udn());
     LOG(kDvDevice, " starting to send %s notifications.\n", aType);
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)
@@ -753,9 +755,10 @@ void DviProtocolUpnpAdapterSpecificData::ClearDeviceXml()
 
 void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iMsearchHandler = 0;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
@@ -809,9 +812,10 @@ void DviProtocolUpnpAdapterSpecificData::ByeByesComplete()
 
 IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     IUpnpMsearchHandler* device = iMsearchHandler;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     return device;
 }
 

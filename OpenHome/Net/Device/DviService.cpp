@@ -110,17 +110,19 @@ void DviService::StopSubscriptions()
 
 void DviService::AddRef()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRefCount++;
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 void DviService::RemoveRef()
 {
-    iDvStack.Env().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    iDvStack.Env().Mutex().Signal();
+    lock.Signal();
     if (dead) {
         delete this;
     }

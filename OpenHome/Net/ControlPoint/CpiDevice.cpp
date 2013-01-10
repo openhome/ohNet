@@ -193,12 +193,13 @@ CpiDeviceList::CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, Functor
 CpiDeviceList::~CpiDeviceList()
 {
     TBool wait = false;
-    iCpStack.Env().Mutex().Wait();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
     if (iRefCount > 0) {
         wait = true;
         iShutdownSem.Clear();
     }
-    iCpStack.Env().Mutex().Signal();
+    lock.Signal();
     if (wait) {
         iShutdownSem.Wait();
     }
@@ -318,11 +319,12 @@ void CpiDeviceList::AddRef()
 
 void CpiDeviceList::RemoveRef()
 {
-    iCpStack.Env().Mutex().Wait();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
     if (--iRefCount == 0) {
         iShutdownSem.Signal();
     }
-    iCpStack.Env().Mutex().Signal();
+    lock.Signal();
 }
 
 void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
