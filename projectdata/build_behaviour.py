@@ -66,7 +66,7 @@ require_version(22)
 # Command-line options. See documentation for Python's optparse module.
 add_option("-t", "--target", help="Target platform. One of Windows-x86, Windows-x64, Linux-x86, Linux-x64, Linux-ARM.")
 add_option("-a", "--artifacts", help="Build artifacts directory. Used to fetch dependencies.")
-add_option("--debug", action="store_const", const="debug", dest="debugmode", default="debug", help="Build debug version.")
+add_option("--debug", action="store_const", const="debug", dest="debugmode", default="Debug", help="Build debug version.")
 add_option("--release", action="store_const", const="release", dest="debugmode", help="Build release version.")
 add_option("--steps", default="default", help="Steps to run, comma separated. (all,default,fetch,configure,build,tests,publish)")
 add_option("--publish-version", action="store", help="Specify version string.")
@@ -108,7 +108,7 @@ def setup_universal(context):
         OH_VERSION=context.options.publish_version or context.env.get('RELEASE_VERSION', 'UNKNOWN'))
     context.configure_args = get_dependency_args(env={'debugmode':env['OH_DEBUG']})
     context.configure_args += ["--dest-platform", env["OH_PLATFORM"]]
-    context.configure_args += ["--" + context.options.debugmode]
+    context.configure_args += ["--" + context.options.debugmode.lower()]
 
 # Extra Windows build configuration.
 @build_step()
