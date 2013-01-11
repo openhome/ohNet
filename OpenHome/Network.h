@@ -55,7 +55,7 @@ private:
     TUint16 iPort;
 };
 
-class Socket
+class Socket : public INonCopyable
 {
 public:
     void Close();
