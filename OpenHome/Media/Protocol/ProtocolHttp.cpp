@@ -56,7 +56,7 @@ static const Brn kUserAgentString("Linn DS"); // FIXME
 ProtocolHttp::ProtocolHttp(Environment& aEnv, ProtocolManager& aManager)
     : ProtocolNetwork(aEnv, aManager)
     , iWriterRequest(iWriterBuf)
-    , iReaderResponse(iReaderBuf)
+    , iReaderResponse(aEnv, iReaderBuf)
     , iTotalBytes(0)
     , iSeekable(false)
     , iSnaffling(false)

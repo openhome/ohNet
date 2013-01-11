@@ -29,7 +29,7 @@ public:
 
 class ProtocolManager;
 
-class Protocol : public IProtocolManager
+class Protocol : public IProtocolManager, protected INonCopyable
 {
     friend class ProtocolManager;
 protected:
@@ -52,7 +52,7 @@ protected:
     virtual TBool DoRestream(TUint64 aOffset);
     virtual void DoInterrupt();
 protected:
-    Environment* iEnv;
+    Environment& iEnv;
 private:
     IProtocolManager& iManager;
     TBool iEnabled;
@@ -80,7 +80,6 @@ protected:
     Sws<kWriteBufferBytes> iWriterBuf;
 private:
     SocketTcpClient iTcpClient;
-    SocketTcp iTcpSocketStream;
     TBool iSocketIsOpen;
 };
 

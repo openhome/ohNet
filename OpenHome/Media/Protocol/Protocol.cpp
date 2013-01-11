@@ -10,7 +10,7 @@ EXCEPTION(ProtocolRedirect); // FIXME - unusual to have an exception declared in
 // Protocol
 
 Protocol::Protocol(Environment& aEnv, IProtocolManager& aManager)
-    : iEnv(&aEnv)
+    : iEnv(aEnv)
     , iManager(aManager)
     , iEnabled(true)
 {
@@ -126,9 +126,8 @@ const OpenHome::Uri& Protocol::Uri() const
 
 ProtocolNetwork::ProtocolNetwork(Environment& aEnv, IProtocolManager& aManager)
     : Protocol(aEnv, aManager)
-    , iTcpSocketStream(iTcpClient)
-    , iReaderBuf(iTcpSocketStream)
-    , iWriterBuf(iTcpSocketStream)
+    , iReaderBuf(iTcpClient)
+    , iWriterBuf(iTcpClient)
     , iSocketIsOpen(false)
 {
 }
@@ -208,7 +207,7 @@ void ProtocolNetwork::Open()
 {
     LOG(kMedia, "ProtocolNetwork::Open\n");
 
-    iTcpClient.Open(*iEnv);
+    iTcpClient.Open(iEnv);
     Lock();
     ASSERT(!iSocketIsOpen);
     iSocketIsOpen = true;
