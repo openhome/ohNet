@@ -89,6 +89,7 @@ void CpiDeviceUpnp::InterruptXmlFetch()
     AutoMutex a(iLock);
     if (iXmlFetch != NULL) {
         iXmlFetch->Interrupt();
+        iXmlFetch = NULL;
     }
     iList = NULL;
 }

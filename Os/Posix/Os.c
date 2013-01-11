@@ -811,7 +811,8 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 {
     int32_t err = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    OsMutexLock(handle->iCtx->iMutex);
+    OsContext* ctx = handle->iCtx;
+    OsMutexLock(ctx->iMutex);
     handle->iInterrupted = aInterrupt;
     int32_t val = 1;
     if (aInterrupt != 0) {
@@ -824,7 +825,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
             ;
         }
     }
-    OsMutexUnlock(handle->iCtx->iMutex);
+    OsMutexUnlock(ctx->iMutex);
     return err;
 }
 
