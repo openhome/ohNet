@@ -41,7 +41,6 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iDownstreamElement(aDownstreamElement)
     , iActiveCodec(NULL)
     , iPendingMsg(NULL)
-    , iQuit(false)
     , iAudioEncoded(NULL)
 {
     iDecoderThread = new ThreadFunctor("CDEC", MakeFunctor(*this, &CodecController::CodecThread));
@@ -67,6 +66,8 @@ void CodecController::AddCodec(CodecBase* aCodec)
 
 void CodecController::CodecThread()
 {
+    iStreamStarted = false;
+    iQuit = false;
     while (!iQuit) {
         try {
             iQueueTrackData = false;
