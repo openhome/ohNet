@@ -104,24 +104,34 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     }
 }
 
-TUint NetworkAdapterList::AddCurrentChangeListener(Functor aFunctor)
+TUint NetworkAdapterList::AddCurrentChangeListener(Functor aFunctor, TBool aInternalClient)
 {
-    return AddListener(aFunctor, iListenersCurrent);
+    if (aInternalClient) {
+        return AddListener(aFunctor, iListenersCurrentInternal);
+    }
+    return AddListener(aFunctor, iListenersCurrentExternal);
 }
 
 void NetworkAdapterList::RemoveCurrentChangeListener(TUint aId)
 {
-    RemoveSubnetListChangeListener(aId, iListenersCurrent);
+    if (!RemoveSubnetListChangeListener(aId, iListenersCurrentInternal)) {
+        (void)RemoveSubnetListChangeListener(aId, iListenersCurrentExternal);
+    }
 }
 
-TUint NetworkAdapterList::AddSubnetListChangeListener(Functor aFunctor)
+TUint NetworkAdapterList::AddSubnetListChangeListener(Functor aFunctor, TBool aInternalClient)
 {
-    return AddListener(aFunctor, iListenersSubnet);
+    if (aInternalClient) {
+        return AddListener(aFunctor, iListenersSubnetInternal);
+    }
+    return AddListener(aFunctor, iListenersSubnetExternal);
 }
 
 void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId)
 {
-    RemoveSubnetListChangeListener(aId, iListenersSubnet);
+    if (!RemoveSubnetListChangeListener(aId, iListenersSubnetInternal)) {
+        (void)RemoveSubnetListChangeListener(aId, iListenersSubnetExternal);
+    }
 }
 
 TUint NetworkAdapterList::AddSubnetAddedListener(FunctorNetworkAdapter aFunctor)
@@ -196,14 +206,17 @@ TUint NetworkAdapterList::AddListener(Functor aFunctor, Map& aMap)
     return id;
 }
 
-void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
+TBool NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
 {
+    TBool removed = false;
     iListenerLock.Wait();
     Map::iterator it = aMap.find(aId);
     if (it != aMap.end()) {
         aMap.erase(it);
+        removed = true;
     }
     iListenerLock.Signal();
+    return removed;
 }
 
 TUint NetworkAdapterList::AddSubnetListener(FunctorNetworkAdapter aFunctor, MapNetworkAdapter& aMap)
@@ -458,12 +471,14 @@ void NetworkAdapterList::ListObjectDetails() const
 
 void NetworkAdapterList::NotifyCurrentChanged()
 {
-    RunCallbacks(iListenersCurrent);
+    RunCallbacks(iListenersCurrentInternal);
+    RunCallbacks(iListenersCurrentExternal);
 }
 
 void NetworkAdapterList::NotifySubnetsChanged()
 {
-    RunCallbacks(iListenersSubnet);
+    RunCallbacks(iListenersSubnetInternal);
+    RunCallbacks(iListenersSubnetExternal);
 }
 
 void NetworkAdapterList::NotifyAdapterAdded(NetworkAdapter& aAdapter)

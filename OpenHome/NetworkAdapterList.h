@@ -40,22 +40,22 @@ public:
     std::vector<NetworkAdapter*>* CreateNetworkAdapterList() const;
     static void DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aList);
     void SetCurrentSubnet(TIpAddress aSubnet);
-    TUint AddCurrentChangeListener(Functor aFunctor);
+    TUint AddCurrentChangeListener(Functor aFunctor, TBool aInternalClient = true); // internal clients are notified first
     void RemoveCurrentChangeListener(TUint aId);
-    TUint AddSubnetListChangeListener(Functor aFunctor);
+    TUint AddSubnetListChangeListener(Functor aFunctor, TBool aInternalClient = true); // internal clients are notified first
     void RemoveSubnetListChangeListener(TUint aId);
-    TUint AddSubnetAddedListener(FunctorNetworkAdapter aFunctor);
+    TUint AddSubnetAddedListener(FunctorNetworkAdapter aFunctor); // only for use by client code
     void RemoveSubnetAddedListener(TUint aId);
-    TUint AddSubnetRemovedListener(FunctorNetworkAdapter aFunctor);
+    TUint AddSubnetRemovedListener(FunctorNetworkAdapter aFunctor); // only for use by client code
     void RemoveSubnetRemovedListener(TUint aId);
-    TUint AddNetworkAdapterChangeListener(FunctorNetworkAdapter aFunctor);
+    TUint AddNetworkAdapterChangeListener(FunctorNetworkAdapter aFunctor); // only for use by client code
     void RemoveNetworkAdapterChangeListener(TUint aId);
 private:
     typedef std::map<TUint,Functor> Map;
     typedef std::map<TUint,FunctorNetworkAdapter> MapNetworkAdapter;
     std::vector<NetworkAdapter*>* CreateSubnetListLocked() const;
     TUint AddListener(Functor aFunctor, Map& aMap);
-    void RemoveSubnetListChangeListener(TUint aId, Map& aMap);
+    TBool RemoveSubnetListChangeListener(TUint aId, Map& aMap);
     TUint AddSubnetListener(FunctorNetworkAdapter aFunctor, MapNetworkAdapter& aMap);
     void RemoveSubnetListener(TUint aId, MapNetworkAdapter& aMap);
     static void InterfaceListChanged(void* aPtr);
@@ -92,8 +92,10 @@ private:
     std::vector<NetworkAdapter*>* iSubnets;
     mutable NetworkAdapter* iCurrent;
     TIpAddress iDefaultSubnet;
-    Map iListenersCurrent;
-    Map iListenersSubnet;
+    Map iListenersCurrentInternal;
+    Map iListenersCurrentExternal;
+    Map iListenersSubnetInternal;
+    Map iListenersSubnetExternal;
     MapNetworkAdapter iListenersAdded;
     MapNetworkAdapter iListenersRemoved;
     MapNetworkAdapter iListenersAdapterChanged;

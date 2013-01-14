@@ -59,7 +59,7 @@ Environment::Environment(OsContext* aOsContext, InitialisationParams* aInitParam
     iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, 0);
     Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
     if (subnetListChangeListener) {
-        iNetworkAdapterList->AddSubnetListChangeListener(subnetListChangeListener);
+        iNetworkAdapterList->AddSubnetListChangeListener(subnetListChangeListener, false);
     }
     FunctorNetworkAdapter &subnetAddedListener = iInitParams->SubnetAddedListener();
     if (subnetAddedListener) {
