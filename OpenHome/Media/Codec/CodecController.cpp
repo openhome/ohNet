@@ -40,7 +40,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iUpstreamElement(aUpstreamElement)
     , iDownstreamElement(aDownstreamElement)
     , iActiveCodec(NULL)
-    , iQueueTrackData(false)
+    , iPendingMsg(NULL)
     , iQuit(false)
     , iAudioEncoded(NULL)
 {
@@ -70,52 +70,76 @@ void CodecController::CodecThread()
     while (!iQuit) {
         try {
             iQueueTrackData = false;
+            iStreamEnded = false;
             iActiveCodec = NULL;
-            try {
-                for (;;) {
-                    PullMsg();
+
+            // Find next start of stream marker, ignoring any audio or meta data we encounter
+            while (!iStreamStarted && !iQuit) {
+                Msg* msg = iUpstreamElement.Pull();
+                msg = msg->Process(*this);
+                if (msg != NULL) {
+                    Queue(msg);
                 }
             }
-            catch (CodecStreamStart&) {
-                iQueueTrackData = true;
+            if (iQuit) {
+                break;
+            }
+            iQueueTrackData = true;
+            iStreamStarted = iStreamEnded = false;
+
+            // Read audio data then attempt to recognise it
+            do {
+                Msg* msg = iUpstreamElement.Pull();
+                msg = msg->Process(*this);
+                if (msg != NULL) {
+                    Queue(msg);
+                }
+            } while (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < kMaxRecogniseBytes));
+            if (iQuit) {
+                break;
+            }
+            if (iStreamEnded) {
+                if (iAudioEncoded != NULL) {
+                    iAudioEncoded->RemoveRef();
+                    iAudioEncoded = NULL;
+                }
+                continue;
+            }
+            /* we can only CopyTo a max of kMaxRecogniseBytes bytes.  If we have more data than this, 
+                split the msg, select a codec then add the fragments back together before processing */
+            MsgAudioEncoded* remaining = NULL;
+            if (iAudioEncoded->Bytes() > kMaxRecogniseBytes) {
+                remaining = iAudioEncoded->Split(kMaxRecogniseBytes);
+            }
+            iAudioEncoded->CopyTo(iReadBuf);
+            Brn recogBuf(iReadBuf, kMaxRecogniseBytes);
+            for (size_t i=0; i<iCodecs.size(); i++) {
+                CodecBase* codec = iCodecs[i];
+                if (codec->Recognise(recogBuf)) {
+                    iActiveCodec = codec;
+                    break;
+                }
+            }
+            iAudioEncoded->Add(remaining);
+            if (iActiveCodec == NULL) {
+                // FIXME - send error indication down the pipeline?
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = NULL;
+                continue;
             }
 
+            // tell codec to process audio data
+            // (blocks until end of stream or a flush)
+            // FIXME - rework to deal with seeking
             try {
-                do {
-                    PullMsg();
-                } while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < kMaxRecogniseBytes);
-
-                /* we can only CopyTo a max of kMaxRecogniseBytes bytes.  If we have more data than this, 
-                   split the msg, select a codec then add the fragments back together before processing */
-                MsgAudioEncoded* remaining = NULL;
-                if (iAudioEncoded->Bytes() > kMaxRecogniseBytes) {
-                    remaining = iAudioEncoded->Split(kMaxRecogniseBytes);
-                }
-                iAudioEncoded->CopyTo(iReadBuf);
-                Brn recogBuf(iReadBuf, kMaxRecogniseBytes);
-                for (size_t i=0; i<iCodecs.size(); i++) {
-                    CodecBase* codec = iCodecs[i];
-                    if (codec->Recognise(recogBuf)) {
-                        iActiveCodec = codec;
-                        break;
-                    }
-                }
-                iAudioEncoded->Add(remaining);
-
-                // FIXME - handle iActiveCodec being NULL (i.e. unsupported data)
                 iActiveCodec->Process();
             }
-            catch (CodecStreamStart) {
-                // FIXME
-            }
-            catch (CodecStreamCorrupt) {
-                // FIXME
-            }
+            catch (CodecStreamStart&) { }
+            catch (CodecStreamEnded&) { }
+            catch (CodecStreamCorrupt&) { }
+            iActiveCodec->StreamCompleted();
         }
-        catch (CodecStreamEnded) {
-            // FIXME
-        }
-        catch (CodecStreamFlush) {
+        catch (CodecStreamFlush&) {
             // FIXME
         }
     }
@@ -135,9 +159,20 @@ void CodecController::Queue(Msg* aMsg)
 
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
-    while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes) {
-        // FIXME - need to break out of this loop on MsgTrack, MsgHalt, MsgFlush, MsgQuit
-        PullMsg();
+    if (iStreamEnded) {
+        Queue(iPendingMsg);
+        iPendingMsg = NULL;
+        if (iStreamStarted) {
+            THROW(CodecStreamStart);
+        }
+        THROW(CodecStreamEnded);
+    }
+    while (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) {
+        Msg* msg = iUpstreamElement.Pull();
+        msg = msg->Process(*this);
+        if (msg != NULL && iStreamEnded) {
+            iPendingMsg = msg;
+        }
     }
     MsgAudioEncoded* remaining = NULL;
     if (iAudioEncoded->Bytes() > aBytes) {
@@ -203,14 +238,14 @@ Msg* CodecController::ProcessMsg(MsgAudioFormat* /*aMsg*/)
 
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
-    Queue(aMsg);
-    THROW(CodecStreamStart);
+    iStreamStarted = iStreamEnded = true;
+    return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgAudioStream* aMsg)
 {
-    Queue(aMsg);
-    THROW(CodecStreamStart);
+    iStreamStarted = iStreamEnded = true;
+    return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
@@ -226,8 +261,8 @@ Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
-    Queue(aMsg);
-    return NULL;
+    iStreamEnded = true;
+    return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
@@ -239,6 +274,6 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
 {
     iQuit = true;
-    Queue(aMsg);
-    THROW(CodecStreamEnded);
+    iStreamEnded = true;
+    return aMsg;
 }

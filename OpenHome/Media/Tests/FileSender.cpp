@@ -85,7 +85,7 @@ class FileSender : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
-    FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
     ~FileSender();
     int Run();
 private: // from IPipelineObserver
@@ -95,7 +95,6 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyAudioFormat(const AudioFormat& aFormat);
 private:
-    Net::Library* iLibrary;
     SupplierFile* iSupplier;
     AllocatorInfoLogger iInfoAggregator;
     PipelineManager* iPipeline;
@@ -252,7 +251,7 @@ void SupplierFile::Quit(Msg* aMsg)
 
 // FileSender
 
-FileSender::FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+FileSender::FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
     : iFileName(aFileName)
 {
     iSupplier = new SupplierFile();
@@ -260,27 +259,7 @@ FileSender::FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSe
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
 
-    InitialisationParams* initParams = InitialisationParams::Create();
-	iLibrary = new Net::Library(initParams);
-    Net::DvStack* dvStack = iLibrary->StartDv();
-    std::vector<NetworkAdapter*>* subnetList = iLibrary->CreateSubnetList();
-    if (subnetList->size() <= aAdapterIndex) {
-		printf("ERROR: adapter %d doesn't exist\n", aAdapterIndex);
-		ASSERTS();
-    }
-    printf ("adapter list:\n");
-    for (unsigned i=0; i<subnetList->size(); ++i) {
-		TIpAddress addr = (*subnetList)[i]->Address();
-		printf ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
-    }
-    TIpAddress subnet = (*subnetList)[aAdapterIndex]->Subnet();
-    TIpAddress adapter = (*subnetList)[aAdapterIndex]->Address();
-    Library::DestroySubnetList(subnetList);
-    iLibrary->SetCurrentSubnet(subnet);
-
-    printf("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
-
-    iDevice = new DvDeviceStandard(*dvStack, aSenderUdn);
+    iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Sender");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -294,7 +273,7 @@ FileSender::FileSender(const Brx& aFileName, TUint aAdapterIndex, const Brx& aSe
     iDevice->SetAttribute("Upnp.SerialNumber", "");
     iDevice->SetAttribute("Upnp.Upc", "");
 
-    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, iLibrary->Env(), *iDevice, aSenderUdn, aSenderChannel, adapter);
+    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter);
     iDevice->SetEnabled();
 }
 
@@ -304,7 +283,6 @@ FileSender::~FileSender()
     delete iSupplier;
     delete iDriver;
     delete iDevice;
-	UpnpLibrary::Close();
 }
 
 int FileSender::Run()
@@ -432,7 +410,7 @@ void FileSender::NotifyAudioFormat(const AudioFormat& aFormat)
 int CDECL main(int aArgc, char* aArgv[])
 {
     OptionParser parser;
-    OptionString optionFile("-f", "--file", Brn(""), "[file] wav file to play");
+    OptionString optionFile("-f", "--file", Brn("c:\\girlfriend.flac"), "[file] wav file to play");
     parser.AddOption(&optionFile);
     OptionString optionUdn("-u", "--udn", Brn("PipelineWavSender"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
@@ -447,9 +425,31 @@ int CDECL main(int aArgc, char* aArgv[])
         return 1;
     }
 
-    FileSender* fileSender = new FileSender(optionFile.Value(), optionAdapter.Value(), optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    InitialisationParams* initParams = InitialisationParams::Create();
+	Net::Library* lib = new Net::Library(initParams);
+    Net::DvStack* dvStack = lib->StartDv();
+    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
+    const TUint adapterIndex = optionAdapter.Value();
+    if (subnetList->size() <= adapterIndex) {
+		printf("ERROR: adapter %d doesn't exist\n", adapterIndex);
+		ASSERTS();
+    }
+    printf ("adapter list:\n");
+    for (unsigned i=0; i<subnetList->size(); ++i) {
+		TIpAddress addr = (*subnetList)[i]->Address();
+		printf ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+    }
+    TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
+    TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
+    Library::DestroySubnetList(subnetList);
+    lib->SetCurrentSubnet(subnet);
+    printf("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
+
+    FileSender* fileSender = new FileSender(lib->Env(), *dvStack, optionFile.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     const int ret = fileSender->Run();
     delete fileSender;
+    
+    delete lib;
 
     return ret;
 }

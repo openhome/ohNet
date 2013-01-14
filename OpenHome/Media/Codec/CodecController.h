@@ -87,7 +87,10 @@ private:
     ThreadFunctor* iDecoderThread;
     CodecBase* iActiveCodec;
     MsgQueue iQueue;
+    Msg* iPendingMsg;
     TBool iQueueTrackData;
+    TBool iStreamStarted;
+    TBool iStreamEnded;
     TBool iQuit;
     MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[kMaxRecogniseBytes];
