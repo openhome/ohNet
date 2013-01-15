@@ -22,7 +22,6 @@ public:
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
     virtual void End() = 0;
-    virtual TBool Interrupt() const = 0;
     virtual void Lock() = 0;
     virtual void Unlock() = 0;
 };
@@ -42,7 +41,6 @@ protected: // from IProtocolManager
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void End();
-    TBool Interrupt() const;
     void Lock();
     void Unlock();
 protected:
@@ -50,7 +48,7 @@ protected:
     virtual TBool Restream(TUint64 aOffset); // default implementation ASSERTS
     virtual TBool DoStream(const Brx& aUri);
     virtual TBool DoRestream(TUint64 aOffset);
-    virtual void DoInterrupt();
+    virtual void DoInterrupt(TBool aInterrupt);
 protected:
     Environment& iEnv;
 private:
@@ -71,7 +69,7 @@ protected:
 protected: // from Protocol
     TBool DoStream(const Brx& aUri);
     TBool DoRestream(TUint64 aOffset);
-    void DoInterrupt();
+    void DoInterrupt(TBool aInterrupt);
 private:
     void Open();
     void Close();
@@ -91,7 +89,6 @@ public:
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
     virtual void End() = 0;
-    virtual TBool Interrupt() = 0;
 };
 
 class ProtocolManager : public IProtocolManager, private INonCopyable
@@ -104,7 +101,7 @@ public:
     const Brx& Uri() const;
     void DoStream(const Brx& aUri);
     TBool DoRestream(TUint64 aOffset);
-    void DoInterrupt();
+    void DoInterrupt(TBool aInterrupt);
 private: // from IProtocolManager
     TBool Stream(const Brx& aUri);
     TBool Redirect(const Brx& aUri);
@@ -112,7 +109,6 @@ private: // from IProtocolManager
     void OutputData(const Brx& aAudio);
     void OutputMetadata(const Brx& aMetadata);
     void End();
-    TBool Interrupt() const;
     void Lock();
     void Unlock();
 private:

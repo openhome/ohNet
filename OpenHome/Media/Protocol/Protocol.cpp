@@ -62,11 +62,6 @@ void Protocol::Unlock()
     iManager.Unlock();
 }
 
-TBool Protocol::Interrupt() const
-{
-    return iManager.Interrupt();
-}
-
 TBool Protocol::Restream(TUint64 /*aOffset*/)
 {
     ASSERTS();
@@ -112,7 +107,7 @@ TBool Protocol::DoRestream(TUint64 aOffset)
     return Restream(aOffset);
 }
     
-void Protocol::DoInterrupt()
+void Protocol::DoInterrupt(TBool /*aInterrupt*/)
 {
 }
 
@@ -188,16 +183,16 @@ TBool ProtocolNetwork::DoRestream(TUint64 aOffset)
     return result;
 }
     
-void ProtocolNetwork::DoInterrupt()
+void ProtocolNetwork::DoInterrupt(TBool aInterrupt)
 {
     LOG(kMedia, ">ProtocolNetwork::DoInterrupt\n");
 
-    Protocol::DoInterrupt();
+    Protocol::DoInterrupt(aInterrupt);
     Lock();
     TBool open = iSocketIsOpen;
     Unlock();    
     if (open) {
-        iTcpClient.Interrupt(true);
+        iTcpClient.Interrupt(aInterrupt);
     }
 
     LOG(kMedia, "<ProtocolNetwork::DoInterrupt\n");
@@ -287,7 +282,7 @@ TBool ProtocolManager::DoRestream(TUint64 aOffset)
 }
 
 // interrupt the current point in the stack (iProtocol)
-void ProtocolManager::DoInterrupt()
+void ProtocolManager::DoInterrupt(TBool aInterrupt)
 {
     LOG(kMedia, ">ProtocolManager::DoInterrupt\n");
 
@@ -295,7 +290,7 @@ void ProtocolManager::DoInterrupt()
     Protocol* protocol = iProtocol;
     Unlock();
     if (protocol != NULL) {
-        protocol->DoInterrupt();
+        protocol->DoInterrupt(aInterrupt);
     }
         
     LOG(kMedia, "<ProtocolManager::DoInterrupt\n");
@@ -320,9 +315,6 @@ TBool ProtocolManager::Stream(const Brx& aUri)
     TUint index = 0;
     TUint count = iProtocols.size(); 
     while (index < count) {
-        if (Interrupt()) {
-            return false;
-        }
         Protocol* protocol = iProtocols[index++];
         Lock();
         iProtocol = protocol;
@@ -417,11 +409,6 @@ void ProtocolManager::OutputMetadata(const Brx& aMetadata)
 void ProtocolManager::End()
 {
     iSupply.End();
-}
-
-TBool ProtocolManager::Interrupt() const
-{
-    return iSupply.Interrupt();
 }
 
 void ProtocolManager::Lock()

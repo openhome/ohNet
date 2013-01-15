@@ -151,6 +151,7 @@ TBool ProtocolHttp::Restream(TUint64 aOffset)
 {
     LOG(kMedia, "ProtocolHttp::Restream %lld\n", aOffset);
 
+    DoInterrupt(false);
     if (!Connect(80)) {
         LOG(kMedia, "ProtocolHttp::Restream Connection failure\n");
         return true;
@@ -323,10 +324,6 @@ void ProtocolHttp::ProcessAudio()
     TUint dataBytes = 0;
 
     for (;;) {
-        if (Interrupt()) {  // FIXME - new approach to interrupting sockets now
-           LOG(kMedia, "ProtocolHttp::ProcessAudio Interrupted\n");
-           return;
-        }
         try {
             TUint required;
             if (iHeaderIcyMetadata.Received()) {
@@ -399,9 +396,6 @@ void ProtocolHttp::ProcessPls(ReaderBuffer& aHeader)
     try {
         // Find [playlist]
         for (;;) {
-            if (Interrupt()) { // FIXME - review all code for interrupting sockets
-                return;
-            }
             Brn line = EntityReadLine(aHeader);
             if (line == Brn("[playlist]")) {
                 break;
@@ -409,9 +403,6 @@ void ProtocolHttp::ProcessPls(ReaderBuffer& aHeader)
         }
 
         for (;;) {
-            if (Interrupt()) { // FIXME - review all code for interrupting sockets
-                return;
-            }
             Brn line = EntityReadLine(aHeader);
             Parser parser(line);
             Brn key = parser.Next('=');
@@ -445,9 +436,6 @@ void ProtocolHttp::ProcessM3u(ReaderBuffer& aHeader)
     
     try {
         for (;;) {
-            if (Interrupt()) { // FIXME - review all code for interrupting sockets
-                return;
-            }
             Brn line = EntityReadLine(aHeader);
             if (line.BeginsWith(Brn("#"))) {
                 continue; // comment line
@@ -507,10 +495,6 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
     // first character for xml is '<', alternative is '[Reference]' at start else unsupported
     try {
         for (;;) {
-            if (Interrupt()) { // FIXME - review all code for interrupting sockets
-                return;
-            }
-            
             Brn format(aHeader.Read(1));
             if (format.BeginsWith(Brn("<"))) {
                 Parser parser(aHeader.ReadUntil('>')); // read first tag
@@ -605,9 +589,6 @@ void ProtocolHttp::ProcessXml(ReaderBuffer& aHeader)
     // first character for xml is '<', alternative is '[Reference]' at start else unsupported
     try {
         for (;;) {
-            if (Interrupt()) { // FIXME - review all code for interrupting sockets
-                return;
-            }
             Brn format(EntityReadLine(aHeader));
             if (format.BeginsWith(Brn("<"))) {
                 Parser parser(format);
