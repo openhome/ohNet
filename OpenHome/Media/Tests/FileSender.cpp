@@ -296,7 +296,7 @@ int FileSender::Run()
     TBool starve = false;
     TBool quit = false;
 
-    printf("\nWavSender pipeline test.  Usage:\n");
+    printf("\nFileSender pipeline test.  Usage:\n");
     printf("p: Toggle between play/pause\n");
     printf("n: Toggle between start/stop simulating network starvation\n");
     printf("s: Stop (only valid when paused)\n");
@@ -410,9 +410,9 @@ void FileSender::NotifyAudioFormat(const AudioFormat& aFormat)
 int CDECL main(int aArgc, char* aArgv[])
 {
     OptionParser parser;
-    OptionString optionFile("-f", "--file", Brn("c:\\girlfriend.flac"), "[file] wav file to play");
+    OptionString optionFile("-f", "--file", Brn(""), "[file] wav file to play");
     parser.AddOption(&optionFile);
-    OptionString optionUdn("-u", "--udn", Brn("PipelineWavSender"), "[udn] udn for the upnp device");
+    OptionString optionUdn("-u", "--udn", Brn("PipelineFileSender"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
     OptionString optionName("-n", "--name", Brn("Pipeline FileSender"), "[name] name of the sender");
     parser.AddOption(&optionName);
