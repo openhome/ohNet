@@ -592,37 +592,37 @@ CpProxyAvOpenhomeOrgVolume1C::CpProxyAvOpenhomeOrgVolume1C(CpDeviceC aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::VolumePropertyChanged);
-    iVolume = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Volume", functor);
+    iVolume = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "Volume", functor);
     AddProperty(iVolume);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::MutePropertyChanged);
-    iMute = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Mute", functor);
+    iMute = new PropertyBool(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "Mute", functor);
     AddProperty(iMute);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::BalancePropertyChanged);
-    iBalance = new PropertyInt(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Balance", functor);
+    iBalance = new PropertyInt(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "Balance", functor);
     AddProperty(iBalance);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::FadePropertyChanged);
-    iFade = new PropertyInt(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "Fade", functor);
+    iFade = new PropertyInt(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "Fade", functor);
     AddProperty(iFade);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::VolumeLimitPropertyChanged);
-    iVolumeLimit = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "VolumeLimit", functor);
+    iVolumeLimit = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "VolumeLimit", functor);
     AddProperty(iVolumeLimit);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::VolumeMaxPropertyChanged);
-    iVolumeMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "VolumeMax", functor);
+    iVolumeMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "VolumeMax", functor);
     AddProperty(iVolumeMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::VolumeUnityPropertyChanged);
-    iVolumeUnity = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "VolumeUnity", functor);
+    iVolumeUnity = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "VolumeUnity", functor);
     AddProperty(iVolumeUnity);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::VolumeStepsPropertyChanged);
-    iVolumeSteps = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "VolumeSteps", functor);
+    iVolumeSteps = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "VolumeSteps", functor);
     AddProperty(iVolumeSteps);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::VolumeMilliDbPerStepPropertyChanged);
-    iVolumeMilliDbPerStep = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "VolumeMilliDbPerStep", functor);
+    iVolumeMilliDbPerStep = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "VolumeMilliDbPerStep", functor);
     AddProperty(iVolumeMilliDbPerStep);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::BalanceMaxPropertyChanged);
-    iBalanceMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "BalanceMax", functor);
+    iBalanceMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "BalanceMax", functor);
     AddProperty(iBalanceMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgVolume1C::FadeMaxPropertyChanged);
-    iFadeMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().GetStack(), "FadeMax", functor);
+    iFadeMax = new PropertyUint(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "FadeMax", functor);
     AddProperty(iFadeMax);
 }
 

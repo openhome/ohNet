@@ -8,7 +8,7 @@
 #define HEADER_DVI_STACK
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviServerUpnp.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
@@ -26,8 +26,8 @@ namespace Net {
 class DvStack : private IStack, private INonCopyable
 {
 public:
-    DvStack(Stack& aStack);
-    Stack& GetStack() { return iStack; }
+    DvStack(Environment& aEnv);
+    Environment& Env() { return iEnv; }
     TUint BootId();
     TUint NextBootId();
     void UpdateBootId();
@@ -39,7 +39,7 @@ public:
 private:
     ~DvStack();
 private:
-    OpenHome::Net::Stack& iStack;
+    OpenHome::Environment& iEnv;
     TUint iBootId;
     TUint iNextBootId;
     DviServerUpnp* iDviServerUpnp;

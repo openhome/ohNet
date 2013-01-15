@@ -127,7 +127,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         parser.DisplayHelp();
     }
 
-    Blocker* blocker = new Blocker(*gStack);
+    Blocker* blocker = new Blocker(*gEnv);
     if (deviceList != NULL) {
         blocker->Wait(aInitParams->MsearchTimeSecs());
     }

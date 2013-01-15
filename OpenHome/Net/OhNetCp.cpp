@@ -8,12 +8,12 @@ using namespace OpenHome::Net;
 
 CpStack* Library::StartCp(TIpAddress aSubnet)
 {
-    iStack->NetworkAdapterList().SetCurrentSubnet(aSubnet);
-    return new CpStack(*iStack);
+    iEnv->NetworkAdapterList().SetCurrentSubnet(aSubnet);
+    return new CpStack(*iEnv);
 }
 
 void UpnpLibrary::StartCp(TIpAddress aSubnet)
 { // static
-    gStack->NetworkAdapterList().SetCurrentSubnet(aSubnet);
-    gCpStack = new CpStack(*gStack);
+    gEnv->NetworkAdapterList().SetCurrentSubnet(aSubnet);
+    gCpStack = new CpStack(*gEnv);
 }

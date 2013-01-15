@@ -1,26 +1,26 @@
 #ifndef HEADER_OSWRAPPER_INL
 #define HEADER_OSWRAPPER_INL
 
-inline TInt Os::Create()
+inline OsContext* Os::Create()
 { return OsCreate(); }
-inline void Os::Destroy()
-{ OsDestroy(); }
-inline void Os::Quit()
-{ OsQuit(); }
+inline void Os::Destroy(OsContext* aContext)
+{ OsDestroy(aContext); }
+inline void Os::Quit(OsContext* aContext)
+{ OsQuit(aContext); }
 inline TUint Os::StackTraceNumEntries(THandle aStackTrace)
 { return OsStackTraceNumEntries(aStackTrace); }
 inline const char* Os::StackTraceEntry(THandle aStackTrace, TUint aIndex)
 { return OsStackTraceEntry(aStackTrace, aIndex); }
 inline void Os::StackTraceFinalise(THandle aStackTrace)
 { OsStackTraceFinalise(aStackTrace); }
-inline TUint64 Os::TimeInUs()
-{ return OsTimeInUs(); }
-inline TUint Os::TimeInMs()
-{ return (TUint)(TimeInUs()/1000); }
+inline TUint64 Os::TimeInUs(OsContext* aContext)
+{ return OsTimeInUs(aContext); }
+inline TUint Os::TimeInMs(OsContext* aContext)
+{ return (TUint)(TimeInUs(aContext)/1000); }
 inline void Os::ConsoleWrite(const TChar* aStr)
 { OsConsoleWrite(aStr); }
-inline THandle Os::SemaphoreCreate(const TChar* aName, TUint aCount)
-{ return OsSemaphoreCreate(aName, aCount); }
+inline THandle Os::SemaphoreCreate(OsContext* aContext, const TChar* aName, TUint aCount)
+{ return OsSemaphoreCreate(aContext, aName, aCount); }
 inline void Os::SemaphoreDestroy(THandle aSem)
 { OsSemaphoreDestroy(aSem); }
 inline void Os::SemaphoreWait(THandle aSem)
@@ -43,8 +43,8 @@ inline void Os::SemaphoreSignal(THandle aSem)
     int status = OsSemaphoreSignal(aSem);
     ASSERT(status == 0);
 }
-inline THandle Os::MutexCreate(const TChar* aName)
-{ return OsMutexCreate(aName); }
+inline THandle Os::MutexCreate(OsContext* aContext, const TChar* aName)
+{ return OsMutexCreate(aContext, aName); }
 inline void Os::MutexDestroy(THandle aMutex)
 { OsMutexDestroy(aMutex); }
 inline TInt Os::MutexLock(THandle aMutex)
@@ -58,15 +58,15 @@ inline void Os::MutexUnlock(THandle aMutex)
     int status = OsMutexUnlock(aMutex);
     ASSERT(status == 0);
 }
-inline THandle Os::ThreadCreate(const TChar* aName, TUint aPriority, TUint aStackBytes,
-                                ThreadEntryPoint aEntryPoint, void* aArg)
-{ return OsThreadCreate(aName, aPriority, aStackBytes, aEntryPoint, aArg); }
-inline void* Os::ThreadTls()
-{ return OsThreadTls(); }
+inline THandle Os::ThreadCreate(OsContext* aContext, const TChar* aName, TUint aPriority,
+                                TUint aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
+{ return OsThreadCreate(aContext, aName, aPriority, aStackBytes, aEntryPoint, aArg); }
+inline void* Os::ThreadTls(OsContext* aContext)
+{ return OsThreadTls(aContext); }
 inline void Os::ThreadDestroy(THandle aThread)
 { OsThreadDestroy(aThread); }
-inline TBool Os::ThreadSupportsPriorities()
-{ return (OsThreadSupportsPriorities() != 0); }
+inline TBool Os::ThreadSupportsPriorities(OsContext* aContext)
+{ return (OsThreadSupportsPriorities(aContext) != 0); }
 
 inline TInt Os::NetworkSend(THandle aHandle, const Brx& aBuffer)
 { return OsNetworkSend(aHandle, aBuffer.Ptr(), aBuffer.Bytes()); }
@@ -80,7 +80,7 @@ inline TInt Os::NetworkClose(THandle aHandle)
 { return OsNetworkClose(aHandle); }
 inline TInt Os::NetworkListen(THandle aHandle, TUint aSlots)
 { return OsNetworkListen(aHandle, aSlots); }
-void Os::NetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)
-{ OsNetworkSetInterfaceChangedObserver(aCallback, aArg); }
+void Os::NetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChanged aCallback, void* aArg)
+{ OsNetworkSetInterfaceChangedObserver(aContext, aCallback, aArg); }
 
 #endif // HEADER_OSWRAPPER_INL

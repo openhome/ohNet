@@ -4,7 +4,7 @@
 #include <OpenHome/Net/Private/ProtocolUpnp.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Net/Private/XmlParser.h>
@@ -26,7 +26,7 @@ EventSessionUpnp::EventSessionUpnp(CpStack& aCpStack)
     , iShutdownSem("EVSD", 1)
 {
     iReadBuffer = new Srs<kMaxReadBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(aCpStack.GetStack(), *iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(aCpStack.Env(), *iReadBuffer);
 
     iReaderRequest->AddMethod(kMethodNotify);
     iReaderRequest->AddHeader(iHeaderNt);
@@ -224,10 +224,10 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
 // EventServerUpnp
 
 EventServerUpnp::EventServerUpnp(CpStack& aCpStack, TIpAddress aInterface)
-    : iTcpServer("EVNT", aCpStack.GetStack().InitParams().CpUpnpEventServerPort(), aInterface)
+    : iTcpServer(aCpStack.Env(), "EVNT", aCpStack.Env().InitParams().CpUpnpEventServerPort(), aInterface)
 {
     TChar name[5] = "ESS ";
-    const TUint numThread = aCpStack.GetStack().InitParams().NumEventSessionThreads();
+    const TUint numThread = aCpStack.Env().InitParams().NumEventSessionThreads();
 #ifndef _WIN32
     // nothing terribly bad would happen if this assertion failed so its not worth a separate Windows implementation
     ASSERT(numThread < 10);

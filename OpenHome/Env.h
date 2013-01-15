@@ -18,7 +18,6 @@ namespace OpenHome {
 class TimerManager;
 class Mutex;
 class NetworkAdapterList;
-namespace Net {
 
 class IStack
 {
@@ -26,16 +25,18 @@ public:
     virtual ~IStack() {}
 };
 
-class InitialisationParams;
+namespace Net {
+    class InitialisationParams;
+} // namespace Net
 
-class Stack
+class Environment
 {
-    friend class CpStack;
-    friend class DvStack;
+    friend class Net::CpStack;
+    friend class Net::DvStack;
 public:
-    Stack();
-    Stack(InitialisationParams* aInitParams);
-    ~Stack();
+    Environment(OsContext* aOsContext);
+    Environment(OsContext* aOsContext, Net::InitialisationParams* aInitParams);
+    ~Environment();
 
     void GetVersion(TUint& aMajor, TUint& aMinor);
     OpenHome::TimerManager& TimerManager();
@@ -44,37 +45,40 @@ public:
      */
     OpenHome::Mutex& Mutex();
 
+    OsContext* OsCtx();
     OpenHome::NetworkAdapterList& NetworkAdapterList();
-    SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
+    Net::SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     void MulticastListenerRelease(TIpAddress aInterface);
     TUint SequenceNumber();
-    InitialisationParams& InitParams();
+    Net::InitialisationParams& InitParams();
     void AddObject(IStackObject* aObject);
     void RemoveObject(IStackObject* aObject);
     void ListObjects();
     IStack* CpiStack();
     IStack* DviStack();
 private:
+    void Construct();
     void SetCpStack(IStack* aStack);
     void SetDvStack(IStack* aStack);
 private:
     class MListener
     {
     public:
-        MListener(Stack& aStack, TIpAddress aInterface);
+        MListener(Environment& aStack, TIpAddress aInterface);
         ~MListener();
-        SsdpListenerMulticast& Listener();
+        Net::SsdpListenerMulticast& Listener();
         TIpAddress Interface() const;
         void AddRef();
         TBool RemoveRef();
     private:
-        SsdpListenerMulticast iListener;
+        Net::SsdpListenerMulticast iListener;
         TInt iRefCount;
     };
 private:
-    InitialisationParams* iInitParams;
+    OsContext* iOsContext;
+    Net::InitialisationParams* iInitParams;
     OpenHome::TimerManager* iTimerManager;
-    OpenHome::Mutex iPublicLock;
+    OpenHome::Mutex* iPublicLock;
     OpenHome::NetworkAdapterList* iNetworkAdapterList;
     typedef std::vector<MListener*> MulticastListeners;
     MulticastListeners iMulticastListeners;
@@ -83,10 +87,9 @@ private:
     IStack* iDvStack;
     typedef std::map<IStackObject*,IStackObject*> ObjectMap;
     ObjectMap iObjectMap;
-    OpenHome::Mutex iPrivateLock;
+    OpenHome::Mutex* iPrivateLock;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_STACK

@@ -64,7 +64,7 @@ class Shell : private IShellCommandHandler
 public:
     static const TUint kServerPort = 2323;
 public:
-    Shell();
+    Shell(Environment& aStack);
     ~Shell();
     void AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler);
     void RemoveCommandHandler(const TChar* aCommand);

@@ -4,7 +4,7 @@
 #include <OpenHome/Net/Private/DviSubscription.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Private/Converter.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
@@ -425,7 +425,7 @@ void DviPropertyUpdateCollection::NotifySubscriptionExpired(const Brx& aSid)
         // ...and calling it again will cause a recursive lock.
         // use of Timer::IsInManagerThread is nasty.  We have no way of knowing that this'll only be called recursively or in a timer callback.
         // Note that this also turns out to be a handy way of avoiding problems inside ~DviPropertyUpdateCollection
-        if (Timer::IsInManagerThread(iDvStack.GetStack())) {
+        if (Timer::IsInManagerThread(iDvStack.Env())) {
             RemoveSubscription(aSid, true);
         }
     }

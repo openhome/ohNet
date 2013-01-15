@@ -7,6 +7,8 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/Env.h>
 
 #include <stdlib.h>
 
@@ -132,12 +134,12 @@ void OpenHome::TestFramework::SucceedQuietly(const TChar* aFile, TUint aLine)
 
 TUint OpenHome::TestFramework::TimeStart()
 {
-    return OpenHome::Os::TimeInMs();
+    return OpenHome::Os::TimeInMs(gEnv->OsCtx());
 }
 
 TUint OpenHome::TestFramework::TimeStop(TUint aStartTime)
 {
-    TUint time = OpenHome::Os::TimeInMs();
+    TUint time = OpenHome::Os::TimeInMs(gEnv->OsCtx());
     return time - aStartTime;
 }
 
@@ -180,10 +182,10 @@ TInt OpenHome::TestFramework::PrintHex(const Brx& aB)
 
 // Blocker
 
-Blocker::Blocker(Net::Stack& aStack)
+Blocker::Blocker(Environment& aEnv)
     : iSem("SBLK", 0)
 {
-    iTimer = new Timer(aStack, MakeFunctor(*this, &Blocker::TimerExpired));
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &Blocker::TimerExpired));
 }
 
 Blocker::~Blocker()

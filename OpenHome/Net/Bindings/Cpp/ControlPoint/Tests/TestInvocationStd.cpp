@@ -9,7 +9,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Cpp/CpDevice.h>
 #include <OpenHome/Net/Cpp/CpDeviceUpnp.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Cpp/FunctorCpDevice.h>
 #include <OpenHome/Net/Cpp/CpUpnpOrgConnectionManager1.h>
@@ -99,7 +99,7 @@ void DeviceList::TestSync()
 
 void DeviceList::Poll()
 {
-    Timer timer(*gStack, MakeFunctor(*this, &DeviceList::TimerExpired));
+    Timer timer(*gEnv, MakeFunctor(*this, &DeviceList::TimerExpired));
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceList::GetProtocolInfoComplete);
     const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
@@ -107,9 +107,9 @@ void DeviceList::Poll()
         TUint countBefore = gActionCount;
         Print("Device %s", device->Udn().c_str());
         iConnMgr = new CpProxyUpnpOrgConnectionManager1Cpp(*device);
-        iStopTimeMs = Os::TimeInMs() + kDevicePollMs;
+        iStopTimeMs = Os::TimeInMs(gEnv->OsCtx()) + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
-        for (TUint j=0; j<gStack->InitParams().NumActionInvokerThreads(); j++) {
+        for (TUint j=0; j<gEnv->InitParams().NumActionInvokerThreads(); j++) {
             iConnMgr->BeginGetProtocolInfo(callback);
         }
         iPollStop.Wait();
@@ -131,7 +131,7 @@ void DeviceList::TimerExpired()
 
 void DeviceList::GetProtocolInfoComplete(IAsync& aAsync)
 {
-    if (Os::TimeInMs() > iStopTimeMs) {
+    if (Os::TimeInMs(gEnv->OsCtx()) > iStopTimeMs) {
         return;
     }
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceList::GetProtocolInfoComplete);
@@ -213,18 +213,18 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     const std::string uuid("896659847466-8000600fe800-737837");
     CpDeviceListCppUpnpUuid* list = new CpDeviceListCppUpnpUuid(uuid, added, removed);
 #endif
-    Blocker* blocker = new Blocker(*gStack);
+    Blocker* blocker = new Blocker(*gEnv);
     blocker->Wait(aInitParams->MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();
 
-    TUint startTime = Os::TimeInMs();
+    TUint startTime = Os::TimeInMs(gEnv->OsCtx());
     deviceList->TestSync();
     deviceList->Poll();
 
     const TUint count = deviceList->Count();
     Print("\n%u actions invoked on %u devices (avg %u) in %u seconds\n",
-                        gActionCount, count, (count==0? 0 : gActionCount/count), (Os::TimeInMs()-startTime+500)/1000);
+                        gActionCount, count, (count==0? 0 : gActionCount/count), (Os::TimeInMs(gEnv->OsCtx())-startTime+500)/1000);
 
     delete list;
     delete deviceList;

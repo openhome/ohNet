@@ -13,7 +13,7 @@
 #include <OpenHome/Net/C/CpOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Maths.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Debug.h>
 #include "TestBasicDv.h"
 #include "../../ControlPoint/Tests/TestBasicCp.h"

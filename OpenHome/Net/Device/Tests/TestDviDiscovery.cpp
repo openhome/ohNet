@@ -5,7 +5,7 @@
 #include <OpenHome/Net/Private/Discovery.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviService.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
@@ -46,7 +46,7 @@ private:
 class CpListenerMsearch : public ISsdpNotifyHandler
 {
 public:
-    CpListenerMsearch(Stack& aStack);
+    CpListenerMsearch(Environment& aEnv);
     ~CpListenerMsearch();
     TUint TotalMessages() const { return iTotal; }
     TUint RootDeviceCount() const {return iRoot; }
@@ -70,7 +70,7 @@ private:
     void SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
-    Stack& iStack;
+    Environment& iEnv;
     Mutex iLock;
     TUint iTotal;
     TUint iRoot;
@@ -234,7 +234,7 @@ static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = aDvStack.GetStack().NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    NetworkAdapter* nif = aDvStack.Env().NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TUint max = nif->Address();
     TUint seed = aDvStack.ServerUpnp().Port(nif->Address());
     SetRandomSeed(seed);
@@ -260,11 +260,11 @@ SuiteAlive::~SuiteAlive()
 
 void SuiteAlive::Test()
 {
-    Stack& stack = iDvStack.GetStack();
-    Blocker* blocker = new Blocker(stack);
+    Environment& env = iDvStack.Env();
+    Blocker* blocker = new Blocker(env);
     CpListenerBasic* listener = new CpListenerBasic;
-    NetworkAdapter* nif = stack.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
-    SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(stack, nif->Address());
+    NetworkAdapter* nif = env.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(env, nif->Address());
     nif->RemoveRef(kAdapterCookie);
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
     listenerMulticast->Start();
@@ -325,8 +325,8 @@ void SuiteAlive::Disabled()
 
 // CpListenerMsearch
 
-CpListenerMsearch::CpListenerMsearch(Stack& aStack)
-    : iStack(aStack)
+CpListenerMsearch::CpListenerMsearch(Environment& aEnv)
+    : iEnv(aEnv)
     , iLock("LMMX")
 {
     iDev1Type = iDev2Type = iDev21Type = NULL;
@@ -370,7 +370,7 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
 {
     Uri uri(aLocation);
     Endpoint endpt(0, uri.Host());
-    NetworkAdapter* nif = iStack.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
     nif->RemoveRef(kAdapterCookie);
     if (!correctSubnet) {
@@ -498,11 +498,11 @@ SuiteMsearch::SuiteMsearch(DvStack& aDvStack)
     RandomiseUdn(iDvStack, gNameDevice1);
     RandomiseUdn(iDvStack, gNameDevice2);
     RandomiseUdn(iDvStack, gNameDevice2Embedded1);
-    Stack& stack = iDvStack.GetStack();
-    iBlocker = new Blocker(stack);
-    iListener = new CpListenerMsearch(stack);
-    NetworkAdapter* nif = stack.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
-    iListenerUnicast = new SsdpListenerUnicast(stack, *iListener, nif->Address());
+    Environment& env = iDvStack.Env();
+    iBlocker = new Blocker(env);
+    iListener = new CpListenerMsearch(env);
+    NetworkAdapter* nif = env.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    iListenerUnicast = new SsdpListenerUnicast(env, *iListener, nif->Address());
     nif->RemoveRef(kAdapterCookie);
     iListenerUnicast->Start();
 }
@@ -569,7 +569,7 @@ void SuiteMsearch::Test()
 
 void SuiteMsearch::Wait()
 {
-    iBlocker->Wait(iDvStack.GetStack().InitParams().MsearchTimeSecs() + 1);
+    iBlocker->Wait(iDvStack.Env().InitParams().MsearchTimeSecs() + 1);
 }
 
 void SuiteMsearch::TestMsearchAll()
@@ -737,7 +737,7 @@ void SuiteMsearch::TestMsearchServiceType()
 
 void TestDviDiscovery(DvStack& aDvStack)
 {
-    InitialisationParams& initParams = aDvStack.GetStack().InitParams();
+    InitialisationParams& initParams = aDvStack.Env().InitParams();
     TUint oldMsearchTime = initParams.MsearchTimeSecs();
     initParams.SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
 

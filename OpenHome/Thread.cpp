@@ -2,6 +2,8 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/OsWrapper.h>
 #include <exception>
+#include <OpenHome/Net/Private/Globals.h> // FIXME - use of globals should be discouraged
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 
@@ -13,7 +15,7 @@ static const Brn kThreadNameUnknown("____");
 
 Semaphore::Semaphore(const TChar* aName, TUint aCount)
 {
-    iHandle = OpenHome::Os::SemaphoreCreate(aName, aCount);
+    iHandle = OpenHome::Os::SemaphoreCreate(OpenHome::gEnv->OsCtx(), aName, aCount);
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
@@ -57,7 +59,7 @@ void Semaphore::Signal()
 
 Mutex::Mutex(const TChar* aName)
 {
-    iHandle = OpenHome::Os::MutexCreate(aName);
+    iHandle = OpenHome::Os::MutexCreate(OpenHome::gEnv->OsCtx(), aName);
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
@@ -130,7 +132,7 @@ Thread::~Thread()
 
 void Thread::Start()
 {
-    iHandle = OpenHome::Os::ThreadCreate((TChar*)iName.Ptr(), iPriority, iStackBytes, &Thread::EntryPoint, this);
+    iHandle = OpenHome::Os::ThreadCreate(OpenHome::gEnv->OsCtx(), (TChar*)iName.Ptr(), iPriority, iStackBytes, &Thread::EntryPoint, this);
 }
 
 void Thread::EntryPoint(void* aArg)
@@ -196,7 +198,7 @@ const Brx& Thread::CurrentThreadName()
 
 Thread* Thread::Current()
 { // static
-    void* th = OpenHome::Os::ThreadTls();
+    void* th = OpenHome::Os::ThreadTls(OpenHome::gEnv->OsCtx());
     if (th == NULL) {
         return NULL;
     }
@@ -205,7 +207,7 @@ Thread* Thread::Current()
 
 TBool Thread::SupportsPriorities()
 { // static
-    return OpenHome::Os::ThreadSupportsPriorities();
+    return OpenHome::Os::ThreadSupportsPriorities(OpenHome::gEnv->OsCtx());
 }
 
 void Thread::CheckCurrentForKill()

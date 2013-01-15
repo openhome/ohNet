@@ -75,7 +75,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
         FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);
         CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(*gCpStack, domainName, type, ver, added, removed);
-        Blocker* blocker = new Blocker(*gStack);
+        Blocker* blocker = new Blocker(*gEnv);
         blocker->Wait(aInitParams->MsearchTimeSecs());
         delete blocker;
         delete deviceList;

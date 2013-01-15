@@ -9,15 +9,17 @@
 
 namespace OpenHome {
 
+class Environment;
+
 class Time
 {
 public:
-    static TUint Now();
+    static TUint Now(Environment& aEnv);
     static TBool IsBeforeOrAt(TUint aQuestionableTime, TUint aTime);
     static TBool IsAfter(TUint aQuestionableTime, TUint aTime);
-    static TBool IsInPastOrNow(TUint aTime);
-    static TBool IsInFuture(TUint aTime);
-    static TInt TimeToWaitFor(TUint aTime);
+    static TBool IsInPastOrNow(Environment& aEnv, TUint aTime);
+    static TBool IsInFuture(Environment& aEnv, TUint aTime);
+    static TInt TimeToWaitFor(Environment& aEnv, TUint aTime);
 };
 
 class QueueSortedEntryTimer : public QueueSortedEntry
@@ -27,21 +29,18 @@ protected:
     TUint iTime;  // Absolute (milliseconds from startup)
 };
 
-namespace Net {
-    class Stack;
-} // namespace Net
 class TimerManager;
 
 class Timer : public QueueSortedEntryTimer
 {
     friend class TimerManager;
 public:
-    Timer(Net::Stack& aStack, Functor aFunctor);
+    Timer(Environment& aEnv, Functor aFunctor);
     void FireIn(TUint aTime); // Relative (milliseconds from now)
     void FireAt(TUint aTime); // Absolute (at specified millisecond)
     void Cancel();
     ~Timer();
-    static TBool IsInManagerThread(OpenHome::Net::Stack& aStack);
+    static TBool IsInManagerThread(Environment& aEnv);
 private:
     static TBool IsInManagerThread(TimerManager& aMgr);
 private:
@@ -53,7 +52,7 @@ class TimerManager : public QueueSorted<Timer>
 {
     friend class Timer;
 public:
-    TimerManager();
+    TimerManager(Environment& aEnv);
     void Stop();
     ~TimerManager();
     void CallbackLock();
@@ -61,10 +60,11 @@ public:
 private:
     void Run();
     void Fire();
-    OpenHome::Thread* Thread() const;
+    Thread* MgrThread() const;
     virtual void HeadChanged(QueueSortedEntry& aEntry);
     virtual TInt Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2);
 private:
+    Environment& iEnv;
     QueueSortedEntryTimer iNow;
     Mutex iMutexNow;
     TBool iRemoving;
@@ -75,7 +75,7 @@ private:
     TBool iStop;
     Semaphore iStopped;
     Mutex iCallbackMutex;
-    OpenHome::Thread* iThreadHandle;
+    Thread* iThreadHandle;
 };
 
 } // namespace OpenHome

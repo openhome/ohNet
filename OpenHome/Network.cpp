@@ -4,7 +4,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Stream.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Ascii.h>
 
 #include <errno.h>
@@ -13,10 +13,10 @@ using namespace OpenHome;
 
 // OS sockets interface
 
-static THandle SocketCreate(ESocketType aSocketType)
+static THandle SocketCreate(Environment& aEnv, ESocketType aSocketType)
 {
     LOGF(kNetwork, "SocketCreate  ST = %d, \n", aSocketType);
-    THandle handle = OpenHome::Os::NetworkCreate(aSocketType);
+    THandle handle = OpenHome::Os::NetworkCreate(aEnv.OsCtx(), aSocketType);
     LOGF(kNetwork, "SocketCreate  Socket H = %d\n", handle);
     return handle;
 }
@@ -491,10 +491,10 @@ static void TryNetworkTcpSetNoDelay(THandle aHandle)
 
 // Tcp client
 
-void SocketTcpClient::Open()
+void SocketTcpClient::Open(Environment& aEnv)
 {
     LOGF(kNetwork, "SocketTcpClient::Open\n");
-    iHandle = SocketCreate(eSocketTypeStream);
+    iHandle = SocketCreate(aEnv, eSocketTypeStream);
     TryNetworkTcpSetNoDelay(iHandle);
 }
 
@@ -506,7 +506,7 @@ void SocketTcpClient::Connect(const Endpoint& aEndpoint, TUint aTimeout)
 
 // Tcp Server
 
-SocketTcpServer::SocketTcpServer(const TChar* aName, TUint aPort, TIpAddress aInterface,
+SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aPort, TIpAddress aInterface,
                                  TUint aSessionPriority, TUint aSessionStackBytes, TUint aSlots)
     : iMutex(aName)
     , iSessionPriority(aSessionPriority)
@@ -514,7 +514,7 @@ SocketTcpServer::SocketTcpServer(const TChar* aName, TUint aPort, TIpAddress aIn
     , iTerminating(false)
 {
     LOGF(kNetwork, "SocketTcpServer::SocketTcpServer\n");
-    iHandle = SocketCreate(eSocketTypeStream);
+    iHandle = SocketCreate(aEnv, eSocketTypeStream);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
     TryNetworkTcpSetNoDelay(iHandle);
     iInterface = aInterface;
@@ -676,10 +676,10 @@ SocketTcpSession::~SocketTcpSession()
 
 // SocketUdpBase
 
-SocketUdpBase::SocketUdpBase()
+SocketUdpBase::SocketUdpBase(Environment& aEnv)
 {
     LOGF(kNetwork, "> SocketUdpBase::SocketUdpBase\n");
-    iHandle = SocketCreate(eSocketTypeDatagram);
+    iHandle = SocketCreate(aEnv, eSocketTypeDatagram);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
     LOGF(kNetwork, "< SocketUdpBase::SocketUdpBase H = %d\n", iHandle);
 }
@@ -719,21 +719,24 @@ Endpoint SocketUdpBase::Receive(Bwx& aBuffer)
 
 // SocketUdp
 
-SocketUdp::SocketUdp()
+SocketUdp::SocketUdp(Environment& aEnv)
+    : SocketUdpBase(aEnv)
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp\n");
     Bind(0, 0);
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
-SocketUdp::SocketUdp(TUint aPort)
+SocketUdp::SocketUdp(Environment& aEnv, TUint aPort)
+    : SocketUdpBase(aEnv)
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
     Bind(aPort, 0);
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
-SocketUdp::SocketUdp(TUint aPort, TIpAddress aInterface)
+SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, TIpAddress aInterface)
+    : SocketUdpBase(aEnv)
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
     Bind(aPort, aInterface);
@@ -749,8 +752,9 @@ void SocketUdp::Bind(TUint aPort, TIpAddress aInterface)
 
 // SocketUdpMulticast
 
-SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint)
-    : iInterface(aInterface)
+SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface, const Endpoint& aEndpoint)
+    : SocketUdpBase(aEnv)
+    , iInterface(aInterface)
     , iAddress(aEndpoint.Address())
 {
     LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, E = %x:%d\n", iInterface, iAddress, iPort);

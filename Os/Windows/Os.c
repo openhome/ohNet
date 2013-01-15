@@ -16,6 +16,7 @@ static const uint32_t kStackPaddingBytes = 1024 * 16;
 static const uint32_t kPriorityMin = 50;
 static const uint32_t kPriorityMax = 150;
 
+#define UNUSED(a) (a) = (a)
 
 typedef struct InterfaceChangeObserver
 {
@@ -28,79 +29,100 @@ typedef struct InterfaceChangeObserver
     HANDLE               iSem;
 } InterfaceChangeObserver;
 
-static uint64_t gStartTime; /* Time OsCreate was called */
-static uint64_t gPrevTime; /* Last time OsTimeInUs() was called */
-static uint64_t gTimeAdjustment = {0}; /* Amount to adjust return for OsTimeInUs() by. 
-                                          Will be 0 unless time ever jumps backwards. */
-static DWORD gTlsIndex;
-static THandle gMutex = kHandleNull;
-static InterfaceChangeObserver* gInterfaceChangeObserver = NULL;
-static int32_t gTestInterfaceIndex = -1;
-static HANDLE gDebugSymbolHandle;
+typedef struct OsContext {
+    uint64_t iStartTime; /* Time OsCreate was called */
+    uint64_t iPrevTime; /* Last time OsTimeInUs() was called */
+    uint64_t iTimeAdjustment; /* Amount to adjust return for OsTimeInUs() by. 
+                                 Will be 0 unless time ever jumps backwards. */
+    DWORD iTlsIndex;
+    THandle iMutex;
+    InterfaceChangeObserver* iInterfaceChangeObserver;
+    int32_t iTestInterfaceIndex;
+    HANDLE iDebugSymbolHandle;
+} OsContext;
 
-int32_t OsCreate()
+
+OsContext* OsCreate()
 {
     FILETIME ft;
     WSADATA wsaData;
     WORD ver = (2<<8)|2; // WinSock v2.2.  Standard on XP and later
 
     char* noErrDlgs = getenv("OHNET_NO_ERROR_DIALOGS");
+    OsContext* ctx = malloc(sizeof(*ctx));
     if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
+    if (ctx == NULL) {
+        return NULL;
+    }
+
+    ctx->iInterfaceChangeObserver = NULL;
+    ctx->iTestInterfaceIndex = -1;
 
     GetSystemTimeAsFileTime(&ft);
-    gStartTime = ft.dwHighDateTime;
-    gStartTime <<= 32;
-    gStartTime |= ft.dwLowDateTime;
+    ctx->iStartTime = ft.dwHighDateTime;
+    ctx->iStartTime <<= 32;
+    ctx->iStartTime |= ft.dwLowDateTime;
+    ctx->iPrevTime = 0;
+    ctx->iTimeAdjustment = 0;
 
-    gTlsIndex = TlsAlloc();
-    if (TLS_OUT_OF_INDEXES == gTlsIndex) {
-        return -1;
+    ctx->iTlsIndex = TlsAlloc();
+    if (TLS_OUT_OF_INDEXES == ctx->iTlsIndex) {
+        free(ctx);
+        return NULL;
     }
-    gMutex = OsMutexCreate("");
-    if (kHandleNull == gMutex) {
-        TlsFree(gTlsIndex);
-        return -1;
+    ctx->iMutex = OsMutexCreate(ctx, "");
+    if (kHandleNull == ctx->iMutex) {
+        TlsFree(ctx->iTlsIndex);
+        free(ctx);
+        return NULL;
     }
     if (0 != WSAStartup(ver, &wsaData)) {
-        OsMutexDestroy(gMutex);
-        TlsFree(gTlsIndex);
-        return -1;
+        OsMutexDestroy(ctx->iMutex);
+        TlsFree(ctx->iTlsIndex);
+        free(ctx);
+        return NULL;
     }
-    gDebugSymbolHandle = GetCurrentProcess();
-    (void)SymInitialize(gDebugSymbolHandle, NULL, TRUE);
+    ctx->iDebugSymbolHandle = GetCurrentProcess();
+    (void)SymInitialize(ctx->iDebugSymbolHandle, NULL, TRUE);
 
-    return 0;
+    return ctx;
 }
 
-void OsDestroy()
+void OsDestroy(OsContext* aContext)
 {
-    (void)SymCleanup(gDebugSymbolHandle);
-    if (NULL != gInterfaceChangeObserver) {
-        gInterfaceChangeObserver->iShutdown = 1;
-        (void)WSASetEvent(gInterfaceChangeObserver->iShutdownEvent);
-        (void)WaitForSingleObject(gInterfaceChangeObserver->iSem, INFINITE);
-        CloseHandle(gInterfaceChangeObserver->iSem);
-        WSACloseEvent(gInterfaceChangeObserver->iEvent);
-        WSACloseEvent(gInterfaceChangeObserver->iShutdownEvent);
-        (void)closesocket(gInterfaceChangeObserver->iSocket);
-        free(gInterfaceChangeObserver);
-        gInterfaceChangeObserver = NULL;
+    if (aContext == NULL) {
+        return;
+    }
+    (void)SymCleanup(aContext->iDebugSymbolHandle);
+    if (NULL != aContext->iInterfaceChangeObserver) {
+        aContext->iInterfaceChangeObserver->iShutdown = 1;
+        (void)WSASetEvent(aContext->iInterfaceChangeObserver->iShutdownEvent);
+        (void)WaitForSingleObject(aContext->iInterfaceChangeObserver->iSem, INFINITE);
+        CloseHandle(aContext->iInterfaceChangeObserver->iSem);
+        WSACloseEvent(aContext->iInterfaceChangeObserver->iEvent);
+        WSACloseEvent(aContext->iInterfaceChangeObserver->iShutdownEvent);
+        (void)closesocket(aContext->iInterfaceChangeObserver->iSocket);
+        free(aContext->iInterfaceChangeObserver);
+        aContext->iInterfaceChangeObserver = NULL;
     }
     (void)WSACleanup();
-    OsMutexDestroy(gMutex);
-    gMutex = kHandleNull;
-    TlsFree(gTlsIndex);
+    OsMutexDestroy(aContext->iMutex);
+    aContext->iMutex = kHandleNull;
+    TlsFree(aContext->iTlsIndex);
+    free(aContext);
 }
 
-void OsQuit()
+void OsQuit(OsContext* aContext)
 {
+    UNUSED(aContext);
     abort();
 }
 
-void OsBreakpoint()
+void OsBreakpoint(OsContext* aContext)
 {
+    UNUSED(aContext);
 }
 
 #define STACK_TRACE_MAX_DEPTH 32
@@ -109,11 +131,12 @@ typedef struct OsStackTrace
     void* iStack[STACK_TRACE_MAX_DEPTH];
     USHORT iCount;
     SYMBOL_INFO* iSymbol;
+    OsContext* iOsContext;
 } OsStackTrace;
 
 //#define STACK_TRACE_ENABLE
 
-THandle OsStackTraceInitialise()
+THandle OsStackTraceInitialise(OsContext* aContext)
 {
     OsStackTrace* stackTrace = (OsStackTrace*)calloc(sizeof(OsStackTrace), 1);
 #ifdef STACK_TRACE_ENABLE
@@ -122,6 +145,7 @@ THandle OsStackTraceInitialise()
     }
     stackTrace->iCount = CaptureStackBackTrace(0, 100, stackTrace->iStack, NULL);
 #endif /* STACK_TRACE_ENABLE */
+    stackTrace->iOsContext = aContext;
     return stackTrace;
 }
 
@@ -166,7 +190,7 @@ const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
         stackTrace->iSymbol->MaxNameLen = 255;
         stackTrace->iSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
     }
-    SymFromAddr(gDebugSymbolHandle, (DWORD64)(stackTrace->iStack[aIndex]), 0, stackTrace->iSymbol);
+    SymFromAddr(stackTrace->iOsContext->iDebugSymbolHandle, (DWORD64)(stackTrace->iStack[aIndex]), 0, stackTrace->iSymbol);
     return stackTrace->iSymbol->Name;
 #endif
 }
@@ -180,27 +204,27 @@ void OsStackTraceFinalise(THandle aStackTrace)
     }
 }
 
-uint64_t OsTimeInUs()
+uint64_t OsTimeInUs(OsContext* aContext)
 {
     uint64_t now, diff, adjustedNow;
     FILETIME ft;
-    OsMutexLock(gMutex);
+    OsMutexLock(aContext->iMutex);
     GetSystemTimeAsFileTime(&ft);
     now = ft.dwHighDateTime;
     now <<= 32;
     now |= ft.dwLowDateTime;
     
-    /* if time has moved backwards, calculate by how much and add this to gTimeAdjustment */
-    if (now < gPrevTime) {
-        diff = gPrevTime - now;
+    /* if time has moved backwards, calculate by how much and add this to aContext->iTimeAdjustment */
+    if (now < aContext->iPrevTime) {
+        diff = aContext->iPrevTime - now;
         fprintf(stderr, "WARNING: clock moved backwards by %3lums\n", now / 10000);
-        gTimeAdjustment += diff;
+        aContext->iTimeAdjustment += diff;
     }
-    gPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
-    adjustedNow = now + gTimeAdjustment; /* add any previous backwards moves to the time */
-    diff = adjustedNow - gStartTime; /* how long since we started, ignoring any backwards moves */
+    aContext->iPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
+    adjustedNow = now + aContext->iTimeAdjustment; /* add any previous backwards moves to the time */
+    diff = adjustedNow - aContext->iStartTime; /* how long since we started, ignoring any backwards moves */
     diff /= 10; // GetSystemTimeAsFileTime has units of 100 nano-secs
-    OsMutexUnlock(gMutex);
+    OsMutexUnlock(aContext->iMutex);
 
     return diff;
 }
@@ -211,9 +235,10 @@ void OsConsoleWrite(const char* aStr)
     fflush(stderr);
 }
 
-void OsGetPlatformNameAndVersion(char** aName, uint32_t* aMajor, uint32_t* aMinor)
+void OsGetPlatformNameAndVersion(OsContext* aContext, char** aName, uint32_t* aMajor, uint32_t* aMinor)
 {
     OSVERSIONINFO verInfo;
+    UNUSED(aContext);
     memset(&verInfo, 0, sizeof(verInfo));
     verInfo.dwOSVersionInfoSize = sizeof(verInfo);
     (void)GetVersionEx(&verInfo);
@@ -222,9 +247,10 @@ void OsGetPlatformNameAndVersion(char** aName, uint32_t* aMajor, uint32_t* aMino
     *aMinor = verInfo.dwMinorVersion;
 }
 
-THandle OsSemaphoreCreate(const char* aName, uint32_t aCount)
+THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCount)
 {
-    aName = aName;
+    UNUSED(aContext);
+    UNUSED(aName);
     return (THandle)CreateSemaphore(NULL, aCount, INT32_MAX, NULL);
 }
 
@@ -275,10 +301,11 @@ typedef struct
     uint32_t         iCount;
 } Mutex;
 
-THandle OsMutexCreate(const char* aName)
+THandle OsMutexCreate(OsContext* aContext, const char* aName)
 {
     Mutex* mutex = calloc(1, sizeof(*mutex));
-    aName = aName;
+    UNUSED(aContext);
+    UNUSED(aName);
     if (NULL == mutex) {
         return kHandleNull;
     }
@@ -322,6 +349,7 @@ typedef struct
     ThreadEntryPoint iEntryPoint;
     void*            iArg;
     uint32_t         iPriority;
+    OsContext*       iCtx;
 } ThreadData;
 
 
@@ -353,14 +381,14 @@ DWORD threadEntrypoint(LPVOID aArg)
         //fflush(stderr);
     }
 
-    (void)TlsSetValue(gTlsIndex, data->iArg);
+    (void)TlsSetValue(data->iCtx->iTlsIndex, data->iArg);
     data->iEntryPoint(data->iArg);
 
     return 0;
 }
 
-THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes,
-                       ThreadEntryPoint aEntryPoint, void* aArg)
+THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriority,
+                       uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
 {
     ThreadData* data = (ThreadData*)calloc(1, sizeof(ThreadData));
     if (NULL == data) {
@@ -377,6 +405,7 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
     data->iEntryPoint = aEntryPoint;
     data->iArg        = aArg;
     data->iPriority   = aPriority;
+    data->iCtx        = aContext;
 
     data->iThread = CreateThread(NULL, aStackBytes, (LPTHREAD_START_ROUTINE)&threadEntrypoint, data, 0, NULL);
     if (0 == data->iThread) {
@@ -385,9 +414,9 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
     return (THandle)data;
 }
 
-void* OsThreadTls()
+void* OsThreadTls(OsContext* aContext)
 {
-    return TlsGetValue(gTlsIndex);
+    return TlsGetValue(aContext->iTlsIndex);
 }
 
 void OsThreadDestroy(THandle aThread)
@@ -395,25 +424,27 @@ void OsThreadDestroy(THandle aThread)
     free((ThreadData*)aThread);
 }
 
-int32_t OsThreadSupportsPriorities()
+int32_t OsThreadSupportsPriorities(OsContext* aContext)
 {
+    UNUSED(aContext);
     // we do support priorities but can't manage the full range the library expects
     return 0;
 }
 
 typedef struct OsNetworkHandle
 {
-    SOCKET   iSocket;
-    WSAEVENT iEvent;
-    int32_t  iInterrupted;
+    SOCKET     iSocket;
+    WSAEVENT   iEvent;
+    int32_t    iInterrupted;
+    OsContext* iCtx;
 }OsNetworkHandle;
 
 static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
 {
     int32_t interrupted;
-    OsMutexLock(gMutex);
+    OsMutexLock(aHandle->iCtx->iMutex);
     interrupted = aHandle->iInterrupted;
-    OsMutexUnlock(gMutex);
+    OsMutexUnlock(aHandle->iCtx->iMutex);
     return interrupted;
 }
 
@@ -425,7 +456,7 @@ static void sockaddrFromEndpoint(struct sockaddr_in* aAddr, TIpAddress aAddress,
     aAddr->sin_addr.s_addr = aAddress;
 }
 
-static OsNetworkHandle* CreateHandle(SOCKET aSocket)
+static OsNetworkHandle* CreateHandle(OsContext* aContext, SOCKET aSocket)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)malloc(sizeof(OsNetworkHandle));
     if (NULL == handle) {
@@ -440,6 +471,7 @@ static OsNetworkHandle* CreateHandle(SOCKET aSocket)
     }
     handle->iSocket = aSocket;
     handle->iInterrupted = 0;
+    handle->iCtx = aContext;
 
     return handle;
 }
@@ -453,10 +485,10 @@ static void SetSocketBlocking(SOCKET aSocket)
     }
 }
 
-THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
+THandle OsNetworkCreate(OsContext* aContext, OsNetworkSocketType aSocketType)
 {
     SOCKET socketH = socket(AF_INET, aSocketType, 0);
-    OsNetworkHandle* handle = CreateHandle(socketH);
+    OsNetworkHandle* handle = CreateHandle(aContext, socketH);
     return (THandle)handle;
 }
 
@@ -655,7 +687,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 {
     int32_t err = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    OsMutexLock(gMutex);
+    OsMutexLock(handle->iCtx->iMutex);
     handle->iInterrupted = aInterrupt;
     if (aInterrupt != 0) {
         (void)WSASetEvent(handle->iEvent);
@@ -663,7 +695,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
     else {
         (void)WSAResetEvent(handle->iEvent);
     }
-    OsMutexUnlock(gMutex);
+    OsMutexUnlock(handle->iCtx->iMutex);
     return err;
 }
 
@@ -730,7 +762,7 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
         return kHandleNull;
     }
 
-    newHandle = CreateHandle(h);
+    newHandle = CreateHandle(handle->iCtx, h);
     if (NULL == newHandle) {
         return kHandleNull;
     }
@@ -834,7 +866,7 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     return err;
 }
 
-int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
+int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
 {
 #define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
         (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
@@ -898,7 +930,7 @@ int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopb
             (addrRow->dwAddr != loopbackAddr && aUseLoopback == LOOPBACK_USE)) {
             continue;
         }
-        if (-1 != gTestInterfaceIndex && index++ != gTestInterfaceIndex) {
+        if (-1 != aContext->iTestInterfaceIndex && index++ != aContext->iTestInterfaceIndex) {
             continue;
         }
         if (addrRow->dwAddr == 0 || addrRow->dwMask == 0) {
@@ -998,38 +1030,40 @@ DWORD interfaceChangeThread(LPVOID aArg)
     return 0;
 }
 
-void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)
+void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChanged aCallback, void* aArg)
 {
-    if (NULL != gInterfaceChangeObserver) {
+    InterfaceChangeObserver* icobs;
+    if (NULL != aContext->iInterfaceChangeObserver) {
         return;
     }
 
-    gInterfaceChangeObserver = (InterfaceChangeObserver*)malloc(sizeof(*gInterfaceChangeObserver));
-    if (NULL == gInterfaceChangeObserver) {
+    icobs = (InterfaceChangeObserver*)malloc(sizeof(InterfaceChangeObserver));
+    if (NULL == icobs) {
         return;
     }
 
-    gInterfaceChangeObserver->iSocket = socket(AF_INET, SOCK_DGRAM, 0);
-    SetSocketBlocking(gInterfaceChangeObserver->iSocket);
-    gInterfaceChangeObserver->iEvent = WSACreateEvent();
-    gInterfaceChangeObserver->iShutdownEvent = WSACreateEvent();
-    gInterfaceChangeObserver->iCallback = aCallback;
-    gInterfaceChangeObserver->iArg = aArg;
-    gInterfaceChangeObserver->iShutdown = 0;
-    gInterfaceChangeObserver->iSem = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
-    (void)WSAEventSelect(gInterfaceChangeObserver->iSocket, gInterfaceChangeObserver->iEvent, FD_ADDRESS_LIST_CHANGE);
-    (void)CreateThread(NULL, 16*1024, (LPTHREAD_START_ROUTINE)&interfaceChangeThread, gInterfaceChangeObserver, 0, NULL);
+    icobs->iSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    SetSocketBlocking(icobs->iSocket);
+    icobs->iEvent = WSACreateEvent();
+    icobs->iShutdownEvent = WSACreateEvent();
+    icobs->iCallback = aCallback;
+    icobs->iArg = aArg;
+    icobs->iShutdown = 0;
+    icobs->iSem = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
+    (void)WSAEventSelect(icobs->iSocket, icobs->iEvent, FD_ADDRESS_LIST_CHANGE);
+    (void)CreateThread(NULL, 16*1024, (LPTHREAD_START_ROUTINE)&interfaceChangeThread, icobs, 0, NULL);
+    aContext->iInterfaceChangeObserver = icobs;
 }
 
 /**
  * Test function.  Restrict OsNetworkListAdapters to just item aIndex from its normal list
  * Not advertised in Os.h and not guaranteed to be available on all platforms
  */
-extern void OsNetworkSetTestInterfaceIndex(int32_t aIndex);
-void OsNetworkSetTestInterfaceIndex(int32_t aIndex)
+extern void OsNetworkSetTestInterfaceIndex(OsContext* aContext, int32_t aIndex);
+void OsNetworkSetTestInterfaceIndex(OsContext* aContext, int32_t aIndex)
 {
-    gTestInterfaceIndex = aIndex;
-    if (NULL != gInterfaceChangeObserver) {
-        (void)WSASetEvent(gInterfaceChangeObserver->iEvent);
+    aContext->iTestInterfaceIndex = aIndex;
+    if (NULL != aContext->iInterfaceChangeObserver) {
+        (void)WSASetEvent(aContext->iInterfaceChangeObserver->iEvent);
     }
 }

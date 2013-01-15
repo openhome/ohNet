@@ -234,97 +234,97 @@ void DvProviderAvOpenhomeOrgMediaServer1::Construct()
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyManufacturerName()
 {
-    iPropertyManufacturerName = new PropertyString(iDvStack.GetStack(), new ParameterString("ManufacturerName"));
+    iPropertyManufacturerName = new PropertyString(iDvStack.Env(), new ParameterString("ManufacturerName"));
     iService->AddProperty(iPropertyManufacturerName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyManufacturerInfo()
 {
-    iPropertyManufacturerInfo = new PropertyString(iDvStack.GetStack(), new ParameterString("ManufacturerInfo"));
+    iPropertyManufacturerInfo = new PropertyString(iDvStack.Env(), new ParameterString("ManufacturerInfo"));
     iService->AddProperty(iPropertyManufacturerInfo); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyManufacturerUrl()
 {
-    iPropertyManufacturerUrl = new PropertyString(iDvStack.GetStack(), new ParameterString("ManufacturerUrl"));
+    iPropertyManufacturerUrl = new PropertyString(iDvStack.Env(), new ParameterString("ManufacturerUrl"));
     iService->AddProperty(iPropertyManufacturerUrl); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyManufacturerImageUri()
 {
-    iPropertyManufacturerImageUri = new PropertyString(iDvStack.GetStack(), new ParameterString("ManufacturerImageUri"));
+    iPropertyManufacturerImageUri = new PropertyString(iDvStack.Env(), new ParameterString("ManufacturerImageUri"));
     iService->AddProperty(iPropertyManufacturerImageUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyModelName()
 {
-    iPropertyModelName = new PropertyString(iDvStack.GetStack(), new ParameterString("ModelName"));
+    iPropertyModelName = new PropertyString(iDvStack.Env(), new ParameterString("ModelName"));
     iService->AddProperty(iPropertyModelName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyModelInfo()
 {
-    iPropertyModelInfo = new PropertyString(iDvStack.GetStack(), new ParameterString("ModelInfo"));
+    iPropertyModelInfo = new PropertyString(iDvStack.Env(), new ParameterString("ModelInfo"));
     iService->AddProperty(iPropertyModelInfo); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyModelUrl()
 {
-    iPropertyModelUrl = new PropertyString(iDvStack.GetStack(), new ParameterString("ModelUrl"));
+    iPropertyModelUrl = new PropertyString(iDvStack.Env(), new ParameterString("ModelUrl"));
     iService->AddProperty(iPropertyModelUrl); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyModelImageUri()
 {
-    iPropertyModelImageUri = new PropertyString(iDvStack.GetStack(), new ParameterString("ModelImageUri"));
+    iPropertyModelImageUri = new PropertyString(iDvStack.Env(), new ParameterString("ModelImageUri"));
     iService->AddProperty(iPropertyModelImageUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyProductName()
 {
-    iPropertyProductName = new PropertyString(iDvStack.GetStack(), new ParameterString("ProductName"));
+    iPropertyProductName = new PropertyString(iDvStack.Env(), new ParameterString("ProductName"));
     iService->AddProperty(iPropertyProductName); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyProductInfo()
 {
-    iPropertyProductInfo = new PropertyString(iDvStack.GetStack(), new ParameterString("ProductInfo"));
+    iPropertyProductInfo = new PropertyString(iDvStack.Env(), new ParameterString("ProductInfo"));
     iService->AddProperty(iPropertyProductInfo); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyProductUrl()
 {
-    iPropertyProductUrl = new PropertyString(iDvStack.GetStack(), new ParameterString("ProductUrl"));
+    iPropertyProductUrl = new PropertyString(iDvStack.Env(), new ParameterString("ProductUrl"));
     iService->AddProperty(iPropertyProductUrl); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyProductImageUri()
 {
-    iPropertyProductImageUri = new PropertyString(iDvStack.GetStack(), new ParameterString("ProductImageUri"));
+    iPropertyProductImageUri = new PropertyString(iDvStack.Env(), new ParameterString("ProductImageUri"));
     iService->AddProperty(iPropertyProductImageUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyAttributes()
 {
-    iPropertyAttributes = new PropertyString(iDvStack.GetStack(), new ParameterString("Attributes"));
+    iPropertyAttributes = new PropertyString(iDvStack.Env(), new ParameterString("Attributes"));
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyQueryPort()
 {
-    iPropertyQueryPort = new PropertyUint(iDvStack.GetStack(), new ParameterUint("QueryPort"));
+    iPropertyQueryPort = new PropertyUint(iDvStack.Env(), new ParameterUint("QueryPort"));
     iService->AddProperty(iPropertyQueryPort); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyBrowsePort()
 {
-    iPropertyBrowsePort = new PropertyUint(iDvStack.GetStack(), new ParameterUint("BrowsePort"));
+    iPropertyBrowsePort = new PropertyUint(iDvStack.Env(), new ParameterUint("BrowsePort"));
     iService->AddProperty(iPropertyBrowsePort); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::EnablePropertyUpdateCount()
 {
-    iPropertyUpdateCount = new PropertyUint(iDvStack.GetStack(), new ParameterUint("UpdateCount"));
+    iPropertyUpdateCount = new PropertyUint(iDvStack.Env(), new ParameterUint("UpdateCount"));
     iService->AddProperty(iPropertyUpdateCount); // passes ownership
 }
 

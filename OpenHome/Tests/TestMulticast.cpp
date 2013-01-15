@@ -35,7 +35,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
 
     Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*Net::gStack, Net::InitialisationParams::ELoopbackExclude, "TestMulticast");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Net::InitialisationParams::ELoopbackExclude, "TestMulticast");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {
@@ -50,7 +50,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     Endpoint multicast(port.Value(), endpoint.Value());
     
     if (send.Value() == false) {
-        SocketUdpMulticast socket(addr, multicast);
+        SocketUdpMulticast socket(*gEnv, addr, multicast);
 
         Endpoint actual(socket.Port(), multicast.Address());
         Bws<100> buf2;
@@ -79,7 +79,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
             Print("Sending test message to %s\n", buf2.Ptr());
         
             //SocketUdpMulticast socket(addr, multicast);
-            SocketUdp socket(0, addr);
+            SocketUdp socket(*gEnv, 0, addr);
             
             socket.Send(Brn("Test message"), multicast);
         }

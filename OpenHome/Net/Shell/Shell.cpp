@@ -114,13 +114,13 @@ void ShellSession::Run()
 
 // Shell
 
-Shell::Shell()
+Shell::Shell(Environment& aEnv)
     : iLock("MSHL")
 {
     iCommandHelp = new ShellCommandHelp(*this);
     // there's no obvious benefit to only listening on one interface per subnet
     // ...and we can save a bit of code by just binding to all interfaces rather than tracking subnet changes...
-    iServer = new SocketTcpServer("SSHL", kServerPort, 0);
+    iServer = new SocketTcpServer(aEnv, "SSHL", kServerPort, 0);
     iServer->Add("SHEL", new ShellSession(*this));
 }
 

@@ -117,13 +117,13 @@ DvProviderAvOpenhomeOrgRadio1Cpp::DvProviderAvOpenhomeOrgRadio1Cpp(DvDeviceStd& 
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyUri()
 {
-    iPropertyUri = new PropertyString(iDvStack.GetStack(), new ParameterString("Uri"));
+    iPropertyUri = new PropertyString(iDvStack.Env(), new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyMetadata()
 {
-    iPropertyMetadata = new PropertyString(iDvStack.GetStack(), new ParameterString("Metadata"));
+    iPropertyMetadata = new PropertyString(iDvStack.Env(), new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
 }
 
@@ -136,32 +136,32 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyTransportState()
     allowedValues[index++] = (TChar*)"Playing";
     allowedValues[index++] = (TChar*)"Paused";
     allowedValues[index++] = (TChar*)"Buffering";
-    iPropertyTransportState = new PropertyString(iDvStack.GetStack(), new ParameterString("TransportState", allowedValues, 4));
+    iPropertyTransportState = new PropertyString(iDvStack.Env(), new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyId()
 {
-    iPropertyId = new PropertyUint(iDvStack.GetStack(), new ParameterUint("Id"));
+    iPropertyId = new PropertyUint(iDvStack.Env(), new ParameterUint("Id"));
     iService->AddProperty(iPropertyId); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyIdArray()
 {
-    iPropertyIdArray = new PropertyBinary(iDvStack.GetStack(), new ParameterBinary("IdArray"));
+    iPropertyIdArray = new PropertyBinary(iDvStack.Env(), new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyChannelsMax()
 {
-    iPropertyChannelsMax = new PropertyUint(iDvStack.GetStack(), new ParameterUint("ChannelsMax"));
+    iPropertyChannelsMax = new PropertyUint(iDvStack.Env(), new ParameterUint("ChannelsMax"));
     iService->AddProperty(iPropertyChannelsMax); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgRadio1Cpp::EnablePropertyProtocolInfo()
 {
-    iPropertyProtocolInfo = new PropertyString(iDvStack.GetStack(), new ParameterString("ProtocolInfo"));
+    iPropertyProtocolInfo = new PropertyString(iDvStack.Env(), new ParameterString("ProtocolInfo"));
     iService->AddProperty(iPropertyProtocolInfo); // passes ownership
 }
 

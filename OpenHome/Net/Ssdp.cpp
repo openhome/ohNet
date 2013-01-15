@@ -2,7 +2,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -200,32 +200,32 @@ void Ssdp::WriteSearchTypeAll(IWriterHttpHeader& aWriter)
     aWriter.WriteHeader(Ssdp::kHeaderSt, kMsearchAll);
 }
 
-void Ssdp::WriteServer(Stack& aStack, IWriterHttpHeader& aWriter)
+void Ssdp::WriteServer(Environment& aEnv, IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderServer);
     TUint major, minor;
-    Brn osName = Os::GetPlatformNameAndVersion(major, minor);
+    Brn osName = Os::GetPlatformNameAndVersion(aEnv.OsCtx(), major, minor);
     stream.Write(osName);
     stream.Write('/');
     stream.WriteUint(major);
     stream.Write('.');
     stream.WriteUint(minor);
     stream.Write(Brn(" UPnP/1.1 ohNet/"));
-    aStack.GetVersion(major, minor);
+    aEnv.GetVersion(major, minor);
     stream.WriteUint(major);
     stream.Write('.');
     stream.WriteUint(minor);
     stream.WriteFlush();
 }
 
-void Ssdp::WriteMaxAge(Stack& aStack, IWriterHttpHeader& aWriter)
+void Ssdp::WriteMaxAge(Environment& aEnv, IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderCacheControl);
     stream.Write(kSsdpMaxAge);
     stream.Write(Ascii::kSp);
     stream.Write(kSsdpMaxAgeSeparator);
     stream.Write(Ascii::kSp);
-    stream.WriteUint(aStack.InitParams().DvMaxUpdateTimeSecs());
+    stream.WriteUint(aEnv.InitParams().DvMaxUpdateTimeSecs());
     stream.WriteFlush();
 }
 

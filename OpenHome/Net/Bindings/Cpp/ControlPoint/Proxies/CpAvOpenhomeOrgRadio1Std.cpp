@@ -459,25 +459,25 @@ CpProxyAvOpenhomeOrgRadio1Cpp::CpProxyAvOpenhomeOrgRadio1Cpp(CpDeviceCpp& aDevic
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgRadio1Cpp::UriPropertyChanged);
-    iUri = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Uri", functor);
+    iUri = new PropertyString(aDevice.Device().GetCpStack().Env(), "Uri", functor);
     AddProperty(iUri);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgRadio1Cpp::MetadataPropertyChanged);
-    iMetadata = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "Metadata", functor);
+    iMetadata = new PropertyString(aDevice.Device().GetCpStack().Env(), "Metadata", functor);
     AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgRadio1Cpp::TransportStatePropertyChanged);
-    iTransportState = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "TransportState", functor);
+    iTransportState = new PropertyString(aDevice.Device().GetCpStack().Env(), "TransportState", functor);
     AddProperty(iTransportState);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgRadio1Cpp::IdPropertyChanged);
-    iId = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "Id", functor);
+    iId = new PropertyUint(aDevice.Device().GetCpStack().Env(), "Id", functor);
     AddProperty(iId);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgRadio1Cpp::IdArrayPropertyChanged);
-    iIdArray = new PropertyBinary(aDevice.Device().GetCpStack().GetStack(), "IdArray", functor);
+    iIdArray = new PropertyBinary(aDevice.Device().GetCpStack().Env(), "IdArray", functor);
     AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgRadio1Cpp::ChannelsMaxPropertyChanged);
-    iChannelsMax = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "ChannelsMax", functor);
+    iChannelsMax = new PropertyUint(aDevice.Device().GetCpStack().Env(), "ChannelsMax", functor);
     AddProperty(iChannelsMax);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgRadio1Cpp::ProtocolInfoPropertyChanged);
-    iProtocolInfo = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "ProtocolInfo", functor);
+    iProtocolInfo = new PropertyString(aDevice.Device().GetCpStack().Env(), "ProtocolInfo", functor);
     AddProperty(iProtocolInfo);
 }
 

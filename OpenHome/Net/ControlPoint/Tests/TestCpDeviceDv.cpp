@@ -5,7 +5,7 @@
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Maths.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 
@@ -226,7 +226,7 @@ static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = aDvStack.GetStack().NetworkAdapterList().CurrentAdapter("TestCpDeviceDv");
+    NetworkAdapter* nif = aDvStack.Env().NetworkAdapterList().CurrentAdapter("TestCpDeviceDv");
     TUint max = nif->Address();
     TUint seed = aDvStack.ServerUpnp().Port(nif->Address());
     SetRandomSeed(seed);

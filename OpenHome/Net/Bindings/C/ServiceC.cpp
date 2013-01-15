@@ -48,61 +48,61 @@ void STDCALL ServicePropertyDestroy(ServiceProperty aProperty)
 ServiceProperty STDCALL ServicePropertyCreateIntCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
-    return (ServiceProperty)new PropertyInt(*gStack, aName, functor);
+    return (ServiceProperty)new PropertyInt(*gEnv, aName, functor);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateIntDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
-    return (ServiceProperty)new PropertyInt(*gStack, param);
+    return (ServiceProperty)new PropertyInt(*gEnv, param);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateUintCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
-    return (ServiceProperty)new PropertyUint(*gStack, aName, functor);
+    return (ServiceProperty)new PropertyUint(*gEnv, aName, functor);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateUintDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
-    return (ServiceProperty)new PropertyUint(*gStack, param);
+    return (ServiceProperty)new PropertyUint(*gEnv, param);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateBoolCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
-    return (ServiceProperty)new PropertyBool(*gStack, aName, functor);
+    return (ServiceProperty)new PropertyBool(*gEnv, aName, functor);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateBoolDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
-    return (ServiceProperty)new PropertyBool(*gStack, param);
+    return (ServiceProperty)new PropertyBool(*gEnv, param);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateStringCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
-    return (ServiceProperty)new PropertyString(*gStack, aName, functor);
+    return (ServiceProperty)new PropertyString(*gEnv, aName, functor);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateStringDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
-    return (ServiceProperty)new PropertyString(*gStack, param);
+    return (ServiceProperty)new PropertyString(*gEnv, param);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateBinaryCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
-    return (ServiceProperty)new PropertyBinary(*gStack, aName, functor);
+    return (ServiceProperty)new PropertyBinary(*gEnv, aName, functor);
 }
 
 ServiceProperty STDCALL ServicePropertyCreateBinaryDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
-    return (ServiceProperty)new PropertyBinary(*gStack, param);
+    return (ServiceProperty)new PropertyBinary(*gEnv, param);
 }
 
 int32_t STDCALL ServicePropertyValueInt(ServiceProperty aProperty)

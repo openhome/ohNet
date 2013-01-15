@@ -5,7 +5,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Net/Private/Ssdp.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviProtocolUpnp.h>
@@ -15,7 +15,6 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Net/Private/Error.h>
 
 #include <stdlib.h>
@@ -306,8 +305,8 @@ PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPubli
                                        const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber)
     : iDvStack(aDvStack)
 {
-    iSocket.Open();
-    iSocket.Connect(aSubscriber, aDvStack.GetStack().InitParams().TcpConnectTimeoutMs());
+    iSocket.Open(aDvStack.Env());
+    iSocket.Connect(aSubscriber, aDvStack.Env().InitParams().TcpConnectTimeoutMs());
     iWriterChunked = new WriterHttpChunked(iSocket);
     iWriteBuffer = new Sws<kMaxRequestBytes>(*iWriterChunked);
     iWriterEvent = new WriterHttpRequest(*iWriteBuffer);
@@ -358,7 +357,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
     iWriteBuffer->WriteFlush();
 
     Srs<kMaxResponseBytes> readBuffer(iSocket);
-    ReaderHttpResponse readerResponse(iDvStack.GetStack(), readBuffer);
+    ReaderHttpResponse readerResponse(iDvStack.Env(), readBuffer);
     readerResponse.Read(kReadTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
@@ -392,9 +391,10 @@ void PropertyWriterFactory::SubscriptionAdded(DviSubscription& aSubscription)
 
 void PropertyWriterFactory::Disable()
 {
-    iDvStack.GetStack().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iEnabled = false;
-    iDvStack.GetStack().Mutex().Signal();
+    lock.Signal();
     iSubscriptionMapLock.Wait();
     std::vector<DviSubscription*> subscriptions;
     SubscriptionMap::iterator it = iSubscriptionMap.begin();
@@ -416,9 +416,10 @@ void PropertyWriterFactory::Disable()
 
 IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber)
 {
-    iDvStack.GetStack().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     TBool enabled = iEnabled;
-    iDvStack.GetStack().Mutex().Signal();
+    lock.Signal();
     if (!enabled) {
         return NULL;
     }
@@ -455,17 +456,19 @@ PropertyWriterFactory::~PropertyWriterFactory()
 
 void PropertyWriterFactory::AddRef()
 {
-    iDvStack.GetStack().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRefCount++;
-    iDvStack.GetStack().Mutex().Signal();
+    lock.Signal();
 }
 
 void PropertyWriterFactory::RemoveRef()
 {
-    iDvStack.GetStack().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    iDvStack.GetStack().Mutex().Signal();
+    lock.Signal();
     if (dead) {
         delete this;
     }
@@ -482,7 +485,7 @@ DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint a
     , iShutdownSem("DSUS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(aDvStack.GetStack(), *iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(aDvStack.Env(), *iReadBuffer);
     iWriterChunked = new WriterHttpChunked(*this);
     iWriterBuffer = new Sws<kMaxResponseBytes>(*iWriterChunked);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
@@ -541,13 +544,14 @@ void DviSessionUpnp::Run()
         const Brx& method = iReaderRequest->Method();
         iReaderRequest->UnescapeUri();
 
-        iDvStack.GetStack().Mutex().Wait();
+        Mutex& lock = iDvStack.Env().Mutex();
+        lock.Wait();
         LOG(kDvDevice, "Method: ");
         LOG(kDvDevice, method);
         LOG(kDvDevice, ", uri: ");
         LOG(kDvDevice, iReaderRequest->Uri());
         LOG(kDvDevice, "\n");
-        iDvStack.GetStack().Mutex().Signal();
+        lock.Signal();
 
         iResponseStarted = false;
         iResponseEnded = false;
@@ -845,14 +849,14 @@ void DviSessionUpnp::WriteServerHeader(IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Brn("SERVER"));
     TUint major, minor;
-    Brn osName = Os::GetPlatformNameAndVersion(major, minor);
+    Brn osName = Os::GetPlatformNameAndVersion(iDvStack.Env().OsCtx(), major, minor);
     stream.Write(osName);
     stream.Write('/');
     stream.WriteUint(major);
     stream.Write('.');
     stream.WriteUint(minor);
     stream.Write(Brn(" UPnP/1.1 ohNet/"));
-    iDvStack.GetStack().GetVersion(major, minor);
+    iDvStack.Env().GetVersion(major, minor);
     stream.WriteUint(major);
     stream.Write('.');
     stream.WriteUint(minor);
@@ -1234,17 +1238,18 @@ DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
 void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo)
 {
     // could store a vector of redirections if required
-    iDvStack.GetStack().Mutex().Wait();
+    Mutex& lock = iDvStack.Env().Mutex();
+    lock.Wait();
     iRedirectUriRequested.Set(aUriRequested);
     iRedirectUriRedirectedTo.Set(aUriRedirectedTo);
-    iDvStack.GetStack().Mutex().Signal();
+    lock.Signal();
 }
 
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("DSVU", iPort, aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "DSVU", iPort, aNif.Address());
     TChar thName[5];
-    const TUint numWsThreads = iDvStack.GetStack().InitParams().DvNumServerThreads();
+    const TUint numWsThreads = iDvStack.Env().InitParams().DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "DS%2lu", (unsigned long)i);
         server->Add(&thName[0], new DviSessionUpnp(iDvStack, aNif.Address(), server->Port(), *this));

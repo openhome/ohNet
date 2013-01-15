@@ -8,7 +8,7 @@
 #define HEADER_CPI_STACK
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Standard.h>
 
 #include <vector>
@@ -24,8 +24,8 @@ class CpiDeviceListUpdater;
 class CpStack : public IStack, private INonCopyable
 {
 public:
-    CpStack(Stack& aStack);
-    Stack& GetStack() { return iStack; }
+    CpStack(Environment& aEnv);
+    Environment& Env() { return iEnv; }
     OpenHome::Net::InvocationManager& InvocationManager();
     OpenHome::Net::XmlFetchManager& XmlFetchManager();
     CpiSubscriptionManager& SubscriptionManager();
@@ -33,7 +33,7 @@ public:
 private:
     ~CpStack();
 private:
-    OpenHome::Net::Stack& iStack;
+    OpenHome::Environment& iEnv;
     OpenHome::Net::InvocationManager* iInvocationManager;
     OpenHome::Net::XmlFetchManager* iXmlFetchManager;
     CpiSubscriptionManager* iSubscriptionManager;

@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Private/CpiStack.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiService.h>
 #include <OpenHome/Net/Private/XmlFetcher.h>
 #include <OpenHome/Net/Private/CpiSubscription.h>
@@ -11,10 +11,10 @@ using namespace OpenHome::Net;
 
 // CpStack
 
-CpStack::CpStack(OpenHome::Net::Stack& aStack)
-    : iStack(aStack)
+CpStack::CpStack(OpenHome::Environment& aStack)
+    : iEnv(aStack)
 {
-    iStack.SetCpStack(this);
+    iEnv.SetCpStack(this);
     iInvocationManager = new OpenHome::Net::InvocationManager(*this);
     iXmlFetchManager = new OpenHome::Net::XmlFetchManager(*this);
     iSubscriptionManager = new CpiSubscriptionManager(*this);

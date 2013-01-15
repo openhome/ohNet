@@ -26,11 +26,11 @@ static void RunTestNetwork(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const s
 extern void TestTimer();
 static void RunTestTimer(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestTimer(); }
 
-extern void TestSsdpMListen(Stack& aStack, const std::vector<Brn>& aArgs);
-static void RunTestSsdpMListen(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestSsdpMListen(aCpStack.GetStack(), aArgs); }
+extern void TestSsdpMListen(Environment& aEnv, const std::vector<Brn>& aArgs);
+static void RunTestSsdpMListen(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestSsdpMListen(aCpStack.Env(), aArgs); }
 
-extern void TestSsdpUListen(Stack& aStack, const std::vector<Brn>& aArgs);
-static void RunTestSsdpUListen(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestSsdpUListen(aCpStack.GetStack(), aArgs); }
+extern void TestSsdpUListen(Environment& aEnv, const std::vector<Brn>& aArgs);
+static void RunTestSsdpUListen(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestSsdpUListen(aCpStack.Env(), aArgs); }
 
 extern void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs);
 static void RunTestDeviceList(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestDeviceList(aCpStack, aArgs); }

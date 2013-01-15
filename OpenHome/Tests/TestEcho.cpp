@@ -55,7 +55,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     Net::UpnpLibrary::Initialise(aInitParams);
 //    Debug::SetLevel(Debug::kNetwork);
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*Net::gStack, Net::InitialisationParams::ELoopbackExclude, "TestEcho");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Net::InitialisationParams::ELoopbackExclude, "TestEcho");
     ASSERT(ifs->size() > 0);
     TIpAddress addr = (*ifs)[0]->Address();
     Endpoint endpt(0, addr);
@@ -66,7 +66,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     }
     Print("Using network interface %s\n\n", buf.Ptr());
     Semaphore sem("", 0);
-    SocketTcpServer* server = new SocketTcpServer("ECHO", 1025, addr);
+    SocketTcpServer* server = new SocketTcpServer(*gEnv, "ECHO", 1025, addr);
     server->Add("ECHO", new EchoSession(sem));
 
     sem.Wait();

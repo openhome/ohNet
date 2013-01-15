@@ -4,7 +4,7 @@
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Thread.h>
 
 using namespace OpenHome;
@@ -31,7 +31,7 @@ DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDev
     EnableActionGetPropertyUpdates();
 
     iShutdown.Signal();
-    iMaxClientCount = iDvStack.GetStack().InitParams().DvNumServerThreads() / 2;
+    iMaxClientCount = iDvStack.Env().InitParams().DvNumServerThreads() / 2;
     ASSERT(iMaxClientCount > 0);
     UpdateReadySignal empty;
     for (TUint i=0; i<iMaxClientCount; i++) {

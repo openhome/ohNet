@@ -4,15 +4,16 @@
 #include <OpenHome/Os.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 
-THandle Os::StackTraceInitialise()
+THandle Os::StackTraceInitialise(OsContext* aContext)
 {
     /* this function and StackTraceCopy below could be inlined but Exception strips out
        the functions above THROW and that'd be harder to do reliably with inline functions
        (which may or may not be actually inlined depending on compiler optimisations) */
-    return OsStackTraceInitialise();
+    return OsStackTraceInitialise(aContext);
 }
 
 THandle Os::StackTraceCopy(THandle aStackTrace)
@@ -20,17 +21,17 @@ THandle Os::StackTraceCopy(THandle aStackTrace)
     return OsStackTraceCopy(aStackTrace);
 }
 
-Brn Os::GetPlatformNameAndVersion(TUint& aMajor, TUint& aMinor)
+Brn Os::GetPlatformNameAndVersion(OsContext* aContext, TUint& aMajor, TUint& aMinor)
 {
     char* name;
-    OsGetPlatformNameAndVersion(&name, &aMajor, &aMinor);
+    OsGetPlatformNameAndVersion(aContext, &name, &aMajor, &aMinor);
     Brn nameBuf(name);
     return nameBuf;
 }
 
-THandle Os::NetworkCreate(ESocketType aSocketType)
+THandle Os::NetworkCreate(OsContext* aContext, ESocketType aSocketType)
 {
-    THandle handle = OsNetworkCreate((OsNetworkSocketType)aSocketType);
+    THandle handle = OsNetworkCreate(aContext, (OsNetworkSocketType)aSocketType);
     if (handle == kHandleNull) {
         THROW(NetworkError);
     }
@@ -177,10 +178,12 @@ void OpenHome::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddr
     }
 }
 
-std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Net::Stack& aStack, Net::InitialisationParams::ELoopback aUseLoopback, const TChar* aCookie)
+std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Environment& aEnv,
+                                                                Net::InitialisationParams::ELoopback aUseLoopback,
+                                                                const TChar* aCookie)
 {
     OsNetworkAdapter* cIfs = NULL;
-    int32_t err = OsNetworkListAdapters(&cIfs, (uint32_t)aUseLoopback);
+    int32_t err = OsNetworkListAdapters(aEnv.OsCtx(), &cIfs, (uint32_t)aUseLoopback);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::NetworkListAdapters RETURN VALUE = %d\n", err);
         THROW(NetworkError);
@@ -188,7 +191,7 @@ std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Net::Stack& aSta
     std::vector<NetworkAdapter*>* ifs = new std::vector<NetworkAdapter*>;
     OsNetworkAdapter* ptr = cIfs;
     while (ptr != NULL) {
-        NetworkAdapter* iface = new NetworkAdapter(aStack, ptr->iAddress, ptr->iNetMask, ptr->iName, aCookie);
+        NetworkAdapter* iface = new NetworkAdapter(aEnv, ptr->iAddress, ptr->iNetMask, ptr->iName, aCookie);
         ifs->push_back(iface);
         ptr = ptr->iNext;
     }

@@ -521,7 +521,7 @@ DviSessionWebSocket::DviSessionWebSocket(DvStack& aDvStack, TIpAddress aInterfac
     , iPropertyUpdates(kMaxPropertyUpdates)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(iDvStack.GetStack(), *iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(iDvStack.Env(), *iReadBuffer);
     iWriterBuffer = new Sws<kMaxWriteBytes>(*this);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
@@ -993,16 +993,16 @@ DviSessionWebSocket::SubscriptionWrapper::~SubscriptionWrapper()
 DviServerWebSocket::DviServerWebSocket(DvStack& aDvStack)
     : DviServer(aDvStack)
 {
-    if (iDvStack.GetStack().InitParams().DvNumWebSocketThreads() > 0) {
+    if (iDvStack.Env().InitParams().DvNumWebSocketThreads() > 0) {
         Initialise();
     }
 }
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("WSSV", iDvStack.GetStack().InitParams().DvWebSocketPort(), aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "WSSV", iDvStack.Env().InitParams().DvWebSocketPort(), aNif.Address());
     TChar thName[5];
-    const TUint numWsThreads = iDvStack.GetStack().InitParams().DvNumWebSocketThreads();
+    const TUint numWsThreads = iDvStack.Env().InitParams().DvNumWebSocketThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "WS%2lu", (unsigned long)i);
         server->Add(&thName[0], new DviSessionWebSocket(iDvStack, aNif.Address(), server->Port()));

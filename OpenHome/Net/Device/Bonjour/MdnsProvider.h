@@ -6,14 +6,15 @@
 #include <OpenHome/Net/Private/MdnsPlatform.h>
 
 namespace OpenHome {
-namespace Net {
 
-class Stack;
+class Environment;
+
+namespace Net {
 
 class MdnsProvider : public IMdnsProvider
 {
 public:
-    MdnsProvider(Stack& aStack, const TChar* aHost);
+    MdnsProvider(Environment& aStack, const TChar* aHost);
     virtual ~MdnsProvider();
     virtual void MdnsSetHostName(const TChar* aName);
     virtual TUint MdnsCreateService();

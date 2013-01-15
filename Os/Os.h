@@ -36,32 +36,38 @@ extern "C" {
  *
  * This function will be called before any other function defined in this header.
  *
- * @return  0 on success; non-zero on failure
+ * @return  Valid OsContext on success; NULL on failure
  */
-int32_t OsCreate();
+OsContext* OsCreate();
 
 /**
  * Called when the UPnP library is closed.
  *
  * No other functions defined in this header will be called after this function.
+ *
+ * @param[in] aContext     Returned from OsCreate().
  */
-void OsDestroy();
+void OsDestroy(OsContext* aContext);
 
 /**
  * Terminate the process.
  *
  * Will only be called in response to a fatal error.
  * No other functions defined in this header will be called after this function.
+ *
+ * @param[in] aContext     Returned from OsCreate().
  */
-void OsQuit();
+void OsQuit(OsContext* aContext);
 
 /**
  * Cause a breakpoint.
  *
  * OS specific way of causing a breakpoint such that an OS specific debugger
  * can catch the breakpoint and allow debugging of the program.
+ *
+ * @param[in] aContext     Returned from OsCreate().
  */
-void OsBreakpoint();
+void OsBreakpoint(OsContext* aContext);
 
 /**
  * Initialise a stack trace for the current call stack.
@@ -71,9 +77,11 @@ void OsBreakpoint();
  * This will be called for every exception thrown inside ohNet so it is preferable if
  * it can do minimal work, deferring symbol lookup until OsStackTraceEntry is called.
  *
+ * @param[in] aContext     Returned from OsCreate().
+ *
  * @return  A valid handle on success; kHandleNull if creation failed.
  */
-THandle OsStackTraceInitialise();
+THandle OsStackTraceInitialise(OsContext* aContext);
 
 /**
  * Create a deep copy of an existing stack trace.
@@ -126,8 +134,10 @@ void OsStackTraceFinalise(THandle aStackTrace);
  *
  * This is only used to determine relative time rather than absolute time, so the returned time
  * can be relative anything approriate for this implementation.
+ *
+ * @param[in] aContext     Returned from OsCreate().
  */
-uint64_t OsTimeInUs();
+uint64_t OsTimeInUs(OsContext* aContext);
 
 /**
  * Write text to a console
@@ -141,17 +151,19 @@ void OsConsoleWrite(const char* aStr);
 /**
  * Return the platform name and version number
  *
+ * @param[in] aContext    Returned from OsCreate().
  * @param[out] aName      Must be set to the platform name.  The caller will not take
  *                        ownership of the string so it should either be const or freed
  *                        in OsDestroy
  * @param[out] aMajor     Must be set to the major version number of the platform
  * @param[out] aMinor     Must be set to the minor version number of the platform
  */
-void OsGetPlatformNameAndVersion(char** aName, uint32_t* aMajor, uint32_t* aMinor);
+void OsGetPlatformNameAndVersion(OsContext* aContext, char** aName, uint32_t* aMajor, uint32_t* aMinor);
 
 /**
  * Create a semaphore.
  *
+ * @param[in] aContext    Returned from OsCreate().
  * @param[in] aName       Name for this semaphore.  May not be unique.
  *                        Maximum length is 4 characters.
  * @param[in] aCount      Initial count.  If this is greater than zero, the first aCount
@@ -159,7 +171,7 @@ void OsGetPlatformNameAndVersion(char** aName, uint32_t* aMajor, uint32_t* aMino
  *
  * @return  a valid handle on success; kHandleNull if creation failed.
  */
-THandle OsSemaphoreCreate(const char* aName, uint32_t aCount);
+THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCount);
 
 /**
  * Destroy a semaphore.
@@ -224,12 +236,13 @@ int32_t OsSemaphoreSignal(THandle aSem);
 /**
  * Create a mutex.
  *
- * @param[in] aName   Name for this mutex.  May not be unique.
- *                    Maximum length is 4 characters.
+ * @param[in] aContext    Returned from OsCreate().
+ * @param[in] aName       Name for this mutex.  May not be unique.
+ *                        Maximum length is 4 characters.
  *
  * @return  a valid handle on success; kHandleNull if creation failed.
  */
-THandle OsMutexCreate(const char* aName);
+THandle OsMutexCreate(OsContext* aContext, const char* aName);
 
 /**
  * Destroy a mutex.  No further operations will be attempted using this handle.
@@ -280,6 +293,7 @@ typedef void(*ThreadEntryPoint)(void*);
 /**
  * Create a thread.
  *
+ * @param[in] aContext    Returned from OsCreate().
  * @param[in] aName        Name for this thread.  May not be unique.
  *                         Maximum length is 4 characters.
  * @param[in] aPriority    Priority the thread should run at.  Will be in the range
@@ -296,13 +310,15 @@ typedef void(*ThreadEntryPoint)(void*);
  *
  * @return  a valid handle on success; kHandleNull if creation failed.
  */
-THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes,
-                       ThreadEntryPoint aEntryPoint, void* aArg);
+THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriority,
+                       uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg);
 
 /**
  * Return the 'aArg' value passed to the entrypoint for the current thread
+ *
+ * @param[in] aContext    Returned from OsCreate().
  */
-void* OsThreadTls();
+void* OsThreadTls(OsContext* aContext);
 
 /**
  * Destroy a thread.
@@ -316,10 +332,12 @@ void OsThreadDestroy(THandle aThread);
 /**
  * Query whether the threading system supports setting different priorities.
  *
+ * @param[in] aContext    Returned from OsCreate().
+ *
  * @return  non-zero if priorities (at least the range passed to OsThreadCreate)
  *          are supported; zero otherwise
  */
-int32_t OsThreadSupportsPriorities();
+int32_t OsThreadSupportsPriorities(OsContext* aContext);
 
 /**
  * Types of network socket
@@ -337,11 +355,12 @@ typedef enum
  * This is equivalent to the BSD socket() function with two of its parameters assumed
  * to be constant - 'af' should always be 2 (IpV4) and 'protocol' should always be 0.
  *
+ * @param[in] aContext     Returned from OsCreate().
  * @param[in] aSocketType  The type of socket to create
  *
  * @return  a valid handle on success; kHandleNull if creation failed.
  */
-THandle OsNetworkCreate(OsNetworkSocketType aSocketType);
+THandle OsNetworkCreate(OsContext* aContext, OsNetworkSocketType aSocketType);
 
 /**
  * Assign a name to a socket.
@@ -625,6 +644,7 @@ typedef struct OsNetworkAdapter
  * for a subnet should be listed before wireless ones.
  * A loopback interface should only be reported if no other interfaces are present.
  *
+ * @param[in] aContext          Returned from OsCreate().
  * @param[out] aInterfaces      List of available interfaces.  Allocated inside this function;
  *                              the caller should use OsNetworkFreeInterfaces to free it
  * @param[out] aUseLoopback     2 if all interfaces, including loopback, should be returned;
@@ -633,7 +653,7 @@ typedef struct OsNetworkAdapter
  *
  * @return  0 on success; -1 on failure
  */
-int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback);
+int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback);
 
 /**
  * Destroy list returned by OsNetworkListAdapters.
@@ -658,10 +678,11 @@ typedef void(*InterfaceListChanged)(void*);
  * interfaces change).  Note however that the library may sometimes have to be manually
  * stopped then restarted after some changes in interfaces.
  *
+ * @param[in] aContext     Returned from OsCreate().
  * @param[in] aCallback    Callback to run if the interface list changes
  * @param[in] aArg         Argument to pass to the callback
  */
-void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg);
+void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChanged aCallback, void* aArg);
 
 #ifdef __cplusplus
 } // extern "C"

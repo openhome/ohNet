@@ -527,19 +527,19 @@ CpProxyOpenhomeOrgTestBasic1Cpp::CpProxyOpenhomeOrgTestBasic1Cpp(CpDeviceCpp& aD
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1Cpp::VarUintPropertyChanged);
-    iVarUint = new PropertyUint(aDevice.Device().GetCpStack().GetStack(), "VarUint", functor);
+    iVarUint = new PropertyUint(aDevice.Device().GetCpStack().Env(), "VarUint", functor);
     AddProperty(iVarUint);
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1Cpp::VarIntPropertyChanged);
-    iVarInt = new PropertyInt(aDevice.Device().GetCpStack().GetStack(), "VarInt", functor);
+    iVarInt = new PropertyInt(aDevice.Device().GetCpStack().Env(), "VarInt", functor);
     AddProperty(iVarInt);
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1Cpp::VarBoolPropertyChanged);
-    iVarBool = new PropertyBool(aDevice.Device().GetCpStack().GetStack(), "VarBool", functor);
+    iVarBool = new PropertyBool(aDevice.Device().GetCpStack().Env(), "VarBool", functor);
     AddProperty(iVarBool);
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1Cpp::VarStrPropertyChanged);
-    iVarStr = new PropertyString(aDevice.Device().GetCpStack().GetStack(), "VarStr", functor);
+    iVarStr = new PropertyString(aDevice.Device().GetCpStack().Env(), "VarStr", functor);
     AddProperty(iVarStr);
     functor = MakeFunctor(*this, &CpProxyOpenhomeOrgTestBasic1Cpp::VarBinPropertyChanged);
-    iVarBin = new PropertyBinary(aDevice.Device().GetCpStack().GetStack(), "VarBin", functor);
+    iVarBin = new PropertyBinary(aDevice.Device().GetCpStack().Env(), "VarBin", functor);
     AddProperty(iVarBin);
 }
 

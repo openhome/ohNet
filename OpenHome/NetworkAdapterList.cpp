@@ -2,7 +2,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Env.h>
 #include <algorithm>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
@@ -11,20 +11,20 @@ using namespace OpenHome;
 
 // NetworkAdapterList
 
-NetworkAdapterList::NetworkAdapterList(Net::Stack& aStack, TIpAddress aDefaultSubnet)
-    : iStack(aStack)
+NetworkAdapterList::NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSubnet)
+    : iEnv(aEnv)
     , iListLock("MNIL")
     , iListenerLock("MNIO")
     , iCurrent(NULL)
     , iNextListenerId(1)
 {
-    iStack.AddObject(this);
+    iEnv.AddObject(this);
     iDefaultSubnet = aDefaultSubnet;
     iNotifierThread = new NetworkAdapterChangeNotifier(*this);
     iNotifierThread->Start();
-    iNetworkAdapters = Os::NetworkListAdapters(iStack, iStack.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
+    iNetworkAdapters = Os::NetworkListAdapters(iEnv, iEnv.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
-    Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
+    Os::NetworkSetInterfaceChangedObserver(iEnv.OsCtx(), &InterfaceListChanged, this);
     for (size_t i=0; i<iSubnets->size(); i++) {
         TraceAdapter("NetworkAdapter added", *(*iSubnets)[i]);
     }
@@ -35,7 +35,7 @@ NetworkAdapterList::~NetworkAdapterList()
     delete iNotifierThread;
     DestroySubnetList(iNetworkAdapters);
     DestroySubnetList(iSubnets);
-    iStack.RemoveObject(this);
+    iEnv.RemoveObject(this);
 }
 
 NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
@@ -98,30 +98,40 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     iDefaultSubnet = aSubnet;
     UpdateCurrentAdapter();
     iListLock.Signal();
-    const TBool started = (iStack.CpiStack() != NULL || iStack.DviStack() != NULL);
+    const TBool started = (iEnv.CpiStack() != NULL || iEnv.DviStack() != NULL);
     if (started && aSubnet != oldSubnet) {
         iNotifierThread->QueueCurrentChanged();
     }
 }
 
-TUint NetworkAdapterList::AddCurrentChangeListener(Functor aFunctor)
+TUint NetworkAdapterList::AddCurrentChangeListener(Functor aFunctor, TBool aInternalClient)
 {
-    return AddListener(aFunctor, iListenersCurrent);
+    if (aInternalClient) {
+        return AddListener(aFunctor, iListenersCurrentInternal);
+    }
+    return AddListener(aFunctor, iListenersCurrentExternal);
 }
 
 void NetworkAdapterList::RemoveCurrentChangeListener(TUint aId)
 {
-    RemoveSubnetListChangeListener(aId, iListenersCurrent);
+    if (!RemoveSubnetListChangeListener(aId, iListenersCurrentInternal)) {
+        (void)RemoveSubnetListChangeListener(aId, iListenersCurrentExternal);
+    }
 }
 
-TUint NetworkAdapterList::AddSubnetListChangeListener(Functor aFunctor)
+TUint NetworkAdapterList::AddSubnetListChangeListener(Functor aFunctor, TBool aInternalClient)
 {
-    return AddListener(aFunctor, iListenersSubnet);
+    if (aInternalClient) {
+        return AddListener(aFunctor, iListenersSubnetInternal);
+    }
+    return AddListener(aFunctor, iListenersSubnetExternal);
 }
 
 void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId)
 {
-    RemoveSubnetListChangeListener(aId, iListenersSubnet);
+    if (!RemoveSubnetListChangeListener(aId, iListenersSubnetInternal)) {
+        (void)RemoveSubnetListChangeListener(aId, iListenersSubnetExternal);
+    }
 }
 
 TUint NetworkAdapterList::AddSubnetAddedListener(FunctorNetworkAdapter aFunctor)
@@ -196,14 +206,17 @@ TUint NetworkAdapterList::AddListener(Functor aFunctor, Map& aMap)
     return id;
 }
 
-void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
+TBool NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
 {
+    TBool removed = false;
     iListenerLock.Wait();
     Map::iterator it = aMap.find(aId);
     if (it != aMap.end()) {
         aMap.erase(it);
+        removed = true;
     }
     iListenerLock.Signal();
+    return removed;
 }
 
 TUint NetworkAdapterList::AddSubnetListener(FunctorNetworkAdapter aFunctor, MapNetworkAdapter& aMap)
@@ -280,7 +293,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 {
     static const char* kRemovedAdapterCookie = "RemovedAdapter";
     iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iStack, iStack.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iEnv.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;
@@ -458,12 +471,14 @@ void NetworkAdapterList::ListObjectDetails() const
 
 void NetworkAdapterList::NotifyCurrentChanged()
 {
-    RunCallbacks(iListenersCurrent);
+    RunCallbacks(iListenersCurrentInternal);
+    RunCallbacks(iListenersCurrentExternal);
 }
 
 void NetworkAdapterList::NotifySubnetsChanged()
 {
-    RunCallbacks(iListenersSubnet);
+    RunCallbacks(iListenersSubnetInternal);
+    RunCallbacks(iListenersSubnetExternal);
 }
 
 void NetworkAdapterList::NotifyAdapterAdded(NetworkAdapter& aAdapter)
