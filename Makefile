@@ -152,7 +152,7 @@ ifeq ($(platform), Core)
 	# platform == Core
 	libosadir ?= ${LIBOSA}
 	platform_cflags = -I$(libosadir)/include/ -I$(libosadir)/include/FreeRTOS/ -I$(libosadir)/include/lwip/ -mcpu=${CROSS_CPU}
-	platform_linkflags = -B$(libosadir)/lib/ -specs bsp_specs -mcpu=${CROSS_CPU}}
+	platform_linkflags = -B$(libosadir)/lib/ -specs bsp_specs -mcpu=${CROSS_CPU}
 	linkopts_ohNet =
 	osbuilddir = Volkano2
 	osdir = Volkano2
