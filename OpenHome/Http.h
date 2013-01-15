@@ -412,7 +412,6 @@ class HttpHeaderContentType : public HttpHeader
     static const TUint kMaxTypeBytes = 100;
 public:
     const Brx& Type() const;
-    TBool Received() const;
 protected:
     void Process(const Brx& aKey, const Brx& aValue);
 private:
