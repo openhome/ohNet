@@ -208,6 +208,13 @@ TBool Thread::SupportsPriorities()
     return OpenHome::Os::ThreadSupportsPriorities();
 }
 
+void Thread::CheckCurrentForKill()
+{ // static
+    Thread* thread = Thread::Current();
+    if ( thread != NULL )
+        thread->CheckForKill();
+}
+
 void Thread::CheckForKill() const
 {
     AutoMutex _amtx(iKillMutex);

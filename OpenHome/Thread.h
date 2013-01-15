@@ -132,6 +132,12 @@ public:
     static TBool SupportsPriorities();
 
     /**
+     * If current thread is an OpenHome thread, and Kill() has been called, then
+     * throw ThreadKill.
+     */
+    static void CheckCurrentForKill();
+
+    /**
      * Mark a thread as to be killed.  The thread will not exit immediately
      */
     void Kill();
