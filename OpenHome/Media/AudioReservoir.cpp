@@ -25,13 +25,9 @@ Msg* AudioReservoir::Pull()
 {
     Msg* msg;
     do {
-        iLock.Wait();
-        TUint sizeBefore = Size();
-        iLock.Signal();
         msg = DoDequeue();
         iLock.Wait();
-        TUint sizeAfter = Size();
-        if (sizeBefore >= iMaxSize && sizeAfter < iMaxSize) {
+        if (Size() < iMaxSize) {
             iSem.Signal();
         }
         iLock.Signal();
@@ -53,6 +49,7 @@ TBool AudioReservoir::Enqueue(Msg* aMsg)
     DoEnqueue(aMsg);
     iLock.Wait();
     const TBool full = (Size() >= iMaxSize);
+    (void)iSem.Clear();
     iLock.Signal();
     if (full) {
         iSem.Wait();
