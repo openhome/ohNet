@@ -410,7 +410,7 @@ void FileSender::NotifyAudioFormat(const AudioFormat& aFormat)
 int CDECL main(int aArgc, char* aArgv[])
 {
     OptionParser parser;
-    OptionString optionFile("-f", "--file", Brn(""), "[file] wav file to play");
+    OptionString optionFile("-f", "--file", Brn(""), "[file] flac/wav file to play");
     parser.AddOption(&optionFile);
     OptionString optionUdn("-u", "--udn", Brn("PipelineFileSender"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
