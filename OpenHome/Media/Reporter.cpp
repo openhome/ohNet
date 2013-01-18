@@ -86,7 +86,7 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Reporter::ProcessMsg(MsgAudioStream* aMsg)
+Msg* Reporter::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iSeconds = 0;
     iJiffies = 0;

@@ -138,7 +138,7 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Stopper::ProcessMsg(MsgAudioStream* aMsg)
+Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;

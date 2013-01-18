@@ -93,7 +93,7 @@ Msg* Container::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Container::ProcessMsg(MsgAudioStream* aMsg)
+Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iCheckForContainer = true;
     return aMsg;

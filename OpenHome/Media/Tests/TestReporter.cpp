@@ -45,7 +45,7 @@ private:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
-       ,EMsgAudioStream
+       ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush

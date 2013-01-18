@@ -10,6 +10,7 @@
 #include <OpenHome/Private/Printer.h>
 
 #include <string.h>
+#include <climits>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -1345,38 +1346,71 @@ Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
 }
 
 
-// MsgAudioStream
+// MsgEncodedStream
 
-MsgAudioStream::MsgAudioStream(AllocatorBase& aAllocator)
+MsgEncodedStream::MsgEncodedStream(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
 }
 
-const Brx& MsgAudioStream::Uri() const
+const Brx& MsgEncodedStream::Uri() const
 {
     return iUri;
 }
 
-const Brx& MsgAudioStream::MetaText() const
+const Brx& MsgEncodedStream::MetaText() const
 {
     return iMetaText;
 }
 
-void MsgAudioStream::Initialise(const Brx& aUri, const Brx& aMetaText)
+TUint MsgEncodedStream::TotalBytes() const
+{
+    return iTotalBytes;
+}
+
+TBool MsgEncodedStream::IsSeekable() const
+{
+    return iSeekable;
+}
+
+TBool MsgEncodedStream::IsLive() const
+{
+    return iLive;
+}
+
+TUint MsgEncodedStream::StreamId() const
+{
+    return iStreamId;
+}
+
+IRestreamer* MsgEncodedStream::Restreamer() const
+{
+    return iRestreamer;
+}
+
+void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint aTotalBytes, TBool aSeekable, TBool aLive, TUint aStreamId, IRestreamer* aRestreamer)
 {
     iUri.Replace(aUri);
     iMetaText.Replace(aMetaText);
+    iTotalBytes = aTotalBytes;
+    iSeekable = aSeekable;
+    iLive = aLive;
+    iStreamId = aStreamId;
+    iRestreamer = aRestreamer;
 }
 
-void MsgAudioStream::Clear()
+void MsgEncodedStream::Clear()
 {
 #ifdef DEFINE_DEBUG
     iUri.SetBytes(0);
     iMetaText.SetBytes(0);
+    iTotalBytes = UINT_MAX;
+    iStreamId = UINT_MAX;
+    iRestreamer = NULL;
 #endif
 }
 
-Msg* MsgAudioStream::Process(IMsgProcessor& aProcessor)
+Msg* MsgEncodedStream::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
 }
@@ -1632,7 +1666,7 @@ void MsgQueueFlushable::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgAudioStream* /*aMsg*/)
+void MsgQueueFlushable::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
 {
 }
 
@@ -1677,7 +1711,7 @@ Msg* MsgQueueFlushable::ProcessMsgOut(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgAudioStream* aMsg)
+Msg* MsgQueueFlushable::ProcessMsgOut(MsgEncodedStream* aMsg)
 {
     return aMsg;
 }
@@ -1749,7 +1783,7 @@ Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioStream* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
@@ -1822,7 +1856,7 @@ Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgAudioStream* aMsg)
+Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
@@ -1868,7 +1902,7 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                        TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgAudioFormatCount,
-                       TUint aMsgTrackCount, TUint aMsgAudioStreamCount, TUint aMsgMetaTextCount,
+                       TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
                        TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgQuitCount)
     : iAllocatorEncodedAudio("EncodedAudio", aEncodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioEncoded("MsgAudioEncoded", aMsgAudioEncodedCount, aInfoAggregator)
@@ -1879,7 +1913,7 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     , iAllocatorMsgPlayableSilence("MsgPlayableSilence", aMsgPlayableSilenceCount, aInfoAggregator)
     , iAllocatorMsgAudioFormat("MsgAudioFormat", aMsgAudioFormatCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aMsgTrackCount, aInfoAggregator)
-    , iAllocatorMsgAudioStream("MsgAudioStream", aMsgAudioStreamCount, aInfoAggregator)
+    , iAllocatorMsgEncodedStream("MsgEncodedStream", aMsgEncodedStreamCount, aInfoAggregator)
     , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
     , iAllocatorMsgHalt("MsgHalt", aMsgHaltCount, aInfoAggregator)
     , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
@@ -1922,10 +1956,10 @@ MsgTrack* MsgFactory::CreateMsgTrack()
     return iAllocatorMsgTrack.Allocate();
 }
 
-MsgAudioStream* MsgFactory::CreateMsgAudioStream(const Brx& aUri, const Brx& aMetaText)
+MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint aTotalBytes, TBool aSeekable, TBool aLive, TUint aStreamId, IRestreamer* aRestreamer)
 {
-    MsgAudioStream* msg = iAllocatorMsgAudioStream.Allocate();
-    msg->Initialise(aUri, aMetaText);
+    MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
+    msg->Initialise(aUri, aMetaText, aTotalBytes, aSeekable, aLive, aStreamId, aRestreamer);
     return msg;
 }
 

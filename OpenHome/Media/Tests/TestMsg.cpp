@@ -89,7 +89,7 @@ private:
 
 class SuiteAudioStream : public Suite
 {
-    static const TUint kMsgAudioStreamCount = 1;
+    static const TUint kMsgEncodedStreamCount = 1;
 public:
     SuiteAudioStream();
     ~SuiteAudioStream();
@@ -146,7 +146,7 @@ public:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
-       ,EMsgAudioStream
+       ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -162,7 +162,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgAudioStream* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -203,7 +203,7 @@ public:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgTrack
-       ,EMsgAudioStream
+       ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -224,7 +224,7 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgAudioPcm* aMsg);
     void ProcessMsgIn(MsgSilence* aMsg);
     void ProcessMsgIn(MsgTrack* aMsg);
-    void ProcessMsgIn(MsgAudioStream* aMsg);
+    void ProcessMsgIn(MsgEncodedStream* aMsg);
     void ProcessMsgIn(MsgMetaText* aMsg);
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
@@ -232,7 +232,7 @@ private: // from MsgQueueFlushable
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
     Msg* ProcessMsgOut(MsgTrack* aMsg);
-    Msg* ProcessMsgOut(MsgAudioStream* aMsg);
+    Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
     Msg* ProcessMsgOut(MsgMetaText* aMsg);
     Msg* ProcessMsgOut(MsgHalt* aMsg);
     Msg* ProcessMsgOut(MsgFlush* aMsg);
@@ -1079,9 +1079,9 @@ void SuiteRamp::Test()
 // SuiteAudioStream
 
 SuiteAudioStream::SuiteAudioStream()
-    : Suite("MsgAudioStream tests")
+    : Suite("MsgEncodedStream tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgAudioStreamCount, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgEncodedStreamCount, 1, 1, 1, 1);
 }
 
 SuiteAudioStream::~SuiteAudioStream()
@@ -1091,28 +1091,47 @@ SuiteAudioStream::~SuiteAudioStream()
 
 void SuiteAudioStream::Test()
 {
-    // create MetaText msg, check its text can be retrieved
+    // create MetaText msg, check its data can be retrieved
     Brn uri("http://255.1.33.76:8734/path?query");
     Brn metaText("metaText");
-    MsgAudioStream* msg = iMsgFactory->CreateMsgAudioStream(uri, metaText);
+    TUint totalBytes = 1234;
+    TBool seekable = true;
+    TBool live = true;
+    TUint streamId = 8;
+    MsgEncodedStream* msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, seekable, live, streamId, NULL);
     TEST(msg != NULL);
     TEST(msg->Uri() == uri);
     TEST(msg->MetaText() == metaText);
+    TEST(msg->TotalBytes() == totalBytes);
+    TEST(msg->IsSeekable() == seekable);
+    TEST(msg->IsLive() == live);
+    TEST(msg->StreamId() == streamId);
+    TEST(msg->Restreamer() == NULL);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
     // access freed msg (doesn't bother valgrind as this is still allocated memory).  Check text has been cleared.
     TEST(msg->Uri() != uri);
     TEST(msg->MetaText() != metaText);
+    TEST(msg->TotalBytes() != totalBytes);
+    TEST(msg->StreamId() != streamId);
 #endif
 
-    // create second MetaText msg, check its text can be retrieved
+    // create second MetaText msg, check its data can be retrieved
     uri.Set("http://3.4.5.6:8");
     metaText.Set("updated");
-    msg = iMsgFactory->CreateMsgAudioStream(uri, metaText);
+    totalBytes = 65537;
+    live = false;
+    streamId = 99;
+    msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, seekable, live, streamId, NULL);
     TEST(msg != NULL);
     TEST(msg->Uri() == uri);
     TEST(msg->MetaText() == metaText);
+    TEST(msg->TotalBytes() == totalBytes);
+    TEST(msg->IsSeekable() == seekable);
+    TEST(msg->IsLive() == live);
+    TEST(msg->StreamId() == streamId);
+    TEST(msg->Restreamer() == NULL);
     msg->RemoveRef();
 }
 
@@ -1273,9 +1292,9 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgAudioStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"));
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, false, false, 0, NULL);
     TEST(msg == msg->Process(processor));
-    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgAudioStream);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgEncodedStream);
     msg->RemoveRef();
 
     msg = iMsgFactory->CreateMsgMetaText(Brn("Test metatext"));
@@ -1348,9 +1367,9 @@ Msg* ProcessorMsgType::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* ProcessorMsgType::ProcessMsg(MsgAudioStream* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iLastMsgType = ProcessorMsgType::EMsgAudioStream;
+    iLastMsgType = ProcessorMsgType::EMsgEncodedStream;
     return aMsg;
 }
 
@@ -1508,10 +1527,10 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgTrack);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);
 
-    msg = iMsgFactory->CreateMsgAudioStream(Brn("http://1.2.3.4:5"), Brn("metatext"));
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, false, false, 0, NULL);
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == 0);
-    TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgAudioStream);
+    TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgEncodedStream);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);
 
     MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
@@ -1559,7 +1578,7 @@ void SuiteMsgQueueFlushable::Test()
 
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgHalt);
-    TEST(queue->LastOut() == TestMsgQueueFlushable::EMsgAudioStream);
+    TEST(queue->LastOut() == TestMsgQueueFlushable::EMsgEncodedStream);
     TEST(queue->Jiffies() == jiffies);
     msg->RemoveRef();
 
@@ -1670,9 +1689,9 @@ void TestMsgQueueFlushable::ProcessMsgIn(MsgTrack* /*aMsg*/)
     iLastMsgIn = EMsgTrack;
 }
 
-void TestMsgQueueFlushable::ProcessMsgIn(MsgAudioStream* /*aMsg*/)
+void TestMsgQueueFlushable::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
 {
-    iLastMsgIn = EMsgAudioStream;
+    iLastMsgIn = EMsgEncodedStream;
 }
 
 void TestMsgQueueFlushable::ProcessMsgIn(MsgMetaText* /*aMsg*/)
@@ -1713,9 +1732,9 @@ Msg* TestMsgQueueFlushable::ProcessMsgOut(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* TestMsgQueueFlushable::ProcessMsgOut(MsgAudioStream* aMsg)
+Msg* TestMsgQueueFlushable::ProcessMsgOut(MsgEncodedStream* aMsg)
 {
-    iLastMsgOut = EMsgAudioStream;
+    iLastMsgOut = EMsgEncodedStream;
     return aMsg;
 }
 

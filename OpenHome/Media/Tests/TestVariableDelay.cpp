@@ -40,7 +40,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgAudioStream* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -54,7 +54,7 @@ private:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
-       ,EMsgAudioStream
+       ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -156,7 +156,7 @@ void SuiteVariableDelay::Test()
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 
     // Check that Silence, Track, AudioStream, MetaText, Halt, Flush & Quit msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgAudioStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         iNextGeneratedMsg = types[i];
         msg = iVariableDelay->Pull();
@@ -216,8 +216,8 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
-    case EMsgAudioStream:
-        return iMsgFactory->CreateMsgAudioStream(Brn("http://1.2.3.4:5"), Brn("metatext"));
+    case EMsgEncodedStream:
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, false, false, 0, NULL);
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgHalt:
@@ -310,9 +310,9 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteVariableDelay::ProcessMsg(MsgAudioStream* aMsg)
+Msg* SuiteVariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iLastMsg = EMsgAudioStream;
+    iLastMsg = EMsgEncodedStream;
     return aMsg;
 }
 

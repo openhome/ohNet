@@ -243,7 +243,7 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* CodecController::ProcessMsg(MsgAudioStream* aMsg)
+Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iStreamStarted = iStreamEnded = true;
     return aMsg;

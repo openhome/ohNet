@@ -96,7 +96,7 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Logger::ProcessMsg(MsgAudioStream* aMsg)
+Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
 {
     if (IsEnabled(EMsgAudioFormat)) {
         Log::Print("Pipeline (%s): metaText {", iId);

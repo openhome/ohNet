@@ -78,7 +78,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgAudioStream* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -551,7 +551,7 @@ Msg* SuitePipeline::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuitePipeline::ProcessMsg(MsgAudioStream* /*aMsg*/)
+Msg* SuitePipeline::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

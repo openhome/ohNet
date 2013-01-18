@@ -18,19 +18,19 @@ class Logger : public IPipelineElementUpstream, private IMsgProcessor, private I
 public:
     enum EMsgType
     {
-        EMsgAudioEncoded = 1<<0
-       ,EMsgAudioDecoded = 1<<1
-       ,EMsgAudioPcm     = 1<<2
-       ,EMsgSilence      = 1<<3
-       ,EMsgPlayable     = 1<<4
-       ,EMsgAudioFormat  = 1<<5
-       ,EMsgTrack        = 1<<6
-       ,EMsgAudioStream  = 1<<7
-       ,EMsgMetaText     = 1<<8
-       ,EMsgHalt         = 1<<9
-       ,EMsgFlush        = 1<<10
-       ,EMsgQuit         = 1<<11
-       ,EMsgAll          = 0x7fffffff
+        EMsgAudioEncoded  = 1<<0
+       ,EMsgAudioDecoded  = 1<<1
+       ,EMsgAudioPcm      = 1<<2
+       ,EMsgSilence       = 1<<3
+       ,EMsgPlayable      = 1<<4
+       ,EMsgAudioFormat   = 1<<5
+       ,EMsgTrack         = 1<<6
+       ,EMsgEncodedStream = 1<<7
+       ,EMsgMetaText      = 1<<8
+       ,EMsgHalt          = 1<<9
+       ,EMsgFlush         = 1<<10
+       ,EMsgQuit          = 1<<11
+       ,EMsgAll           = 0x7fffffff
     };
 public:
     Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
@@ -46,7 +46,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgAudioStream* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);

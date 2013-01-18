@@ -34,7 +34,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgAudioStream* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -48,7 +48,7 @@ private:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
-       ,EMsgAudioStream
+       ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -138,7 +138,7 @@ void SuitePreDriver::Test()
     iNextGeneratedMsg = EMsgTrack;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
-    iNextGeneratedMsg = EMsgAudioStream;
+    iNextGeneratedMsg = EMsgEncodedStream;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
     iNextGeneratedMsg = EMsgMetaText;
@@ -199,9 +199,9 @@ Msg* SuitePreDriver::Pull()
         iNextGeneratedMsg = EMsgAudioPcm; // msg will be discarded by PreDriver which will immediately Pull again.
                                           // Ensure we have something different to deliver to avoid an infinite loop.
         return iMsgFactory->CreateMsgTrack();
-    case EMsgAudioStream:
+    case EMsgEncodedStream:
         iNextGeneratedMsg = EMsgAudioPcm;
-        return iMsgFactory->CreateMsgAudioStream(Brn("http://1.2.3.4:5"), Brn("metatext"));
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, false, false, 0, NULL);
     case EMsgMetaText:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
@@ -263,7 +263,7 @@ Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuitePreDriver::ProcessMsg(MsgAudioStream* /*aMsg*/)
+Msg* SuitePreDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

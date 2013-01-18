@@ -37,7 +37,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgAudioFormat* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgAudioStream* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
@@ -51,7 +51,7 @@ private:
        ,EMsgPlayable
        ,EMsgAudioFormat
        ,EMsgTrack
-       ,EMsgAudioStream
+       ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -132,7 +132,7 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == NULL);
 
     // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgAudioStream, EMsgMetaText, EMsgHalt, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         GenerateMsg(types[0]);
         msg = iReservoir->Pull();
@@ -226,8 +226,8 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgTrack:
         msg = iMsgFactory->CreateMsgTrack();
         break;
-    case EMsgAudioStream:
-        msg = iMsgFactory->CreateMsgAudioStream(Brn("http://127.0.0.1:65535"), Brn("metatext"));
+    case EMsgEncodedStream:
+        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, false, false, 0, NULL);
         break;
     case EMsgMetaText:
         msg = iMsgFactory->CreateMsgMetaText(Brn("metatext"));
@@ -307,9 +307,9 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioStream* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iLastMsg = EMsgAudioStream;
+    iLastMsg = EMsgEncodedStream;
     return aMsg;
 }
 
