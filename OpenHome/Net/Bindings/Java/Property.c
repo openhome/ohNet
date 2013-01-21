@@ -26,9 +26,9 @@ void STDCALL ChangeCallback(void* aPtr)
 	if (attached < 0)
 	{
 #ifdef __ANDROID__
-		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
 #else
-		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
 #endif
 		if (ret < 0)
 		{
@@ -45,10 +45,7 @@ void STDCALL ChangeCallback(void* aPtr)
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
-	if (attached < 0)
-	{
-		(*vm)->DetachCurrentThread(vm);
-	}
+	// leave daemon thread attached to the VM
 }
 
 void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRef)

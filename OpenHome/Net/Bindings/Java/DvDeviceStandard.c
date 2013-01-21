@@ -28,9 +28,9 @@ int32_t STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, T
 	if (attached < 0)
 	{
 #ifdef __ANDROID__
-		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
 #else
-		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
 #endif
 		if (ret < 0)
 		{
@@ -63,10 +63,7 @@ int32_t STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, T
 			(jlong) (size_t)aWriteResource,
 			(jlong) (size_t)aWriteEnd);
 	
-	if (attached < 0)
-	{
-		(*vm)->DetachCurrentThread(vm);
-	}
+	// leave daemon thread attached to the VM
     return 0;
 }
 

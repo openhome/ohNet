@@ -71,6 +71,14 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetSetCurrentSubnet
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetCurrentSubnetAdapter
   (JNIEnv *, jclass);
 
+/*
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetDebugSetLevel
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetDebugSetLevel
+  (JNIEnv *, jclass, jint);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1008,10 +1008,12 @@ java_classes = \
 	$(objdir)org/openhome/net/core/Action.class \
 	$(objdir)org/openhome/net/core/CombinedStack.class \
 	$(objdir)org/openhome/net/core/ControlPointStack.class \
+    $(objdir)org/openhome/net/core/DebugLevel.class \
 	$(objdir)org/openhome/net/core/DeviceStack.class \
 	$(objdir)org/openhome/net/core/ErrorGeneral.class \
 	$(objdir)org/openhome/net/core/ErrorNetworkAddressInUse.class \
 	$(objdir)org/openhome/net/core/ErrorNoMemory.class \
+    $(objdir)org/openhome/net/core/IMessageListener.class \
 	$(objdir)org/openhome/net/core/InitParams.class \
 	$(objdir)org/openhome/net/core/Library.class \
 	$(objdir)org/openhome/net/core/LibraryException.class \
@@ -1121,6 +1123,8 @@ $(objdir)org/openhome/net/controlpoint/tests/TestProxy.class : $(publicjavadir)o
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/tests/TestProxy.java
 $(objdir)org/openhome/net/core/Action.class : $(publicjavadir)org/openhome/net/core/Action.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/Action.java
+$(objdir)org/openhome/net/core/DebugLevel.class : $(publicjavadir)org/openhome/net/core/DebugLevel.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/DebugLevel.java
 $(objdir)org/openhome/net/core/CombinedStack.class : $(publicjavadir)org/openhome/net/core/CombinedStack.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/CombinedStack.java
 $(objdir)org/openhome/net/core/ControlPointStack.class : $(publicjavadir)org/openhome/net/core/ControlPointStack.java
@@ -1133,6 +1137,8 @@ $(objdir)org/openhome/net/core/ErrorNetworkAddressInUse.class : $(publicjavadir)
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/ErrorNetworkAddressInUse.java
 $(objdir)org/openhome/net/core/ErrorNoMemory.class : $(publicjavadir)org/openhome/net/core/ErrorNoMemory.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/ErrorNoMemory.java
+$(objdir)org/openhome/net/core/IMessageListener.class : $(publicjavadir)org/openhome/net/core/IMessageListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/IMessageListener.java
 $(objdir)org/openhome/net/core/InitParams.class : $(publicjavadir)org/openhome/net/core/InitParams.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/InitParams.java
 $(objdir)org/openhome/net/core/Library.class : $(publicjavadir)org/openhome/net/core/Library.java

@@ -24,9 +24,9 @@ static void STDCALL CallbackDeviceDisabled(void* aPtr)
 	if (attached < 0)
 	{
 #ifdef __ANDROID__
-		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
 #else
-		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
 #endif
 		if (ret < 0)
 		{
@@ -44,10 +44,7 @@ static void STDCALL CallbackDeviceDisabled(void* aPtr)
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
 	(*env)->DeleteGlobalRef(env, ref->callbackObj);
-	if(attached < 0)
-	{
-		(*vm)->DetachCurrentThread(vm);
-	}
+	// leave daemon thread attached to the VM
 	free(ref);
 }
 

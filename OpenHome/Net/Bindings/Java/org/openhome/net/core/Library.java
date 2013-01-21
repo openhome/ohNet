@@ -14,6 +14,7 @@ public class Library
     private static native void OhNetLibraryClose();
     private static native void OhNetSetCurrentSubnet(long aSubnet);
     private static native long OhNetCurrentSubnetAdapter();
+    private static native void OhNetDebugSetLevel(int aLevel);
 
     static
     {
@@ -158,6 +159,20 @@ public class Library
     public NetworkAdapter getCurrentSubnet()
     {
     	return new NetworkAdapter(OhNetCurrentSubnetAdapter());
+    }
+
+    /**
+     * Enable debug logging.
+     * 
+     * <p>Log messages can optionally be passed to a callback registered by {@link InitParams#setLogOutput}.
+     * 
+     * @param aLevel    bit(s) specifying debug level.  The debug level can be any
+     *                  combination of bit-mask values returned by {@link DebugLevel#intValue}.
+     *                  See {@link DebugLevel} for details.
+     */
+    public void setDebugLevel(int aLevel)
+    {
+        OhNetDebugSetLevel(aLevel);
     }
     
     /**

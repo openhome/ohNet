@@ -303,6 +303,22 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvEnableBonjour
   (JNIEnv *, jclass, jlong);
 
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetLogOutput
+ * Signature: (JLorg/openhome/net/core/IMessageListener;)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetLogOutput
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetFatalErrorHandler
+ * Signature: (JLorg/openhome/net/core/IMessageListener;)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetFatalErrorHandler
+  (JNIEnv *, jclass, jlong, jobject);
+
 #ifdef __cplusplus
 }
 #endif

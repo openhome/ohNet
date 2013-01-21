@@ -10,8 +10,6 @@ public class InitParams
 	private static native void OhNetInitParamsDestroy(long aParams);
 	
 	// Callbacks.
-//	private static native void OhNetInitParamsSetLogOutput(long aParams, OhNetCallbackMsg aCallback, void* aPtr);
-//	private static native void OhNetInitParamsSetFatalErrorHandler(long aParams, OhNetCallbackMsg aCallback, void* aPtr);
 //	private static native void OhNetInitParamsSetAsyncBeginHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
 //	private static native void OhNetInitParamsSetAsyncEndHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
 //	private static native void OhNetInitParamsSetAsyncErrorHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
@@ -59,6 +57,8 @@ public class InitParams
 	private static native void OhNetInitParamsSetDvUpnpServerPort(long aParams, int aPort);
 	private static native void OhNetInitParamsSetDvWebSocketPort(long aParams, int aPort);
 	private static native void OhNetInitParamsSetDvEnableBonjour(long aParams);
+    private static native void OhNetInitParamsSetLogOutput(long aParams, IMessageListener aListener);
+    private static native void OhNetInitParamsSetFatalErrorHandler(long aParams, IMessageListener aListener);
 
 
 	static
@@ -544,6 +544,26 @@ public class InitParams
 	{
 		OhNetInitParamsSetDvEnableBonjour(iHandle);
 	}
+    
+    /**
+     * Set the listener callback for log messages.
+     * 
+     * @param aListener     the listener callback for log messages.
+     */
+    public void setLogOutput(IMessageListener aListener)
+    {
+        OhNetInitParamsSetLogOutput(iHandle, aListener);
+    }
+    
+    /**
+     * Set the fatal error handler.
+     * 
+     * @param aListener     the handler for fatal error messages.
+     */
+    public void setFatalErrorHandler(IMessageListener aListener)
+    {
+        OhNetInitParamsSetFatalErrorHandler(iHandle, aListener);
+    }
 	
 	public static void main(String[] args)
 	{

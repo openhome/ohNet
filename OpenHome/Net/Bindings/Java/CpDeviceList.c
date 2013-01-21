@@ -26,9 +26,9 @@ void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
 	if (attached < 0)
 	{
 #ifdef __ANDROID__
-		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
 #else
-		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
 #endif
 		if (ret < 0)
 		{
@@ -45,10 +45,7 @@ void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
 		return;
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aDevice);
-	if (attached < 0)
-    {
-		(*vm)->DetachCurrentThread(vm);
-	}
+	// leave daemon thread attached to the VM
 }
 
 void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
@@ -65,9 +62,9 @@ void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
 	if (attached < 0)
 	{
 #ifdef __ANDROID__
-		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
 #else
-		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
 #endif
 		if (ret < 0)
 		{
@@ -84,10 +81,7 @@ void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
 		return;
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aDevice);
-	if (attached < 0)
-	{
-		(*vm)->DetachCurrentThread(vm);
-	}
+	// leave daemon thread attached to the VM
 }
 
 void InitialiseCpDeviceListReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRef)

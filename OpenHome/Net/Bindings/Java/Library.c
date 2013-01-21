@@ -124,6 +124,20 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetSetCurrentSubnet
 
 /*
  * Class:     org_openhome_net_core_Library
+ * Method:    OhNetDebugSetLevel
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetDebugSetLevel
+  (JNIEnv *aEnv, jclass aClass, jint aLevel)
+{
+   aEnv = aEnv;
+   aClass = aClass;
+
+   OhNetDebugSetLevel((uint32_t)aLevel);
+}
+
+/*
+ * Class:     org_openhome_net_core_Library
  * Method:    OhNetCurrentSubnetAdapter
  * Signature: ()J
  */

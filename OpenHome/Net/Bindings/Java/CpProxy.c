@@ -24,9 +24,9 @@ static void STDCALL CallbackChange(void* aPtr)
 	if (attached < 0)
 	{
 #ifdef __ANDROID__
-		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
 #else
-		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
 #endif
 		if (ret < 0)
 		{
@@ -43,10 +43,7 @@ static void STDCALL CallbackChange(void* aPtr)
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
-	if (attached < 0)
-	{
-		(*vm)->DetachCurrentThread(vm);
-	}
+	// leave daemon thread attached to the VM
 }
 
 static void STDCALL CallbackInitial(void* aPtr)
@@ -63,9 +60,9 @@ static void STDCALL CallbackInitial(void* aPtr)
 	if (attached < 0)
 	{
 #ifdef __ANDROID__
-		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
 #else
-		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
 #endif
 		if (ret < 0)
 		{
@@ -82,10 +79,7 @@ static void STDCALL CallbackInitial(void* aPtr)
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
-	if (attached < 0)
-	{
-		(*vm)->DetachCurrentThread(vm);
-	}
+	// leave daemon thread attached to the VM
 }
 
 static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRef)
