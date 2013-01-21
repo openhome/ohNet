@@ -34,15 +34,15 @@ int mygetch()
 
 int mygetch()
 {
-	struct termios oldt, newt;
-	int ch;
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	return ch;
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
 }
 
 #endif // _WIN32
@@ -133,25 +133,25 @@ SupplierFile::~SupplierFile()
 
 TBool SupplierFile::LoadFile(const Brx& aFileName)
 {
-	Brhz file(aFileName);
+    Brhz file(aFileName);
     if (file.Bytes() == 0) {
-    	Log::Print("ERROR: No file specified\n");
-    	return false;
+        Log::Print("ERROR: No file specified\n");
+        return false;
     }
     iFh = fopen(file.CString(), "rb");
     if (iFh == NULL) {
-    	Log::Print("ERROR: Unable to open specified file\n");
-    	return false;
+        Log::Print("ERROR: Unable to open specified file\n");
+        return false;
     }
 
     if (fseek(iFh, 0L, SEEK_END) == -1) {
-    	Log::Print("ERROR: Unable to seek to end of file\n");
-    	return false;
+        Log::Print("ERROR: Unable to seek to end of file\n");
+        return false;
     }
     iDataSize = ftell(iFh);
     if (fseek(iFh, 0L, SEEK_SET) == -1) {
-    	Log::Print("ERROR: Unable to seek back to start of file\n");
-    	return false;
+        Log::Print("ERROR: Unable to seek back to start of file\n");
+        return false;
     }
     iBytesRemaining = iDataSize;
 
@@ -209,8 +209,8 @@ MsgAudioEncoded* SupplierFile::CreateAudio()
         bytes = iBytesRemaining;
     }
     if (fread(iBuf, 1, bytes, iFh) != bytes) {
-    	Log::Print("ERROR: Unable to read file data\n");
-    	ASSERTS();
+        Log::Print("ERROR: Unable to read file data\n");
+        ASSERTS();
     }
     iBytesRemaining -= bytes;
     Brn encodedAudioBuf(iBuf, bytes);
@@ -303,7 +303,7 @@ int FileSender::Run()
     Log::Print("q: Quit\n");
     Log::Print("\n");
     do {
-    	int key = mygetch();
+        int key = mygetch();
         switch (key)
         {
         case 'p':
@@ -426,18 +426,18 @@ int CDECL main(int aArgc, char* aArgv[])
     }
 
     InitialisationParams* initParams = InitialisationParams::Create();
-	Net::Library* lib = new Net::Library(initParams);
+    Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     const TUint adapterIndex = optionAdapter.Value();
     if (subnetList->size() <= adapterIndex) {
-		Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
-		ASSERTS();
+        Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
+        ASSERTS();
     }
     Log::Print ("adapter list:\n");
     for (unsigned i=0; i<subnetList->size(); ++i) {
-		TIpAddress addr = (*subnetList)[i]->Address();
-		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+        TIpAddress addr = (*subnetList)[i]->Address();
+        Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
     TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
