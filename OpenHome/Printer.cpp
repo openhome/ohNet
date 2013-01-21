@@ -43,12 +43,12 @@ TInt Log::Print(const TChar* aFormat, ...)
 {
     va_list args;
     va_start(args, aFormat);
-    TInt n = Print(aFormat, args);
+    TInt n = PrintVA(aFormat, args);
     va_end(args);
     return n;
 }
 
-TInt Log::Print(const TChar* aFormat, va_list aArgs)
+TInt Log::PrintVA(const TChar* aFormat, va_list aArgs)
 {
     return Print(gLogger, aFormat, aArgs);
 }
