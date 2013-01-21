@@ -353,7 +353,7 @@ void OhmSenderDriver::Resend(const Brx& aFrames)
 
 	frames--;
 
-	printf(" %d", frame);
+	printf(" %lu", (unsigned long)frame);
 	
 	TBool found = false;
 
