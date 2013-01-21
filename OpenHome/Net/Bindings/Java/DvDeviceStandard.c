@@ -54,7 +54,7 @@ int32_t STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, T
             (jint) SwapEndian32(aInterface),
 #elif defined DEFINE_BIG_ENDIAN
 			(jint) aInterface,
-#elif
+#else
 # error Endianness not defined
 #endif
             (jlong) (size_t)aLanguageList,
