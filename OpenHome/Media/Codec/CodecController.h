@@ -56,7 +56,7 @@ class CodecController : private ICodecController, private IMsgProcessor, private
 {
 public:
     CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement);
-    ~CodecController();
+    virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
 private:
     void CodecThread();

@@ -33,6 +33,7 @@ class Stopper : public IPipelineElementUpstream, private IMsgProcessor
     friend class SuiteStopper;
 public:
     Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
+    virtual ~Stopper();
     void Start();
     void BeginHalt();
     void BeginFlush();

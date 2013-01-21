@@ -14,6 +14,10 @@ Splitter::Splitter(IPipelineElementUpstream& aUpstreamElement, IPipelineBranch& 
 {
 }
 
+Splitter::~Splitter()
+{
+}
+
 Msg* Splitter::Pull()
 {
     Msg* msg = iUpstreamElement.Pull();

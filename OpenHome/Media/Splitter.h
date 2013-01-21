@@ -24,6 +24,7 @@ class Splitter : public IPipelineElementUpstream, private IMsgProcessor, private
 {
 public:
     Splitter(IPipelineElementUpstream& aUpstreamElement, IPipelineBranch& aBranch);
+    virtual ~Splitter();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor

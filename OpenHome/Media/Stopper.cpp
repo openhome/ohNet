@@ -24,6 +24,10 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
 {
 }
 
+Stopper::~Stopper()
+{
+}
+
 void Stopper::Start()
 {
     iLock.Wait();

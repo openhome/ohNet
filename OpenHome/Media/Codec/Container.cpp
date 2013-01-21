@@ -19,6 +19,10 @@ Container::Container(IPipelineElementUpstream& aUpstreamElement)
 {
 }
 
+Container::~Container()
+{
+}
+
 Msg* Container::Pull()
 {
     Msg* msg;
