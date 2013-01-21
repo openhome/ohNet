@@ -135,22 +135,22 @@ TBool SupplierFile::LoadFile(const Brx& aFileName)
 {
 	Brhz file(aFileName);
     if (file.Bytes() == 0) {
-    	printf("ERROR: No file specified\n");
+    	Log::Print("ERROR: No file specified\n");
     	return false;
     }
     iFh = fopen(file.CString(), "rb");
     if (iFh == NULL) {
-    	printf("ERROR: Unable to open specified file\n");
+    	Log::Print("ERROR: Unable to open specified file\n");
     	return false;
     }
 
     if (fseek(iFh, 0L, SEEK_END) == -1) {
-    	printf("ERROR: Unable to seek to end of file\n");
+    	Log::Print("ERROR: Unable to seek to end of file\n");
     	return false;
     }
     iDataSize = ftell(iFh);
     if (fseek(iFh, 0L, SEEK_SET) == -1) {
-    	printf("ERROR: Unable to seek back to start of file\n");
+    	Log::Print("ERROR: Unable to seek back to start of file\n");
     	return false;
     }
     iBytesRemaining = iDataSize;
@@ -188,7 +188,7 @@ void SupplierFile::Run()
             msg = CreateAudio();
         }
         else {
-            printf("Reached end of track, pipeline will shut down\n");
+            Log::Print("Reached end of track, pipeline will shut down\n");
             msg = iMsgFactory->CreateMsgHalt();
             iBlock = true; // wait for a quit command now
         }
@@ -209,7 +209,7 @@ MsgAudioEncoded* SupplierFile::CreateAudio()
         bytes = iBytesRemaining;
     }
     if (fread(iBuf, 1, bytes, iFh) != bytes) {
-    	printf("ERROR: Unable to read file data\n");
+    	Log::Print("ERROR: Unable to read file data\n");
     	ASSERTS();
     }
     iBytesRemaining -= bytes;
@@ -296,12 +296,12 @@ int FileSender::Run()
     TBool starve = false;
     TBool quit = false;
 
-    printf("\nFileSender pipeline test.  Usage:\n");
-    printf("p: Toggle between play/pause\n");
-    printf("n: Toggle between start/stop simulating network starvation\n");
-    printf("s: Stop (only valid when paused)\n");
-    printf("q: Quit\n");
-    printf("\n");
+    Log::Print("\nFileSender pipeline test.  Usage:\n");
+    Log::Print("p: Toggle between play/pause\n");
+    Log::Print("n: Toggle between start/stop simulating network starvation\n");
+    Log::Print("s: Stop (only valid when paused)\n");
+    Log::Print("q: Quit\n");
+    Log::Print("\n");
     do {
     	int key = mygetch();
         switch (key)
@@ -431,19 +431,19 @@ int CDECL main(int aArgc, char* aArgv[])
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     const TUint adapterIndex = optionAdapter.Value();
     if (subnetList->size() <= adapterIndex) {
-		printf("ERROR: adapter %d doesn't exist\n", adapterIndex);
+		Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
 		ASSERTS();
     }
-    printf ("adapter list:\n");
+    Log::Print ("adapter list:\n");
     for (unsigned i=0; i<subnetList->size(); ++i) {
 		TIpAddress addr = (*subnetList)[i]->Address();
-		printf ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
     TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
     Library::DestroySubnetList(subnetList);
     lib->SetCurrentSubnet(subnet);
-    printf("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
+    Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
     FileSender* fileSender = new FileSender(lib->Env(), *dvStack, optionFile.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     const int ret = fileSender->Run();

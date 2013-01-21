@@ -110,30 +110,30 @@ Brn SupplierWav::LoadFile(const Brx& aFileName)
     Brn audioData;
 	Brhz file(aFileName);
     if (file.Bytes() == 0) {
-    	printf("ERROR: No wav file specified\n");
+    	Log::Print("ERROR: No wav file specified\n");
     	return audioData;
     }
     FILE* fh = fopen(file.CString(), "rb");
     if (fh == NULL) {
-    	printf("ERROR: Unable to open specified wav file\n");
+    	Log::Print("ERROR: Unable to open specified wav file\n");
     	return audioData;
     }
     TByte header[kFileHeaderBytes];
     if (fread(header, 1, kFileHeaderBytes, fh) != kFileHeaderBytes) {
-    	printf("ERROR: Failed to read wav file header\n");
+    	Log::Print("ERROR: Failed to read wav file header\n");
     	goto exit;
     }
     if (header[0] != 'R' || header[1] != 'I' || header[2] != 'F' || header[3] != 'F') {
-    	printf("ERROR: Invalid wav file\n");
+    	Log::Print("ERROR: Invalid wav file\n");
     	goto exit;
     }
     // skip reading next 4 bytes (chunk size)
     if (header[8] != 'W' || header[9] != 'A' || header[10] != 'V' || header[11] != 'E') {
-    	printf("ERROR: Invalid wav file\n");
+    	Log::Print("ERROR: Invalid wav file\n");
     	goto exit;
     }
     if (header[12] != 'f' || header[13] != 'm' || header[14] != 't' || header[15] != ' ') {
-    	printf("ERROR: Invalid wav file\n");
+    	Log::Print("ERROR: Invalid wav file\n");
     	goto exit;
     }
     {
@@ -141,12 +141,12 @@ Brn SupplierWav::LoadFile(const Brx& aFileName)
         // ...so move them into their own scope
         const TUint subChunk1Size = header[16] | (header[17] << 8) | (header[18] << 16) | (header[19] << 24);
         if (subChunk1Size != 16) {
-            printf("ERROR: Unsupported wav file\n");
+            Log::Print("ERROR: Unsupported wav file\n");
             goto exit;
         }
         const TUint audioFormat = header[20] | (header[21] << 8);
         if (audioFormat != 1) {
-            printf("ERROR: Unsupported wav file\n");
+            Log::Print("ERROR: Unsupported wav file\n");
             goto exit;
         }
     }
@@ -156,17 +156,17 @@ Brn SupplierWav::LoadFile(const Brx& aFileName)
     //const TUint blockAlign = header[32] | (header[33] << 8);
     iBitDepth = header[34] | (header[35] << 8);
     if (header[36] != 'd' || header[37] != 'a' || header[38] != 't' || header[39] != 'a') {
-    	printf("ERROR: Invalid wav file\n");
+    	Log::Print("ERROR: Invalid wav file\n");
     	goto exit;
     }
     iDataSize = header[40] | (header[41] << 8) | (header[42] << 16) | (header[43] << 24);
 
-//    printf("numChannels=%u, sampleRate=%u, byteRate=%u, blockAlign=%u, bitsDepth=%u, subChunk2Size=%u\n",
+//    Log::Print("numChannels=%u, sampleRate=%u, byteRate=%u, blockAlign=%u, bitsDepth=%u, subChunk2Size=%u\n",
 //           iNumChannels, iSampleRate, byteRate, blockAlign, iBitDepth, iDataBytes);
 
     iBuf = new TByte[iDataSize];
     if (fread(iBuf, 1, iDataSize, fh) != iDataSize) {
-    	printf("ERROR: Unable to read wav file data\n");
+    	Log::Print("ERROR: Unable to read wav file data\n");
     	goto exit;
     }
     audioData.Set(iBuf, iDataSize);

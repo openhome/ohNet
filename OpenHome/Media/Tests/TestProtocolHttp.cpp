@@ -234,12 +234,12 @@ int TestProtocolHttp::Run()
     //TBool starve = false;
     TBool quit = false;
 
-    printf("\nPipeline test using ProtocolHttp as supplier.  Usage:\n");
-    printf("p: Toggle between play/pause\n");
-    printf("n: Toggle between start/stop simulating network starvation\n");
-    printf("s: Stop (only valid when paused)\n");
-    printf("q: Quit\n");
-    printf("\n");
+    Log::Print("\nPipeline test using ProtocolHttp as supplier.  Usage:\n");
+    Log::Print("p: Toggle between play/pause\n");
+    Log::Print("n: Toggle between start/stop simulating network starvation\n");
+    Log::Print("s: Stop (only valid when paused)\n");
+    Log::Print("q: Quit\n");
+    Log::Print("\n");
     do {
     	int key = mygetch();
         switch (key)
@@ -369,19 +369,19 @@ int CDECL main(int aArgc, char* aArgv[])
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     const TUint adapterIndex = optionAdapter.Value();
     if (subnetList->size() <= adapterIndex) {
-		printf("ERROR: adapter %d doesn't exist\n", adapterIndex);
+		Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
 		ASSERTS();
     }
-    printf ("adapter list:\n");
+    Log::Print ("adapter list:\n");
     for (unsigned i=0; i<subnetList->size(); ++i) {
 		TIpAddress addr = (*subnetList)[i]->Address();
-		printf ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
     TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
     Library::DestroySubnetList(subnetList);
     lib->SetCurrentSubnet(subnet);
-    printf("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
+    Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
     TestProtocolHttp* tph = new TestProtocolHttp(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     const int ret = tph->Run();
