@@ -161,14 +161,14 @@ Msg* DriverSongcastSender::ProcessMsg(MsgPlayable* aMsg)
     return NULL;
 }
 
-Msg* DriverSongcastSender::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    const AudioFormat& fmt = aMsg->Format();
-    iSampleRate = fmt.SampleRate();
-    iNumChannels = fmt.NumChannels();
-    iBitDepth = fmt.BitDepth();
+    const DecodedStreamInfo& stream = aMsg->StreamInfo();
+    iSampleRate = stream.SampleRate();
+    iNumChannels = stream.NumChannels();
+    iBitDepth = stream.BitDepth();
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
-    iOhmSenderDriver->SetAudioFormat(iSampleRate, fmt.BitRate(), iNumChannels, iBitDepth, fmt.Lossless(), fmt.CodecName());
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), iNumChannels, iBitDepth, stream.Lossless(), stream.CodecName());
     aMsg->RemoveRef();
     return NULL;
 }

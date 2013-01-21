@@ -383,45 +383,49 @@ private:
     TUint iNumChannels;
 };
 
-class AudioFormat
+class DecodedStreamInfo
 {
-    friend class MsgAudioFormat;
+    friend class MsgDecodedStream;
 public:
     static const TUint kMaxCodecNameBytes = 32;
 public:
+    TUint StreamId() const { return iStreamId; }
     TUint BitRate() const { return iBitRate; }
     TUint BitDepth() const { return iBitDepth; }
     TUint SampleRate() const { return iSampleRate; }
     TUint NumChannels() const { return iNumChannels; }
     const Brx& CodecName() const { return iCodecName; }
     TUint64 TrackLength() const { return iTrackLength; }
+    TUint64 SampleStart() const { return iSampleStart; }
     TBool Lossless() const { return iLossless; }
 private:
-    AudioFormat();
-    void Set(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
+    DecodedStreamInfo();
+    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
 private:
+    TUint iStreamId;
     TUint iBitRate;
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
     Bws<kMaxCodecNameBytes> iCodecName;
     TUint64 iTrackLength; // jiffies
+    TUint64 iSampleStart;
     TBool iLossless;
 };
 
-class MsgAudioFormat : public Msg
+class MsgDecodedStream : public Msg
 {
     friend class MsgFactory;
 public:
-    MsgAudioFormat(AllocatorBase& aAllocator);
-    const AudioFormat& Format() const;
+    MsgDecodedStream(AllocatorBase& aAllocator);
+    const DecodedStreamInfo& StreamInfo() const;
 private:
-    void Initialise(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
+    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
-    AudioFormat iAudioFormat;
+    DecodedStreamInfo iStreamInfo;
 };
 
 class MsgTrack : public Msg
@@ -516,7 +520,7 @@ public:
     virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
-    virtual Msg* ProcessMsg(MsgAudioFormat* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgDecodedStream* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgEncodedStream* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
@@ -607,7 +611,7 @@ private:
     virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
     virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
     virtual void ProcessMsgIn(MsgSilence* aMsg);
-    virtual void ProcessMsgIn(MsgAudioFormat* aMsg);
+    virtual void ProcessMsgIn(MsgDecodedStream* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
     virtual void ProcessMsgIn(MsgEncodedStream* aMsg);
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
@@ -617,7 +621,7 @@ private:
     virtual Msg* ProcessMsgOut(MsgAudioEncoded* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
-    virtual Msg* ProcessMsgOut(MsgAudioFormat* aMsg);
+    virtual Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
     virtual Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
@@ -634,7 +638,7 @@ private:
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);
         Msg* ProcessMsg(MsgPlayable* aMsg);
-        Msg* ProcessMsg(MsgAudioFormat* aMsg);
+        Msg* ProcessMsg(MsgDecodedStream* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -653,7 +657,7 @@ private:
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);
         Msg* ProcessMsg(MsgPlayable* aMsg);
-        Msg* ProcessMsg(MsgAudioFormat* aMsg);
+        Msg* ProcessMsg(MsgDecodedStream* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -698,14 +702,14 @@ public:
     MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
-               TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgAudioFormatCount,
+               TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
                TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
                TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgQuitCount);
     //
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
-    MsgAudioFormat* CreateMsgAudioFormat(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TBool aLossless);
+    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
     MsgTrack* CreateMsgTrack();
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint aTotalBytes, TBool aSeekable, TBool aLive, TUint aStreamId, IRestreamer* aRestreamer);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
@@ -723,7 +727,7 @@ private:
     Allocator<MsgSilence> iAllocatorMsgSilence;
     Allocator<MsgPlayablePcm> iAllocatorMsgPlayablePcm;
     Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
-    Allocator<MsgAudioFormat> iAllocatorMsgAudioFormat;
+    Allocator<MsgDecodedStream> iAllocatorMsgDecodedStream;
     Allocator<MsgTrack> iAllocatorMsgTrack;
     Allocator<MsgEncodedStream> iAllocatorMsgEncodedStream;
     Allocator<MsgMetaText> iAllocatorMsgMetaText;

@@ -44,7 +44,7 @@ public:
     virtual void NotifyTrack() = 0; // FIXME - MsgTrack doesn't contain any data yet
     virtual void NotifyMetaText(const Brx& aText) = 0;
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
-    virtual void NotifyAudioFormat(const AudioFormat& aFormat) = 0;
+    virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
     
 class PipelineManager : private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
@@ -57,9 +57,9 @@ class PipelineManager : private IStopperObserver, private IPipelinePropertyObser
     static const TUint kMsgCountSilence         = 512;
     static const TUint kMsgCountPlayablePcm     = 1024;
     static const TUint kMsgCountPlayableSilence = 1024;
-    static const TUint kMsgCountAudioFormat     = 20;
+    static const TUint kMsgCountEncodedStream   = 20;
     static const TUint kMsgCountTrack           = 20;
-    static const TUint kMsgCountAudioStream     = 20;
+    static const TUint kMsgCountDecodedStream   = 20;
     static const TUint kMsgCountMetaText        = 20;
     static const TUint kMsgCountHalt            = 20;
     static const TUint kMsgCountFlush           = 1;
@@ -92,7 +92,7 @@ private: // from IPipelinePropertyObserver
     void NotifyTrack();
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyAudioFormat(const AudioFormat& aFormat);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private: // from IStarvationMonitorObserver
     void NotifyStarvationMonitorBuffering(TBool aBuffering);
 private:
@@ -145,7 +145,7 @@ private: // from IPipelineObserver
     void NotifyTrack();
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyAudioFormat(const AudioFormat& aFormat);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 };
 
 class LoggingPipelineObserver : public IPipelineObserver // test helper
@@ -155,7 +155,7 @@ private: // from IPipelineObserver
     void NotifyTrack();
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyAudioFormat(const AudioFormat& aFormat);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 };
 
 } // namespace Media

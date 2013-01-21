@@ -15,7 +15,7 @@ public:
     virtual void NotifyTrack() = 0; // FIXME - MsgTrack doesn't contain any data yet
     virtual void NotifyMetaText(const Brx& aText) = 0;
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
-    virtual void NotifyAudioFormat(const AudioFormat& aFormat) = 0;
+    virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
 
 /*
@@ -35,7 +35,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);

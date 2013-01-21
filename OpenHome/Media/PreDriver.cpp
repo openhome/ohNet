@@ -15,7 +15,7 @@ PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
     , iMaxPlayableJiffies(aMaxPlayableJiffies)
     , iMaxPlayableBytes(0)
     , iPlayable(NULL)
-    , iFormat(NULL)
+    , iStreamInfo(NULL)
     , iPendingFormatChange(NULL)
     , iPendingHalt(NULL)
     , iHalted(true)
@@ -26,8 +26,8 @@ PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
 PreDriver::~PreDriver()
 {
     iShutdownSem.Wait();
-    if (iFormat != NULL) {
-        iFormat->RemoveRef();
+    if (iStreamInfo != NULL) {
+        iStreamInfo->RemoveRef();
     }
     if (iPlayable != NULL) {
         iPlayable->RemoveRef();
@@ -128,8 +128,8 @@ Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 {
     iHalted = false;
-    const AudioFormat& format = iFormat->Format();
-    MsgPlayable* playable = aMsg->CreatePlayable(format.SampleRate(), format.BitDepth(), format.NumChannels());
+    const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();
+    MsgPlayable* playable = aMsg->CreatePlayable(stream.SampleRate(), stream.BitDepth(), stream.NumChannels());
     return AddPlayable(playable);
 }
 
@@ -139,24 +139,24 @@ Msg* PreDriver::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* PreDriver::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    const AudioFormat& format = iFormat->Format();
-    if (iFormat != NULL &&
-        aMsg->Format().SampleRate() == format.SampleRate() &&
-        aMsg->Format().BitDepth() == format.BitDepth()) {
+    const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();
+    if (iStreamInfo != NULL &&
+        aMsg->StreamInfo().SampleRate() == stream.SampleRate() &&
+        aMsg->StreamInfo().BitDepth() == stream.BitDepth()) {
         // no change in format.  Discard this msg
         aMsg->RemoveRef();
         return NULL;
     }
-    if (iFormat != NULL) {
-        iFormat->RemoveRef();
+    if (iStreamInfo != NULL) {
+        iStreamInfo->RemoveRef();
     }
-    iFormat = aMsg;
-    iFormat->AddRef();
+    iStreamInfo = aMsg;
+    iStreamInfo->AddRef();
     TUint jiffies = iMaxPlayableJiffies;
-    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iFormat->Format().SampleRate());
-    iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iFormat->Format().NumChannels(), iFormat->Format().BitDepth() / 8);
+    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iStreamInfo->StreamInfo().SampleRate());
+    iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iStreamInfo->StreamInfo().NumChannels(), iStreamInfo->StreamInfo().BitDepth() / 8);
     if (iHalted) {
         ASSERT(iPlayable == NULL);
         return aMsg;

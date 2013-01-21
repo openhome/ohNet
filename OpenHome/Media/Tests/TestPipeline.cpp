@@ -70,13 +70,13 @@ private: // from IPipelineObserver
     void NotifyTrack();
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyAudioFormat(const AudioFormat& aFormat);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -472,7 +472,7 @@ void SuitePipeline::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 #endif
 }
 
-void SuitePipeline::NotifyAudioFormat(const AudioFormat& aFormat)
+void SuitePipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
@@ -535,12 +535,12 @@ Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
     return NULL;
 }
 
-Msg* SuitePipeline::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* SuitePipeline::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastMsgWasAudio = false;
-    iSampleRate = aMsg->Format().SampleRate();
-    iNumChannels = aMsg->Format().NumChannels();
-    iBitDepth = aMsg->Format().BitDepth();
+    iSampleRate = aMsg->StreamInfo().SampleRate();
+    iNumChannels = aMsg->StreamInfo().NumChannels();
+    iBitDepth = aMsg->StreamInfo().BitDepth();
     aMsg->RemoveRef();
     return NULL;
 }
@@ -602,7 +602,7 @@ TBool DummyCodec::Recognise(const Brx& /*aData*/)
 void DummyCodec::Process()
 {
     const TUint bitRate = iSampleRate * iBitDepth * iChannels;
-    MsgAudioFormat* format = iMsgFactory->CreateMsgAudioFormat(bitRate, iBitDepth, iSampleRate, iChannels, Brn("dummy codec"), 1LL<<34, false);
+    MsgDecodedStream* format = iMsgFactory->CreateMsgDecodedStream(1, bitRate, iBitDepth, iSampleRate, iChannels, Brn("dummy codec"), 1LL<<34, 0, false);
     iController->Output(format);
 
     // Don't need any exit condition for loop below.  iController->Read will throw eventually.

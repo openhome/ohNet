@@ -69,11 +69,11 @@ Msg* Reporter::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* Reporter::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* Reporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iTimeInvalid = true;
-    iTrackDurationSeconds = (TUint)(aMsg->Format().TrackLength() / Jiffies::kJiffiesPerSecond);
-    iObserver.NotifyAudioFormat(aMsg->Format());
+    iTrackDurationSeconds = (TUint)(aMsg->StreamInfo().TrackLength() / Jiffies::kJiffiesPerSecond);
+    iObserver.NotifyStreamInfo(aMsg->StreamInfo());
     return aMsg;
 }
 

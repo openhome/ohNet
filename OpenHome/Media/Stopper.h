@@ -43,7 +43,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);

@@ -102,6 +102,6 @@ void CodecWav::ProcessHeader(const Brx& aHeader, TUint& aNumChannels, TUint& aSa
     const TUint numSamples = aAudioBytes / (aNumChannels * (aBitDepth/8));
     const TUint64 trackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / aSampleRate;
 
-    MsgAudioFormat* msg = iMsgFactory->CreateMsgAudioFormat(bitRate, aBitDepth, aSampleRate, aNumChannels, Brn("WAV"), trackLengthJiffies, true);
+    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(0, bitRate, aBitDepth, aSampleRate, aNumChannels, Brn("WAV"), trackLengthJiffies, 0, true); // FIXME - missing streamId and startSample
     iController->Output(msg);
 }

@@ -30,7 +30,7 @@ class ICodecController
 {
 public:
     virtual void Read(Bwx& aBuf, TUint aBytes) = 0;
-    virtual void Output(MsgAudioFormat* aMsg) = 0;
+    virtual void Output(MsgDecodedStream* aMsg) = 0;
     virtual void Output(MsgAudioPcm* aMsg) = 0;
 };
     
@@ -64,14 +64,14 @@ private:
     void Queue(Msg* aMsg);
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
-    void Output(MsgAudioFormat* aMsg);
+    void Output(MsgDecodedStream* aMsg);
     void Output(MsgAudioPcm* aMsg);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);

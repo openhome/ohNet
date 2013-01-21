@@ -38,7 +38,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -52,7 +52,7 @@ private:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
-       ,EMsgAudioFormat
+       ,EMsgDecodedStream
        ,EMsgTrack
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -156,7 +156,7 @@ void SuiteVariableDelay::Test()
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 
     // Check that Silence, Track, AudioStream, MetaText, Halt, Flush & Quit msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         iNextGeneratedMsg = types[i];
         msg = iVariableDelay->Pull();
@@ -212,8 +212,8 @@ Msg* SuiteVariableDelay::Pull()
         return CreateAudio();
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
-    case EMsgAudioFormat:
-        return iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
+    case EMsgDecodedStream:
+        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
     case EMsgEncodedStream:
@@ -298,9 +298,9 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuiteVariableDelay::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* SuiteVariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iLastMsg = EMsgAudioFormat;
+    iLastMsg = EMsgDecodedStream;
     return aMsg;
 }
 

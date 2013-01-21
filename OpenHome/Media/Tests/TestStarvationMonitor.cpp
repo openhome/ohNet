@@ -39,7 +39,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -55,7 +55,7 @@ private:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
-       ,EMsgAudoiFormat
+       ,EMsgDecodedStream
        ,EMsgTrack
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -359,9 +359,9 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioFormat* /*aMsg*/)
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
-    ASSERTS(); // MsgAudioFormat not used in this test
+    ASSERTS(); // MsgDecodedStream not used in this test
     return NULL;
 }
 

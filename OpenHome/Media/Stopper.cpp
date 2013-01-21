@@ -126,7 +126,7 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* Stopper::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
     return aMsg;
 }

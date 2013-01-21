@@ -35,7 +35,7 @@ private: // from IPipelinePropertyObserver
     void NotifyTrack();
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyAudioFormat(const AudioFormat& aFormat);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private:
     enum EMsgType
     {
@@ -43,7 +43,7 @@ private:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
-       ,EMsgAudioFormat
+       ,EMsgDecodedStream
        ,EMsgTrack
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -103,7 +103,7 @@ void SuiteReporter::Test()
     TUint expectedAudioFormatUpdates = 0;
     TUint expectedTimeSeconds = 0;
 
-    // deliver MsgTrack then MsgAudioFormat.  Check these are notified.
+    // deliver MsgTrack then MsgDecodedStream.  Check these are notified.
     iNextGeneratedMsg = EMsgTrack;
     Msg* msg = iReporter->Pull();
     msg->RemoveRef();
@@ -113,7 +113,7 @@ void SuiteReporter::Test()
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
     TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
-    iNextGeneratedMsg = EMsgAudioFormat;
+    iNextGeneratedMsg = EMsgDecodedStream;
     msg = iReporter->Pull();
     msg->RemoveRef();
     expectedAudioFormatUpdates++;
@@ -185,7 +185,7 @@ void SuiteReporter::Test()
 
     // simulate seeking to 3.5s then deliver single audio msg.  Check NotifyTime is called.
     iTrackOffset = (3 * Jiffies::kJiffiesPerSecond) + (Jiffies::kJiffiesPerSecond / 2);
-    iNextGeneratedMsg = EMsgAudioFormat;
+    iNextGeneratedMsg = EMsgDecodedStream;
     msg = iReporter->Pull();
     msg->RemoveRef();
     expectedAudioFormatUpdates++;
@@ -232,8 +232,8 @@ Msg* SuiteReporter::Pull()
         return CreateAudio();
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerSecond * 10);
-    case EMsgAudioFormat:
-        return iMsgFactory->CreateMsgAudioFormat(kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, kLossless);
+    case EMsgDecodedStream:
+        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
     case EMsgMetaText:
@@ -279,10 +279,10 @@ void SuiteReporter::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
     TEST(iTrackDurationSeconds == aTrackDurationSeconds);
 }
 
-void SuiteReporter::NotifyAudioFormat(const AudioFormat& aFormat)
+void SuiteReporter::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
     iAudioFormatUpdates++;
-    iTrackDurationSeconds = (TUint)(aFormat.TrackLength() / Jiffies::kJiffiesPerSecond);
+    iTrackDurationSeconds = (TUint)(aStreamInfo.TrackLength() / Jiffies::kJiffiesPerSecond);
 }
 
 

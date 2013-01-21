@@ -111,12 +111,12 @@ private:
     AllocatorInfoLogger iInfoAggregator;
 };
 
-class SuiteAudioFormat : public Suite
+class SuiteDecodedStream : public Suite
 {
-    static const TUint kMsgAudioFormatCount = 1;
+    static const TUint kMsgDecodedStreamCount = 1;
 public:
-    SuiteAudioFormat();
-    ~SuiteAudioFormat();
+    SuiteDecodedStream();
+    ~SuiteDecodedStream();
     void Test();
 private:
     MsgFactory* iMsgFactory;
@@ -144,7 +144,7 @@ public:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
-       ,EMsgAudioFormat
+       ,EMsgDecodedStream
        ,EMsgTrack
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -160,7 +160,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -1172,68 +1172,78 @@ void SuiteMetaText::Test()
 }
 
 
-// SuiteAudioFormat
+// SuiteDecodedStream
 
-SuiteAudioFormat::SuiteAudioFormat()
-    : Suite("MsgAudioFormat tests")
+SuiteDecodedStream::SuiteDecodedStream()
+    : Suite("MsgDecodedStream tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgAudioFormatCount, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgDecodedStreamCount, 1, 1, 1, 1, 1);
 }
 
-SuiteAudioFormat::~SuiteAudioFormat()
+SuiteDecodedStream::~SuiteDecodedStream()
 {
     delete iMsgFactory;
 }
 
-void SuiteAudioFormat::Test()
+void SuiteDecodedStream::Test()
 {
     // create AudioFormat msg, check its text can be retrieved
-    TUint bitRate = 128; // nonsense value but doesn't matter for this test
+    TUint streamId = 3; // nonsense value but doesn't matter for this test
+    TUint bitRate = 128;
     TUint bitDepth = 16;
     TUint sampleRate = 44100;
     TUint numChannels = 2;
     Brn codecName("test codec");
     TUint64 trackLength = 1<<16;
+    TUint64 startSample = 1LL<33;
     TBool lossless = true;
-    MsgAudioFormat* msg = iMsgFactory->CreateMsgAudioFormat(bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, lossless);
+    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless);
     TEST(msg != NULL);
-    TEST(msg->Format().BitRate() == bitRate);
-    TEST(msg->Format().BitDepth() == bitDepth);
-    TEST(msg->Format().SampleRate() == sampleRate);
-    TEST(msg->Format().NumChannels() == numChannels);
-    TEST(msg->Format().CodecName() == codecName);
-    TEST(msg->Format().TrackLength() == trackLength);
-    TEST(msg->Format().Lossless() == lossless);
+    TEST(msg->StreamInfo().StreamId() == streamId);
+    TEST(msg->StreamInfo().BitRate() == bitRate);
+    TEST(msg->StreamInfo().BitDepth() == bitDepth);
+    TEST(msg->StreamInfo().SampleRate() == sampleRate);
+    TEST(msg->StreamInfo().NumChannels() == numChannels);
+    TEST(msg->StreamInfo().CodecName() == codecName);
+    TEST(msg->StreamInfo().TrackLength() == trackLength);
+    TEST(msg->StreamInfo().SampleStart() == startSample);
+    TEST(msg->StreamInfo().Lossless() == lossless);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
     // access freed msg (doesn't bother valgrind as this is still allocated memory).  Check text has been cleared.
-    TEST(msg->Format().BitRate() != bitRate);
-    TEST(msg->Format().BitDepth() != bitDepth);
-    TEST(msg->Format().SampleRate() != sampleRate);
-    TEST(msg->Format().NumChannels() != numChannels);
-    TEST(msg->Format().CodecName() != codecName);
-    TEST(msg->Format().TrackLength() != trackLength);
-    TEST(msg->Format().Lossless() != lossless);
+    TEST(msg->StreamInfo().StreamId() != streamId);
+    TEST(msg->StreamInfo().BitRate() != bitRate);
+    TEST(msg->StreamInfo().BitDepth() != bitDepth);
+    TEST(msg->StreamInfo().SampleRate() != sampleRate);
+    TEST(msg->StreamInfo().NumChannels() != numChannels);
+    TEST(msg->StreamInfo().CodecName() != codecName);
+    TEST(msg->StreamInfo().TrackLength() != trackLength);
+    TEST(msg->StreamInfo().SampleStart() != startSample);
+    TEST(msg->StreamInfo().Lossless() != lossless);
 #endif
 
     // create second MetaText msg, check its text can be retrieved
+    streamId = 4;
     bitRate = 700;
     bitDepth = 24;
     sampleRate = 192000;
     numChannels = 1;
     codecName.Set("new codec name (a bit longer)");
     trackLength = 1<<30;
+    startSample += 111;
     lossless = false;
-    msg = iMsgFactory->CreateMsgAudioFormat(bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, lossless);
+    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless);
     TEST(msg != NULL);
-    TEST(msg->Format().BitRate() == bitRate);
-    TEST(msg->Format().BitDepth() == bitDepth);
-    TEST(msg->Format().SampleRate() == sampleRate);
-    TEST(msg->Format().NumChannels() == numChannels);
-    TEST(msg->Format().CodecName() == codecName);
-    TEST(msg->Format().TrackLength() == trackLength);
-    TEST(msg->Format().Lossless() == lossless);
+    TEST(msg->StreamInfo().StreamId() == streamId);
+    TEST(msg->StreamInfo().BitRate() == bitRate);
+    TEST(msg->StreamInfo().BitDepth() == bitDepth);
+    TEST(msg->StreamInfo().SampleRate() == sampleRate);
+    TEST(msg->StreamInfo().NumChannels() == numChannels);
+    TEST(msg->StreamInfo().CodecName() == codecName);
+    TEST(msg->StreamInfo().TrackLength() == trackLength);
+    TEST(msg->StreamInfo().SampleStart() == startSample);
+    TEST(msg->StreamInfo().Lossless() == lossless);
     msg->RemoveRef();
 }
 
@@ -1282,9 +1292,9 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    Msg* msg = iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
+    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false);
     TEST(msg == msg->Process(processor));
-    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgAudioFormat);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
     msg = iMsgFactory->CreateMsgTrack();
@@ -1355,9 +1365,9 @@ Msg* ProcessorMsgType::ProcessMsg(MsgPlayable* aMsg)
     return aMsg;
 }
 
-Msg* ProcessorMsgType::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iLastMsgType = ProcessorMsgType::EMsgAudioFormat;
+    iLastMsgType = ProcessorMsgType::EMsgDecodedStream;
     return aMsg;
 }
 
@@ -1774,7 +1784,7 @@ void TestMsg()
     runner.Add(new SuiteRamp());
     runner.Add(new SuiteAudioStream());
     runner.Add(new SuiteMetaText());
-    runner.Add(new SuiteAudioFormat());
+    runner.Add(new SuiteDecodedStream());
     runner.Add(new SuiteMsgProcessor());
     runner.Add(new SuiteMsgQueue());
     runner.Add(new SuiteMsgQueueFlushable());

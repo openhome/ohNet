@@ -65,7 +65,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -184,7 +184,7 @@ void SupplierWav::Run()
     ASSERT(iDataSize % (iNumChannels * (iBitDepth/8)) == 0);
     const TUint numSamples = iDataSize / (iNumChannels * (iBitDepth/8));
     const TUint64 trackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / iSampleRate;
-    msg = iMsgFactory->CreateMsgAudioFormat(bitRate, iBitDepth, iSampleRate, iNumChannels, Brn("WAV"), trackLengthJiffies, true);
+    msg = iMsgFactory->CreateMsgDecodedStream(1, bitRate, iBitDepth, iSampleRate, iNumChannels, Brn("WAV"), trackLengthJiffies, 0, true);
     iPipeline->Push(msg);
     while (iDataPos < iDataSize) {
         msg = CreateAudio();
@@ -290,7 +290,7 @@ Msg* DriverAudioCheck::ProcessMsg(MsgPlayable* aMsg)
     return NULL;
 }
 
-Msg* DriverAudioCheck::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* DriverAudioCheck::ProcessMsg(MsgDecodedStream* aMsg)
 {
     aMsg->RemoveRef();
     return NULL;

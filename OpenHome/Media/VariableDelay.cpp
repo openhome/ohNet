@@ -167,7 +167,7 @@ Msg* VariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
     return aMsg;
 }

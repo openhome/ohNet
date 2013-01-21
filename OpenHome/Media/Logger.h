@@ -23,7 +23,7 @@ public:
        ,EMsgAudioPcm      = 1<<2
        ,EMsgSilence       = 1<<3
        ,EMsgPlayable      = 1<<4
-       ,EMsgAudioFormat   = 1<<5
+       ,EMsgDecodedStream = 1<<5
        ,EMsgTrack         = 1<<6
        ,EMsgEncodedStream = 1<<7
        ,EMsgMetaText      = 1<<8
@@ -44,7 +44,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);

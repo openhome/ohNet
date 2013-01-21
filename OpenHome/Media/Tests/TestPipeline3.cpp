@@ -56,7 +56,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -89,7 +89,7 @@ private: // from IPipelineObserver
     void NotifyTrack();
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyAudioFormat(const AudioFormat& aFormat);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private:
     Semaphore iSem;
     SupplierTp3* iSupplier;
@@ -138,7 +138,7 @@ void SupplierTp3::Run()
     const TUint bitRate = kSampleRate * kBitDepth * kNumChannels;
     const TUint numSamples = kMsgAudioCount * (iBuf.Bytes() / (kNumChannels * (kBitDepth/8)));
     const TUint64 trackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / kSampleRate;
-    msg = iMsgFactory->CreateMsgAudioFormat(bitRate, kBitDepth, kSampleRate, kNumChannels, Brn("MadeUp"), trackLengthJiffies, true);
+    msg = iMsgFactory->CreateMsgDecodedStream(1, bitRate, kBitDepth, kSampleRate, kNumChannels, Brn("MadeUp"), trackLengthJiffies, 0, true);
     iPipeline->Push(msg);
     while (iRemainingMsgAudio > 0) {
         MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataBigEndian, iTrackOffset);
@@ -223,7 +223,7 @@ Msg* DriverTp3::ProcessMsg(MsgPlayable* aMsg)
     return NULL;
 }
 
-Msg* DriverTp3::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* DriverTp3::ProcessMsg(MsgDecodedStream* aMsg)
 {
     aMsg->RemoveRef();
     return NULL;
@@ -353,7 +353,7 @@ void TestPipeline3::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
     Log::Print("Pipeline report property: TIME {secs=%u; duration=%u}\n", aSeconds, aTrackDurationSeconds);
 }
 
-void TestPipeline3::NotifyAudioFormat(const AudioFormat& /*aFormat*/)
+void TestPipeline3::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 {
 }
 

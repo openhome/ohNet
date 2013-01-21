@@ -41,8 +41,8 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     iMsgFactory = new MsgFactory(aInfoAggregator,
                                  kMsgCountEncodedAudio, kMsgCountAudioEncoded,
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
-                                 kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountAudioFormat,
-                                 kMsgCountTrack, kMsgCountAudioStream, kMsgCountMetaText,
+                                 kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
+                                 kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
                                  kMsgCountHalt, kMsgCountFlush, kMsgCountQuit);
 
     iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
@@ -300,9 +300,9 @@ void PipelineManager::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
     iObserver.NotifyTime(aSeconds, aTrackDurationSeconds);
 }
 
-void PipelineManager::NotifyAudioFormat(const AudioFormat& aFormat)
+void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
-    iObserver.NotifyAudioFormat(aFormat);
+    iObserver.NotifyStreamInfo(aStreamInfo);
 }
 
 void PipelineManager::NotifyStarvationMonitorBuffering(TBool aBuffering)
@@ -336,7 +336,7 @@ void NullPipelineObserver::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDuration
 }
 
 
-void NullPipelineObserver::NotifyAudioFormat(const AudioFormat& /*aFormat*/)
+void NullPipelineObserver::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 {
 }
 
@@ -384,10 +384,10 @@ void LoggingPipelineObserver::NotifyTime(TUint aSeconds, TUint aTrackDurationSec
 }
 
 
-void LoggingPipelineObserver::NotifyAudioFormat(const AudioFormat& aFormat)
+void LoggingPipelineObserver::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
     Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
-               aFormat.BitRate(), aFormat.BitDepth(), aFormat.SampleRate(), aFormat.NumChannels());
-    Log::Print(aFormat.CodecName());
-    Log::Print("; trackLength=%llx, lossless=%u}\n", aFormat.TrackLength(), aFormat.Lossless());
+               aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels());
+    Log::Print(aStreamInfo.CodecName());
+    Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 }

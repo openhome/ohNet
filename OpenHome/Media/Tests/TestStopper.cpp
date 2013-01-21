@@ -38,7 +38,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -52,7 +52,7 @@ private:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
-       ,EMsgAudioFormat
+       ,EMsgDecodedStream
        ,EMsgTrack
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -156,7 +156,7 @@ void SuiteStopper::Test()
     TEST(iStopper->iQueue.IsEmpty());
 
     // Deliver Silence, Track, AudioStream, Metatext, Quit msgs.  Check they're passed through.
-    EMsgType expected[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgQuit };
+    EMsgType expected[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgQuit };
     for (TUint i=0; i<sizeof(expected)/sizeof(expected[0]); i++) {
         iNextGeneratedMsg = expected[i];
         msg = iStopper->Pull();
@@ -286,8 +286,8 @@ Msg* SuiteStopper::Pull()
         return CreateAudio();
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
-    case EMsgAudioFormat:
-        return iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
+    case EMsgDecodedStream:
+        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
     case EMsgEncodedStream:
@@ -378,9 +378,9 @@ Msg* SuiteStopper::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuiteStopper::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* SuiteStopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iLastMsg = EMsgAudioFormat;
+    iLastMsg = EMsgDecodedStream;
     return aMsg;
 }
 

@@ -89,7 +89,7 @@ private: // from IPipelineObserver
     void NotifyTrack();
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyAudioFormat(const AudioFormat& aFormat);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private:
     SupplierProtocolHttp* iSupplier;
     AllocatorInfoLogger iInfoAggregator;
@@ -332,13 +332,13 @@ void TestProtocolHttp::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 #endif
 }
 
-void TestProtocolHttp::NotifyAudioFormat(const AudioFormat& aFormat)
+void TestProtocolHttp::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
-           aFormat.BitRate(), aFormat.BitDepth(), aFormat.SampleRate(), aFormat.NumChannels());
-    Log::Print(aFormat.CodecName());
-    Log::Print("; trackLength=%llx, lossless=%u}\n", aFormat.TrackLength(), aFormat.Lossless());
+           aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels());
+    Log::Print(aStreamInfo.CodecName());
+    Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 #endif
 }
 

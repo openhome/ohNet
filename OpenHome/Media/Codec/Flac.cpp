@@ -259,10 +259,10 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
     if (!iMsgFormatSent) {
         /* If we get a Audio Frame prior to a metadata frame (and therefore
            iMsgFormatSent is still false) we must have picked up a file mid-stream.
-           Therefore, put out a MsgAudioFormat on the basis of what we know mid-stream. */
+           Therefore, put out a MsgDecodedStream on the basis of what we know mid-stream. */
         const TUint bitRate = sampleRate * bitDepth * channels;
-        MsgAudioFormat* format = iMsgFactory->CreateMsgAudioFormat(bitRate, bitDepth, sampleRate,
-                                                                   channels, iName, 0, true);
+        MsgDecodedStream* format = iMsgFactory->CreateMsgDecodedStream(0, bitRate, bitDepth, sampleRate,
+                                                                       channels, iName, 0, 0, true); // FIXME - missing streamId and startSample
         iController->Output(format);
         iMsgFormatSent = true;
     }
@@ -325,9 +325,9 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
     const TUint bitRate = streamInfo->sample_rate * streamInfo->bits_per_sample * streamInfo->channels;
     const TUint64 trackLengthJiffies = (streamInfo->total_samples * Jiffies::kJiffiesPerSecond) / streamInfo->sample_rate;
 
-    MsgAudioFormat* format = iMsgFactory->CreateMsgAudioFormat(bitRate, streamInfo->bits_per_sample,
-                                                               streamInfo->sample_rate, streamInfo->channels,
-                                                               iName, trackLengthJiffies, true);
+    MsgDecodedStream* format = iMsgFactory->CreateMsgDecodedStream(0, bitRate, streamInfo->bits_per_sample,
+                                                                   streamInfo->sample_rate, streamInfo->channels,
+                                                                   iName, trackLengthJiffies, 0, true); // FIXME - missing streamId and startSample
     iController->Output(format);
     iMsgFormatSent = true;
 }

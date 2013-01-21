@@ -33,7 +33,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -46,8 +46,8 @@ private:
     TUint iMaxPlayableJiffies;
     TUint iMaxPlayableBytes;
     MsgPlayable* iPlayable;
-    MsgAudioFormat* iFormat;
-    MsgAudioFormat* iPendingFormatChange;
+    MsgDecodedStream* iStreamInfo;
+    MsgDecodedStream* iPendingFormatChange;
     MsgHalt* iPendingHalt;
     TBool iHalted;
     Semaphore iShutdownSem;

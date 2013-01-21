@@ -35,7 +35,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgAudioFormat* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -49,7 +49,7 @@ private:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
-       ,EMsgAudioFormat
+       ,EMsgDecodedStream
        ,EMsgTrack
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -132,7 +132,7 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == NULL);
 
     // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgAudioFormat, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         GenerateMsg(types[0]);
         msg = iReservoir->Pull();
@@ -220,8 +220,8 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgSilence:
         msg = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
         break;
-    case EMsgAudioFormat:
-        msg = iMsgFactory->CreateMsgAudioFormat(0, 0, 0, 0, Brx::Empty(), 0, false);
+    case EMsgDecodedStream:
+        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false);
         break;
     case EMsgTrack:
         msg = iMsgFactory->CreateMsgTrack();
@@ -295,9 +295,9 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioFormat* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iLastMsg = EMsgAudioFormat;
+    iLastMsg = EMsgDecodedStream;
     return aMsg;
 }
 
