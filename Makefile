@@ -189,7 +189,7 @@ ifeq ($(platform), Vanilla)
         linkopts_ohNet = -Wl,-soname,libohNet.so
 	osbuilddir = Posix
 	osdir = Posix
-	endian = LITTLE
+	endian ?= LITTLE
 	openhome_system = Linux
 
 endif
@@ -242,7 +242,7 @@ else
 	jar = $(JAVA_HOME)/bin/jar
 endif
 
-java_cflags = -fexceptions -Wall $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
+java_cflags = -fexceptions -Wall $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
 jarflags = cf
 dirsep = /
 prefix = /usr/local

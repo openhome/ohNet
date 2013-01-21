@@ -597,7 +597,7 @@ static void sockaddrFromEndpoint(struct sockaddr_in* aAddr, TIpAddress aAddress,
 {
     memset(aAddr, 0, sizeof(*aAddr));
     aAddr->sin_family = 2;
-    aAddr->sin_port = SwapEndian16(aPort);
+    aAddr->sin_port = htons(aPort);
     aAddr->sin_addr.s_addr = aAddress;
 }
 
@@ -666,7 +666,7 @@ int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort)
     socklen_t len = sizeof(addr);
     err = getsockname(handle->iSocket, (struct sockaddr*)&addr, &len);
     if (err == 0) {
-        uint16_t port = SwapEndian16(addr.sin_port);
+        uint16_t port = ntohs(addr.sin_port);
         *aPort = port;
     }
     return err;
@@ -803,7 +803,7 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     }
     SetFdBlocking(handle->iSocket);
     *aAddress = addr.sin_addr.s_addr;
-    *aPort = SwapEndian16(addr.sin_port);
+    *aPort = ntohs(addr.sin_port);
     return received;
 }
 
@@ -893,7 +893,7 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
     }
 
     *aClientAddress = addr.sin_addr.s_addr;
-    *aClientPort = SwapEndian16(addr.sin_port);
+    *aClientPort = ntohs(addr.sin_port);
     return (THandle)newHandle;
 }
 

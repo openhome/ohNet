@@ -59,10 +59,10 @@ public class NetworkAdapter
 	{
 		byte[] addr = new byte[4];
 
-		for (int i = 3; i >= 0; i--) {
-			addr[i] = (byte) (ipv4 >> i*8);
-		}
-		
+        addr[0] = (byte) (ipv4 >> 24);
+        addr[1] = (byte) (ipv4 >> 16);
+        addr[2] = (byte) (ipv4 >> 8);
+        addr[3] = (byte) ipv4;		
 		return addr;
 	}
 	

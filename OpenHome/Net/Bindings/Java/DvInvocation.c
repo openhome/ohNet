@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <OpenHome/Os.h>
 #include "DvInvocation.h"
 #include "OpenHome/Net/C/DvProvider.h"
 
@@ -39,7 +40,13 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGet
 	aClass = aClass;
 	
 	DvInvocationGetAdapter(invocation, &adapter);
-	return (jint) adapter;
+#ifdef DEFINE_LITTLE_ENDIAN
+    return (jint) SwapEndian32(adapter);
+#elif defined DEFINE_BIG_ENDIAN
+    return (jint) adapter;
+#else
+# error Endianness not defined
+#endif
 }
 
 
@@ -75,7 +82,13 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGet
     aClass = aClass;
     
     DvInvocationGetClientEndpoint(invocation, &adapter, &port);
+#ifdef DEFINE_LITTLE_ENDIAN
+    return (jint) SwapEndian32(adapter);
+#elif defined DEFINE_BIG_ENDIAN
     return (jint) adapter;
+#else
+# error Endianness not defined
+#endif
 }
 
 /*

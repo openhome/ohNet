@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <OpenHome/Os.h>
 #include "DvDeviceStandard.h"
 #include "JniCallbackList.h"
 #include "OpenHome/Net/C/DvDevice.h"
@@ -49,8 +50,14 @@ int32_t STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, T
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid,
 			(jlong) (size_t)aUserData,
 			(jstring) (*env)->NewStringUTF(env, aUriTail),
+#ifdef DEFINE_LITTLE_ENDIAN
+            (jint) SwapEndian32(aInterface),
+#elif defined DEFINE_BIG_ENDIAN
 			(jint) aInterface,
-			(jlong) (size_t)aLanguageList,
+#elif
+# error Endianness not defined
+#endif
+            (jlong) (size_t)aLanguageList,
 			(jlong) (size_t)aWriterData,
 			(jlong) (size_t)aWriteBegin,
 			(jlong) (size_t)aWriteResource,

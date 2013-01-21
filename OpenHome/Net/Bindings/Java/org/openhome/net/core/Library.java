@@ -170,12 +170,10 @@ public class Library
     private int getIpv4Int(Inet4Address aAddress)
     {
         byte[] ipv4Bytes = aAddress.getAddress();
-        int ipv4Addr = ipv4Bytes[0] & 0xff;
-
-        for (int i = 1; i < 4; i++) {
-            ipv4Addr |= (ipv4Bytes[i] & 0xff) << i*8;
-        }
-
+        int ipv4Addr = (ipv4Bytes[0] & 0xff) << 24;
+        ipv4Addr |= (ipv4Bytes[1] & 0xff) << 16;
+        ipv4Addr |= (ipv4Bytes[2] & 0xff) << 8;
+        ipv4Addr |= ipv4Bytes[3] & 0xff;
         return ipv4Addr;
     }
 }
