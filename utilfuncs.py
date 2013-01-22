@@ -126,11 +126,12 @@ def configure_toolchain(conf):
                 cpu = 'arm926ej-s'
                 # core2 is arm based - pass no-psabi flag to avoid excessive noise during compilation.
                 conf.env.append_value('CXXFLAGS', ['-Wno-psabi'])
-                conf.env.append_value('CFLAGS', ['-Wno-psabi'])
+                conf.env.append_value('CFLAGS',   ['-Wno-psabi'])
 
             conf.env.append_value('LINKFLAGS', ['-specs', 'bsp_specs', '-mcpu=' + cpu])
-            conf.env.append_value('CXXFLAGS', ['-mcpu=' + cpu])
-            conf.env.append_value('CFLAGS', ['-mcpu=' + cpu])
+            conf.env.append_value('CXXFLAGS',  ['-mcpu=' + cpu])
+            conf.env.append_value('CFLAGS',    ['-mcpu=' + cpu])
+            conf.env.append_value('DEFINES',   ['BYTE_ORDER=' + platform_info['endian'] + '_ENDIAN'])
 
     if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
         cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
