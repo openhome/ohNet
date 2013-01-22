@@ -101,12 +101,15 @@ def configure_toolchain(conf):
         # Don't enable warnings for C code as its typically third party and written to different standards
         conf.env.append_value('CXXFLAGS', [
                 '-fexceptions', '-Wall', '-Werror'])
-        conf.env.append_value('LINKFLAGS', ['-pthread'])
+
         if conf.options.dest_platform in ['Linux-x86']:
+            conf.env.append_value('LINKFLAGS', ['-pthread'])
             conf.env.append_value('VALGRIND_ENABLE', ['1'])
         if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM']:
+            conf.env.append_value('LINKFLAGS', ['-pthread'])
             conf.env.append_value('CXXFLAGS',['-Wno-psabi', '-fPIC'])
         elif conf.options.dest_platform in ['Mac-x86', 'Mac-x64']:
+            conf.env.append_value('LINKFLAGS', ['-pthread'])
             if conf.options.dest_platform == 'Mac-x86':
                 conf.env.append_value('CXXFLAGS', ['-arch', 'i386'])
                 conf.env.append_value('LINKFLAGS', ['-arch', 'i386'])
@@ -115,6 +118,20 @@ def configure_toolchain(conf):
                 conf.env.append_value('LINKFLAGS', ['-arch', 'x86_64'])
             conf.env.append_value('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
             conf.env.append_value('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
+        # Options for Libosa-core1 and Libosa-core2
+        if conf.options.dest_platform in ['Libosa-core1', 'Libosa-core2']:
+            if conf.options.dest_platfrom == 'Libosa-core1':
+                cpu = '403'
+            if conf.options.dest_platform == 'Libosa-core2':
+                cpu = 'arm926ej-s'
+                # core2 is arm based - pass no-psabi flag to avoid excessive noise during compilation.
+                conf.env.append_value('CXXFLAGS', ['-Wno-psabi'])
+                conf.env.append_value('CFLAGS', ['-Wno-psabi'])
+
+            conf.env.append_value('LINKFLAGS', ['-specs', 'bsp_specs', '-mcpu=' + cpu])
+            conf.env.append_value('CXXFLAGS', ['-mcpu=' + cpu])
+            conf.env.append_value('CFLAGS', ['-mcpu=' + cpu])
+
     if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
         cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
         conf.msg('Cross compiling using compiler prefix:', cross_compile)
@@ -159,7 +176,6 @@ def guess_ohnet_location(conf):
         message='Specify --ohnet-lib-dir or --ohnet')
     )
 
-
 def get_platform_info(dest_platform):
     platforms = {
         'Linux-x86': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
@@ -167,7 +183,8 @@ def get_platform_info(dest_platform):
         'Linux-ARM': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Windows-x86': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
         'Windows-x64': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
-        'Core': dict(endian='BIG',           build_platform='linux2', ohnet_plat_dir='Volkano2'),
+        'Libosa-core1': dict(endian='BIG',   build_platform='linux2', ohnet_plat_dir='Volkano2'),
+        'Libosa-core2': dict(endian='LITTLE',build_platform='linux2', ohnet_plat_dir='Volkano2'),
         'Mac-x86': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac-x86'),
         'Mac-x64': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac-x64'),
         'iOs-ARM': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac/arm'),
