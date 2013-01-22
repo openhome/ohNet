@@ -120,7 +120,7 @@ def configure_toolchain(conf):
             conf.env.append_value('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
         # Options for Libosa-core1 and Libosa-core2
         if conf.options.dest_platform in ['Libosa-core1', 'Libosa-core2']:
-            if conf.options.dest_platfrom == 'Libosa-core1':
+            if conf.options.dest_platform == 'Libosa-core1':
                 cpu = '403'
             if conf.options.dest_platform == 'Libosa-core2':
                 cpu = 'arm926ej-s'
