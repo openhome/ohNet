@@ -27,6 +27,15 @@ int mygetch()
     return (_getch());
 }
 
+#elif defined(NOTERMIOS)
+
+#define CDECL
+
+int mygetch()
+{
+    return 0;
+}
+
 #else
 
 # define CDECL
@@ -82,7 +91,7 @@ class TestProtocolHttp : private IPipelineObserver
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
     TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-    ~TestProtocolHttp();
+    virtual ~TestProtocolHttp();
     int Run();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);

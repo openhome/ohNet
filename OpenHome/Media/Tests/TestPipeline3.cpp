@@ -82,7 +82,7 @@ class TestPipeline3 : private IPipelineObserver
 {
 public:
     TestPipeline3();
-    ~TestPipeline3();
+    virtual ~TestPipeline3();
     void Run();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
