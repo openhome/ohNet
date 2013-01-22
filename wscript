@@ -18,6 +18,7 @@ def options(opt):
     opt.add_option('--ohnet-include-dir', action='store', default=None)
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
     opt.add_option('--ohnet', action='store', default=None)
+    opt.add_option('--libosa', action='store', default=None)
     opt.add_option('--debug', action='store_const', dest="debugmode", const="Debug", default="Release")
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
     opt.add_option('--dest-platform', action='store', default=None)
@@ -40,6 +41,13 @@ def configure(conf):
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     conf.env.STLIB_OHNET=['ohNetProxies', 'ohNetDevices', 'TestFramework', 'ohNetCore']
+
+    if conf.options.dest_platform in ['Libosa-core1', 'Libosa-core2']:
+        osa_include_dir = os.path.join(conf.options.libosa, 'install', 'include')
+        conf.env.append_value('INCLUDES_OSA', [os.path.abspath(os.path.join(osa_include_dir, x)) for x in ['', 'lwip']])
+        conf.env.append_value('DEFINES', ['NETWORK_LWIP', 'NOTERMIOS']) # Tell FLAC about LWIP, stub out mygetch().
+        conf.env.append_value('LINKFLAGS', ['-B' + os.path.abspath(os.path.join(conf.options.libosa, 'install', 'lib'))])
+
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
 
 def get_node(bld, node_or_filename):
@@ -144,7 +152,7 @@ def build(bld):
                 'flac-1.2.1/include',
                 'libogg-1.1.3/include'
             ],
-            use=['OHNET'],
+            use=['OHNET', 'OSA'],
             target='CodecFlac')
 
     # Tests
