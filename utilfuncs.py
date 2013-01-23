@@ -155,7 +155,11 @@ def guess_ohnet_location(conf):
         return value
     def match_path(paths, message):
         for p in paths:
-            fname = p.format(options=conf.options, debugmode_lc=conf.options.debugmode.lower(), platform_info=get_platform_info(conf.options.dest_platform))
+            fname = p.format(
+                options=conf.options,
+                debugmode_lc=conf.options.debugmode.lower(),
+                debugmode_tc=conf.options.debugmode.title(),
+                platform_info=get_platform_info(conf.options.dest_platform))
             if os.path.exists(fname):
                 return os.path.abspath(fname)
         conf.fatal(message)
@@ -165,6 +169,7 @@ def guess_ohnet_location(conf):
             '{options.ohnet_include_dir}',
             '{options.ohnet}/Build/Include',
             'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_lc}-dev/include/ohnet',
+            'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_tc}/include/ohnet',
         ],
         message='Specify --ohnet-include-dir or --ohnet')
     )
@@ -173,6 +178,7 @@ def guess_ohnet_location(conf):
             '{options.ohnet_lib_dir}',
             '{options.ohnet}/Build/Obj/{platform_info[ohnet_plat_dir]}/{options.debugmode}',
             'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_lc}-dev/lib', 
+            'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_tc}/lib',
         ],
         message='Specify --ohnet-lib-dir or --ohnet')
     )
