@@ -12,6 +12,8 @@
 #include <OpenHome/Private/Debug.h>
 #include "AllocatorInfoLogger.h"
 
+#include "FileSender.h"
+
 #include <stdio.h>
 
 #ifdef _WIN32
@@ -56,64 +58,6 @@ int mygetch()
 
 #endif // _WIN32
 
-namespace OpenHome {
-namespace Media {
-
-class SupplierFile : public Thread, public ISupplier
-{
-public:
-    SupplierFile();
-    ~SupplierFile();
-    TBool LoadFile(const Brx& aFileName);
-    void Block();
-    void Unblock();
-private: // from Thread
-    void Run();
-private:
-    MsgAudioEncoded* CreateAudio();
-private: // from ISupplier
-    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement);
-    void Play();
-    void Flush(Msg* aMsg);
-    void Quit(Msg* aMsg);
-private:
-    Mutex iLock;
-    Semaphore iBlocker;
-    MsgFactory* iMsgFactory;
-    IPipelineElementDownstream* iPipeline;
-    Msg* iPendingMsg;
-    TBool iBlock;
-    TBool iQuit;
-    FILE* iFh;
-    TByte iBuf[DecodedAudio::kMaxBytes];
-    TUint iDataSize;
-    TUint iBytesRemaining;
-};
-
-class FileSender : private IPipelineObserver
-{
-    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
-public:
-    FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-    virtual ~FileSender();
-    int Run();
-private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack();
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
-private:
-    SupplierFile* iSupplier;
-    AllocatorInfoLogger iInfoAggregator;
-    PipelineManager* iPipeline;
-    Net::DvDeviceStandard* iDevice;
-    DriverSongcastSender* iDriver;
-    Brh iFileName;
-};
-
-} // namespace Media
-} // namespace OpenHome
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -413,52 +357,3 @@ void FileSender::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 #endif
 }
 
-
-
-
-int CDECL main(int aArgc, char* aArgv[])
-{
-    OptionParser parser;
-    OptionString optionFile("-f", "--file", Brn(""), "[file] flac/wav file to play");
-    parser.AddOption(&optionFile);
-    OptionString optionUdn("-u", "--udn", Brn("PipelineFileSender"), "[udn] udn for the upnp device");
-    parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("Pipeline FileSender"), "[name] name of the sender");
-    parser.AddOption(&optionName);
-    OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
-    parser.AddOption(&optionChannel);
-    OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
-    parser.AddOption(&optionAdapter);
-
-    if (!parser.Parse(aArgc, aArgv)) {
-        return 1;
-    }
-
-    InitialisationParams* initParams = InitialisationParams::Create();
-    Net::Library* lib = new Net::Library(initParams);
-    Net::DvStack* dvStack = lib->StartDv();
-    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
-    const TUint adapterIndex = optionAdapter.Value();
-    if (subnetList->size() <= adapterIndex) {
-        Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
-        ASSERTS();
-    }
-    Log::Print ("adapter list:\n");
-    for (unsigned i=0; i<subnetList->size(); ++i) {
-        TIpAddress addr = (*subnetList)[i]->Address();
-        Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
-    }
-    TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
-    TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
-    Library::DestroySubnetList(subnetList);
-    lib->SetCurrentSubnet(subnet);
-    Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
-
-    FileSender* fileSender = new FileSender(lib->Env(), *dvStack, optionFile.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
-    const int ret = fileSender->Run();
-    delete fileSender;
-    
-    delete lib;
-
-    return ret;
-}
