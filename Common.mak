@@ -68,6 +68,7 @@ objects_core = \
 	$(objdir)EventUpnp.$(objext) \
 	$(objdir)Exception.$(objext) \
 	$(objdir)Fifo.$(objext) \
+	$(objdir)File.$(objext) \
 	$(objdir)Globals.$(objext) \
 	$(objdir)Http.$(objext) \
 	$(objdir)DNSCommon.$(objext) \
@@ -127,6 +128,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Converter.h \
 	$(inc_build)/OpenHome/Private/Debug.h \
 	$(inc_build)/OpenHome/Private/Fifo.h \
+        $(inc_build)/OpenHome/Private/File.h \
 	$(inc_build)/OpenHome/Private/Http.h \
 	$(inc_build)/OpenHome/Private/Maths.h \
 	$(inc_build)/OpenHome/Private/md5.h \
@@ -386,6 +388,8 @@ $(objdir)OsWrapper.$(objext) : Os/OsWrapper.cpp $(headers)
 	$(compiler)OsWrapper.$(objext) -c $(cflags) $(includes) Os/OsWrapper.cpp
 $(objdir)Os.$(objext) : Os/$(osdir)/Os.c $(headers)
 	$(compiler)Os.$(objext) -c $(cflags) $(includes) Os/$(osdir)/Os.c
+$(objdir)File.$(objext) : Os/$(osdir)/File.cpp $(headers)
+	$(compiler)File.$(objext) -c $(cflags) $(includes) Os/$(osdir)/File.cpp
 
 
 ohNetDll: ohNetCore
