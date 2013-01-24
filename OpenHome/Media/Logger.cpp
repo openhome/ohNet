@@ -80,7 +80,7 @@ Msg* Logger::ProcessMsg(MsgPlayable* aMsg)
 Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
 {
     if (IsEnabled(EMsgEncodedStream)) {
-        Log::Print("Pipeline (%s): metaText {", iId);
+        Log::Print("Pipeline (%s): encoded stream {", iId);
         Log::Print(aMsg->Uri());
         Log::Print(", ");
         Log::Print(aMsg->MetaText());
