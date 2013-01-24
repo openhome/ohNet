@@ -14,7 +14,7 @@ static inline FILE* ToFile(THandle aHandle)
     return (FILE*) aHandle;
 }
 
-File::File(const char* aFilename, IFile::FileMode aFileMode)
+File::File(const char* aFilename, FileMode aFileMode)
     : iHandle(0)
 {
     FILE* filePtr;
@@ -67,7 +67,7 @@ void File::Write(const Brx& aBuffer, TUint32 aBytes)
     THROW(FileWriteError);
 }
 
-void File::Seek(TInt32 aBytes, IFile::SeekWhence aWhence)
+void File::Seek(TInt32 aBytes, SeekWhence aWhence)
 {
     int whence;
 
