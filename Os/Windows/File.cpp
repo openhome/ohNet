@@ -62,7 +62,7 @@ void File::Write(const Brx& aBuffer)
     Write(aBuffer, aBuffer.Bytes());
 }
 
-void File::Write(const Brx& aBuffer, TUint32 aBytes)
+void File::Write(const Brx& /*aBuffer*/, TUint32 /*aBytes*/)
 {
     THROW(FileWriteError);
 }
