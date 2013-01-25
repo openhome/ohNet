@@ -1,6 +1,7 @@
 // Implementation of Os.h APIs for Posix
 
 #undef ATTEMPT_THREAD_PRIORITIES
+#undef ATTEMPT_THREAD_NICENESS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +12,10 @@
 #include <assert.h>
 #ifdef ATTEMPT_THREAD_PRIORITIES
 # include <sys/capability.h>
+#endif
+#ifdef ATTEMPT_THREAD_NICENESS
+#include <sys/time.h>
+#include <sys/resource.h>
 #endif
 #include <string.h>
 #include <sys/types.h>
@@ -464,7 +469,7 @@ static void* threadEntrypoint(void* aArg)
     ThreadData* data = (ThreadData*)aArg;
     assert(data != NULL);
 
-#ifdef ATTEMPT_THREAD_PRIORITIES
+#if defined(ATTEMPT_THREAD_PRIORITIES)
     {
         TInt platMin = sched_get_priority_min(kThreadSchedPolicy);
         TInt platMax = sched_get_priority_max(kThreadSchedPolicy);
@@ -479,7 +484,21 @@ static void* threadEntrypoint(void* aArg)
         int status = pthread_setschedparam(data->iThread, kThreadSchedPolicy, &param);
         assert(status == 0);
     }
-#endif // ATTEMPT_THREAD_PRIORITIES
+#elif defined(ATTEMPT_THREAD_NICENESS) // ATTEMPT_THREAD_PRIORITIES
+    {
+        static const int kMinimumNice = 5; // set MIN
+        // Map all prios > 105 -> nice 0 (default), anything else to MIN
+        //int nice_value = (data->iPriority > 105 ? 0 : kMinimumNice);
+        // Map prio=[50,150]-> nice=[MIN,0]
+        int nice_value = -1 * (((((int) data->iPriority-50) * kMinimumNice) / (150-50)) - kMinimumNice);
+        if ( nice_value < 0 )
+            nice_value = 0;
+        //printf("Thread of priority %d asking for niceness %d\n", data->iPriority, nice_value);
+        int result = setpriority(PRIO_PROCESS, 0, nice_value);
+        //if ( result == -1 )
+        //    printf("Warning: Could not renice this thread!\n");
+    }
+#endif
 
     // Disable cancellation - we're in a C++ environment, and
     // don't want to rely on pthreads to mess things up for us.
