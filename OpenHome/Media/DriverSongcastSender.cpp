@@ -15,7 +15,7 @@ using namespace OpenHome::Media;
 
 // DriverSongcastSender
 
-DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Environment& aEnv, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter)
+DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Environment& aEnv, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter, TBool aMulticast)
     : Thread("DSCS")
     , iPipeline(aPipeline)
     , iMaxMsgSizeJiffies(aMaxMsgSizeJiffies)
@@ -34,7 +34,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     iOhmSenderDriver = new Av::OhmSenderDriver(aEnv);
     Brn imageData(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender) / sizeof(kIconDriverSongcastSender[0]));
     Brn imageMime(kIconDriverSongcastSenderMimeType);
-    iOhmSender = new Av::OhmSender(iEnv, aDevice, *iOhmSenderDriver, aName, aChannel, aAdapter, kSongcastTtl, kSongcastLatencyMs, false, true, imageData, imageMime, kSongcastPreset);
+    iOhmSender = new Av::OhmSender(iEnv, aDevice, *iOhmSenderDriver, aName, aChannel, aAdapter, kSongcastTtl, kSongcastLatencyMs, aMulticast, true, imageData, imageMime, kSongcastPreset);
     iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback));
     Start();
     iTimer->FireIn(1); // first callback has special case behaviour so it doesn't really matter how soon we run

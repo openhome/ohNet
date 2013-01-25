@@ -204,7 +204,7 @@ void SupplierFile::Quit(Msg* aMsg)
 
 // FileSender
 
-FileSender::FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+FileSender::FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast)
     : iFileName(aFileName)
 {
     iSupplier = new SupplierFile();
@@ -226,7 +226,7 @@ FileSender::FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFi
     iDevice->SetAttribute("Upnp.SerialNumber", "");
     iDevice->SetAttribute("Upnp.Upc", "");
 
-    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter);
+    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter, aMulticast);
     iDevice->SetEnabled();
 }
 

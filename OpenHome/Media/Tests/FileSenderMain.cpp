@@ -38,6 +38,8 @@ int CDECL main(int aArgc, char* aArgv[])
     parser.AddOption(&optionChannel);
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
     parser.AddOption(&optionAdapter);
+    OptionBool optionMulticast("-m", "--multicast", "use multicast protocol (default is unicast)");
+    parser.AddOption(&optionMulticast);
 
     if (!parser.Parse(aArgc, aArgv)) {
         return 1;
@@ -63,7 +65,14 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    FileSender* fileSender = new FileSender(lib->Env(), *dvStack, optionFile.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    FileSender* fileSender = new FileSender(lib->Env(), *dvStack,
+        optionFile.Value(),
+        adapter,
+        optionUdn.Value(),
+        optionName.CString(),
+        optionChannel.Value(),
+        optionMulticast.Value());
+
     const int ret = fileSender->Run();
     delete fileSender;
     

@@ -223,7 +223,7 @@ TestProtocolHttp::TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, co
     iDevice->SetAttribute("Upnp.SerialNumber", "");
     iDevice->SetAttribute("Upnp.Upc", "");
 
-    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter);
+    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter, false /*unicast*/);
     iDevice->SetEnabled();
 }
 
