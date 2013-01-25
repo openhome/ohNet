@@ -52,7 +52,7 @@ void File::Read(Bwx& aBuffer, TUint32 aBytes)
 
     aBuffer.SetBytes(0);
     // Bwx should have a Ptr() that returns a non-const TByte* (viz. const TByte* Brx::Ptr() const)
-    size_t bytesRead = fread((void*) aBuffer.Ptr(), aBytes, 1, ToFile(iHandle));
+    size_t bytesRead = fread((void*) aBuffer.Ptr(), 1, aBytes, ToFile(iHandle));
 
     aBuffer.SetBytes(bytesRead);
 }
@@ -62,7 +62,7 @@ void File::Write(const Brx& aBuffer)
     Write(aBuffer, aBuffer.Bytes());
 }
 
-void File::Write(const Brx& /*aBuffer*/, TUint32 /*aBytes*/)
+void File::Write(const Brx& aBuffer, TUint32 aBytes)
 {
     THROW(FileWriteError);
 }
