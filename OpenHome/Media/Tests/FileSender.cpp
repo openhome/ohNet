@@ -14,8 +14,6 @@
 
 #include "FileSender.h"
 
-#include <stdio.h>
-
 #ifdef _WIN32
 
 # define CDECL __cdecl
@@ -75,13 +73,15 @@ SupplierFile::SupplierFile()
     , iPendingMsg(NULL)
     , iBlock(true)
     , iQuit(false)
+    , iFile(NULL)
+    , iBuf(EncodedAudio::kMaxBytes)
 {
 }
 
 SupplierFile::~SupplierFile()
 {
     Join();
-    (void)fclose(iFh);
+    delete iFile;
 }
 
 TBool SupplierFile::LoadFile(const Brx& aFileName)
@@ -91,21 +91,25 @@ TBool SupplierFile::LoadFile(const Brx& aFileName)
         Log::Print("ERROR: No file specified\n");
         return false;
     }
-    iFh = fopen(file.CString(), "rb");
-    if (iFh == NULL) {
+
+    try
+    {
+        if ( iFile )
+            delete iFile;
+        iFile = new File(file.CString(), eFileReadOnly);
+        iFile->Seek(0, eSeekFromEnd);
+        iDataSize = iFile->Bytes();
+        iFile->Seek(0, eSeekFromStart);
+    }
+    catch ( FileOpenError ) {
         Log::Print("ERROR: Unable to open specified file\n");
         return false;
     }
-
-    if (fseek(iFh, 0L, SEEK_END) == -1) {
+    catch ( FileSeekError ) {
         Log::Print("ERROR: Unable to seek to end of file\n");
         return false;
     }
-    iDataSize = ftell(iFh);
-    if (fseek(iFh, 0L, SEEK_SET) == -1) {
-        Log::Print("ERROR: Unable to seek back to start of file\n");
-        return false;
-    }
+
     iBytesRemaining = iDataSize;
 
     return true;
@@ -157,17 +161,19 @@ void SupplierFile::Run()
 
 MsgAudioEncoded* SupplierFile::CreateAudio()
 {
-    TUint bytes = EncodedAudio::kMaxBytes;
+    TUint bytes = iBuf.MaxBytes();
     if (iBytesRemaining < bytes) {
         bytes = iBytesRemaining;
     }
-    if (fread(iBuf, 1, bytes, iFh) != bytes) {
+
+    iFile->Read(iBuf, bytes);
+    
+    if (iBuf.Bytes() != bytes) {
         Log::Print("ERROR: Unable to read file data\n");
         ASSERTS();
     }
     iBytesRemaining -= bytes;
-    Brn encodedAudioBuf(iBuf, bytes);
-    return iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
+    return iMsgFactory->CreateMsgAudioEncoded(iBuf);
 }
 
 void SupplierFile::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
@@ -185,7 +191,7 @@ void SupplierFile::Flush(Msg* aMsg)
 {
     iLock.Wait();
     iPendingMsg = aMsg;
-    ASSERT(0 == fseek(iFh, 0, SEEK_SET));
+    iFile->Seek(0, eSeekFromStart);
     iBytesRemaining = iDataSize;
     iLock.Signal();
 }

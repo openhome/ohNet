@@ -2,6 +2,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/OptionParser.h>
+#include <OpenHome/Private/File.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Wav.h>
@@ -40,8 +41,8 @@ private:
     Msg* iPendingMsg;
     TBool iBlock;
     TBool iQuit;
-    FILE* iFh;
-    TByte iBuf[DecodedAudio::kMaxBytes];
+    File* iFile;
+    Bwh   iBuf;
     TUint iDataSize;
     TUint iBytesRemaining;
 };
