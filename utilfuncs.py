@@ -90,11 +90,14 @@ def configure_toolchain(conf):
     else:
         conf.load('compiler_cxx')
         conf.load('compiler_c')
+        conf.env.append_value('CFLAGS', '-g')
+        conf.env.append_value('CXXFLAGS', '-g')
+        conf.env.append_value('LINKFLAGS', '-g')
         conf.env.append_value('CXXFLAGS', [
                 '-pipe', '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_TRACE',
                 '-DDEFINE_'+platform_info['endian']+'_ENDIAN', '-fvisibility=hidden',])
         if conf.options.debugmode == 'Debug':
-            conf.env.append_value('CXXFLAGS',['-g','-O0', '-DDEFINE_DEBUG'])
+            conf.env.append_value('CXXFLAGS',['-O0', '-DDEFINE_DEBUG'])
         else:
             conf.env.append_value('CXXFLAGS',['-O2'])
         conf.env.append_value('CFLAGS', conf.env['CXXFLAGS'])
