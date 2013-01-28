@@ -2,7 +2,6 @@
 #include <OpenHome/Private/Printer.h>
 #include <termios.h>
 #include <unistd.h>
-#include <cstdio>
 #include <cstdarg>
 
 namespace OpenHome {

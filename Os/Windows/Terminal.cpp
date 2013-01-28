@@ -1,6 +1,8 @@
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Terminal.h>
 
 #include <conio.h>
+#include <cstdarg>
 
 namespace OpenHome {
 
@@ -11,7 +13,7 @@ TerminalOs::TerminalOs()
 
 TChar TerminalOs::GetChar()
 {
-    return (_getch());
+    return (TChar) (_getch());
 }
 
 void TerminalOs::Print(const TChar* aFormat, ...)
