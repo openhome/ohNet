@@ -93,6 +93,7 @@ objects_core = \
 	$(objdir)Env.$(objext) \
 	$(objdir)Stream.$(objext) \
 	$(objdir)Subscription.$(objext) \
+	$(objdir)Terminal.$(objext) \
 	$(objdir)Thread.$(objext) \
 	$(objdir)Timer.$(objext) \
 	$(objdir)Uri.$(objext) \
@@ -139,6 +140,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Queue.h \
 	$(inc_build)/OpenHome/Private/Standard.h \
 	$(inc_build)/OpenHome/Private/Stream.h \
+	$(inc_build)/OpenHome/Private/Terminal.h \
 	$(inc_build)/OpenHome/Private/Thread.h \
 	$(inc_build)/OpenHome/Private/Timer.h \
 	$(inc_build)/OpenHome/Private/Uri.h \
@@ -390,6 +392,8 @@ $(objdir)Os.$(objext) : Os/$(osdir)/Os.c $(headers)
 	$(compiler)Os.$(objext) -c $(cflags) $(includes) Os/$(osdir)/Os.c
 $(objdir)File.$(objext) : Os/$(osdir)/File.cpp $(headers)
 	$(compiler)File.$(objext) -c $(cflags) $(includes) Os/$(osdir)/File.cpp
+$(objdir)Terminal.$(objext) : Os/$(osdir)/Terminal.cpp $(headers)
+	$(compiler)Terminal.$(objext) -c $(cflags) $(includes) Os/$(osdir)/Terminal.cpp
 
 
 ohNetDll: ohNetCore
