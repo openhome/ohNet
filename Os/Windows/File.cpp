@@ -14,7 +14,7 @@ static inline FILE* ToFile(THandle aHandle)
     return (FILE*) aHandle;
 }
 
-File::File(const char* aFilename, FileMode aFileMode)
+File::File(const TChar* aFilename, FileMode aFileMode)
     : iHandle(0)
 {
     FILE* filePtr;

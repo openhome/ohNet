@@ -48,7 +48,7 @@ public:
 class File : public IFileSeekable, public IFileReadable, public IFileWriteable
 {
 public:
-    File(const char* aFilename, FileMode aFileMode);
+    File(const TChar* aFilename, FileMode aFileMode);
     virtual ~File();
 
     virtual void Read(Bwx& aBuffer);
