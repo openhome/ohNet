@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
+#include <cstdarg>
 
 EXCEPTION(BufferFull);
 EXCEPTION(BufferOverflow);
@@ -108,6 +109,7 @@ public:
     void Append(const TChar* aStr);
     void Append(const TByte* aPtr, TUint aBytes);
     void AppendPrintf(const TChar* aFormatString, ...);
+    void AppendPrintf(const TChar* aFormatString, va_list aArgs);
     const TChar* PtrZ() const;
     void Fill(TByte aFillByte);
     inline void FillZ();

@@ -281,14 +281,19 @@ void Bwx::AppendPrintf(const TChar* aFormatString, ...)
 {
     va_list args;
     va_start( args, aFormatString );
+    AppendPrintf(aFormatString, args);
+    va_end(args);
+}
 
+void Bwx::AppendPrintf(const TChar* aFormatString, va_list aArgs)
+{
     const TByte* ptr = Ptr();
     ASSERT(ptr != NULL);
     TUint n = vsnprintf(
         (TChar*) (ptr + Bytes()),
         MaxBytes() - Bytes(),
         aFormatString,
-        args );
+        aArgs );
 
     if((Bytes() + n) >= MaxBytes()) {
         SetBytes(MaxBytes());
@@ -297,8 +302,6 @@ void Bwx::AppendPrintf(const TChar* aFormatString, ...)
     else {
         SetBytes( Bytes() + n );
     }
-
-    va_end( args );
 }
 
 const TChar* Bwx::PtrZ() const
