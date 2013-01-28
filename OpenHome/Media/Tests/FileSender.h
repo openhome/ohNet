@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Private/File.h>
+#include <OpenHome/Private/Terminal.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Wav.h>
@@ -51,7 +52,7 @@ class FileSender : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
-    FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast);
+    FileSender(Environment& aEnv, ITerminal& aTerminal, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast);
     virtual ~FileSender();
     int Run();
 private: // from IPipelineObserver
@@ -61,6 +62,7 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private:
+    ITerminal& iTerminal;
     SupplierFile* iSupplier;
     AllocatorInfoLogger iInfoAggregator;
     PipelineManager* iPipeline;

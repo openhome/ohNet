@@ -10,6 +10,7 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Terminal.h>
 #include "AllocatorInfoLogger.h"
 
 #include "FileSender.h"
@@ -65,7 +66,11 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    FileSender* fileSender = new FileSender(lib->Env(), *dvStack,
+    TerminalOs terminal;
+
+    FileSender* fileSender = new FileSender(lib->Env(),
+        terminal,
+         *dvStack,
         optionFile.Value(),
         adapter,
         optionUdn.Value(),

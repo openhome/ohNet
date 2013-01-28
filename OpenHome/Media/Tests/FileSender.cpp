@@ -11,51 +11,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
 #include "AllocatorInfoLogger.h"
-
 #include "FileSender.h"
-
-#ifdef _WIN32
-
-# define CDECL __cdecl
-
-# include <conio.h>
-
-int mygetch()
-{
-    return (_getch());
-}
-
-#elif defined(NOTERMIOS)
-
-#define CDECL 
-
-int mygetch()
-{
-    return 0;
-}
-
-#else
-
-# define CDECL
-
-# include <termios.h>
-# include <unistd.h>
-
-int mygetch()
-{
-    struct termios oldt, newt;
-    int ch;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    return ch;
-}
-
-#endif // _WIN32
-
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -87,28 +43,13 @@ SupplierFile::~SupplierFile()
 TBool SupplierFile::LoadFile(const Brx& aFileName)
 {
     Brhz file(aFileName);
-    if (file.Bytes() == 0) {
-        Log::Print("ERROR: No file specified\n");
-        return false;
-    }
 
-    try
-    {
-        if ( iFile )
-            delete iFile;
-        iFile = new File(file.CString(), eFileReadOnly);
-        iFile->Seek(0, eSeekFromEnd);
-        iDataSize = iFile->Bytes();
-        iFile->Seek(0, eSeekFromStart);
-    }
-    catch ( FileOpenError ) {
-        Log::Print("ERROR: Unable to open specified file\n");
-        return false;
-    }
-    catch ( FileSeekError ) {
-        Log::Print("ERROR: Unable to seek to end of file\n");
-        return false;
-    }
+    if ( iFile )
+        delete iFile;
+    iFile = new File(file.CString(), eFileReadOnly);
+    iFile->Seek(0, eSeekFromEnd);
+    iDataSize = iFile->Bytes();
+    iFile->Seek(0, eSeekFromStart);
 
     iBytesRemaining = iDataSize;
 
@@ -145,7 +86,7 @@ void SupplierFile::Run()
             msg = CreateAudio();
         }
         else {
-            Log::Print("Reached end of track, pipeline will shut down\n");
+            //iTerminal.Print("Reached end of track, pipeline will shut down\n");
             msg = iMsgFactory->CreateMsgHalt();
             iBlock = true; // wait for a quit command now
         }
@@ -169,7 +110,7 @@ MsgAudioEncoded* SupplierFile::CreateAudio()
     iFile->Read(iBuf, bytes);
     
     if (iBuf.Bytes() != bytes) {
-        Log::Print("ERROR: Unable to read file data\n");
+        //iTerminal.Print("ERROR: Unable to read file data\n");
         ASSERTS();
     }
     iBytesRemaining -= bytes;
@@ -210,8 +151,9 @@ void SupplierFile::Quit(Msg* aMsg)
 
 // FileSender
 
-FileSender::FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast)
-    : iFileName(aFileName)
+FileSender::FileSender(Environment& aEnv, ITerminal& aTerminal, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast)
+    : iTerminal(aTerminal)
+    , iFileName(aFileName)
 {
     iSupplier = new SupplierFile();
     iPipeline = new PipelineManager(iInfoAggregator, *iSupplier, *this, kMaxDriverJiffies);
@@ -246,23 +188,33 @@ FileSender::~FileSender()
 
 int FileSender::Run()
 {
-    if (!iSupplier->LoadFile(iFileName)) {
-        return 1;
+    try
+    {
+        iSupplier->LoadFile(iFileName);
     }
+    catch ( FileOpenError ) {
+        iTerminal.Print("ERROR: Unable to open specified file\n");
+        return false;
+    }
+    catch ( FileSeekError ) {
+        iTerminal.Print("ERROR: Unable to seek to end of file\n");
+        return false;
+    }
+
     iSupplier->Start();
 
     TBool playing = false;
     TBool starve = false;
     TBool quit = false;
 
-    Log::Print("\nFileSender pipeline test.  Usage:\n");
-    Log::Print("p: Toggle between play/pause\n");
-    Log::Print("n: Toggle between start/stop simulating network starvation\n");
-    Log::Print("s: Stop (only valid when paused)\n");
-    Log::Print("q: Quit\n");
-    Log::Print("\n");
+    iTerminal.Print("\nFileSender pipeline test.  Usage:\n");
+    iTerminal.Print("p: Toggle between play/pause\n");
+    iTerminal.Print("n: Toggle between start/stop simulating network starvation\n");
+    iTerminal.Print("s: Stop (only valid when paused)\n");
+    iTerminal.Print("q: Quit\n");
+    iTerminal.Print("\n");
     do {
-        int key = mygetch();
+        TChar key = iTerminal.GetChar();
         switch (key)
         {
         case 'p':
@@ -326,40 +278,40 @@ void FileSender::NotifyPipelineState(EPipelineState aState)
     default:
         ASSERTS();
     }
-    Log::Print("Pipeline state change: %s\n", state);
+    iTerminal.Print("Pipeline state change: %s\n", state);
 #endif
 }
 
 void FileSender::NotifyTrack()
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: TRACK\n");
+    iTerminal.Print("Pipeline report property: TRACK\n");
 #endif
 }
 
 void FileSender::NotifyMetaText(const Brx& aText)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: METATEXT {");
-    Log::Print(aText);
-    Log::Print("}\n");
+    iTerminal.Print("Pipeline report property: METATEXT {");
+    iTerminal.Print(aText);
+    iTerminal.Print("}\n");
 #endif
 }
 
 void FileSender::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: TIME {secs=%u; duration=%u}\n", aSeconds, aTrackDurationSeconds);
+    iTerminal.Print("Pipeline report property: TIME {secs=%u; duration=%u}\n", aSeconds, aTrackDurationSeconds);
 #endif
 }
 
 void FileSender::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
+    iTerminal.Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
            aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels());
-    Log::Print(aStreamInfo.CodecName());
-    Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
+    iTerminal.Print(aStreamInfo.CodecName());
+    iTerminal.Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 #endif
 }
 
