@@ -257,7 +257,7 @@ Property::Property(Environment& aEnv, OpenHome::Net::Parameter* aParameter, Func
     : iEnv(aEnv)
     , iParameter(aParameter)
     , iFunctor(aFunctor)
-    , iChanged(true)
+    , iChanged(false)
     , iSequenceNumber(0)
 {
     ASSERT(iParameter != NULL);
@@ -267,7 +267,7 @@ Property::Property(Environment& aEnv, OpenHome::Net::Parameter* aParameter, Func
 Property::Property(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
     : iEnv(aEnv)
     , iParameter(aParameter)
-    , iChanged(true)
+    , iChanged(false)
     , iSequenceNumber(0)
 {
     ASSERT(iParameter != NULL);
