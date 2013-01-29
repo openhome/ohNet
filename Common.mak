@@ -94,6 +94,7 @@ objects_core = \
 	$(objdir)Stream.$(objext) \
 	$(objdir)Subscription.$(objext) \
 	$(objdir)Terminal.$(objext) \
+	$(objdir)TerminalOs.$(objext) \
 	$(objdir)Thread.$(objext) \
 	$(objdir)Timer.$(objext) \
 	$(objdir)Uri.$(objext) \
