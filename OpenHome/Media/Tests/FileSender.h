@@ -42,7 +42,7 @@ private:
     Msg* iPendingMsg;
     TBool iBlock;
     TBool iQuit;
-    File* iFile;
+    IFile* iFile;
     Bwh   iBuf;
     TUint iDataSize;
     TUint iBytesRemaining;

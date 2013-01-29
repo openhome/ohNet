@@ -46,7 +46,7 @@ TBool SupplierFile::LoadFile(const Brx& aFileName)
 
     if ( iFile )
         delete iFile;
-    iFile = new File(file.CString(), eFileReadOnly);
+    iFile = IFile::Open(file.CString(), eFileReadOnly);
     iFile->Seek(0, eSeekFromEnd);
     iDataSize = iFile->Bytes();
     iFile->Seek(0, eSeekFromStart);
