@@ -523,7 +523,6 @@ void CpiSubscriptionManager::WaitForPendingAdd(const Brx& aSid)
         RemovePendingAdd(aSid);
         iLock.Signal();
     }
-    delete pending;
 }
 
 void CpiSubscriptionManager::Add(CpiSubscription& aSubscription)
@@ -590,6 +589,7 @@ void CpiSubscriptionManager::RemovePendingAdd(const Brx& aSid)
         PendingSubscription* pending = iPendingSubscriptions[i];
         if (pending->iSid == aSid) {
             pending->iSem.Signal();
+            delete pending;
             iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
             break;
         }
