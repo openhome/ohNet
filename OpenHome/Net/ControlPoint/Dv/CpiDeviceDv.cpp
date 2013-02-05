@@ -118,6 +118,7 @@ IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUs
         iSubscriptionCp->SetNotificationError();
         return NULL;
     }
+    iSubscriptionCp->Unlock();
     ASSERT(iSubscriptionCp != NULL);
     return new PropertyWriterDv(*iSubscriptionCp);
 }
