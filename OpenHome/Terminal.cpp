@@ -3,9 +3,18 @@
 
 namespace OpenHome {
 
+void Terminal::Print(const TChar* aFormat, ...)
+{
+    Bws<1024> buffer;
+    va_list args;
+    va_start(args, aFormat);
+    buffer.AppendPrintf(aFormat, args);
+    va_end(args);
+    Print(buffer); // Call virtual function to do work.
+}
+
 TerminalTcpSession::TerminalTcpSession()
-    : iBufferMutex("omtx")
-    , iFifo(32)
+    : iFifo(32)
     , iReadySema("redy", 0)
     , iInterrupted(false)
 {
@@ -49,16 +58,6 @@ TChar TerminalTcpSession::GetChar()
     return key;
 }
 
-void TerminalTcpSession::Print(const TChar* aFormat, ...)
-{
-    AutoMutex _amtx(iBufferMutex);
-    iBuffer.SetBytes(0);
-    va_list args;
-    va_start(args, aFormat);
-    iBuffer.AppendPrintf(aFormat, args);
-    va_end(args);
-    Print(iBuffer);
-}
 
 void TerminalTcpSession::Print(const Brx& aBuffer)
 {

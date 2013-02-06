@@ -11,43 +11,43 @@ EXCEPTION(TerminalClosed);
 
 namespace OpenHome {
 
-class ITerminal
+class Terminal
 {
 public:
     virtual TChar GetChar() = 0;
-    virtual void Print(const TChar* aFormat, ...) = 0;
     virtual void Print(const Brx& aBuffer) = 0;
+
+    void Print(const TChar* aFormat, ...);
 };
 
-class TerminalOs : public ITerminal
+class TerminalOs : public Terminal
 {
 public:
     TerminalOs();
     virtual TChar GetChar();
-    virtual void Print(const TChar* aFormat, ...);
     virtual void Print(const Brx& aBuffer);
-private:
-    void PrintVA(const TChar* aFormat, va_list aArgs);
 private:
     THandle iHandle;
 };
 
-class TerminalTcpSession : public SocketTcpSession, public ITerminal
+// Terminal was once the ITerminal interface, so this was cool. llvm-gcc not
+// happy with virtual variadic Print(, ...), so hack it together for now.
+
+class TerminalTcpSession : public SocketTcpSession, public Terminal
 {
 public:
     TerminalTcpSession();
     virtual ~TerminalTcpSession();
-    //  From SocketTcpSession
-    virtual void Run();
-    // From ITerminal
-    virtual TChar GetChar();
-    virtual void Print(const TChar* aFormat, ...);
-    virtual void Print(const Brx& aBuffer);
 
     void Wait();
+
+    //  From SocketTcpSession
+    virtual void Run();
+    // From Terminal
+    virtual TChar GetChar();
+    virtual void Print(const Brx& aBuffer);
+
 private:
-    Mutex       iBufferMutex;
-    Bws<1024>   iBuffer;
     Fifo<TChar> iFifo;
     Semaphore   iReadySema;
     TBool       iInterrupted;
