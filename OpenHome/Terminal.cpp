@@ -21,8 +21,7 @@ void TerminalTcpSession::Run()
 
     Bws<1> charBuffer;
 
-    while(true)
-    {
+    for (;;) {
         try
         {
             Receive(charBuffer, 1);

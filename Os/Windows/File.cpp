@@ -72,7 +72,7 @@ void FileAnsii::Write(const Brx& aBuffer)
     Write(aBuffer, aBuffer.Bytes());
 }
 
-void FileAnsii::Write(const Brx& aBuffer, TUint32 aBytes)
+void FileAnsii::Write(const Brx& /*aBuffer*/, TUint32 /*aBytes*/)
 {
     THROW(FileWriteError);
 }
