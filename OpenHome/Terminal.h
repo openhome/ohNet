@@ -3,7 +3,11 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Network.h>
+#include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Exception.h>
 #include <cstdarg>
+
+EXCEPTION(TerminalClosed);
 
 namespace OpenHome {
 
@@ -39,6 +43,14 @@ public:
     virtual TChar GetChar();
     virtual void Print(const TChar* aFormat, ...);
     virtual void Print(const Brx& aBuffer);
+
+    void Wait();
+private:
+    Mutex       iBufferMutex;
+    Bws<1024>   iBuffer;
+    Fifo<TChar> iFifo;
+    Semaphore   iReadySema;
+    TBool       iInterrupted;
 };
 
 } // namespace OpenHome

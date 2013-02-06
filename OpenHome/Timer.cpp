@@ -85,12 +85,7 @@ TBool Timer::IsInManagerThread(OpenHome::Environment& aEnv)
 
 TBool Timer::IsInManagerThread(TimerManager& aMgr)
 { // static
-    Thread* current = NULL;
-    try {
-        current = Thread::Current();
-    }
-    catch (ThreadUnknown&) {}
-    return (current == aMgr.MgrThread());
+    return (Thread::Current() == aMgr.MgrThread());
 }
 
 Timer::~Timer()

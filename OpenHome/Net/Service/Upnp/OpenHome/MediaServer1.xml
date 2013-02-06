@@ -120,21 +120,6 @@
         </argument>
       </argumentList>
     </action>
-    <action>
-      <name>Query</name>
-      <argumentList>
-        <argument>
-          <name>Request</name>
-          <direction>in</direction>
-          <relatedStateVariable>Request</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>Result</name>
-          <direction>out</direction>
-          <relatedStateVariable>Result</relatedStateVariable>
-        </argument>
-      </argumentList>
-    </action>
   </actionList>
   <serviceStateTable>
     <stateVariable sendEvents="yes">
@@ -200,14 +185,6 @@
     <stateVariable sendEvents="yes">
       <name>UpdateCount</name>
       <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="no">
-      <name>Request</name>
-      <dataType>string</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="no">
-      <name>Result</name>
-      <dataType>string</dataType>
     </stateVariable>
   </serviceStateTable>
 </scpd>

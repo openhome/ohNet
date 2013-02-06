@@ -4,70 +4,80 @@
 
 namespace OpenHome {
 
-static inline THandle ToHandle(FILE* aFile)
+class FileAnsii : public IFile
 {
-    return (THandle) aFile;
+public:
+    FileAnsii(const TChar* aFilename, FileMode aFileMode);
+    virtual ~FileAnsii();
+
+    virtual void Read(Bwx& aBuffer);
+    virtual void Read(Bwx& aBuffer, TUint aBytes);
+
+    virtual void Write(const Brx& aBuffer);
+    virtual void Write(const Brx& aBuffer, TUint32 aBytes);
+
+    virtual void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart);
+    virtual TUint32 Tell() const;
+    virtual TUint32 Bytes();
+private:
+    FILE* iFilePtr;
+};
+
+IFile* IFile::Open(const TChar* aFilename, FileMode aFileMode)
+{
+    return new FileAnsii(aFilename, aFileMode);
 }
 
-static inline FILE* ToFile(THandle aHandle)
+FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
+    : iFilePtr(NULL)
 {
-    return (FILE*) aHandle;
-}
-
-File::File(const char* aFilename, FileMode aFileMode)
-    : iHandle(0)
-{
-    FILE* filePtr;
-
     switch ( aFileMode )
     {
         case eFileReadOnly:
-            filePtr = fopen(aFilename, "rb");
+            iFilePtr = fopen(aFilename, "rb");
             break;
         default:
-            filePtr = NULL;
+            iFilePtr = NULL;
             break;
     }
 
-    if ( filePtr == NULL )
+    if ( iFilePtr == NULL )
         THROW(FileOpenError);
-
-    iHandle = ToHandle(filePtr);
 }
 
-File::~File()
+FileAnsii::~FileAnsii()
 {
-    if ( fclose(ToFile(iHandle)) == EOF )
+    if ( fclose(iFilePtr) == EOF )
         THROW(FileCloseError);
 }
 
-void File::Read(Bwx& aBuffer)
+void FileAnsii::Read(Bwx& aBuffer)
 {
     Read(aBuffer, aBuffer.MaxBytes());
 }
 
-void File::Read(Bwx& aBuffer, TUint32 aBytes)
+void FileAnsii::Read(Bwx& aBuffer, TUint32 aBytes)
 {
     ASSERT(aBytes <= aBuffer.MaxBytes());
 
     aBuffer.SetBytes(0);
     // Bwx should have a Ptr() that returns a non-const TByte* (viz. const TByte* Brx::Ptr() const)
-    TUint bytesRead = (TUint)fread((void*) aBuffer.Ptr(), aBytes, 1, ToFile(iHandle));
+    size_t bytesRead = fread((void*) aBuffer.Ptr(), 1, aBytes, iFilePtr);
 
     aBuffer.SetBytes(bytesRead);
 }
 
-void File::Write(const Brx& aBuffer)
+void FileAnsii::Write(const Brx& aBuffer)
 {
     Write(aBuffer, aBuffer.Bytes());
 }
 
-void File::Write(const Brx& /*aBuffer*/, TUint32 /*aBytes*/)
+void FileAnsii::Write(const Brx& aBuffer, TUint32 aBytes)
 {
     THROW(FileWriteError);
 }
 
-void File::Seek(TInt32 aBytes, SeekWhence aWhence)
+void FileAnsii::Seek(TInt32 aBytes, SeekWhence aWhence)
 {
     int whence;
 
@@ -87,16 +97,16 @@ void File::Seek(TInt32 aBytes, SeekWhence aWhence)
             break;
     }
 
-    if ( fseek(ToFile(iHandle), aBytes, whence) == -1 )
+    if ( fseek(iFilePtr, aBytes, whence) == -1 )
         THROW(FileSeekError);
 }
 
-TUint32 File::Tell() const
+TUint32 FileAnsii::Tell() const
 {
-    return ftell(ToFile(iHandle));
+    return ftell(iFilePtr);
 }
 
-TUint32 File::Bytes()
+TUint32 FileAnsii::Bytes()
 {
     TUint32 currentPos = Tell();
     Seek(0, eSeekFromEnd);

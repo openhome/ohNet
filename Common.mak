@@ -94,6 +94,7 @@ objects_core = \
 	$(objdir)Stream.$(objext) \
 	$(objdir)Subscription.$(objext) \
 	$(objdir)Terminal.$(objext) \
+	$(objdir)TerminalOs.$(objext) \
 	$(objdir)Thread.$(objext) \
 	$(objdir)Timer.$(objext) \
 	$(objdir)Uri.$(objext) \
@@ -360,6 +361,8 @@ $(objdir)Stream.$(objext) : OpenHome/Stream.cpp $(headers)
 	$(compiler)Stream.$(objext) -c $(cflags) $(includes) OpenHome/Stream.cpp
 $(objdir)Subscription.$(objext) : OpenHome/Net/Subscription.cpp $(headers)
 	$(compiler)Subscription.$(objext) -c $(cflags) $(includes) OpenHome/Net/Subscription.cpp
+$(objdir)Terminal.$(objext) : OpenHome/Terminal.cpp $(headers)
+	$(compiler)Terminal.$(objext) -c $(cflags) $(includes) OpenHome/Terminal.cpp
 $(objdir)Thread.$(objext) : OpenHome/Thread.cpp $(headers)
 	$(compiler)Thread.$(objext) -c $(cflags) $(includes) OpenHome/Thread.cpp
 $(objdir)Timer.$(objext) : OpenHome/Timer.cpp $(headers)
@@ -392,8 +395,8 @@ $(objdir)Os.$(objext) : Os/$(osdir)/Os.c $(headers)
 	$(compiler)Os.$(objext) -c $(cflags) $(includes) Os/$(osdir)/Os.c
 $(objdir)File.$(objext) : Os/$(osdir)/File.cpp $(headers)
 	$(compiler)File.$(objext) -c $(cflags) $(includes) Os/$(osdir)/File.cpp
-$(objdir)Terminal.$(objext) : Os/$(osdir)/Terminal.cpp $(headers)
-	$(compiler)Terminal.$(objext) -c $(cflags) $(includes) Os/$(osdir)/Terminal.cpp
+$(objdir)TerminalOs.$(objext) : Os/$(osdir)/TerminalOs.cpp $(headers)
+	$(compiler)TerminalOs.$(objext) -c $(cflags) $(includes) Os/$(osdir)/TerminalOs.cpp
 
 
 ohNetDll: ohNetCore
