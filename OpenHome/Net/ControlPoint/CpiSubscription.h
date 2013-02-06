@@ -53,6 +53,7 @@ public:
      * Used by the comms thread which receives updates on the state of properties.
      * Assumes that updates are incrementally numbered and returns false if
      * aSequenceNumber suggests that previous updates may have been missed.
+     * Locks subscription iff true is returned.
      */
     TBool UpdateSequenceNumber(TUint aSequenceNumber);
 
@@ -92,6 +93,12 @@ public:
      * Intended for internal use only
      */
     void RunInSubscriber();
+
+    /**
+     * Used by event processing threads to serialise handling of updates to a particular subscription.
+     * Intended for internal use only
+     */
+    void Unlock();
 private:
     enum EOperation
     {

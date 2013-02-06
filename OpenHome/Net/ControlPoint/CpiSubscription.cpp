@@ -54,11 +54,18 @@ void CpiSubscription::RemoveRef()
 
 TBool CpiSubscription::UpdateSequenceNumber(TUint aSequenceNumber)
 {
+    iLock.Wait();
     if (aSequenceNumber != iNextSequenceNumber) {
+        iLock.Signal();
         return false;
     }
     iNextSequenceNumber++;
     return true;
+}
+
+void CpiSubscription::Unlock()
+{
+    iLock.Signal();
 }
 
 void CpiSubscription::SetNotificationError()
@@ -311,7 +318,6 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 
 void CpiSubscription::EventUpdateStart()
 {
-    iLock.Wait();
     if (iEventProcessor != NULL) {
         iEventProcessor->EventUpdateStart();
     }
@@ -329,7 +335,6 @@ void CpiSubscription::EventUpdateEnd()
     if (iEventProcessor != NULL) {
         iEventProcessor->EventUpdateEnd();
     }
-    iLock.Signal();
 }
 
 void CpiSubscription::ListObjectDetails() const
@@ -523,6 +528,7 @@ void CpiSubscriptionManager::WaitForPendingAdd(const Brx& aSid)
         RemovePendingAdd(aSid);
         iLock.Signal();
     }
+    delete pending;
 }
 
 void CpiSubscriptionManager::Add(CpiSubscription& aSubscription)
@@ -589,7 +595,6 @@ void CpiSubscriptionManager::RemovePendingAdd(const Brx& aSid)
         PendingSubscription* pending = iPendingSubscriptions[i];
         if (pending->iSid == aSid) {
             pending->iSem.Signal();
-            delete pending;
             iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
             break;
         }

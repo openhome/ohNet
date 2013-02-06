@@ -167,6 +167,7 @@ void EventSessionUpnp::Run()
         LogError(subscription, "XmlError");
     }
     if (subscription != NULL) {
+        subscription->Unlock();
         subscription->RemoveRef();
     }    
 }
