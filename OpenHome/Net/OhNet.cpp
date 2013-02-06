@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/OsWrapper.h>
 
 #include <string.h>
 
@@ -158,8 +159,7 @@ public:
 
 void OpenHome::Net::DefaultLogger::Log(const char* aMsg)
 {
-    fprintf(stdout, "%s", aMsg);
-    fflush(stdout);
+    Os::ConsoleWrite(aMsg);
 }
 
 class OpenHome::Net::DefaultAsyncHandler : private IAsyncOutput
