@@ -2,7 +2,6 @@
 #include <OpenHome/Private/Printer.h>
 #include <termios.h>
 #include <unistd.h>
-#include <cstdarg>
 
 namespace OpenHome {
 
@@ -24,22 +23,9 @@ TChar TerminalOs::GetChar()
     return (TChar) ch;
 }
 
-void TerminalOs::Print(const TChar* aFormat, ...)
-{
-    va_list args;
-    va_start(args, aFormat);
-    PrintVA(aFormat, args);
-    va_end(args);
-}
-
 void TerminalOs::Print(const Brx& aBuffer)
 {
     Log::Print(aBuffer);
-}
-
-void TerminalOs::PrintVA(const TChar* aFormat, va_list aArgs)
-{
-    Log::PrintVA(aFormat, aArgs);
 }
 
 } // namespace OpenHome
