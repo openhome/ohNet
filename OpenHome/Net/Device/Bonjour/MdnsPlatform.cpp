@@ -320,7 +320,7 @@ void MdnsPlatform::RegisterService(TUint aHandle, const TChar* aName, const TCha
 void MdnsPlatform::RenameAndReregisterService(TUint aHandle, const TChar* aName)
 {
     LOG(kBonjour, "Bonjour             RenameService\n");
-    ServiceRecordSet* service = iServices.at(aHandle);
+    ServiceRecordSet* service = iServices[aHandle];
     domainlabel name;
     SetDomainLabel(name, aName);
     mDNS_RenameAndReregisterService(iMdns, service, &name);
