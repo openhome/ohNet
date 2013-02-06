@@ -8,7 +8,6 @@
 
 EXCEPTION(ThreadKill);
 EXCEPTION(Timeout);
-EXCEPTION(ThreadUnknown);
 
 namespace OpenHome {
 
