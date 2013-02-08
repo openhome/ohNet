@@ -108,6 +108,7 @@ class DummyCodec : public CodecBase
 public:
     DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private: // from CodecBase
+    void StreamInitialise();
     TBool Recognise(const Brx& aData);
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -117,6 +118,8 @@ private:
     TUint iSampleRate;
     TUint iBitDepth;
     EMediaDataEndian iEndian;
+    TUint64 iTrackOffsetJiffies;
+    TBool iSentDecodedInfo;
 };
 
 #undef LOG_PIPELINE_OBSERVER // enable this to check output from IPipelineObserver
@@ -163,6 +166,8 @@ void Supplier::Run()
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
     Msg* msg = iMsgFactory->CreateMsgTrack();
+    iPipeline->Push(msg);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn(""), Brn(""), 1LL<<32, 1, NULL, NULL);
     iPipeline->Push(msg);
     while (!iQuit) {
         if (iBlock) {
@@ -595,6 +600,12 @@ DummyCodec::DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMed
 {
 }
 
+void DummyCodec::StreamInitialise()
+{
+    iTrackOffsetJiffies = 0;
+    iSentDecodedInfo = false;
+}
+
 TBool DummyCodec::Recognise(const Brx& /*aData*/)
 {
     return true;
@@ -602,16 +613,17 @@ TBool DummyCodec::Recognise(const Brx& /*aData*/)
 
 void DummyCodec::Process()
 {
-    const TUint bitRate = iSampleRate * iBitDepth * iChannels;
-    iController->OutputDecodedStream(bitRate, iBitDepth, iSampleRate, iChannels, Brn("dummy codec"), 1LL<<34, 0, true);
-
-    // Don't need any exit condition for loop below.  iController->Read will throw eventually.
-    TUint64 trackOffsetJiffies = 0;
-    for (;;) {
+    if (!iSentDecodedInfo) {
+        const TUint bitRate = iSampleRate * iBitDepth * iChannels;
+        iController->OutputDecodedStream(bitRate, iBitDepth, iSampleRate, iChannels, Brn("dummy codec"), 1LL<<34, 0, true);
+        iSentDecodedInfo = true;
+    }
+    else {
+        // Don't need any exit condition for loop below.  iController->Read will throw eventually.
         iReadBuf.SetBytes(0);
         iController->Read(iReadBuf, iReadBuf.MaxBytes());
-        MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndian, trackOffsetJiffies);
-        trackOffsetJiffies += audio->Jiffies();
+        MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndian, iTrackOffsetJiffies);
+        iTrackOffsetJiffies += audio->Jiffies();
         iController->Output(audio);
     }
 }
