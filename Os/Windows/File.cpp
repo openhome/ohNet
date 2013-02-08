@@ -62,7 +62,7 @@ void FileAnsii::Read(Bwx& aBuffer, TUint32 aBytes)
 
     aBuffer.SetBytes(0);
     // Bwx should have a Ptr() that returns a non-const TByte* (viz. const TByte* Brx::Ptr() const)
-    size_t bytesRead = fread((void*) aBuffer.Ptr(), 1, aBytes, iFilePtr);
+    TUint bytesRead = (TUint)fread((void*) aBuffer.Ptr(), 1, aBytes, iFilePtr);
 
     aBuffer.SetBytes(bytesRead);
 }
