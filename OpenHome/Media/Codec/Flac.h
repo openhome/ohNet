@@ -18,11 +18,10 @@ public:
     ~CodecFlac();
 private: // from CodecBase
     TBool Recognise(const Brx& aData);
+    void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
-private:
-    void Initialise();
 public:
     FLAC__StreamDecoderReadStatus CallbackRead(const FLAC__StreamDecoder* aDecoder,
                                                TUint8 aBuffer[],  TUint* aBytes);

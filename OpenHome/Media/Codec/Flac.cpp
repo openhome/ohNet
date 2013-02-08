@@ -104,7 +104,7 @@ TBool CodecFlac::Recognise(const Brx& aMsg)
     return false;
 }
 
-void CodecFlac::Initialise()
+void CodecFlac::StreamInitialise()
 {
     iMsgFormatSent = false;
     iTrackOffset = 0;
@@ -167,47 +167,43 @@ void CodecFlac::Initialise()
 
 void CodecFlac::Process()
 {
-    Initialise();
-
-    for (;;) {
-        FLAC__stream_decoder_process_single(iDecoder);
-        FLAC__StreamDecoderState state = FLAC__stream_decoder_get_state(iDecoder);
-        switch(state) {
-            case FLAC__STREAM_DECODER_SEARCH_FOR_METADATA:
-            case FLAC__STREAM_DECODER_READ_METADATA:
-            case FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC:
-            case FLAC__STREAM_DECODER_READ_FRAME:
-                break;
-            case FLAC__STREAM_DECODER_END_OF_STREAM:
-                // we've decoded the entire stream.  Can now either return or throw CodecStreamEnded
-                return;
-            case FLAC__STREAM_DECODER_OGG_ERROR:
-                // We don't support ogg currently, bug in code -- unrecoverable
-                THROW(CodecStreamCorrupt);
-                break;
-            case FLAC__STREAM_DECODER_SEEK_ERROR:
-                /* Is this recoverable?  throw here?  How is this different to
-                   seek_absolute returning false? -- see comments above
-                   (Flac::Seek())about throwing in the middle of seeks */
-                THROW(CodecStreamCorrupt);
-                break;
-            case FLAC__STREAM_DECODER_ABORTED:
-                THROW(CodecStreamCorrupt);
-                break;
-            case FLAC__STREAM_DECODER_MEMORY_ALLOCATION_ERROR:
-                // Bug in code -- unrecoverable
-                THROW(CodecStreamCorrupt);
-                break;
-            case FLAC__STREAM_DECODER_UNINITIALIZED:
-                // Bug in code -- unrecoverable
-                THROW(CodecStreamCorrupt);
-                break;
-            default:
-                // Mismatch in code between us and Flac, haven't covered all cases
-                // --> bug --> unrecoverable
-                THROW(CodecStreamCorrupt);
-                break;
-        }
+    FLAC__stream_decoder_process_single(iDecoder);
+    FLAC__StreamDecoderState state = FLAC__stream_decoder_get_state(iDecoder);
+    switch(state) {
+        case FLAC__STREAM_DECODER_SEARCH_FOR_METADATA:
+        case FLAC__STREAM_DECODER_READ_METADATA:
+        case FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC:
+        case FLAC__STREAM_DECODER_READ_FRAME:
+            break;
+        case FLAC__STREAM_DECODER_END_OF_STREAM:
+            // we've decoded the entire stream.  Can now either return or throw CodecStreamEnded
+            return;
+        case FLAC__STREAM_DECODER_OGG_ERROR:
+            // We don't support ogg currently, bug in code -- unrecoverable
+            THROW(CodecStreamCorrupt);
+            break;
+        case FLAC__STREAM_DECODER_SEEK_ERROR:
+            /* Is this recoverable?  throw here?  How is this different to
+                seek_absolute returning false? -- see comments above
+                (Flac::Seek())about throwing in the middle of seeks */
+            THROW(CodecStreamCorrupt);
+            break;
+        case FLAC__STREAM_DECODER_ABORTED:
+            THROW(CodecStreamCorrupt);
+            break;
+        case FLAC__STREAM_DECODER_MEMORY_ALLOCATION_ERROR:
+            // Bug in code -- unrecoverable
+            THROW(CodecStreamCorrupt);
+            break;
+        case FLAC__STREAM_DECODER_UNINITIALIZED:
+            // Bug in code -- unrecoverable
+            THROW(CodecStreamCorrupt);
+            break;
+        default:
+            // Mismatch in code between us and Flac, haven't covered all cases
+            // --> bug --> unrecoverable
+            THROW(CodecStreamCorrupt);
+            break;
     }
 }
 
