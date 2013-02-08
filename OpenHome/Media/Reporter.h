@@ -28,6 +28,7 @@ class Reporter : public IPipelineElementUpstream, private IMsgProcessor, private
     static const Brn kNullMetaText;
 public:
     Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver);
+    virtual ~Reporter();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor

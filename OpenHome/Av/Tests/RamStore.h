@@ -16,7 +16,7 @@ namespace Av {
 class RamStore : public IStaticDataSource, public IPersister
 {
 public:
-    ~RamStore();
+    virtual ~RamStore();
     void AddItem(const TChar* aKey, const TChar* aValue);
     void List();
 private: // from IStaticDataSource

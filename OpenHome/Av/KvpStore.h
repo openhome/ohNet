@@ -87,7 +87,7 @@ class KvpStore : public IReadWriteStore,
 {
 public:
     KvpStore(IStaticDataSource& aStaticData, IPersister& aPersister);
-    ~KvpStore();
+    virtual ~KvpStore();
 private: // from IReadWriteStore
     TBool TryReadStoreItem(const Brx& aKey, Bwx& aValue);
     TBool TryReadStoreStaticItem(const Brx& aKey, Brn& aValue);

@@ -342,7 +342,7 @@ void OhmSenderDriver::Resend(const Brx& aFrames)
 {
     AutoMutex mutex(iMutex);
 
-	printf("RESEND");
+	Log::Print("RESEND");
 
 	ReaderBuffer buffer(aFrames);
 	ReaderBinary reader(buffer);
@@ -353,7 +353,7 @@ void OhmSenderDriver::Resend(const Brx& aFrames)
 
 	frames--;
 
-	printf(" %d", frame);
+	Log::Print(" %lu", (unsigned long)frame);
 	
 	TBool found = false;
 
@@ -405,7 +405,7 @@ void OhmSenderDriver::Resend(const Brx& aFrames)
 		iFifoHistory.Write(msg);
 	}
 
-	printf("\n");
+	Log::Print("\n");
 }
 
 void OhmSenderDriver::ResetLocked()

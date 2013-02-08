@@ -22,7 +22,7 @@ class PreDriver : public IPipelineElementUpstream, private IMsgProcessor, privat
 {
 public:
     PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies);
-    ~PreDriver();
+    virtual ~PreDriver();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private:

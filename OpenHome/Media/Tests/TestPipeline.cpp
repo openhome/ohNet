@@ -641,11 +641,3 @@ void TestPipeline()
     runner.Run();
 }
 
-
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
-{
-    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
-    TestPipeline();
-    delete aInitParams;
-    Net::UpnpLibrary::Close();
-}

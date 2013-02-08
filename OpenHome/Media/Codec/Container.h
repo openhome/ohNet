@@ -29,6 +29,7 @@ class Container : public IPipelineElementUpstream, private IContainer, private I
 {
 public:
     Container(IPipelineElementUpstream& aUpstreamElement);
+    virtual ~Container();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IContainer

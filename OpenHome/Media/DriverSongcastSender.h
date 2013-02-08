@@ -18,7 +18,7 @@ class DriverSongcastSender : public Thread, private IMsgProcessor
     static const TUint kSongcastLatencyMs = 300;
     static const TUint kSongcastPreset = 0;
 public:
-    DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Environment& aEnv, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter);
+    DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Environment& aEnv, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter, TBool aMulticast);
     ~DriverSongcastSender();
 private: // from Thread
     void Run();

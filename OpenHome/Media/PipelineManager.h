@@ -75,7 +75,7 @@ class PipelineManager : private IStopperObserver, private IPipelinePropertyObser
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kJiffiesPerMs * 100;
 public:
     PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier& aSupplier, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes);
-    ~PipelineManager();
+    virtual ~PipelineManager();
     void AddCodec(Codec::CodecBase* aCodec);
     MsgFactory& Factory();
     IPipelineElementUpstream& FinalElement();

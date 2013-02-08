@@ -48,6 +48,7 @@ template <class T> class Allocator : public AllocatorBase
 {
 public:
     Allocator(const TChar* aName, TUint aNumCells, Av::IInfoAggregator& aInfoAggregator);
+    virtual ~Allocator();
     T* Allocate();
 };
 
@@ -57,6 +58,10 @@ template <class T> Allocator<T>::Allocator(const TChar* aName, TUint aNumCells, 
     for (TUint i=0; i<aNumCells; i++) {
         iFree.Write(new T(*this));
     }
+}
+
+template <class T> Allocator<T>::~Allocator()
+{
 }
 
 template <class T> T* Allocator<T>::Allocate()
@@ -73,7 +78,7 @@ public:
 protected:
     Allocated(AllocatorBase& aAllocator);
 protected:
-    ~Allocated();
+    virtual ~Allocated();
 private:
     virtual void RefAdded();
     virtual void RefRemoved();

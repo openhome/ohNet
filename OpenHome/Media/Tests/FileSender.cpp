@@ -11,100 +11,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
 #include "AllocatorInfoLogger.h"
-
-#include <stdio.h>
-
-#ifdef _WIN32
-
-# define CDECL __cdecl
-
-# include <conio.h>
-
-int mygetch()
-{
-    return (_getch());
-}
-
-#else
-
-# define CDECL
-
-# include <termios.h>
-# include <unistd.h>
-
-int mygetch()
-{
-	struct termios oldt, newt;
-	int ch;
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	return ch;
-}
-
-#endif // _WIN32
-
-namespace OpenHome {
-namespace Media {
-
-class SupplierFile : public Thread, public ISupplier
-{
-public:
-    SupplierFile();
-    ~SupplierFile();
-    TBool LoadFile(const Brx& aFileName);
-    void Block();
-    void Unblock();
-private: // from Thread
-    void Run();
-private:
-    MsgAudioEncoded* CreateAudio();
-private: // from ISupplier
-    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement);
-    void Play();
-    void Flush(Msg* aMsg);
-    void Quit(Msg* aMsg);
-private:
-    Mutex iLock;
-    Semaphore iBlocker;
-    MsgFactory* iMsgFactory;
-    IPipelineElementDownstream* iPipeline;
-    Msg* iPendingMsg;
-    TBool iBlock;
-    TBool iQuit;
-    FILE* iFh;
-    TByte iBuf[DecodedAudio::kMaxBytes];
-    TUint iDataSize;
-    TUint iBytesRemaining;
-};
-
-class FileSender : private IPipelineObserver
-{
-    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
-public:
-    FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-    ~FileSender();
-    int Run();
-private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack();
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
-private:
-    SupplierFile* iSupplier;
-    AllocatorInfoLogger iInfoAggregator;
-    PipelineManager* iPipeline;
-    Net::DvDeviceStandard* iDevice;
-    DriverSongcastSender* iDriver;
-    Brh iFileName;
-};
-
-} // namespace Media
-} // namespace OpenHome
+#include "FileSender.h"
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -122,37 +29,28 @@ SupplierFile::SupplierFile()
     , iPendingMsg(NULL)
     , iBlock(true)
     , iQuit(false)
+    , iFile(NULL)
+    , iBuf(EncodedAudio::kMaxBytes)
 {
 }
 
 SupplierFile::~SupplierFile()
 {
     Join();
-    (void)fclose(iFh);
+    delete iFile;
 }
 
 TBool SupplierFile::LoadFile(const Brx& aFileName)
 {
-	Brhz file(aFileName);
-    if (file.Bytes() == 0) {
-    	printf("ERROR: No file specified\n");
-    	return false;
-    }
-    iFh = fopen(file.CString(), "rb");
-    if (iFh == NULL) {
-    	printf("ERROR: Unable to open specified file\n");
-    	return false;
-    }
+    Brhz file(aFileName);
 
-    if (fseek(iFh, 0L, SEEK_END) == -1) {
-    	printf("ERROR: Unable to seek to end of file\n");
-    	return false;
-    }
-    iDataSize = ftell(iFh);
-    if (fseek(iFh, 0L, SEEK_SET) == -1) {
-    	printf("ERROR: Unable to seek back to start of file\n");
-    	return false;
-    }
+    if ( iFile )
+        delete iFile;
+    iFile = new File(file.CString(), eFileReadOnly);
+    iFile->Seek(0, eSeekFromEnd);
+    iDataSize = iFile->Bytes();
+    iFile->Seek(0, eSeekFromStart);
+
     iBytesRemaining = iDataSize;
 
     return true;
@@ -190,7 +88,7 @@ void SupplierFile::Run()
             msg = CreateAudio();
         }
         else {
-            printf("Reached end of track, pipeline will shut down\n");
+            //iTerminal.Print("Reached end of track, pipeline will shut down\n");
             msg = iMsgFactory->CreateMsgHalt();
             iBlock = true; // wait for a quit command now
         }
@@ -206,17 +104,19 @@ void SupplierFile::Run()
 
 MsgAudioEncoded* SupplierFile::CreateAudio()
 {
-    TUint bytes = EncodedAudio::kMaxBytes;
+    TUint bytes = iBuf.MaxBytes();
     if (iBytesRemaining < bytes) {
         bytes = iBytesRemaining;
     }
-    if (fread(iBuf, 1, bytes, iFh) != bytes) {
-    	printf("ERROR: Unable to read file data\n");
-    	ASSERTS();
+
+    iFile->Read(iBuf, bytes);
+    
+    if (iBuf.Bytes() != bytes) {
+        //iTerminal.Print("ERROR: Unable to read file data\n");
+        ASSERTS();
     }
     iBytesRemaining -= bytes;
-    Brn encodedAudioBuf(iBuf, bytes);
-    return iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
+    return iMsgFactory->CreateMsgAudioEncoded(iBuf);
 }
 
 void SupplierFile::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
@@ -234,7 +134,7 @@ void SupplierFile::Flush(Msg* aMsg)
 {
     iLock.Wait();
     iPendingMsg = aMsg;
-    ASSERT(0 == fseek(iFh, 0, SEEK_SET));
+    iFile->Seek(0, eSeekFromStart);
     iBytesRemaining = iDataSize;
     iLock.Signal();
 }
@@ -253,8 +153,9 @@ void SupplierFile::Quit(Msg* aMsg)
 
 // FileSender
 
-FileSender::FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
-    : iFileName(aFileName)
+FileSender::FileSender(Environment& aEnv, ITerminal& aTerminal, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast)
+    : iTerminal(aTerminal)
+    , iFileName(aFileName)
 {
     iSupplier = new SupplierFile();
     iPipeline = new PipelineManager(iInfoAggregator, *iSupplier, *this, kMaxDriverJiffies);
@@ -275,7 +176,7 @@ FileSender::FileSender(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aFi
     iDevice->SetAttribute("Upnp.SerialNumber", "");
     iDevice->SetAttribute("Upnp.Upc", "");
 
-    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter);
+    iDriver = new DriverSongcastSender(iPipeline->FinalElement(), kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter, aMulticast);
     iDevice->SetEnabled();
 }
 
@@ -289,23 +190,33 @@ FileSender::~FileSender()
 
 int FileSender::Run()
 {
-    if (!iSupplier->LoadFile(iFileName)) {
-        return 1;
+    try
+    {
+        iSupplier->LoadFile(iFileName);
     }
+    catch ( FileOpenError ) {
+        iTerminal.Print("ERROR: Unable to open specified file\n");
+        return false;
+    }
+    catch ( FileSeekError ) {
+        iTerminal.Print("ERROR: Unable to seek to end of file\n");
+        return false;
+    }
+
     iSupplier->Start();
 
     TBool playing = false;
     TBool starve = false;
     TBool quit = false;
 
-    printf("\nFileSender pipeline test.  Usage:\n");
-    printf("p: Toggle between play/pause\n");
-    printf("n: Toggle between start/stop simulating network starvation\n");
-    printf("s: Stop (only valid when paused)\n");
-    printf("q: Quit\n");
-    printf("\n");
+    iTerminal.Print("\nFileSender pipeline test.  Usage:\n");
+    iTerminal.Print("p: Toggle between play/pause\n");
+    iTerminal.Print("n: Toggle between start/stop simulating network starvation\n");
+    iTerminal.Print("s: Stop (only valid when paused)\n");
+    iTerminal.Print("q: Quit\n");
+    iTerminal.Print("\n");
     do {
-    	int key = mygetch();
+        TChar key = iTerminal.GetChar();
         switch (key)
         {
         case 'p':
@@ -369,89 +280,40 @@ void FileSender::NotifyPipelineState(EPipelineState aState)
     default:
         ASSERTS();
     }
-    Log::Print("Pipeline state change: %s\n", state);
+    iTerminal.Print("Pipeline state change: %s\n", state);
 #endif
 }
 
 void FileSender::NotifyTrack()
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: TRACK\n");
+    iTerminal.Print("Pipeline report property: TRACK\n");
 #endif
 }
 
 void FileSender::NotifyMetaText(const Brx& aText)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: METATEXT {");
-    Log::Print(aText);
-    Log::Print("}\n");
+    iTerminal.Print("Pipeline report property: METATEXT {");
+    iTerminal.Print(aText);
+    iTerminal.Print("}\n");
 #endif
 }
 
 void FileSender::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: TIME {secs=%u; duration=%u}\n", aSeconds, aTrackDurationSeconds);
+    iTerminal.Print("Pipeline report property: TIME {secs=%u; duration=%u}\n", aSeconds, aTrackDurationSeconds);
 #endif
 }
 
 void FileSender::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
+    iTerminal.Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
            aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels());
-    Log::Print(aStreamInfo.CodecName());
-    Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
+    iTerminal.Print(aStreamInfo.CodecName());
+    iTerminal.Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 #endif
 }
 
-
-
-
-int CDECL main(int aArgc, char* aArgv[])
-{
-    OptionParser parser;
-    OptionString optionFile("-f", "--file", Brn(""), "[file] flac/wav file to play");
-    parser.AddOption(&optionFile);
-    OptionString optionUdn("-u", "--udn", Brn("PipelineFileSender"), "[udn] udn for the upnp device");
-    parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("Pipeline FileSender"), "[name] name of the sender");
-    parser.AddOption(&optionName);
-    OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
-    parser.AddOption(&optionChannel);
-    OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
-    parser.AddOption(&optionAdapter);
-
-    if (!parser.Parse(aArgc, aArgv)) {
-        return 1;
-    }
-
-    InitialisationParams* initParams = InitialisationParams::Create();
-	Net::Library* lib = new Net::Library(initParams);
-    Net::DvStack* dvStack = lib->StartDv();
-    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
-    const TUint adapterIndex = optionAdapter.Value();
-    if (subnetList->size() <= adapterIndex) {
-		printf("ERROR: adapter %d doesn't exist\n", adapterIndex);
-		ASSERTS();
-    }
-    printf ("adapter list:\n");
-    for (unsigned i=0; i<subnetList->size(); ++i) {
-		TIpAddress addr = (*subnetList)[i]->Address();
-		printf ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
-    }
-    TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
-    TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
-    Library::DestroySubnetList(subnetList);
-    lib->SetCurrentSubnet(subnet);
-    printf("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
-
-    FileSender* fileSender = new FileSender(lib->Env(), *dvStack, optionFile.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
-    const int ret = fileSender->Run();
-    delete fileSender;
-    
-    delete lib;
-
-    return ret;
-}

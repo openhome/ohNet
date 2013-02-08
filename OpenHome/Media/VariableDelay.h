@@ -24,7 +24,7 @@ class VariableDelay : public IPipelineElementUpstream, private IMsgProcessor
     friend class SuiteVariableDelay;
 public:
     VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration);
-    ~VariableDelay();
+    virtual ~VariableDelay();
     void AdjustDelay(TUint aJiffies);
 public: // from IPipelineElementUpstream
     Msg* Pull();

@@ -21,6 +21,10 @@ Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelineProperty
 {
 }
 
+Reporter::~Reporter()
+{
+}
+
 Msg* Reporter::Pull()
 {
     Msg* msg = iUpstreamElement.Pull();

@@ -18,6 +18,7 @@ def options(opt):
     opt.add_option('--ohnet-include-dir', action='store', default=None)
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
     opt.add_option('--ohnet', action='store', default=None)
+    opt.add_option('--libosa', action='store', default=None)
     opt.add_option('--debug', action='store_const', dest="debugmode", const="Debug", default="Release")
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
     opt.add_option('--dest-platform', action='store', default=None)
@@ -40,7 +41,21 @@ def configure(conf):
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     conf.env.STLIB_OHNET=['ohNetProxies', 'ohNetDevices', 'TestFramework', 'ohNetCore']
+
+    if conf.options.dest_platform in ['Libosa-core1', 'Libosa-core2']:
+        osa_include_dir = os.path.join(conf.options.libosa, 'install', 'include')
+        conf.env.append_value('INCLUDES_OSA', [os.path.abspath(os.path.join(osa_include_dir, x)) for x in ['', 'lwip']])
+        conf.env.append_value('DEFINES', ['NETWORK_LWIP', 'NOTERMIOS']) # Tell FLAC about LWIP, stub out mygetch().
+        conf.env.append_value('LINKFLAGS', ['-B' + os.path.abspath(os.path.join(conf.options.libosa, 'install', 'lib'))])
+
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
+    # Setup FLAC lib options 
+    conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL']
+    conf.env.INCLUDES_FLAC = [
+        'flac-1.2.1/src/libFLAC/include',
+        'flac-1.2.1/include',
+        'libogg-1.1.3/include',
+    ]
 
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
@@ -138,13 +153,7 @@ def build(bld):
                 'flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
                 'flac-1.2.1/src/libFLAC/ogg_mapping.c',
             ],
-            defines = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL'],
-            includes = [
-                'flac-1.2.1/src/libFLAC/include',
-                'flac-1.2.1/include',
-                'libogg-1.1.3/include'
-            ],
-            use=['OHNET'],
+            use=['FLAC', 'OHNET', 'OSA'],
             target='CodecFlac')
 
     # Tests
@@ -152,58 +161,57 @@ def build(bld):
             source=[
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp',
+                'OpenHome/Media/Tests/TestMsg.cpp',
+                'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
+                'OpenHome/Media/Tests/TestStopper.cpp',
+                'OpenHome/Media/Tests/TestAudioReservoir.cpp',
+                'OpenHome/Media/Tests/TestVariableDelay.cpp',
+                'OpenHome/Media/Tests/TestReporter.cpp',
+                'OpenHome/Media/Tests/TestPreDriver.cpp',
+                'OpenHome/Media/Tests/TestPipeline.cpp',
+                'OpenHome/Media/Tests/FileSender.cpp',
             ],
-            use=['ohMediaPlayer'],
+            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
             target='ohMediaPlayerTestUtils')
     bld.program(
-            source='OpenHome/Media/Tests/TestMsg.cpp',
+            source='OpenHome/Media/Tests/TestMsgMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMsg')
     bld.program(
-            source='OpenHome/Media/Tests/TestStarvationMonitor.cpp',
+            source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStarvationMonitor')
     bld.program(
-            source='OpenHome/Media/Tests/TestStopper.cpp',
+            source='OpenHome/Media/Tests/TestStopperMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStopper')
     bld.program(
-            source='OpenHome/Media/Tests/TestAudioReservoir.cpp',
+            source='OpenHome/Media/Tests/TestAudioReservoirMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestAudioReservoir')
     bld.program(
-            source='OpenHome/Media/Tests/TestVariableDelay.cpp',
+            source='OpenHome/Media/Tests/TestVariableDelayMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestVariableDelay')
     bld.program(
-            source='OpenHome/Media/Tests/TestReporter.cpp',
+            source='OpenHome/Media/Tests/TestReporterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestReporter')
     bld.program(
-            source='OpenHome/Media/Tests/TestPreDriver.cpp',
+            source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPreDriver')
     bld.program(
-            source='OpenHome/Media/Tests/TestPipeline.cpp',
+            source='OpenHome/Media/Tests/TestPipelineMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline')
     bld.program(
-            source='OpenHome/Media/Tests/FileSender.cpp',
-            includes = [
-                'flac-1.2.1/src/libFLAC/include',
-                'flac-1.2.1/include',
-                'libogg-1.1.3/include'
-            ],
+            source='OpenHome/Media/Tests/FileSenderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
             target='FileSender')
     bld.program(
             source='OpenHome/Media/Tests/TestProtocolHttp.cpp',
-            includes = [
-                'flac-1.2.1/src/libFLAC/include',
-                'flac-1.2.1/include',
-                'libogg-1.1.3/include'
-            ],
-            use=['OHNET', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
             target='TestProtocolHttp')
     bld.program(
             source='OpenHome/Media/Tests/TestPipeline2.cpp',

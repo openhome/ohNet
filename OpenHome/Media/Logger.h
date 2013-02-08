@@ -34,7 +34,7 @@ public:
     };
 public:
     Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
-    ~Logger();
+    virtual ~Logger();
     void SetEnabled(TBool aEnabled);
     void SetFilter(TUint aMsgTypes);
 public: // from IPipelineElementUpstream
