@@ -55,7 +55,7 @@ void DriverSongcastSender::Run()
     (void)msg->Process(*this);
 
     TUint64 now = OsTimeInUs(iEnv.OsCtx());
-    do {
+    while(!iQuit) {
         if (iAudioSent) {
             // skip the first packet, and any time the clock value wraps
             if (iLastTimeUs == 0 || iLastTimeUs >= now) {
@@ -103,7 +103,7 @@ void DriverSongcastSender::Run()
             Msg* msg = iPipeline.Pull();
             (void)msg->Process(*this);
         }
-    } while (!iQuit);
+    }
 }
 
 void DriverSongcastSender::TimerCallback()
