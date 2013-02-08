@@ -10,6 +10,10 @@ TerminalOs::TerminalOs()
 {
 }
 
+TerminalOs::~TerminalOs()
+{
+}
+
 TChar TerminalOs::GetChar()
 {
     struct termios oldt, newt;

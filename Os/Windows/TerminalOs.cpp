@@ -10,6 +10,10 @@ TerminalOs::TerminalOs()
 {
 }
 
+TerminalOs::~TerminalOs()
+{
+}
+
 TChar TerminalOs::GetChar()
 {
     return (TChar) (_getch());

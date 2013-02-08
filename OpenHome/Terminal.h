@@ -14,6 +14,7 @@ namespace OpenHome {
 class Terminal
 {
 public:
+    virtual ~Terminal() {}
     virtual TChar GetChar() = 0;
     virtual void Print(const Brx& aBuffer) = 0;
 
@@ -24,6 +25,7 @@ class TerminalOs : public Terminal
 {
 public:
     TerminalOs();
+    virtual ~TerminalOs();
     virtual TChar GetChar();
     virtual void Print(const Brx& aBuffer);
 private:
