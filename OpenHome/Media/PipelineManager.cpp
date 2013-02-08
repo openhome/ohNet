@@ -129,7 +129,7 @@ void PipelineManager::AddCodec(Codec::CodecBase* aCodec)
 void PipelineManager::Quit()
 {
     iQuitting = true;
-    if (iStatus != EPlaying) {
+    /*if (iStatus != EPlaying) */ { // always send quit message and ensure pipeline is playing.
         iSupplier.Quit(iMsgFactory->CreateMsgQuit());
         Play();
         iTargetStatus = EQuit;
