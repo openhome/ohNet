@@ -174,6 +174,8 @@ void SupplierFile::Run()
 {
     Msg* msg = iMsgFactory->CreateMsgTrack();
     iPipeline->Push(msg);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), iDataSize, 1, NULL, NULL);
+    iPipeline->Push(msg);
     while (!iQuit) {
         if (iBlock) {
             iBlocker.Wait();

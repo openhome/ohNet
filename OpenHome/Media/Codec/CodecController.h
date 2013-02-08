@@ -12,6 +12,7 @@
 EXCEPTION(CodecStreamStart);
 EXCEPTION(CodecStreamEnded);
 EXCEPTION(CodecStreamFlush);
+EXCEPTION(CodecStreamSeek);
 EXCEPTION(CodecStreamFeatureUnsupported);
 
 namespace OpenHome {
@@ -30,8 +31,9 @@ class ICodecController
 {
 public:
     virtual void Read(Bwx& aBuf, TUint aBytes) = 0;
-    virtual void Output(MsgDecodedStream* aMsg) = 0;
-    virtual void Output(MsgAudioPcm* aMsg) = 0;
+    virtual TBool TrySeek(TUint aStreamId, TUint64 aBytePos) = 0;
+    virtual void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless) = 0;
+    virtual void Output(MsgAudioPcm* aMsg) = 0; // FIXME - might be worth passing data, endianess etc rather than creating Msg inside each codec
 };
     
 class CodecBase
@@ -41,7 +43,9 @@ public:
     virtual ~CodecBase();
 public:
     virtual TBool Recognise(const Brx& aData) = 0;
+    virtual void StreamInitialise();
     virtual void Process() = 0;
+    virtual TBool TrySeek(TUint aStreamId, TUint64 aSample) = 0; // FIXME - no obvious point to bool return
     virtual void StreamCompleted();
 protected:
     CodecBase();
@@ -58,13 +62,18 @@ public:
     CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement);
     ~CodecController();
     void AddCodec(CodecBase* aCodec);
+    TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
 private:
     void CodecThread();
     void PullMsg();
     void Queue(Msg* aMsg);
+    TBool QueueTrackData() const;
+    void ReleaseAudioEncoded();
+    TBool DoRead(Bwx& aBuf, TUint aBytes);
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
-    void Output(MsgDecodedStream* aMsg);
+    TBool TrySeek(TUint aStreamId, TUint64 aBytePos);
+    void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
     void Output(MsgAudioPcm* aMsg);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
@@ -83,6 +92,7 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IPipelineElementDownstream& iDownstreamElement;
+    Mutex iLock;
     std::vector<CodecBase*> iCodecs;
     ThreadFunctor* iDecoderThread;
     CodecBase* iActiveCodec;
@@ -92,8 +102,16 @@ private:
     TBool iStreamStarted;
     TBool iStreamEnded;
     TBool iQuit;
+    TBool iSeek;
+    TUint iSeekSeconds;
+    TUint iFlushExpectedCount;
+    MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[kMaxRecogniseBytes];
+    IRestreamer* iRestreamer;
+    ILiveStreamer* iLiveStreamer;
+    TUint iStreamId;
+    TUint iSampleRate;
 };
 
 

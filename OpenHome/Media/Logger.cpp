@@ -82,11 +82,12 @@ Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
     if (IsEnabled(EMsgEncodedStream)) {
         Log::Print("Pipeline (%s): encoded stream {", iId);
         Log::Print(aMsg->Uri());
-        Log::Print(", ");
+        Log::Print(", metaText: ");
         Log::Print(aMsg->MetaText());
-        Log::Print(" , totalBytes: %u, seekable: %s, live: %s, streamId: %u}\n",
-                    aMsg->TotalBytes(), (aMsg->IsSeekable()? "true" : "false"),
-                    (aMsg->IsLive()? "true" : "false"), aMsg->StreamId());
+        Log::Print(" , totalBytes: %u, streamId: %u, seekable: %s, live: %s}\n",
+                    aMsg->TotalBytes(), aMsg->StreamId(),
+                    (aMsg->Restreamer()!=NULL? "true" : "false"),
+                    (aMsg->LiveStreamer()!=NULL? "true" : "false"));
     }
     return aMsg;
 }

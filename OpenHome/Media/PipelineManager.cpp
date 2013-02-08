@@ -229,6 +229,12 @@ void PipelineManager::Stop()
     }
 }
 
+TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
+{
+    // FIXME - update iTargetStatus
+    return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
+}
+
 void PipelineManager::PipelineHalted()
 {
     iLock.Wait();

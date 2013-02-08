@@ -211,6 +211,11 @@ void CodecFlac::Process()
     }
 }
 
+TBool CodecFlac::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
+{
+    return false;
+}
+
 void CodecFlac::StreamCompleted()
 {
     FLAC__stream_decoder_finish(iDecoder);
@@ -261,9 +266,7 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
            iMsgFormatSent is still false) we must have picked up a file mid-stream.
            Therefore, put out a MsgDecodedStream on the basis of what we know mid-stream. */
         const TUint bitRate = sampleRate * bitDepth * channels;
-        MsgDecodedStream* format = iMsgFactory->CreateMsgDecodedStream(0, bitRate, bitDepth, sampleRate,
-                                                                       channels, iName, 0, 0, true); // FIXME - missing streamId and startSample
-        iController->Output(format);
+        iController->OutputDecodedStream(bitRate, bitDepth, sampleRate, channels, iName, 0, 0, true); // FIXME - missing trackLength, startSample
         iMsgFormatSent = true;
     }
     
@@ -325,9 +328,6 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
     const TUint bitRate = streamInfo->sample_rate * streamInfo->bits_per_sample * streamInfo->channels;
     const TUint64 trackLengthJiffies = (streamInfo->total_samples * Jiffies::kJiffiesPerSecond) / streamInfo->sample_rate;
 
-    MsgDecodedStream* format = iMsgFactory->CreateMsgDecodedStream(0, bitRate, streamInfo->bits_per_sample,
-                                                                   streamInfo->sample_rate, streamInfo->channels,
-                                                                   iName, trackLengthJiffies, 0, true); // FIXME - missing streamId and startSample
-    iController->Output(format);
+    iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, streamInfo->sample_rate, streamInfo->channels, iName, trackLengthJiffies, 0, true); // FIXME - missing startSample
     iMsgFormatSent = true;
 }

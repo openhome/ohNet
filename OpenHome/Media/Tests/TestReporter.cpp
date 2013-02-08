@@ -233,7 +233,7 @@ Msg* SuiteReporter::Pull()
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerSecond * 10);
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless);
+        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, NULL);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
     case EMsgMetaText:

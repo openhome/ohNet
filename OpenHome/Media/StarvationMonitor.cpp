@@ -95,9 +95,12 @@ Msg* StarvationMonitor::Pull()
         if (jiffies == 0 && iPlannedHalt && !iHaltDelivered) {
             wait = IsEmpty(); // allow reading of the halt msg which should be the last item in the queue
         }
-        else if (jiffies < iGorgeSize) {
+        else {
             wait = true;
         }
+        iSemOut.Clear(); /* Its possible for Enqueue to signal iSemOut repeatedly.
+                            It is safe to clear any past signals here as Enqueue will try
+                            to take iLock before signalling again. */
     }
     iLock.Signal();
     if (wait) {
@@ -135,7 +138,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     }
 
     remainingSize = Jiffies(); // re-calculate this as Ramp() can cause a msg to be split with a fragment re-queued
-    if (remainingSize == 0) {
+    if (remainingSize == 0 && iStatus != EBuffering) {
         UpdateStatus(EBuffering);
     }
     if ((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax)) {

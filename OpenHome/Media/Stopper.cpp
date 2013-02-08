@@ -128,6 +128,12 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
+    ILiveStreamer* ls = streamInfo.LiveStreamer();
+    if (ls != NULL) {
+        (void)ls->StartLiveStream(streamInfo.StreamId());
+        // FIXME - either report error from StartLiveStream or remove its return type
+    }
     return aMsg;
 }
 
@@ -159,10 +165,11 @@ Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
 {
-    ASSERT_DEBUG(iState == EFlushing);
     aMsg->RemoveRef();
-    iState = EHalted;
-    iReportFlushed = true;
+    if (iState == EFlushing) { // flush may arrive as a result of either a Pause or a Seek
+        iState = EHalted;
+        iReportFlushed = true;
+    }
     return NULL;
 }
 

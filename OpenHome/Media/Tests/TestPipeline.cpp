@@ -110,6 +110,7 @@ public:
 private: // from CodecBase
     TBool Recognise(const Brx& aData);
     void Process();
+    TBool TrySeek(TUint aStreamId, TUint64 aSample);
 private:
     Bws<DecodedAudio::kMaxBytes> iReadBuf;
     TUint iChannels;
@@ -602,8 +603,7 @@ TBool DummyCodec::Recognise(const Brx& /*aData*/)
 void DummyCodec::Process()
 {
     const TUint bitRate = iSampleRate * iBitDepth * iChannels;
-    MsgDecodedStream* format = iMsgFactory->CreateMsgDecodedStream(1, bitRate, iBitDepth, iSampleRate, iChannels, Brn("dummy codec"), 1LL<<34, 0, false);
-    iController->Output(format);
+    iController->OutputDecodedStream(bitRate, iBitDepth, iSampleRate, iChannels, Brn("dummy codec"), 1LL<<34, 0, true);
 
     // Don't need any exit condition for loop below.  iController->Read will throw eventually.
     TUint64 trackOffsetJiffies = 0;
@@ -616,6 +616,10 @@ void DummyCodec::Process()
     }
 }
 
+TBool DummyCodec::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
+{
+    return false;
+}
 
 
 void TestPipeline()

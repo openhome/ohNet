@@ -19,6 +19,7 @@ public:
 private: // from CodecBase
     TBool Recognise(const Brx& aData);
     void Process();
+    TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
 private:
     void Initialise();

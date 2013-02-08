@@ -138,7 +138,7 @@ void SupplierTp3::Run()
     const TUint bitRate = kSampleRate * kBitDepth * kNumChannels;
     const TUint numSamples = kMsgAudioCount * (iBuf.Bytes() / (kNumChannels * (kBitDepth/8)));
     const TUint64 trackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / kSampleRate;
-    msg = iMsgFactory->CreateMsgDecodedStream(1, bitRate, kBitDepth, kSampleRate, kNumChannels, Brn("MadeUp"), trackLengthJiffies, 0, true);
+    msg = iMsgFactory->CreateMsgDecodedStream(1, bitRate, kBitDepth, kSampleRate, kNumChannels, Brn("MadeUp"), trackLengthJiffies, 0, true, NULL);
     iPipeline->Push(msg);
     while (iRemainingMsgAudio > 0) {
         MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataBigEndian, iTrackOffset);

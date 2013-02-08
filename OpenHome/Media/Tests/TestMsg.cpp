@@ -1095,18 +1095,15 @@ void SuiteAudioStream::Test()
     Brn uri("http://255.1.33.76:8734/path?query");
     Brn metaText("metaText");
     TUint totalBytes = 1234;
-    TBool seekable = true;
-    TBool live = true;
     TUint streamId = 8;
-    MsgEncodedStream* msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, seekable, live, streamId, NULL);
+    MsgEncodedStream* msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, NULL, NULL);
     TEST(msg != NULL);
     TEST(msg->Uri() == uri);
     TEST(msg->MetaText() == metaText);
     TEST(msg->TotalBytes() == totalBytes);
-    TEST(msg->IsSeekable() == seekable);
-    TEST(msg->IsLive() == live);
     TEST(msg->StreamId() == streamId);
     TEST(msg->Restreamer() == NULL);
+    TEST(msg->LiveStreamer() == NULL);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
@@ -1121,17 +1118,15 @@ void SuiteAudioStream::Test()
     uri.Set("http://3.4.5.6:8");
     metaText.Set("updated");
     totalBytes = 65537;
-    live = false;
     streamId = 99;
-    msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, seekable, live, streamId, NULL);
+    msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, NULL, NULL);
     TEST(msg != NULL);
     TEST(msg->Uri() == uri);
     TEST(msg->MetaText() == metaText);
     TEST(msg->TotalBytes() == totalBytes);
-    TEST(msg->IsSeekable() == seekable);
-    TEST(msg->IsLive() == live);
     TEST(msg->StreamId() == streamId);
     TEST(msg->Restreamer() == NULL);
+    TEST(msg->LiveStreamer() == NULL);
     msg->RemoveRef();
 }
 
@@ -1197,7 +1192,7 @@ void SuiteDecodedStream::Test()
     TUint64 trackLength = 1<<16;
     TUint64 startSample = 1LL<33;
     TBool lossless = true;
-    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless);
+    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, NULL);
     TEST(msg != NULL);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
@@ -1208,6 +1203,7 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().TrackLength() == trackLength);
     TEST(msg->StreamInfo().SampleStart() == startSample);
     TEST(msg->StreamInfo().Lossless() == lossless);
+    TEST(msg->StreamInfo().LiveStreamer() == NULL);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
@@ -1233,7 +1229,7 @@ void SuiteDecodedStream::Test()
     trackLength = 1<<30;
     startSample += 111;
     lossless = false;
-    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless);
+    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, NULL);
     TEST(msg != NULL);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
@@ -1244,6 +1240,7 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().TrackLength() == trackLength);
     TEST(msg->StreamInfo().SampleStart() == startSample);
     TEST(msg->StreamInfo().Lossless() == lossless);
+    TEST(msg->StreamInfo().LiveStreamer() == NULL);
     msg->RemoveRef();
 }
 
@@ -1292,7 +1289,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false);
+    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, NULL);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
@@ -1302,7 +1299,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, false, false, 0, NULL);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, NULL, NULL);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgEncodedStream);
     msg->RemoveRef();
@@ -1537,7 +1534,7 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgTrack);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);
 
-    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, false, false, 0, NULL);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, NULL, NULL);
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == 0);
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgEncodedStream);

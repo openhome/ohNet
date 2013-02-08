@@ -17,6 +17,10 @@ CodecBase::~CodecBase()
 {
 }
 
+void CodecBase::StreamInitialise()
+{
+}
+
 void CodecBase::StreamCompleted()
 {
 }
@@ -39,9 +43,15 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iDownstreamElement(aDownstreamElement)
+    , iLock("CDCC")
     , iActiveCodec(NULL)
     , iPendingMsg(NULL)
+    , iPostSeekStreamInfo(NULL)
     , iAudioEncoded(NULL)
+    , iRestreamer(NULL)
+    , iLiveStreamer(NULL)
+    , iStreamId(0)
+    , iSampleRate(0)
 {
     iDecoderThread = new ThreadFunctor("CDEC", MakeFunctor(*this, &CodecController::CodecThread));
     iDecoderThread->Start();
@@ -53,8 +63,9 @@ CodecController::~CodecController()
         delete iCodecs[i];
     }
     delete iDecoderThread;
-    if (iAudioEncoded != NULL) {
-        iAudioEncoded->RemoveRef();
+    ReleaseAudioEncoded();
+    if (iPostSeekStreamInfo != NULL) {
+        iPostSeekStreamInfo->RemoveRef();
     }
 }
 
@@ -64,15 +75,44 @@ void CodecController::AddCodec(CodecBase* aCodec)
     iCodecs.push_back(aCodec);
 }
 
+TBool CodecController::Seek(TUint /*aTrackId*/, TUint aStreamId, TUint aSecondsAbsolute)
+{
+    AutoMutex a(iLock);
+    // FIXME - check aTrackId
+    if (aStreamId != iStreamId) {
+        return false;
+    }
+    if (iActiveCodec == NULL || iRestreamer == NULL) {
+        return false;
+    }
+    iSeek = true;
+    iSeekSeconds = aSecondsAbsolute;
+    /* If we're very near the end of the track, we may return success here but later fail to seek.
+       Its hard to imagine what sort of UI would display error indication from seek so it doesn't
+       seem worth worrying about this. */
+    return true;
+}
+
 void CodecController::CodecThread()
 {
     iStreamStarted = false;
     iQuit = false;
     while (!iQuit) {
         try {
+            iLock.Wait();
             iQueueTrackData = false;
             iStreamEnded = false;
+            iSeek = false;
             iActiveCodec = NULL;
+            iRestreamer = NULL;
+            iLiveStreamer = NULL;
+            iStreamId = 0;
+            iSampleRate = 0;
+            iSeek = false;
+            iSeekSeconds = 0;
+            iFlushExpectedCount = 0;
+            ReleaseAudioEncoded();
+            iLock.Signal();
 
             // Find next start of stream marker, ignoring any audio or meta data we encounter
             while (!iStreamStarted && !iQuit) {
@@ -100,10 +140,6 @@ void CodecController::CodecThread()
                 break;
             }
             if (iStreamEnded) {
-                if (iAudioEncoded != NULL) {
-                    iAudioEncoded->RemoveRef();
-                    iAudioEncoded = NULL;
-                }
                 continue;
             }
             /* we can only CopyTo a max of kMaxRecogniseBytes bytes.  If we have more data than this, 
@@ -124,21 +160,44 @@ void CodecController::CodecThread()
             iAudioEncoded->Add(remaining);
             if (iActiveCodec == NULL) {
                 // FIXME - send error indication down the pipeline?
-                iAudioEncoded->RemoveRef();
-                iAudioEncoded = NULL;
                 continue;
             }
 
             // tell codec to process audio data
             // (blocks until end of stream or a flush)
-            // FIXME - rework to deal with seeking
-            try {
-                iActiveCodec->Process();
+            iActiveCodec->StreamInitialise();
+            for (;;) {
+                try {
+                    iLock.Wait();
+                    TBool seek = iSeek;
+                    iLock.Signal();
+                    if (seek) {
+                        iSeek = false;
+                        TUint64 sampleNum = iSeekSeconds * iSampleRate;
+                        iLock.Wait();
+                        // need to increment iFlushExpectedCount now in case TrySeek results in updated DecodedStreamInfo being output
+                        iFlushExpectedCount++;
+                        iLock.Signal();
+                        if (!iActiveCodec->TrySeek(iStreamId, sampleNum)) {
+                            iLock.Wait();
+                            iFlushExpectedCount--;
+                            iLock.Signal();
+                        }
+                    }
+                    else {
+                        iActiveCodec->Process();
+                    }
+                }
+                catch (CodecStreamStart&) { }
+                catch (CodecStreamEnded&) { }
+                catch (CodecStreamCorrupt&) {
+                    iStreamEnded = true;
+                }
+                if (iStreamEnded) {
+                    iActiveCodec->StreamCompleted();
+                    break;
+                }
             }
-            catch (CodecStreamStart&) { }
-            catch (CodecStreamEnded&) { }
-            catch (CodecStreamCorrupt&) { }
-            iActiveCodec->StreamCompleted();
         }
         catch (CodecStreamFlush&) {
             // FIXME
@@ -158,11 +217,32 @@ void CodecController::Queue(Msg* aMsg)
     iDownstreamElement.Push(aMsg);
 }
 
+TBool CodecController::QueueTrackData() const
+{
+    return (iQueueTrackData && iFlushExpectedCount == 0);
+}
+
+void CodecController::ReleaseAudioEncoded()
+{
+    if (iAudioEncoded != NULL) {
+        iAudioEncoded->RemoveRef();
+        iAudioEncoded = NULL;
+    }
+}
+
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
-    if (iStreamEnded) {
+    if (iPendingMsg != NULL) {
+        if (DoRead(aBuf, aBytes)) {
+            return;
+        }
         Queue(iPendingMsg);
         iPendingMsg = NULL;
+    }
+    if (iStreamEnded) {
+        if (DoRead(aBuf, aBytes)) {
+            return;
+        }
         if (iStreamStarted) {
             THROW(CodecStreamStart);
         }
@@ -171,9 +251,18 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
     while (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) {
         Msg* msg = iUpstreamElement.Pull();
         msg = msg->Process(*this);
-        if (msg != NULL && iStreamEnded) {
+        if (msg != NULL) {
             iPendingMsg = msg;
+            break;
         }
+    }
+    (void)DoRead(aBuf, aBytes);
+}
+
+TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
+{
+    if (iAudioEncoded == NULL) {
+        return false;
     }
     MsgAudioEncoded* remaining = NULL;
     if (iAudioEncoded->Bytes() > aBytes) {
@@ -186,11 +275,30 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
     aBuf.SetBytes(aBuf.Bytes() + bytes);
     iAudioEncoded->RemoveRef();
     iAudioEncoded = remaining;
+    return true;
 }
 
-void CodecController::Output(MsgDecodedStream* aMsg)
+TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
-    Queue(aMsg);
+    ReleaseAudioEncoded();
+    return iRestreamer->Restream(aStreamId, aBytePos);
+}
+
+void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless)
+{
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iLiveStreamer);
+    iLock.Wait();
+    iSampleRate = aSampleRate;
+    if (iFlushExpectedCount > 0) {
+        if (iPostSeekStreamInfo != NULL) {
+            iPostSeekStreamInfo->RemoveRef();
+        }
+        iPostSeekStreamInfo = msg;
+    }
+    else {
+        Queue(msg);
+    }
+    iLock.Signal();
 }
 
 void CodecController::Output(MsgAudioPcm* aMsg)
@@ -200,7 +308,7 @@ void CodecController::Output(MsgAudioPcm* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    if (!iQueueTrackData) {
+    if (!QueueTrackData()) {
         aMsg->RemoveRef();
     }
     else if (iAudioEncoded == NULL) {
@@ -239,19 +347,23 @@ Msg* CodecController::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
-    iStreamStarted = iStreamEnded = true;
     return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iStreamStarted = iStreamEnded = true;
-    return aMsg;
+    iStreamId = aMsg->StreamId();
+    iSeek = false; // clear any pending seek - it'd have been against a previous track now
+    iRestreamer = aMsg->Restreamer();
+    iLiveStreamer = aMsg->LiveStreamer();
+    aMsg->RemoveRef();
+    return NULL;
 }
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
-    if (!iQueueTrackData) {
+    if (!QueueTrackData()) {
         aMsg->RemoveRef();
     }
     else {
@@ -268,8 +380,19 @@ Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 {
+    ReleaseAudioEncoded();
     Queue(aMsg);
-    THROW(CodecStreamFlush);
+    AutoMutex a(iLock);
+    if (iFlushExpectedCount == 0) {
+        THROW(CodecStreamFlush);
+    }
+    if (--iFlushExpectedCount == 0) {
+        if (iPostSeekStreamInfo != NULL) {
+            Queue(iPostSeekStreamInfo);
+            iPostSeekStreamInfo = NULL;
+        }
+    }
+    return NULL;
 }
 
 Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
