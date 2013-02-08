@@ -274,6 +274,7 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
 {
+    Queue(aMsg);
     iQuit = true;
     iStreamEnded = true;
     return aMsg;
