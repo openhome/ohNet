@@ -52,6 +52,8 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iLiveStreamer(NULL)
     , iStreamId(0)
     , iSampleRate(0)
+    , iStreamLength(0)
+    , iStreamPos(0)
 {
     iDecoderThread = new ThreadFunctor("CDEC", MakeFunctor(*this, &CodecController::CodecThread));
     iDecoderThread->Start();
@@ -108,6 +110,8 @@ void CodecController::CodecThread()
             iLiveStreamer = NULL;
             iStreamId = 0;
             iSampleRate = 0;
+            iStreamLength = 0;
+            iStreamPos = 0;
             iSeek = false;
             iSeekSeconds = 0;
             iFlushExpectedCount = 0;
@@ -174,14 +178,14 @@ void CodecController::CodecThread()
                     if (seek) {
                         iSeek = false;
                         TUint64 sampleNum = iSeekSeconds * iSampleRate;
-                        iLock.Wait();
+                        /*iLock.Wait();
                         // need to increment iFlushExpectedCount now in case TrySeek results in updated DecodedStreamInfo being output
                         iFlushExpectedCount++;
-                        iLock.Signal();
+                        iLock.Signal();*/
                         if (!iActiveCodec->TrySeek(iStreamId, sampleNum)) {
-                            iLock.Wait();
+                            /*iLock.Wait();
                             iFlushExpectedCount--;
-                            iLock.Signal();
+                            iLock.Signal();*/
                         }
                     }
                     else {
@@ -275,13 +279,38 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
     aBuf.SetBytes(aBuf.Bytes() + bytes);
     iAudioEncoded->RemoveRef();
     iAudioEncoded = remaining;
+    iStreamPos += bytes;
     return true;
 }
 
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
     ReleaseAudioEncoded();
-    return iRestreamer->Restream(aStreamId, aBytePos);
+    iLock.Wait();
+    // need to increment iFlushExpectedCount now in case TrySeek results in updated DecodedStreamInfo being output
+    iFlushExpectedCount++;
+    iLock.Signal();
+    const TBool canSeek = iRestreamer->Restream(aStreamId, aBytePos);
+    if (canSeek) {
+        iStreamPos = aBytePos;
+    }
+    else {
+        iLock.Wait();
+        iFlushExpectedCount--;
+        iLock.Signal();
+    }
+    return canSeek;
+}
+
+TUint64 CodecController::StreamLength() const
+{
+    return iStreamLength;
+}
+
+TUint64 CodecController::StreamPos() const
+{
+    // FIXME doesn't work with containers.  Need to be told when a container consumes data from a stream.
+    return iStreamPos;
 }
 
 void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless)
@@ -355,6 +384,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamStarted = iStreamEnded = true;
     iStreamId = aMsg->StreamId();
     iSeek = false; // clear any pending seek - it'd have been against a previous track now
+    iStreamLength = aMsg->TotalBytes();
     iRestreamer = aMsg->Restreamer();
     iLiveStreamer = aMsg->LiveStreamer();
     aMsg->RemoveRef();

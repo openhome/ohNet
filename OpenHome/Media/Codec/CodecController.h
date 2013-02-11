@@ -32,6 +32,8 @@ class ICodecController
 public:
     virtual void Read(Bwx& aBuf, TUint aBytes) = 0;
     virtual TBool TrySeek(TUint aStreamId, TUint64 aBytePos) = 0;
+    virtual TUint64 StreamLength() const = 0;
+    virtual TUint64 StreamPos() const = 0;
     virtual void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless) = 0;
     virtual void Output(MsgAudioPcm* aMsg) = 0; // FIXME - might be worth passing data, endianess etc rather than creating Msg inside each codec
 };
@@ -73,6 +75,8 @@ private:
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
     TBool TrySeek(TUint aStreamId, TUint64 aBytePos);
+    TUint64 StreamLength() const;
+    TUint64 StreamPos() const;
     void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
     void Output(MsgAudioPcm* aMsg);
 private: // IMsgProcessor
@@ -112,6 +116,8 @@ private:
     ILiveStreamer* iLiveStreamer;
     TUint iStreamId;
     TUint iSampleRate;
+    TUint64 iStreamLength;
+    TUint64 iStreamPos;
 };
 
 

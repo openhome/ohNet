@@ -73,7 +73,7 @@ void CallbackError(const FLAC__StreamDecoder *aDecoder,
 
 CodecFlac::CodecFlac() 
     : iName("FLAC")
-    , iMsgFormatSent(false)
+    , iMsgFormatRequired(false)
 {
     iDecoder = FLAC__stream_decoder_new();
     ASSERT(iDecoder != NULL);
@@ -106,8 +106,11 @@ TBool CodecFlac::Recognise(const Brx& aMsg)
 
 void CodecFlac::StreamInitialise()
 {
-    iMsgFormatSent = false;
+    iMsgFormatRequired = false;
+    iSampleStart = 0;
     iTrackOffset = 0;
+    iSampleRate = 0;
+    iTrackLengthJiffies = 0;
     
     FLAC__StreamDecoderState state;
     state = FLAC__stream_decoder_get_state(iDecoder);
@@ -154,7 +157,7 @@ void CodecFlac::StreamInitialise()
         ASSERTS();
     }
 
-    while(!iMsgFormatSent) {
+    while(!iMsgFormatRequired) {
 		// Decode until the streaminfo metadata block or an audio frame are found, both of which put out the Soa.
     	// There may be other metadata types decoded first, eg picture metadata, which will be ignored.
 		if(!FLAC__stream_decoder_process_single(iDecoder)) {
@@ -207,9 +210,22 @@ void CodecFlac::Process()
     }
 }
 
-TBool CodecFlac::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
+TBool CodecFlac::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    return false;
+    iStreamId = aStreamId;
+    iSampleStart = aSample;
+    if (iSampleRate > 0) {
+        iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    }
+    FLAC__bool ret = FLAC__stream_decoder_seek_absolute(iDecoder, aSample);
+    if (ret == 0) {
+        FLAC__StreamDecoderState state;
+        state = FLAC__stream_decoder_get_state(iDecoder);
+        // this can occur if we try to seek beyond the end, so abort this track
+        THROW(CodecStreamCorrupt);
+    }
+    iMsgFormatRequired = false;
+    return true;
 }
 
 void CodecFlac::StreamCompleted()
@@ -227,24 +243,37 @@ FLAC__StreamDecoderReadStatus CodecFlac::CallbackRead(const FLAC__StreamDecoder*
     return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 }
 
-FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder* /*aDecoder*/, TUint64 /*aOffsetBytes*/)
+FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder* /*aDecoder*/, TUint64 aOffsetBytes)
 {
-    return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
+    if (!iController->TrySeek(iStreamId, aOffsetBytes)) {
+        return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
+    }
+    return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
 }
 
-FLAC__StreamDecoderTellStatus CodecFlac::CallbackTell(const FLAC__StreamDecoder* /*aDecoder*/, TUint64* /*aOffsetBytes*/)
+FLAC__StreamDecoderTellStatus CodecFlac::CallbackTell(const FLAC__StreamDecoder* /*aDecoder*/, TUint64* aOffsetBytes)
 {
-    return FLAC__STREAM_DECODER_TELL_STATUS_UNSUPPORTED;
+    TUint64 offset = iController->StreamPos();
+    if(offset == 0) {
+        return FLAC__STREAM_DECODER_TELL_STATUS_UNSUPPORTED;
+    }
+    *aOffsetBytes = offset;
+    return FLAC__STREAM_DECODER_TELL_STATUS_OK;
 }
 
-FLAC__StreamDecoderLengthStatus CodecFlac::CallbackLength(const FLAC__StreamDecoder* /*aDecoder*/,
-                                                          TUint64* /*aStreamBytes*/)
+FLAC__StreamDecoderLengthStatus CodecFlac::CallbackLength(const FLAC__StreamDecoder* /*aDecoder*/, TUint64* aStreamBytes)
 {
-    return FLAC__STREAM_DECODER_LENGTH_STATUS_UNSUPPORTED;
+    TUint64 len = iController->StreamLength();
+    if(len == 0) {
+        return FLAC__STREAM_DECODER_LENGTH_STATUS_UNSUPPORTED;
+    }
+    *aStreamBytes = len;
+    return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
 }
 
 TBool CodecFlac::CallbackEof(const FLAC__StreamDecoder* /*aDecoder*/)
 {
+    //Log::Print("FIXME - CodecFlac::CallbackEof unimplemented\n");
     return false;
 }
 
@@ -257,13 +286,13 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
     const TUint bitDepth = aFrame->header.bits_per_sample;
     const TUint sampleRate = aFrame->header.sample_rate;
 
-    if (!iMsgFormatSent) {
+    if (!iMsgFormatRequired) {
         /* If we get a Audio Frame prior to a metadata frame (and therefore
-           iMsgFormatSent is still false) we must have picked up a file mid-stream.
+           iMsgFormatRequired is still false) we must have picked up a file mid-stream.
            Therefore, put out a MsgDecodedStream on the basis of what we know mid-stream. */
         const TUint bitRate = sampleRate * bitDepth * channels;
-        iController->OutputDecodedStream(bitRate, bitDepth, sampleRate, channels, iName, 0, 0, true); // FIXME - missing trackLength, startSample
-        iMsgFormatSent = true;
+        iController->OutputDecodedStream(bitRate, bitDepth, sampleRate, channels, iName, iTrackLengthJiffies, iSampleStart, true);
+        iMsgFormatRequired = true;
     }
     
     const TUint maxSamples = sizeof(iBuf) / ((bitDepth/8) * channels);
@@ -318,12 +347,13 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
                                  const FLAC__StreamMetadata* aMetadata)
 {
     ASSERT(aMetadata->type == FLAC__METADATA_TYPE_STREAMINFO);
-    ASSERT(!iMsgFormatSent);
+    ASSERT(!iMsgFormatRequired);
     const FLAC__StreamMetadata_StreamInfo* streamInfo = &aMetadata->data.stream_info;
 
-    const TUint bitRate = streamInfo->sample_rate * streamInfo->bits_per_sample * streamInfo->channels;
-    const TUint64 trackLengthJiffies = (streamInfo->total_samples * Jiffies::kJiffiesPerSecond) / streamInfo->sample_rate;
+    iSampleRate = streamInfo->sample_rate;
+    const TUint bitRate = iSampleRate * streamInfo->bits_per_sample * streamInfo->channels;
+    iTrackLengthJiffies = (streamInfo->total_samples * Jiffies::kJiffiesPerSecond) / iSampleRate;
 
-    iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, streamInfo->sample_rate, streamInfo->channels, iName, trackLengthJiffies, 0, true); // FIXME - missing startSample
-    iMsgFormatSent = true;
+    iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, iSampleRate, streamInfo->channels, iName, iTrackLengthJiffies, iSampleStart, true);
+    iMsgFormatRequired = true;
 }

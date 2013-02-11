@@ -386,8 +386,12 @@ void TestProtocolHttp::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 int CDECL main(int aArgc, char* aArgv[])
 {
+    /* Useful test urls:
+    http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav
+    http://10.2.9.146:26125/content/c2/b16/f44100/d35587-co6318.flac
+    */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d35587-co6318.flac"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocolHttp"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);

@@ -44,9 +44,13 @@ private:
     TByte iBuf[DecodedAudio::kMaxBytes];
     FLAC__StreamDecoder* iDecoder;
     Brn iName;
+    TUint64 iSampleStart;
     TUint64 iTrackOffset;
-    TBool iMsgFormatSent;
+    TUint iSampleRate;
+    TUint64 iTrackLengthJiffies;
+    TBool iMsgFormatRequired;
     TBool iOgg;
+    TUint iStreamId;
 };
 
 }; // namespace Codec
