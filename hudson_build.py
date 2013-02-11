@@ -34,7 +34,9 @@ class PostActions():
             print ret
             sys.exit(10)
 
-    def arm_tests(self,type):
+    def arm_tests(self,type,release):
+        # type will be either 'nightly' or 'commit'
+        # release will be either '0' or '1'
         rem = remote()
         ret = rem.rsync('root','sheeva010.linn.co.uk','Build','~/')
         if ret != 0:
@@ -44,16 +46,18 @@ class PostActions():
         if ret != 0:
             print ret
             sys.exit(10)
+
+        alltests_cmd = 'python AllTests.py -t' # Setup AllTests cmd line to run tests only.
+
         if type == 'nightly':
-            ret = rem.rssh('root','sheeva010.linn.co.uk','python AllTests.py -f -t')            
-            if ret != 0:
-                print ret
-                sys.exit(10)
-        else:
-            ret = rem.rssh('root','sheeva010.linn.co.uk','python AllTests.py -t')
-            if ret != 0:
-                print ret
-                sys.exit(10)        
+            alltests_cmd += ' -f'        # Add 'full test' flag if in nightly-mode
+        if release == '0':
+            alltests_cmd += ' --debug'   # Run binaries residing in Build/Debug instead of Build/Release
+
+        ret = rem.rssh('root','sheeva010.linn.co.uk', alltests_cmd)
+        if ret != 0:
+            print ret
+            sys.exit(10)
     
 class JenkinsBuild():
     def get_options(self):
@@ -262,10 +266,10 @@ class JenkinsBuild():
                 postAction.gen_docs()
 
             if os_platform == 'linux' and arch in ['armel', 'armhf']:
-                postAction.arm_tests('nightly')
+                postAction.arm_tests('nightly', release)
         else:
             if os_platform == 'linux' and arch in ['armel', 'armhf']:
-                postAction.arm_tests('commit')    
+                postAction.arm_tests('commit', release)
         if self.platform['publish'] and release == '1':
             self.do_release()
 
