@@ -20,8 +20,8 @@ private:
 	TUint32 iContainerSize;
 };
 
-}; // namespace Codec
-}; // namespace Media
-}; // namespace OpenHome
+} // namespace Codec
+} // namespace Media
+} // namespace OpenHome
 
 #endif  // HEADER_PIPELINE_CODEC_ID3V2

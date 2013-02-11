@@ -120,9 +120,8 @@ private:
     TUint64 iStreamPos;
 };
 
-
-}; // namespace Codec
-}; // namespace Media
-}; // namespace OpenHome
+} // namespace Codec
+} // namespace Media
+} // namespace OpenHome
 
 #endif // HEADER_PIPELINE_CODEC

@@ -55,8 +55,8 @@ private:
     TByte iReadBuf[EncodedAudio::kMaxBytes];
 };
 
-}; // namespace Codec
-}; // namespace Media
-}; // namespace OpenHome
+} // namespace Codec
+} // namespace Media
+} // namespace OpenHome
 
 #endif // HEADER_PIPELINE_CONTAINER

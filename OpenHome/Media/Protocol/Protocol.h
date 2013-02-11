@@ -125,7 +125,7 @@ private:
     TUint iNextStreamId;
 };
 
-}; // namespace Media
-}; // namespace OpenHome
+} // namespace Media
+} // namespace OpenHome
 
 #endif  // HEADER_PIPELINE_PROTOCOL
