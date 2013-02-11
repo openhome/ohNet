@@ -91,6 +91,10 @@ void SuiteFile::TestFunctionality(IFile& aFile, TUint32 aBytes)
     TEST(aFile.Tell() == aBytes);
     TEST(buffer.Bytes() == readBytes/2);
 
+    aFile.Seek(0, eSeekFromEnd);
+    aFile.Read(buffer);
+    TEST(buffer.Bytes() == 0);
+
     // Writing
 
     buffer.SetBytes(aBytes/2);
@@ -99,10 +103,53 @@ void SuiteFile::TestFunctionality(IFile& aFile, TUint32 aBytes)
     Print("\n");
 }
 
+class SuiteFileBrx : public Suite
+{
+public:
+    SuiteFileBrx() : Suite("Test FileBrx data read.") {}
+    void Test();
+};
+
+void SuiteFileBrx::Test()
+{
+    const TUint kBytes = 256;
+    Bwx* b = new Bwh(kBytes);
+
+    // Populate each position in the buffer with it's index.
+    for ( TInt i = 0 ; i < 256 ; ++i ) {
+        b->Append((TChar) i);
+    }
+
+    FileBrx f(b);
+    Bws<kBytes> buff;
+
+    f.Read(buff);       // Read full buffer
+    TEST(buff == *b);
+
+    f.Read(buff);       // Attempt full buffer from end
+    TEST(buff.Bytes() == 0);
+
+    f.Seek(0, eSeekFromStart);
+    f.Read(buff, 10);
+    TEST(buff[0] == 0);
+    TEST(buff[9] == 9);
+
+    f.Seek(10, eSeekFromStart);
+    f.Read(buff, 10);
+    TEST(buff[0] == 10);
+    TEST(buff[9] == 19);
+    
+    f.Seek(10, eSeekFromCurrent);
+    f.Read(buff, 10);
+    TEST(buff[0] == 30);
+    TEST(buff[9] == 39);
+}
+
 void Test()
 {
     Runner runner("File testing.");
     runner.Add(new SuiteFile);
+    runner.Add(new SuiteFileBrx);
     runner.Run();
 }
 
