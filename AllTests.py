@@ -236,6 +236,7 @@ class TestCase(object):
 gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestThread', [], True)
              ,TestCase('TestFifo', [], True)
+             ,TestCase('TestFile', [], True)
              ,TestCase('TestQueue', [], True)
              ,TestCase('TestTextUtils', [], True)
              ,TestCase('TestNetwork', [], True)

@@ -433,6 +433,14 @@ $(objdir)TestBuffer.$(objext) : OpenHome/Tests/TestBuffer.cpp $(headers)
 $(objdir)TestBufferMain.$(objext) : OpenHome/Tests/TestBufferMain.cpp $(headers)
 	$(compiler)TestBufferMain.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestBufferMain.cpp
 
+TestFile: $(objdir)TestFile.$(exeext) 
+$(objdir)TestFile.$(exeext) :  ohNetCore $(objdir)TestFile.$(objext) $(objdir)TestFileMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestFile.$(exeext) $(objdir)TestFileMain.$(objext) $(objdir)TestFile.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestFile.$(objext) : OpenHome/Tests/TestFile.cpp $(headers)
+	$(compiler)TestFile.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestFile.cpp
+$(objdir)TestFileMain.$(objext) : OpenHome/Tests/TestFileMain.cpp $(headers)
+	$(compiler)TestFileMain.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestFileMain.cpp
+
 TestThread: $(objdir)TestThread.$(exeext) 
 $(objdir)TestThread.$(exeext) :  ohNetCore $(objdir)TestThread.$(objext) $(objdir)TestThreadMain.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestThread.$(exeext) $(objdir)TestThreadMain.$(objext) $(objdir)TestThread.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -704,6 +712,7 @@ tests_core = \
 	$(objdir)TestBuffer.$(objext) \
 	$(objdir)TestThread.$(objext) \
 	$(objdir)TestFifo.$(objext) \
+	$(objdir)TestFile.$(objext) \
 	$(objdir)TestQueue.$(objext) \
 	$(objdir)TestTextUtils.$(objext) \
 	$(objdir)TestNetwork.$(objext) \
@@ -726,7 +735,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestThread TestFifo TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestThread TestFifo TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
