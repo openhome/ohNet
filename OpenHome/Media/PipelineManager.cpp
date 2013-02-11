@@ -73,25 +73,29 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     iSupplier.Initialise(*iMsgFactory, *iEncodedAudioReservoir);
 
-    //iLoggerEncodedAudioReservoir->SetEnabled(true);
-    //iLoggerContainer->SetEnabled(true);
-    //iLoggerDecodedAudioReservoir->SetEnabled(true);
-    //iLoggerVariableDelay->SetEnabled(true);
-    //iLoggerStopper->SetEnabled(true);
-    //iLoggerReporter->SetEnabled(true);
-    //iLoggerSplitter->SetEnabled(true);
-    //iLoggerStarvationMonitor->SetEnabled(true);
-    //iLoggerPreDriver->SetEnabled(true);
+    TBool loggersEnabled = false;
 
-    //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
-    //iLoggerContainer->SetFilter(Logger::EMsgAll);
-    //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
-    //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
-    //iLoggerStopper->SetFilter(Logger::EMsgAll);
-    //iLoggerReporter->SetFilter(Logger::EMsgAll);
-    //iLoggerSplitter->SetFilter(Logger::EMsgAll);
-    //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
-    //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
+    iLoggerEncodedAudioReservoir->SetEnabled(loggersEnabled);
+    iLoggerContainer->SetEnabled(loggersEnabled);
+    iLoggerDecodedAudioReservoir->SetEnabled(loggersEnabled);
+    iLoggerVariableDelay->SetEnabled(loggersEnabled);
+    iLoggerStopper->SetEnabled(loggersEnabled);
+    iLoggerReporter->SetEnabled(loggersEnabled);
+    iLoggerSplitter->SetEnabled(loggersEnabled);
+    iLoggerStarvationMonitor->SetEnabled(loggersEnabled);
+    iLoggerPreDriver->SetEnabled(loggersEnabled);
+
+    TInt filter = Logger::EMsgAll;
+
+    iLoggerEncodedAudioReservoir->SetFilter(filter);
+    iLoggerContainer->SetFilter(filter);
+    iLoggerDecodedAudioReservoir->SetFilter(filter);
+    iLoggerVariableDelay->SetFilter(filter);
+    iLoggerStopper->SetFilter(filter);
+    iLoggerReporter->SetFilter(filter);
+    iLoggerSplitter->SetFilter(filter);
+    iLoggerStarvationMonitor->SetFilter(filter);
+    iLoggerPreDriver->SetFilter(filter);
 }
 
 PipelineManager::~PipelineManager()
