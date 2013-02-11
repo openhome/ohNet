@@ -49,13 +49,25 @@ def configure(conf):
         conf.env.append_value('LINKFLAGS', ['-B' + os.path.abspath(os.path.join(conf.options.libosa, 'install', 'lib'))])
 
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
+
     # Setup FLAC lib options 
     conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL']
     conf.env.INCLUDES_FLAC = [
         'flac-1.2.1/src/libFLAC/include',
         'flac-1.2.1/include',
         'libogg-1.1.3/include',
-    ]
+        ]
+
+    # Setup Mad (mp3) lib options
+    fixed_point_model = 'FPM_INTEL'
+    if conf.options.dest_platform in ['Linux-ARM', 'Libosa-core2']:
+        fixed_point_model = 'FPM_ARM'
+    elif conf.options.dest_platform in ['Libosa-core1']:
+        fixed_point_model = 'FPM_PPC'
+    conf.env.DEFINES_MAD = [fixed_point_model, 'OPT_ACCURACY']
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.DEFINES_MAD.append('inline=__inline')
+    conf.env.INCLUDES_MAD = ['libmad-0.15.1b']
 
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
@@ -155,6 +167,26 @@ def build(bld):
             ],
             use=['FLAC', 'OHNET', 'OSA'],
             target='CodecFlac')
+
+    # Mad
+    # Built separately from CodecMp3 in case we want to move it into a separate repo,
+    # allowing the rest of ohMediaPlayer to be open sourced without worrying about royalties for Mad.
+    bld.stlib(
+            source=[
+                'libmad-0.15.1b/version.c',
+                'libmad-0.15.1b/fixed.c',
+                'libmad-0.15.1b/bit.c',
+                'libmad-0.15.1b/timer.c',
+                'libmad-0.15.1b/stream.c',
+                'libmad-0.15.1b/frame.c',
+                'libmad-0.15.1b/synth.c',
+                'libmad-0.15.1b/decoder.c',
+                'libmad-0.15.1b/layer12.c',
+                'libmad-0.15.1b/layer3.c',
+                'libmad-0.15.1b/huffman.c',
+            ],
+            use=['MAD', 'OHNET', 'OSA'],
+            target='libMad')
 
     # Tests
     bld.stlib(
