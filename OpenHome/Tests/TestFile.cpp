@@ -53,7 +53,7 @@ void SuiteFile::TestFunctionality(IFile& aFile, TUint32 aBytes)
     aFile.Seek(aBytes, eSeekFromStart);
     TEST(aFile.Tell() == aBytes);
 
-    aFile.Seek(-aBytes, eSeekFromEnd);
+    aFile.Seek(-(TInt) aBytes, eSeekFromEnd);
     TEST(aFile.Tell() == 0);
 
     aFile.Seek(0, eSeekFromEnd);
@@ -69,7 +69,7 @@ void SuiteFile::TestFunctionality(IFile& aFile, TUint32 aBytes)
     //TEST_THROWS(aFile.Seek(aBytes+1, eSeekFromStart),   FileSeekError);
 
     // Backwards from end
-    TEST_THROWS(aFile.Seek(-(aBytes+1), eSeekFromEnd),  FileSeekError);
+    TEST_THROWS(aFile.Seek(-(TInt) (aBytes+1), eSeekFromEnd),  FileSeekError);
 
     // Reading
 
@@ -86,7 +86,7 @@ void SuiteFile::TestFunctionality(IFile& aFile, TUint32 aBytes)
     TEST(aFile.Tell() == readBytes);
     TEST(buffer.Bytes() == readBytes);
 
-    aFile.Seek(-(readBytes/2), eSeekFromEnd);
+    aFile.Seek(-(TInt) (readBytes/2), eSeekFromEnd);
     aFile.Read(buffer);
     TEST(aFile.Tell() == aBytes);
     TEST(buffer.Bytes() == readBytes/2);
