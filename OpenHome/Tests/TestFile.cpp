@@ -17,17 +17,13 @@ void SuiteFile::Test()
 {
     //FileBrx tests.
 
-    Bwh* buffer = new Bwh(256);
-    buffer->SetBytes(buffer->MaxBytes());
+    const TUint bufferBytes = 256;
+    // Use only the first half of a buffer for IFile
+    FileBrx fbrx(new Bwh(bufferBytes, 2*bufferBytes));
+    TEST(fbrx.Bytes() == bufferBytes);
+    Print("\n");
 
-    for ( TInt i = 0 ; i < 256 ; ++i )
-    {
-        buffer->At(i) = i;
-    }
-
-    FileBrx fbrx(buffer);
-
-    TestFunctionality(fbrx, 256);
+    TestFunctionality(fbrx, bufferBytes);
 
     try {
         IFile* f = IFile::Open("TestFile.elf", eFileReadOnly);
@@ -35,7 +31,7 @@ void SuiteFile::Test()
         delete f;
     }
     catch ( FileOpenError ) {
-        // Ignore until I have an idea of testing real files.
+        // Ignore until I have an idea for portably testing real files.
     }
 }
 
@@ -77,18 +73,28 @@ void SuiteFile::TestFunctionality(IFile& aFile, TUint32 aBytes)
 
     // Reading
 
-    Bwh readBuffer(aBytes + 20);
+    Bwh buffer(aBytes + 20);
     aFile.Seek(0, eSeekFromStart);
 
-    aFile.Read(readBuffer);
+    aFile.Read(buffer);
     TEST(aFile.Tell() == aBytes);
-    TEST(readBuffer.Bytes() == aBytes);
+    TEST(buffer.Bytes() == aBytes);
 
     const TUint readBytes = 10;
     aFile.Seek(0, eSeekFromStart);
-    aFile.Read(readBuffer, readBytes);
+    aFile.Read(buffer, readBytes);
     TEST(aFile.Tell() == readBytes);
-    TEST(readBuffer.Bytes() == readBytes);
+    TEST(buffer.Bytes() == readBytes);
+
+    aFile.Seek(-(readBytes/2), eSeekFromEnd);
+    aFile.Read(buffer);
+    TEST(aFile.Tell() == aBytes);
+    TEST(buffer.Bytes() == readBytes/2);
+
+    // Writing
+
+    buffer.SetBytes(aBytes/2);
+    TEST_THROWS(aFile.Write(buffer), FileWriteError);
 
     Print("\n");
 }
