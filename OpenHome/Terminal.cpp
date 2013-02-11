@@ -9,8 +9,8 @@ void Terminal::Print(const TChar* aFormat, ...)
     va_list args;
     va_start(args, aFormat);
     buffer.AppendPrintf(aFormat, args);
-    va_end(args);
     Print(buffer); // Call virtual function to do work.
+    va_end(args);
 }
 
 TerminalTcpSession::TerminalTcpSession()
