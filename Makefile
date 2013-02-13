@@ -1,4 +1,4 @@
-Makefile for linux
+#Makefile for linux
 # Could be extended to support Mac in future
 
 rsync ?= yes
