@@ -134,7 +134,7 @@ class JenkinsBuild():
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
         if os_platform == 'Libosa' and arch == 'powerpc':
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
-        if os_platform == 'Libosa' and arch == 'arm':
+        if os_platform == 'Libosa' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/arm-rtemseabi4.11-'
 
         self.platform_args = args
