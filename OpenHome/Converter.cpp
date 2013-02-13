@@ -279,3 +279,21 @@ void Converter::FromXmlEscaped(Bwx& aValue)
     }
     aValue.SetBytes(j);
 }
+
+TUint32 Converter::BeUint32At(const Brx& aBuf, TUint aIndex)
+{
+    TUint b[4];
+    for (TUint i=0; i<4; i++) {
+        b[i] = aBuf[aIndex++];
+    }
+    return ((b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3]);
+}
+
+TUint16 Converter::BeUint16At(const Brx& aBuf, TUint aIndex)
+{
+    TUint b[2];
+    for (TUint i=0; i<2; i++) {
+        b[i] = aBuf[aIndex++];
+    }
+    return (TUint16)((b[0] << 8) | b[1]);
+}
