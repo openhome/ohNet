@@ -77,8 +77,13 @@ class JenkinsBuild():
           help="publish release")
         parser.add_option("-v", "--version", dest="version",
             help="version number for release")
+        parser.add_option("-t", "--testcore", dest="testcore",
+            help="explicity enable tests on core platforms.")
+        parser.add_option("-j", "--parallel",
+            action="store_true", dest="parallel", default=False,
+            help="explicity enable tests on core platforms.")
         (self.options, self.args) = parser.parse_args()
-        
+
         # check if env variables are set
         # if they are, ignore what is on the command line.
 
@@ -108,6 +113,7 @@ class JenkinsBuild():
                 'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish':True, 'system':'Linux'},
                 'iOs-ARM': { 'os': 'macos', 'arch':'armv7', 'publish':True, 'system':'iOs'},
+                'timc-core1-powerpc': { 'os': 'Libosa', 'arch':'powerpc', 'publish':False, 'system':''},
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -125,6 +131,10 @@ class JenkinsBuild():
             os.environ['CS_PLATFORM'] = 'x64'
         if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
+        if os_platform == 'Libosa' and arch == 'powerpc':
+            os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
+        if os_platform == 'Libosa' and arch == 'arm':
+            os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/arm-rtemseabi4.11-'
 
         self.platform_args = args
 
@@ -159,10 +169,15 @@ class JenkinsBuild():
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
             args.append('--buildonly')
+        if os_platform == 'Libosa':
+            args.append('--buildonly')
+            args.append('--core')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
                 args.append('--valgrind')    
+        if self.options.parallel:
+            args.append('--parallel')
         self.build_args = args
 
     def do_build(self):

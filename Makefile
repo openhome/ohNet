@@ -28,6 +28,7 @@ endif
 gcc_machine = $(shell ${CROSS_COMPILE}gcc -dumpmachine)
 MACHINE = $(shell uname -s)
 
+$(info CROSS_COMPILE: ${CROSS_COMPILE})
 $(info Machine reported by compiler is: ${gcc_machine})
 $(info Machine reported by uname is: ${MACHINE})
 
