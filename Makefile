@@ -1,4 +1,4 @@
-# Makefile for linux
+Makefile for linux
 # Could be extended to support Mac in future
 
 rsync ?= yes
@@ -49,9 +49,11 @@ ifeq ($(MACHINE),Darwin)
 else
   # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
   platform ?= Vanilla
-  ifeq ($(platform), Core)
-    detected_openhome_system = Core
-    detected_openhome_architecture = Core
+  ifeq ($(platform), Core1)
+    detected_openhome_architecture = powerpc
+  else
+  ifeq ($(platform), Core2)
+    detected_openhome_architecture = armel
   else
     ifneq (,$(findstring linux,$(gcc_machine)))
       detected_openhome_system = Linux
@@ -83,6 +85,7 @@ else
     ifneq (,$(findstring x86_64,$(gcc_machine)))
       detected_openhome_architecture = x64
     endif
+  endif
   endif
 endif
 
@@ -149,18 +152,28 @@ ifeq ($(platform),IntelMac)
 	openhome_system = Mac
 endif
 
-ifeq ($(platform), Core)
-	# platform == Core
-	platform_cflags = -mcpu=${CROSS_CPU}
+ifeq ($(platform), Core1)
+	# platform == Core1
+	platform_cflags = -mcpu=405
 	platform_linkflags =
 	linkopts_ohNet =
-	osbuilddir = Volkano2
 	osdir = Volkano2
-	endian = ${CROSS_ENDIAN}
+	endian = BIG
 	native_only = yes
 endif
 
-ifneq (,$(findstring $(platform),Core Vanilla))
+ifeq ($(platform), Core2)
+	# platform == Core2
+	platform_cflags = -mcpu=arm926ej-s -Wno-psabi
+	platform_linkflags =
+	linkopts_ohNet =
+	osdir = Volkano2
+	endian = LITTLE
+	native_only = yes
+endif
+
+
+ifneq (,$(findstring $(platform),Core1 Core2 Vanilla))
   ifeq ($(gcc4_1), yes)
     version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
     version_specific_cflags_third_party = -Wno-non-virtual-dtor
@@ -191,7 +204,6 @@ ifeq ($(platform), Vanilla)
 	osdir = Posix
 	endian ?= LITTLE
 	openhome_system = Linux
-
 endif
 
 # Macros used by Common.mak

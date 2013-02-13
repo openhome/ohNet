@@ -38,8 +38,10 @@ def build(aTarget, aParallel=False):
         buildCmd += ' mac-64=1'
     if gMacArm == 1:
         buildCmd += ' mac-arm=1'
-    if gCore == 1:
-        buildCmd += ' platform=Core'
+    if gCore1 == 1:
+        buildCmd += ' platform=Core1'
+    if gCore2 == 1:
+        buildCmd += ' platform=Core2'
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
@@ -55,7 +57,7 @@ def runBuilds():
         os.system(cleanCmd)
     if gParallel:
         build('copy_build_includes')
-    if gCore == 1:
+    if gCore1 == 1 or gCore2 == 1:
         build('ohNet TestFramework', gParallel)
     else:
         build('all', gParallel)
@@ -179,7 +181,8 @@ gJsTests = 0
 gDebugBuild = 0
 gMac64 = 0
 gMacArm = 0
-gCore = 0
+gCore1 = 0
+gCore2 = 0
 gParallel = False
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
@@ -220,8 +223,10 @@ for arg in sys.argv[1:]:
         if platform.system() != 'Darwin':
             print 'ERROR - --mac-arm only applicable on Darwin'
             sys.exit(1)
-    elif arg == '--core':
-        gCore = 1
+    elif arg == '--core1':
+        gCore1 = 1
+    elif arg == '--core2':
+        gCore2 = 1
     elif arg == '--parallel':
         gParallel = True
     else:

@@ -114,6 +114,7 @@ class JenkinsBuild():
                 'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish':True, 'system':'Linux'},
                 'iOs-ARM': { 'os': 'macos', 'arch':'armv7', 'publish':True, 'system':'iOs'},
                 'timc-core1-powerpc': { 'os': 'Libosa', 'arch':'powerpc', 'publish':False, 'system':''},
+                'timc-core2-arm': { 'os': 'Libosa', 'arch':'armel', 'publish':False, 'system':''},
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -171,7 +172,10 @@ class JenkinsBuild():
             args.append('--buildonly')
         if os_platform == 'Libosa':
             args.append('--buildonly')
-            args.append('--core')
+            if arch == 'armel':
+                args.append('--core2')
+            if arch == 'powerpc':
+                args.append('--core1')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
