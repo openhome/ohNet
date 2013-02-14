@@ -705,11 +705,9 @@ void CodecMp3::Process()
         // only output audio when we have data for a full-sized msg.
         // any data not output now will be picked up the next time round
         if (iOutput.MaxBytes() - iOutput.Bytes() < (kBitDepth/8) * channels) {
-            MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iOutput, channels, iHeader->SampleRate(),
-                                                                kBitDepth, EMediaDataBigEndian, iTrackOffset);
+            iTrackOffset += iController->OutputAudioPcm(iOutput, channels, iHeader->SampleRate(),
+                                                        kBitDepth, EMediaDataBigEndian, iTrackOffset);
             iOutput.SetBytes(0);
-            iTrackOffset += audio->Jiffies();
-            iController->Output(audio);
         }
         iSamplesWrittenTotal += samples;
         samplesToWrite -= samples;
@@ -717,9 +715,8 @@ void CodecMp3::Process()
 
     // now propogate any end of stream exception
     if (streamEnded || newStreamStarted) {
-        MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iOutput, channels, iHeader->SampleRate(),
-                                                            kBitDepth, EMediaDataBigEndian, iTrackOffset);
-        iController->Output(audio);
+        iController->OutputAudioPcm(iOutput, channels, iHeader->SampleRate(),
+                                    kBitDepth, EMediaDataBigEndian, iTrackOffset);
         if (newStreamStarted) {
             THROW(CodecStreamStart);
         }

@@ -326,10 +326,8 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
         }
         const TUint bytes = samples * (bitDepth/8) * channels;
         Brn encodedAudio(iBuf, bytes);
-        MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudio, channels, sampleRate,
-                                                            bitDepth, EMediaDataBigEndian, iTrackOffset);
-        iTrackOffset += audio->Jiffies();
-        iController->Output(audio);
+        iTrackOffset += iController->OutputAudioPcm(encodedAudio, channels, sampleRate,
+                                                    bitDepth, EMediaDataBigEndian, iTrackOffset);
         samplesToWrite -= samples;
         startI = endI;
     }

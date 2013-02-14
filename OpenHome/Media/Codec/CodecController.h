@@ -35,7 +35,7 @@ public:
     virtual TUint64 StreamLength() const = 0;
     virtual TUint64 StreamPos() const = 0;
     virtual void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless) = 0;
-    virtual void Output(MsgAudioPcm* aMsg) = 0; // FIXME - might be worth passing data, endianess etc rather than creating Msg inside each codec
+    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset) = 0; // returns jiffy size of data
 };
     
 class CodecBase
@@ -52,10 +52,9 @@ public:
 protected:
     CodecBase();
 private:
-    void Construct(ICodecController& aController, MsgFactory& aMsgFactory);
+    void Construct(ICodecController& aController);
 protected:
     ICodecController* iController;
-    MsgFactory* iMsgFactory;
 };
 
 class CodecController : private ICodecController, private IMsgProcessor, private INonCopyable
@@ -78,7 +77,7 @@ private: // ICodecController
     TUint64 StreamLength() const;
     TUint64 StreamPos() const;
     void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
-    void Output(MsgAudioPcm* aMsg);
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);

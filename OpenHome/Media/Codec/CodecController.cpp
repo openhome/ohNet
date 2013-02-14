@@ -30,10 +30,9 @@ CodecBase::CodecBase()
 {
 }
 
-void CodecBase::Construct(ICodecController& aController, MsgFactory& aMsgFactory)
+void CodecBase::Construct(ICodecController& aController)
 {
     iController = &aController;
-    iMsgFactory = &aMsgFactory;
 }
 
 
@@ -73,7 +72,7 @@ CodecController::~CodecController()
 
 void CodecController::AddCodec(CodecBase* aCodec)
 {
-    aCodec->Construct(*this, iMsgFactory);
+    aCodec->Construct(*this);
     iCodecs.push_back(aCodec);
 }
 
@@ -330,9 +329,12 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     iLock.Signal();
 }
 
-void CodecController::Output(MsgAudioPcm* aMsg)
+TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
 {
-    Queue(aMsg);
+    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
+    TUint jiffies= audio->Jiffies();
+    Queue(audio);
+    return jiffies;
 }
 
 Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)

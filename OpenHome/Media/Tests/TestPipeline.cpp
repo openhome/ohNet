@@ -622,9 +622,7 @@ void DummyCodec::Process()
         // Don't need any exit condition for loop below.  iController->Read will throw eventually.
         iReadBuf.SetBytes(0);
         iController->Read(iReadBuf, iReadBuf.MaxBytes());
-        MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndian, iTrackOffsetJiffies);
-        iTrackOffsetJiffies += audio->Jiffies();
-        iController->Output(audio);
+        iTrackOffsetJiffies += iController->OutputAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndian, iTrackOffsetJiffies);
     }
 }
 
