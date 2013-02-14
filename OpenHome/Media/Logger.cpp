@@ -84,7 +84,7 @@ Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
         Log::Print(aMsg->Uri());
         Log::Print(", metaText: ");
         Log::Print(aMsg->MetaText());
-        Log::Print(" , totalBytes: %u, streamId: %u, seekable: %s, live: %s}\n",
+        Log::Print(" , totalBytes: %llu, streamId: %u, seekable: %s, live: %s}\n",
                     aMsg->TotalBytes(), aMsg->StreamId(),
                     (aMsg->Restreamer()!=NULL? "true" : "false"),
                     (aMsg->LiveStreamer()!=NULL? "true" : "false"));
