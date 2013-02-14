@@ -15,6 +15,8 @@ using namespace OpenHome::Media::Codec;
 Container::Container(IPipelineElementUpstream& aUpstreamElement)
     : iUpstreamElement(aUpstreamElement)
     , iCheckForContainer(false)
+    , iContainerSize(0)
+    , iRemainingContainerSize(0)
     , iAudioEncoded(NULL)
 {
 }
@@ -52,7 +54,7 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
             //Attempt to construct an id3 tag -- this will throw if not present
             Id3v2 id3(*this);
             LOG(kMedia, "Selector::DoRecognise found id3 tag of %d bytes -- skipping\n", id3.ContainerSize());
-            iRemainingContainerSize = id3.ContainerSize();
+            iContainerSize = iRemainingContainerSize = id3.ContainerSize();
         }
         catch(MediaCodecId3v2NotFound) { //thrown from Id3v2 constructor
         }
@@ -111,6 +113,8 @@ Msg* Container::ProcessMsg(MsgTrack* aMsg)
 Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iCheckForContainer = true;
+    iContainerSize = 0;
+    iRemainingContainerSize = 0;
     return aMsg;
 }
 
