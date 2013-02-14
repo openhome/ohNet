@@ -7,6 +7,7 @@
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Wav.h>
+#include <OpenHome/Media/Codec/Mp3.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
@@ -220,6 +221,7 @@ TestProtocolHttp::TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, co
     iPipeline = new PipelineManager(iInfoAggregator, *iSupplier, *this, kMaxDriverJiffies);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
+    iPipeline->AddCodec(new Codec::CodecMp3());
 
     iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
@@ -389,9 +391,10 @@ int CDECL main(int aArgc, char* aArgv[])
     /* Useful test urls:
     http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav
     http://10.2.9.146:26125/content/c2/b16/f44100/d35587-co6318.flac
+    http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3
     */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d35587-co6318.flac"), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocolHttp"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);

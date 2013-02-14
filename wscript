@@ -168,6 +168,14 @@ def build(bld):
             use=['FLAC', 'OHNET', 'OSA'],
             target='CodecFlac')
 
+    # MP3
+    bld.stlib(
+            source=[
+                'OpenHome/Media/Codec/Mp3.cpp'
+            ],
+            use=['MAD', 'OHNET', 'OSA'],
+            target='CodecMp3')
+
     # Mad
     # Built separately from CodecMp3 in case we want to move it into a separate repo,
     # allowing the rest of ohMediaPlayer to be open sourced without worrying about royalties for Mad.
@@ -243,7 +251,7 @@ def build(bld):
     #        target='FileSender')
     bld.program(
             source='OpenHome/Media/Tests/TestProtocolHttp.cpp',
-            use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'libMad', 'ohMediaPlayerTestUtils'],
             target='TestProtocolHttp')
     bld.program(
             source='OpenHome/Media/Tests/TestPipeline2.cpp',
