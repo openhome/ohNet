@@ -12,11 +12,13 @@ using namespace OpenHome::Media::Codec;
 
 // Container
 
-Container::Container(IPipelineElementUpstream& aUpstreamElement)
-    : iUpstreamElement(aUpstreamElement)
+Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
+    : iMsgFactory(aMsgFactory)
+    , iUpstreamElement(aUpstreamElement)
     , iCheckForContainer(false)
     , iContainerSize(0)
     , iRemainingContainerSize(0)
+    , iRestreamer(NULL)
     , iAudioEncoded(NULL)
 {
 }
@@ -115,7 +117,10 @@ Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
     iCheckForContainer = true;
     iContainerSize = 0;
     iRemainingContainerSize = 0;
-    return aMsg;
+    iRestreamer = aMsg->Restreamer();
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), iRestreamer!=NULL? this : NULL, aMsg->LiveStreamer());
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* Container::ProcessMsg(MsgMetaText* /*aMsg*/)
@@ -137,4 +142,10 @@ Msg* Container::ProcessMsg(MsgFlush* aMsg)
 Msg* Container::ProcessMsg(MsgQuit* aMsg)
 {
     return aMsg;
+}
+
+TBool Container::Restream(TUint aStreamId, TUint64 aBytePos)
+{
+    ASSERT(iRestreamer != NULL);
+    return iRestreamer->Restream(aStreamId, aBytePos + iContainerSize);
 }

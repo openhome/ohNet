@@ -588,6 +588,8 @@ TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
     if (canSeek) {
         iInput.SetBytes(0);
         iSamplesWrittenTotal = aSample;
+        iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iHeader->SampleRate();
+        iController->OutputDecodedStream(iHeader->BitRate(), kBitDepth, iHeader->SampleRate(), iHeader->Channels(), iHeader->Name(), iTrackLengthJiffies, aSample, false);
     }
     return canSeek;
 }
