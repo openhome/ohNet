@@ -172,6 +172,8 @@ private:
     CpiSubscription* iSubscription;
 };
 
+class PendingSubscription;
+
 /**
  * Singleton which manages the pools of Subscriber and active Subscription instances
  */
@@ -193,7 +195,7 @@ public:
      * applies to, this causes obvious problems...
      *
      * Handlers of notification messages who find that FindSubscription() returns
-     * NULL should try calling this function.  WaitForPendingAdds() blocks until all
+     * NULL should try calling this function.  WaitForPendingAdd() blocks until all
      * pending subscriptions have completed.  (It also times out after a reasonable
      * delay to avoid being block indefinitely by any badly behaved client which issues
      * streams of (un)subscribe requests.)  After this completes, FindSubscription()
@@ -207,19 +209,12 @@ public:
      * doesn't exist.  Claims a reference to any subscription returned.  The caller
      * is responsible for releasing this reference.
      *
-     * See also WaitForPendingAdds()
+     * See also WaitForPendingAdd()
      */
     CpiSubscription* FindSubscription(const Brx& aSid);
     void Remove(CpiSubscription& aSubscription);
     void Schedule(CpiSubscription& aSubscription);
     TUint EventServerPort();
-private:
-    void RemovePendingAdd(const Brx& aSid);
-    void CurrentNetworkAdapterChanged();
-    void SubnetListChanged();
-    void HandleInterfaceChange();
-    TBool ReadyForShutdown() const;
-    void Run();
 private:
     class PendingSubscription
     {
@@ -229,6 +224,14 @@ private:
         Brn iSid;
         Semaphore iSem;
     };
+private:
+    void RemovePendingAdd(PendingSubscription* aPending);
+    void RemovePendingAdds(const Brx& aSid);
+    void CurrentNetworkAdapterChanged();
+    void SubnetListChanged();
+    void HandleInterfaceChange();
+    TBool ReadyForShutdown() const;
+    void Run();
 private:
     CpStack& iCpStack;
     OpenHome::Mutex iLock;

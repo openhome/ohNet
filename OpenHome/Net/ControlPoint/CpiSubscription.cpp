@@ -525,7 +525,7 @@ void CpiSubscriptionManager::WaitForPendingAdd(const Brx& aSid)
     }
     catch(Timeout&) {
         iLock.Wait();
-        RemovePendingAdd(aSid);
+        RemovePendingAdd(pending);
         iLock.Signal();
     }
     delete pending;
@@ -537,7 +537,7 @@ void CpiSubscriptionManager::Add(CpiSubscription& aSubscription)
     Brn sid(aSubscription.Sid());
     ASSERT(sid.Bytes() > 0);
     iMap.insert(std::pair<Brn,CpiSubscription*>(sid, &aSubscription));
-    RemovePendingAdd(sid);
+    RemovePendingAdds(sid);
     iLock.Signal();
 }
 
@@ -589,14 +589,26 @@ TUint CpiSubscriptionManager::EventServerPort()
     return server->Port();
 }
 
-void CpiSubscriptionManager::RemovePendingAdd(const Brx& aSid)
+void CpiSubscriptionManager::RemovePendingAdd(PendingSubscription* aPending)
 {
     for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
+        PendingSubscription* pending = iPendingSubscriptions[i];
+        if (pending == aPending) {
+            pending->iSem.Signal();
+            iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
+            break;
+        }
+    }
+}
+
+void CpiSubscriptionManager::RemovePendingAdds(const Brx& aSid)
+{
+    TInt i = iPendingSubscriptions.size() - 1;
+    while (--i >= 0) {
         PendingSubscription* pending = iPendingSubscriptions[i];
         if (pending->iSid == aSid) {
             pending->iSem.Signal();
             iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
-            break;
         }
     }
 }
@@ -616,7 +628,7 @@ void CpiSubscriptionManager::HandleInterfaceChange()
     iLock.Wait();
     // trigger CpiSubscriptionManager::WaitForPendingAdd
     while (iPendingSubscriptions.size() > 0) {
-        RemovePendingAdd(iPendingSubscriptions[0]->iSid);
+        RemovePendingAdds(iPendingSubscriptions[0]->iSid);
     }
     EventServerUpnp* server = iEventServer;
     iEventServer = NULL;
