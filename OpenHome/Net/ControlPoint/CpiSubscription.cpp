@@ -80,7 +80,10 @@ void CpiSubscription::Unsubscribe()
 {
     AddRef();
     iLock.Wait();
-    iEventProcessor = NULL;
+    if (iEventProcessor != NULL) {
+        iEventProcessor->EventUpdatePrepareForDelete();
+        iEventProcessor = NULL;
+    }
     if (iInterruptHandler != NULL) {
         iInterruptHandler->Interrupt();
     }
@@ -334,6 +337,13 @@ void CpiSubscription::EventUpdateEnd()
 {
     if (iEventProcessor != NULL) {
         iEventProcessor->EventUpdateEnd();
+    }
+}
+
+void CpiSubscription::EventUpdatePrepareForDelete()
+{
+    if (iEventProcessor != NULL) {
+        iEventProcessor->EventUpdatePrepareForDelete();
     }
 }
 

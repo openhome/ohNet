@@ -131,6 +131,7 @@ private: // IEventProcessor
     void EventUpdateStart();
     void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
     void EventUpdateEnd();
+    void EventUpdatePrepareForDelete();
 private: // from IStackObject
     void ListObjectDetails() const;
 private:

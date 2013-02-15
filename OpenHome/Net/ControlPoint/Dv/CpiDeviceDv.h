@@ -21,8 +21,8 @@ class CpiDeviceDv : private INonCopyable, private ICpiProtocol, private ICpiDevi
 {
 public:
     CpiDeviceDv(CpStack& aCpStack, DviDevice& aDevice);
+    virtual ~CpiDeviceDv();
     CpiDevice& Device();
-    virtual ~CpiDeviceDv() {}
 private: // ICpiProtocol
     void InvokeAction(Invocation& aInvocation);
     TBool GetAttribute(const char* aKey, Brh& aValue) const;
@@ -44,6 +44,8 @@ private:
     CpiSubscription* iSubscriptionCp;
     typedef std::map<Brn,Brn,BufferCmp> SubscriptionMap;
     SubscriptionMap iSubscriptions;
+    Mutex iLock;
+    Semaphore iShutdownSem;
 };
 
 class Argument;
