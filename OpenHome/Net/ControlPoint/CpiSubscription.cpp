@@ -603,12 +603,12 @@ void CpiSubscriptionManager::RemovePendingAdd(PendingSubscription* aPending)
 
 void CpiSubscriptionManager::RemovePendingAdds(const Brx& aSid)
 {
-    TInt i = iPendingSubscriptions.size() - 1;
-    while (--i >= 0) {
+    for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
         PendingSubscription* pending = iPendingSubscriptions[i];
         if (pending->iSid == aSid) {
             pending->iSem.Signal();
             iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
+            i--;
         }
     }
 }
