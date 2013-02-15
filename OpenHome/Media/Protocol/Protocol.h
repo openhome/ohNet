@@ -17,15 +17,15 @@ class IProtocolManager
 {
 public:
     virtual ~IProtocolManager() {}
-    virtual TBool Stream(const Brx& aUri) = 0;
-    virtual TBool Redirect(const Brx& aUri) = 0;
-    virtual TUint Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer) = 0;
-    virtual void OutputData(const Brx& aData) = 0;
-    virtual void OutputMetadata(const Brx& aMetadata) = 0;
-    virtual void OutputFlush() = 0;
-    virtual void End() = 0;
-    virtual void Lock() = 0;
-    virtual void Unlock() = 0;
+    virtual TBool REVIEW_ME_Stream(const Brx& aUri) = 0;
+    virtual TBool REVIEW_ME_Redirect(const Brx& aUri) = 0;
+    virtual TUint REVIEW_ME_Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer) = 0;
+    virtual void REVIEW_ME_OutputData(const Brx& aData) = 0;
+    virtual void REVIEW_ME_OutputMetadata(const Brx& aMetadata) = 0;
+    virtual void REVIEW_ME_OutputFlush() = 0;
+    virtual void REVIEW_ME_End() = 0;
+    virtual void REVIEW_ME_Lock() = 0;
+    virtual void REVIEW_ME_Unlock() = 0;
 };
 
 class ProtocolManager;
@@ -37,19 +37,19 @@ protected:
     Protocol(Environment& aEnv, IProtocolManager& aManager);
     const OpenHome::Uri& Uri() const;
 protected: // from IProtocolManager
-    TBool Stream(const Brx& aUri);
-    TBool Redirect(const Brx& aUri);
-    TUint Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer);
-    void OutputData(const Brx& aData);
-    void OutputMetadata(const Brx& aMetadata);
-    void OutputFlush();
-    void End();
-    void Lock();
-    void Unlock();
+    TBool REVIEW_ME_Stream(const Brx& aUri);
+    TBool REVIEW_ME_Redirect(const Brx& aUri);
+    TUint REVIEW_ME_Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer);
+    void REVIEW_ME_OutputData(const Brx& aData);
+    void REVIEW_ME_OutputMetadata(const Brx& aMetadata);
+    void REVIEW_ME_OutputFlush();
+    void REVIEW_ME_End();
+    void REVIEW_ME_Lock();
+    void REVIEW_ME_Unlock();
 protected:
-    virtual void Stream() = 0;
-    virtual TBool DoStream(const Brx& aUri);
-    virtual void DoInterrupt(TBool aInterrupt);
+    virtual void REVIEW_ME_Stream() = 0;
+    virtual TBool REVIEW_ME_DoStream(const Brx& aUri);
+    virtual void REVIEW_ME_DoInterrupt(TBool aInterrupt);
 protected:
     Environment& iEnv;
 private:
@@ -68,8 +68,8 @@ protected:
 	ProtocolNetwork(Environment& aEnv, IProtocolManager& aManager);
     TBool Connect(TUint aDefaultPort);
 protected: // from Protocol
-    TBool DoStream(const Brx& aUri);
-    void DoInterrupt(TBool aInterrupt);
+    TBool REVIEW_ME_DoStream(const Brx& aUri);
+    void REVIEW_ME_DoInterrupt(TBool aInterrupt);
 protected: // FIXME - review this
     void Open();
     void Close();
@@ -104,15 +104,15 @@ public:
     void DoStream(const Brx& aUri);
     void DoInterrupt(TBool aInterrupt);
 private: // from IProtocolManager
-    TBool Stream(const Brx& aUri);
-    TBool Redirect(const Brx& aUri);
-    TUint Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer);
-    void OutputData(const Brx& aAudio);
-    void OutputMetadata(const Brx& aMetadata);
-    void OutputFlush();
-    void End();
-    void Lock();
-    void Unlock();
+    TBool REVIEW_ME_Stream(const Brx& aUri);
+    TBool REVIEW_ME_Redirect(const Brx& aUri);
+    TUint REVIEW_ME_Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer);
+    void REVIEW_ME_OutputData(const Brx& aAudio);
+    void REVIEW_ME_OutputMetadata(const Brx& aMetadata);
+    void REVIEW_ME_OutputFlush();
+    void REVIEW_ME_End();
+    void REVIEW_ME_Lock();
+    void REVIEW_ME_Unlock();
 private:
     TBool SetUri(const Brx& aUri);
 private:

@@ -66,7 +66,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv, ProtocolManager& aManager)
     iReaderResponse.AddHeader(iHeaderIcyMetadata);
 }
 
-void ProtocolHttp::Stream()
+void ProtocolHttp::REVIEW_ME_Stream()
 {
     iTotalBytes = iRestreamPos = iOffset = 0;
     iStreamId = ProtocolManager::kStreamIdInvalid;
@@ -94,7 +94,7 @@ void ProtocolHttp::Stream()
         }
         else if (iSeekable) {
             if (iRestream) {
-                OutputFlush();
+                REVIEW_ME_OutputFlush();
                 iOffset = iRestreamPos;
                 iRestream = false;
             }
@@ -114,12 +114,12 @@ TBool ProtocolHttp::Restream(TUint aStreamId, TUint64 aBytePos)
 {
     LOG(kMedia, "ProtocolHttp::Restream\n");
 
-    Lock();
+    REVIEW_ME_Lock();
     TBool streamIsValid = (iStreamId == aStreamId);
     TBool ended = iEnded;
     iRestream = true;
     iRestreamPos = aBytePos;
-    Unlock();
+    REVIEW_ME_Unlock();
     if (!streamIsValid || ended) {
         return false;
     }
@@ -155,7 +155,7 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     // Check for redirection
     if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
         if (iHeaderLocation.Received()) {
-            Redirect(iHeaderLocation.Location());
+            REVIEW_ME_Redirect(iHeaderLocation.Location());
         }
         return EProtocolStreamErrorUnrecoverable;
     }
@@ -182,7 +182,7 @@ ProtocolStreamResult ProtocolHttp::DoRestream(TUint64 aOffset)
 {
     LOG(kMedia, "ProtocolHttp::DoRestream %lld\n", aOffset);
 
-    DoInterrupt(false);
+    REVIEW_ME_DoInterrupt(false);
     Close();
     const TUint code = WriteRequest(aOffset);
     if (code == 0) {
@@ -202,7 +202,7 @@ ProtocolStreamResult ProtocolHttp::DoLiveStream()
 {
     LOG(kMedia, "ProtocolHttp::DoLiveStream\n");
 
-    DoInterrupt(false);
+    REVIEW_ME_DoInterrupt(false);
     Close();
     const TUint code = WriteRequest(0);
     if (code == 0) {
@@ -327,7 +327,7 @@ void ProtocolHttp::ProcessContentType()
     }
     LOG(kMedia, "ProtocolHttp::ProcessContentType Audio\n");
     
-    iStreamId = Start(iTotalBytes, (iTotalBytes == 0? this : NULL), (iSeekable? this : NULL));
+    iStreamId = REVIEW_ME_Start(iTotalBytes, (iTotalBytes == 0? this : NULL), (iSeekable? this : NULL));
     iStarted = true;
 
     ProcessAudio();
@@ -397,7 +397,7 @@ void ProtocolHttp::ProcessAudio()
             if (finite) {
                 if (bytes == 0) {
                     LOG(kMedia, "ProtocolHttp::ProcessAudio completed\n");
-                    End();
+                    REVIEW_ME_End();
                     break;
                 }
                 if (bytes < required) {
@@ -406,7 +406,7 @@ void ProtocolHttp::ProcessAudio()
                 bytes -= required;
             }
             
-            OutputData(iReaderBuf.Read(required));
+            REVIEW_ME_OutputData(iReaderBuf.Read(required));
 
             if (iHeaderIcyMetadata.Received() && dataBytes == 0) { // at start of metadata
                 ExtractMetadata();
@@ -460,7 +460,7 @@ void ProtocolHttp::ProcessPls(ReaderBuffer& aHeader)
             Brn key = parser.Next('=');
             if (key.BeginsWith(Brn("File"))) {
                 Brn value = parser.Next();
-                if (Protocol::Stream(value)) {
+                if (Protocol::REVIEW_ME_Stream(value)) {
                     return;
                 }
             }
@@ -492,7 +492,7 @@ void ProtocolHttp::ProcessM3u(ReaderBuffer& aHeader)
             if (line.BeginsWith(Brn("#"))) {
                 continue; // comment line
             }
-            if (Protocol::Stream(line)) {
+            if (Protocol::REVIEW_ME_Stream(line)) {
                 return;
             }
         }
@@ -598,7 +598,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
                 Brn uri;
                 uriList.FindFirst();
                 while(uriList.FindNext(uri)) {
-                    if (Protocol::Stream(uri)) {
+                    if (Protocol::REVIEW_ME_Stream(uri)) {
                         return;
                     }
                 }
@@ -620,7 +620,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
                                 iMmsUri.Append(iAsxUri.AbsoluteUri().Split(4));
                                 iAsxUri.Replace(iMmsUri);
                             }
-                            if (Protocol::Stream(iAsxUri.AbsoluteUri())) {
+                            if (Protocol::REVIEW_ME_Stream(iAsxUri.AbsoluteUri())) {
                                 return;
                             }
                         }
@@ -682,7 +682,7 @@ void ProtocolHttp::ProcessXml(ReaderBuffer& aHeader)
                     LOG(kMedia, iXmlUri);
                     LOG(kMedia, "]\n");
 
-                    if (Protocol::Stream(iXmlUri)) {
+                    if (Protocol::REVIEW_ME_Stream(iXmlUri)) {
                         return;
                     }
                 }

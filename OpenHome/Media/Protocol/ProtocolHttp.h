@@ -42,7 +42,7 @@ class ProtocolHttp : public ProtocolNetwork, private IRestreamer, private ILiveS
 public:
 	ProtocolHttp(Environment& aEnv, ProtocolManager& aManager);
 private: // from Protocol	
-    void Stream();
+    void REVIEW_ME_Stream();
 private: // from IRestreamer
     TBool Restream(TUint aStreamId, TUint64 aBytePos);
 private: // from ILiveStreamer

@@ -16,56 +16,56 @@ Protocol::Protocol(Environment& aEnv, IProtocolManager& aManager)
 {
 }
 
-TBool Protocol::Stream(const Brx& aUri)
+TBool Protocol::REVIEW_ME_Stream(const Brx& aUri)
 {
     LOG(kMedia, "Protocol::Stream\n");
-    return iManager.Stream(aUri);
+    return iManager.REVIEW_ME_Stream(aUri);
 }
 
-TBool Protocol::Redirect(const Brx& aUri)
+TBool Protocol::REVIEW_ME_Redirect(const Brx& aUri)
 {
     LOG(kMedia, "Protocol::Redirect\n");
-    return iManager.Redirect(aUri);
+    return iManager.REVIEW_ME_Redirect(aUri);
 }
 
-TUint Protocol::Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer)
+TUint Protocol::REVIEW_ME_Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer)
 {
     LOG(kMedia, "Protocol::Start\n");
-    return iManager.Start(aTotalBytes, aLiveStreamer, aRestreamer);
+    return iManager.REVIEW_ME_Start(aTotalBytes, aLiveStreamer, aRestreamer);
 }
 
-void Protocol::OutputData(const Brx& aAudio)
+void Protocol::REVIEW_ME_OutputData(const Brx& aAudio)
 {
     LOG(kMedia, "Protocol::OutputData\n");
-    iManager.OutputData(aAudio);
+    iManager.REVIEW_ME_OutputData(aAudio);
 }
 
-void Protocol::OutputMetadata(const Brx& aMetadata)
+void Protocol::REVIEW_ME_OutputMetadata(const Brx& aMetadata)
 {
     LOG(kMedia, "Protocol::OutputMetadata\n");
-    iManager.OutputMetadata(aMetadata);
+    iManager.REVIEW_ME_OutputMetadata(aMetadata);
 }
 
-void Protocol::OutputFlush()
+void Protocol::REVIEW_ME_OutputFlush()
 {
     LOG(kMedia, "Protocol::OutputFlush\n");
-    iManager.OutputFlush();
+    iManager.REVIEW_ME_OutputFlush();
 }
 
-void Protocol::End()
+void Protocol::REVIEW_ME_End()
 {
     LOG(kMedia, "Protocol::End\n");
-    iManager.End();
+    iManager.REVIEW_ME_End();
 }
 
-void Protocol::Lock()
+void Protocol::REVIEW_ME_Lock()
 {
-    iManager.Lock();
+    iManager.REVIEW_ME_Lock();
 }
 
-void Protocol::Unlock()
+void Protocol::REVIEW_ME_Unlock()
 {
-    iManager.Unlock();
+    iManager.REVIEW_ME_Unlock();
 }
 
 /*TBool Protocol::Restream(TUint64 aOffset)
@@ -75,7 +75,7 @@ void Protocol::Unlock()
 }*/
 
 // Returns true if protocol enabled
-TBool Protocol::DoStream(const Brx& aUri)
+TBool Protocol::REVIEW_ME_DoStream(const Brx& aUri)
 {
     LOG(kMedia, ">Protocol::DoStream\n");
 
@@ -94,7 +94,7 @@ TBool Protocol::DoStream(const Brx& aUri)
 
     iEnabled = false;
     try {
-        Stream();
+        REVIEW_ME_Stream();
         iEnabled = true;
     }
     catch (...) {
@@ -113,7 +113,7 @@ TBool Protocol::DoStream(const Brx& aUri)
     return Restream(aOffset);
 }*/
     
-void Protocol::DoInterrupt(TBool /*aInterrupt*/)
+void Protocol::REVIEW_ME_DoInterrupt(TBool /*aInterrupt*/)
 {
 }
 
@@ -167,10 +167,10 @@ TBool ProtocolNetwork::Connect(TUint aDefaultPort)
 }
 
 // Returns true if protocol enabled
-TBool ProtocolNetwork::DoStream(const Brx& aUri)
+TBool ProtocolNetwork::REVIEW_ME_DoStream(const Brx& aUri)
 {
     try {
-        if (Protocol::DoStream(aUri)) {
+        if (Protocol::REVIEW_ME_DoStream(aUri)) {
             Close();
             return true;
         }
@@ -182,14 +182,14 @@ TBool ProtocolNetwork::DoStream(const Brx& aUri)
     }
 }
     
-void ProtocolNetwork::DoInterrupt(TBool aInterrupt)
+void ProtocolNetwork::REVIEW_ME_DoInterrupt(TBool aInterrupt)
 {
     LOG(kMedia, ">ProtocolNetwork::DoInterrupt\n");
 
-    Protocol::DoInterrupt(aInterrupt);
-    Lock();
+    Protocol::REVIEW_ME_DoInterrupt(aInterrupt);
+    REVIEW_ME_Lock();
     TBool open = iSocketIsOpen;
-    Unlock();
+    REVIEW_ME_Unlock();
     if (open) {
         iTcpClient.Interrupt(aInterrupt);
     }
@@ -202,20 +202,20 @@ void ProtocolNetwork::Open()
     LOG(kMedia, "ProtocolNetwork::Open\n");
 
     iTcpClient.Open(iEnv);
-    Lock();
+    REVIEW_ME_Lock();
     ASSERT(!iSocketIsOpen);
     iSocketIsOpen = true;
-    Unlock();
+    REVIEW_ME_Unlock();
 }
     
 void ProtocolNetwork::Close()
 {
     LOG(kMedia, "ProtocolNetwork::Close\n");
 
-    Lock();
+    REVIEW_ME_Lock();
     TBool open = iSocketIsOpen;
     iSocketIsOpen = false;
-    Unlock();
+    REVIEW_ME_Unlock();
     if (open) {
         iTcpClient.Close();
     }
@@ -247,50 +247,28 @@ void ProtocolManager::DoStream(const Brx& aUri)
     LOG(kMedia, aUri);
     LOG(kMedia, "]\n");
 
-    Lock();
+    REVIEW_ME_Lock();
     iProtocol = NULL;
     iStarted = NULL;
-    Unlock();
+    REVIEW_ME_Unlock();
 
-    Stream(aUri);
+    REVIEW_ME_Stream(aUri);
     
     LOG(kMedia, "<ProtocolManager::DoStream [");
     LOG(kMedia, aUri);
     LOG(kMedia, "]\n");
 }
 
-// restream the last protocol that started (iStarted)
-
-/*TBool ProtocolManager::DoRestream(TUint64 aOffset)
-{
-    LOG(kMedia, ">ProtocolManager::DoRestream offset %lld\n", aOffset);
-    
-    TBool success = false;
-    Lock();
-    Protocol* protocol = iStarted;
-    Unlock();
-    ASSERT(protocol != 0);
-    try {
-        success = protocol->DoRestream(aOffset);
-    }
-    catch (ProtocolRedirect&) {
-        ASSERTS();
-    }
-    
-    LOG(kMedia, "<ProtocolManager::DoRestream\n");
-    return success;
-}*/
-
 // interrupt the current point in the stack (iProtocol)
 void ProtocolManager::DoInterrupt(TBool aInterrupt)
 {
     LOG(kMedia, ">ProtocolManager::DoInterrupt\n");
 
-    Lock();
+    REVIEW_ME_Lock();
     Protocol* protocol = iProtocol;
-    Unlock();
+    REVIEW_ME_Unlock();
     if (protocol != NULL) {
-        protocol->DoInterrupt(aInterrupt);
+        protocol->REVIEW_ME_DoInterrupt(aInterrupt);
     }
         
     LOG(kMedia, "<ProtocolManager::DoInterrupt\n");
@@ -298,7 +276,7 @@ void ProtocolManager::DoInterrupt(TBool aInterrupt)
 
 // Recursive functions called from Protocol Modules
     
-TBool ProtocolManager::Stream(const Brx& aUri)
+TBool ProtocolManager::REVIEW_ME_Stream(const Brx& aUri)
 {
     LOG(kMedia, "ProtocolManager::Stream [");
     LOG(kMedia, aUri);
@@ -308,22 +286,22 @@ TBool ProtocolManager::Stream(const Brx& aUri)
         return (false);
     }
 
-    Lock();
+    REVIEW_ME_Lock();
     iStarted = NULL;
     Protocol* last = iProtocol;
-    Unlock();
+    REVIEW_ME_Unlock();
     TUint index = 0;
     TUint count = iProtocols.size(); 
     while (index < count) {
         Protocol* protocol = iProtocols[index++];
-        Lock();
+        REVIEW_ME_Lock();
         iProtocol = protocol;
-        Unlock();
+        REVIEW_ME_Unlock();
         try {
-            if (protocol->DoStream(iUri)) {
-                Lock();
+            if (protocol->REVIEW_ME_DoStream(iUri)) {
+                REVIEW_ME_Lock();
                 Protocol* protocol = iStarted;
-                Unlock();
+                REVIEW_ME_Unlock();
                 if (protocol != NULL) { 
                     break;
                 }
@@ -337,16 +315,16 @@ TBool ProtocolManager::Stream(const Brx& aUri)
         }
     }
     
-    Lock();
+    REVIEW_ME_Lock();
     iProtocol = last;
     // iStarted indicates that some protocol in the stack started playing a track
     TBool result = (iStarted != NULL);
-    Unlock();
+    REVIEW_ME_Unlock();
 
     return result;
 }
 
-TBool ProtocolManager::Redirect(const Brx& aUri)
+TBool ProtocolManager::REVIEW_ME_Redirect(const Brx& aUri)
 {
     LOG(kMedia, "ProtocolManager::Redirect\n");
 
@@ -388,43 +366,43 @@ const Brx& ProtocolManager::Uri() const
     return iUri;
 }
 
-TUint ProtocolManager::Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer)
+TUint ProtocolManager::REVIEW_ME_Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer)
 {
-    Lock();
+    REVIEW_ME_Lock();
     iStarted = iProtocol;
     TUint streamId = iNextStreamId;
     iNextStreamId += 1;
-    Unlock();
+    REVIEW_ME_Unlock();
     iSupply.Start(aTotalBytes, aLiveStreamer, aRestreamer, streamId);
     return streamId;
 }
 
-void ProtocolManager::OutputData(const Brx& aAudio)
+void ProtocolManager::REVIEW_ME_OutputData(const Brx& aAudio)
 {
     iSupply.OutputData(aAudio);
 }
 
-void ProtocolManager::OutputMetadata(const Brx& aMetadata)
+void ProtocolManager::REVIEW_ME_OutputMetadata(const Brx& aMetadata)
 {
     iSupply.OutputMetadata(aMetadata);
 }
 
-void ProtocolManager::OutputFlush()
+void ProtocolManager::REVIEW_ME_OutputFlush()
 {
     iSupply.OutputFlush();
 }
 
-void ProtocolManager::End()
+void ProtocolManager::REVIEW_ME_End()
 {
     iSupply.End();
 }
 
-void ProtocolManager::Lock()
+void ProtocolManager::REVIEW_ME_Lock()
 {
     iMutex.Wait();
 }
 
-void ProtocolManager::Unlock()
+void ProtocolManager::REVIEW_ME_Unlock()
 {
     iMutex.Signal();
 }
