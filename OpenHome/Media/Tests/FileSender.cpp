@@ -40,6 +40,7 @@ SupplierFile::SupplierFile(const Brx& aFileName)
     catch ( FileOpenError ) {
         Kill();
         Start();
+        Join();
         throw;
     }
 
