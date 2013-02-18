@@ -179,3 +179,9 @@ void CpProxy::EventUpdateEnd()
     }
     iPropertyWriteLock->Signal();
 }
+
+void CpProxy::EventUpdatePrepareForDelete()
+{
+    iPropertyWriteLock->Wait();
+    iPropertyWriteLock->Signal();
+}

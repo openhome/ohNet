@@ -21,10 +21,17 @@ CpiDeviceDv::CpiDeviceDv(CpStack& aCpStack, DviDevice& aDevice)
     : iDeviceDv(aDevice)
     , iSubscriptionDv(NULL)
     , iSubscriptionCp(NULL)
+    , iLock("CpDv")
+    , iShutdownSem("CpDv", 1)
 {
     iDeviceDv.AddWeakRef();
     iDeviceCp = new CpiDevice(aCpStack, iDeviceDv.Udn(), *this, *this, NULL);
     iDeviceCp->SetReady();
+}
+
+CpiDeviceDv::~CpiDeviceDv()
+{
+    iShutdownSem.Wait(); // blocks until all DviSubscriptions are deleted
 }
 
 CpiDevice& CpiDeviceDv::Device()
@@ -126,20 +133,30 @@ IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUs
 void CpiDeviceDv::NotifySubscriptionCreated(const Brx& aSid)
 {
     Brn sid(aSid);
+    iLock.Wait();
     SubscriptionMap::iterator it = iSubscriptions.find(sid);
     if (it == iSubscriptions.end()) {
+        if (iSubscriptions.size() == 0) {
+            iShutdownSem.Wait(); // consume shutdown signal now the map is non-empty
+        }
         iSubscriptions.insert(std::pair<Brn,Brn>(sid, sid));
         iDeviceCp->AddRef();
     }
+    iLock.Signal();
 }
 
 void CpiDeviceDv::NotifySubscriptionDeleted(const Brx& aSid)
 {
     Brn sid(aSid);
+    iLock.Wait();
     SubscriptionMap::iterator it = iSubscriptions.find(sid);
     ASSERT(it != iSubscriptions.end());
     iSubscriptions.erase(it);
+    if (iSubscriptions.size() == 0) {
+        iShutdownSem.Signal(); // unblock shutdown now we have no subscriptions that may be trying to event out updates
+    }
     iDeviceCp->RemoveRef();
+    iLock.Signal();
 }
 
 void CpiDeviceDv::NotifySubscriptionExpired(const Brx& /*aSid*/)
