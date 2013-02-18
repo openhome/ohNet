@@ -24,7 +24,15 @@ private:
     TUint iBytes;
 };
 
-class ProtocolHttp : public ProtocolNetwork
+enum ProtocolStreamResult
+{
+    EProtocolStreamSuccess
+   ,EProtocolStreamErrorRecoverable
+   ,EProtocolStreamErrorUnrecoverable
+   ,EProtocolStreamLive
+};
+
+class ProtocolHttp : public ProtocolNetwork, private IRestreamer, private ILiveStreamer
 {
     static const TUint kAudioBytes = 4 * 1024;
     static const TUint kEntityBufferBytes = 2 * 1024;
@@ -33,10 +41,17 @@ class ProtocolHttp : public ProtocolNetwork
     static const TUint kMaxUriBytes = 1024;
 public:
 	ProtocolHttp(Environment& aEnv, ProtocolManager& aManager);
-public: // from Protocol	
+private: // from Protocol	
     void Stream();
-    TBool Restream(TUint64 aOffset);
+private: // from IRestreamer
+    TBool Restream(TUint aStreamId, TUint64 aBytePos);
+private: // from ILiveStreamer
+    TBool StartLiveStream(TUint aStreamId);
 private:
+    ProtocolStreamResult DoStream();
+    ProtocolStreamResult DoRestream(TUint64 aOffset);
+    ProtocolStreamResult DoLiveStream();
+    TUint WriteRequest(TUint64 aOffset);
     void ProcessContentType();
     void ProcessPls(ReaderBuffer& aHeader);
     void ProcessM3u(ReaderBuffer& aHeader);
@@ -53,15 +68,21 @@ private:
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderLocation iHeaderLocation;
     HeaderIcyMetadata iHeaderIcyMetadata;
-    TUint64 iTotalBytes;
-    TBool iSeekable;
-    TBool iSnaffling;
     Bws<kIcyMetadataBytes> iIcyMetadata;
     Bws<kEntityLineBytes> iLine;
     Bws<kAudioBytes> iAudio;
     Bws<kMaxUriBytes> iMmsUri;
     Bws<kMaxUriBytes> iXmlUri;
     OpenHome::Uri iAsxUri;
+    TUint64 iTotalBytes;
+    TUint iStreamId;
+    TBool iSeekable;
+    TBool iRestream;
+    TBool iLive;
+    TBool iStarted;
+    TBool iEnded;
+    TUint64 iRestreamPos;
+    TUint64 iOffset;
 };
 
 class UriEntry

@@ -18,10 +18,10 @@ public:
     ~CodecFlac();
 private: // from CodecBase
     TBool Recognise(const Brx& aData);
+    void StreamInitialise();
     void Process();
+    TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
-private:
-    void Initialise();
 public:
     FLAC__StreamDecoderReadStatus CallbackRead(const FLAC__StreamDecoder* aDecoder,
                                                TUint8 aBuffer[],  TUint* aBytes);
@@ -44,13 +44,17 @@ private:
     TByte iBuf[DecodedAudio::kMaxBytes];
     FLAC__StreamDecoder* iDecoder;
     Brn iName;
+    TUint64 iSampleStart;
     TUint64 iTrackOffset;
-    TBool iMsgFormatSent;
+    TUint iSampleRate;
+    TUint64 iTrackLengthJiffies;
+    TBool iMsgFormatRequired;
     TBool iOgg;
+    TUint iStreamId;
 };
 
-}; // namespace Codec
-}; // namespace Media
-}; // namespace OpenHome
+} // namespace Codec
+} // namespace Media
+} // namespace OpenHome
 
 #endif // HEADER_PIPELINE_CODEC_FLAC

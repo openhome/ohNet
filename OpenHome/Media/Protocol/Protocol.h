@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Media/Msg.h>
 
 namespace OpenHome {
 class Environment;
@@ -18,9 +19,10 @@ public:
     virtual ~IProtocolManager() {}
     virtual TBool Stream(const Brx& aUri) = 0;
     virtual TBool Redirect(const Brx& aUri) = 0;
-    virtual TBool Start(TUint64 aTotalBytes, TBool aLiveStream, TBool aSeekableStream) = 0;
+    virtual TUint Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer) = 0;
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
+    virtual void OutputFlush() = 0;
     virtual void End() = 0;
     virtual void Lock() = 0;
     virtual void Unlock() = 0;
@@ -37,17 +39,16 @@ protected:
 protected: // from IProtocolManager
     TBool Stream(const Brx& aUri);
     TBool Redirect(const Brx& aUri);
-    TBool Start(TUint64 aTotalBytes, TBool aLiveStream, TBool aSeekableStream);
+    TUint Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
+    void OutputFlush();
     void End();
     void Lock();
     void Unlock();
 protected:
     virtual void Stream() = 0;
-    virtual TBool Restream(TUint64 aOffset); // default implementation ASSERTS
     virtual TBool DoStream(const Brx& aUri);
-    virtual TBool DoRestream(TUint64 aOffset);
     virtual void DoInterrupt(TBool aInterrupt);
 protected:
     Environment& iEnv;
@@ -68,15 +69,13 @@ protected:
     TBool Connect(TUint aDefaultPort);
 protected: // from Protocol
     TBool DoStream(const Brx& aUri);
-    TBool DoRestream(TUint64 aOffset);
     void DoInterrupt(TBool aInterrupt);
-private:
+protected: // FIXME - review this
     void Open();
     void Close();
 protected:
     Srs<kReadBufferBytes> iReaderBuf;
     Sws<kWriteBufferBytes> iWriterBuf;
-private:
     SocketTcpClient iTcpClient;
     TBool iSocketIsOpen;
 };
@@ -85,9 +84,10 @@ class ISupply
 {
 public:
     virtual ~ISupply() {}
-    virtual TBool Start(TUint64 aTotalBytes, TBool aLiveStream, TBool aSeekable) = 0;
+    virtual void Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer, TUint aStreamId) = 0;
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
+    virtual void OutputFlush() = 0;
     virtual void End() = 0;
 };
 
@@ -95,19 +95,21 @@ class ProtocolManager : public IProtocolManager, private INonCopyable
 {
     static const TUint kMaxUriBytes = 1024;
 public:
+    static const TUint kStreamIdInvalid = 0;
+public:
     ProtocolManager(ISupply& aSupply);
     virtual ~ProtocolManager();
     void Add(Protocol* aProtocol);
     const Brx& Uri() const;
     void DoStream(const Brx& aUri);
-    TBool DoRestream(TUint64 aOffset);
     void DoInterrupt(TBool aInterrupt);
 private: // from IProtocolManager
     TBool Stream(const Brx& aUri);
     TBool Redirect(const Brx& aUri);
-    TBool Start(TUint64 aTotalBytes, TBool aLiveStream, TBool aSeekableStream);
+    TUint Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer);
     void OutputData(const Brx& aAudio);
     void OutputMetadata(const Brx& aMetadata);
+    void OutputFlush();
     void End();
     void Lock();
     void Unlock();
@@ -120,9 +122,10 @@ private:
     Bws<kMaxUriBytes> iUri;
     Protocol* iProtocol;
     Protocol* iStarted;
+    TUint iNextStreamId;
 };
 
-}; // namespace Media
-}; // namespace OpenHome
+} // namespace Media
+} // namespace OpenHome
 
 #endif  // HEADER_PIPELINE_PROTOCOL

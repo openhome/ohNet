@@ -287,11 +287,11 @@ Msg* SuiteStopper::Pull()
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false);
+        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, NULL);
     case EMsgTrack:
         return iMsgFactory->CreateMsgTrack();
     case EMsgEncodedStream:
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, false, false, 0, NULL);
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, NULL, NULL);
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgHalt:

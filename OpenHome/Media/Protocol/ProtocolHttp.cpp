@@ -59,7 +59,6 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv, ProtocolManager& aManager)
     , iReaderResponse(aEnv, iReaderBuf)
     , iTotalBytes(0)
     , iSeekable(false)
-    , iSnaffling(false)
 {
     iReaderResponse.AddHeader(iHeaderContentType);
     iReaderResponse.AddHeader(iHeaderContentLength);
@@ -69,6 +68,74 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv, ProtocolManager& aManager)
 
 void ProtocolHttp::Stream()
 {
+    iTotalBytes = iRestreamPos = iOffset = 0;
+    iStreamId = ProtocolManager::kStreamIdInvalid;
+
+    iSeekable = iRestream = iLive = iStarted = iEnded = false;
+
+    ProtocolStreamResult res = DoStream();
+    if (res == EProtocolStreamErrorUnrecoverable) {
+        return;
+    }
+    if (res == EProtocolStreamLive) {
+        // FIXME - wait on semaphore
+        // FIXME - ...which will require that Interrupt signals the semaphore
+    }
+    for (;;) {
+        if (iEnded) {
+            break;
+        }
+        if (!iStarted) {
+            // FIXME - msg to indicate bad track
+            break;
+        }
+        if (iLive) {
+            res = DoLiveStream();
+        }
+        else if (iSeekable) {
+            if (iRestream) {
+                OutputFlush();
+                iOffset = iRestreamPos;
+                iRestream = false;
+            }
+            res = DoRestream(iOffset);
+        }
+        if (res == EProtocolStreamErrorUnrecoverable) {
+            // FIXME - msg to indicate bad track
+            break;
+        }
+        if (!iEnded) {
+            Thread::Sleep(50);
+        }
+    }
+}
+
+TBool ProtocolHttp::Restream(TUint aStreamId, TUint64 aBytePos)
+{
+    LOG(kMedia, "ProtocolHttp::Restream\n");
+
+    Lock();
+    TBool streamIsValid = (iStreamId == aStreamId);
+    TBool ended = iEnded;
+    iRestream = true;
+    iRestreamPos = aBytePos;
+    Unlock();
+    if (!streamIsValid || ended) {
+        return false;
+    }
+    iTcpClient.Interrupt(true);
+
+    return true;
+}
+
+TBool ProtocolHttp::StartLiveStream(TUint /*aStreamId*/)
+{
+    // FIXME
+    return false;
+}
+
+ProtocolStreamResult ProtocolHttp::DoStream()
+{
     const OpenHome::Uri& uri = Uri();
     LOG(kMedia, "ProtocolHttp::Stream ");
     LOG(kMedia, uri.AbsoluteUri());
@@ -76,85 +143,81 @@ void ProtocolHttp::Stream()
 
     if (uri.Scheme() != Brn("http")) {
         LOG(kMedia, "ProtocolHttp::Stream Scheme not recognised\n");
-        return;
+        return EProtocolStreamErrorUnrecoverable;
     }
     
     iTotalBytes = 0;
     iSeekable = false;
-
-    if (!Connect(80)) {
-        LOG(kMedia, "ProtocolHttp::Stream Connection failure\n");
-        return;
+    TUint code = WriteRequest(0);
+    if (code == 0) {
+        return EProtocolStreamErrorUnrecoverable;
     }
-        
-    try {
-        LOG(kMedia, "ProtocolHttp::Stream send request\n");
-        iWriterRequest.WriteMethod(Http::kMethodGet, uri.PathAndQuery(), Http::eHttp11);
-        Http::WriteHeaderHost(iWriterRequest, uri);
-        iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
-        Http::WriteHeaderConnectionClose(iWriterRequest);
-        HeaderIcyMetadata::Write(iWriterRequest);
-        Http::WriteHeaderRangeFirstOnly(iWriterRequest, 0);
-        iWriterRequest.WriteFlush();
-    }
-    catch(WriterError&) {
-        LOG(kMedia, "ProtocolHttp::Stream writer error\n");
-        return;
-    }
-    
-    try {
-        LOG(kMedia, "ProtocolHttp::Stream read response\n");
-        iReaderResponse.Read();
-    }
-    catch(HttpError&) {
-        LOG(kMedia, "ProtocolHttp::Stream http error\n");
-        return;
-    }
-    catch(ReaderError&) {
-        LOG(kMedia, "ProtocolHttp::Stream reader error\n");
-        return;
-    }
-    
-    const TUint code = iReaderResponse.Status().Code();
-    LOG(kMedia, "ProtocolHttp::Stream response code %d\n", code);
     // Check for redirection
     if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
         if (iHeaderLocation.Received()) {
             Redirect(iHeaderLocation.Location());
         }
-        return;
+        return EProtocolStreamErrorUnrecoverable;
     }
     
     iTotalBytes = iHeaderContentLength.ContentLength();
-    // Check for success seekable
+    if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
+        LOG(kMedia, "ProtocolHttp::Stream Failed\n");
+        return EProtocolStreamErrorUnrecoverable;
+    }
     if (code == HttpStatus::kPartialContent.Code()) {
         if (iTotalBytes > 0) {
             iSeekable = true;
         }
         LOG(kMedia, "ProtocolHttp::Connect 'Partial Content' seekable=%d (%lld bytes)\n", iSeekable, iTotalBytes);
-        ProcessContentType();
-        return;
-    }        
-    
-    // Check for success non-seekable
-    if (code == HttpStatus::kOk.Code()) {
-        iSeekable = false;
-        LOG(kMedia, "ProtocolHttp::Connect 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
-        ProcessContentType();
-        return;
     }
-        
-    LOG(kMedia, "ProtocolHttp::Stream Failed\n");
+    else { // code == HttpStatus::kOk.Code()
+        LOG(kMedia, "ProtocolHttp::Connect 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
+    }
+    ProcessContentType();
+    return (iEnded? EProtocolStreamSuccess : EProtocolStreamErrorRecoverable);
 }
 
-TBool ProtocolHttp::Restream(TUint64 aOffset)
+ProtocolStreamResult ProtocolHttp::DoRestream(TUint64 aOffset)
 {
-    LOG(kMedia, "ProtocolHttp::Restream %lld\n", aOffset);
+    LOG(kMedia, "ProtocolHttp::DoRestream %lld\n", aOffset);
 
     DoInterrupt(false);
+    Close();
+    const TUint code = WriteRequest(aOffset);
+    if (code == 0) {
+        return EProtocolStreamErrorRecoverable;
+    }
+    iTotalBytes = iHeaderContentLength.ContentLength();
+    if (code != HttpStatus::kPartialContent.Code()) {
+        LOG(kMedia, "ProtocolHttp::DoRestream Not seekable\n");
+        return EProtocolStreamErrorUnrecoverable;
+    }       
+
+    ProcessAudio();
+    return (iEnded? EProtocolStreamSuccess : EProtocolStreamErrorRecoverable);
+}
+
+ProtocolStreamResult ProtocolHttp::DoLiveStream()
+{
+    LOG(kMedia, "ProtocolHttp::DoLiveStream\n");
+
+    DoInterrupt(false);
+    Close();
+    const TUint code = WriteRequest(0);
+    if (code == 0) {
+        return EProtocolStreamErrorRecoverable;
+    }
+
+    ProcessAudio();
+    return (iEnded? EProtocolStreamSuccess : EProtocolStreamErrorRecoverable);
+}
+
+TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
+{
     if (!Connect(80)) {
         LOG(kMedia, "ProtocolHttp::Restream Connection failure\n");
-        return true;
+        return 0;
     }
         
     try {
@@ -169,7 +232,7 @@ TBool ProtocolHttp::Restream(TUint64 aOffset)
     }
     catch(WriterError&) {
         LOG(kMedia, "ProtocolHttp::Restream writer error\n");
-        return true;
+        return 0;
     }
     
     try {
@@ -178,24 +241,15 @@ TBool ProtocolHttp::Restream(TUint64 aOffset)
     }
     catch(HttpError&) {
         LOG(kMedia, "ProtocolHttp::Restream http error\n");
-        return true;
+        return 0;
     }
     catch(ReaderError&) {
         LOG(kMedia, "ProtocolHttp::Restream reader error\n");
-        return true;
+        return 0;
     }
-    
     const TUint code = iReaderResponse.Status().Code();
-    LOG(kMedia, "ProtocolHttp::Restream response code %d\n", code);
-    iTotalBytes = iHeaderContentLength.ContentLength();
-    // Check for success seekable
-    if (code != HttpStatus::kPartialContent.Code()) {
-        LOG(kMedia, "ProtocolHttp::Restream Not seekable\n");
-        return false; // return with unrecoverable error if connected but file/server problem arisen
-    }       
-
-    ProcessAudio();
-    return true;
+    LOG(kMedia, "ProtocolHttp response code %d\n", code);
+    return code;
 }
 
 void ProtocolHttp::ProcessContentType()
@@ -268,15 +322,13 @@ void ProtocolHttp::ProcessContentType()
             return;
         }
     }
-    catch (ReaderError) {
+    catch (ReaderError&) {
         return;
     }
     LOG(kMedia, "ProtocolHttp::ProcessContentType Audio\n");
     
-    if (!Start(iTotalBytes, iTotalBytes == 0, iSeekable)) {
-        LOG(kMedia, "ProtocolHttp::ProcessContentType Start rejected\n");
-        return;
-    }
+    iStreamId = Start(iTotalBytes, (iTotalBytes == 0? this : NULL), (iSeekable? this : NULL));
+    iStarted = true;
 
     ProcessAudio();
 }

@@ -52,7 +52,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
-    iContainer = new Codec::Container(/**iEncodedAudioReservoir*/*iLoggerEncodedAudioReservoir);
+    iContainer = new Codec::Container(*iMsgFactory, /**iEncodedAudioReservoir*/*iLoggerEncodedAudioReservoir);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
     iCodecController = new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer, *iDecodedAudioReservoir);
     // no iLoggerCodecController since CodecController pushes to its right and Logger only pulls
@@ -231,6 +231,12 @@ void PipelineManager::Stop()
         iSupplier.Flush(iMsgFactory->CreateMsgFlush());
         iStatus = EFlushing;
     }
+}
+
+TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
+{
+    // FIXME - update iTargetStatus
+    return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
 void PipelineManager::PipelineHalted()

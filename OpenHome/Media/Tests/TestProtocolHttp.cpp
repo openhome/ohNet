@@ -7,6 +7,7 @@
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Wav.h>
+#include <OpenHome/Media/Codec/Mp3.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
@@ -75,9 +76,10 @@ private: // from ISupplier
     void Flush(Msg* aMsg);
     void Quit(Msg* aMsg);
 private: // from ISupply
-    TBool Start(TUint64 aTotalBytes, TBool aLiveStream, TBool aSeekable);
+    void Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
+    void OutputFlush();
     void End();
 private:
     MsgFactory* iMsgFactory;
@@ -89,6 +91,7 @@ private:
 class TestProtocolHttp : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kSeekStepSeconds = 10;
 public:
     TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
     virtual ~TestProtocolHttp();
@@ -106,6 +109,9 @@ private:
     Net::DvDeviceStandard* iDevice;
     DriverSongcastSender* iDriver;
     Brh iUrl;
+    TUint iSeconds;
+    TUint iTrackDurationSeconds;
+    TUint iStreamId;
 };
 
 } // namespace Media
@@ -164,12 +170,12 @@ void SupplierProtocolHttp::Quit(Msg* aMsg)
     iPipeline->Push(aMsg);
 }
 
-TBool SupplierProtocolHttp::Start(TUint64 aTotalBytes, TBool aLiveStream, TBool aSeekable)
+void SupplierProtocolHttp::Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer, TUint aStreamId)
 {
-    Log::Print("FIXME - Start: totalBytes=%llu, liveStream=%u, seekable=%u\n", aTotalBytes, aLiveStream, aSeekable);
-    Msg* msg = iMsgFactory->CreateMsgTrack();
+    Msg* msg = iMsgFactory->CreateMsgTrack(); // FIXME - should output this as soon as PipelineManager is told to play a track
     iPipeline->Push(msg);
-    return true;
+    msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), aTotalBytes, aStreamId, aRestreamer, aLiveStreamer);
+    iPipeline->Push(msg);
 }
 
 void SupplierProtocolHttp::OutputData(const Brx& aData)
@@ -193,6 +199,12 @@ void SupplierProtocolHttp::OutputMetadata(const Brx& aMetadata)
     iPipeline->Push(metaText);
 }
 
+void SupplierProtocolHttp::OutputFlush()
+{
+    Msg* flush = iMsgFactory->CreateMsgFlush();
+    iPipeline->Push(flush);
+}
+
 void SupplierProtocolHttp::End()
 {
     Log::Print("FIXME - End\n");
@@ -203,11 +215,13 @@ void SupplierProtocolHttp::End()
 
 TestProtocolHttp::TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
     : iUrl(aUrl)
+    , iStreamId(0)
 {
     iSupplier = new SupplierProtocolHttp(aEnv);
     iPipeline = new PipelineManager(iInfoAggregator, *iSupplier, *this, kMaxDriverJiffies);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
+    iPipeline->AddCodec(new Codec::CodecMp3());
 
     iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
@@ -279,6 +293,21 @@ int TestProtocolHttp::Run()
         case 'q':
             quit = true;
             break;
+        case '+':
+        {
+            TUint seekAbsolute = iSeconds + kSeekStepSeconds;
+            if (seekAbsolute > iTrackDurationSeconds) {
+                seekAbsolute = iTrackDurationSeconds;
+            }
+            (void)iPipeline->Seek(1, iStreamId, seekAbsolute);
+        }
+            break;
+        case '-':
+        {
+            const TUint seekAbsolute = (iSeconds > kSeekStepSeconds? iSeconds - kSeekStepSeconds : 0);
+            (void)iPipeline->Seek(1, 1, seekAbsolute);
+        }
+            break;
         default:
             break;
         }
@@ -336,6 +365,8 @@ void TestProtocolHttp::NotifyMetaText(const Brx& aText)
 
 void TestProtocolHttp::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
+    iSeconds = aSeconds;
+    iTrackDurationSeconds = aTrackDurationSeconds;
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TIME {secs=%u; duration=%u}\n", aSeconds, aTrackDurationSeconds);
 #endif
@@ -343,6 +374,7 @@ void TestProtocolHttp::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 
 void TestProtocolHttp::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
+    iStreamId = aStreamInfo.StreamId();
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
            aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels());
@@ -356,8 +388,13 @@ void TestProtocolHttp::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 int CDECL main(int aArgc, char* aArgv[])
 {
+    /* Useful test urls:
+    http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav
+    http://10.2.9.146:26125/content/c2/b16/f44100/d35587-co6318.flac
+    http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3
+    */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn(""), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocolHttp"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);

@@ -75,9 +75,13 @@ Msg* Reporter::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Reporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iTimeInvalid = true;
-    iTrackDurationSeconds = (TUint)(aMsg->StreamInfo().TrackLength() / Jiffies::kJiffiesPerSecond);
-    iObserver.NotifyStreamInfo(aMsg->StreamInfo());
+    iTrackDurationSeconds = (TUint)(streamInfo.TrackLength() / Jiffies::kJiffiesPerSecond);
+    TUint64 jiffies = (streamInfo.SampleStart() * Jiffies::kJiffiesPerSecond) / streamInfo.SampleRate();
+    iSeconds = (TUint)(jiffies / Jiffies::kJiffiesPerSecond);
+    iJiffies = jiffies % Jiffies::kJiffiesPerSecond;
+    iObserver.NotifyStreamInfo(streamInfo);
     return aMsg;
 }
 
@@ -92,10 +96,7 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
 
 Msg* Reporter::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iSeconds = 0;
-    iJiffies = 0;
-    iObserver.NotifyTrack();
-    iObserver.NotifyMetaText(aMsg->MetaText());
+    ASSERTS(); // don't expect to see MsgEncodedStream at this stage of the pipeline
     return aMsg;
 }
 

@@ -24,7 +24,7 @@ Id3v2::Id3v2(IContainer& aContainer)
     if (strncmp((const TChar*)(data.Ptr()), kContainerStart, sizeof(kContainerStart)-1) != 0) {
         THROW(MediaCodecId3v2NotFound); 
     }
-    if (data[3] != 2 || data[4] > 4) { // We only support upto Id3v2.4
+    if (data[3] > 4) { // We only support upto Id3v2.4
         THROW(MediaCodecId3v2NotFound);
     }
     const TBool hasFooter = ((data[5] & 0x10) != 0); // FIXME - docs suggest this is an experimental field rather than footer indicator
@@ -36,6 +36,7 @@ Id3v2::Id3v2(IContainer& aContainer)
             THROW(MediaCodecId3v2NotFound);
         }
     }
+    
     iContainerSize = ((data[6] << 21) | (data[7] << 14) | (data[8] << 7) | data[9]);
     iContainerSize += 10; // for header
     if(hasFooter) {

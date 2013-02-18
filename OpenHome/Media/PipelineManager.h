@@ -82,6 +82,7 @@ public:
     void Play();
     void Pause();
     void Stop();
+    TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
 private:
     void Quit();
     void NotifyStatus();

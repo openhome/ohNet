@@ -52,13 +52,25 @@ def configure(conf):
         conf.env.append_value('STLIB_OHNET', ['platform'])
 
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
+
     # Setup FLAC lib options 
     conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL']
     conf.env.INCLUDES_FLAC = [
         'flac-1.2.1/src/libFLAC/include',
         'flac-1.2.1/include',
         'libogg-1.1.3/include',
-    ]
+        ]
+
+    # Setup Mad (mp3) lib options
+    fixed_point_model = 'FPM_INTEL'
+    if conf.options.dest_platform in ['Linux-ARM', 'Libosa-core2']:
+        fixed_point_model = 'FPM_ARM'
+    elif conf.options.dest_platform in ['Libosa-core1']:
+        fixed_point_model = 'FPM_PPC'
+    conf.env.DEFINES_MAD = [fixed_point_model, 'OPT_ACCURACY']
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.DEFINES_MAD.append('inline=__inline')
+    conf.env.INCLUDES_MAD = ['libmad-0.15.1b']
 
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
@@ -159,6 +171,25 @@ def build(bld):
             use=['FLAC', 'OHNET'],
             target='CodecFlac')
 
+    # MP3
+    bld.stlib(
+            source=[
+                'OpenHome/Media/Codec/Mp3.cpp',
+                'libmad-0.15.1b/version.c',
+                'libmad-0.15.1b/fixed.c',
+                'libmad-0.15.1b/bit.c',
+                'libmad-0.15.1b/timer.c',
+                'libmad-0.15.1b/stream.c',
+                'libmad-0.15.1b/frame.c',
+                'libmad-0.15.1b/synth.c',
+                'libmad-0.15.1b/decoder.c',
+                'libmad-0.15.1b/layer12.c',
+                'libmad-0.15.1b/layer3.c',
+                'libmad-0.15.1b/huffman.c',
+            ],
+            use=['MAD', 'OHNET', 'OSA'],
+            target='CodecMp3')
+
     # Tests
     bld.stlib(
             source=[
@@ -172,7 +203,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
-                'OpenHome/Media/Tests/FileSender.cpp',
+                #'OpenHome/Media/Tests/FileSender.cpp',
             ],
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
             target='ohMediaPlayerTestUtils')
@@ -208,13 +239,13 @@ def build(bld):
             source='OpenHome/Media/Tests/TestPipelineMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline')
-    bld.program(
-            source='OpenHome/Media/Tests/FileSenderMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
-            target='FileSender')
+    #bld.program(
+    #        source='OpenHome/Media/Tests/FileSenderMain.cpp',
+    #        use=['OHNET', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
+    #        target='FileSender')
     bld.program(
             source='OpenHome/Media/Tests/TestProtocolHttp.cpp',
-            use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'ohMediaPlayerTestUtils'],
             target='TestProtocolHttp')
     bld.program(
             source='OpenHome/Media/Tests/TestPipeline2.cpp',

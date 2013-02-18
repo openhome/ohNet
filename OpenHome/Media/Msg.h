@@ -388,6 +388,8 @@ private:
     TUint iNumChannels;
 };
 
+class ILiveStreamer;
+
 class DecodedStreamInfo
 {
     friend class MsgDecodedStream;
@@ -403,9 +405,10 @@ public:
     TUint64 TrackLength() const { return iTrackLength; }
     TUint64 SampleStart() const { return iSampleStart; }
     TBool Lossless() const { return iLossless; }
+    ILiveStreamer* LiveStreamer() const { return iLiveStreamer; }
 private:
     DecodedStreamInfo();
-    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
+    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, ILiveStreamer* aLiveStreamer);
 private:
     TUint iStreamId;
     TUint iBitRate;
@@ -416,6 +419,7 @@ private:
     TUint64 iTrackLength; // jiffies
     TUint64 iSampleStart;
     TBool iLossless;
+    ILiveStreamer* iLiveStreamer;
 };
 
 class MsgDecodedStream : public Msg
@@ -425,7 +429,7 @@ public:
     MsgDecodedStream(AllocatorBase& aAllocator);
     const DecodedStreamInfo& StreamInfo() const;
 private:
-    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
+    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, ILiveStreamer* aLiveStreamer);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -457,24 +461,22 @@ public:
     MsgEncodedStream(AllocatorBase& aAllocator);
     const Brx& Uri() const;
     const Brx& MetaText() const;
-    TUint TotalBytes() const;
-    TBool IsSeekable() const;
-    TBool IsLive() const;
+    TUint64 TotalBytes() const;
     TUint StreamId() const;
     IRestreamer* Restreamer() const;
+    ILiveStreamer* LiveStreamer() const;
 private:
-    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint aTotalBytes, TBool aSeekable, TBool aLive, TUint aStreamId, IRestreamer* aRestreamer);
+    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, IRestreamer* aRestreamer, ILiveStreamer* aLiveStreamer);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     Bws<kMaxUriBytes> iUri;
     Bws<kMaxMetaTextBytes> iMetaText;
-    TUint iTotalBytes;
-    TBool iSeekable;
-    TBool iLive;
+    TUint64 iTotalBytes;
     TUint iStreamId;
     IRestreamer* iRestreamer;
+    ILiveStreamer* iLiveStreamer;
 };
 
 class MsgMetaText : public Msg
@@ -689,6 +691,20 @@ private:
     Msg& iMsg;
 };
 
+class IRestreamer
+{
+public:
+    virtual ~IRestreamer() {}
+    virtual TBool Restream(TUint aStreamId, TUint64 aBytePos) = 0;
+};
+
+class ILiveStreamer
+{
+public:
+    virtual ~ILiveStreamer() {}
+    virtual TBool StartLiveStream(TUint aStreamId) = 0;
+};
+
 class IPipelineElementUpstream
 {
 public:
@@ -714,9 +730,9 @@ public:
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
-    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
+    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, ILiveStreamer* aLiveStreamer);
     MsgTrack* CreateMsgTrack();
-    MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint aTotalBytes, TBool aSeekable, TBool aLive, TUint aStreamId, IRestreamer* aRestreamer);
+    MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, IRestreamer* aRestreamer, ILiveStreamer* aLiveStreamer);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt();
     MsgFlush* CreateMsgFlush();

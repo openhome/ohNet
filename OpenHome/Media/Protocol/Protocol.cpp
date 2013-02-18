@@ -28,10 +28,10 @@ TBool Protocol::Redirect(const Brx& aUri)
     return iManager.Redirect(aUri);
 }
 
-TBool Protocol::Start(TUint64 aTotalBytes, TBool aLiveStream, TBool aSeekableStream)
+TUint Protocol::Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer)
 {
     LOG(kMedia, "Protocol::Start\n");
-    return iManager.Start(aTotalBytes, aLiveStream, aSeekableStream);
+    return iManager.Start(aTotalBytes, aLiveStreamer, aRestreamer);
 }
 
 void Protocol::OutputData(const Brx& aAudio)
@@ -44,6 +44,12 @@ void Protocol::OutputMetadata(const Brx& aMetadata)
 {
     LOG(kMedia, "Protocol::OutputMetadata\n");
     iManager.OutputMetadata(aMetadata);
+}
+
+void Protocol::OutputFlush()
+{
+    LOG(kMedia, "Protocol::OutputFlush\n");
+    iManager.OutputFlush();
 }
 
 void Protocol::End()
@@ -62,11 +68,11 @@ void Protocol::Unlock()
     iManager.Unlock();
 }
 
-TBool Protocol::Restream(TUint64 /*aOffset*/)
+/*TBool Protocol::Restream(TUint64 aOffset)
 {
     ASSERTS();
     return false;
-}
+}*/
 
 // Returns true if protocol enabled
 TBool Protocol::DoStream(const Brx& aUri)
@@ -101,11 +107,11 @@ TBool Protocol::DoStream(const Brx& aUri)
     return true;
 }
     
-TBool Protocol::DoRestream(TUint64 aOffset)
+/*TBool Protocol::DoRestream(TUint64 aOffset)
 {
     LOG(kMedia, "Protocol::DoRestream\n");
     return Restream(aOffset);
-}
+}*/
     
 void Protocol::DoInterrupt(TBool /*aInterrupt*/)
 {
@@ -176,13 +182,6 @@ TBool ProtocolNetwork::DoStream(const Brx& aUri)
     }
 }
     
-TBool ProtocolNetwork::DoRestream(TUint64 aOffset)
-{
-    TBool result = Protocol::DoRestream(aOffset);
-    Close();
-    return result;
-}
-    
 void ProtocolNetwork::DoInterrupt(TBool aInterrupt)
 {
     LOG(kMedia, ">ProtocolNetwork::DoInterrupt\n");
@@ -190,7 +189,7 @@ void ProtocolNetwork::DoInterrupt(TBool aInterrupt)
     Protocol::DoInterrupt(aInterrupt);
     Lock();
     TBool open = iSocketIsOpen;
-    Unlock();    
+    Unlock();
     if (open) {
         iTcpClient.Interrupt(aInterrupt);
     }
@@ -230,6 +229,7 @@ ProtocolManager::ProtocolManager(ISupply& aSupply)
     , iMutex("PMAN")
     , iProtocol(0)
     , iStarted(0)
+    , iNextStreamId(kStreamIdInvalid + 1)
 {
 }
 
@@ -261,7 +261,7 @@ void ProtocolManager::DoStream(const Brx& aUri)
 
 // restream the last protocol that started (iStarted)
 
-TBool ProtocolManager::DoRestream(TUint64 aOffset)
+/*TBool ProtocolManager::DoRestream(TUint64 aOffset)
 {
     LOG(kMedia, ">ProtocolManager::DoRestream offset %lld\n", aOffset);
     
@@ -279,7 +279,7 @@ TBool ProtocolManager::DoRestream(TUint64 aOffset)
     
     LOG(kMedia, "<ProtocolManager::DoRestream\n");
     return success;
-}
+}*/
 
 // interrupt the current point in the stack (iProtocol)
 void ProtocolManager::DoInterrupt(TBool aInterrupt)
@@ -388,22 +388,30 @@ const Brx& ProtocolManager::Uri() const
     return iUri;
 }
 
-TBool ProtocolManager::Start(TUint64 aTotalBytes, TBool aLiveStream, TBool aSeekableStream)
+TUint ProtocolManager::Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer)
 {
     Lock();
     iStarted = iProtocol;
+    TUint streamId = iNextStreamId;
+    iNextStreamId += 1;
     Unlock();
-    return iSupply.Start(aTotalBytes, aLiveStream,  aSeekableStream);
+    iSupply.Start(aTotalBytes, aLiveStreamer, aRestreamer, streamId);
+    return streamId;
 }
 
 void ProtocolManager::OutputData(const Brx& aAudio)
 {
-    return iSupply.OutputData(aAudio);
+    iSupply.OutputData(aAudio);
 }
 
 void ProtocolManager::OutputMetadata(const Brx& aMetadata)
 {
-    return iSupply.OutputMetadata(aMetadata);
+    iSupply.OutputMetadata(aMetadata);
+}
+
+void ProtocolManager::OutputFlush()
+{
+    iSupply.OutputFlush();
 }
 
 void ProtocolManager::End()

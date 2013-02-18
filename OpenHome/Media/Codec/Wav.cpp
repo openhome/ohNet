@@ -27,33 +27,58 @@ TBool CodecWav::Recognise(const Brx& aData)
     return false;
 }
 
+void CodecWav::StreamInitialise()
+{
+    iNumChannels = 0;
+    iSampleRate = 0;
+    iBitDepth = 0;
+    iAudioBytesTotal = 0;
+    iAudioBytesRemaining = 0;
+    iTrackOffset = 0;
+}
+
 void CodecWav::Process()
 {
     LOG(kMedia, "> CodecWav::Process()\n");
 
-    iController->Read(iReadBuf, 44);
-    TUint numChannels, sampleRate, bitDepth, audioBytes;
-    ProcessHeader(iReadBuf, numChannels, sampleRate, bitDepth, audioBytes);
-    TUint64 trackOffset = 0;
-    TUint chunkSize = DecodedAudio::kMaxBytes - (DecodedAudio::kMaxBytes % (numChannels * (bitDepth/8)));
-    if (chunkSize > sizeof(iReadBuf)) {
-        chunkSize = sizeof(iReadBuf);
+    if (iNumChannels == 0) {
+        iController->Read(iReadBuf, kHeaderBytes);
+        ProcessHeader(iReadBuf);
+        SendMsgDecodedStream(0);
     }
-    while (audioBytes > 0) {
+    else {
+        if (iAudioBytesRemaining == 0) {
+            THROW(CodecStreamEnded);
+        }
+        TUint chunkSize = DecodedAudio::kMaxBytes - (DecodedAudio::kMaxBytes % (iNumChannels * (iBitDepth/8)));
+        if (chunkSize > sizeof(iReadBuf)) {
+            chunkSize = sizeof(iReadBuf);
+        }
         iReadBuf.SetBytes(0);
-        const TUint bytes = (chunkSize < audioBytes? chunkSize : audioBytes);
+        const TUint bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
         iController->Read(iReadBuf, bytes);
         Brn encodedAudioBuf(iReadBuf.Ptr(), bytes);
-        MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, numChannels, sampleRate, bitDepth, EMediaDataLittleEndian, trackOffset);
-        trackOffset += audio->Jiffies();
-        audioBytes -= bytes;
-        iController->Output(audio);
+        iTrackOffset += iController->OutputAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
+        iAudioBytesRemaining -= bytes;
     }
 
-    LOG(kMedia, "< CodecWav::Process()\n"); // FIXME - will we ever reach here (need to decide whether to return from Process() or throw)
+    LOG(kMedia, "< CodecWav::Process()\n");
 }
 
-void CodecWav::ProcessHeader(const Brx& aHeader, TUint& aNumChannels, TUint& aSampleRate, TUint& aBitDepth, TUint& aAudioBytes)
+TBool CodecWav::TrySeek(TUint aStreamId, TUint64 aSample)
+{
+    const TUint byteDepth = iBitDepth/8;
+    const TUint64 bytePos = aSample * iNumChannels * byteDepth;
+    if (!iController->TrySeek(aStreamId, bytePos)) {
+        return false;
+    }
+    iTrackOffset = ((TUint64)aSample * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iNumChannels * byteDepth);
+    SendMsgDecodedStream(aSample);
+    return true;
+}
+
+void CodecWav::ProcessHeader(const Brx& aHeader)
 {
     LOG(kMedia, "Wav::ProcessHeader()\n");
 
@@ -84,24 +109,30 @@ void CodecWav::ProcessHeader(const Brx& aHeader, TUint& aNumChannels, TUint& aSa
     if (audioFormat != 1) {
         THROW(CodecStreamFeatureUnsupported);
     }
-    aNumChannels = header[22] | (header[23] << 8);
-    aSampleRate = header[24] | (header[25] << 8) | (header[26] << 16) | (header[27] << 24);
+    iNumChannels = header[22] | (header[23] << 8);
+    iSampleRate = header[24] | (header[25] << 8) | (header[26] << 16) | (header[27] << 24);
     const TUint byteRate = header[28] | (header[29] << 8) | (header[30] << 16) | (header[31] << 24);
     //const TUint blockAlign = header[32] | (header[33] << 8);
-    aBitDepth = header[34] | (header[35] << 8);
+    iBitDepth = header[34] | (header[35] << 8);
+    if (iNumChannels == 0 || iSampleRate == 0 || iBitDepth == 0 || iBitDepth % 8 != 0) {
+        THROW(CodecStreamCorrupt);
+    }
     if (strncmp((const TChar*)header+36, "data", 4) != 0) {
         THROW(CodecStreamFeatureUnsupported);
     }
-    aAudioBytes = header[40] | (header[41] << 8) | (header[42] << 16) | (header[43] << 24);
+    iAudioBytesTotal = header[40] | (header[41] << 8) | (header[42] << 16) | (header[43] << 24);
+    iAudioBytesRemaining = iAudioBytesTotal;
 
-    const TUint bitRate = byteRate * 8;
-    if (aAudioBytes % (aNumChannels * (aBitDepth/8)) != 0) {
+    iBitRate = byteRate * 8;
+    if (iAudioBytesTotal % (iNumChannels * (iBitDepth/8)) != 0) {
         // There aren't an exact number of samples in the file => file is corrupt
         THROW(CodecStreamCorrupt);
     }
-    const TUint numSamples = aAudioBytes / (aNumChannels * (aBitDepth/8));
-    const TUint64 trackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / aSampleRate;
+    const TUint numSamples = iAudioBytesTotal / (iNumChannels * (iBitDepth/8));
+    iTrackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / iSampleRate;
+}
 
-    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(0, bitRate, aBitDepth, aSampleRate, aNumChannels, Brn("WAV"), trackLengthJiffies, 0, true); // FIXME - missing streamId and startSample
-    iController->Output(msg);
+void CodecWav::SendMsgDecodedStream(TUint64 aStartSample)
+{
+    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, Brn("WAV"), iTrackLengthJiffies, aStartSample, true);
 }
