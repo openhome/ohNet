@@ -68,7 +68,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Mac-x64")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Mac-x64, Core-ppc32, Core-armv6")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -77,11 +77,9 @@ class JenkinsBuild():
           help="publish release")
         parser.add_option("-v", "--version", dest="version",
             help="version number for release")
-        parser.add_option("-t", "--testcore", dest="testcore",
-            help="explicity enable tests on core platforms.")
         parser.add_option("-j", "--parallel",
             action="store_true", dest="parallel", default=False,
-            help="explicity enable tests on core platforms.")
+            help="Tell AllTests to parallelise the build.")
         (self.options, self.args) = parser.parse_args()
 
         # check if env variables are set
@@ -113,8 +111,8 @@ class JenkinsBuild():
                 'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish':True, 'system':'Linux'},
                 'iOs-ARM': { 'os': 'macos', 'arch':'armv7', 'publish':True, 'system':'iOs'},
-                'timc-core1-powerpc': { 'os': 'Libosa', 'arch':'powerpc', 'publish':False, 'system':''},
-                'timc-core2-arm': { 'os': 'Libosa', 'arch':'armel', 'publish':False, 'system':''},
+                'Core-ppc32': { 'os': 'Core', 'arch':'ppc32', 'publish':False, 'system':''},
+                'Core-armv6': { 'os': 'Core', 'arch':'armv6', 'publish':False, 'system':''},
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -132,9 +130,9 @@ class JenkinsBuild():
             os.environ['CS_PLATFORM'] = 'x64'
         if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
-        if os_platform == 'Libosa' and arch == 'powerpc':
+        if os_platform == 'Core' and arch == 'ppc32':
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
-        if os_platform == 'Libosa' and arch == 'armel':
+        if os_platform == 'Core' and arch == 'armv6':
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/arm-rtemseabi4.11-'
 
         self.platform_args = args
@@ -150,7 +148,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if arch in ['armel', 'armhf', 'armv7']:
+        if arch in ['armel', 'armhf', 'armv7', 'armv6', 'ppc32']:
             args.append('--buildonly')
         elif arch == 'x64':
             args.append('--native')
@@ -170,12 +168,6 @@ class JenkinsBuild():
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
             args.append('--buildonly')
-        if os_platform == 'Libosa':
-            args.append('--buildonly')
-            if arch == 'armel':
-                args.append('--core2')
-            if arch == 'powerpc':
-                args.append('--core1')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
