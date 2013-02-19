@@ -5,10 +5,9 @@
 #include <OpenHome/Net/Core/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h>
+#include <OpenHome/Private/File.h>
 
-#include <stdlib.h>
 #include <vector>
-#include <sys/stat.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -72,15 +71,18 @@ void DeviceTestBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface
     filePath.Append(file);
     filePath.PtrZ();
 
+    IFile* filePtr = NULL;
+
     const char* path = (const char*)filePath.Ptr();
-    FILE* fd = fopen(path, "rb");
-    if (fd == NULL) {
+    try {
+        filePtr = IFile::Open(path, eFileReadOnly);
+    }
+    catch ( FileOpenError ) {
         return;
     }
+
     static const TUint kMaxReadSize = 4096;
-    struct stat fileStats;
-    (void)stat(path, &fileStats);
-    TUint bytes = (TUint)fileStats.st_size;
+    TUint bytes = filePtr->Bytes();
     const char* mime = NULL;
     for (TUint i=filePath.Bytes()-1; i>0; i--) {
         if (filePath[i] == '/' || filePath[i] == '\\') {
@@ -96,15 +98,15 @@ void DeviceTestBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface
     }
     aResourceWriter.WriteResourceBegin(bytes, mime);
     do {
-        TByte buf[kMaxReadSize];
+        Bws<kMaxReadSize> buf;
         TUint size = (bytes<kMaxReadSize? bytes : kMaxReadSize);
-        size_t records_read = fread(buf, size, 1, fd);
-        ASSERT(records_read == 1);
-        aResourceWriter.WriteResource(buf, size);
+        filePtr->Read(buf, size);
+        ASSERT(buf.Bytes() == size);
+        aResourceWriter.WriteResource(buf.Ptr(), buf.Bytes());
         bytes -= size;
     } while (bytes > 0);
     aResourceWriter.WriteResourceEnd();
-    (void)fclose(fd);
+    delete filePtr;
 }
 
 
