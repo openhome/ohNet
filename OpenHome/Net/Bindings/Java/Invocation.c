@@ -25,9 +25,9 @@ void STDCALL AsyncComplete(void* aPtr, OhNetHandleAsync aAsync) {
     if (attached < 0)
     {
 #ifdef __ANDROID__
-		ret = (*vm)->AttachCurrentThread(vm, &env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
 #else
-		ret = (*vm)->AttachCurrentThread(vm, (void **)&env, NULL);
+		ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
 #endif
         if (ret < 0)
         {
@@ -49,10 +49,7 @@ void STDCALL AsyncComplete(void* aPtr, OhNetHandleAsync aAsync) {
 	
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)NULL, (jlong)(size_t)aAsync);
 	(*env)->DeleteGlobalRef(env, ref->callbackObj);
-    if (attached < 0)
-    {
-        (*vm)->DetachCurrentThread(vm);
-    }
+    // leave daemon thread attached to the VM
 	
 	free(ref);
 }
@@ -153,7 +150,7 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvoca
     }
     mid = (*aEnv)->GetMethodID(aEnv, proxyErrorClass, "<init>", "(ILjava/lang/String;)V");
     if (mid == NULL) {
-        printf("Unable to find constructor for class org/openhome/net/controlpoint/proxyError\n");
+        printf("Unable to find constructor for class org/openhome/net/controlpoint/ProxyError\n");
         fflush(stdout);
         return NULL;
     }
