@@ -79,7 +79,7 @@ class JenkinsBuild():
             help="version number for release")
         parser.add_option("-j", "--parallel",
             action="store_true", dest="parallel", default=False,
-            help="Tell AllTests to parallelise the build.")
+            help="Tell AllTests.py to parallelise the build.")
         (self.options, self.args) = parser.parse_args()
 
         # check if env variables are set
@@ -168,6 +168,8 @@ class JenkinsBuild():
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
             args.append('--buildonly')
+        if os_platform == 'Core':
+            args.append('--core')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':

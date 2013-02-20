@@ -38,7 +38,7 @@ def build(aTarget, aParallel=False):
         buildCmd += ' mac-64=1'
     if gMacArm == 1:
         buildCmd += ' mac-arm=1'
-    if gPlatform != None:
+    if gCore == 1:
         buildCmd += ' platform=' + gPlatform
 
     ret = os.system(buildCmd)
@@ -184,6 +184,7 @@ try:
     gPlatform = os.environ['PLATFORM']
 except KeyError:
     gPlatform = None
+gCore = 0
 gParallel = False
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
@@ -226,6 +227,8 @@ for arg in sys.argv[1:]:
             sys.exit(1)
     elif arg == '--parallel':
         gParallel = True
+    elif arg == '--core':
+        gCore = 1
     else:
         print 'Unrecognised argument - ' + arg
         sys.exit(1)

@@ -148,11 +148,12 @@ ifeq ($(platform),IntelMac)
 endif
 
 ifeq ($(platform), Core-ppc32)
+
 	# platform == Core1
 	platform_cflags = -mcpu=405
 	platform_linkflags =
 	linkopts_ohNet =
-	osdir = Volkano2
+	osdir = Core
 	endian = BIG
 	native_only = yes
 endif
@@ -162,7 +163,7 @@ ifeq ($(platform), Core-armv6)
 	platform_cflags = -mcpu=arm926ej-s -Wno-psabi
 	platform_linkflags =
 	linkopts_ohNet =
-	osdir = Volkano2
+	osdir = Core
 	endian = LITTLE
 	native_only = yes
 endif
