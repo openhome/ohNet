@@ -123,6 +123,7 @@ void DviSubscription::Remove()
     if (service != NULL) {
         service->AddRef();
     }
+    iService = NULL;
     iLock.Signal();
     if (service != NULL) {
         service->RemoveSubscription(iSid);
@@ -154,6 +155,7 @@ void DviSubscription::WriteChanges()
 {
     IPropertyWriter* writer = NULL;
     try {
+        AutoMutex a(iLock); // claim lock here to fully serialise updates to a single subscriber
         writer = CreateWriter();
         if (writer != NULL) {
             writer->PropertyWriteEnd();
@@ -174,7 +176,6 @@ void DviSubscription::WriteChanges()
 
 IPropertyWriter* DviSubscription::CreateWriter()
 {
-    AutoMutex a(iLock);
     LOG(kDvEvent, "WriteChanges for subscription ");
     LOG(kDvEvent, iSid);
     LOG(kDvEvent, " seq - %u\n", iSequenceNumber);
@@ -258,7 +259,9 @@ DviSubscription::~DviSubscription()
 void DviSubscription::Expired()
 {
     // no need to call NotifySubscriptionExpired - line below calls back into Stop() which performs the notification
-    iService->RemoveSubscription(iSid);
+    if (iService != NULL) {
+        iService->RemoveSubscription(iSid);
+    }
 }
 
 
