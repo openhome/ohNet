@@ -49,12 +49,7 @@ ifeq ($(MACHINE),Darwin)
 else
   # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
   platform ?= Vanilla
-  ifeq ($(platform), Core1)
-    detected_openhome_architecture = powerpc
-  else
-  ifeq ($(platform), Core2)
-    detected_openhome_architecture = armel
-  else
+
     ifneq (,$(findstring linux,$(gcc_machine)))
       detected_openhome_system = Linux
     endif
@@ -85,8 +80,8 @@ else
     ifneq (,$(findstring x86_64,$(gcc_machine)))
       detected_openhome_architecture = x64
     endif
-  endif
-  endif
+
+
 endif
 
 detected_openhome_system ?= Unknown
@@ -152,7 +147,7 @@ ifeq ($(platform),IntelMac)
 	openhome_system = Mac
 endif
 
-ifeq ($(platform), Core1)
+ifeq ($(platform), Core-ppc32)
 	# platform == Core1
 	platform_cflags = -mcpu=405
 	platform_linkflags =
@@ -162,7 +157,7 @@ ifeq ($(platform), Core1)
 	native_only = yes
 endif
 
-ifeq ($(platform), Core2)
+ifeq ($(platform), Core-armv6)
 	# platform == Core2
 	platform_cflags = -mcpu=arm926ej-s -Wno-psabi
 	platform_linkflags =
@@ -173,7 +168,7 @@ ifeq ($(platform), Core2)
 endif
 
 
-ifneq (,$(findstring $(platform),Core1 Core2 Vanilla))
+ifneq (,$(findstring $(platform),Core-ppc32 Core-armv6 Vanilla))
   ifeq ($(gcc4_1), yes)
     version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
     version_specific_cflags_third_party = -Wno-non-virtual-dtor
