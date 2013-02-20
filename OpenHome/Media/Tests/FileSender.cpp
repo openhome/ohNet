@@ -20,7 +20,7 @@ using namespace OpenHome::Net;
 
 // SupplierFile
 
-SupplierFile::SupplierFile()
+SupplierFile::SupplierFile(const Brx& aFileName)
     : Thread("SFIL")
     , iLock("SFIL")
     , iBlocker("SFIL", 0)
@@ -32,28 +32,26 @@ SupplierFile::SupplierFile()
     , iFile(NULL)
     , iBuf(EncodedAudio::kMaxBytes)
 {
+    Brhz file(aFileName);
+
+    try {
+        iFile = IFile::Open(file.CString(), eFileReadOnly);
+    }
+    catch ( FileOpenError ) {
+        Kill();
+        Start();
+        Join();
+        throw;
+    }
+
+    iDataSize = iFile->Bytes();
+    iBytesRemaining = iDataSize;
 }
 
 SupplierFile::~SupplierFile()
 {
     Join();
     delete iFile;
-}
-
-TBool SupplierFile::LoadFile(const Brx& aFileName)
-{
-    Brhz file(aFileName);
-
-    if ( iFile )
-        delete iFile;
-    iFile = new File(file.CString(), eFileReadOnly);
-    iFile->Seek(0, eSeekFromEnd);
-    iDataSize = iFile->Bytes();
-    iFile->Seek(0, eSeekFromStart);
-
-    iBytesRemaining = iDataSize;
-
-    return true;
 }
 
 void SupplierFile::Block()
@@ -70,6 +68,7 @@ void SupplierFile::Unblock()
 
 void SupplierFile::Run()
 {
+    CheckForKill();
     Msg* msg = iMsgFactory->CreateMsgTrack();
     iPipeline->Push(msg);
     msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), iDataSize, 1, NULL, NULL);
@@ -153,11 +152,11 @@ void SupplierFile::Quit(Msg* aMsg)
 
 // FileSender
 
-FileSender::FileSender(Environment& aEnv, ITerminal& aTerminal, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast)
+FileSender::FileSender(Environment& aEnv, Terminal& aTerminal, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast)
     : iTerminal(aTerminal)
     , iFileName(aFileName)
 {
-    iSupplier = new SupplierFile();
+    iSupplier = new SupplierFile(aFileName);
     iPipeline = new PipelineManager(iInfoAggregator, *iSupplier, *this, kMaxDriverJiffies);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
@@ -190,19 +189,6 @@ FileSender::~FileSender()
 
 int FileSender::Run()
 {
-    try
-    {
-        iSupplier->LoadFile(iFileName);
-    }
-    catch ( FileOpenError ) {
-        iTerminal.Print("ERROR: Unable to open specified file\n");
-        return false;
-    }
-    catch ( FileSeekError ) {
-        iTerminal.Print("ERROR: Unable to seek to end of file\n");
-        return false;
-    }
-
     iSupplier->Start();
 
     TBool playing = false;

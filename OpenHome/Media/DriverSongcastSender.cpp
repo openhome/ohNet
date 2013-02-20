@@ -55,42 +55,42 @@ void DriverSongcastSender::Run()
     (void)msg->Process(*this);
 
     TUint64 now = OsTimeInUs(iEnv.OsCtx());
-    do {
+    while(!iQuit) {
         if (iAudioSent) {
-		    // skip the first packet, and any time the clock value wraps
-		    if (iLastTimeUs == 0 || iLastTimeUs >= now) {
+            // skip the first packet, and any time the clock value wraps
+            if (iLastTimeUs == 0 || iLastTimeUs >= now) {
                 iTimer->FireIn(iTimerFrequencyMs);
             }
             else {
-			    TUint nextTimerMs = iTimerFrequencyMs;
-			    TInt diff = (TInt)(now - iLastTimeUs) - (iTimerFrequencyMs * 1000); // the difference in usec from where we should be
-			    iTimeOffsetUs -= diff; // increment running offset
+                TUint nextTimerMs = iTimerFrequencyMs;
+                TInt diff = (TInt)(now - iLastTimeUs) - (iTimerFrequencyMs * 1000); // the difference in usec from where we should be
+                iTimeOffsetUs -= diff; // increment running offset
 
-			    // determine new timer value based upon current offset from ideal
-			    if (iTimeOffsetUs < -1000) { // we are late
-				    TInt32 timeOffsetMs = iTimeOffsetUs/1000;
-				    if (timeOffsetMs < 4 * (TInt32)iTimerFrequencyMs) {
+                // determine new timer value based upon current offset from ideal
+                if (iTimeOffsetUs < -1000) { // we are late
+                    TInt32 timeOffsetMs = iTimeOffsetUs/1000;
+                    if (timeOffsetMs < 4 * (TInt32)iTimerFrequencyMs) {
                         // we're miles behind, probably as a result of drop-outs
                         // don't even try to catch up
-					    iTimeOffsetUs = 0;
+                        iTimeOffsetUs = 0;
                     }
                     else if (timeOffsetMs < 1-(TInt32)iTimerFrequencyMs) {
-					    // in case callback is pretty late, we can only catch up so much
-					    nextTimerMs = 1;
-				    }
+                        // in case callback is pretty late, we can only catch up so much
+                        nextTimerMs = 1;
+                    }
                     else {
-					    nextTimerMs = iTimerFrequencyMs + timeOffsetMs;
-				    }
-			    }
+                        nextTimerMs = iTimerFrequencyMs + timeOffsetMs;
+                    }
+                }
                 else if (iTimeOffsetUs > 1000) { // we are early
-				    nextTimerMs = iTimerFrequencyMs+1;
-			    }
+                    nextTimerMs = iTimerFrequencyMs+1;
+                }
                 else { // we are about on time
-				    nextTimerMs = iTimerFrequencyMs;
-			    }
-			    iTimer->FireIn(nextTimerMs);
+                    nextTimerMs = iTimerFrequencyMs;
+                }
+                iTimer->FireIn(nextTimerMs);
             }
-    		iLastTimeUs = now;
+            iLastTimeUs = now;
             Wait();
             now = OsTimeInUs(iEnv.OsCtx());
             iAudioSent = false;
@@ -103,7 +103,7 @@ void DriverSongcastSender::Run()
             Msg* msg = iPipeline.Pull();
             (void)msg->Process(*this);
         }
-    } while (!iQuit);
+    }
 }
 
 void DriverSongcastSender::TimerCallback()

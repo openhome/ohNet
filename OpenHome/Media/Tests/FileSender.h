@@ -20,9 +20,8 @@ namespace Media {
 class SupplierFile : public Thread, public ISupplier
 {
 public:
-    SupplierFile();
+    SupplierFile(const Brx& aFileName);
     ~SupplierFile();
-    TBool LoadFile(const Brx& aFileName);
     void Block();
     void Unblock();
 private: // from Thread
@@ -42,7 +41,7 @@ private:
     Msg* iPendingMsg;
     TBool iBlock;
     TBool iQuit;
-    File* iFile;
+    IFile* iFile;
     Bwh   iBuf;
     TUint iDataSize;
     TUint iBytesRemaining;
@@ -52,7 +51,7 @@ class FileSender : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
-    FileSender(Environment& aEnv, ITerminal& aTerminal, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast);
+    FileSender(Environment& aEnv, Terminal& aTerminal, Net::DvStack& aDvStack, const Brx& aFileName, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel, TBool aMulticast);
     virtual ~FileSender();
     int Run();
 private: // from IPipelineObserver
@@ -62,7 +61,7 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private:
-    ITerminal& iTerminal;
+    Terminal& iTerminal;
     SupplierFile* iSupplier;
     AllocatorInfoLogger iInfoAggregator;
     PipelineManager* iPipeline;

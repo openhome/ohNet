@@ -10,8 +10,8 @@ using namespace OpenHome::Av;
 OhmSocket::OhmSocket(Environment& aEnv)
     : iEnv(aEnv)
     , iRxSocket(0)
-	, iTxSocket(0)
-	, iReader(0)
+    , iTxSocket(0)
+    , iReader(0)
 {
 }
 
@@ -35,7 +35,7 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
     ASSERT(!iReader);
     iRxSocket = new SocketUdpMulticast(iEnv, aInterface, aEndpoint);
     iRxSocket->SetRecvBufBytes(kReceiveBufBytes);
-	iTxSocket = new SocketUdp(iEnv, 0, aInterface);
+    iTxSocket = new SocketUdp(iEnv, 0, aInterface);
     iTxSocket->SetTtl(aTtl);
     iTxSocket->SetSendBufBytes(kSendBufBytes);
     iReader = new UdpReader(*iRxSocket);
@@ -44,12 +44,12 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
 
 void OhmSocket::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-	if (iTxSocket) {
-		iTxSocket->Send(aBuffer, aEndpoint);
-	}
-	else {
-		iRxSocket->Send(aBuffer, aEndpoint);
-	}
+    if (iTxSocket) {
+        iTxSocket->Send(aBuffer, aEndpoint);
+    }
+    else {
+        iRxSocket->Send(aBuffer, aEndpoint);
+    }
 }
 
 Endpoint OhmSocket::This() const
@@ -71,10 +71,10 @@ void OhmSocket::Close()
     ASSERT(iRxSocket != NULL);
     delete iRxSocket;
     iRxSocket = NULL;
-	if (iTxSocket != NULL) {
-		delete iTxSocket;
-	    iTxSocket = NULL;
-	}
+    if (iTxSocket != NULL) {
+        delete iTxSocket;
+        iTxSocket = NULL;
+    }
 }
     
 void OhmSocket::Read(Bwx& aBuffer)
@@ -106,23 +106,23 @@ OhmSocket::~OhmSocket()
 // OhzSocket
 
 OhzSocket::OhzSocket(Environment& aEnv)
-	: iEnv(aEnv)
+    : iEnv(aEnv)
     , iRxSocket(0)
-	, iTxSocket(0)
-	, iEndpoint(51972, Brn("239.255.255.250"))
+    , iTxSocket(0)
+    , iEndpoint(51972, Brn("239.255.255.250"))
 {
 }
 
 const Endpoint& OhzSocket::This() const
 {
-	return (iEndpoint);
+    return (iEndpoint);
 }
 
 void OhzSocket::Open(TIpAddress aInterface, TUint aTtl)
 {
     ASSERT(!iRxSocket);
     iRxSocket = new SocketUdpMulticast(iEnv, aInterface, iEndpoint);
-	iTxSocket = new SocketUdp(iEnv, 0, aInterface);
+    iTxSocket = new SocketUdp(iEnv, 0, aInterface);
     iTxSocket->SetTtl(aTtl);
     iReader = new UdpReader(*iRxSocket);
 }
@@ -137,10 +137,10 @@ void OhzSocket::Close()
 {
     ASSERT(iRxSocket);
     delete (iRxSocket);
-	delete (iTxSocket);
+    delete (iTxSocket);
     delete (iReader);
     iRxSocket = 0;
-	iTxSocket = 0;
+    iTxSocket = 0;
     iReader = 0;
 }
     

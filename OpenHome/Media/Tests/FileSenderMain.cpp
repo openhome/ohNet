@@ -66,22 +66,32 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TerminalOs terminal;
+    int ret = 1;
 
-    FileSender* fileSender = new FileSender(lib->Env(),
-        terminal,
-         *dvStack,
-        optionFile.Value(),
-        adapter,
-        optionUdn.Value(),
-        optionName.CString(),
-        optionChannel.Value(),
-        optionMulticast.Value());
+    try {
 
-    const int ret = fileSender->Run();
-    delete fileSender;
-    
+        Terminal* terminal = new TerminalOs();
+
+        FileSender* fileSender = new FileSender(lib->Env(),
+            *terminal,
+            *dvStack,
+            optionFile.Value(),
+            adapter,
+            optionUdn.Value(),
+            optionName.CString(),
+            optionChannel.Value(),
+            optionMulticast.Value());
+
+        ret = fileSender->Run();
+
+        delete fileSender;
+        delete terminal;
+    }
+    catch ( FileOpenError ) {
+
+        Log::Print("FileSender: Could not open file %s\n", optionFile.CString());
+    }
+
     delete lib;
-
     return ret;
 }
