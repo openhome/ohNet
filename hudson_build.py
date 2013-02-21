@@ -38,7 +38,7 @@ class PostActions():
         # type will be either 'nightly' or 'commit'
         # release will be either '0' or '1'
         rem = remote()
-        ret = rem.rsync('root','sheeva010.linn.co.uk','Build','~/')
+        ret = rem.rsync('root','sheeva010.linn.co.uk','Build','~/', excludes=['*.o', '*.a', 'Bundles'])
         if ret != 0:
             print ret
             sys.exit(10)
