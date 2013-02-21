@@ -53,7 +53,7 @@ class remote():
 
 			return cmd
 
-		def rsync(self, username, host, src, dst, excludes=[], delete_excluded=True):
+		def rsync(self, username, host, src, dst, excludes=[], delete_excluded=False):
 			cmd = self._rsync_cmd(username, host, src, dst, excludes, delete_excluded)
 			ret = subprocess.call(cmd)
 			return ret
@@ -65,7 +65,7 @@ class remote():
 			ret = subprocess.call(cmd)
 			return ret
 
-		def check_rsync(self, username, host, src, dst, excludes=[], delete_excluded=True):
+		def check_rsync(self, username, host, src, dst, excludes=[], delete_excluded=False):
 			cmd = self._rsync_cmd(username, host, src, dst, excludes, delete_excluded)
 			ret = subprocess.check_call(cmd)
 			return ret
