@@ -153,7 +153,7 @@ ifeq ($(platform), Core-ppc32)
     openhome_architecture = ppc32
     endian = BIG
     platform_cflags = -mcpu=405
-    platform_linkflags =
+    platform_linkflags = -mcpu=405 ${CROSS_LINKFLAGS}
     linkopts_ohNet =
     osdir = Core
     osbuilddir = Core-ppc32
@@ -170,7 +170,7 @@ ifeq ($(platform), Core-armv6)
     openhome_architecture = armv6
     endian = LITTLE
     platform_cflags = -mcpu=arm926ej-s -Wno-psabi
-    platform_linkflags =
+    platform_linkflags = -mcpu=arm926ej-s ${CROSS_LINKFLAGS}
     linkopts_ohNet =
     osdir = Core
     osbuilddir = Core-armv6
