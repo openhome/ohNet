@@ -145,7 +145,7 @@ void SuiteFileBrx::Test()
     TEST(buff[9] == 39);
 }
 
-void Test()
+void TestFile()
 {
     Runner runner("File testing.");
     runner.Add(new SuiteFile);
