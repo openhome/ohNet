@@ -79,7 +79,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/sha1.c \
                    $(ohroot)OpenHome/Net/Ssdp.cpp \
                    $(ohroot)OpenHome/Net/SsdpDv.cpp \
-                   $(ohroot)OpenHome/Net/Stack.cpp \
+                   $(ohroot)OpenHome/Env.cpp \
                    $(ohroot)OpenHome/Stream.cpp \
                    $(ohroot)OpenHome/Net/Subscription.cpp \
                    $(ohroot)OpenHome/Thread.cpp \
