@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <stddef.h>
+#include <stdio.h>
 #include "InitParams.h"
 #include "JniCallbackList.h"
 #include "OpenHome/Net/C/OhNet.h"
