@@ -59,6 +59,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/EventUpnp.cpp \
                    $(ohroot)OpenHome/Exception.cpp \
                    $(ohroot)OpenHome/Fifo.cpp \
+                   $(ohroot)OpenHome/Net/Globals.cpp \
                    $(ohroot)OpenHome/Http.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c \
                    $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c \
