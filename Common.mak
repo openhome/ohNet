@@ -708,6 +708,10 @@ ShellCommandDebug: $(objdir)ShellCommandDebug.$(objext)
 $(objdir)ShellCommandDebug.$(objext) : OpenHome/Net/Shell/ShellCommandDebug.cpp $(headers)
 	$(compiler)ShellCommandDebug.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandDebug.cpp
 
+GroupTest: $(objdir)GroupTest.$(exeext) 
+$(objdir)GroupTest.$(exeext) :  ohNetCore $(libprefix)TestFramework.$(libext) $(headers) TestsCore
+	$(link) $(linkoutput)$(objdir)GroupTest.$(exeext) $(cflags) $(includes) OpenHome/Tests/GroupTest.cpp $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext) 
+
 tests_core = \
 	$(objdir)TestBuffer.$(objext) \
 	$(objdir)TestThread.$(objext) \

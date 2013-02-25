@@ -38,7 +38,7 @@ class PostActions():
         # type will be either 'nightly' or 'commit'
         # release will be either '0' or '1'
         rem = remote()
-        ret = rem.rsync('root','sheeva010.linn.co.uk','Build','~/')
+        ret = rem.rsync('root','sheeva010.linn.co.uk','Build','~/', excludes=['*.o', '*.a', 'Bundles'])
         if ret != 0:
             print ret
             sys.exit(10)
@@ -111,8 +111,8 @@ class JenkinsBuild():
                 'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish':True, 'system':'Linux'},
                 'iOs-ARM': { 'os': 'macos', 'arch':'armv7', 'publish':True, 'system':'iOs'},
-                'Core-ppc32': { 'os': 'Core', 'arch':'ppc32', 'publish':False, 'system':''},
-                'Core-armv6': { 'os': 'Core', 'arch':'armv6', 'publish':False, 'system':''},
+                'Core-ppc32': { 'os': 'Core', 'arch':'ppc32', 'publish':True, 'system':'Core'},
+                'Core-armv6': { 'os': 'Core', 'arch':'armv6', 'publish':True, 'system':'Core'},
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]

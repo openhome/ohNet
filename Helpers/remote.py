@@ -30,7 +30,7 @@ class remote():
 
                         ssh.close()
 
-		def _rsync_cmd(self, username, host, src, dst):
+		def _rsync_cmd(self, username, host, src, dst, excludes, delete_excluded):
 			cmd = []
 			dst = "%s@%s:%s" %(username,host,dst)
 
@@ -39,25 +39,34 @@ class remote():
 			cmd.append('-v'),
 			cmd.append('--chmod=u=rwX,go=rX'), # New files are user-writable and world-readable
 			cmd.append('--no-p'),              # Don't change permissions of existing directories (or files)
+
+                        if delete_excluded:
+                            cmd.append('--delete-excluded')
+
+                        for pattern in excludes:
+                            cmd.append('--exclude=' + pattern)
+
 			cmd.append(src),
 			cmd.append(dst)
 
+                        print(cmd)
+
 			return cmd
 
-		def rsync(self, username, host, src, dst):
-			cmd = self._rsync_cmd(username, host, src, dst)
+		def rsync(self, username, host, src, dst, excludes=[], delete_excluded=False):
+			cmd = self._rsync_cmd(username, host, src, dst, excludes, delete_excluded)
 			ret = subprocess.call(cmd)
 			return ret
 
 		# garbage collect (delete) outdated items at destination
 		def rsync_gc(self, username, host, src, dst):
-			cmd = self._rsync_cmd(username, host, src, dst)
+			cmd = self._rsync_cmd(username, host, src, dst, [], False)
 			cmd[1:1] = ['--itemize-changes', '--checksum', '--delete']
 			ret = subprocess.call(cmd)
 			return ret
 
-		def check_rsync(self, username, host, src, dst):
-			cmd = self._rsync_cmd(username, host, src, dst)
+		def check_rsync(self, username, host, src, dst, excludes=[], delete_excluded=False):
+			cmd = self._rsync_cmd(username, host, src, dst, excludes, delete_excluded)
 			ret = subprocess.check_call(cmd)
 			return ret
 

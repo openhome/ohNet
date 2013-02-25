@@ -148,28 +148,41 @@ ifeq ($(platform),IntelMac)
 endif
 
 ifeq ($(platform), Core-ppc32)
-
-	# platform == Core1
-	platform_cflags = -mcpu=405
-	platform_linkflags =
-	linkopts_ohNet =
-	osdir = Core
-	endian = BIG
-	native_only = yes
+    # platform == Core1
+    openhome_system = Core
+    openhome_architecture = ppc32
+    endian = BIG
+    platform_cflags = -mcpu=405
+    platform_linkflags = -mcpu=405 ${CROSS_LINKFLAGS}
+    linkopts_ohNet =
+    osdir = Core
+    osbuilddir = Core-ppc32
+    objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
+    native_only = yes
+    compiler = ${CROSS_COMPILE}gcc -o $(objdir)
+    link = ${CROSS_COMPILE}g++ $(platform_linkflags)
+    ar = ${CROSS_COMPILE}ar rc $(objdir)
 endif
 
 ifeq ($(platform), Core-armv6)
-	# platform == Core2
-	platform_cflags = -mcpu=arm926ej-s -Wno-psabi
-	platform_linkflags =
-	linkopts_ohNet =
-	osdir = Core
-	endian = LITTLE
-	native_only = yes
+    # platform == Core2
+    openhome_system = Core
+    openhome_architecture = armv6
+    endian = LITTLE
+    platform_cflags = -mcpu=arm926ej-s -Wno-psabi
+    platform_linkflags = -mcpu=arm926ej-s ${CROSS_LINKFLAGS}
+    linkopts_ohNet =
+    osdir = Core
+    osbuilddir = Core-armv6
+    objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
+    native_only = yes
+    compiler = ${CROSS_COMPILE}gcc -o $(objdir)
+    link = ${CROSS_COMPILE}g++ $(platform_linkflags)
+    ar = ${CROSS_COMPILE}ar rc $(objdir)
 endif
 
 
-ifneq (,$(findstring $(platform),Core-ppc32 Core-armv6 Vanilla))
+ifneq (,$(findstring $(platform),Vanilla))
   ifeq ($(gcc4_1), yes)
     version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
     version_specific_cflags_third_party = -Wno-non-virtual-dtor

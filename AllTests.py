@@ -56,7 +56,7 @@ def runBuilds():
         os.system(cleanCmd)
     if gParallel:
         build('copy_build_includes')
-    if gPlatform != None:
+    if gCore == 1:
         build('ohNet TestFramework', gParallel)
     else:
         build('all', gParallel)
