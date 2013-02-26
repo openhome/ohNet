@@ -26,7 +26,7 @@ public:
     virtual void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement) = 0;
     virtual void Play() = 0; // FIXME - should pass a uri to be played here
     virtual void Flush(Msg* aMsg) = 0;
-    virtual void Quit(Msg* aMsg) = 0; // FIXME - do we need to pass a Quit all the way down the pipeline or can we inject it at the Stopper?
+    virtual void Quit(Msg* aMsg) = 0;
 };
 
 enum EPipelineState

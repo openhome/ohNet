@@ -13,15 +13,6 @@ namespace OpenHome {
 class Environment;
 namespace Media {
 
-class ISupply
-{
-public:
-    virtual void Start(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
-    virtual void OutputData(const Brx& aData) = 0;
-    virtual void OutputMetadata(const Brx& aMetadata) = 0;
-    virtual void OutputFlush() = 0;
-};
-
 enum ProtocolStreamResult
 {
     EProtocolStreamSuccess

@@ -123,6 +123,7 @@ def build(bld):
                 'OpenHome/Media/Splitter.cpp',
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
+                'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
@@ -132,6 +133,7 @@ def build(bld):
                 'OpenHome/Media/Codec/CodecController.cpp',
                 'OpenHome/Media/Protocol/Protocol.cpp',
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
+                #'OpenHome/Media/Protocol/ContentPls.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
@@ -198,6 +200,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
                 'OpenHome/Media/Tests/TestStopper.cpp',
+                'OpenHome/Media/Tests/TestSupply.cpp',
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
@@ -219,6 +222,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestStopperMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStopper')
+    bld.program(
+            source='OpenHome/Media/Tests/TestSupplyMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestSupply')
     bld.program(
             source='OpenHome/Media/Tests/TestAudioReservoirMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -277,6 +284,7 @@ def build(bld):
 
 def test(tst):
     for t, a, when in [['TestMsg', [], True]
+                      ,['TestSupply', [], True]
                       ,['TestAudioReservoir', [], True]
                       ,['TestVariableDelay', [], True]
                       ,['TestStopper', [], True]

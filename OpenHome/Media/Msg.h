@@ -697,6 +697,17 @@ private:
     Msg& iMsg;
 };
 
+class ISupply
+{
+public:
+    virtual void OutputTrack(const Brx& aUri, TUint aTrackId) = 0;
+    virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
+    virtual void OutputData(const Brx& aData) = 0;
+    virtual void OutputMetadata(const Brx& aMetadata) = 0;
+    virtual void OutputFlush() = 0;
+    virtual void OutputQuit() = 0;
+};
+
 class IStreamHandler
 {
 public:

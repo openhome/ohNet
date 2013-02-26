@@ -76,10 +76,12 @@ private: // from ISupplier
     void Flush(Msg* aMsg);
     void Quit(Msg* aMsg);
 private: // from ISupply
-    void Start(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
+    void OutputTrack(const Brx& aUri, TUint aTrackId);
+    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush();
+    void OutputQuit();
 private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
@@ -178,11 +180,15 @@ void SupplierProtocolHttp::Quit(Msg* aMsg)
     iPipeline->Push(aMsg);
 }
 
-void SupplierProtocolHttp::Start(const Brx& /*aUri*/, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+void SupplierProtocolHttp::OutputTrack(const Brx& /*aUri*/, TUint /*aTrackId*/)
 {
-    Msg* msg = iMsgFactory->CreateMsgTrack(); // FIXME - should output this as soon as PipelineManager is told to play a track
+    Msg* msg = iMsgFactory->CreateMsgTrack();
     iPipeline->Push(msg);
-    msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), aTotalBytes, aStreamId, aSeekable, aLive, &aStreamHandler);
+}
+
+void SupplierProtocolHttp::OutputStream(const Brx& /*aUri*/, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+{
+    Msg* msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), aTotalBytes, aStreamId, aSeekable, aLive, &aStreamHandler);
     iPipeline->Push(msg);
 }
 
@@ -211,6 +217,12 @@ void SupplierProtocolHttp::OutputFlush()
 {
     Msg* flush = iMsgFactory->CreateMsgFlush();
     iPipeline->Push(flush);
+}
+
+void SupplierProtocolHttp::OutputQuit()
+{
+    Msg* quit = iMsgFactory->CreateMsgQuit();
+    iPipeline->Push(quit);
 }
 
 TUint SupplierProtocolHttp::NextTrackId()

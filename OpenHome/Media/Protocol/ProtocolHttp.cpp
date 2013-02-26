@@ -295,7 +295,7 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
 
     if (!iStarted) {
         iStreamId = iIdProvider->NextStreamId();
-        iSupply->Start(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
+        iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
         iStarted = true;
         if (iLive) {
             // don't want to buffer content from a live stream so need to wait on pipeline signalling it is ready to play
