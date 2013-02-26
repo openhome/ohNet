@@ -18,7 +18,7 @@ using namespace OpenHome::Media::Codec;
 namespace OpenHome {
 namespace Media {
 
-class Supplier : public Thread, public ISupplier
+class Supplier : public Thread, public ISupplier, private IStreamHandler
 {
 public:
     Supplier();
@@ -32,6 +32,10 @@ private: // from ISupplier
     void Play();
     void Flush(Msg* aMsg);
     void Quit(Msg* aMsg);
+private: // from IStreamHandler
+    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    void Stop();
 private:
     Mutex iLock;
     Semaphore iBlocker;
@@ -167,7 +171,7 @@ void Supplier::Run()
 
     Msg* msg = iMsgFactory->CreateMsgTrack();
     iPipeline->Push(msg);
-    msg = iMsgFactory->CreateMsgEncodedStream(Brn(""), Brn(""), 1LL<<32, 1, NULL, NULL);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn(""), Brn(""), 1LL<<32, 1, false, false, this);
     iPipeline->Push(msg);
     while (!iQuit) {
         if (iBlock) {
@@ -220,6 +224,21 @@ void Supplier::Quit(Msg* aMsg)
         Unblock();
     }
     iLock.Signal();
+}
+
+TBool Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    return true;
+}
+
+TBool Supplier::Seek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return false;
+}
+
+void Supplier::Stop()
+{
 }
 
 

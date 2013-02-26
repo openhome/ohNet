@@ -13,49 +13,75 @@ namespace OpenHome {
 class Environment;
 namespace Media {
 
-class IProtocolManager
+class ISupply
 {
 public:
-    virtual ~IProtocolManager() {}
-    virtual TBool REVIEW_ME_Stream(const Brx& aUri) = 0;
-    virtual TBool REVIEW_ME_Redirect(const Brx& aUri) = 0;
-    virtual TUint REVIEW_ME_Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer) = 0;
-    virtual void REVIEW_ME_OutputData(const Brx& aData) = 0;
-    virtual void REVIEW_ME_OutputMetadata(const Brx& aMetadata) = 0;
-    virtual void REVIEW_ME_OutputFlush() = 0;
-    virtual void REVIEW_ME_End() = 0;
-    virtual void REVIEW_ME_Lock() = 0;
-    virtual void REVIEW_ME_Unlock() = 0;
+    virtual void Start(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
+    virtual void OutputData(const Brx& aData) = 0;
+    virtual void OutputMetadata(const Brx& aMetadata) = 0;
+    virtual void OutputFlush() = 0;
 };
 
-class ProtocolManager;
-
-class Protocol : public IProtocolManager, protected INonCopyable
+enum ProtocolStreamResult
 {
-    friend class ProtocolManager;
+    EProtocolStreamSuccess
+   ,EProtocolErrorNotSupported
+   ,EProtocolStreamStopped
+   ,EProtocolStreamErrorRecoverable
+   ,EProtocolStreamErrorUnrecoverable
+};
+
+class IProtocolSet
+{
+public:
+    virtual ProtocolStreamResult Stream(const Brx& aUri, TUint aTrackId) = 0;
+};
+
+class ContentProcessor;
+class IProtocolManager : public IProtocolSet
+{
+public:
+    virtual ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) = 0;
+};
+
+class IPipelineIdProvider // FIXME - move to more appropriate header
+{
+public:
+    virtual TUint NextTrackId() = 0;
+    virtual TUint NextStreamId() = 0;
+    virtual TBool OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+};
+
+class Protocol : protected IStreamHandler, protected INonCopyable
+{
+public:
+    ProtocolStreamResult TryStream(const Brx& aUri, TUint aTrackId);
+    void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply);
+    TBool Active() const;
 protected:
-    Protocol(Environment& aEnv, IProtocolManager& aManager);
-    const OpenHome::Uri& Uri() const;
-protected: // from IProtocolManager
-    TBool REVIEW_ME_Stream(const Brx& aUri);
-    TBool REVIEW_ME_Redirect(const Brx& aUri);
-    TUint REVIEW_ME_Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer);
-    void REVIEW_ME_OutputData(const Brx& aData);
-    void REVIEW_ME_OutputMetadata(const Brx& aMetadata);
-    void REVIEW_ME_OutputFlush();
-    void REVIEW_ME_End();
-    void REVIEW_ME_Lock();
-    void REVIEW_ME_Unlock();
-protected:
-    virtual void REVIEW_ME_Stream() = 0;
-    virtual TBool REVIEW_ME_DoStream(const Brx& aUri);
-    virtual void REVIEW_ME_DoInterrupt(TBool aInterrupt);
+    Protocol(Environment& aEnv);
+private: // from IProtocolManager
+    TBool Seekable() const;
+    TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TBool Live() const;
+private:
+    virtual ProtocolStreamResult Stream(const Brx& aUri, TUint aTrackId) = 0;
 protected:
     Environment& iEnv;
+    IProtocolManager* iProtocolManager;
+    IPipelineIdProvider* iIdProvider;
+    ISupply* iSupply;
 private:
-    IProtocolManager& iManager;
-    TBool iEnabled;
-    OpenHome::Uri iUri;
+    TBool iActive;
+private:
+    class AutoStream : private INonCopyable
+    {
+    public:
+        AutoStream(Protocol& aProtocol);
+        ~AutoStream();
+    private:
+        Protocol& iProtocol;
+    };
 };
 
 class ProtocolNetwork : public Protocol
@@ -65,64 +91,69 @@ protected:
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 3000;
 protected:
-	ProtocolNetwork(Environment& aEnv, IProtocolManager& aManager);
-    TBool Connect(TUint aDefaultPort);
+	ProtocolNetwork(Environment& aEnv);
+    TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort);
 protected: // from Protocol
     TBool REVIEW_ME_DoStream(const Brx& aUri);
-    void REVIEW_ME_DoInterrupt(TBool aInterrupt);
-protected: // FIXME - review this
+    void Interrupt(TBool aInterrupt);
+protected:
     void Open();
     void Close();
 protected:
     Srs<kReadBufferBytes> iReaderBuf;
     Sws<kWriteBufferBytes> iWriterBuf;
+    Mutex iLock;
     SocketTcpClient iTcpClient;
     TBool iSocketIsOpen;
 };
 
-class ISupply
+class ContentProcessor
 {
 public:
-    virtual ~ISupply() {}
-    virtual void Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer, TUint aStreamId) = 0;
-    virtual void OutputData(const Brx& aData) = 0;
-    virtual void OutputMetadata(const Brx& aMetadata) = 0;
-    virtual void OutputFlush() = 0;
-    virtual void End() = 0;
+    virtual ~ContentProcessor();
+    void Initialise(IProtocolSet& aProtocolSet);
+    TBool Active() const;
+protected:
+    ContentProcessor();
+public:
+    virtual TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) = 0;
+    ProtocolStreamResult TryStream(Srx& aReaderStream, TUint64 aRemainingBytes, TUint aMaxReadBytes);
+private:
+    virtual ProtocolStreamResult Stream(Srx& aReaderStream, TUint64 aTotalBytes, TUint aMaxReadBytes) = 0;
+protected:
+    IProtocolSet* iProtocolSet;
+private:
+    TBool iActive;
+private:
+    class AutoStream : private INonCopyable
+    {
+    public:
+        AutoStream(ContentProcessor& aProcessor);
+        ~AutoStream();
+    private:
+        ContentProcessor& iProcessor;
+    };
 };
 
-class ProtocolManager : public IProtocolManager, private INonCopyable
+class ProtocolManager : private IProtocolManager, private INonCopyable
 {
     static const TUint kMaxUriBytes = 1024;
 public:
     static const TUint kStreamIdInvalid = 0;
 public:
-    ProtocolManager(ISupply& aSupply);
+    ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider);
     virtual ~ProtocolManager();
     void Add(Protocol* aProtocol);
-    const Brx& Uri() const;
-    void DoStream(const Brx& aUri);
-    void DoInterrupt(TBool aInterrupt);
+    void Add(ContentProcessor* aProcessor);
+    TBool DoStream(const Brx& aUri);
 private: // from IProtocolManager
-    TBool REVIEW_ME_Stream(const Brx& aUri);
-    TBool REVIEW_ME_Redirect(const Brx& aUri);
-    TUint REVIEW_ME_Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer);
-    void REVIEW_ME_OutputData(const Brx& aAudio);
-    void REVIEW_ME_OutputMetadata(const Brx& aMetadata);
-    void REVIEW_ME_OutputFlush();
-    void REVIEW_ME_End();
-    void REVIEW_ME_Lock();
-    void REVIEW_ME_Unlock();
+    ProtocolStreamResult Stream(const Brx& aUri, TUint aTrackId);
+    ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
 private:
-    TBool SetUri(const Brx& aUri);
-private:
+    IPipelineIdProvider& iIdProvider;
     ISupply& iSupply;
-    Mutex iMutex;
     std::vector<Protocol*> iProtocols;
-    Bws<kMaxUriBytes> iUri;
-    Protocol* iProtocol;
-    Protocol* iStarted;
-    TUint iNextStreamId;
+    std::vector<ContentProcessor*> iContentProcessors;
 };
 
 } // namespace Media

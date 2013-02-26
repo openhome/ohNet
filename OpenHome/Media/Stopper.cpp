@@ -133,11 +133,13 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
-    ILiveStreamer* ls = streamInfo.LiveStreamer();
-    if (ls != NULL) {
-        (void)ls->StartLiveStream(streamInfo.StreamId());
-        // FIXME - either report error from StartLiveStream or remove its return type
+    IStreamHandler* sh = streamInfo.StreamHandler();
+    //ASSERT(sh != NULL);
+    if (sh != NULL && !sh->OkToPlay(0, streamInfo.StreamId())) { // FIXME - need a trackId
+        // FIXME - start a flush, discarding all content until the flush we issue is received
+        // FIXME - ...which requires that MsgFlush instances are uniquely identifiable
     }
+    // FIXME - should maybe issue a halt for live streams (to prevent starvation monitor from kicking in before we've received enough data)
     return aMsg;
 }
 

@@ -24,43 +24,35 @@ private:
     TUint iBytes;
 };
 
-enum ProtocolStreamResult
+class ProtocolHttp : public ProtocolNetwork
 {
-    EProtocolStreamSuccess
-   ,EProtocolStreamErrorRecoverable
-   ,EProtocolStreamErrorUnrecoverable
-   ,EProtocolStreamLive
-};
-
-class ProtocolHttp : public ProtocolNetwork, private IRestreamer, private ILiveStreamer
-{
-    static const TUint kAudioBytes = 4 * 1024;
-    static const TUint kEntityBufferBytes = 2 * 1024;
-    static const TUint kEntityLineBytes = 256;
+    static const TUint kAudioBytes = 6 * 1024;
+//    static const TUint kEntityBufferBytes = 2 * 1024;
+//    static const TUint kEntityLineBytes = 256;
     static const TUint kIcyMetadataBytes = 255 * 16;
     static const TUint kMaxUriBytes = 1024;
 public:
-	ProtocolHttp(Environment& aEnv, ProtocolManager& aManager);
+	ProtocolHttp(Environment& aEnv);
 private: // from Protocol	
-    void REVIEW_ME_Stream();
-private: // from IRestreamer
-    TBool Restream(TUint aStreamId, TUint64 aBytePos);
-private: // from ILiveStreamer
-    TBool StartLiveStream(TUint aStreamId);
+    ProtocolStreamResult Stream(const Brx& aUri, TUint aTrackId);
+private: // from IStreamHandler
+    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    void Stop();
 private:
     ProtocolStreamResult DoStream();
-    ProtocolStreamResult DoRestream(TUint64 aOffset);
+    ProtocolStreamResult DoSeek(TUint64 aOffset);
     ProtocolStreamResult DoLiveStream();
     TUint WriteRequest(TUint64 aOffset);
-    void ProcessContentType();
+    ProtocolStreamResult ProcessContent();
+    void ExtractMetadata();
+/*    void ProcessContentType();
     void ProcessPls(ReaderBuffer& aHeader);
     void ProcessM3u(ReaderBuffer& aHeader);
     void ProcessAsx(ReaderBuffer& aHeader);
     void ProcessXml(ReaderBuffer& aHeader);
-    void ProcessAudio();
-    void ExtractMetadata();
     Brn EntityReadLine(ReaderBuffer& aHeader);
-    Brn EntityReadTag(ReaderBuffer& aHeader);
+    Brn EntityReadTag(ReaderBuffer& aHeader);*/
 private:
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
@@ -69,23 +61,26 @@ private:
     HttpHeaderLocation iHeaderLocation;
     HeaderIcyMetadata iHeaderIcyMetadata;
     Bws<kIcyMetadataBytes> iIcyMetadata;
-    Bws<kEntityLineBytes> iLine;
-    Bws<kAudioBytes> iAudio;
-    Bws<kMaxUriBytes> iMmsUri;
-    Bws<kMaxUriBytes> iXmlUri;
-    OpenHome::Uri iAsxUri;
+    OpenHome::Uri iUri;
+//    Bws<kEntityLineBytes> iLine;
+//    Bws<kAudioBytes> iAudio;
+//    Bws<kMaxUriBytes> iMmsUri;
+//    Bws<kMaxUriBytes> iXmlUri;
+//    OpenHome::Uri iAsxUri;
     TUint64 iTotalBytes;
+    TUint iTrackId;
     TUint iStreamId;
     TBool iSeekable;
-    TBool iRestream;
+    TBool iSeek;
     TBool iLive;
     TBool iStarted;
-    TBool iEnded;
-    TUint64 iRestreamPos;
+    TBool iStopped;
+    TUint64 iSeekPos;
     TUint64 iOffset;
+    ContentProcessor* iContentProcessor;
 };
 
-class UriEntry
+/*class UriEntry
 {
 public:
 	UriEntry(Brn aUri, TUint aEntry);
@@ -113,7 +108,7 @@ private:
     TUint iEntry;
     TUint iUriCount;
     TUint iUriIndex;
-};
+};*/
 
 };  // namespace Media
 };  // namespace OpenHome

@@ -18,7 +18,7 @@ Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
     , iCheckForContainer(false)
     , iContainerSize(0)
     , iRemainingContainerSize(0)
-    , iRestreamer(NULL)
+    , iStreamHandler(NULL)
     , iAudioEncoded(NULL)
 {
 }
@@ -117,8 +117,8 @@ Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
     iCheckForContainer = true;
     iContainerSize = 0;
     iRemainingContainerSize = 0;
-    iRestreamer = aMsg->Restreamer();
-    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), iRestreamer!=NULL? this : NULL, aMsg->LiveStreamer());
+    iStreamHandler = aMsg->StreamHandler();
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
     aMsg->RemoveRef();
     return msg;
 }
@@ -144,8 +144,17 @@ Msg* Container::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-TBool Container::Restream(TUint aStreamId, TUint64 aBytePos)
+TBool Container::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    ASSERT(iRestreamer != NULL);
-    return iRestreamer->Restream(aStreamId, aBytePos + iContainerSize);
+    return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+}
+
+TBool Container::Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+{
+    return iStreamHandler->Seek(aTrackId, aStreamId, aOffset + iContainerSize);
+}
+
+void Container::Stop()
+{
+    iStreamHandler->Stop();
 }

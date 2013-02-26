@@ -62,7 +62,7 @@ int mygetch()
 namespace OpenHome {
 namespace Media {
 
-class SupplierProtocolHttp : public Thread, public ISupplier, private ISupply
+class SupplierProtocolHttp : public Thread, public ISupplier, private ISupply, private IPipelineIdProvider
 {
 public:
     SupplierProtocolHttp(Environment& aEnv);
@@ -76,16 +76,22 @@ private: // from ISupplier
     void Flush(Msg* aMsg);
     void Quit(Msg* aMsg);
 private: // from ISupply
-    void Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer, TUint aStreamId);
+    void Start(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush();
-    void End();
+private: // from IPipelineIdProvider
+    TUint NextTrackId();
+    TUint NextStreamId();
+    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
 private:
     MsgFactory* iMsgFactory;
     IPipelineElementDownstream* iPipeline;
     ProtocolManager* iProtocolManager;
     Brn iUrl;
+    TUint iNextTrackId;
+    TUint iNextStreamId;
+    static const TUint kInvalidPipelineId = 0;
 };
 
 class TestProtocolHttp : private IPipelineObserver
@@ -128,9 +134,11 @@ SupplierProtocolHttp::SupplierProtocolHttp(Environment& aEnv)
     : Thread("SPHt")
     , iMsgFactory(NULL)
     , iPipeline(NULL)
+    , iNextTrackId(kInvalidPipelineId+1)
+    , iNextStreamId(kInvalidPipelineId+1)
 {
-    iProtocolManager = new ProtocolManager(*this);
-    ProtocolHttp* protocolHttp = new ProtocolHttp(aEnv, *iProtocolManager);
+    iProtocolManager = new ProtocolManager(*this, *this);
+    ProtocolHttp* protocolHttp = new ProtocolHttp(aEnv);
     iProtocolManager->Add(protocolHttp);
 }
 
@@ -170,11 +178,11 @@ void SupplierProtocolHttp::Quit(Msg* aMsg)
     iPipeline->Push(aMsg);
 }
 
-void SupplierProtocolHttp::Start(TUint64 aTotalBytes, ILiveStreamer* aLiveStreamer, IRestreamer* aRestreamer, TUint aStreamId)
+void SupplierProtocolHttp::Start(const Brx& /*aUri*/, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
 {
     Msg* msg = iMsgFactory->CreateMsgTrack(); // FIXME - should output this as soon as PipelineManager is told to play a track
     iPipeline->Push(msg);
-    msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), aTotalBytes, aStreamId, aRestreamer, aLiveStreamer);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), aTotalBytes, aStreamId, aSeekable, aLive, &aStreamHandler);
     iPipeline->Push(msg);
 }
 
@@ -205,9 +213,19 @@ void SupplierProtocolHttp::OutputFlush()
     iPipeline->Push(flush);
 }
 
-void SupplierProtocolHttp::End()
+TUint SupplierProtocolHttp::NextTrackId()
 {
-    Log::Print("FIXME - End\n");
+    return iNextTrackId++;
+}
+
+TUint SupplierProtocolHttp::NextStreamId()
+{
+    return iNextStreamId++;
+}
+
+TBool SupplierProtocolHttp::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    return true;
 }
 
 

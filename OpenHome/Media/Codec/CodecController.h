@@ -111,8 +111,9 @@ private:
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[kMaxRecogniseBytes];
-    IRestreamer* iRestreamer;
-    ILiveStreamer* iLiveStreamer;
+    TBool iSeekable;
+    TBool iLive;
+    IStreamHandler* iStreamHandler;
     TUint iStreamId;
     TUint iSampleRate;
     TUint64 iStreamLength;

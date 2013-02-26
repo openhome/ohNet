@@ -25,7 +25,7 @@ public:
     virtual void Read(Bwx& aBuf, TUint aOffset, TUint aBytes) = 0;
 };
 
-class Container : public IPipelineElementUpstream, private IContainer, private IMsgProcessor, private IRestreamer, private INonCopyable
+class Container : public IPipelineElementUpstream, private IContainer, private IMsgProcessor, private IStreamHandler, private INonCopyable
 {
 public:
     Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
@@ -46,15 +46,17 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
-private: // from IRestreamer
-    TBool Restream(TUint aStreamId, TUint64 aBytePos);
+private: // from IStreamHandler
+    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    void Stop();
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     TBool iCheckForContainer;
     TUint iContainerSize;
     TUint iRemainingContainerSize; // number of bytes of container (that shouldn't be passed downstream)
-    IRestreamer* iRestreamer;
+    IStreamHandler* iStreamHandler;
     MsgAudioEncoded* iAudioEncoded; /* FIXME - restricting container processing to a single Msg seems
                                        risky but its consistent with volkano so is hopefully safe
                                        in practice... */

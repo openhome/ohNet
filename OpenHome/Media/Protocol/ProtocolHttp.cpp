@@ -50,11 +50,10 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
 
 // ProtocolHttp
 
-static const Brn kM3uAppendix("\r\n");
 static const Brn kUserAgentString("Linn DS"); // FIXME
 
-ProtocolHttp::ProtocolHttp(Environment& aEnv, ProtocolManager& aManager)
-    : ProtocolNetwork(aEnv, aManager)
+ProtocolHttp::ProtocolHttp(Environment& aEnv)
+    : ProtocolNetwork(aEnv)
     , iWriterRequest(iWriterBuf)
     , iReaderResponse(aEnv, iReaderBuf)
     , iTotalBytes(0)
@@ -66,61 +65,93 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv, ProtocolManager& aManager)
     iReaderResponse.AddHeader(iHeaderIcyMetadata);
 }
 
-void ProtocolHttp::REVIEW_ME_Stream()
+ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri, TUint aTrackId)
 {
-    iTotalBytes = iRestreamPos = iOffset = 0;
+    iTotalBytes = iSeekPos = iOffset = 0;
     iStreamId = ProtocolManager::kStreamIdInvalid;
+    iSeekable = iSeek = iLive = iStarted = iStopped = false;
+    iContentProcessor = NULL;
+    iTrackId = aTrackId;
+    iUri.Replace(aUri);
 
-    iSeekable = iRestream = iLive = iStarted = iEnded = false;
+    LOG(kMedia, "ProtocolHttp::Stream ");
+    LOG(kMedia, iUri.AbsoluteUri());
+    LOG(kMedia, "\n");
 
+    if (iUri.Scheme() != Brn("http")) {
+        LOG(kMedia, "ProtocolHttp::Stream Scheme not recognised\n");
+        return EProtocolErrorNotSupported;
+    }
+    
     ProtocolStreamResult res = DoStream();
     if (res == EProtocolStreamErrorUnrecoverable) {
-        return;
+        // FIXME - error msg
+        return res;
     }
-    if (res == EProtocolStreamLive) {
+    if (iLive) {
         // FIXME - wait on semaphore
         // FIXME - ...which will require that Interrupt signals the semaphore
+        res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
     }
-    for (;;) {
-        if (iEnded) {
-            break;
-        }
-        if (!iStarted) {
-            // FIXME - msg to indicate bad track
-            break;
-        }
+    while (res == EProtocolStreamErrorRecoverable) {
         if (iLive) {
             res = DoLiveStream();
         }
         else if (iSeekable) {
-            if (iRestream) {
-                REVIEW_ME_OutputFlush();
-                iOffset = iRestreamPos;
-                iRestream = false;
+            if (iSeek) {
+                iSupply->OutputFlush();
+                iOffset = iSeekPos;
+                iSeek = false;
             }
-            res = DoRestream(iOffset);
+            res = DoSeek(iOffset);
+        }
+        else {
+            TUint code = WriteRequest(iOffset);
+            if (code == 0) {
+                res = EProtocolStreamErrorUnrecoverable;
+            }
+            else {
+                res = ProcessContent();
+            }
         }
         if (res == EProtocolStreamErrorUnrecoverable) {
             // FIXME - msg to indicate bad track
-            break;
         }
-        if (!iEnded) {
+        if (res == EProtocolStreamErrorRecoverable) {
             Thread::Sleep(50);
         }
     }
+    iLock.Wait();
+    // FIXME - clear track, stream ids
+    // TBool stopped = iStopped;
+    iLock.Signal();
+    if (iStopped) {
+        return EProtocolStreamStopped;
+    }
+    return res;
 }
 
-TBool ProtocolHttp::Restream(TUint aStreamId, TUint64 aBytePos)
+TBool ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    LOG(kMedia, "ProtocolHttp::Restream\n");
+    TBool canPlay = iIdProvider->OkToPlay(aTrackId, aStreamId);
+    if (canPlay && iLive) {
+        // signal semaphore
+    }
+    return canPlay;
+}
 
-    REVIEW_ME_Lock();
+TBool ProtocolHttp::Seek(TUint /*aTrackId*/, TUint aStreamId, TUint64 aOffset)
+{
+    LOG(kMedia, "ProtocolHttp::Seek\n");
+
+    iLock.Wait();
+    // FIXME - MsgTrack needs getter/setter for TrackIdPipeline() before test of iTrackId becomes valid
+//    TBool streamIsValid = (iTrackId == aTrackId && iStreamId == aStreamId);
     TBool streamIsValid = (iStreamId == aStreamId);
-    TBool ended = iEnded;
-    iRestream = true;
-    iRestreamPos = aBytePos;
-    REVIEW_ME_Unlock();
-    if (!streamIsValid || ended) {
+    iSeek = true;
+    iSeekPos = aOffset;
+    iLock.Signal();
+    if (!streamIsValid) {
         return false;
     }
     iTcpClient.Interrupt(true);
@@ -128,39 +159,33 @@ TBool ProtocolHttp::Restream(TUint aStreamId, TUint64 aBytePos)
     return true;
 }
 
-TBool ProtocolHttp::StartLiveStream(TUint /*aStreamId*/)
+void ProtocolHttp::Stop()
 {
     // FIXME
-    return false;
 }
 
 ProtocolStreamResult ProtocolHttp::DoStream()
 {
-    const OpenHome::Uri& uri = Uri();
-    LOG(kMedia, "ProtocolHttp::Stream ");
-    LOG(kMedia, uri.AbsoluteUri());
-    LOG(kMedia, "\n");
-
-    if (uri.Scheme() != Brn("http")) {
-        LOG(kMedia, "ProtocolHttp::Stream Scheme not recognised\n");
-        return EProtocolStreamErrorUnrecoverable;
-    }
-    
-    iTotalBytes = 0;
-    iSeekable = false;
-    TUint code = WriteRequest(0);
-    if (code == 0) {
-        return EProtocolStreamErrorUnrecoverable;
-    }
-    // Check for redirection
-    if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
-        if (iHeaderLocation.Received()) {
-            REVIEW_ME_Redirect(iHeaderLocation.Location());
+    TUint code;
+    for (;;) { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
+        code = WriteRequest(0);
+        if (code == 0) {
+            return EProtocolStreamErrorUnrecoverable;
         }
-        return EProtocolStreamErrorUnrecoverable;
+        // Check for redirection
+        if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
+            if (!iHeaderLocation.Received()) {
+                return EProtocolStreamErrorUnrecoverable;
+            }
+            iUri.Replace(iHeaderLocation.Location());
+            continue;
+        }
+        break;
     }
     
+    iSeekable = false;
     iTotalBytes = iHeaderContentLength.ContentLength();
+    iLive = (iTotalBytes == 0);
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
         LOG(kMedia, "ProtocolHttp::Stream Failed\n");
         return EProtocolStreamErrorUnrecoverable;
@@ -174,15 +199,15 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     else { // code == HttpStatus::kOk.Code()
         LOG(kMedia, "ProtocolHttp::Connect 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
     }
-    ProcessContentType();
-    return (iEnded? EProtocolStreamSuccess : EProtocolStreamErrorRecoverable);
+
+    return ProcessContent();
 }
 
-ProtocolStreamResult ProtocolHttp::DoRestream(TUint64 aOffset)
+ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
 {
     LOG(kMedia, "ProtocolHttp::DoRestream %lld\n", aOffset);
 
-    REVIEW_ME_DoInterrupt(false);
+    Interrupt(false);
     Close();
     const TUint code = WriteRequest(aOffset);
     if (code == 0) {
@@ -194,36 +219,35 @@ ProtocolStreamResult ProtocolHttp::DoRestream(TUint64 aOffset)
         return EProtocolStreamErrorUnrecoverable;
     }       
 
-    ProcessAudio();
-    return (iEnded? EProtocolStreamSuccess : EProtocolStreamErrorRecoverable);
+    return ProcessContent();
 }
 
 ProtocolStreamResult ProtocolHttp::DoLiveStream()
 {
     LOG(kMedia, "ProtocolHttp::DoLiveStream\n");
 
-    REVIEW_ME_DoInterrupt(false);
+    Interrupt(false);
     Close();
     const TUint code = WriteRequest(0);
+    iLive = false; // FIXME - review this
     if (code == 0) {
         return EProtocolStreamErrorRecoverable;
     }
 
-    ProcessAudio();
-    return (iEnded? EProtocolStreamSuccess : EProtocolStreamErrorRecoverable);
+    return ProcessContent();
 }
 
 TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 {
-    if (!Connect(80)) {
-        LOG(kMedia, "ProtocolHttp::Restream Connection failure\n");
+    if (!Connect(iUri, 80)) {
+        LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;
     }
         
     try {
         LOG(kMedia, "ProtocolHttp::Stream send request\n");
-        iWriterRequest.WriteMethod(Http::kMethodGet, Uri().PathAndQuery(), Http::eHttp11);
-        Http::WriteHeaderHost(iWriterRequest, Uri());
+        iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
+        Http::WriteHeaderHost(iWriterRequest, iUri);
         iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
         Http::WriteHeaderConnectionClose(iWriterRequest);
         HeaderIcyMetadata::Write(iWriterRequest);
@@ -231,26 +255,146 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         iWriterRequest.WriteFlush();
     }
     catch(WriterError&) {
-        LOG(kMedia, "ProtocolHttp::Restream writer error\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest writer error\n");
         return 0;
     }
     
     try {
-        LOG(kMedia, "ProtocolHttp::Restream read response\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest read response\n");
         iReaderResponse.Read();
     }
     catch(HttpError&) {
-        LOG(kMedia, "ProtocolHttp::Restream http error\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest http error\n");
         return 0;
     }
     catch(ReaderError&) {
-        LOG(kMedia, "ProtocolHttp::Restream reader error\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest reader error\n");
         return 0;
     }
     const TUint code = iReaderResponse.Status().Code();
     LOG(kMedia, "ProtocolHttp response code %d\n", code);
     return code;
 }
+
+ProtocolStreamResult ProtocolHttp::ProcessContent()
+{
+    LOG(kMedia, "ProtocolHttp::ProcessContent %lld\n", iTotalBytes);
+    
+    if (iContentProcessor == NULL && !iStarted) {
+        try {
+            Brn contentStart = iReaderBuf.Peek(100);
+            iContentProcessor = iProtocolManager->GetContentProcessor(iUri.AbsoluteUri(), iHeaderContentType.Received()? iHeaderContentType.Type() : Brx::Empty(), contentStart);
+        }
+        catch (ReaderError&) {
+            return EProtocolStreamErrorRecoverable;
+        }
+    }
+    if (iContentProcessor != NULL) {
+        return iContentProcessor->TryStream(iReaderBuf, iTotalBytes, kReadBufferBytes/*, iOffset*/); // FIXME - passing iOffset might help with retries
+    }
+
+    if (!iStarted) {
+        iStreamId = iIdProvider->NextStreamId();
+        iSupply->Start(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
+        iStarted = true;
+        if (iLive) {
+            // don't want to buffer content from a live stream so need to wait on pipeline signalling it is ready to play
+            Close();
+            return EProtocolStreamErrorRecoverable;
+        }
+    }
+
+    iIcyMetadata.SetBytes(0);
+    TUint64 bytes = iTotalBytes;
+    const TBool finite = (bytes > 0);
+    TUint dataBytes = 0;
+
+    for (;;) {
+        try {
+            TUint required;
+            if (iHeaderIcyMetadata.Received()) {
+                if (dataBytes == 0) {
+                    dataBytes = iHeaderIcyMetadata.Bytes();
+                }
+                if (dataBytes > kAudioBytes) {
+                    required = kAudioBytes;
+                }
+                else {
+                    required = dataBytes;
+                }
+                dataBytes -= required;
+            }
+            else {
+                required = kAudioBytes;
+            }
+            
+            if (finite) {
+                if (bytes == 0) {
+                    LOG(kMedia, "ProtocolHttp::ProcessContent completed\n");
+                    break;
+                }
+                if (bytes < required) {
+                    required = (TUint)bytes;
+                }
+                bytes -= required;
+            }
+            
+            iSupply->OutputData(iReaderBuf.Read(required));
+            iOffset += required;
+
+            if (iHeaderIcyMetadata.Received() && dataBytes == 0) { // at start of metadata
+                ExtractMetadata();
+            }
+        }
+        catch (ReaderError&)
+        {
+            LOG(kMedia, "ProtocolHttp::ProcessContent ReaderError bytes %lld, iTotalBytes %lld\n", bytes, iTotalBytes);
+            if (iOffset == iTotalBytes) {
+                return EProtocolStreamSuccess;
+            }
+            return EProtocolStreamErrorRecoverable;
+        }
+    }
+    return EProtocolStreamSuccess;
+}
+
+void ProtocolHttp::ExtractMetadata()
+{
+#if 0 // FIXME - need to bring across DidlLite class
+    Brn metadata = iReaderBuf.Read(1);
+    TUint metadataBytes = metadata[0] * 16;
+    Bws<kIcyMetadataBytes> newMetadata;
+    DidlLite didl;
+    if (metadataBytes != 0) {
+        Parser data(iReaderBuf.Read(metadataBytes));
+        while(!data.Finished()) {
+            Brn name = data.Next('=');
+            if (name == Brn("StreamTitle")) {
+                // metadata is in the format: 'data';
+                // may contain single quote characters so seek to the semicolon and discard the trailing single quote
+                data.Next('\'');
+                Brn title = data.Next(';');
+                if (title.Bytes() > 1) {
+                    didl.SetTitle(Brn(title.Ptr(), title.Bytes()-1));
+                }
+                didl.SetClass(DidlLite::eObjectItem);
+                break;
+            }
+        }
+        didl.Create(newMetadata);
+        // if the message has changed put it into the pipeline
+        if (newMetadata != iIcyMetadata) {
+            iIcyMetadata.Replace(newMetadata);
+            OutputMetadata(iIcyMetadata);
+        }
+    }
+#endif // 0
+}
+
+#if 0
+// unused but retained until all content processors are factored out
+
+
 
 void ProtocolHttp::ProcessContentType()
 {
@@ -332,94 +476,6 @@ void ProtocolHttp::ProcessContentType()
 
     ProcessAudio();
 }
-
-void ProtocolHttp::ExtractMetadata()
-{
-#if 0 // FIXME - need to bring across DidlLite class
-    Brn metadata = iReaderBuf.Read(1);
-    TUint metadataBytes = metadata[0] * 16;
-    Bws<kIcyMetadataBytes> newMetadata;
-    DidlLite didl;
-    if (metadataBytes != 0) {
-        Parser data(iReaderBuf.Read(metadataBytes));
-        while(!data.Finished()) {
-            Brn name = data.Next('=');
-            if (name == Brn("StreamTitle")) {
-                // metadata is in the format: 'data';
-                // may contain single quote characters so seek to the semicolon and discard the trailing single quote
-                data.Next('\'');
-                Brn title = data.Next(';');
-                if (title.Bytes() > 1) {
-                    didl.SetTitle(Brn(title.Ptr(), title.Bytes()-1));
-                }
-                didl.SetClass(DidlLite::eObjectItem);
-                break;
-            }
-        }
-        didl.Create(newMetadata);
-        // if the message has changed put it into the pipeline
-        if (newMetadata != iIcyMetadata) {
-            iIcyMetadata.Replace(newMetadata);
-            OutputMetadata(iIcyMetadata);
-        }
-    }
-#endif // 0
-}
-
-void ProtocolHttp::ProcessAudio()
-{
-    LOG(kMedia, "ProtocolHttp::ProcessAudio %lld\n", iTotalBytes);
-    
-    iIcyMetadata.SetBytes(0);
-    TUint64 bytes = iTotalBytes;
-    TBool finite = bytes > 0;
-    TUint dataBytes = 0;
-
-    for (;;) {
-        try {
-            TUint required;
-            if (iHeaderIcyMetadata.Received()) {
-                if (dataBytes == 0) {
-                    dataBytes = iHeaderIcyMetadata.Bytes();
-                }
-                if (dataBytes > kAudioBytes) {
-                    required = kAudioBytes;
-                }
-                else {
-                    required = dataBytes;
-                }
-                dataBytes -= required;
-            }
-            else {
-                required = kAudioBytes;
-            }
-            
-            if (finite) {
-                if (bytes == 0) {
-                    LOG(kMedia, "ProtocolHttp::ProcessAudio completed\n");
-                    REVIEW_ME_End();
-                    break;
-                }
-                if (bytes < required) {
-                    required = (TUint)bytes;
-                }
-                bytes -= required;
-            }
-            
-            REVIEW_ME_OutputData(iReaderBuf.Read(required));
-
-            if (iHeaderIcyMetadata.Received() && dataBytes == 0) { // at start of metadata
-                ExtractMetadata();
-            }
-        }
-        catch (ReaderError&)
-        {
-            LOG(kMedia, "ProtocolHttp::ProcessAudio ReaderError bytes %lld, iTotalBytes %lld\n", bytes, iTotalBytes);
-            return;
-        }
-    }
-}
-
 /* Example pls file
 
 [playlist]
@@ -791,3 +847,4 @@ TBool UriList::FindNext(Brn& aUri)
     }
     return false;
 }
+#endif // 0

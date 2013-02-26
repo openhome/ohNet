@@ -47,8 +47,9 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iPendingMsg(NULL)
     , iPostSeekStreamInfo(NULL)
     , iAudioEncoded(NULL)
-    , iRestreamer(NULL)
-    , iLiveStreamer(NULL)
+    , iSeekable(false)
+    , iLive(false)
+    , iStreamHandler(NULL)
     , iStreamId(0)
     , iSampleRate(0)
     , iStreamLength(0)
@@ -83,7 +84,7 @@ TBool CodecController::Seek(TUint /*aTrackId*/, TUint aStreamId, TUint aSecondsA
     if (aStreamId != iStreamId) {
         return false;
     }
-    if (iActiveCodec == NULL || iRestreamer == NULL) {
+    if (iActiveCodec == NULL || !iSeekable) {
         return false;
     }
     iSeek = true;
@@ -105,8 +106,9 @@ void CodecController::CodecThread()
             iStreamEnded = false;
             iSeek = false;
             iActiveCodec = NULL;
-            iRestreamer = NULL;
-            iLiveStreamer = NULL;
+            iSeekable = false;
+            iLive = false;
+            iStreamHandler = NULL;
             iStreamId = 0;
             iSampleRate = 0;
             iStreamLength = 0;
@@ -289,7 +291,7 @@ TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
     // need to increment iFlushExpectedCount now in case TrySeek results in updated DecodedStreamInfo being output
     iFlushExpectedCount++;
     iLock.Signal();
-    const TBool canSeek = iRestreamer->Restream(aStreamId, aBytePos);
+    const TBool canSeek = iStreamHandler->Seek(0, aStreamId, aBytePos); // FIXME - need trackId
     if (canSeek) {
         iStreamPos = aBytePos;
     }
@@ -314,7 +316,7 @@ TUint64 CodecController::StreamPos() const
 
 void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless)
 {
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iLiveStreamer);
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, iStreamHandler);
     iLock.Wait();
     iSampleRate = aSampleRate;
     if (iFlushExpectedCount > 0) {
@@ -387,8 +389,9 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamId = aMsg->StreamId();
     iSeek = false; // clear any pending seek - it'd have been against a previous track now
     iStreamLength = aMsg->TotalBytes();
-    iRestreamer = aMsg->Restreamer();
-    iLiveStreamer = aMsg->LiveStreamer();
+    iSeekable = aMsg->Seekable();
+    iLive = aMsg->Live();
+    iStreamHandler = aMsg->StreamHandler();
     aMsg->RemoveRef();
     return NULL;
 }

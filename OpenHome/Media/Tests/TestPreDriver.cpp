@@ -194,14 +194,14 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgSilence(iNextMsgSilenceSize);
     case EMsgDecodedStream:
         iNextGeneratedMsg = EMsgSilence;
-        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, kNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, kNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
     case EMsgTrack:
         iNextGeneratedMsg = EMsgAudioPcm; // msg will be discarded by PreDriver which will immediately Pull again.
                                           // Ensure we have something different to deliver to avoid an infinite loop.
         return iMsgFactory->CreateMsgTrack();
     case EMsgEncodedStream:
         iNextGeneratedMsg = EMsgAudioPcm;
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, NULL, NULL);
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
     case EMsgMetaText:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));

@@ -1291,7 +1291,7 @@ DecodedStreamInfo::DecodedStreamInfo()
 {
 }
 
-void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, ILiveStreamer* aLiveStreamer)
+void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
 {
     iStreamId = aStreamId;
     iBitRate = aBitRate;
@@ -1302,7 +1302,9 @@ void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TU
     iTrackLength = aTrackLength;
     iSampleStart = aSampleStart;
     iLossless = aLossless;
-    iLiveStreamer = aLiveStreamer;
+    iSeekable = aSeekable;
+    iLive = aLive;
+    iStreamHandler = aStreamHandler;
 }
 
 
@@ -1318,15 +1320,15 @@ const DecodedStreamInfo& MsgDecodedStream::StreamInfo() const
     return iStreamInfo;
 }
 
-void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, ILiveStreamer* aLiveStreamer)
+void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
 {
-    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aLiveStreamer);
+    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aStreamHandler);
 }
 
 void MsgDecodedStream::Clear()
 {
 #ifdef DEFINE_DEBUG
-    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, NULL);
+    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, NULL);
 #endif
 }
 
@@ -1376,24 +1378,30 @@ TUint MsgEncodedStream::StreamId() const
     return iStreamId;
 }
 
-IRestreamer* MsgEncodedStream::Restreamer() const
+TBool MsgEncodedStream::Seekable() const
 {
-    return iRestreamer;
+    return iSeekable;
 }
 
-ILiveStreamer* MsgEncodedStream::LiveStreamer() const
+TBool MsgEncodedStream::Live() const
 {
-    return iLiveStreamer;
+    return iLive;
 }
 
-void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, IRestreamer* aRestreamer, ILiveStreamer* aLiveStreamer)
+IStreamHandler* MsgEncodedStream::StreamHandler() const
+{
+    return iStreamHandler;
+}
+
+void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
 {
     iUri.Replace(aUri);
     iMetaText.Replace(aMetaText);
     iTotalBytes = aTotalBytes;
     iStreamId = aStreamId;
-    iRestreamer = aRestreamer;
-    iLiveStreamer = aLiveStreamer;
+    iSeekable = aSeekable;
+    iLive = aLive;
+    iStreamHandler = aStreamHandler;
 }
 
 void MsgEncodedStream::Clear()
@@ -1403,8 +1411,9 @@ void MsgEncodedStream::Clear()
     iMetaText.SetBytes(0);
     iTotalBytes = UINT_MAX;
     iStreamId = UINT_MAX;
-    iRestreamer = NULL;
-    iLiveStreamer = NULL;
+    iSeekable = false;
+    iLive = false;
+    iStreamHandler = NULL;
 #endif
 }
 
@@ -1942,10 +1951,10 @@ MsgSilence* MsgFactory::CreateMsgSilence(TUint aSizeJiffies)
     return msg;
 }
 
-MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, ILiveStreamer* aLiveStreamer)
+MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
 {
     MsgDecodedStream* msg = iAllocatorMsgDecodedStream.Allocate();
-    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aLiveStreamer);
+    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aStreamHandler);
     return msg;
 }
 
@@ -1954,10 +1963,10 @@ MsgTrack* MsgFactory::CreateMsgTrack()
     return iAllocatorMsgTrack.Allocate();
 }
 
-MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, IRestreamer* aRestreamer, ILiveStreamer* aLiveStreamer)
+MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
 {
     MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
-    msg->Initialise(aUri, aMetaText, aTotalBytes, aStreamId, aRestreamer, aLiveStreamer);
+    msg->Initialise(aUri, aMetaText, aTotalBytes, aStreamId, aSeekable, aLive, aStreamHandler);
     return msg;
 }
 

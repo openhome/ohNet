@@ -184,7 +184,7 @@ void SupplierWav::Run()
     ASSERT(iDataSize % (iNumChannels * (iBitDepth/8)) == 0);
     const TUint numSamples = iDataSize / (iNumChannels * (iBitDepth/8));
     const TUint64 trackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / iSampleRate;
-    msg = iMsgFactory->CreateMsgDecodedStream(1, bitRate, iBitDepth, iSampleRate, iNumChannels, Brn("WAV"), trackLengthJiffies, 0, true, NULL);
+    msg = iMsgFactory->CreateMsgDecodedStream(1, bitRate, iBitDepth, iSampleRate, iNumChannels, Brn("WAV"), trackLengthJiffies, 0, true, false, false, NULL);
     iPipeline->Push(msg);
     while (iDataPos < iDataSize) {
         msg = CreateAudio();

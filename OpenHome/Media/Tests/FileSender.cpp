@@ -71,7 +71,7 @@ void SupplierFile::Run()
     CheckForKill();
     Msg* msg = iMsgFactory->CreateMsgTrack();
     iPipeline->Push(msg);
-    msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), iDataSize, 1, NULL, NULL);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), iDataSize, 1, false, false, NULL);
     iPipeline->Push(msg);
     while (!iQuit) {
         if (iBlock) {
