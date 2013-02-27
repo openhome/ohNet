@@ -23,10 +23,10 @@ void Protocol::Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvide
     iSupply = &aSupply;
 }
 
-ProtocolStreamResult Protocol::TryStream(const Brx& aUri, TUint aTrackId)
+ProtocolStreamResult Protocol::TryStream(const Brx& aUri)
 {
     AutoStream a(*this);
-    return Stream(aUri, aTrackId);
+    return Stream(aUri);
 }
 
 TBool Protocol::Active() const
@@ -34,19 +34,14 @@ TBool Protocol::Active() const
     return iActive;
 }
 
-TBool Protocol::Seekable() const
+TBool Protocol::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    return false;
+    return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
 
 TBool Protocol::Seek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
-    return false;
-}
-
-TBool Protocol::Live() const
-{
     return false;
 }
 
@@ -206,6 +201,7 @@ ContentProcessor::AutoStream::~AutoStream()
 ProtocolManager::ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider)
     : iIdProvider(aIdProvider)
     , iSupply(aSupply)
+    , iLock("PMGR")
 {
 }
 
@@ -237,26 +233,29 @@ void ProtocolManager::Add(ContentProcessor* aProcessor)
 
 TBool ProtocolManager::DoStream(const Brx& aUri)
 {
-    TUint trackId = iIdProvider.NextTrackId();
-    ProtocolStreamResult res = Stream(aUri, trackId);
+    iLock.Wait();
+    iTrackId = iIdProvider.NextTrackId();
+    iLock.Signal();
+    iSupply.OutputTrack(aUri, iTrackId);
+    ProtocolStreamResult res = Stream(aUri);
     return (res != EProtocolStreamStopped);
 }
 
-ProtocolStreamResult ProtocolManager::Stream(const Brx& aUri, TUint aTrackId)
+ProtocolStreamResult ProtocolManager::Stream(const Brx& aUri)
 {
     ProtocolStreamResult res = EProtocolErrorNotSupported;
     const TUint count = iProtocols.size();
     for (TUint i=0; i<count, res==EProtocolErrorNotSupported; i++) {
         Protocol* protocol = iProtocols[i];
         if (!protocol->Active()) {
-            res = protocol->TryStream(aUri, aTrackId);
+            res = protocol->TryStream(aUri);
             ASSERT(res != EProtocolStreamErrorRecoverable);
         }
     }
     return res;
 }
 
-ContentProcessor* ProtocolManager::GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData)
+ContentProcessor* ProtocolManager::GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const
 {
     const TUint count = iContentProcessors.size();
     for (TUint i=0; i<count; i++) {
@@ -267,4 +266,13 @@ ContentProcessor* ProtocolManager::GetContentProcessor(const Brx& aUri, const Br
     }
     // unrecognised content (may well be audio)
     return NULL;
+}
+
+TBool ProtocolManager::OkToSeek(TUint /*aTrackId*/) const
+{
+    iLock.Wait();
+    // FIXME - MsgTrack needs getter/setter for TrackIdPipeline() before test of iTrackId becomes valid
+    const TBool ok = true;//(iTrackId == aTrackId);
+    iLock.Signal();
+    return ok;
 }

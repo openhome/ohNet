@@ -65,13 +65,12 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
     iReaderResponse.AddHeader(iHeaderIcyMetadata);
 }
 
-ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri, TUint aTrackId)
+ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 {
     iTotalBytes = iSeekPos = iOffset = 0;
     iStreamId = ProtocolManager::kStreamIdInvalid;
     iSeekable = iSeek = iLive = iStarted = iStopped = false;
     iContentProcessor = NULL;
-    iTrackId = aTrackId;
     iUri.Replace(aUri);
 
     LOG(kMedia, "ProtocolHttp::Stream ");
@@ -140,14 +139,12 @@ TBool ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
     return canPlay;
 }
 
-TBool ProtocolHttp::Seek(TUint /*aTrackId*/, TUint aStreamId, TUint64 aOffset)
+TBool ProtocolHttp::Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ProtocolHttp::Seek\n");
 
     iLock.Wait();
-    // FIXME - MsgTrack needs getter/setter for TrackIdPipeline() before test of iTrackId becomes valid
-//    TBool streamIsValid = (iTrackId == aTrackId && iStreamId == aStreamId);
-    TBool streamIsValid = (iStreamId == aStreamId);
+    const TBool streamIsValid = (iProtocolManager->OkToSeek(aTrackId) && iStreamId == aStreamId);
     iSeek = true;
     iSeekPos = aOffset;
     iLock.Signal();

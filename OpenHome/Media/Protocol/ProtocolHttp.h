@@ -34,7 +34,7 @@ class ProtocolHttp : public ProtocolNetwork
 public:
 	ProtocolHttp(Environment& aEnv);
 private: // from Protocol	
-    ProtocolStreamResult Stream(const Brx& aUri, TUint aTrackId);
+    ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -68,7 +68,6 @@ private:
 //    Bws<kMaxUriBytes> iXmlUri;
 //    OpenHome::Uri iAsxUri;
     TUint64 iTotalBytes;
-    TUint iTrackId;
     TUint iStreamId;
     TBool iSeekable;
     TBool iSeek;

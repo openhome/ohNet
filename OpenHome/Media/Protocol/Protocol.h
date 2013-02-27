@@ -25,14 +25,15 @@ enum ProtocolStreamResult
 class IProtocolSet
 {
 public:
-    virtual ProtocolStreamResult Stream(const Brx& aUri, TUint aTrackId) = 0;
+    virtual ProtocolStreamResult Stream(const Brx& aUri) = 0;
 };
 
 class ContentProcessor;
 class IProtocolManager : public IProtocolSet
 {
 public:
-    virtual ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) = 0;
+    virtual ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const = 0;
+    virtual TBool OkToSeek(TUint aTrackId) const = 0;
 };
 
 class IPipelineIdProvider // FIXME - move to more appropriate header
@@ -46,17 +47,16 @@ public:
 class Protocol : protected IStreamHandler, protected INonCopyable
 {
 public:
-    ProtocolStreamResult TryStream(const Brx& aUri, TUint aTrackId);
+    ProtocolStreamResult TryStream(const Brx& aUri);
     void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply);
     TBool Active() const;
 protected:
     Protocol(Environment& aEnv);
-private: // from IProtocolManager
-    TBool Seekable() const;
+private: // from IStreamHandler
+    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TBool Live() const;
 private:
-    virtual ProtocolStreamResult Stream(const Brx& aUri, TUint aTrackId) = 0;
+    virtual ProtocolStreamResult Stream(const Brx& aUri) = 0;
 protected:
     Environment& iEnv;
     IProtocolManager* iProtocolManager;
@@ -138,13 +138,16 @@ public:
     void Add(ContentProcessor* aProcessor);
     TBool DoStream(const Brx& aUri);
 private: // from IProtocolManager
-    ProtocolStreamResult Stream(const Brx& aUri, TUint aTrackId);
-    ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
+    ProtocolStreamResult Stream(const Brx& aUri);
+    ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;
+    TBool OkToSeek(TUint aTrackId) const;
 private:
     IPipelineIdProvider& iIdProvider;
     ISupply& iSupply;
+    mutable Mutex iLock;
     std::vector<Protocol*> iProtocols;
     std::vector<ContentProcessor*> iContentProcessors;
+    TUint iTrackId;
 };
 
 } // namespace Media
