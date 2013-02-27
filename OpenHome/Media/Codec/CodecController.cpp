@@ -435,5 +435,5 @@ Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
     Queue(aMsg);
     iQuit = true;
     iStreamEnded = true;
-    return aMsg;
+    return NULL;
 }
