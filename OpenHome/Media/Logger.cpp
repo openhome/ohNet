@@ -9,7 +9,18 @@ using namespace OpenHome::Media;
 //  Logger
 
 Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
-    : iUpstreamElement(aUpstreamElement)
+    : iUpstreamElement(&aUpstreamElement)
+    , iDownstreamElement(NULL)
+    , iId(aId)
+    , iEnabled(false)
+    , iFilter(EMsgAll)
+    , iShutdownSem("PDSD", 0)
+{
+}
+
+Logger::Logger(const TChar* aId, IPipelineElementDownstream& aDownstreamElement)
+    : iUpstreamElement(NULL)
+    , iDownstreamElement(&aDownstreamElement)
     , iId(aId)
     , iEnabled(false)
     , iFilter(EMsgAll)
@@ -34,9 +45,15 @@ void Logger::SetFilter(TUint aMsgTypes)
 
 Msg* Logger::Pull()
 {
-    Msg* msg = iUpstreamElement.Pull();
+    Msg* msg = iUpstreamElement->Pull();
     (void)msg->Process(*this);
     return msg;
+}
+
+void Logger::Push(Msg* aMsg)
+{
+    (void)aMsg->Process(*this);
+    iDownstreamElement->Push(aMsg);
 }
 
 Msg* Logger::ProcessMsg(MsgAudioEncoded* aMsg)

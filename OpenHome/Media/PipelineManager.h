@@ -116,6 +116,7 @@ private:
     Codec::Container* iContainer;
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
+    Logger* iLoggerCodecController;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
     VariableDelay* iVariableDelay;

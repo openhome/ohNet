@@ -54,8 +54,10 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
 
     iContainer = new Codec::Container(*iMsgFactory, /**iEncodedAudioReservoir*/*iLoggerEncodedAudioReservoir);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
-    iCodecController = new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer, *iDecodedAudioReservoir);
-    // no iLoggerCodecController since CodecController pushes to its right and Logger only pulls
+    
+    // construct push logger slightly out of sequence
+    iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioReservoir);
+    iCodecController = new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer, /**iDecodedAudioReservoir*/*iLoggerCodecController);
 
     iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
@@ -77,6 +79,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
 
     iLoggerEncodedAudioReservoir->SetEnabled(loggersEnabled);
     iLoggerContainer->SetEnabled(loggersEnabled);
+    iLoggerCodecController->SetEnabled(true/*loggersEnabled*/);
     iLoggerDecodedAudioReservoir->SetEnabled(loggersEnabled);
     iLoggerVariableDelay->SetEnabled(loggersEnabled);
     iLoggerStopper->SetEnabled(loggersEnabled);
@@ -89,6 +92,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
 
     iLoggerEncodedAudioReservoir->SetFilter(filter);
     iLoggerContainer->SetFilter(filter);
+    iLoggerCodecController->SetFilter(Logger::EMsgQuit/*filter*/);
     iLoggerDecodedAudioReservoir->SetFilter(filter);
     iLoggerVariableDelay->SetFilter(filter);
     iLoggerStopper->SetFilter(filter);
@@ -117,6 +121,7 @@ PipelineManager::~PipelineManager()
     delete iVariableDelay;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
+    delete iLoggerCodecController;
     delete iCodecController;
     delete iLoggerContainer;
     delete iContainer;

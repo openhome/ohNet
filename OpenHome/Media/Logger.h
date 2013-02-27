@@ -13,7 +13,7 @@ Element which logs msgs as they pass through.
 Can be inserted [0..n] times through the pipeline, depending on your debugging needs.
 */
 
-class Logger : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
+class Logger : public IPipelineElementUpstream, public IPipelineElementDownstream, private IMsgProcessor, private INonCopyable
 {
 public:
     enum EMsgType
@@ -34,11 +34,14 @@ public:
     };
 public:
     Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
+    Logger(const TChar* aId, IPipelineElementDownstream& aDownstreamElement);
     virtual ~Logger();
     void SetEnabled(TBool aEnabled);
     void SetFilter(TUint aMsgTypes);
 public: // from IPipelineElementUpstream
     Msg* Pull();
+public: // from IPipelineElementDownstream
+    void Push(Msg* aMsg);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -55,7 +58,8 @@ private:
     void LogRamp(const Media::Ramp& aRamp);
     TBool IsEnabled(EMsgType aType) const;
 private:
-    IPipelineElementUpstream& iUpstreamElement;
+    IPipelineElementUpstream* iUpstreamElement;
+    IPipelineElementDownstream* iDownstreamElement;
     const TChar* iId;
     TBool iEnabled;
     TInt iFilter;
