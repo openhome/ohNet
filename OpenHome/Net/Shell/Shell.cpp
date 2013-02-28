@@ -75,25 +75,25 @@ void ShellSession::Run()
     FunctorMsg oldLogger = Log::SwapOutput(logger);
     iShutdownSem.Wait();
     for (;;) {
-        Brn buf = iReadBuffer->ReadUntil('\n');
-        TUint bytes = buf.Bytes();
-        if (bytes > 0 && buf[bytes - 1] == '\r') { // strip any trailing LF
-            buf.Set(buf.Ptr(), bytes-1);
-        }
-        Parser parser(buf);
-        Brn command = parser.Next(' ');
-        if (command == kCmdExit) {
-            break;
-        }
-        std::vector<Brn> args;
-        for (;;) {
-            Brn arg = parser.Next(' ');
-            if (arg.Bytes() == 0) {
+        try {
+            Brn buf = iReadBuffer->ReadUntil('\n');
+            TUint bytes = buf.Bytes();
+            if (bytes > 0 && buf[bytes - 1] == '\r') { // strip any trailing LF
+                buf.Set(buf.Ptr(), bytes-1);
+            }
+            Parser parser(buf);
+            Brn command = parser.Next(' ');
+            if (command == kCmdExit) {
                 break;
             }
-            args.push_back(arg);
-        }
-        try {
+            std::vector<Brn> args;
+            for (;;) {
+                Brn arg = parser.Next(' ');
+                if (arg.Bytes() == 0) {
+                    break;
+                }
+                args.push_back(arg);
+            }
             iCommandHandler.HandleShellCommand(command, args, *iWriterResponse);
         }
         catch (ReaderError&) {
@@ -132,24 +132,22 @@ Shell::~Shell()
 
 void Shell::AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler)
 {
-    iLock.Wait();
+    AutoMutex a(iLock);
     Brn command(aCommand);
     if (iCommands.find(command) != iCommands.end()) {
         THROW(ShellCommandAlreadyRegistered);
     }
     iCommands.insert(std::pair<Brn, IShellCommandHandler*>(command, &aHandler));
-    iLock.Signal();
 }
 
 void Shell::RemoveCommandHandler(const TChar* aCommand)
 {
-    iLock.Wait();
+    AutoMutex a(iLock);
     Brn command(aCommand);
     CommandMap::iterator it = iCommands.find(command);
     if (it != iCommands.end()) {
         iCommands.erase(it);
     }
-    iLock.Signal();
 }
 
 void Shell::HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse)
