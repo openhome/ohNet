@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandRun.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
+#include <OpenHome/Net/Private/ShellCommandQuit.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 
@@ -25,12 +26,14 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     lib->StartCombined(subnet, cpStack, dvStack);
 
     Shell* shell = new Shell(cpStack->Env());
+    Semaphore* blocker = new Semaphore("BLCK", 0);
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
-    Semaphore* blocker = new Semaphore("BLCK", 0);
+    ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
     blocker->Wait();
     // control never reaches here
     delete blocker;
+    delete cmdQuit;
     delete cmdDebug;
     delete cmdRun;
     delete shell;

@@ -695,8 +695,8 @@ $(objdir)TestShell.$(exeext) :  Shell ShellCommandRun $(objdir)TestShell.$(objex
 $(objdir)TestShell.$(objext) : OpenHome/Net/Shell/TestShell.cpp $(headers)
 	$(compiler)TestShell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/TestShell.cpp
 
-Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug
-	$(ar)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext)
+Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug ShellCommandQuit
+	$(ar)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)ShellCommandQuit.$(objext)
 $(objdir)Shell.$(objext) : OpenHome/Net/Shell/Shell.cpp $(headers)
 	$(compiler)Shell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/Shell.cpp
 
@@ -707,6 +707,10 @@ $(objdir)ShellCommandRun.$(objext) : OpenHome/Net/Shell/ShellCommandRun.cpp $(he
 ShellCommandDebug: $(objdir)ShellCommandDebug.$(objext)
 $(objdir)ShellCommandDebug.$(objext) : OpenHome/Net/Shell/ShellCommandDebug.cpp $(headers)
 	$(compiler)ShellCommandDebug.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandDebug.cpp
+
+ShellCommandQuit: $(objdir)ShellCommandQuit.$(objext)
+$(objdir)ShellCommandQuit.$(objext) : OpenHome/Net/Shell/ShellCommandQuit.cpp $(headers)
+	$(compiler)ShellCommandQuit.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandQuit.cpp
 
 GroupTest: $(objdir)GroupTest.$(exeext) 
 $(objdir)GroupTest.$(exeext) :  ohNetCore $(libprefix)TestFramework.$(libext) $(headers) TestsCore
