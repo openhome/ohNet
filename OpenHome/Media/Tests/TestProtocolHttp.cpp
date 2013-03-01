@@ -75,7 +75,6 @@ private: // from IPipelineIdProvider
     TUint NextStreamId();
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
 private:
-    ISupply& iSupply;
     ProtocolManager* iProtocolManager;
     Brn iUrl;
     TUint iNextTrackId;
@@ -121,7 +120,6 @@ using namespace OpenHome::Net;
 
 SupplierProtocolHttp::SupplierProtocolHttp(Environment& aEnv, ISupply& aSupply)
     : Thread("SPHt")
-    , iSupply(aSupply)
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
