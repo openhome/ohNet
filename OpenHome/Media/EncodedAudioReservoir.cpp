@@ -15,3 +15,8 @@ TUint EncodedAudioReservoir::Size() const
 {
     return EncodedBytes();
 }
+
+void EncodedAudioReservoir::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
+{
+    BlockIfFull();
+}

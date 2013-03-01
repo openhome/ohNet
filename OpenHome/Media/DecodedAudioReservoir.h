@@ -11,6 +11,9 @@ class DecodedAudioReservoir : public AudioReservoir
 {
 public:
     DecodedAudioReservoir(TUint aMaxSize);
+private: // from MsgQueueFlushable
+    virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
+    virtual void ProcessMsgIn(MsgSilence* aMsg);
 private: // from AudioReservoir
     TUint Size() const;
 };

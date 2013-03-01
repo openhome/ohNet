@@ -37,16 +37,11 @@ Msg* AudioReservoir::Pull()
 
 void AudioReservoir::Push(Msg* aMsg)
 {
-    (void)Enqueue(aMsg);
+    DoEnqueue(aMsg);
 }
 
-TBool AudioReservoir::Enqueue(Msg* aMsg)
+void AudioReservoir::BlockIfFull()
 {
-    // Queue the next msg before checking how much data we already have in the buffer
-    // This risks us going over the nominal max size for the buffer but guarantees that
-    // we don't deadlock if a single message larger than iMaxSize is queued.
-
-    DoEnqueue(aMsg);
     iLock.Wait();
     const TBool full = (Size() >= iMaxSize);
     (void)iSem.Clear();
@@ -54,5 +49,4 @@ TBool AudioReservoir::Enqueue(Msg* aMsg)
     if (full) {
         iSem.Wait();
     }
-    return full;
 }

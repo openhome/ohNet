@@ -13,6 +13,8 @@ public:
     EncodedAudioReservoir(TUint aMaxSize);
 private: // from AudioReservoir
     TUint Size() const;
+private: // from MsgQueueFlushable
+    void ProcessMsgIn(MsgAudioEncoded* aMsg);
 };
 
 } // namespace Media

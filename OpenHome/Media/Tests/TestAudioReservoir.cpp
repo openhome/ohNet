@@ -206,6 +206,7 @@ void SuiteAudioReservoir::MsgEnqueueThread()
 
 TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
 {
+    TBool shouldBlock = false;
     Msg* msg = NULL;
     switch (aType)
     {
@@ -215,11 +216,19 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         ASSERTS();
         break;
     case EMsgAudioPcm:
-        msg = CreateAudio();
+    {
+        MsgAudio* audio = CreateAudio();
+        shouldBlock = (iReservoir->Size() + audio->Jiffies() >= kReservoirSize);
+        msg = audio;
         break;
+    }
     case EMsgSilence:
-        msg = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    {
+        MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+        shouldBlock = (iReservoir->Size() + audio->Jiffies() >= kReservoirSize);
+        msg = audio;
         break;
+    }
     case EMsgDecodedStream:
         msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
         break;
@@ -242,7 +251,8 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgQuit();
         break;
     }
-    return iReservoir->Enqueue(msg);
+    iReservoir->Push(msg);
+    return shouldBlock;
 }
 
 MsgAudio* SuiteAudioReservoir::CreateAudio()

@@ -16,3 +16,13 @@ TUint DecodedAudioReservoir::Size() const
 {
     return Jiffies();
 }
+
+void DecodedAudioReservoir::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
+{
+    BlockIfFull();
+}
+
+void DecodedAudioReservoir::ProcessMsgIn(MsgSilence* /*aMsg*/)
+{
+    BlockIfFull();
+}

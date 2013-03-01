@@ -28,7 +28,7 @@ public: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 protected:
     AudioReservoir(TUint aMaxSize);
-    TBool Enqueue(Msg* aMsg); // returns true if was blocked
+    void BlockIfFull();
 private:
     virtual TUint Size() const = 0;
 private:
