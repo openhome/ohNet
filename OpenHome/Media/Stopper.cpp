@@ -38,7 +38,6 @@ void Stopper::Start()
     else {
         iState = EStarting;
         iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
-//        Log::Print("Start, iRemainingRampSize=%u\n", iRemainingRampSize);
     }
     iSem.Signal();
     iLock.Signal();
