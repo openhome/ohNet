@@ -119,20 +119,18 @@ SuiteSupply::~SuiteSupply()
 
 void SuiteSupply::Test()
 {
-    ISupply* supply = static_cast<ISupply*>(iSupply);
-
     TUint expectedMsgCount = 0;
-    supply->OutputTrack(Brn(kUri), kTrackId);
+    iSupply->OutputTrack(Brn(kUri), kTrackId);
     TEST(++expectedMsgCount == iMsgPushCount);
-    supply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
+    iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
     TEST(++expectedMsgCount == iMsgPushCount);
-    supply->OutputData(Brn(kTestData));
+    iSupply->OutputData(Brn(kTestData));
     TEST(++expectedMsgCount == iMsgPushCount);
-    supply->OutputMetadata(Brn(kMetaData));
+    iSupply->OutputMetadata(Brn(kMetaData));
     TEST(++expectedMsgCount == iMsgPushCount);
-    supply->OutputFlush();
+    iSupply->OutputFlush();
     TEST(++expectedMsgCount == iMsgPushCount);
-    supply->OutputQuit();
+    iSupply->OutputQuit();
     TEST(++expectedMsgCount == iMsgPushCount);
 }
 

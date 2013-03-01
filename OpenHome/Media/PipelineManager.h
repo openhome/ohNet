@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Supply.h>
 #include <OpenHome/Media/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
@@ -19,15 +20,6 @@
 
 namespace OpenHome {
 namespace Media {
-
-class ISupplier
-{
-public:
-    virtual void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement) = 0;
-    virtual void Play() = 0; // FIXME - should pass a uri to be played here
-    virtual void Flush(Msg* aMsg) = 0;
-    virtual void Quit(Msg* aMsg) = 0;
-};
 
 enum EPipelineState
 {
@@ -47,7 +39,7 @@ public:
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
     
-class PipelineManager : private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class PipelineManager : public ISupply, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
     static const TUint kMsgCountEncodedAudio    = 512;
@@ -74,7 +66,7 @@ class PipelineManager : private IStopperObserver, private IPipelinePropertyObser
     static const TUint kStarvationMonitorGorgeSize           = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kJiffiesPerMs * 100;
 public:
-    PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier& aSupplier, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes);
+    PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes);
     virtual ~PipelineManager();
     void AddCodec(Codec::CodecBase* aCodec);
     MsgFactory& Factory();
@@ -83,6 +75,13 @@ public:
     void Pause();
     void Stop();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+public: // from ISupply
+    void OutputTrack(const Brx& aUri, TUint aTrackId);
+    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
+    void OutputData(const Brx& aData);
+    void OutputMetadata(const Brx& aMetadata);
+    void OutputFlush();
+    void OutputQuit();
 private:
     void Quit();
     void NotifyStatus();
@@ -107,10 +106,11 @@ private:
        ,EQuit
     };
 private:
-    ISupplier& iSupplier;
     IPipelineObserver& iObserver;
     Mutex iLock;
     MsgFactory* iMsgFactory;
+    Supply* iSupply;
+    Logger* iLoggerSupply;
     EncodedAudioReservoir* iEncodedAudioReservoir;
     Logger* iLoggerEncodedAudioReservoir;
     Codec::Container* iContainer;

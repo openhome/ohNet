@@ -1,6 +1,10 @@
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Media/Supply.h>
+#include <OpenHome/Media/EncodedAudioReservoir.h>
+#include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/VariableDelay.h>
 #include <OpenHome/Media/Stopper.h>
@@ -18,12 +22,13 @@ using namespace OpenHome::Media;
 
 // PipelineManager
 
-PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier& aSupplier, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes)
-    : iSupplier(aSupplier)
-    , iObserver(aObserver)
+PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes)
+    : iObserver(aObserver)
     , iLock("PLMG")
+    , iLoggerSupply(NULL)
     , iLoggerEncodedAudioReservoir(NULL)
     , iLoggerContainer(NULL)
+    , iLoggerCodecController(NULL)
     , iLoggerDecodedAudioReservoir(NULL)
     , iLoggerVariableDelay(NULL)
     , iLoggerStopper(NULL)
@@ -45,8 +50,13 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
                                  kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
                                  kMsgCountHalt, kMsgCountFlush, kMsgCountQuit);
 
+    
+    // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
+    // construct push logger slightly out of sequence
+    iLoggerSupply = new Logger("Supply", *iEncodedAudioReservoir);
+    iSupply = new Supply(*iMsgFactory, /**iEncodedAudioReservoir*/*iLoggerSupply);
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
@@ -73,7 +83,6 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iMsgFactory, /**iStarvationMonitor*/*iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
-    iSupplier.Initialise(*iMsgFactory, *iEncodedAudioReservoir);
 
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
@@ -88,7 +97,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, ISupplier
 
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
-    //iLoggerCodecController->SetFilter(Logger::EMsgQuit);
+    //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
@@ -135,7 +144,7 @@ void PipelineManager::Quit()
 {
     iQuitting = true;
     /*if (iStatus != EPlaying) */ { // always send quit message and ensure pipeline is playing.
-        iSupplier.Quit(iMsgFactory->CreateMsgQuit());
+        OutputQuit();
         Play();
         iTargetStatus = EQuit;
     }
@@ -196,7 +205,6 @@ void PipelineManager::Play()
         iFlushCompletedIgnoreCount++;
     }
     iStopper->Start();
-    iSupplier.Play();
     iStatus = EPlaying;
     iTargetStatus = EPlaying;
     iLock.Signal();
@@ -229,7 +237,7 @@ void PipelineManager::Stop()
     }
     else if (iStatus == EHalted) {
         iStopper->BeginFlush();
-        iSupplier.Flush(iMsgFactory->CreateMsgFlush());
+        OutputFlush();
         iStatus = EFlushing;
     }
 }
@@ -238,6 +246,36 @@ TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsol
 {
     // FIXME - update iTargetStatus
     return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
+}
+
+void PipelineManager::OutputTrack(const Brx& aUri, TUint aTrackId)
+{
+    iSupply->OutputTrack(aUri, aTrackId);
+}
+
+void PipelineManager::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+{
+    iSupply->OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
+}
+
+void PipelineManager::OutputData(const Brx& aData)
+{
+    iSupply->OutputData(aData);
+}
+
+void PipelineManager::OutputMetadata(const Brx& aMetadata)
+{
+    iSupply->OutputMetadata(aMetadata);
+}
+
+void PipelineManager::OutputFlush()
+{
+    iSupply->OutputFlush();
+}
+
+void PipelineManager::OutputQuit()
+{
+    iSupply->OutputQuit();
 }
 
 void PipelineManager::PipelineHalted()
@@ -262,7 +300,7 @@ void PipelineManager::PipelineHalted()
     case EQuit:
         iStatus = EFlushing;
         iStopper->BeginFlush();
-        iSupplier.Flush(iMsgFactory->CreateMsgFlush());
+        OutputFlush();
         iLock.Signal();
         break;
     default:
@@ -289,7 +327,7 @@ void PipelineManager::PipelineFlushed()
     case EQuit:
         iStatus = EFlushed;
         iLock.Signal();
-        iSupplier.Quit(iMsgFactory->CreateMsgQuit());
+        OutputQuit();
         break;
     default:
         ASSERTS();

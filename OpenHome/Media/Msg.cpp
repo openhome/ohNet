@@ -1753,22 +1753,22 @@ MsgQueueFlushable::ProcessorQueueIn::ProcessorQueueIn(MsgQueueFlushable& aQueue)
 
 Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    iQueue.ProcessMsgIn(aMsg);
     iQueue.Add(iQueue.iEncodedBytes, aMsg->Bytes());
+    iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
 Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iQueue.ProcessMsgIn(aMsg);
     iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
 Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgSilence* aMsg)
 {
-    iQueue.ProcessMsgIn(aMsg);
     iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 

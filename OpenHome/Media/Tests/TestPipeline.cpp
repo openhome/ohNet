@@ -18,29 +18,23 @@ using namespace OpenHome::Media::Codec;
 namespace OpenHome {
 namespace Media {
 
-class Supplier : public Thread, public ISupplier, private IStreamHandler
+class Supplier : public Thread, private IStreamHandler
 {
 public:
-    Supplier();
+    Supplier(ISupply& aSupply);
     ~Supplier();
     void Block();
     void Unblock();
 private: // from Thread
     void Run();
-private: // from ISupplier
-    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement);
-    void Play();
-    void Flush(Msg* aMsg);
-    void Quit(Msg* aMsg);
 private: // from IStreamHandler
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     void Stop();
 private:
+    ISupply& iSupply;
     Mutex iLock;
     Semaphore iBlocker;
-    MsgFactory* iMsgFactory;
-    IPipelineElementDownstream* iPipeline;
     Msg* iPendingMsg;
     TBool iBlock;
     TBool iQuit;
@@ -134,20 +128,20 @@ private:
 
 // Supplier
 
-Supplier::Supplier()
+Supplier::Supplier(ISupply& aSupply)
     : Thread("TSUP")
+    , iSupply(aSupply)
     , iLock("TSUP")
     , iBlocker("TSUP", 0)
-    , iMsgFactory(NULL)
-    , iPipeline(NULL)
-    , iPendingMsg(NULL)
-    , iBlock(true)
+    , iBlock(false)
     , iQuit(false)
 {
+    Start();
 }
 
 Supplier::~Supplier()
 {
+    Kill();
     Join();
 }
 
@@ -169,63 +163,38 @@ void Supplier::Run()
     (void)memset(encodedAudioData, 0x7f, sizeof(encodedAudioData));
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
-    Msg* msg = iMsgFactory->CreateMsgTrack();
-    iPipeline->Push(msg);
-    msg = iMsgFactory->CreateMsgEncodedStream(Brn(""), Brn(""), 1LL<<32, 1, false, false, this);
-    iPipeline->Push(msg);
-    while (!iQuit) {
+    iSupply.OutputTrack(Brx::Empty(), 1);
+    iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);
+    for (;;) {
+        CheckForKill();
         if (iBlock) {
             iBlocker.Wait();
         }
-        iLock.Wait();
-        if (iPendingMsg != NULL) {
+//        iLock.Wait();
+/*        if (iPendingMsg != NULL) {
             msg = iPendingMsg;
             iPendingMsg = NULL;
             iBlock = !iQuit; // nasty way of blocking after delivering a Flush
         }
-        else {
-            msg = iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
-        }
-        iLock.Signal();
-        iPipeline->Push(msg);
+        else {*/
+            iSupply.OutputData(encodedAudioBuf);
+//        }
+//        iLock.Signal();
         Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
-    if (iPendingMsg != NULL) {
-        iPipeline->Push(iPendingMsg);
-        iPendingMsg = NULL;
-    }
 }
-
-void Supplier::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
+#if 0
+void Supplier::Quit()
 {
-    iMsgFactory = &aMsgFactory;
-    iPipeline = &aDownstreamElement;
-    Start();
-}
-
-void Supplier::Play()
-{
-    Unblock();
-}
-
-void Supplier::Flush(Msg* aMsg)
-{
-    iLock.Wait();
-    iPendingMsg = aMsg;
-    iLock.Signal();
-}
-
-void Supplier::Quit(Msg* aMsg)
-{
-    iLock.Wait();
+/*    iLock.Wait();
     iPendingMsg = aMsg;
     iQuit = true;
     if (iBlock) {
         Unblock();
     }
-    iLock.Signal();
+    iLock.Signal();*/
 }
-
+#endif
 TBool Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     return true;
@@ -257,14 +226,15 @@ SuitePipeline::SuitePipeline()
     , iSemFlushed("TPSF", 0)
     , iQuitReceived(false)
 {
-    iSupplier = new Supplier();
-    iPipelineManager = new PipelineManager(iInfoAggregator, *iSupplier, *this, kDriverMaxAudioJiffies);
+    iPipelineManager = new PipelineManager(iInfoAggregator, *this, kDriverMaxAudioJiffies);
+    iSupplier = new Supplier(*iPipelineManager);
     iPipelineManager->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
     iPipelineEnd = &iPipelineManager->FinalElement();
 }
 
 SuitePipeline::~SuitePipeline()
 {
+    delete iSupplier; // stop generating pipeline msgs
     // PipelineManager d'tor will block until the driver pulls a Quit msg
     // we've been cheating by running a driver in this thread up until now
     // ...so we cheat some more by creating a worker thread to pull until Quit is read
@@ -272,7 +242,6 @@ SuitePipeline::~SuitePipeline()
     th->Start();
     delete iPipelineManager;
     delete th;
-    delete iSupplier;
 }
 
 void SuitePipeline::Test()

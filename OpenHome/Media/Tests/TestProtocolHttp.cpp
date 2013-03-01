@@ -62,33 +62,20 @@ int mygetch()
 namespace OpenHome {
 namespace Media {
 
-class SupplierProtocolHttp : public Thread, public ISupplier, private ISupply, private IPipelineIdProvider
+class SupplierProtocolHttp : public Thread, private IPipelineIdProvider
 {
 public:
-    SupplierProtocolHttp(Environment& aEnv);
+    SupplierProtocolHttp(Environment& aEnv, ISupply& aSupply);
     ~SupplierProtocolHttp();
     void Start(const Brx& aUrl);
 private: // from Thread
     void Run();
-private: // from ISupplier
-    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement);
-    void Play();
-    void Flush(Msg* aMsg);
-    void Quit(Msg* aMsg);
-private: // from ISupply
-    void OutputTrack(const Brx& aUri, TUint aTrackId);
-    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
-    void OutputData(const Brx& aData);
-    void OutputMetadata(const Brx& aMetadata);
-    void OutputFlush();
-    void OutputQuit();
 private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
 private:
-    MsgFactory* iMsgFactory;
-    IPipelineElementDownstream* iPipeline;
+    ISupply& iSupply;
     ProtocolManager* iProtocolManager;
     Brn iUrl;
     TUint iNextTrackId;
@@ -132,14 +119,13 @@ using namespace OpenHome::Net;
 
 // SupplierProtocolHttp
 
-SupplierProtocolHttp::SupplierProtocolHttp(Environment& aEnv)
+SupplierProtocolHttp::SupplierProtocolHttp(Environment& aEnv, ISupply& aSupply)
     : Thread("SPHt")
-    , iMsgFactory(NULL)
-    , iPipeline(NULL)
+    , iSupply(aSupply)
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
-    iProtocolManager = new ProtocolManager(*this, *this);
+    iProtocolManager = new ProtocolManager(aSupply, *this);
     ProtocolHttp* protocolHttp = new ProtocolHttp(aEnv);
     iProtocolManager->Add(protocolHttp);
 }
@@ -158,71 +144,6 @@ void SupplierProtocolHttp::Start(const Brx& aUrl)
 void SupplierProtocolHttp::Run()
 {
     iProtocolManager->DoStream(iUrl);
-}
-
-void SupplierProtocolHttp::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
-{
-    iMsgFactory = &aMsgFactory;
-    iPipeline = &aDownstreamElement;
-}
-
-void SupplierProtocolHttp::Play()
-{
-}
-
-void SupplierProtocolHttp::Flush(Msg* aMsg)
-{
-    iPipeline->Push(aMsg);
-}
-
-void SupplierProtocolHttp::Quit(Msg* aMsg)
-{
-    iPipeline->Push(aMsg);
-}
-
-void SupplierProtocolHttp::OutputTrack(const Brx& /*aUri*/, TUint /*aTrackId*/)
-{
-    Msg* msg = iMsgFactory->CreateMsgTrack();
-    iPipeline->Push(msg);
-}
-
-void SupplierProtocolHttp::OutputStream(const Brx& /*aUri*/, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
-{
-    Msg* msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), aTotalBytes, aStreamId, aSeekable, aLive, &aStreamHandler);
-    iPipeline->Push(msg);
-}
-
-void SupplierProtocolHttp::OutputData(const Brx& aData)
-{
-    Brn data(aData);
-    do {
-        Brn remaining;
-        if (data.Bytes() > EncodedAudio::kMaxBytes) {
-            remaining = data.Split(EncodedAudio::kMaxBytes);
-            data.Set(data.Ptr(), EncodedAudio::kMaxBytes);
-        }
-        Msg* msg = iMsgFactory->CreateMsgAudioEncoded(data);
-        iPipeline->Push(msg);
-        data.Set(remaining);
-    } while (data.Bytes() > 0);
-}
-
-void SupplierProtocolHttp::OutputMetadata(const Brx& aMetadata)
-{
-    Msg* metaText = iMsgFactory->CreateMsgMetaText(aMetadata);
-    iPipeline->Push(metaText);
-}
-
-void SupplierProtocolHttp::OutputFlush()
-{
-    Msg* flush = iMsgFactory->CreateMsgFlush();
-    iPipeline->Push(flush);
-}
-
-void SupplierProtocolHttp::OutputQuit()
-{
-    Msg* quit = iMsgFactory->CreateMsgQuit();
-    iPipeline->Push(quit);
 }
 
 TUint SupplierProtocolHttp::NextTrackId()
@@ -247,8 +168,8 @@ TestProtocolHttp::TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, co
     : iUrl(aUrl)
     , iStreamId(0)
 {
-    iSupplier = new SupplierProtocolHttp(aEnv);
-    iPipeline = new PipelineManager(iInfoAggregator, *iSupplier, *this, kMaxDriverJiffies);
+    iPipeline = new PipelineManager(iInfoAggregator, *this, kMaxDriverJiffies);
+    iSupplier = new SupplierProtocolHttp(aEnv, *iPipeline);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
     iPipeline->AddCodec(new Codec::CodecMp3());
@@ -424,7 +345,7 @@ int CDECL main(int aArgc, char* aArgv[])
     http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3
     */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3"), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocolHttp"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
