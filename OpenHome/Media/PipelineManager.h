@@ -39,7 +39,7 @@ public:
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
     
-class PipelineManager : public ISupply, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class PipelineManager : public ISupply, public IPipelineElementUpstream, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
     static const TUint kMsgCountEncodedAudio    = 512;
@@ -70,7 +70,6 @@ public:
     virtual ~PipelineManager();
     void AddCodec(Codec::CodecBase* aCodec);
     MsgFactory& Factory();
-    IPipelineElementUpstream& FinalElement();
     void Play();
     void Pause();
     void Stop();
@@ -82,6 +81,8 @@ public: // from ISupply
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush();
     void OutputQuit();
+public: // from IPipelineElementUpstream
+    Msg* Pull();
 private:
     void Quit();
     void NotifyStatus();
@@ -131,6 +132,7 @@ private:
     Logger* iLoggerStarvationMonitor;
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
+    IPipelineElementUpstream* iPipelineEnd;
     PipelineBranchNull iNullSongcaster; // FIXME - placeholder for real songcaster
     EStatus iStatus;
     EStatus iTargetStatus; // status at the end of a series of async operations

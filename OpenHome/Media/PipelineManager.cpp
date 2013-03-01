@@ -84,6 +84,11 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipeline
     iPreDriver = new PreDriver(*iMsgFactory, /**iStarvationMonitor*/*iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
 
+    iPipelineEnd = iLoggerPreDriver;
+    if (iPipelineEnd == NULL) {
+        iPipelineEnd = iPreDriver;
+    }
+
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
@@ -183,14 +188,6 @@ MsgFactory& PipelineManager::Factory()
     return *iMsgFactory;
 }
 
-IPipelineElementUpstream& PipelineManager::FinalElement()
-{
-    if (iLoggerPreDriver == NULL) {
-        return *iPreDriver;
-    }
-    return *iLoggerPreDriver;
-}
-
 void PipelineManager::Play()
 {
     iLock.Wait();
@@ -276,6 +273,11 @@ void PipelineManager::OutputFlush()
 void PipelineManager::OutputQuit()
 {
     iSupply->OutputQuit();
+}
+
+Msg* PipelineManager::Pull()
+{
+    return iPipelineEnd->Pull();
 }
 
 void PipelineManager::PipelineHalted()

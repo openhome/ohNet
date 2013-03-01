@@ -229,7 +229,7 @@ SuitePipeline::SuitePipeline()
     iPipelineManager = new PipelineManager(iInfoAggregator, *this, kDriverMaxAudioJiffies);
     iSupplier = new Supplier(*iPipelineManager);
     iPipelineManager->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
-    iPipelineEnd = &iPipelineManager->FinalElement();
+    iPipelineEnd = iPipelineManager;
 }
 
 SuitePipeline::~SuitePipeline()
