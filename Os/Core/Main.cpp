@@ -29,8 +29,8 @@ static void threadMain ( void* aData )
 
 int main(int argc, char* argv[])
 {
-    ThreadFunctor* t = new ThreadFunctor("MAIN", MakeFunctor(NULL, threadMain));
-    t->Start();
+    ThreadFunctor t("MAIN", MakeFunctor(NULL, threadMain));
+    t.Start();
     return 0;
 }
 
