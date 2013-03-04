@@ -53,11 +53,12 @@ protected:
 
 class Srx : public Sxx, public IReader
 {
+public: // from IReader
+    Brn Read(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
+    void ReadFlush();
+    void ReadInterrupt();
 public:
-    virtual Brn Read(TUint aBytes);
-    virtual Brn ReadUntil(TByte aSeparator);
-    virtual void ReadFlush();
-    virtual void ReadInterrupt();
     Brn Peek(TUint aBytes);
     Brn Snaffle();
 protected:
@@ -90,10 +91,10 @@ private:
 
 class Swx : public Sxx, public IWriter
 {
-public:
-    virtual void Write(TByte aValue);
-    virtual void Write(const Brx& aBuffer);
-    virtual void WriteFlush();
+public: // from IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
 private:
     void WriteDrain();
 protected:
@@ -146,11 +147,11 @@ public:
     TUint Bytes() const;
     Brn ReadRemaining();
     Brn ReadPartial(TUint aBytes);
-    // IReader
-    virtual Brn Read(TUint aBytes);
-    virtual Brn ReadUntil(TByte aSeparator);
-    virtual void ReadFlush();
-    virtual void ReadInterrupt();
+public: // from IReader
+    Brn Read(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
+    void ReadFlush();
+    void ReadInterrupt();
 private:
     Brn iBuffer;
     TUint iOffset;
@@ -161,10 +162,10 @@ class WriterBuffer : public IWriter, public INonCopyable
 public:
     WriterBuffer(Bwx& aBuffer);
     void Flush();
-    // IWriter
-    virtual void Write(TByte aValue);
-    virtual void Write(const Brx& aBuffer);
-    virtual void WriteFlush();
+public: // from IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
 private:
     Bwx& iBuffer;
 };
@@ -176,7 +177,7 @@ public:
     void TransferTo(Bwh& aDest);
     void TransferTo(Brh& aDest);
     void Write(const TChar* aBuffer);
-    // IWriter
+public: // from IWriter
     void Write(TByte aValue);
     void Write(const Brx& aBuffer);
     void WriteFlush();
