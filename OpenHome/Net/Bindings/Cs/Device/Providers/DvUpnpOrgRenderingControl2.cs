@@ -152,7 +152,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetBrightness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 2147483647, 1));
             iDelegateGetBrightness = new ActionDelegate(DoGetBrightness);
             EnableAction(action, iDelegateGetBrightness, GCHandle.ToIntPtr(iGch));
         }
@@ -166,7 +166,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBrightness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredBrightness", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredBrightness", 0, 2147483647, 1));
             iDelegateSetBrightness = new ActionDelegate(DoSetBrightness);
             EnableAction(action, iDelegateSetBrightness, GCHandle.ToIntPtr(iGch));
         }
@@ -180,7 +180,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetContrast");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentContrast", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentContrast", 0, 2147483647, 1));
             iDelegateGetContrast = new ActionDelegate(DoGetContrast);
             EnableAction(action, iDelegateGetContrast, GCHandle.ToIntPtr(iGch));
         }
@@ -194,7 +194,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetContrast");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredContrast", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredContrast", 0, 2147483647, 1));
             iDelegateSetContrast = new ActionDelegate(DoSetContrast);
             EnableAction(action, iDelegateSetContrast, GCHandle.ToIntPtr(iGch));
         }
@@ -208,7 +208,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetSharpness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 2147483647, 1));
             iDelegateGetSharpness = new ActionDelegate(DoGetSharpness);
             EnableAction(action, iDelegateGetSharpness, GCHandle.ToIntPtr(iGch));
         }
@@ -222,7 +222,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetSharpness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredSharpness", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredSharpness", 0, 2147483647, 1));
             iDelegateSetSharpness = new ActionDelegate(DoSetSharpness);
             EnableAction(action, iDelegateSetSharpness, GCHandle.ToIntPtr(iGch));
         }
@@ -236,7 +236,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRedVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 2147483647, 1));
             iDelegateGetRedVideoGain = new ActionDelegate(DoGetRedVideoGain);
             EnableAction(action, iDelegateGetRedVideoGain, GCHandle.ToIntPtr(iGch));
         }
@@ -250,7 +250,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetRedVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 2147483647, 1));
             iDelegateSetRedVideoGain = new ActionDelegate(DoSetRedVideoGain);
             EnableAction(action, iDelegateSetRedVideoGain, GCHandle.ToIntPtr(iGch));
         }
@@ -264,7 +264,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetGreenVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 2147483647, 1));
             iDelegateGetGreenVideoGain = new ActionDelegate(DoGetGreenVideoGain);
             EnableAction(action, iDelegateGetGreenVideoGain, GCHandle.ToIntPtr(iGch));
         }
@@ -278,7 +278,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetGreenVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 2147483647, 1));
             iDelegateSetGreenVideoGain = new ActionDelegate(DoSetGreenVideoGain);
             EnableAction(action, iDelegateSetGreenVideoGain, GCHandle.ToIntPtr(iGch));
         }
@@ -292,7 +292,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetBlueVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 2147483647, 1));
             iDelegateGetBlueVideoGain = new ActionDelegate(DoGetBlueVideoGain);
             EnableAction(action, iDelegateGetBlueVideoGain, GCHandle.ToIntPtr(iGch));
         }
@@ -306,7 +306,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBlueVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 2147483647, 1));
             iDelegateSetBlueVideoGain = new ActionDelegate(DoSetBlueVideoGain);
             EnableAction(action, iDelegateSetBlueVideoGain, GCHandle.ToIntPtr(iGch));
         }
@@ -320,7 +320,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRedVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 2147483647, 1));
             iDelegateGetRedVideoBlackLevel = new ActionDelegate(DoGetRedVideoBlackLevel);
             EnableAction(action, iDelegateGetRedVideoBlackLevel, GCHandle.ToIntPtr(iGch));
         }
@@ -334,7 +334,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetRedVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 2147483647, 1));
             iDelegateSetRedVideoBlackLevel = new ActionDelegate(DoSetRedVideoBlackLevel);
             EnableAction(action, iDelegateSetRedVideoBlackLevel, GCHandle.ToIntPtr(iGch));
         }
@@ -348,7 +348,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetGreenVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 2147483647, 1));
             iDelegateGetGreenVideoBlackLevel = new ActionDelegate(DoGetGreenVideoBlackLevel);
             EnableAction(action, iDelegateGetGreenVideoBlackLevel, GCHandle.ToIntPtr(iGch));
         }
@@ -362,7 +362,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetGreenVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 2147483647, 1));
             iDelegateSetGreenVideoBlackLevel = new ActionDelegate(DoSetGreenVideoBlackLevel);
             EnableAction(action, iDelegateSetGreenVideoBlackLevel, GCHandle.ToIntPtr(iGch));
         }
@@ -376,7 +376,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetBlueVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 2147483647, 1));
             iDelegateGetBlueVideoBlackLevel = new ActionDelegate(DoGetBlueVideoBlackLevel);
             EnableAction(action, iDelegateGetBlueVideoBlackLevel, GCHandle.ToIntPtr(iGch));
         }
@@ -390,7 +390,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBlueVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 2147483647, 1));
             iDelegateSetBlueVideoBlackLevel = new ActionDelegate(DoSetBlueVideoBlackLevel);
             EnableAction(action, iDelegateSetBlueVideoBlackLevel, GCHandle.ToIntPtr(iGch));
         }
@@ -404,7 +404,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetColorTemperature");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 2147483647, 1));
             iDelegateGetColorTemperature = new ActionDelegate(DoGetColorTemperature);
             EnableAction(action, iDelegateGetColorTemperature, GCHandle.ToIntPtr(iGch));
         }
@@ -418,7 +418,7 @@ namespace OpenHome.Net.Device.Providers
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetColorTemperature");
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 2147483647, 1));
             iDelegateSetColorTemperature = new ActionDelegate(DoSetColorTemperature);
             EnableAction(action, iDelegateSetColorTemperature, GCHandle.ToIntPtr(iGch));
         }
@@ -522,7 +522,7 @@ namespace OpenHome.Net.Device.Providers
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            action.AddOutputParameter(new ParameterUint("CurrentVolume", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("CurrentVolume", 0, 2147483647, 1));
             iDelegateGetVolume = new ActionDelegate(DoGetVolume);
             EnableAction(action, iDelegateGetVolume, GCHandle.ToIntPtr(iGch));
         }
@@ -538,7 +538,7 @@ namespace OpenHome.Net.Device.Providers
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("Channel", allowedValues));
-            action.AddInputParameter(new ParameterUint("DesiredVolume", 0, 0, 1));
+            action.AddInputParameter(new ParameterUint("DesiredVolume", 0, 2147483647, 1));
             iDelegateSetVolume = new ActionDelegate(DoSetVolume);
             EnableAction(action, iDelegateSetVolume, GCHandle.ToIntPtr(iGch));
         }

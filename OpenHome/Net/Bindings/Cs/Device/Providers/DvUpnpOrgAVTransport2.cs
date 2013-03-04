@@ -197,7 +197,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetMediaInfo");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
+            action.AddOutputParameter(new ParameterUint("NrTracks", 0));
             action.AddOutputParameter(new ParameterString("MediaDuration", allowedValues));
             action.AddOutputParameter(new ParameterString("CurrentURI", allowedValues));
             action.AddOutputParameter(new ParameterString("CurrentURIMetaData", allowedValues));
@@ -231,7 +231,7 @@ namespace OpenHome.Net.Device.Providers
             allowedValues.Add("TRACK_UNAWARE");
             action.AddOutputParameter(new ParameterString("CurrentType", allowedValues));
             allowedValues.Clear();
-            action.AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
+            action.AddOutputParameter(new ParameterUint("NrTracks", 0));
             action.AddOutputParameter(new ParameterString("MediaDuration", allowedValues));
             action.AddOutputParameter(new ParameterString("CurrentURI", allowedValues));
             action.AddOutputParameter(new ParameterString("CurrentURIMetaData", allowedValues));
@@ -277,7 +277,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetPositionInfo");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            action.AddOutputParameter(new ParameterUint("Track", 0, 0, 1));
+            action.AddOutputParameter(new ParameterUint("Track", 0, 2147483647, 1));
             action.AddOutputParameter(new ParameterString("TrackDuration", allowedValues));
             action.AddOutputParameter(new ParameterString("TrackMetaData", allowedValues));
             action.AddOutputParameter(new ParameterString("TrackURI", allowedValues));

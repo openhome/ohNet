@@ -402,8 +402,16 @@ string ParameterAllowedValues(Variable v)
     {
         result += ", ";
         result += v.min;
-        result += ", ";
-        result += v.max;
+        if (v.maxspecified)
+        {
+            result += ", ";
+            result += v.max;
+        }
+        else if (v.stepspecified)
+        {
+            result += ", ";
+            result += Int32.MaxValue;
+        }
         if (v.stepspecified)
         {
             result += ", ";

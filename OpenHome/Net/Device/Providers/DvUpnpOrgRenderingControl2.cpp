@@ -65,7 +65,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetBrightness()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBrightness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetBrightness);
     iService->AddAction(action, functor);
 }
@@ -74,7 +74,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetBrightness()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBrightness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredBrightness", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredBrightness", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetBrightness);
     iService->AddAction(action, functor);
 }
@@ -83,7 +83,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetContrast()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetContrast");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentContrast", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentContrast", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetContrast);
     iService->AddAction(action, functor);
 }
@@ -92,7 +92,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetContrast()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetContrast");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredContrast", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredContrast", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetContrast);
     iService->AddAction(action, functor);
 }
@@ -101,7 +101,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetSharpness()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSharpness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetSharpness);
     iService->AddAction(action, functor);
 }
@@ -110,7 +110,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetSharpness()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetSharpness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredSharpness", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredSharpness", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetSharpness);
     iService->AddAction(action, functor);
 }
@@ -119,7 +119,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetRedVideoGain()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRedVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetRedVideoGain);
     iService->AddAction(action, functor);
 }
@@ -128,7 +128,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetRedVideoGain()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRedVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetRedVideoGain);
     iService->AddAction(action, functor);
 }
@@ -137,7 +137,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetGreenVideoGain()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetGreenVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetGreenVideoGain);
     iService->AddAction(action, functor);
 }
@@ -146,7 +146,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetGreenVideoGain()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetGreenVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetGreenVideoGain);
     iService->AddAction(action, functor);
 }
@@ -155,7 +155,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetBlueVideoGain()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBlueVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetBlueVideoGain);
     iService->AddAction(action, functor);
 }
@@ -164,7 +164,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetBlueVideoGain()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBlueVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetBlueVideoGain);
     iService->AddAction(action, functor);
 }
@@ -173,7 +173,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetRedVideoBlackLevel()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRedVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetRedVideoBlackLevel);
     iService->AddAction(action, functor);
 }
@@ -182,7 +182,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetRedVideoBlackLevel()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRedVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetRedVideoBlackLevel);
     iService->AddAction(action, functor);
 }
@@ -191,7 +191,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetGreenVideoBlackLevel()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetGreenVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetGreenVideoBlackLevel);
     iService->AddAction(action, functor);
 }
@@ -200,7 +200,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetGreenVideoBlackLevel()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetGreenVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetGreenVideoBlackLevel);
     iService->AddAction(action, functor);
 }
@@ -209,7 +209,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetBlueVideoBlackLevel()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBlueVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetBlueVideoBlackLevel);
     iService->AddAction(action, functor);
 }
@@ -218,7 +218,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetBlueVideoBlackLevel()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBlueVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetBlueVideoBlackLevel);
     iService->AddAction(action, functor);
 }
@@ -227,7 +227,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetColorTemperature()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetColorTemperature");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetColorTemperature);
     iService->AddAction(action, functor);
 }
@@ -236,7 +236,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetColorTemperature()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetColorTemperature");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetColorTemperature);
     iService->AddAction(action, functor);
 }
@@ -302,7 +302,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionGetVolume()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolume");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("Channel"));
-    action->AddOutputParameter(new ParameterUint("CurrentVolume", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("CurrentVolume", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoGetVolume);
     iService->AddAction(action, functor);
 }
@@ -312,7 +312,7 @@ void DvProviderUpnpOrgRenderingControl2::EnableActionSetVolume()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVolume");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("Channel"));
-    action->AddInputParameter(new ParameterUint("DesiredVolume", 0, 0, 1));
+    action->AddInputParameter(new ParameterUint("DesiredVolume", 0, 2147483647, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2::DoSetVolume);
     iService->AddAction(action, functor);
 }

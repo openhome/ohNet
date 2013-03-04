@@ -497,7 +497,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     {
         Action action = new Action("GetMediaInfo");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
-        action.addOutputParameter(new ParameterUint("NrTracks", 0, 0));
+        action.addOutputParameter(new ParameterUint("NrTracks", 0, 2147483647));
         action.addOutputParameter(new ParameterString("MediaDuration", allowedValues));
         action.addOutputParameter(new ParameterString("CurrentURI", allowedValues));
         action.addOutputParameter(new ParameterString("CurrentURIMetaData", allowedValues));
@@ -531,7 +531,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
         allowedValues.add("TRACK_UNAWARE");
         action.addOutputParameter(new ParameterString("CurrentType", allowedValues));
         allowedValues.clear();
-        action.addOutputParameter(new ParameterUint("NrTracks", 0, 0));
+        action.addOutputParameter(new ParameterUint("NrTracks", 0, 2147483647));
         action.addOutputParameter(new ParameterString("MediaDuration", allowedValues));
         action.addOutputParameter(new ParameterString("CurrentURI", allowedValues));
         action.addOutputParameter(new ParameterString("CurrentURIMetaData", allowedValues));
@@ -577,7 +577,7 @@ public class DvProviderUpnpOrgAVTransport2 extends DvProvider implements IDvProv
     {
         Action action = new Action("GetPositionInfo");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
-        action.addOutputParameter(new ParameterUint("Track", 0, 0, 1));
+        action.addOutputParameter(new ParameterUint("Track", 0, 2147483647, 1));
         action.addOutputParameter(new ParameterString("TrackDuration", allowedValues));
         action.addOutputParameter(new ParameterString("TrackMetaData", allowedValues));
         action.addOutputParameter(new ParameterString("TrackURI", allowedValues));

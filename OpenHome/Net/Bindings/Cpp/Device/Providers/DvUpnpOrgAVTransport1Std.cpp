@@ -61,7 +61,7 @@ void DvProviderUpnpOrgAVTransport1Cpp::EnableActionGetMediaInfo()
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
+    action->AddOutputParameter(new ParameterUint("NrTracks", 0));
     action->AddOutputParameter(new ParameterString("MediaDuration"));
     action->AddOutputParameter(new ParameterString("CurrentURI"));
     action->AddOutputParameter(new ParameterString("CurrentURIMetaData"));
@@ -118,7 +118,7 @@ void DvProviderUpnpOrgAVTransport1Cpp::EnableActionGetPositionInfo()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("GetPositionInfo");
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    action->AddOutputParameter(new ParameterUint("Track", 0, 0, 1));
+    action->AddOutputParameter(new ParameterUint("Track", 0, 2147483647, 1));
     action->AddOutputParameter(new ParameterString("TrackDuration"));
     action->AddOutputParameter(new ParameterString("TrackMetaData"));
     action->AddOutputParameter(new ParameterString("TrackURI"));
