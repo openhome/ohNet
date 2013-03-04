@@ -246,34 +246,6 @@ public:
     void EndUpdateCount(IAsync& aAsync, uint32_t& aValue);
 
     /**
-     * Invoke the action synchronously.  Blocks until the action has been processed
-     * on the device and sets any output arguments.
-     *
-     * @param[in]  aRequest
-     * @param[out] aResult
-     */
-    void SyncQuery(const std::string& aRequest, std::string& aResult);
-    /**
-     * Invoke the action asynchronously.
-     * Returns immediately and will run the client-specified callback when the action
-     * later completes.  Any output arguments can then be retrieved by calling
-     * EndQuery().
-     *
-     * @param[in] aRequest
-     * @param[in] aFunctor   Callback to run when the action completes.
-     *                       This is guaranteed to be run but may indicate an error
-     */
-    void BeginQuery(const std::string& aRequest, FunctorAsync& aFunctor);
-    /**
-     * Retrieve the output arguments from an asynchronously invoked action.
-     * This may only be called from the callback set in the above Begin function.
-     *
-     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
-     * @param[out] aResult
-     */
-    void EndQuery(IAsync& aAsync, std::string& aResult);
-
-    /**
      * Set a callback to be run when the ManufacturerName state variable changes.
      *
      * Callbacks may be run in different threads but callbacks for a
@@ -603,7 +575,6 @@ private:
     Action* iActionQueryPort;
     Action* iActionBrowsePort;
     Action* iActionUpdateCount;
-    Action* iActionQuery;
     PropertyString* iManufacturerName;
     PropertyString* iManufacturerInfo;
     PropertyString* iManufacturerUrl;

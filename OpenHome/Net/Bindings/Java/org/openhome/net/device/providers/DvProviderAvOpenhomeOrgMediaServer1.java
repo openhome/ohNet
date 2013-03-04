@@ -391,7 +391,6 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     private IDvInvocationListener iDelegateQueryPort;
     private IDvInvocationListener iDelegateBrowsePort;
     private IDvInvocationListener iDelegateUpdateCount;
-    private IDvInvocationListener iDelegateQuery;
     private PropertyString iPropertyManufacturerName;
     private PropertyString iPropertyManufacturerInfo;
     private PropertyString iPropertyManufacturerUrl;
@@ -1036,21 +1035,6 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
     }
 
     /**
-     * Signal that the action Query is supported.
-     *
-     * <p>The action's availability will be published in the device's service.xml.
-     * Query must be overridden if this is called.
-     */      
-    protected void enableActionQuery()
-    {
-        Action action = new Action("Query");        List<String> allowedValues = new LinkedList<String>();
-        action.addInputParameter(new ParameterString("Request", allowedValues));
-        action.addOutputParameter(new ParameterString("Result", allowedValues));
-        iDelegateQuery = new DoQuery();
-        enableAction(action, iDelegateQuery);
-    }
-
-    /**
      * Manufacturer action.
      *
      * <p>Will be called when the device stack receives an invocation of the
@@ -1151,22 +1135,6 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
      * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected long updateCount(IDvInvocation aInvocation)
-    {
-        throw (new ActionDisabledError());
-    }
-
-    /**
-     * Query action.
-     *
-     * <p>Will be called when the device stack receives an invocation of the
-     * Query action for the owning device.
-     *
-     * <p>Must be implemented iff {@link #enableActionQuery} was called.</remarks>
-     *
-     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
-     * @param aRequest
-     */
-    protected String query(IDvInvocation aInvocation, String aRequest)
     {
         throw (new ActionDisabledError());
     }
@@ -1542,56 +1510,6 @@ public class DvProviderAvOpenhomeOrgMediaServer1 extends DvProvider implements I
             {
                 invocation.writeStart();
                 invocation.writeUint("Value", value);
-                invocation.writeEnd();
-            }
-            catch (ActionError ae)
-            {
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("ERROR: unexpected exception: " + e.getMessage());
-                System.out.println("       Only ActionError can be thrown by action response writer");
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private class DoQuery implements IDvInvocationListener
-    {
-        public void actionInvoked(long aInvocation)
-        {
-            DvInvocation invocation = new DvInvocation(aInvocation);
-            String request;
-            String result;
-            try
-            {
-                invocation.readStart();
-                request = invocation.readString("Request");
-                invocation.readEnd();
-                 result = query(invocation, request);
-            }
-            catch (ActionError ae)
-            {
-                invocation.reportActionError(ae, "Query");
-                return;
-            }
-            catch (PropertyUpdateError pue)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("WARNING: unexpected exception: " + e.getMessage());
-                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
-                e.printStackTrace();
-                return;
-            }
-            try
-            {
-                invocation.writeStart();
-                invocation.writeString("Result", result);
                 invocation.writeEnd();
             }
             catch (ActionError ae)

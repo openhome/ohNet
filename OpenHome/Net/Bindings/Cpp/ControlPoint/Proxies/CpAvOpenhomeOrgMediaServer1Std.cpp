@@ -192,29 +192,6 @@ void SyncUpdateCountAvOpenhomeOrgMediaServer1Cpp::CompleteRequest(IAsync& aAsync
 }
 
 
-class SyncQueryAvOpenhomeOrgMediaServer1Cpp : public SyncProxyAction
-{
-public:
-    SyncQueryAvOpenhomeOrgMediaServer1Cpp(CpProxyAvOpenhomeOrgMediaServer1Cpp& aProxy, std::string& aResult);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncQueryAvOpenhomeOrgMediaServer1Cpp() {}
-private:
-    CpProxyAvOpenhomeOrgMediaServer1Cpp& iService;
-    std::string& iResult;
-};
-
-SyncQueryAvOpenhomeOrgMediaServer1Cpp::SyncQueryAvOpenhomeOrgMediaServer1Cpp(CpProxyAvOpenhomeOrgMediaServer1Cpp& aProxy, std::string& aResult)
-    : iService(aProxy)
-    , iResult(aResult)
-{
-}
-
-void SyncQueryAvOpenhomeOrgMediaServer1Cpp::CompleteRequest(IAsync& aAsync)
-{
-    iService.EndQuery(aAsync, iResult);
-}
-
-
 CpProxyAvOpenhomeOrgMediaServer1Cpp::CpProxyAvOpenhomeOrgMediaServer1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("av-openhome-org", "MediaServer", 1, aDevice.Device())
 {
@@ -265,12 +242,6 @@ CpProxyAvOpenhomeOrgMediaServer1Cpp::CpProxyAvOpenhomeOrgMediaServer1Cpp(CpDevic
     iActionUpdateCount = new Action("UpdateCount");
     param = new OpenHome::Net::ParameterUint("Value");
     iActionUpdateCount->AddOutputParameter(param);
-
-    iActionQuery = new Action("Query");
-    param = new OpenHome::Net::ParameterString("Request");
-    iActionQuery->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterString("Result");
-    iActionQuery->AddOutputParameter(param);
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgMediaServer1Cpp::ManufacturerNamePropertyChanged);
@@ -333,7 +304,6 @@ CpProxyAvOpenhomeOrgMediaServer1Cpp::~CpProxyAvOpenhomeOrgMediaServer1Cpp()
     delete iActionQueryPort;
     delete iActionBrowsePort;
     delete iActionUpdateCount;
-    delete iActionQuery;
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::SyncManufacturer(std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri)
@@ -615,47 +585,6 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndUpdateCount(IAsync& aAsync, uint32_
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
-}
-
-void CpProxyAvOpenhomeOrgMediaServer1Cpp::SyncQuery(const std::string& aRequest, std::string& aResult)
-{
-    SyncQueryAvOpenhomeOrgMediaServer1Cpp sync(*this, aResult);
-    BeginQuery(aRequest, sync.Functor());
-    sync.Wait();
-}
-
-void CpProxyAvOpenhomeOrgMediaServer1Cpp::BeginQuery(const std::string& aRequest, FunctorAsync& aFunctor)
-{
-    Invocation* invocation = iService->Invocation(*iActionQuery, aFunctor);
-    TUint inIndex = 0;
-    const Action::VectorParameters& inParams = iActionQuery->InputParameters();
-    {
-        Brn buf((const TByte*)aRequest.c_str(), (TUint)aRequest.length());
-        invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
-    }
-    TUint outIndex = 0;
-    const Action::VectorParameters& outParams = iActionQuery->OutputParameters();
-    invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
-}
-
-void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndQuery(IAsync& aAsync, std::string& aResult)
-{
-    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
-    Invocation& invocation = (Invocation&)aAsync;
-    ASSERT(invocation.Action().Name() == Brn("Query"));
-
-    Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
-    }
-    TUint index = 0;
-    {
-        const Brx& val = ((ArgumentString*)invocation.OutputArguments()[index++])->Value();
-        aResult.assign((const char*)val.Ptr(), val.Bytes());
-    }
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::SetPropertyManufacturerNameChanged(Functor& aFunctor)

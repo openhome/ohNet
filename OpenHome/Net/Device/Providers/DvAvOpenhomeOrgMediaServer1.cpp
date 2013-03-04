@@ -393,15 +393,6 @@ void DvProviderAvOpenhomeOrgMediaServer1::EnableActionUpdateCount()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::EnableActionQuery()
-{
-    OpenHome::Net::Action* action = new OpenHome::Net::Action("Query");
-    action->AddInputParameter(new ParameterString("Request"));
-    action->AddOutputParameter(new ParameterString("Result"));
-    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1::DoQuery);
-    iService->AddAction(action, functor);
-}
-
 void DvProviderAvOpenhomeOrgMediaServer1::DoManufacturer(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
@@ -474,17 +465,6 @@ void DvProviderAvOpenhomeOrgMediaServer1::DoUpdateCount(IDviInvocation& aInvocat
     UpdateCount(invocation, respValue);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1::DoQuery(IDviInvocation& aInvocation)
-{
-    aInvocation.InvocationReadStart();
-    Brhz Request;
-    aInvocation.InvocationReadString("Request", Request);
-    aInvocation.InvocationReadEnd();
-    DviInvocation invocation(aInvocation);
-    DviInvocationResponseString respResult(aInvocation, "Result");
-    Query(invocation, Request, respResult);
-}
-
 void DvProviderAvOpenhomeOrgMediaServer1::Manufacturer(IDvInvocation& /*aResponse*/, IDvInvocationResponseString& /*aName*/, IDvInvocationResponseString& /*aInfo*/, IDvInvocationResponseString& /*aUrl*/, IDvInvocationResponseString& /*aImageUri*/)
 {
     ASSERTS();
@@ -516,11 +496,6 @@ void DvProviderAvOpenhomeOrgMediaServer1::BrowsePort(IDvInvocation& /*aResponse*
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1::UpdateCount(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValue*/)
-{
-    ASSERTS();
-}
-
-void DvProviderAvOpenhomeOrgMediaServer1::Query(IDvInvocation& /*aResponse*/, const Brx& /*aRequest*/, IDvInvocationResponseString& /*aResult*/)
 {
     ASSERTS();
 }

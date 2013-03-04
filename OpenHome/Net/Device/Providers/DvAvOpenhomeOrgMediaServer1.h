@@ -368,12 +368,6 @@ protected:
      * UpdateCount must be overridden if this is called.
      */
     void EnableActionUpdateCount();
-    /**
-     * Signal that the action Query is supported.
-     * The action's availability will be published in the device's service.xml.
-     * Query must be overridden if this is called.
-     */
-    void EnableActionQuery();
 private:
     /**
      * Manufacturer action.
@@ -431,14 +425,6 @@ private:
      * Must be implemented iff EnableActionUpdateCount was called.
      */
     virtual void UpdateCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
-    /**
-     * Query action.
-     *
-     * Will be called when the device stack receives an invocation of the
-     * Query action for the owning device.
-     * Must be implemented iff EnableActionQuery was called.
-     */
-    virtual void Query(IDvInvocation& aInvocation, const Brx& aRequest, IDvInvocationResponseString& aResult);
 private:
     DvProviderAvOpenhomeOrgMediaServer1();
     void Construct();
@@ -449,7 +435,6 @@ private:
     void DoQueryPort(IDviInvocation& aInvocation);
     void DoBrowsePort(IDviInvocation& aInvocation);
     void DoUpdateCount(IDviInvocation& aInvocation);
-    void DoQuery(IDviInvocation& aInvocation);
 private:
     PropertyString* iPropertyManufacturerName;
     PropertyString* iPropertyManufacturerInfo;

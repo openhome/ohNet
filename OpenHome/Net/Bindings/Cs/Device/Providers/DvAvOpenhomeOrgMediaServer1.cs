@@ -231,7 +231,6 @@ namespace OpenHome.Net.Device.Providers
         private ActionDelegate iDelegateQueryPort;
         private ActionDelegate iDelegateBrowsePort;
         private ActionDelegate iDelegateUpdateCount;
-        private ActionDelegate iDelegateQuery;
         private PropertyString iPropertyManufacturerName;
         private PropertyString iPropertyManufacturerInfo;
         private PropertyString iPropertyManufacturerUrl;
@@ -917,21 +916,6 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
-        /// Signal that the action Query is supported.
-        /// </summary>
-        /// <remarks>The action's availability will be published in the device's service.xml.
-        /// Query must be overridden if this is called.</remarks>
-        protected void EnableActionQuery()
-        {
-            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Query");
-            List<String> allowedValues = new List<String>();
-            action.AddInputParameter(new ParameterString("Request", allowedValues));
-            action.AddOutputParameter(new ParameterString("Result", allowedValues));
-            iDelegateQuery = new ActionDelegate(DoQuery);
-            EnableAction(action, iDelegateQuery, GCHandle.ToIntPtr(iGch));
-        }
-
-        /// <summary>
         /// Manufacturer action.
         /// </summary>
         /// <remarks>Will be called when the device stack receives an invocation of the
@@ -1034,21 +1018,6 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         /// <param name="aValue"></param>
         protected virtual void UpdateCount(IDvInvocation aInvocation, out uint aValue)
-        {
-            throw (new ActionDisabledError());
-        }
-
-        /// <summary>
-        /// Query action.
-        /// </summary>
-        /// <remarks>Will be called when the device stack receives an invocation of the
-        /// Query action for the owning device.
-        ///
-        /// Must be implemented iff EnableActionQuery was called.</remarks>
-        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
-        /// <param name="aRequest"></param>
-        /// <param name="aResult"></param>
-        protected virtual void Query(IDvInvocation aInvocation, string aRequest, out string aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -1388,54 +1357,6 @@ namespace OpenHome.Net.Device.Providers
             catch (System.Exception e)
             {
                 Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "UpdateCount", e.TargetSite.Name);
-                Console.WriteLine("       Only ActionError can be thrown by action response writer");
-            }
-            return 0;
-        }
-
-        private static int DoQuery(IntPtr aPtr, IntPtr aInvocation)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderAvOpenhomeOrgMediaServer1 self = (DvProviderAvOpenhomeOrgMediaServer1)gch.Target;
-            DvInvocation invocation = new DvInvocation(aInvocation);
-            string request;
-            string result;
-            try
-            {
-                invocation.ReadStart();
-                request = invocation.ReadString("Request");
-                invocation.ReadEnd();
-                self.Query(invocation, request, out result);
-            }
-            catch (ActionError e)
-            {
-                invocation.ReportActionError(e, "Query");
-                return -1;
-            }
-            catch (PropertyUpdateError)
-            {
-                invocation.ReportError(501, String.Format("Invalid value for property {0}", "Query"));
-                return -1;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Query", e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
-                return -1;
-            }
-            try
-            {
-                invocation.WriteStart();
-                invocation.WriteString("Result", result);
-                invocation.WriteEnd();
-            }
-            catch (ActionError)
-            {
-                return -1;
-            }
-            catch (System.Exception e)
-            {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "Query", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
             }
             return 0;

@@ -51,10 +51,6 @@ public:
     void BeginUpdateCount(FunctorAsync& aFunctor);
     void EndUpdateCount(IAsync& aAsync, TUint& aValue);
 
-    void SyncQuery(const Brx& aRequest, Brh& aResult);
-    void BeginQuery(const Brx& aRequest, FunctorAsync& aFunctor);
-    void EndQuery(IAsync& aAsync, Brh& aResult);
-
     void SetPropertyManufacturerNameChanged(Functor& aFunctor);
     void SetPropertyManufacturerInfoChanged(Functor& aFunctor);
     void SetPropertyManufacturerUrlChanged(Functor& aFunctor);
@@ -114,7 +110,6 @@ private:
     Action* iActionQueryPort;
     Action* iActionBrowsePort;
     Action* iActionUpdateCount;
-    Action* iActionQuery;
     PropertyString* iManufacturerName;
     PropertyString* iManufacturerInfo;
     PropertyString* iManufacturerUrl;
@@ -328,29 +323,6 @@ void SyncUpdateCountAvOpenhomeOrgMediaServer1C::CompleteRequest(IAsync& aAsync)
     iService.EndUpdateCount(aAsync, iValue);
 }
 
-
-class SyncQueryAvOpenhomeOrgMediaServer1C : public SyncProxyAction
-{
-public:
-    SyncQueryAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, Brh& aResult);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncQueryAvOpenhomeOrgMediaServer1C() {};
-private:
-    CpProxyAvOpenhomeOrgMediaServer1C& iService;
-    Brh& iResult;
-};
-
-SyncQueryAvOpenhomeOrgMediaServer1C::SyncQueryAvOpenhomeOrgMediaServer1C(CpProxyAvOpenhomeOrgMediaServer1C& aProxy, Brh& aResult)
-    : iService(aProxy)
-    , iResult(aResult)
-{
-}
-
-void SyncQueryAvOpenhomeOrgMediaServer1C::CompleteRequest(IAsync& aAsync)
-{
-    iService.EndQuery(aAsync, iResult);
-}
-
 CpProxyAvOpenhomeOrgMediaServer1C::CpProxyAvOpenhomeOrgMediaServer1C(CpDeviceC aDevice)
     : CpProxyC("av-openhome-org", "MediaServer", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
@@ -402,12 +374,6 @@ CpProxyAvOpenhomeOrgMediaServer1C::CpProxyAvOpenhomeOrgMediaServer1C(CpDeviceC a
     iActionUpdateCount = new Action("UpdateCount");
     param = new OpenHome::Net::ParameterUint("Value");
     iActionUpdateCount->AddOutputParameter(param);
-
-    iActionQuery = new Action("Query");
-    param = new OpenHome::Net::ParameterString("Request");
-    iActionQuery->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterString("Result");
-    iActionQuery->AddOutputParameter(param);
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgMediaServer1C::ManufacturerNamePropertyChanged);
@@ -470,7 +436,6 @@ CpProxyAvOpenhomeOrgMediaServer1C::~CpProxyAvOpenhomeOrgMediaServer1C()
     delete iActionQueryPort;
     delete iActionBrowsePort;
     delete iActionUpdateCount;
-    delete iActionQuery;
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::SyncManufacturer(Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri)
@@ -713,41 +678,6 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndUpdateCount(IAsync& aAsync, TUint& aV
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
-}
-
-void CpProxyAvOpenhomeOrgMediaServer1C::SyncQuery(const Brx& aRequest, Brh& aResult)
-{
-    SyncQueryAvOpenhomeOrgMediaServer1C sync(*this, aResult);
-    BeginQuery(aRequest, sync.Functor());
-    sync.Wait();
-}
-
-void CpProxyAvOpenhomeOrgMediaServer1C::BeginQuery(const Brx& aRequest, FunctorAsync& aFunctor)
-{
-    Invocation* invocation = Service()->Invocation(*iActionQuery, aFunctor);
-    TUint inIndex = 0;
-    const Action::VectorParameters& inParams = iActionQuery->InputParameters();
-    invocation->AddInput(new ArgumentString(*inParams[inIndex++], aRequest));
-    TUint outIndex = 0;
-    const Action::VectorParameters& outParams = iActionQuery->OutputParameters();
-    invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    Invocable().InvokeAction(*invocation);
-}
-
-void CpProxyAvOpenhomeOrgMediaServer1C::EndQuery(IAsync& aAsync, Brh& aResult)
-{
-    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
-    Invocation& invocation = (Invocation&)aAsync;
-    ASSERT(invocation.Action().Name() == Brn("Query"));
-
-    Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
-    }
-    TUint index = 0;
-    ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResult);
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::SetPropertyManufacturerNameChanged(Functor& aFunctor)
@@ -1422,52 +1352,6 @@ int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndUpdateCount(THandle aHandle, 
     ASSERT(async != NULL);
     try {
         proxyC->EndUpdateCount(*async, *aValue);
-    }
-    catch(...) {
-        err = -1;
-    }
-    return err;
-}
-
-int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1SyncQuery(THandle aHandle, const char* aRequest, char** aResult)
-{
-    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
-    ASSERT(proxyC != NULL);
-    Brh buf_aRequest(aRequest);
-    Brh buf_aResult;
-    int32_t err = 0;
-    try {
-        proxyC->SyncQuery(buf_aRequest, buf_aResult);
-        *aResult = buf_aResult.Extract();
-    }
-    catch (ProxyError& ) {
-        err = -1;
-        *aResult = NULL;
-    }
-    return err;
-}
-
-void STDCALL CpProxyAvOpenhomeOrgMediaServer1BeginQuery(THandle aHandle, const char* aRequest, OhNetCallbackAsync aCallback, void* aPtr)
-{
-    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
-    ASSERT(proxyC != NULL);
-    Brh buf_aRequest(aRequest);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
-    proxyC->BeginQuery(buf_aRequest, functor);
-}
-
-int32_t STDCALL CpProxyAvOpenhomeOrgMediaServer1EndQuery(THandle aHandle, OhNetHandleAsync aAsync, char** aResult)
-{
-    int32_t err = 0;
-    CpProxyAvOpenhomeOrgMediaServer1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgMediaServer1C*>(aHandle);
-    ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
-    ASSERT(async != NULL);
-    Brh buf_aResult;
-    *aResult = NULL;
-    try {
-        proxyC->EndQuery(*async, buf_aResult);
-        *aResult = buf_aResult.Extract();
     }
     catch(...) {
         err = -1;

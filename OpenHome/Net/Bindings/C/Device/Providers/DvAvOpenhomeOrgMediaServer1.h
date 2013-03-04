@@ -112,19 +112,6 @@ typedef int32_t (STDCALL *CallbackMediaServer1BrowsePort)(void* aPtr, IDvInvocat
  * @return  0 if the action succeeded; non-zero if the action failed
  */
 typedef int32_t (STDCALL *CallbackMediaServer1UpdateCount)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValue);
-/**
- * Callback which runs when the Query action is invoked
- *
- * @param[in]  aPtr           Opaque data passed to DvProviderAvOpenhomeOrgMediaServer1EnableActionQuery
- * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
- *                            and other queries.
- * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
- * @param[in]  aRequest
- * @param[out] aResult
- *
- * @return  0 if the action succeeded; non-zero if the action failed
- */
-typedef int32_t (STDCALL *CallbackMediaServer1Query)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aRequest, char** aResult);
 
 /**
  * Provider constructor
@@ -284,17 +271,6 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionBrowsePort
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionUpdateCount(THandle aProvider, CallbackMediaServer1UpdateCount aCallback, void* aPtr);
-/**
- * Register a callback for the action Query
- *
- * If this is called, the action's availability will be published in the device's service.xml.
- * If this is not called, any attempt to invoke the action on a control point will fail.
- *
- * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgMediaServer1Create
- * @param[in] aCallback  Callback which will be run when the action is invoked
- * @param[in] aPtr       Client-specified data which will be passed to the callback
- */
-DllExport void STDCALL DvProviderAvOpenhomeOrgMediaServer1EnableActionQuery(THandle aProvider, CallbackMediaServer1Query aCallback, void* aPtr);
 
 /**
  * Set the value of the ManufacturerName property

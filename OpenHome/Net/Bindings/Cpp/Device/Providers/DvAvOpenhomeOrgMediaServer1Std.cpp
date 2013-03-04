@@ -409,15 +409,6 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnableActionUpdateCount()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1Cpp::EnableActionQuery()
-{
-    OpenHome::Net::Action* action = new OpenHome::Net::Action("Query");
-    action->AddInputParameter(new ParameterString("Request"));
-    action->AddOutputParameter(new ParameterString("Result"));
-    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgMediaServer1Cpp::DoQuery);
-    iService->AddAction(action, functor);
-}
-
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoManufacturer(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
@@ -562,24 +553,6 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoUpdateCount(IDviInvocation& aInvo
     aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgMediaServer1Cpp::DoQuery(IDviInvocation& aInvocation)
-{
-    aInvocation.InvocationReadStart();
-    Brhz buf_Request;
-    aInvocation.InvocationReadString("Request", buf_Request);
-    std::string Request((const char*)buf_Request.Ptr(), buf_Request.Bytes());
-    aInvocation.InvocationReadEnd();
-    std::string respResult;
-    DvInvocationStd invocation(aInvocation);
-    Query(invocation, Request, respResult);
-    aInvocation.InvocationWriteStart();
-    DviInvocationResponseString respWriterResult(aInvocation, "Result");
-    Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
-    respWriterResult.Write(buf_Result);
-    aInvocation.InvocationWriteStringEnd("Result");
-    aInvocation.InvocationWriteEnd();
-}
-
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::Manufacturer(IDvInvocationStd& /*aInvocation*/, std::string& /*aName*/, std::string& /*aInfo*/, std::string& /*aUrl*/, std::string& /*aImageUri*/)
 {
     ASSERTS();
@@ -611,11 +584,6 @@ void DvProviderAvOpenhomeOrgMediaServer1Cpp::BrowsePort(IDvInvocationStd& /*aInv
 }
 
 void DvProviderAvOpenhomeOrgMediaServer1Cpp::UpdateCount(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValue*/)
-{
-    ASSERTS();
-}
-
-void DvProviderAvOpenhomeOrgMediaServer1Cpp::Query(IDvInvocationStd& /*aInvocation*/, const std::string& /*aRequest*/, std::string& /*aResult*/)
 {
     ASSERTS();
 }

@@ -418,26 +418,4 @@ CpProxyAvOpenhomeOrgMediaServer1.prototype.UpdateCount = function(successFunctio
 }
 
 
-/**
-* A service action to Query
-* @method Query
-* @param {String} Request An action parameter
-* @param {Function} successFunction The function that is executed when the action has completed successfully
-* @param {Function} errorFunction The function that is executed when the action has cause an error
-*/
-CpProxyAvOpenhomeOrgMediaServer1.prototype.Query = function(Request, successFunction, errorFunction){ 
-    var request = new ohnet.soaprequest("Query", this.url, this.domain, this.type, this.version);     
-    request.writeStringParameter("Request", Request);
-    request.send(function(result){
-        result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]); 
-    
-        if (successFunction){
-            successFunction(result);
-        }
-    }, function(message, transport) {
-        if (errorFunction) {errorFunction(message, transport);}
-    });
-}
-
-
 

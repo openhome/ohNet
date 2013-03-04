@@ -31,9 +31,6 @@ interface ICpProxyAvOpenhomeOrgMediaServer1 extends ICpProxy
     public long syncUpdateCount();
     public void beginUpdateCount(ICpProxyListener aCallback);
     public long endUpdateCount(long aAsyncHandle);
-    public String syncQuery(String aRequest);
-    public void beginQuery(String aRequest, ICpProxyListener aCallback);
-    public String endQuery(long aAsyncHandle);
     public void setPropertyManufacturerNameChanged(IPropertyChangeListener aManufacturerNameChanged);
     public String getPropertyManufacturerName();
     public void setPropertyManufacturerInfoChanged(IPropertyChangeListener aManufacturerInfoChanged);
@@ -269,27 +266,6 @@ class SyncUpdateCountAvOpenhomeOrgMediaServer1 extends SyncProxyAction
     }
 }
 
-class SyncQueryAvOpenhomeOrgMediaServer1 extends SyncProxyAction
-{
-    private CpProxyAvOpenhomeOrgMediaServer1 iService;
-    private String iResult;
-
-    public SyncQueryAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1 aProxy)
-    {
-        iService = aProxy;
-    }
-    public String getResult()
-    {
-        return iResult;
-    }
-    protected void completeRequest(long aAsyncHandle)
-    {
-        String result = iService.endQuery(aAsyncHandle);
-        
-        iResult = result;
-    }
-}
-
 /**
  * Proxy for the av.openhome.org:MediaServer:1 UPnP service
  */
@@ -414,7 +390,6 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
     private Action iActionQueryPort;
     private Action iActionBrowsePort;
     private Action iActionUpdateCount;
-    private Action iActionQuery;
     private PropertyString iManufacturerName;
     private PropertyString iManufacturerInfo;
     private PropertyString iManufacturerUrl;
@@ -507,12 +482,6 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         iActionUpdateCount = new Action("UpdateCount");
         param = new ParameterUint("Value");
         iActionUpdateCount.addOutputParameter(param);
-
-        iActionQuery = new Action("Query");
-        param = new ParameterString("Request", allowedValues);
-        iActionQuery.addInputParameter(param);
-        param = new ParameterString("Result", allowedValues);
-        iActionQuery.addOutputParameter(param);
 
         iManufacturerNameChanged = new PropertyChangeListener();
         iManufacturerName = new PropertyString("ManufacturerName",
@@ -1091,64 +1060,6 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
         int index = 0;
         long value = Invocation.getOutputUint(aAsyncHandle, index++);
         return value;
-    }
-        
-    /**
-     * Invoke the action synchronously.
-     * Blocks until the action has been processed on the device and sets any
-     * output arguments.
-     *
-     * @return the result of the invoked action.
-     */
-    public String syncQuery(String aRequest)
-    {
-        SyncQueryAvOpenhomeOrgMediaServer1 sync = new SyncQueryAvOpenhomeOrgMediaServer1(this);
-        beginQuery(aRequest, sync.getListener());
-        sync.waitToComplete();
-        sync.reportError();
-
-        return sync.getResult();
-    }
-    
-    /**
-     * Invoke the action asynchronously.
-     * Returns immediately and will run the client-specified callback when the
-     * action later completes.  Any output arguments can then be retrieved by
-     * calling {@link #endQuery}.
-     * 
-     * @param aRequest
-     * @param aCallback listener to call back when action completes.
-     *                  This is guaranteed to be run but may indicate an error.
-     */
-    public void beginQuery(String aRequest, ICpProxyListener aCallback)
-    {
-        Invocation invocation = iService.getInvocation(iActionQuery, aCallback);
-        int inIndex = 0;
-        invocation.addInput(new ArgumentString((ParameterString)iActionQuery.getInputParameter(inIndex++), aRequest));
-        int outIndex = 0;
-        invocation.addOutput(new ArgumentString((ParameterString)iActionQuery.getOutputParameter(outIndex++)));
-        iService.invokeAction(invocation);
-    }
-
-    /**
-     * Retrieve the output arguments from an asynchronously invoked action.
-     * This may only be called from the callback set in the
-     * {@link #beginQuery} method.
-     *
-     * @param aAsyncHandle  argument passed to the delegate set in the
-     *          {@link #beginQuery} method.
-     * @return the result of the previously invoked action.
-     */
-    public String endQuery(long aAsyncHandle)
-    {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
-        if (errObj != null)
-        {
-            throw errObj;
-        }
-        int index = 0;
-        String result = Invocation.getOutputString(aAsyncHandle, index++);
-        return result;
     }
         
     /**
@@ -1798,7 +1709,6 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
             iActionQueryPort.destroy();
             iActionBrowsePort.destroy();
             iActionUpdateCount.destroy();
-            iActionQuery.destroy();
             iManufacturerName.destroy();
             iManufacturerInfo.destroy();
             iManufacturerUrl.destroy();

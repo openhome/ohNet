@@ -31,9 +31,6 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncUpdateCount(out uint aValue);
         void BeginUpdateCount(CpProxy.CallbackAsyncComplete aCallback);
         void EndUpdateCount(IntPtr aAsyncHandle, out uint aValue);
-        void SyncQuery(String aRequest, out String aResult);
-        void BeginQuery(String aRequest, CpProxy.CallbackAsyncComplete aCallback);
-        void EndQuery(IntPtr aAsyncHandle, out String aResult);
         void SetPropertyManufacturerNameChanged(System.Action aManufacturerNameChanged);
         String PropertyManufacturerName();
         void SetPropertyManufacturerInfoChanged(System.Action aManufacturerInfoChanged);
@@ -246,25 +243,6 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
     };
 
-    internal class SyncQueryAvOpenhomeOrgMediaServer1 : SyncProxyAction
-    {
-        private CpProxyAvOpenhomeOrgMediaServer1 iService;
-        private String iResult;
-
-        public SyncQueryAvOpenhomeOrgMediaServer1(CpProxyAvOpenhomeOrgMediaServer1 aProxy)
-        {
-            iService = aProxy;
-        }
-        public String Result()
-        {
-            return iResult;
-        }
-        protected override void CompleteRequest(IntPtr aAsyncHandle)
-        {
-            iService.EndQuery(aAsyncHandle, out iResult);
-        }
-    };
-
     /// <summary>
     /// Proxy for the av.openhome.org:MediaServer:1 UPnP service
     /// </summary>
@@ -277,7 +255,6 @@ namespace OpenHome.Net.ControlPoint.Proxies
         private OpenHome.Net.Core.Action iActionQueryPort;
         private OpenHome.Net.Core.Action iActionBrowsePort;
         private OpenHome.Net.Core.Action iActionUpdateCount;
-        private OpenHome.Net.Core.Action iActionQuery;
         private PropertyString iManufacturerName;
         private PropertyString iManufacturerInfo;
         private PropertyString iManufacturerUrl;
@@ -368,12 +345,6 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionUpdateCount = new OpenHome.Net.Core.Action("UpdateCount");
             param = new ParameterUint("Value");
             iActionUpdateCount.AddOutputParameter(param);
-
-            iActionQuery = new OpenHome.Net.Core.Action("Query");
-            param = new ParameterString("Request", allowedValues);
-            iActionQuery.AddInputParameter(param);
-            param = new ParameterString("Result", allowedValues);
-            iActionQuery.AddOutputParameter(param);
 
             iManufacturerName = new PropertyString("ManufacturerName", ManufacturerNamePropertyChanged);
             AddProperty(iManufacturerName);
@@ -797,59 +768,6 @@ namespace OpenHome.Net.ControlPoint.Proxies
             }
             uint index = 0;
             aValue = Invocation.OutputUint(aAsyncHandle, index++);
-        }
-
-        /// <summary>
-        /// Invoke the action synchronously
-        /// </summary>
-        /// <remarks>Blocks until the action has been processed
-        /// on the device and sets any output arguments</remarks>
-        /// <param name="aRequest"></param>
-        /// <param name="aResult"></param>
-        public void SyncQuery(String aRequest, out String aResult)
-        {
-            SyncQueryAvOpenhomeOrgMediaServer1 sync = new SyncQueryAvOpenhomeOrgMediaServer1(this);
-            BeginQuery(aRequest, sync.AsyncComplete());
-            sync.Wait();
-            sync.ReportError();
-            aResult = sync.Result();
-        }
-
-        /// <summary>
-        /// Invoke the action asynchronously
-        /// </summary>
-        /// <remarks>Returns immediately and will run the client-specified callback when the action
-        /// later completes.  Any output arguments can then be retrieved by calling
-        /// EndQuery().</remarks>
-        /// <param name="aRequest"></param>
-        /// <param name="aCallback">Delegate to run when the action completes.
-        /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginQuery(String aRequest, CallbackAsyncComplete aCallback)
-        {
-            Invocation invocation = iService.Invocation(iActionQuery, aCallback);
-            int inIndex = 0;
-            invocation.AddInput(new ArgumentString((ParameterString)iActionQuery.InputParameter(inIndex++), aRequest));
-            int outIndex = 0;
-            invocation.AddOutput(new ArgumentString((ParameterString)iActionQuery.OutputParameter(outIndex++)));
-            iService.InvokeAction(invocation);
-        }
-
-        /// <summary>
-        /// Retrieve the output arguments from an asynchronously invoked action.
-        /// </summary>
-        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
-        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aResult"></param>
-        public void EndQuery(IntPtr aAsyncHandle, out String aResult)
-        {
-			uint code;
-			string desc;
-            if (Invocation.Error(aAsyncHandle, out code, out desc))
-            {
-                throw new ProxyError(code, desc);
-            }
-            uint index = 0;
-            aResult = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1463,7 +1381,6 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionQueryPort.Dispose();
             iActionBrowsePort.Dispose();
             iActionUpdateCount.Dispose();
-            iActionQuery.Dispose();
             iManufacturerName.Dispose();
             iManufacturerInfo.Dispose();
             iManufacturerUrl.Dispose();
