@@ -111,6 +111,18 @@ private:
     AllocatorInfoLogger iInfoAggregator;
 };
 
+class SuiteFlush : public Suite
+{
+    static const TUint kMsgFlushCount = 1;
+public:
+    SuiteFlush();
+    ~SuiteFlush();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    AllocatorInfoLogger iInfoAggregator;
+};
+
 class SuiteDecodedStream : public Suite
 {
     static const TUint kMsgDecodedStreamCount = 1;
@@ -1176,6 +1188,34 @@ void SuiteMetaText::Test()
 }
 
 
+// SuiteFlush
+
+SuiteFlush::SuiteFlush()
+    : Suite("MsgFlush tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgFlushCount, 1);
+}
+
+SuiteFlush::~SuiteFlush()
+{
+    delete iMsgFactory;
+}
+
+void SuiteFlush::Test()
+{
+    MsgFlush* msg = iMsgFactory->CreateMsgFlush();
+    TUint id = msg->Id();
+    TEST(id != MsgFlush::kIdInvalid);
+    msg->RemoveRef();
+    TEST(id != msg->Id()); // slightly dodgy to assert that Clear()ing a flush resets its id
+
+    msg = iMsgFactory->CreateMsgFlush();
+    TEST(msg->Id() != MsgFlush::kIdInvalid);
+    TEST(msg->Id() != id);
+    msg->RemoveRef();
+}
+
+
 // SuiteDecodedStream
 
 SuiteDecodedStream::SuiteDecodedStream()
@@ -1800,6 +1840,7 @@ void TestMsg()
     runner.Add(new SuiteRamp());
     runner.Add(new SuiteAudioStream());
     runner.Add(new SuiteMetaText());
+    runner.Add(new SuiteFlush());
     runner.Add(new SuiteDecodedStream());
     runner.Add(new SuiteMsgProcessor());
     runner.Add(new SuiteMsgQueue());

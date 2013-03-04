@@ -513,9 +513,16 @@ private: // from Msg
 class MsgFlush : public Msg
 {
 public:
+    static const TUint kIdInvalid = 0;
+public:
     MsgFlush(AllocatorBase& aAllocator);
+    void Initialise(TUint aId);
+    TUint Id() const;
 private: // from Msg
+    void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
+private:
+    TUint iId;
 };
 
 class MsgQuit : public Msg
@@ -752,6 +759,7 @@ private:
     EncodedAudio* CreateEncodedAudio(const Brx& aData);
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
+    Mutex iLock;
     Allocator<EncodedAudio> iAllocatorEncodedAudio;
     Allocator<MsgAudioEncoded> iAllocatorMsgAudioEncoded;
     Allocator<DecodedAudio> iAllocatorDecodedAudio;
@@ -766,6 +774,7 @@ private:
     Allocator<MsgHalt> iAllocatorMsgHalt;
     Allocator<MsgFlush> iAllocatorMsgFlush;
     Allocator<MsgQuit> iAllocatorMsgQuit;
+    TUint iNextFlushId;
 };
 
 } // namespace Media
