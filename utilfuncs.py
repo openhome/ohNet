@@ -121,11 +121,11 @@ def configure_toolchain(conf):
                 conf.env.append_value('LINKFLAGS', ['-arch', 'x86_64'])
             conf.env.append_value('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
             conf.env.append_value('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
-        # Options for Libosa-core1 and Libosa-core2
-        if conf.options.dest_platform in ['Libosa-core1', 'Libosa-core2']:
-            if conf.options.dest_platform == 'Libosa-core1':
+        # Options for Core-ppc32 and Core-armv6
+        if conf.options.dest_platform in ['Core-ppc32', 'Core-armv6']:
+            if conf.options.dest_platform == 'Core-ppc32':
                 cpu = '403'
-            if conf.options.dest_platform == 'Libosa-core2':
+            if conf.options.dest_platform == 'Core-armv6':
                 cpu = 'arm926ej-s'
                 # core2 is arm based - pass no-psabi flag to avoid excessive noise during compilation.
                 conf.env.append_value('CXXFLAGS', ['-Wno-psabi'])
@@ -193,8 +193,8 @@ def get_platform_info(dest_platform):
         'Linux-ARM': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Windows-x86': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
         'Windows-x64': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
-        'Libosa-core1': dict(endian='BIG',   build_platform='linux2', ohnet_plat_dir='Volkano2'),
-        'Libosa-core2': dict(endian='LITTLE',build_platform='linux2', ohnet_plat_dir='Volkano2'),
+        'Core-ppc32': dict(endian='BIG',     build_platform='linux2', ohnet_plat_dir='Core-ppc32'),
+        'Core-armv6': dict(endian='LITTLE',  build_platform='linux2', ohnet_plat_dir='Core-armv6'),
         'Mac-x86': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac-x86'),
         'Mac-x64': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac-x64'),
         'iOs-ARM': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac/arm'),
