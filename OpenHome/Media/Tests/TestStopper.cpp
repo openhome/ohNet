@@ -120,7 +120,7 @@ SuiteStopper::SuiteStopper()
     , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1);
-    iStopper = new Stopper(*iMsgFactory, *this, *this, kRampDuration);
+    iStopper = new Stopper(*iMsgFactory, *this, *this, *this, kRampDuration);
 }
 
 SuiteStopper::~SuiteStopper()
@@ -215,7 +215,7 @@ void SuiteStopper::Test()
     iAudioMsgsDue = 5;
     iFlushMsgsDue = 2;
     iNextGeneratedMsg = EMsgFlush;
-    iStopper->BeginFlush(*this);
+    iStopper->BeginFlush();
     TEST(iFlush != NULL);
     TEST(iStopper->iState == Stopper::EFlushing);
     flushThread->Start();
