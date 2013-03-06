@@ -137,6 +137,8 @@ PipelineManager::~PipelineManager()
     delete iContainer;
     delete iLoggerEncodedAudioReservoir;
     delete iEncodedAudioReservoir;
+    delete iLoggerSupply;
+    delete iSupply;
     delete iMsgFactory;
 }
 

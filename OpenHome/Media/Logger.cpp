@@ -104,7 +104,7 @@ Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
         Log::Print(" , totalBytes: %llu, streamId: %u, seekable: %s, live: %s}\n",
                     aMsg->TotalBytes(), aMsg->StreamId(),
                     (aMsg->Seekable()? "true" : "false"),
-                    (aMsg->Live()!=NULL? "true" : "false"));
+                    (aMsg->Live()? "true" : "false"));
     }
     return aMsg;
 }

@@ -219,8 +219,7 @@ TBool CodecFlac::TrySeek(TUint aStreamId, TUint64 aSample)
     }
     FLAC__bool ret = FLAC__stream_decoder_seek_absolute(iDecoder, aSample);
     if (ret == 0) {
-        FLAC__StreamDecoderState state;
-        state = FLAC__stream_decoder_get_state(iDecoder);
+        //FLAC__StreamDecoderState state = FLAC__stream_decoder_get_state(iDecoder);
         // this can occur if we try to seek beyond the end, so abort this track
         THROW(CodecStreamCorrupt);
     }

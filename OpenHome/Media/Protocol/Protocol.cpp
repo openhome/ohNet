@@ -245,7 +245,7 @@ ProtocolStreamResult ProtocolManager::Stream(const Brx& aUri)
 {
     ProtocolStreamResult res = EProtocolErrorNotSupported;
     const TUint count = iProtocols.size();
-    for (TUint i=0; i<count, res==EProtocolErrorNotSupported; i++) {
+    for (TUint i=0; i<count && res==EProtocolErrorNotSupported; i++) {
         Protocol* protocol = iProtocols[i];
         if (!protocol->Active()) {
             res = protocol->TryStream(aUri);
