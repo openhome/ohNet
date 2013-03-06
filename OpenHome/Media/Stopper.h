@@ -36,7 +36,7 @@ public:
     virtual ~Stopper();
     void Start();
     void BeginHalt();
-    void BeginFlush();
+    void BeginFlush(ISupply& aSupply);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
@@ -77,6 +77,8 @@ private:
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TBool iReportHalted;
     TBool iReportFlushed;
+    TBool iFlushStream;
+    TUint iTargetFlushId;
 };
 
 } // namespace Media

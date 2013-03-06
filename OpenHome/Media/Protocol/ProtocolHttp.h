@@ -37,8 +37,8 @@ private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    void Stop();
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     ProtocolStreamResult DoStream();
     ProtocolStreamResult DoSeek(TUint64 aOffset);
@@ -77,6 +77,8 @@ private:
     TUint64 iSeekPos;
     TUint64 iOffset;
     ContentProcessor* iContentProcessor;
+    TUint iLastFlushId;
+    Semaphore iSem;
 };
 
 /*class UriEntry

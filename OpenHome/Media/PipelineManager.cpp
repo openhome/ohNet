@@ -233,8 +233,7 @@ void PipelineManager::Stop()
         iStatus = EHalting;
     }
     else if (iStatus == EHalted) {
-        iStopper->BeginFlush();
-        OutputFlush();
+        iStopper->BeginFlush(*iSupply);
         iStatus = EFlushing;
     }
 }
@@ -265,9 +264,9 @@ void PipelineManager::OutputMetadata(const Brx& aMetadata)
     iSupply->OutputMetadata(aMetadata);
 }
 
-void PipelineManager::OutputFlush()
+TUint PipelineManager::OutputFlush()
 {
-    iSupply->OutputFlush();
+    return iSupply->OutputFlush();
 }
 
 void PipelineManager::OutputQuit()
@@ -301,8 +300,7 @@ void PipelineManager::PipelineHalted()
     case EFlushed:
     case EQuit:
         iStatus = EFlushing;
-        iStopper->BeginFlush();
-        OutputFlush();
+        iStopper->BeginFlush(*iSupply);
         iLock.Signal();
         break;
     default:

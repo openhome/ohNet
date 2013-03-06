@@ -79,7 +79,7 @@ public: // from ISupply
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
-    void OutputFlush();
+    TUint OutputFlush();
     void OutputQuit();
 public: // from IPipelineElementUpstream
     Msg* Pull();

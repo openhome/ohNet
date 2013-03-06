@@ -711,7 +711,7 @@ public:
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
-    virtual void OutputFlush() = 0;
+    virtual TUint OutputFlush() = 0;
     virtual void OutputQuit() = 0;
 };
 
@@ -719,8 +719,8 @@ class IStreamHandler
 {
 public:
     virtual TBool OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
-    virtual TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
-    virtual void Stop() = 0;
+    virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
+    virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
 };
 
 class IPipelineElementUpstream

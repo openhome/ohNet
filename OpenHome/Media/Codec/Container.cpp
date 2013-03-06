@@ -149,12 +149,12 @@ TBool Container::OkToPlay(TUint aTrackId, TUint aStreamId)
     return iStreamHandler->OkToPlay(aTrackId, aStreamId);
 }
 
-TBool Container::Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
-    return iStreamHandler->Seek(aTrackId, aStreamId, aOffset + iContainerSize);
+    return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset + iContainerSize);
 }
 
-void Container::Stop()
+TUint Container::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    iStreamHandler->Stop();
+    return iStreamHandler->TryStop(aTrackId, aStreamId);
 }
