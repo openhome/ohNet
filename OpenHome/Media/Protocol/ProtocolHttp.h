@@ -7,8 +7,6 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 
-#include <vector>
-
 namespace OpenHome {
 namespace Media {
 

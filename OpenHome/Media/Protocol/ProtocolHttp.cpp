@@ -1,9 +1,6 @@
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Parser.h>
-#include <OpenHome/Private/Converter.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
