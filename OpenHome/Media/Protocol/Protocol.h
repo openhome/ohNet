@@ -50,6 +50,7 @@ public:
     ProtocolStreamResult TryStream(const Brx& aUri);
     void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply);
     TBool Active() const;
+    virtual ~Protocol() {}
 protected:
     Protocol(Environment& aEnv);
 private: // from IStreamHandler
