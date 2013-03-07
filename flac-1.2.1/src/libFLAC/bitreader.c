@@ -43,6 +43,14 @@
 #include <winsock.h> /* for ntohl() */
 #elif defined NETWORK_LWIP
 #include <lwip/inet.h>
+#elif defined NETWORK_NTOHL_LOCAL
+
+#ifdef DEFINE_LITTLE_ENDIAN
+#define ntohl(x)    __builtin_bswap32((x))
+#else
+#define ntohl(x)    (x)
+#endif
+
 #else
 #include <netinet/in.h> /* for ntohl() */
 #endif
