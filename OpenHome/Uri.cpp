@@ -112,6 +112,7 @@ void Uri::Parse(const Brx& aUri)
     Brn path;
     Brn query;
     Brn fragment;
+    TBool isFileScheme;
 
     // Parse the fragment first
     Parser parser(aUri);
@@ -124,6 +125,7 @@ void Uri::Parse(const Brx& aUri)
     if (parser.Finished()) {
         THROW(UriError); // No ":" scheme delimiter (or URI == scheme:)
     }
+    isFileScheme = (scheme == Brn("file"));
 
     // Parse for the query
     currUri.Set(parser.NextNoTrim('?'));  // currUri = "//host[:port]/path" remaining = "query"
@@ -160,7 +162,7 @@ void Uri::Parse(const Brx& aUri)
     path.Set(parser.Remaining());
 
     // Parse the host and port
-    if (Ascii::Contains(authority, ':')) {
+    if (!isFileScheme && Ascii::Contains(authority, ':')) {
         // host:port
         parser.Set(authority);  // remaining = "host:port"
         host.Set(parser.Next(':'));
@@ -263,7 +265,7 @@ void Uri::ValidateScheme()
 
 void Uri::ValidateHost()
 {
-    if (iHost.Bytes() == 0) {
+    if (iHost.Bytes() == 0 && iScheme != Brn("file")) {
         THROW(UriError); // Zero length host
     }
     // Host characters must be letter, number, - or .
