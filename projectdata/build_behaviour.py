@@ -141,12 +141,12 @@ def setup_core(context):
 
 @build_step()
 @build_condition(OH_PLATFORM="Core-ppc32")
-def setup_core(context):
+def setup_cross_ppc32(context):
     context.env.update(CROSS_COMPILE='/opt/rtems-4.11/bin/powerpc-rtems4.11-')
 
 @build_step()
 @build_condition(OH_PLATFORM="Core-armv6")
-def setup_core(context):
+def setup_cross_armv6(context):
     context.env.update(CROSS_COMPILE='/opt/rtems-4.11/bin/arm-rtemseabi4.11-')
 
 # Principal build steps.
