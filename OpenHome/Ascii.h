@@ -86,7 +86,6 @@ public:
 
     static TBool CaseInsensitiveEquals(TChar aValue1, TChar aValue2);
     static TBool CaseInsensitiveEquals(const Brx& aBuffer1, const Brx& aBuffer2);
-    static TBool RemoveTheFromStart(const Brx& aSrc, Bwx& aDst);
 
     static TUint AppendDec(Bwx& aBuffer, TUint8 aValue);
     static TUint AppendDec(Bwx& aBuffer, TInt8 aValue);

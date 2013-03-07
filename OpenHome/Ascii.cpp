@@ -91,25 +91,6 @@ TBool Ascii::CaseInsensitiveEquals(const Brx& aBuffer1, const Brx& aBuffer2)
     return (true);
 }
 
-TBool Ascii::RemoveTheFromStart(const Brx& aSrc, Bwx& aDst)
-{
-    if (aSrc.Bytes() <= 4)
-    {
-        aDst.Replace(aSrc);
-        return (false);
-    }
-    else if (CaseInsensitiveEquals(aSrc.Split(0,4), Brn("The "))) 
-    {
-        aDst.Replace(aSrc.Split(4, (aSrc.Bytes() - 4)));
-        return (true);
-    }
-    else
-    {
-        aDst.Replace(aSrc);
-        return (false);
-    }
-}
-
 /// Return the hex character coresponding to the value passed in.
 /// The value passed in should be from 0 to 15.
 
