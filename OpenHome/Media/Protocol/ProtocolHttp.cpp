@@ -1,9 +1,6 @@
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Parser.h>
-#include <OpenHome/Private/Converter.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -58,6 +55,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
     , iReaderResponse(aEnv, iReaderBuf)
     , iTotalBytes(0)
     , iSeekable(false)
+    , iSem("PRTH", 0)
 {
     iReaderResponse.AddHeader(iHeaderContentType);
     iReaderResponse.AddHeader(iHeaderContentLength);
@@ -71,6 +69,8 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     iStreamId = ProtocolManager::kStreamIdInvalid;
     iSeekable = iSeek = iLive = iStarted = iStopped = false;
     iContentProcessor = NULL;
+    iLastFlushId = MsgFlush::kIdInvalid;
+    (void)iSem.Clear();
     iUri.Replace(aUri);
 
     LOG(kMedia, "ProtocolHttp::Stream ");
@@ -88,28 +88,23 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         return res;
     }
     if (iLive) {
-        // FIXME - wait on semaphore
-        // FIXME - ...which will require that Interrupt signals the semaphore
+        iSem.Wait();
         res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
     }
     while (res == EProtocolStreamErrorRecoverable) {
         if (iLive) {
             res = DoLiveStream();
         }
-        else if (iSeekable) {
-            if (iSeek) {
-                iSupply->OutputFlush();
-                iOffset = iSeekPos;
-                iSeek = false;
-            }
+        else if (iSeek) {
+            iLastFlushId = iSupply->OutputFlush();
+            iSem.Signal();
+            iOffset = iSeekPos;
+            iSeek = false;
             res = DoSeek(iOffset);
         }
         else {
             TUint code = WriteRequest(iOffset);
-            if (code == 0) {
-                res = EProtocolStreamErrorUnrecoverable;
-            }
-            else {
+            if (code != 0) {
                 res = ProcessContent();
             }
         }
@@ -119,27 +114,29 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         if (res == EProtocolStreamErrorRecoverable) {
             Thread::Sleep(50);
         }
+        if (iStopped) {
+            iLastFlushId = iSupply->OutputFlush();
+            iSem.Signal();
+            res = EProtocolStreamStopped;
+        }
     }
     iLock.Wait();
     // FIXME - clear track, stream ids
     // TBool stopped = iStopped;
     iLock.Signal();
-    if (iStopped) {
-        return EProtocolStreamStopped;
-    }
     return res;
 }
 
 TBool ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    TBool canPlay = iIdProvider->OkToPlay(aTrackId, aStreamId);
-    if (canPlay && iLive) {
-        // signal semaphore
+    const TBool canPlay = iIdProvider->OkToPlay(aTrackId, aStreamId);
+    if (canPlay && iLive && iStreamId == aStreamId) {
+        iSem.Signal();
     }
     return canPlay;
 }
 
-TBool ProtocolHttp::Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint ProtocolHttp::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ProtocolHttp::Seek\n");
 
@@ -149,16 +146,27 @@ TBool ProtocolHttp::Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
     iSeekPos = aOffset;
     iLock.Signal();
     if (!streamIsValid) {
-        return false;
+        return MsgFlush::kIdInvalid;
     }
     iTcpClient.Interrupt(true);
-
-    return true;
+    iSem.Wait();
+    return iLastFlushId;
 }
 
-void ProtocolHttp::Stop()
+TUint ProtocolHttp::TryStop(TUint /*aTrackId*/, TUint aStreamId)
 {
-    // FIXME
+    // FIXME - check aTrackId
+    iLock.Wait();
+    const TBool wait = (iStreamId == aStreamId);
+    if (wait) {
+        iStopped = true;
+        iTcpClient.Interrupt(true);
+    }
+    iLock.Signal();
+    if (wait) {
+        iSem.Wait();
+    }
+    return (wait? iLastFlushId : MsgFlush::kIdInvalid);
 }
 
 ProtocolStreamResult ProtocolHttp::DoStream()
@@ -226,7 +234,7 @@ ProtocolStreamResult ProtocolHttp::DoLiveStream()
     Interrupt(false);
     Close();
     const TUint code = WriteRequest(0);
-    iLive = false; // FIXME - review this
+    iLive = false;
     if (code == 0) {
         return EProtocolStreamErrorRecoverable;
     }

@@ -9,9 +9,10 @@ using namespace OpenHome::Media;
 
 // Stopper
 
-Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration)
+Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISupply& aSupply, IStopperObserver& aObserver, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iSupply(aSupply)
     , iObserver(aObserver)
     , iLock("MSTP")
     , iSem("SSTP", 0)
@@ -21,6 +22,8 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iCurrentRampValue(Ramp::kRampMin)
     , iReportHalted(false)
     , iReportFlushed(false)
+    , iFlushStream(false)
+    , iTargetFlushId(MsgFlush::kIdInvalid)
 {
 }
 
@@ -57,9 +60,7 @@ void Stopper::BeginFlush()
     ASSERT(iState == EHalted);
     iLock.Wait();
     iState = EFlushing;
-    while (!iQueue.IsEmpty()) {
-        iQueue.Dequeue()->RemoveRef();
-    }
+    iTargetFlushId = iSupply.OutputFlush();
     iSem.Signal();
     iLock.Signal();
 }
@@ -90,7 +91,7 @@ Msg* Stopper::Pull()
         iLock.Wait();
         msg = msg->Process(*this);
         // handling of EFlushing state is common across all message types so we might as well do it here
-        if (iState == EFlushing) {
+        if (iState == EFlushing && msg != NULL) {
             msg->RemoveRef();
             msg = NULL;
         }
@@ -115,11 +116,19 @@ Msg* Stopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    if (iFlushStream) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
     return ProcessMsgAudio(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgSilence* aMsg)
 {
+    if (iFlushStream) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
     return ProcessMsgAudio(aMsg);
 }
 
@@ -131,14 +140,19 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    iRemainingRampSize = 0;
+    iCurrentRampValue = Ramp::kRampMax;
+    iFlushStream = false;
+
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     IStreamHandler* sh = streamInfo.StreamHandler();
-    //ASSERT(sh != NULL);
-    if (sh != NULL && !sh->OkToPlay(0, streamInfo.StreamId())) { // FIXME - need a trackId
-        // FIXME - start a flush, discarding all content until the flush we issue is received
-        // FIXME - ...which requires that MsgFlush instances are uniquely identifiable
+    if (!sh->OkToPlay(0, streamInfo.StreamId())) { // FIXME - need a trackId
+        /*TUint flushId = */sh->TryStop(0, streamInfo.StreamId()); // FIXME - need a trackId
+        iFlushStream = true;
+        aMsg->RemoveRef();
+        return NULL;
     }
-    // FIXME - should maybe issue a halt for live streams (to prevent starvation monitor from kicking in before we've received enough data)
+    // FIXME - should maybe issue a halt if OkToPlay returns false (all cases) or true (for a live stream)
     return aMsg;
 }
 
@@ -149,15 +163,18 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* Stopper::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
-    iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
-    return aMsg;
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
 }
 
 Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
 {
+    if (iFlushStream) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
     return aMsg;
 }
 
@@ -170,11 +187,12 @@ Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
 {
-    aMsg->RemoveRef();
-    if (iState == EFlushing) { // flush may arrive as a result of either a Pause or a Seek
+    if (iTargetFlushId == aMsg->Id()) { // flush may arrive as a result of either a Pause or a Seek
         iState = EHalted;
         iReportFlushed = true;
+        iTargetFlushId = MsgFlush::kIdInvalid;
     }
+    aMsg->RemoveRef();
     return NULL;
 }
 

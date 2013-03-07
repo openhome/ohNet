@@ -17,8 +17,8 @@ class DummyStreamHandler : public IStreamHandler
 {
 private: // from IStreamHandler
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    void Stop();
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
 };
 
 class SuiteSupply : public Suite, private IPipelineElementDownstream, private IMsgProcessor
@@ -88,15 +88,16 @@ TBool DummyStreamHandler::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return false;
 }
 
-TBool DummyStreamHandler::Seek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint DummyStreamHandler::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
-    return false;
+    return MsgFlush::kIdInvalid;
 }
 
-void DummyStreamHandler::Stop()
+TUint DummyStreamHandler::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
+    return MsgFlush::kIdInvalid;
 }
 
 

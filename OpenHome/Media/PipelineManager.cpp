@@ -71,7 +71,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipeline
 
     iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
-    iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *this, kStopperRampDuration);
+    iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *iSupply, *this, kStopperRampDuration);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iReporter = new Reporter(/**iStopper*/*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
@@ -236,7 +236,6 @@ void PipelineManager::Stop()
     }
     else if (iStatus == EHalted) {
         iStopper->BeginFlush();
-        OutputFlush();
         iStatus = EFlushing;
     }
 }
@@ -267,9 +266,9 @@ void PipelineManager::OutputMetadata(const Brx& aMetadata)
     iSupply->OutputMetadata(aMetadata);
 }
 
-void PipelineManager::OutputFlush()
+TUint PipelineManager::OutputFlush()
 {
-    iSupply->OutputFlush();
+    return iSupply->OutputFlush();
 }
 
 void PipelineManager::OutputQuit()
@@ -304,7 +303,6 @@ void PipelineManager::PipelineHalted()
     case EQuit:
         iStatus = EFlushing;
         iStopper->BeginFlush();
-        OutputFlush();
         iLock.Signal();
         break;
     default:

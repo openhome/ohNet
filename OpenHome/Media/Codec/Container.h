@@ -48,8 +48,8 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from IStreamHandler
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    void Stop();
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;

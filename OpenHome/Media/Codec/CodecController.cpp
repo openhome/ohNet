@@ -102,20 +102,12 @@ void CodecController::CodecThread()
     while (!iQuit) {
         try {
             iLock.Wait();
-            iQueueTrackData = false;
-            iStreamEnded = false;
-            iSeek = false;
+            iQueueTrackData = iStreamEnded = iSeekable = iLive = iSeek = iConsumeExpectedFlush = false;
             iActiveCodec = NULL;
-            iSeekable = false;
-            iLive = false;
             iStreamHandler = NULL;
-            iStreamId = 0;
-            iSampleRate = 0;
-            iStreamLength = 0;
-            iStreamPos = 0;
-            iSeek = false;
-            iSeekSeconds = 0;
-            iFlushExpectedCount = 0;
+            iStreamId = iSampleRate = iSeekSeconds = 0;
+            iStreamLength = iStreamPos = 0LL;
+            iExpectedFlushId = MsgFlush::kIdInvalid;
             ReleaseAudioEncoded();
             iLock.Signal();
 
@@ -165,6 +157,7 @@ void CodecController::CodecThread()
             iAudioEncoded->Add(remaining);
             if (iActiveCodec == NULL) {
                 // FIXME - send error indication down the pipeline?
+                iExpectedFlushId = iStreamHandler->TryStop(0, iStreamId); // FIXME - need trackId
                 continue;
             }
 
@@ -179,15 +172,7 @@ void CodecController::CodecThread()
                     if (seek) {
                         iSeek = false;
                         TUint64 sampleNum = iSeekSeconds * iSampleRate;
-                        /*iLock.Wait();
-                        // need to increment iFlushExpectedCount now in case TrySeek results in updated DecodedStreamInfo being output
-                        iFlushExpectedCount++;
-                        iLock.Signal();*/
-                        if (!iActiveCodec->TrySeek(iStreamId, sampleNum)) {
-                            /*iLock.Wait();
-                            iFlushExpectedCount--;
-                            iLock.Signal();*/
-                        }
+                        (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
                     }
                     else {
                         iActiveCodec->Process();
@@ -224,7 +209,7 @@ void CodecController::Queue(Msg* aMsg)
 
 TBool CodecController::QueueTrackData() const
 {
-    return (iQueueTrackData && iFlushExpectedCount == 0);
+    return (iQueueTrackData && iExpectedFlushId == MsgFlush::kIdInvalid);
 }
 
 void CodecController::ReleaseAudioEncoded()
@@ -287,20 +272,13 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
     ReleaseAudioEncoded();
-    iLock.Wait();
-    // need to increment iFlushExpectedCount now in case TrySeek results in updated DecodedStreamInfo being output
-    iFlushExpectedCount++;
-    iLock.Signal();
-    const TBool canSeek = iStreamHandler->Seek(0, aStreamId, aBytePos); // FIXME - need trackId
-    if (canSeek) {
+    TUint flushId = iStreamHandler->TrySeek(0, aStreamId, aBytePos); // FIXME - need trackId
+    if (flushId != MsgFlush::kIdInvalid) {
+        iExpectedFlushId = flushId;
         iStreamPos = aBytePos;
+        return true;
     }
-    else {
-        iLock.Wait();
-        iFlushExpectedCount--;
-        iLock.Signal();
-    }
-    return canSeek;
+    return false;
 }
 
 TUint64 CodecController::StreamLength() const
@@ -310,7 +288,6 @@ TUint64 CodecController::StreamLength() const
 
 TUint64 CodecController::StreamPos() const
 {
-    // FIXME doesn't work with containers.  Need to be told when a container consumes data from a stream.
     return iStreamPos;
 }
 
@@ -319,14 +296,14 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, iStreamHandler);
     iLock.Wait();
     iSampleRate = aSampleRate;
-    if (iFlushExpectedCount > 0) {
+    if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+        Queue(msg);
+    }
+    else {
         if (iPostSeekStreamInfo != NULL) {
             iPostSeekStreamInfo->RemoveRef();
         }
         iPostSeekStreamInfo = msg;
-    }
-    else {
-        Queue(msg);
     }
     iLock.Signal();
 }
@@ -416,15 +393,23 @@ Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 {
     ReleaseAudioEncoded();
-    Queue(aMsg);
     AutoMutex a(iLock);
-    if (iFlushExpectedCount == 0) {
+    if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+        Queue(aMsg);
         THROW(CodecStreamFlush);
     }
-    if (--iFlushExpectedCount == 0) {
-        if (iPostSeekStreamInfo != NULL) {
-            Queue(iPostSeekStreamInfo);
-            iPostSeekStreamInfo = NULL;
+    if (iExpectedFlushId == aMsg->Id()) {
+        iExpectedFlushId = MsgFlush::kIdInvalid;
+        if (iConsumeExpectedFlush) {
+            iConsumeExpectedFlush = false;
+            aMsg->RemoveRef();
+        }
+        else {
+            Queue(aMsg);
+            if (iPostSeekStreamInfo != NULL) {
+                Queue(iPostSeekStreamInfo);
+                iPostSeekStreamInfo = NULL;
+            }
         }
     }
     return NULL;

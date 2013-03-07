@@ -107,7 +107,8 @@ private:
     TBool iQuit;
     TBool iSeek;
     TUint iSeekSeconds;
-    TUint iFlushExpectedCount;
+    TUint iExpectedFlushId;
+    TBool iConsumeExpectedFlush;
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[kMaxRecogniseBytes];

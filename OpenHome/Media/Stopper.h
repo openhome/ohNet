@@ -32,7 +32,7 @@ class Stopper : public IPipelineElementUpstream, private IMsgProcessor
 {
     friend class SuiteStopper;
 public:
-    Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
+    Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISupply& aSupply, IStopperObserver& aObserver, TUint aRampDuration);
     virtual ~Stopper();
     void Start();
     void BeginHalt();
@@ -67,6 +67,7 @@ private:
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
+    ISupply& iSupply;
     IStopperObserver& iObserver;
     Mutex iLock;
     Semaphore iSem;
@@ -77,6 +78,8 @@ private:
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TBool iReportHalted;
     TBool iReportFlushed;
+    TBool iFlushStream;
+    TUint iTargetFlushId;
 };
 
 } // namespace Media

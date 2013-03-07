@@ -513,9 +513,16 @@ private: // from Msg
 class MsgFlush : public Msg
 {
 public:
+    static const TUint kIdInvalid = 0;
+public:
     MsgFlush(AllocatorBase& aAllocator);
+    void Initialise(TUint aId);
+    TUint Id() const;
 private: // from Msg
+    void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
+private:
+    TUint iId;
 };
 
 class MsgQuit : public Msg
@@ -704,7 +711,7 @@ public:
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
-    virtual void OutputFlush() = 0;
+    virtual TUint OutputFlush() = 0;
     virtual void OutputQuit() = 0;
 };
 
@@ -712,8 +719,8 @@ class IStreamHandler
 {
 public:
     virtual TBool OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
-    virtual TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
-    virtual void Stop() = 0;
+    virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
+    virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
 };
 
 class IPipelineElementUpstream
@@ -752,6 +759,7 @@ private:
     EncodedAudio* CreateEncodedAudio(const Brx& aData);
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
+    Mutex iLock;
     Allocator<EncodedAudio> iAllocatorEncodedAudio;
     Allocator<MsgAudioEncoded> iAllocatorMsgAudioEncoded;
     Allocator<DecodedAudio> iAllocatorDecodedAudio;
@@ -766,6 +774,7 @@ private:
     Allocator<MsgHalt> iAllocatorMsgHalt;
     Allocator<MsgFlush> iAllocatorMsgFlush;
     Allocator<MsgQuit> iAllocatorMsgQuit;
+    TUint iNextFlushId;
 };
 
 } // namespace Media

@@ -42,10 +42,12 @@ void Supply::OutputMetadata(const Brx& aMetadata)
     iDownStreamElement.Push(msg);
 }
 
-void Supply::OutputFlush()
+TUint Supply::OutputFlush()
 {
     MsgFlush* msg = iMsgFactory.CreateMsgFlush();
+    TUint id = msg->Id();
     iDownStreamElement.Push(msg);
+    return id;
 }
 
 void Supply::OutputQuit()

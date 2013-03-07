@@ -29,8 +29,8 @@ private: // from Thread
     void Run();
 private: // from IStreamHandler
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    void Stop();
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     ISupply& iSupply;
     Mutex iLock;
@@ -200,14 +200,15 @@ TBool Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return true;
 }
 
-TBool Supplier::Seek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint Supplier::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
-    return false;
+    return MsgFlush::kIdInvalid;
 }
 
-void Supplier::Stop()
+TUint Supplier::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
+    return MsgFlush::kIdInvalid;
 }
 
 

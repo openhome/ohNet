@@ -39,10 +39,10 @@ TBool Protocol::OkToPlay(TUint aTrackId, TUint aStreamId)
     return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
 
-TBool Protocol::Seek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint Protocol::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
-    return false;
+    return MsgFlush::kIdInvalid;
 }
 
 
