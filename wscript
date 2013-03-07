@@ -133,6 +133,7 @@ def build(bld):
                 'OpenHome/Media/Codec/CodecController.cpp',
                 'OpenHome/Media/Protocol/Protocol.cpp',
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
+                'OpenHome/Media/Protocol/ProtocolFile.cpp',
                 #'OpenHome/Media/Protocol/ContentPls.cpp',
             ],
             use=['OHNET'],
@@ -206,7 +207,6 @@ def build(bld):
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
-                #'OpenHome/Media/Tests/FileSender.cpp',
             ],
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
             target='ohMediaPlayerTestUtils')
@@ -246,14 +246,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestPipelineMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline')
-    #bld.program(
-    #        source='OpenHome/Media/Tests/FileSenderMain.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'ohMediaPlayerTestUtils'],
-    #        target='FileSender')
     bld.program(
-            source='OpenHome/Media/Tests/TestProtocolHttp.cpp',
+            source='OpenHome/Media/Tests/TestProtocol.cpp',
             use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'ohMediaPlayerTestUtils'],
-            target='TestProtocolHttp')
+            target='TestProtocol')
     bld.program(
             source='OpenHome/Av/Tests/TestStore.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

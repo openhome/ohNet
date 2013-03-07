@@ -4,6 +4,7 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
+#include <OpenHome/Media/Protocol/ProtocolFile.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Wav.h>
@@ -62,11 +63,11 @@ int mygetch()
 namespace OpenHome {
 namespace Media {
 
-class SupplierProtocolHttp : public Thread, private IPipelineIdProvider
+class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    SupplierProtocolHttp(Environment& aEnv, ISupply& aSupply);
-    ~SupplierProtocolHttp();
+    DummyFiller(Environment& aEnv, ISupply& aSupply);
+    ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
     void Run();
@@ -82,13 +83,13 @@ private:
     static const TUint kInvalidPipelineId = 0;
 };
 
-class TestProtocolHttp : private IPipelineObserver
+class TestProtocol : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
     static const TUint kSeekStepSeconds = 10;
 public:
-    TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-    virtual ~TestProtocolHttp();
+    TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    virtual ~TestProtocol();
     int Run();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
@@ -97,7 +98,7 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private:
-    SupplierProtocolHttp* iSupplier;
+    DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
     PipelineManager* iPipeline;
     Net::DvDeviceStandard* iDevice;
@@ -116,58 +117,58 @@ using namespace OpenHome::TestFramework;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 
-// SupplierProtocolHttp
+// DummyFiller
 
-SupplierProtocolHttp::SupplierProtocolHttp(Environment& aEnv, ISupply& aSupply)
+DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aSupply, *this);
-    ProtocolHttp* protocolHttp = new ProtocolHttp(aEnv);
-    iProtocolManager->Add(protocolHttp);
+    iProtocolManager->Add(new ProtocolHttp(aEnv));
+    iProtocolManager->Add(new ProtocolFile(aEnv));
 }
 
-SupplierProtocolHttp::~SupplierProtocolHttp()
+DummyFiller::~DummyFiller()
 {
     delete iProtocolManager;
 }
 
-void SupplierProtocolHttp::Start(const Brx& aUrl)
+void DummyFiller::Start(const Brx& aUrl)
 {
     iUrl.Set(aUrl);
     Thread::Start();
 }
 
-void SupplierProtocolHttp::Run()
+void DummyFiller::Run()
 {
     iProtocolManager->DoStream(iUrl);
 }
 
-TUint SupplierProtocolHttp::NextTrackId()
+TUint DummyFiller::NextTrackId()
 {
     return iNextTrackId++;
 }
 
-TUint SupplierProtocolHttp::NextStreamId()
+TUint DummyFiller::NextStreamId()
 {
     return iNextStreamId++;
 }
 
-TBool SupplierProtocolHttp::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TBool DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     return true;
 }
 
 
-// TestProtocolHttp
+// TestProtocol
 
-TestProtocolHttp::TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
     : iUrl(aUrl)
     , iStreamId(0)
 {
     iPipeline = new PipelineManager(iInfoAggregator, *this, kMaxDriverJiffies);
-    iSupplier = new SupplierProtocolHttp(aEnv, *iPipeline);
+    iFiller = new DummyFiller(aEnv, *iPipeline);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
     iPipeline->AddCodec(new Codec::CodecMp3());
@@ -179,8 +180,8 @@ TestProtocolHttp::TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, co
     iDevice->SetAttribute("Upnp.FriendlyName", aSenderFriendlyName);
     iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
     iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer TestProtocolHttp");
-    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer TestProtocolHttp");
+    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer TestProtocol");
+    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer TestProtocol");
     iDevice->SetAttribute("Upnp.ModelNumber", "1");
     iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
     iDevice->SetAttribute("Upnp.SerialNumber", "");
@@ -190,17 +191,17 @@ TestProtocolHttp::TestProtocolHttp(Environment& aEnv, Net::DvStack& aDvStack, co
     iDevice->SetEnabled();
 }
 
-TestProtocolHttp::~TestProtocolHttp()
+TestProtocol::~TestProtocol()
 {
     delete iPipeline;
-    delete iSupplier;
+    delete iFiller;
     delete iDriver;
     delete iDevice;
 }
 
-int TestProtocolHttp::Run()
+int TestProtocol::Run()
 {
-    iSupplier->Start(iUrl);
+    iFiller->Start(iUrl);
 
     TBool playing = false;
     //TBool starve = false;
@@ -228,10 +229,10 @@ int TestProtocolHttp::Run()
         /*case 'n':
             starve = !starve;
             if (starve) {
-                iSupplier->Block();
+                iFiller->Block();
             }
             else {
-                iSupplier->Unblock();
+                iFiller->Unblock();
             }
             break;*/
         case 's':
@@ -271,7 +272,7 @@ int TestProtocolHttp::Run()
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void TestProtocolHttp::NotifyPipelineState(EPipelineState aState)
+void TestProtocol::NotifyPipelineState(EPipelineState aState)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     const char* state = "";
@@ -296,14 +297,14 @@ void TestProtocolHttp::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocolHttp::NotifyTrack()
+void TestProtocol::NotifyTrack()
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK\n");
 #endif
 }
 
-void TestProtocolHttp::NotifyMetaText(const Brx& aText)
+void TestProtocol::NotifyMetaText(const Brx& aText)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: METATEXT {");
@@ -312,7 +313,7 @@ void TestProtocolHttp::NotifyMetaText(const Brx& aText)
 #endif
 }
 
-void TestProtocolHttp::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
+void TestProtocol::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
     iSeconds = aSeconds;
     iTrackDurationSeconds = aTrackDurationSeconds;
@@ -321,7 +322,7 @@ void TestProtocolHttp::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 #endif
 }
 
-void TestProtocolHttp::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
+void TestProtocol::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
     iStreamId = aStreamInfo.StreamId();
 #ifdef LOG_PIPELINE_OBSERVER
@@ -343,11 +344,11 @@ int CDECL main(int aArgc, char* aArgv[])
     http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3
     */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("file:///c:/test.wav"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
-    OptionString optionUdn("-u", "--udn", Brn("TestProtocolHttp"), "[udn] udn for the upnp device");
+    OptionString optionUdn("-u", "--udn", Brn("TestProtocol"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("TestProtocolHttp"), "[name] name of the sender");
+    OptionString optionName("-n", "--name", Brn("TestProtocol"), "[name] name of the sender");
     parser.AddOption(&optionName);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
@@ -378,7 +379,7 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestProtocolHttp* tph = new TestProtocolHttp(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestProtocol* tph = new TestProtocol(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     const int ret = tph->Run();
     delete tph;
     
