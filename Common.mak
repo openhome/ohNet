@@ -71,6 +71,7 @@ objects_core = \
 	$(objdir)File.$(objext) \
 	$(objdir)FileAnsii.$(objext) \
 	$(objdir)FileBrx.$(objext) \
+	$(objdir)FileStream.$(objext) \
 	$(objdir)Globals.$(objext) \
 	$(objdir)Http.$(objext) \
 	$(objdir)DNSCommon.$(objext) \
@@ -319,6 +320,8 @@ $(objdir)FileAnsii.$(objext) : OpenHome/FileAnsii.cpp $(headers)
 	$(compiler)FileAnsii.$(objext) -c $(cflags) $(includes) OpenHome/FileAnsii.cpp
 $(objdir)FileBrx.$(objext) : OpenHome/FileBrx.cpp $(headers)
 	$(compiler)FileBrx.$(objext) -c $(cflags) $(includes) OpenHome/FileBrx.cpp
+$(objdir)FileStream.$(objext) : OpenHome/FileStream.cpp $(headers)
+	$(compiler)FileStream.$(objext) -c $(cflags) $(includes) OpenHome/FileStream.cpp
 $(objdir)Globals.$(objext) : OpenHome/Net/Globals.cpp $(headers)
 	$(compiler)Globals.$(objext) -c $(cflags) $(includes) OpenHome/Net/Globals.cpp
 $(objdir)Http.$(objext) : OpenHome/Http.cpp $(headers)

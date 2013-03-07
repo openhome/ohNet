@@ -1,12 +1,12 @@
 #include <OpenHome/Private/File.h>
 #include <cstdio>
 
-namespace OpenHome {
+using namespace OpenHome;
 
 FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
     : iFilePtr(NULL)
 {
-    switch ( aFileMode )
+    switch (aFileMode)
     {
         case eFileReadOnly:
             iFilePtr = fopen(aFilename, "rb");
@@ -16,30 +16,26 @@ FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
             break;
     }
 
-    if ( iFilePtr == NULL )
+    if (iFilePtr == NULL)
         THROW(FileOpenError);
 }
 
 FileAnsii::~FileAnsii()
 {
-    if ( fclose(iFilePtr) == EOF )
-        THROW(FileCloseError);
+    ASSERT(fclose(iFilePtr) != EOF);
 }
 
 void FileAnsii::Read(Bwx& aBuffer)
 {
-    Read(aBuffer, aBuffer.MaxBytes());
+    Read(aBuffer, aBuffer.MaxBytes() - aBuffer.Bytes());
 }
 
 void FileAnsii::Read(Bwx& aBuffer, TUint32 aBytes)
 {
-    ASSERT(aBytes <= aBuffer.MaxBytes());
-
-    aBuffer.SetBytes(0);
-    // Bwx should have a Ptr() that returns a non-const TByte* (viz. const TByte* Brx::Ptr() const)
-    TUint bytesRead = (TUint)fread((void*) aBuffer.Ptr(), 1, aBytes, iFilePtr);
-
-    aBuffer.SetBytes(bytesRead);
+    ASSERT(aBytes <= aBuffer.MaxBytes() - aBuffer.Bytes());
+    TByte* p = const_cast<TByte*>(aBuffer.Ptr()) + aBuffer.Bytes();
+    TUint bytesRead = (TUint)fread(p, 1, aBytes, iFilePtr);
+    aBuffer.SetBytes(aBuffer.Bytes() + bytesRead);
 }
 
 void FileAnsii::Write(const Brx& aBuffer)
@@ -55,8 +51,7 @@ void FileAnsii::Write(const Brx& /*aBuffer*/, TUint32 /*aBytes*/)
 void FileAnsii::Seek(TInt32 aBytes, SeekWhence aWhence)
 {
     int whence;
-
-    switch ( aWhence )
+    switch (aWhence)
     {
         case eSeekFromStart:
             whence = SEEK_SET;
@@ -72,7 +67,7 @@ void FileAnsii::Seek(TInt32 aBytes, SeekWhence aWhence)
             break;
     }
 
-    if ( fseek(iFilePtr, aBytes, whence) == -1 )
+    if (fseek(iFilePtr, aBytes, whence) == -1)
         THROW(FileSeekError);
 }
 
@@ -81,14 +76,19 @@ TUint32 FileAnsii::Tell() const
     return ftell(iFilePtr);
 }
 
-TUint32 FileAnsii::Bytes()
+TUint32 FileAnsii::Bytes() const
 {
-    TUint32 currentPos = Tell();
-    Seek(0, eSeekFromEnd);
-    TUint32 bytes = Tell();
-    Seek(currentPos, eSeekFromStart);
+    FileAnsii* self = const_cast<FileAnsii*>(this);
+    TUint32 currentPos = self->Tell();
+    TUint32 bytes = 0;
+    try {
+        self->Seek(0, eSeekFromEnd);
+        bytes = Tell();
+        self->Seek(currentPos, eSeekFromStart);
+    }
+    catch(FileSeekError&) {
+        // its not reasonable to expect clients to cope with a size querying function throwing and leaving the object in a different, indeterminate, state
+        ASSERTS();
+    }
     return bytes;
 }
-
-} // namespace OpenHome
-

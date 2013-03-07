@@ -1,21 +1,22 @@
 #include <OpenHome/Private/File.h>
 
-namespace OpenHome {
+using namespace OpenHome;
 
-FileBrx::FileBrx(const Brx* aBuffer)
+FileBrx::FileBrx(const Brx& aBuffer)
     : iBuffer(aBuffer)
     , iCursor(0)
 {
 }
 
-FileBrx::~FileBrx()
+FileBrx::FileBrx(const TChar* aBuffer)
+    : iBuffer(aBuffer)
+    , iCursor(0)
 {
-    delete iBuffer;
 }
 
-TUint32 FileBrx::Bytes()
+TUint32 FileBrx::Bytes() const
 {
-    return iBuffer->Bytes();
+    return iBuffer.Bytes();
 }
 
 TUint32 FileBrx::Tell() const
@@ -25,14 +26,14 @@ TUint32 FileBrx::Tell() const
 
 void FileBrx::Read(Bwx& aBuffer)
 {
-    Read(aBuffer, aBuffer.MaxBytes());
+    Read(aBuffer, aBuffer.MaxBytes() - aBuffer.Bytes());
 }
 
 void FileBrx::Read(Bwx& aBuffer, TUint32 aBytes)
 {
-    ASSERT(aBytes <= aBuffer.MaxBytes());
-    TUint32 bytes = ( iCursor + aBytes > Bytes() ? Bytes() - iCursor : aBytes );
-    aBuffer.Replace(iBuffer->Split(iCursor, bytes));
+    ASSERT(aBytes <= aBuffer.MaxBytes() - aBuffer.Bytes());
+    TUint32 bytes = (iCursor + aBytes > Bytes() ? Bytes() - iCursor : aBytes);
+    aBuffer.Append(iBuffer.Split(iCursor, bytes));
     iCursor += bytes;
 }
 
@@ -49,8 +50,7 @@ void FileBrx::Write(const Brx& /*aBuffer*/, TUint32 /*aBytes*/)
 void FileBrx::Seek(TInt32 aBytes, SeekWhence aWhence)
 {
     TInt proposedCursor;
-
-    switch(aWhence)
+    switch (aWhence)
     {
         case eSeekFromStart:
             proposedCursor = aBytes;
@@ -65,11 +65,8 @@ void FileBrx::Seek(TInt32 aBytes, SeekWhence aWhence)
             THROW(FileSeekError);
     }
 
-    if ( proposedCursor < 0 || proposedCursor > (TInt) Bytes() )
+    if (proposedCursor < 0 || proposedCursor > (TInt)Bytes())
         THROW(FileSeekError);
 
     iCursor = proposedCursor;
 }
-
-} // namespace OpenHome
-

@@ -19,7 +19,8 @@ void SuiteFile::Test()
 
     const TUint bufferBytes = 256;
     // Use only the first half of a buffer for IFile
-    FileBrx fbrx(new Bwh(bufferBytes, 2*bufferBytes));
+    Bwh buf(bufferBytes, 2*bufferBytes);
+    FileBrx fbrx(buf);
     TEST(fbrx.Bytes() == bufferBytes);
     Print("\n");
 
@@ -82,16 +83,19 @@ void SuiteFile::TestFunctionality(IFile& aFile, TUint32 aBytes)
 
     const TUint readBytes = 10;
     aFile.Seek(0, eSeekFromStart);
+    buffer.SetBytes(0);
     aFile.Read(buffer, readBytes);
     TEST(aFile.Tell() == readBytes);
     TEST(buffer.Bytes() == readBytes);
 
     aFile.Seek(-(TInt) (readBytes/2), eSeekFromEnd);
+    buffer.SetBytes(0);
     aFile.Read(buffer);
     TEST(aFile.Tell() == aBytes);
     TEST(buffer.Bytes() == readBytes/2);
 
     aFile.Seek(0, eSeekFromEnd);
+    buffer.SetBytes(0);
     aFile.Read(buffer);
     TEST(buffer.Bytes() == 0);
 
@@ -113,43 +117,96 @@ public:
 void SuiteFileBrx::Test()
 {
     const TUint kBytes = 256;
-    Bwx* b = new Bwh(kBytes);
-
+    Bws<kBytes> b;
     // Populate each position in the buffer with it's index.
-    for ( TInt i = 0 ; i < 256 ; ++i ) {
-        b->Append((TChar) i);
+    for (TUint i=0; i<kBytes; i++) {
+        b.Append((TChar)i);
     }
 
     FileBrx f(b);
     Bws<kBytes> buff;
 
     f.Read(buff);       // Read full buffer
-    TEST(buff == *b);
+    TEST(buff == b);
 
+    buff.SetBytes(0);
     f.Read(buff);       // Attempt full buffer from end
     TEST(buff.Bytes() == 0);
 
     f.Seek(0, eSeekFromStart);
+    buff.SetBytes(0);
     f.Read(buff, 10);
     TEST(buff[0] == 0);
     TEST(buff[9] == 9);
 
     f.Seek(10, eSeekFromStart);
+    buff.SetBytes(0);
     f.Read(buff, 10);
     TEST(buff[0] == 10);
     TEST(buff[9] == 19);
     
     f.Seek(10, eSeekFromCurrent);
+    buff.SetBytes(0);
     f.Read(buff, 10);
     TEST(buff[0] == 30);
     TEST(buff[9] == 39);
 }
+
+class SuiteFileStream : public Suite
+{
+public:
+    SuiteFileStream() : Suite("Test FileStream") {}
+    void Test();
+};
+
+void SuiteFileStream::Test()
+{
+    const TUint kBytes = 256;
+    Bws<kBytes> b;
+    // Populate each position in the buffer with it's index.
+    for (TUint i=0; i<kBytes; i++) {
+        b.Append((TChar)i);
+    }
+    FileBrx f(b);
+    FileStream stream;
+    stream.SetFile(&f);
+    TEST(stream.Bytes() == kBytes);
+
+    // test basic reading & seeking
+    Bws<kBytes> buf;
+    stream.Read(buf);
+    TEST(buf == b);
+    TEST(stream.Tell() == kBytes);
+    stream.Seek(0);
+    TEST(stream.Tell() == 0);
+
+    // test a stream can be (un)interrupted
+    stream.ReadInterrupt();
+    Bws<10> buf2;
+    TEST_THROWS(stream.Read(buf2), ReaderError);
+    stream.Interrupt(false);
+    stream.Read(buf2);
+    TEST(buf2.Bytes() == buf2.MaxBytes());
+    for (TUint i=0; i<10; i++) {
+        TEST(buf[i] == b[i]);
+    }
+    
+    // test that Read appends to a buffer
+    buf.SetBytes(0);
+    buf.Append(buf2);
+    stream.Read(buf);
+    TEST(buf.Bytes() == kBytes);
+    TEST(buf == b);
+}
+
+
 
 void TestFile()
 {
     Runner runner("File testing.");
     runner.Add(new SuiteFile);
     runner.Add(new SuiteFileBrx);
+    runner.Add(new SuiteFileStream);
     runner.Run();
 }
 
