@@ -150,7 +150,6 @@ TUint ProtocolHttp::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
         return MsgFlush::kIdInvalid;
     }
     iTcpClient.Interrupt(true);
-    iSem.Wait();
     return iNextFlushId;
 }
 

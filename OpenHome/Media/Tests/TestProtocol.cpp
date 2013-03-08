@@ -342,10 +342,10 @@ int CDECL main(int aArgc, char* aArgv[])
     http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav
     http://10.2.9.146:26125/content/c2/b16/f44100/d35587-co6318.flac
     http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3
+    file:///c:/test.wav
     */
     OptionParser parser;
     OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
-//    OptionString optionUrl("", "--url", Brn("file:///c:/test.wav"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocol"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
