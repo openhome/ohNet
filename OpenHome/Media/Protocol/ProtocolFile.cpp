@@ -14,7 +14,6 @@ using namespace OpenHome::Media;
 ProtocolFile::ProtocolFile(Environment& aEnv)
     : Protocol(aEnv)
     , iLock("PRTF")
-    , iSem("PTRF", 0)
     , iReaderBuf(iFileStream)
 {
 }
@@ -24,7 +23,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     iStreamId = 0;
     iStop = iSeek = false;
     iSeekPos = 0;
-    iLastFlushId = MsgFlush::kIdInvalid;
+    iNextFlushId = MsgFlush::kIdInvalid;
     iUri.Replace(aUri);
 
     LOG(kMedia, "ProtocolHttp::Stream ");
@@ -80,14 +79,12 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
                 remaining = fileSize - iSeekPos;
                 iSeek = false;
                 iSeekPos = 0;
-                iLastFlushId = iSupply->OutputFlush();
-                iSem.Signal();
+                iSupply->OutputFlush(iNextFlushId);
             }
             else if (iStop) {
                 remaining = 0;
                 res = EProtocolStreamStopped;
-                iLastFlushId = iSupply->OutputFlush();
-                iSem.Signal();
+                iSupply->OutputFlush(iNextFlushId);
             }
             else {
                 // don't expect any exceptions (other than the above ones we generate) when reading a local file
@@ -103,22 +100,24 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
 
 TBool ProtocolFile::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId, aStreamId);
+    return iIdProvider->OkToPlay(aTrackId) && (iStreamId == aStreamId);
 }
 
 TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     iLock.Wait();
     const TBool streamIsValid = (iProtocolManager->OkToSeek(aTrackId) && iStreamId == aStreamId);
-    iSeek = true;
-    iSeekPos = (TUint32)aOffset;
+    if (streamIsValid) {
+        iSeek = true;
+        iSeekPos = (TUint32)aOffset;
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+    }
     iLock.Signal();
     if (!streamIsValid) {
         return MsgFlush::kIdInvalid;
     }
     iFileStream.ReadInterrupt();
-    iSem.Wait();
-    return iLastFlushId;
+    return iNextFlushId;
 }
 
 TUint ProtocolFile::TryStop(TUint /*aTrackId*/, TUint aStreamId)
@@ -126,10 +125,14 @@ TUint ProtocolFile::TryStop(TUint /*aTrackId*/, TUint aStreamId)
     // FIXME - test aTrackId
     iLock.Wait();
     const TBool stop = (iStreamId == aStreamId);
+    if (stop) {
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+        iStop = true;
+        iFileStream.ReadInterrupt();
+    }
     iLock.Signal();
     if (!stop) {
         return MsgFlush::kIdInvalid;
     }
-    iSem.Wait();
-    return iLastFlushId;
+    return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }

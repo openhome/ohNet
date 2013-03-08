@@ -1203,15 +1203,17 @@ SuiteFlush::~SuiteFlush()
 
 void SuiteFlush::Test()
 {
-    MsgFlush* msg = iMsgFactory->CreateMsgFlush();
-    TUint id = msg->Id();
-    TEST(id != MsgFlush::kIdInvalid);
+    TUint id = MsgFlush::kIdInvalid + 1;
+    MsgFlush* msg = iMsgFactory->CreateMsgFlush(id);
+    TEST(msg->Id() == id);
+    TEST(msg->Id() != MsgFlush::kIdInvalid);
     msg->RemoveRef();
     TEST(id != msg->Id()); // slightly dodgy to assert that Clear()ing a flush resets its id
 
-    msg = iMsgFactory->CreateMsgFlush();
+    id++;
+    msg = iMsgFactory->CreateMsgFlush(id);
     TEST(msg->Id() != MsgFlush::kIdInvalid);
-    TEST(msg->Id() != id);
+    TEST(msg->Id() == id);
     msg->RemoveRef();
 }
 
@@ -1373,7 +1375,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgFlush();
+    msg = iMsgFactory->CreateMsgFlush(1);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
     msg->RemoveRef();
@@ -1505,7 +1507,7 @@ void SuiteMsgQueue::Test()
     queue->Enqueue(msg);
     msg = iMsgFactory->CreateMsgHalt();
     queue->Enqueue(msg);
-    msg = iMsgFactory->CreateMsgFlush();
+    msg = iMsgFactory->CreateMsgFlush(1);
     queue->Enqueue(msg);
     msg = iMsgFactory->CreateMsgQuit();
     queue->Enqueue(msg);
@@ -1537,7 +1539,7 @@ void SuiteMsgQueue::Test()
     queue->Enqueue(msg);
     msg = iMsgFactory->CreateMsgHalt();
     queue->Enqueue(msg);
-    msg = iMsgFactory->CreateMsgFlush();
+    msg = iMsgFactory->CreateMsgFlush(1);
     queue->EnqueueAtHead(msg);
     TEST(!queue->IsEmpty());
     dequeued = queue->Dequeue();
@@ -1687,7 +1689,7 @@ void SuiteMsgQueueFlushable::Test()
     msg->RemoveRef();
 
     // Add some msgs then a Flush.  Add another msg.  Check dequeue delivers that last msg.
-    /*msg = iMsgFactory->CreateMsgFlush();
+    /*msg = iMsgFactory->CreateMsgFlush(1);
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == jiffies);
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgFlush);
@@ -1698,7 +1700,7 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->Jiffies() == 3 * Jiffies::kJiffiesPerMs);
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgSilence);
     TEST(queue->LastOut() == TestMsgQueueFlushable::EMsgHalt);
-    queue->Enqueue(iMsgFactory->CreateMsgFlush());
+    queue->Enqueue(iMsgFactory->CreateMsgFlush(1));
     TEST(queue->Jiffies() == 3 * Jiffies::kJiffiesPerMs);
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgFlush);
     TEST(queue->LastOut() == TestMsgQueueFlushable::EMsgHalt);

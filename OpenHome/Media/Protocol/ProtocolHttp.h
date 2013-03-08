@@ -75,7 +75,7 @@ private:
     TUint64 iSeekPos;
     TUint64 iOffset;
     ContentProcessor* iContentProcessor;
-    TUint iLastFlushId;
+    TUint iNextFlushId;
     Semaphore iSem;
 };
 

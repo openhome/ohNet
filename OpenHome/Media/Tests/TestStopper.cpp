@@ -15,7 +15,7 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteStopper : public Suite, private IPipelineElementUpstream, private IStopperObserver, private IStreamHandler, private IMsgProcessor, private ISupply
+class SuiteStopper : public Suite, private IPipelineElementUpstream, private IFlushIdProvider, private IStopperObserver, private IStreamHandler, private IMsgProcessor, private ISupply
 {
     static const TUint kDecodedAudioCount = 2;
     static const TUint kMsgAudioPcmCount  = 4;
@@ -30,6 +30,8 @@ public:
     void Test();
 private: // from IPipelineElementUpstream
     Msg* Pull();
+private: // from IFlushIdProvider
+    TUint NextFlushId();
 private: // from IStopperObserver
     void PipelineHalted();
     void PipelineFlushed();
@@ -54,7 +56,7 @@ private: // from ISupply
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
-    TUint OutputFlush();
+    void OutputFlush(TUint aFlushId);
     void OutputQuit();
 private:
     enum EMsgType
@@ -94,6 +96,7 @@ private:
     TUint iPipelineFlushedCount;
     TUint iAudioMsgsDue;
     TUint iFlushMsgsDue;
+    TUint iNextFlushId;
     MsgFlush* iFlush;
     Semaphore iFlushThreadExit;
     TUint64 iTrackOffset;
@@ -115,12 +118,13 @@ SuiteStopper::SuiteStopper()
     , iPipelineFlushedCount(0)
     , iAudioMsgsDue(0)
     , iFlushMsgsDue(0)
+    , iNextFlushId(MsgFlush::kIdInvalid + 1000)
     , iFlush(NULL)
     , iFlushThreadExit("HACK", 0)
     , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1);
-    iStopper = new Stopper(*iMsgFactory, *this, *this, *this, kRampDuration);
+    iStopper = new Stopper(*iMsgFactory, *this, *this, *this, *this, kRampDuration);
 }
 
 SuiteStopper::~SuiteStopper()
@@ -296,7 +300,7 @@ Msg* SuiteStopper::Pull()
 {
     if (iFlushMsgsDue > 0) {
         --iFlushMsgsDue;
-        return iMsgFactory->CreateMsgFlush();
+        return iMsgFactory->CreateMsgFlush(1);
     }
     if (iAudioMsgsDue > 0) {
         --iAudioMsgsDue;
@@ -324,7 +328,7 @@ Msg* SuiteStopper::Pull()
             iFlush = NULL;
             return msg;
         }
-        return iMsgFactory->CreateMsgFlush();
+        return iMsgFactory->CreateMsgFlush(1);
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     default:
@@ -342,6 +346,11 @@ MsgAudio* SuiteStopper::CreateAudio()
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
+}
+
+TUint SuiteStopper::NextFlushId()
+{
+    return iNextFlushId++;
 }
 
 void SuiteStopper::PipelineHalted()
@@ -482,10 +491,9 @@ void SuiteStopper::OutputMetadata(const Brx& /*aMetadata*/)
     ASSERTS();
 }
 
-TUint SuiteStopper::OutputFlush()
+void SuiteStopper::OutputFlush(TUint aFlushId)
 {
-    iFlush = iMsgFactory->CreateMsgFlush();
-    return iFlush->Id();
+    iFlush = iMsgFactory->CreateMsgFlush(aFlushId);
 }
 
 void SuiteStopper::OutputQuit()

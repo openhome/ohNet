@@ -66,7 +66,7 @@ namespace Media {
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, ISupply& aSupply);
+    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -74,7 +74,7 @@ private: // from Thread
 private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    TBool OkToPlay(TUint aTrackId);
 private:
     ProtocolManager* iProtocolManager;
     Brn iUrl;
@@ -119,12 +119,12 @@ using namespace OpenHome::Net;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply)
+DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
-    iProtocolManager = new ProtocolManager(aSupply, *this);
+    iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     iProtocolManager->Add(new ProtocolHttp(aEnv));
     iProtocolManager->Add(new ProtocolFile(aEnv));
 }
@@ -155,7 +155,7 @@ TUint DummyFiller::NextStreamId()
     return iNextStreamId++;
 }
 
-TBool DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TBool DummyFiller::OkToPlay(TUint /*aTrackId*/)
 {
     return true;
 }
@@ -168,7 +168,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     , iStreamId(0)
 {
     iPipeline = new PipelineManager(iInfoAggregator, *this, kMaxDriverJiffies);
-    iFiller = new DummyFiller(aEnv, *iPipeline);
+    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
     iPipeline->AddCodec(new Codec::CodecMp3());
@@ -344,7 +344,8 @@ int CDECL main(int aArgc, char* aArgv[])
     http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3
     */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("file:///c:/test.wav"), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
+//    OptionString optionUrl("", "--url", Brn("file:///c:/test.wav"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocol"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);

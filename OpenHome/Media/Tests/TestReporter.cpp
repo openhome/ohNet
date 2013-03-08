@@ -241,7 +241,7 @@ Msg* SuiteReporter::Pull()
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
-        return iMsgFactory->CreateMsgFlush();
+        return iMsgFactory->CreateMsgFlush(1);
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     default:

@@ -711,8 +711,22 @@ public:
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
-    virtual TUint OutputFlush() = 0;
+    virtual void OutputFlush(TUint aFlushId) = 0;
     virtual void OutputQuit() = 0;
+};
+
+class IFlushIdProvider
+{
+public:
+    virtual TUint NextFlushId() = 0;
+};
+
+class IPipelineIdProvider
+{
+public:
+    virtual TUint NextTrackId() = 0;
+    virtual TUint NextStreamId() = 0;
+    virtual TBool OkToPlay(TUint aTrackId) = 0;
 };
 
 class IStreamHandler
@@ -753,13 +767,12 @@ public:
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt();
-    MsgFlush* CreateMsgFlush();
+    MsgFlush* CreateMsgFlush(TUint aId);
     MsgQuit* CreateMsgQuit();
 private:
     EncodedAudio* CreateEncodedAudio(const Brx& aData);
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
-    Mutex iLock;
     Allocator<EncodedAudio> iAllocatorEncodedAudio;
     Allocator<MsgAudioEncoded> iAllocatorMsgAudioEncoded;
     Allocator<DecodedAudio> iAllocatorDecodedAudio;

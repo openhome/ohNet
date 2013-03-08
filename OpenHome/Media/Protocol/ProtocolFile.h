@@ -26,7 +26,6 @@ private: // from IStreamHandler
 private:
     static const TUint kReadBufBytes = 4 * 1024;
     Mutex iLock;
-    Semaphore iSem;
     OpenHome::Uri iUri;
     FileStream iFileStream;
     Srs<kReadBufBytes> iReaderBuf;
@@ -34,7 +33,7 @@ private:
     TBool iStop;
     TBool iSeek;
     TUint32 iSeekPos;
-    TUint iLastFlushId;
+    TUint iNextFlushId;
 };
 
 };  // namespace Media

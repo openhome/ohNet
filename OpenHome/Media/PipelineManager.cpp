@@ -42,6 +42,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipeline
     , iFlushCompletedIgnoreCount(0)
     , iBuffering(false)
     , iQuitting(false)
+    , iNextFlushId(MsgFlush::kIdInvalid + 1)
 {
     iMsgFactory = new MsgFactory(aInfoAggregator,
                                  kMsgCountEncodedAudio, kMsgCountAudioEncoded,
@@ -71,7 +72,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipeline
 
     iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
-    iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *iSupply, *this, kStopperRampDuration);
+    iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *iSupply, *this, *this, kStopperRampDuration);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iReporter = new Reporter(/**iStopper*/*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
@@ -266,9 +267,9 @@ void PipelineManager::OutputMetadata(const Brx& aMetadata)
     iSupply->OutputMetadata(aMetadata);
 }
 
-TUint PipelineManager::OutputFlush()
+void PipelineManager::OutputFlush(TUint aFlushId)
 {
-    return iSupply->OutputFlush();
+    iSupply->OutputFlush(aFlushId);
 }
 
 void PipelineManager::OutputQuit()
@@ -302,13 +303,21 @@ void PipelineManager::PipelineHalted()
     case EFlushed:
     case EQuit:
         iStatus = EFlushing;
-        iStopper->BeginFlush();
         iLock.Signal();
+        iStopper->BeginFlush();
         break;
     default:
         ASSERTS();
         break;
     }
+}
+
+TUint PipelineManager::NextFlushId()
+{
+    iLock.Wait();
+    TUint id = iNextFlushId++;
+    iLock.Signal();
+    return id;
 }
 
 void PipelineManager::PipelineFlushed()
