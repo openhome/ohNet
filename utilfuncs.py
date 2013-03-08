@@ -131,7 +131,8 @@ def configure_toolchain(conf):
                 conf.env.append_value('CXXFLAGS', ['-Wno-psabi'])
                 conf.env.append_value('CFLAGS',   ['-Wno-psabi'])
 
-            conf.env.append_value('LINKFLAGS', ['-specs', 'bsp_specs', '-mcpu=' + cpu])
+            conf.env.append_value('LINKFLAGS', os.environ.get('CROSS_LINKFLAGS', '').split())
+            conf.env.append_value('LINKFLAGS',  ['-mcpu=' + cpu])
             conf.env.append_value('CXXFLAGS',  ['-mcpu=' + cpu])
             conf.env.append_value('CFLAGS',    ['-mcpu=' + cpu])
             conf.env.append_value('DEFINES',   ['BYTE_ORDER=' + platform_info['endian'] + '_ENDIAN'])
