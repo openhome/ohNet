@@ -18,13 +18,13 @@ class Supply : public ISupply, private INonCopyable
 {
 public:
     Supply(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement);
-    virtual ~Supply() {}
+    virtual ~Supply();
 public: // from ISupply
     void OutputTrack(const Brx& aUri, TUint aTrackId);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
-    TUint OutputFlush();
+    void OutputFlush(TUint aFlushId);
     void OutputQuit();
 private:
     MsgFactory& iMsgFactory;

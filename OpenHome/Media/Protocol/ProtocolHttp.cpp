@@ -69,7 +69,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     iStreamId = ProtocolManager::kStreamIdInvalid;
     iSeekable = iSeek = iLive = iStarted = iStopped = false;
     iContentProcessor = NULL;
-    iLastFlushId = MsgFlush::kIdInvalid;
+    iNextFlushId = MsgFlush::kIdInvalid;
     (void)iSem.Clear();
     iUri.Replace(aUri);
 
@@ -96,8 +96,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
             res = DoLiveStream();
         }
         else if (iSeek) {
-            iLastFlushId = iSupply->OutputFlush();
-            iSem.Signal();
+            iSupply->OutputFlush(iNextFlushId);
             iOffset = iSeekPos;
             iSeek = false;
             res = DoSeek(iOffset);
@@ -115,8 +114,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
             Thread::Sleep(50);
         }
         if (iStopped) {
-            iLastFlushId = iSupply->OutputFlush();
-            iSem.Signal();
+            iSupply->OutputFlush(iNextFlushId);
             res = EProtocolStreamStopped;
         }
     }
@@ -129,7 +127,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 
 TBool ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    const TBool canPlay = iIdProvider->OkToPlay(aTrackId, aStreamId);
+    const TBool canPlay = iIdProvider->OkToPlay(aTrackId);
     if (canPlay && iLive && iStreamId == aStreamId) {
         iSem.Signal();
     }
@@ -142,31 +140,31 @@ TUint ProtocolHttp::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 
     iLock.Wait();
     const TBool streamIsValid = (iProtocolManager->OkToSeek(aTrackId) && iStreamId == aStreamId);
-    iSeek = true;
-    iSeekPos = aOffset;
+    if (streamIsValid) {
+        iSeek = true;
+        iSeekPos = aOffset;
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+    }
     iLock.Signal();
     if (!streamIsValid) {
         return MsgFlush::kIdInvalid;
     }
     iTcpClient.Interrupt(true);
-    iSem.Wait();
-    return iLastFlushId;
+    return iNextFlushId;
 }
 
 TUint ProtocolHttp::TryStop(TUint /*aTrackId*/, TUint aStreamId)
 {
     // FIXME - check aTrackId
     iLock.Wait();
-    const TBool wait = (iStreamId == aStreamId);
-    if (wait) {
+    const TBool stop = (iStreamId == aStreamId);
+    if (stop) {
+        iNextFlushId = iFlushIdProvider->NextFlushId();
         iStopped = true;
         iTcpClient.Interrupt(true);
     }
     iLock.Signal();
-    if (wait) {
-        iSem.Wait();
-    }
-    return (wait? iLastFlushId : MsgFlush::kIdInvalid);
+    return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
 ProtocolStreamResult ProtocolHttp::DoStream()
@@ -244,6 +242,7 @@ ProtocolStreamResult ProtocolHttp::DoLiveStream()
 
 TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 {
+    Close();
     if (!Connect(iUri, 80)) {
         LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;

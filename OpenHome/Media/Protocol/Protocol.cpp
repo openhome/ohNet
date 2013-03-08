@@ -12,15 +12,21 @@ Protocol::Protocol(Environment& aEnv)
     , iProtocolManager(NULL)
     , iIdProvider(NULL)
     , iSupply(NULL)
+    , iFlushIdProvider(NULL)
     , iActive(false)
 {
 }
 
-void Protocol::Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply)
+Protocol::~Protocol()
+{
+}
+
+void Protocol::Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider)
 {
     iProtocolManager = &aProtocolManager;
     iIdProvider = &aIdProvider;
     iSupply = &aSupply;
+    iFlushIdProvider = &aFlushIdProvider;
 }
 
 ProtocolStreamResult Protocol::TryStream(const Brx& aUri)
@@ -34,9 +40,9 @@ TBool Protocol::Active() const
     return iActive;
 }
 
-TBool Protocol::OkToPlay(TUint aTrackId, TUint aStreamId)
+TBool Protocol::OkToPlay(TUint aTrackId, TUint /*aStreamId*/)
 {
-    return iIdProvider->OkToPlay(aTrackId, aStreamId);
+    return iIdProvider->OkToPlay(aTrackId);
 }
 
 TUint Protocol::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -198,8 +204,9 @@ ContentProcessor::AutoStream::~AutoStream()
 
 // ProtocolManager
 
-ProtocolManager::ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider)
+ProtocolManager::ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider, IFlushIdProvider& aFlushIdProvider)
     : iIdProvider(aIdProvider)
+    , iFlushIdProvider(aFlushIdProvider)
     , iSupply(aSupply)
     , iLock("PMGR")
 {
@@ -221,7 +228,7 @@ void ProtocolManager::Add(Protocol* aProtocol)
 {
 	LOG(kMedia, "ProtocolManager::Add(Protocol*)\n");
 	iProtocols.push_back(aProtocol);
-    aProtocol->Initialise(*this, iIdProvider, iSupply);
+    aProtocol->Initialise(*this, iIdProvider, iSupply, iFlushIdProvider);
 }
 
 void ProtocolManager::Add(ContentProcessor* aProcessor)

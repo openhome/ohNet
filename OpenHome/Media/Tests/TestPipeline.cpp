@@ -37,7 +37,6 @@ private:
     Semaphore iBlocker;
     Msg* iPendingMsg;
     TBool iBlock;
-    TBool iQuit;
 };
 
 class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor
@@ -134,7 +133,6 @@ Supplier::Supplier(ISupply& aSupply)
     , iLock("TSUP")
     , iBlocker("TSUP", 0)
     , iBlock(false)
-    , iQuit(false)
 {
     Start();
 }
@@ -170,31 +168,11 @@ void Supplier::Run()
         if (iBlock) {
             iBlocker.Wait();
         }
-//        iLock.Wait();
-/*        if (iPendingMsg != NULL) {
-            msg = iPendingMsg;
-            iPendingMsg = NULL;
-            iBlock = !iQuit; // nasty way of blocking after delivering a Flush
-        }
-        else {*/
-            iSupply.OutputData(encodedAudioBuf);
-//        }
-//        iLock.Signal();
+        iSupply.OutputData(encodedAudioBuf);
         Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
 }
-#if 0
-void Supplier::Quit()
-{
-/*    iLock.Wait();
-    iPendingMsg = aMsg;
-    iQuit = true;
-    if (iBlock) {
-        Unblock();
-    }
-    iLock.Signal();*/
-}
-#endif
+
 TBool Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     return true;

@@ -245,7 +245,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgHalt();
         break;
     case EMsgFlush:
-        msg = iMsgFactory->CreateMsgFlush();
+        msg = iMsgFactory->CreateMsgFlush(1);
         break;
     case EMsgQuit:
         msg = iMsgFactory->CreateMsgQuit();

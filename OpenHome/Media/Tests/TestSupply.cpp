@@ -129,7 +129,7 @@ void SuiteSupply::Test()
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputMetadata(Brn(kMetaData));
     TEST(++expectedMsgCount == iMsgPushCount);
-    iSupply->OutputFlush();
+    iSupply->OutputFlush(1);
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputQuit();
     TEST(++expectedMsgCount == iMsgPushCount);

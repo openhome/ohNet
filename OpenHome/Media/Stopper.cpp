@@ -9,10 +9,11 @@ using namespace OpenHome::Media;
 
 // Stopper
 
-Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISupply& aSupply, IStopperObserver& aObserver, TUint aRampDuration)
+Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISupply& aSupply, IFlushIdProvider& aIdProvider, IStopperObserver& aObserver, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iSupply(aSupply)
+    , iIdProvider(aIdProvider)
     , iObserver(aObserver)
     , iLock("MSTP")
     , iSem("SSTP", 0)
@@ -60,7 +61,8 @@ void Stopper::BeginFlush()
     ASSERT(iState == EHalted);
     iLock.Wait();
     iState = EFlushing;
-    iTargetFlushId = iSupply.OutputFlush();
+    iTargetFlushId = iIdProvider.NextFlushId();
+    iSupply.OutputFlush(iTargetFlushId);
     iSem.Signal();
     iLock.Signal();
 }

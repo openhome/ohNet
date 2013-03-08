@@ -36,21 +36,13 @@ public:
     virtual TBool OkToSeek(TUint aTrackId) const = 0;
 };
 
-class IPipelineIdProvider // FIXME - move to more appropriate header
-{
-public:
-    virtual TUint NextTrackId() = 0;
-    virtual TUint NextStreamId() = 0;
-    virtual TBool OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
-};
-
 class Protocol : protected IStreamHandler, protected INonCopyable
 {
 public:
+    virtual ~Protocol();
     ProtocolStreamResult TryStream(const Brx& aUri);
-    void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply);
+    void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
     TBool Active() const;
-    virtual ~Protocol() {}
 protected:
     Protocol(Environment& aEnv);
 private: // from IStreamHandler
@@ -63,6 +55,7 @@ protected:
     IProtocolManager* iProtocolManager;
     IPipelineIdProvider* iIdProvider;
     ISupply* iSupply;
+    IFlushIdProvider* iFlushIdProvider;
 private:
     TBool iActive;
 private:
@@ -133,7 +126,7 @@ class ProtocolManager : private IProtocolManager, private INonCopyable
 public:
     static const TUint kStreamIdInvalid = 0;
 public:
-    ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider);
+    ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider, IFlushIdProvider& aFlushIdProvider);
     virtual ~ProtocolManager();
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aProcessor);
@@ -144,6 +137,7 @@ private: // from IProtocolManager
     TBool OkToSeek(TUint aTrackId) const;
 private:
     IPipelineIdProvider& iIdProvider;
+    IFlushIdProvider& iFlushIdProvider;
     ISupply& iSupply;
     mutable Mutex iLock;
     std::vector<Protocol*> iProtocols;

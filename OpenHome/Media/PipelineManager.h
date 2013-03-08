@@ -39,7 +39,7 @@ public:
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
     
-class PipelineManager : public ISupply, public IPipelineElementUpstream, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class PipelineManager : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
     static const TUint kMsgCountEncodedAudio    = 512;
@@ -79,10 +79,12 @@ public: // from ISupply
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
-    TUint OutputFlush();
+    void OutputFlush(TUint aFlushId);
     void OutputQuit();
 public: // from IPipelineElementUpstream
     Msg* Pull();
+private: // from IFlushIdProvider
+    TUint NextFlushId();
 private:
     void Quit();
     void NotifyStatus();
@@ -140,6 +142,7 @@ private:
     TUint iFlushCompletedIgnoreCount;
     TBool iBuffering;
     TBool iQuitting;
+    TUint iNextFlushId;
 };
 
 class NullPipelineObserver : public IPipelineObserver // test helper

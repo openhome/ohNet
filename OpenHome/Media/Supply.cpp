@@ -16,6 +16,10 @@ Supply::Supply(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamE
 {
 }
 
+Supply::~Supply()
+{
+}
+
 void Supply::OutputTrack(const Brx& /*aUri*/, TUint /*aTrackId*/)
 {
     // FIXME - MsgTrack should take uri and trackId
@@ -42,12 +46,10 @@ void Supply::OutputMetadata(const Brx& aMetadata)
     iDownStreamElement.Push(msg);
 }
 
-TUint Supply::OutputFlush()
+void Supply::OutputFlush(TUint aFlushId)
 {
-    MsgFlush* msg = iMsgFactory.CreateMsgFlush();
-    TUint id = msg->Id();
+    MsgFlush* msg = iMsgFactory.CreateMsgFlush(aFlushId);
     iDownStreamElement.Push(msg);
-    return id;
 }
 
 void Supply::OutputQuit()
