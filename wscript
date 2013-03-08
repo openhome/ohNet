@@ -18,15 +18,11 @@ def options(opt):
     opt.add_option('--ohnet-include-dir', action='store', default=None)
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
     opt.add_option('--ohnet', action='store', default=None)
-    opt.add_option('--libosa', action='store', default=None)
-    opt.add_option('--libplatform', action='store', default=None)
     opt.add_option('--debug', action='store_const', dest="debugmode", const="Debug", default="Release")
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
     opt.add_option('--dest-platform', action='store', default=None)
     opt.add_option('--cross', action='store', default=None)
-    #opt.add_option('--big-endian', action='store_const', dest="endian",  const="BIG", default="LITTLE")
-    #opt.add_option('--little-endian', action='store_const', dest="endian",  const="LITTLE", default="LITTLE")
-    #opt.add_option('--dest', action='store', default=None)
+    opt.add_option('--nolink', action='store_true', dest="nolink", default=False)
 
 def configure(conf):
     conf.msg("debugmode:", conf.options.debugmode)
@@ -43,13 +39,10 @@ def configure(conf):
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     conf.env.STLIB_OHNET=['ohNetProxies', 'ohNetDevices', 'TestFramework', 'ohNetCore']
 
-    if conf.options.dest_platform in ['Libosa-core1', 'Libosa-core2']:
-        osa_include_dir = os.path.join(conf.options.libosa, 'install', 'include')
-        conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_LWIP', 'NOTERMIOS']) # Tell FLAC about LWIP
-        conf.env.append_value('LINKFLAGS', ['-B' + os.path.abspath(os.path.join(conf.options.libosa, 'install', 'lib'))])
-        conf.env.append_value('INCLUDES_OHNET', [os.path.abspath(os.path.join(osa_include_dir, x)) for x in ['', 'lwip']])
-        conf.env.append_value('STLIBPATH_OHNET', os.path.abspath(os.path.join(conf.options.libplatform, 'install', 'lib')))
-        conf.env.append_value('STLIB_OHNET', ['platform'])
+    if conf.options.dest_platform in ['Core-ppc32', 'Core-armv6']:
+        conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
+
+    conf.env.nolink = conf.options.nolink
 
     conf.env.INCLUDES = conf.path.find_node('.').abspath()
 
@@ -63,9 +56,9 @@ def configure(conf):
 
     # Setup Mad (mp3) lib options
     fixed_point_model = 'FPM_INTEL'
-    if conf.options.dest_platform in ['Linux-ARM', 'Libosa-core2']:
+    if conf.options.dest_platform in ['Linux-ARM', 'Core-armv6']:
         fixed_point_model = 'FPM_ARM'
-    elif conf.options.dest_platform in ['Libosa-core1']:
+    elif conf.options.dest_platform in ['Core-ppc32']:
         fixed_point_model = 'FPM_PPC'
     conf.env.DEFINES_MAD = [fixed_point_model, 'OPT_ACCURACY']
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
@@ -210,50 +203,51 @@ def build(bld):
             ],
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
             target='ohMediaPlayerTestUtils')
-    bld.program(
-            source='OpenHome/Media/Tests/TestMsgMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestMsg')
-    bld.program(
-            source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestStarvationMonitor')
-    bld.program(
-            source='OpenHome/Media/Tests/TestStopperMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestStopper')
-    bld.program(
-            source='OpenHome/Media/Tests/TestSupplyMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestSupply')
-    bld.program(
-            source='OpenHome/Media/Tests/TestAudioReservoirMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestAudioReservoir')
-    bld.program(
-            source='OpenHome/Media/Tests/TestVariableDelayMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestVariableDelay')
-    bld.program(
-            source='OpenHome/Media/Tests/TestReporterMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestReporter')
-    bld.program(
-            source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestPreDriver')
-    bld.program(
-            source='OpenHome/Media/Tests/TestPipelineMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestPipeline')
-    bld.program(
-            source='OpenHome/Media/Tests/TestProtocol.cpp',
-            use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'ohMediaPlayerTestUtils'],
-            target='TestProtocol')
-    bld.program(
-            source='OpenHome/Av/Tests/TestStore.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestStore')
+    if not bld.env.nolink:
+        bld.program(
+                source='OpenHome/Media/Tests/TestMsgMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestMsg')
+        bld.program(
+                source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestStarvationMonitor')
+        bld.program(
+                source='OpenHome/Media/Tests/TestStopperMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestStopper')
+        bld.program(
+                source='OpenHome/Media/Tests/TestSupplyMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestSupply')
+        bld.program(
+                source='OpenHome/Media/Tests/TestAudioReservoirMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestAudioReservoir')
+        bld.program(
+                source='OpenHome/Media/Tests/TestVariableDelayMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestVariableDelay')
+        bld.program(
+                source='OpenHome/Media/Tests/TestReporterMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestReporter')
+        bld.program(
+                source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestPreDriver')
+        bld.program(
+                source='OpenHome/Media/Tests/TestPipelineMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestPipeline')
+        bld.program(
+                source='OpenHome/Media/Tests/TestProtocol.cpp',
+                use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'ohMediaPlayerTestUtils'],
+                target='TestProtocol')
+        bld.program(
+                source='OpenHome/Av/Tests/TestStore.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestStore')
 
     # Bundles
     #header_files = gather_files(bld, '{top}/src', ['*.h'])

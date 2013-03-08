@@ -39,6 +39,7 @@ public:
 class Protocol : protected IStreamHandler, protected INonCopyable
 {
 public:
+    virtual ~Protocol();
     ProtocolStreamResult TryStream(const Brx& aUri);
     void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
     TBool Active() const;

@@ -16,6 +16,10 @@ Supply::Supply(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamE
 {
 }
 
+Supply::~Supply()
+{
+}
+
 void Supply::OutputTrack(const Brx& /*aUri*/, TUint /*aTrackId*/)
 {
     // FIXME - MsgTrack should take uri and trackId

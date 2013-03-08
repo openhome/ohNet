@@ -17,6 +17,10 @@ Protocol::Protocol(Environment& aEnv)
 {
 }
 
+Protocol::~Protocol()
+{
+}
+
 void Protocol::Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider)
 {
     iProtocolManager = &aProtocolManager;

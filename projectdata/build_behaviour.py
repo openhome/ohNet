@@ -64,7 +64,7 @@ require_version(22)
 
 
 # Command-line options. See documentation for Python's optparse module.
-add_option("-t", "--target", help="Target platform. One of Windows-x86, Windows-x64, Linux-x86, Linux-x64, Linux-ARM.")
+add_option("-t", "--target", help="Target platform.")
 add_option("-a", "--artifacts", help="Build artifacts directory. Used to fetch dependencies.")
 add_option("--debug", action="store_const", const="debug", dest="debugmode", default="Debug", help="Build debug version.")
 add_option("--release", action="store_const", const="release", dest="debugmode", help="Build release version.")
@@ -90,6 +90,8 @@ def choose_platform(context):
                 "Linux-x64" : "Linux-x64",
                 "Linux-ARM" : "Linux-ARM",
                 "Macos-x64" : "Mac-x64",
+                "Core-ppc32" : "Core-ppc32",
+                "Core-armv6" : "Core-armv6",
             }[context.env["PLATFORM"]]
     else:
         context.env["OH_PLATFORM"] = default_platform()
@@ -101,7 +103,7 @@ def setup_universal(context):
     env.update(
         OHNET_ARTIFACTS=context.options.artifacts or 'http://www.openhome.org/releases/artifacts',
         OH_PUBLISHDIR="releases@www.openhome.org:/home/releases/www/artifacts",
-        OH_PROJECT="ohTopology",
+        OH_PROJECT="ohMediaPlayer",
         OH_DEBUG=context.options.debugmode,
         BUILDDIR='buildhudson',
         WAFLOCK='.lock-wafbuildhudson',
@@ -128,6 +130,24 @@ def setup_windows(context):
 @build_condition(OH_PLATFORM="Linux-ARM")
 def setup_linux(context):
     env = context.env
+
+@build_step()
+@build_condition(OH_PLATFORM="Core-ppc32")
+@build_condition(OH_PLATFORM="Core-armv6")
+def setup_core(context):
+    env = context.env
+    context.configure_args += ['--nolink']
+    select_optional_steps("-test")
+
+@build_step()
+@build_condition(OH_PLATFORM="Core-ppc32")
+def setup_core(context):
+    context.env.update(CROSS_COMPILE='/opt/rtems-4.11/bin/powerpc-rtems4.11-')
+
+@build_step()
+@build_condition(OH_PLATFORM="Core-armv6")
+def setup_core(context):
+    context.env.update(CROSS_COMPILE='/opt/rtems-4.11/bin/arm-rtemseabi4.11-')
 
 # Principal build steps.
 @build_step("fetch", optional=True)
