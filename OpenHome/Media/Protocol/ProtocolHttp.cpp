@@ -242,6 +242,7 @@ ProtocolStreamResult ProtocolHttp::DoLiveStream()
 
 TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 {
+    Close();
     if (!Connect(iUri, 80)) {
         LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;
