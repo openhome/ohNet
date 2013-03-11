@@ -127,7 +127,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/Protocol.cpp',
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
-                #'OpenHome/Media/Protocol/ContentPls.cpp',
+                'OpenHome/Media/Protocol/ContentPls.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
@@ -199,6 +199,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
+                'OpenHome/Media/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
             ],
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
@@ -237,6 +238,10 @@ def build(bld):
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestPreDriver')
         bld.program(
+                source='OpenHome/Media/Tests/TestContentProcessorMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestContentProcessor')
+        bld.program(
                 source='OpenHome/Media/Tests/TestPipelineMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestPipeline')
@@ -273,6 +278,7 @@ def test(tst):
                       ,['TestReporter', [], True]
                       ,['TestStarvationMonitor', [], True]
                       ,['TestPreDriver', [], True]
+                      ,['TestContentProcessor', [], True]
                       ,['TestPipeline', [], True]
                       ,['TestStore', [], True]
                       ]:
