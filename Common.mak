@@ -694,12 +694,12 @@ $(objdir)TestPerformanceCp.$(objext) : OpenHome/Net/Bindings/Cpp/ControlPoint/Te
 
 TestShell: $(objdir)TestShell.$(exeext) 
 $(objdir)TestShell.$(exeext) :  Shell ShellCommandRun $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)Shell.$(libext) $(objdir)ShellCommandRun.$(objext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)$(libprefix)Shell.$(libext) $(objdir)ShellCommandRun.$(objext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestShell.$(objext) : OpenHome/Net/Shell/TestShell.cpp $(headers)
 	$(compiler)TestShell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/TestShell.cpp
 
 Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug ShellCommandQuit
-	$(ar)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)ShellCommandQuit.$(objext)
+	$(ar)$(libprefix)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)ShellCommandQuit.$(objext)
 $(objdir)Shell.$(objext) : OpenHome/Net/Shell/Shell.cpp $(headers)
 	$(compiler)Shell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/Shell.cpp
 
@@ -714,10 +714,6 @@ $(objdir)ShellCommandDebug.$(objext) : OpenHome/Net/Shell/ShellCommandDebug.cpp 
 ShellCommandQuit: $(objdir)ShellCommandQuit.$(objext)
 $(objdir)ShellCommandQuit.$(objext) : OpenHome/Net/Shell/ShellCommandQuit.cpp $(headers)
 	$(compiler)ShellCommandQuit.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandQuit.cpp
-
-GroupTest: $(objdir)GroupTest.$(exeext) 
-$(objdir)GroupTest.$(exeext) :  ohNetCore $(libprefix)TestFramework.$(libext) $(headers) TestsCore
-	$(link) $(linkoutput)$(objdir)GroupTest.$(exeext) $(cflags) $(includes) OpenHome/Tests/GroupTest.cpp $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext) 
 
 tests_core = \
 	$(objdir)TestBuffer.$(objext) \
