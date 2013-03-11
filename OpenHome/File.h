@@ -99,6 +99,8 @@ private:
     IFile* iFile;
     Mutex iLock;
     TBool iInterrupt;
+    TUint iSize;
+    TUint iPos;
 };
 
 } // namespace OpenHome

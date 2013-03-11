@@ -9,6 +9,8 @@ FileStream::FileStream()
     : iFile(NULL)
     , iLock("FSTR")
     , iInterrupt(false)
+    , iSize(0)
+    , iPos(0)
 {
 }
 
@@ -22,6 +24,8 @@ void FileStream::SetFile(IFile* aFile)
 {
     ASSERT(iFile == NULL);
     iFile = aFile;
+    iSize = Bytes();
+    iPos = Tell();
 }
 
 void FileStream::CloseFile()
@@ -44,6 +48,7 @@ void FileStream::Seek(TInt32 aBytes, SeekWhence aWhence)
 {
     ASSERT(iFile != NULL);
     iFile->Seek(aBytes, aWhence);
+    iPos = aBytes;
 }
 
 TUint32 FileStream::Tell() const
@@ -68,6 +73,7 @@ void FileStream::Write(const Brx& aBuffer)
 {
     ASSERT(iFile != NULL);
     iFile->Write(aBuffer);
+    iSize += aBuffer.Bytes();
 }
 
 void FileStream::WriteFlush()
@@ -82,7 +88,21 @@ void FileStream::Read(Bwx& aBuffer)
     if (iInterrupt) {
         THROW(ReaderError);
     }
-    iFile->Read(aBuffer);
+    if (iPos == iSize) {
+        // already at the end of the stream.  Throw to encourage any upstream buffer out of an endless read loop
+        THROW(ReaderError);
+    }
+    const TUint before = aBuffer.Bytes();
+    if (aBuffer.MaxBytes() == before) {
+        THROW(ReaderError);
+    }
+    try {
+        iFile->Read(aBuffer);
+    }
+    catch (FileReadError&) {
+        THROW(ReaderError);
+    }
+    iPos += aBuffer.Bytes() - before;
 }
 
 void FileStream::ReadFlush()

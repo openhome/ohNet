@@ -172,11 +172,18 @@ void SuiteFileStream::Test()
     stream.SetFile(&f);
     TEST(stream.Bytes() == kBytes);
 
-    // test basic reading & seeking
+    // test basic reading
     Bws<kBytes> buf;
     stream.Read(buf);
     TEST(buf == b);
     TEST(stream.Tell() == kBytes);
+
+    // test that reads on a full buffer and at the end of a file throw
+    TEST_THROWS(stream.Read(buf), ReaderError);
+    buf.SetBytes(0);
+    TEST_THROWS(stream.Read(buf), ReaderError);
+
+    // test seeking
     stream.Seek(0);
     TEST(stream.Tell() == 0);
 
@@ -188,7 +195,7 @@ void SuiteFileStream::Test()
     stream.Read(buf2);
     TEST(buf2.Bytes() == buf2.MaxBytes());
     for (TUint i=0; i<10; i++) {
-        TEST(buf[i] == b[i]);
+        TEST(buf2[i] == b[i]);
     }
     
     // test that Read appends to a buffer
