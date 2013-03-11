@@ -5,86 +5,20 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-extern void TestBuffer();
-static void RunTestBuffer(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestBuffer(); }
-
-extern void TestThread();
-static void RunTestThread(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestThread(); }
-
-extern void TestFifo();
-static void RunTestFifo(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestFifo(); }
-
-extern void TestQueue();
-static void RunTestQueue(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestQueue(); }
-
-extern void TestTextUtils();
-static void RunTestTextUtils(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestTextUtils(); }
-
-extern void TestNetwork(const std::vector<Brn>& aArgs);
-static void RunTestNetwork(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestNetwork(aArgs); }
-
-extern void TestTimer();
-static void RunTestTimer(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestTimer(); }
-
-extern void TestSsdpMListen(Environment& aEnv, const std::vector<Brn>& aArgs);
-static void RunTestSsdpMListen(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestSsdpMListen(aCpStack.Env(), aArgs); }
-
-extern void TestSsdpUListen(Environment& aEnv, const std::vector<Brn>& aArgs);
-static void RunTestSsdpUListen(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestSsdpUListen(aCpStack.Env(), aArgs); }
-
-extern void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs);
-static void RunTestDeviceList(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestDeviceList(aCpStack, aArgs); }
-
-extern void TestInvocation(CpStack& aCpStack);
-static void RunTestInvocation(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestInvocation(aCpStack); }
-
-extern void TestSubscription(CpStack& aCpStack);
-static void RunTestSubscription(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestSubscription(aCpStack); }
-
-extern void TestCpDeviceDv(CpStack& aCpStack, DvStack& aDvStack);
-static void RunTestCpDeviceDv(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestCpDeviceDv(aCpStack, aDvStack); }
-
-extern void TestDviDiscovery(DvStack& aDvStack);
-static void RunTestDviDiscovery(CpStack& /*aCpStack*/, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestDviDiscovery(aDvStack); }
-
-extern void TestDviDeviceList(CpStack& aCpStack, DvStack& aDvStack);
-static void RunTestDviDeviceList(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestDviDeviceList(aCpStack, aDvStack); }
-
-extern void TestDvInvocation(CpStack& aCpStack, DvStack& aDvStack);
-static void RunTestDvInvocation(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestDvInvocation(aCpStack, aDvStack); }
-
-extern void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack);
-static void RunTestDvSubscription(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestDvSubscription(aCpStack, aDvStack); }
-
-
 // ShellCommandRun
 
 static const TChar kShellCommandRun[] = "run";
 
-ShellCommandRun::ShellCommandRun(CpStack& aCpStack, DvStack& aDvStack, Shell& aShell)
+ShellCommandRun::ShellCommandRun(CpStack& aCpStack, DvStack& aDvStack, Shell& aShell, std::vector<ShellTest>& aShellTests)
     : iCpStack(aCpStack)
     , iDvStack(aDvStack)
     , iShell(aShell)
     , iResponseWriter(NULL)
 {
     iShell.AddCommandHandler(kShellCommandRun, *this);
-    AddTest("TestBuffer", RunTestBuffer);
-    AddTest("TestThread", RunTestThread);
-    AddTest("TestFifo", RunTestFifo);
-    AddTest("TestQueue", RunTestQueue);
-    AddTest("TestTextUtils", RunTestTextUtils);
-    AddTest("TestNetwork", RunTestNetwork, true);
-    AddTest("TestTimer", RunTestTimer);
-    AddTest("TestSsdpMListen", RunTestSsdpMListen, true);
-    AddTest("TestSsdpUListen", RunTestSsdpUListen, true);
-    AddTest("TestDeviceList", RunTestDeviceList, true);
-    AddTest("TestInvocation", RunTestInvocation);
-    AddTest("TestSubscription", RunTestSubscription);
-    AddTest("TestCpDeviceDv", RunTestCpDeviceDv);
-    AddTest("TestDviDiscovery", RunTestDviDiscovery);
-    AddTest("TestDviDeviceList", RunTestDviDeviceList);
-    AddTest("TestDvInvocation", RunTestDvInvocation);
-    AddTest("TestDvSubscription", RunTestDvSubscription);
+
+    for ( std::vector<ShellTest>::iterator i = aShellTests.begin() ; i != aShellTests.end() ; ++i )
+        AddTest(new ShellTest(*i));
 }
 
 ShellCommandRun::~ShellCommandRun()
@@ -109,7 +43,7 @@ void ShellCommandRun::HandleShellCommand(Brn aCommand, const std::vector<Brn>& a
     Brn program = aArgs[0];
     TestMap::iterator it = iTests.find(program);
     if (it != iTests.end()) {
-        it->second->Run(aArgs);
+        it->second->Run(iCpStack, iDvStack, aArgs);
     }
     else {
         aResponse.Write(Brn("Unexpected test name for command \'run\': "));
@@ -124,7 +58,7 @@ void ShellCommandRun::DisplayHelp(IWriter& aResponse)
     aResponse.Write(Brn("Run a unit test.  Options are:\n"));
     TestMap::iterator it = iTests.begin();
     while (it != iTests.end()) {
-        Test* test = it->second;
+        ShellTest* test = it->second;
         aResponse.Write(Brn("  "));
         aResponse.Write(Brn(test->Name()));
         if (test->HelpAvailable()) {
@@ -137,13 +71,13 @@ void ShellCommandRun::DisplayHelp(IWriter& aResponse)
 
 void ShellCommandRun::AddTest(const TChar* aName, ShellTestRunner aRunner, TBool aHelpAvailable)
 {
-    AddTest(new Test(iCpStack, iDvStack, aName, aRunner, aHelpAvailable));
+    AddTest(new ShellTest(aName, aRunner, aHelpAvailable));
 }
 
-void ShellCommandRun::AddTest(Test* aTest)
+void ShellCommandRun::AddTest(ShellTest* aTest)
 {
     Brn name(aTest->Name());
-    iTests.insert(std::pair<Brn, Test*>(name, aTest));
+    iTests.insert(std::pair<Brn, ShellTest*>(name, aTest));
 }
 
 void ShellCommandRun::Log(const char* aMsg)
@@ -153,28 +87,26 @@ void ShellCommandRun::Log(const char* aMsg)
 }
 
 
-// ShellCommandRun::Test
+// ShellTest
 
-ShellCommandRun::Test::Test(CpStack& aCpStack, DvStack& aDvStack, const TChar* aName, ShellTestRunner aRunner, TBool aHelpAvailable)
-    : iCpStack(aCpStack)
-    , iDvStack(aDvStack)
-    , iName(aName)
+ShellTest::ShellTest(const TChar* aName, ShellTestRunner aRunner, TBool aHelpAvailable)
+    : iName(aName)
     , iRunner(aRunner)
     , iHelpAvailable(aHelpAvailable)
 {
 }
 
-const TChar* ShellCommandRun::Test::Name() const
+const TChar* ShellTest::Name() const
 {
     return iName;
 }
 
-void ShellCommandRun::Test::Run(const std::vector<Brn>& aArgs)
+void ShellTest::Run(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& aArgs)
 {
-    iRunner(iCpStack, iDvStack, aArgs);
+    iRunner(aCpStack, aDvStack, aArgs);
 }
 
-TBool ShellCommandRun::Test::HelpAvailable() const
+TBool ShellTest::HelpAvailable() const
 {
     return iHelpAvailable;
 }
