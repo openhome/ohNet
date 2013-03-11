@@ -54,6 +54,8 @@ def configure(conf):
         'libogg-1.1.3/include',
         ]
 
+    conf.env.STLIB_SHELL = ['Shell']
+
     # Setup Mad (mp3) lib options
     fixed_point_model = 'FPM_INTEL'
     if conf.options.dest_platform in ['Linux-ARM', 'Core-armv6']:
@@ -204,6 +206,10 @@ def build(bld):
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
             target='ohMediaPlayerTestUtils')
     if not bld.env.nolink:
+        bld.program(
+                source='OpenHome/Media/Tests/TestShell.cpp',
+                use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestShell')
         bld.program(
                 source='OpenHome/Media/Tests/TestMsgMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
