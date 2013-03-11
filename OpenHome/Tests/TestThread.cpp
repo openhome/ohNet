@@ -5,7 +5,7 @@
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
-const TUint32 kSleepMs = 50; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
+const TUint32 kSleepMs = 500; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
 
 class TestStack
 {
@@ -97,8 +97,7 @@ void SuiteStartStop::Test()
     threadA->Start();
     threadB->Start();
 
-    TUint i=0;
-    for(; i< 100; i++) {
+    for( TUint i = 0 ; i< 10; ++i) {
         TEST(gEnv->IsEmpty());
         threadA->Signal();
         // use sleeps to avoid dependency on thread priorities being supported
