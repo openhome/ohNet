@@ -692,18 +692,18 @@ $(objdir)TestPerformanceCp.$(exeext) :  ohNetCore $(objdir)TestPerformanceCp.$(o
 $(objdir)TestPerformanceCp.$(objext) : OpenHome/Net/Bindings/Cpp/ControlPoint/Tests/TestPerformanceCp.cpp $(headers)
 	$(compiler)TestPerformanceCp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/Cpp/ControlPoint/Tests/TestPerformanceCp.cpp
 
-TestShell: $(objdir)TestShell.$(exeext) 
-$(objdir)TestShell.$(exeext) :  Shell ShellCommandRun $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)$(libprefix)Shell.$(libext) $(objdir)ShellCommandRun.$(objext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+TestShell: $(objdir)TestShell.$(exeext)
+$(objdir)TestShell.$(exeext) :  Shell ShellCommandRun $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext) TestsCore
+	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)$(libprefix)Shell.$(libext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestShell.$(objext) : OpenHome/Net/Shell/TestShell.cpp $(headers)
 	$(compiler)TestShell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/TestShell.cpp
 
-Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug ShellCommandQuit
-	$(ar)$(libprefix)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)ShellCommandQuit.$(objext)
+Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug ShellCommandQuit ShellCommandRun
+	$(ar)$(libprefix)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)ShellCommandQuit.$(objext) $(objdir)ShellCommandRun.$(objext)
 $(objdir)Shell.$(objext) : OpenHome/Net/Shell/Shell.cpp $(headers)
 	$(compiler)Shell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/Shell.cpp
 
-ShellCommandRun: $(objdir)ShellCommandRun.$(objext) TestsCore
+ShellCommandRun: $(objdir)ShellCommandRun.$(objext)
 $(objdir)ShellCommandRun.$(objext) : OpenHome/Net/Shell/ShellCommandRun.cpp $(headers)
 	$(compiler)ShellCommandRun.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandRun.cpp
 
@@ -735,7 +735,7 @@ tests_core = \
 	$(objdir)TestDviDeviceList.$(objext) \
 	$(objdir)TestDvInvocation.$(objext) \
 	$(objdir)TestDvSubscription.$(objext) \
-    $(objdir)TestBasicDvCore.$(objext) \
+	$(objdir)TestBasicDvCore.$(objext) \
 	$(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
 	$(objdir)CpOpenhomeOrgTestBasic1.$(objext)
 
