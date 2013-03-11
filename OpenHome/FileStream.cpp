@@ -22,7 +22,9 @@ void FileStream::OpenFile(const TChar* aFilename, FileMode aFileMode)
 
 void FileStream::SetFile(IFile* aFile)
 {
-    ASSERT(iFile == NULL);
+    /* Don't assert that iFile is NULL.  We want to allow replacement of stack-allocated
+       FileBrx instances so can't assume that failure to call CloseFile when switching
+       the source of a stream is an error. */
     iFile = aFile;
     iSize = Bytes();
     iPos = Tell();

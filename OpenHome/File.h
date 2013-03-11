@@ -68,7 +68,7 @@ public: // from IFile
     void Read(Bwx& aBuffer, TUint aBytes);
     void Write(const Brx& aBuffer);
     void Write(const Brx& aBuffer, TUint32 aBytes);
-    void Seek(TInt32 aBytes, SeekWhence aWhence);
+    void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart);
     TUint32 Tell() const;
     TUint32 Bytes() const;
 private:
@@ -84,7 +84,7 @@ public:
     void SetFile(IFile* aFile);
     void CloseFile();
     void Interrupt(TBool aInterrupt);
-    void Seek(TInt32 aBytes, SeekWhence aWhence=eSeekFromStart);
+    void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart);
     TUint32 Tell() const;
     TUint32 Bytes() const;
 public: // from IWriter
