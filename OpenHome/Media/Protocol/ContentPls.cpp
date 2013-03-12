@@ -47,7 +47,8 @@ ProtocolStreamResult ContentPls::Stream(Srx& aReader, TUint64 aTotalBytes, TUint
 {
     LOG(kMedia, "ContentPls::Stream\n");
 
-    ProtocolStreamResult res = EProtocolStreamSuccess;
+    TBool stopped = false;
+    TBool streamSucceeded = false;
     try {
         // Find [playlist]
         while (!iIsPlaylist) {
@@ -57,30 +58,36 @@ ProtocolStreamResult ContentPls::Stream(Srx& aReader, TUint64 aTotalBytes, TUint
             }
         }
 
-        while (res != EProtocolStreamStopped) {
+        while (!stopped) {
             Brn line = ReadLine(aReader, aTotalBytes, aOffset);
             Parser parser(line);
             Brn key = parser.Next('=');
             if (key.BeginsWith(Brn("File"))) {
                 Brn value = parser.Next();
-                res = iProtocolSet->Stream(value);
+                ProtocolStreamResult res = iProtocolSet->Stream(value);
+                if (res == EProtocolStreamStopped) {
+                    stopped = true;
+                }
+                else if (res == EProtocolStreamSuccess) {
+                    streamSucceeded = true;
+                }
             }
         }
     }
     catch (ReaderError&) {
     }
 
-    if (iPartialLine.Bytes() > 0) {
+    if (stopped) {
+        return EProtocolStreamStopped;
+    }
+    else if (iPartialLine.Bytes() > 0) {
         // break in stream.  Return an error and let caller attempt to re-establish connection
         return EProtocolStreamErrorRecoverable;
     }
-    else if (!iIsPlaylist) {
-        return EProtocolStreamErrorUnrecoverable;
+    else if (streamSucceeded) {
+        return EProtocolStreamSuccess;
     }
-    else if (res == EProtocolStreamStopped) {
-        return res;
-    }
-    return EProtocolStreamSuccess;
+    return EProtocolStreamErrorUnrecoverable;
 }
 
 void ContentPls::Reset()
