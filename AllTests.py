@@ -57,7 +57,7 @@ def runBuilds():
     if gParallel:
         build('copy_build_includes')
     if gCore == 1:
-        build('ohNet TestFramework', gParallel)
+        build('ohNet TestFramework Shell', gParallel)
     else:
         build('all', gParallel)
     if (gRunJavaTests == 1):
