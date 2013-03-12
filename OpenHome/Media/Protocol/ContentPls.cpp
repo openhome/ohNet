@@ -43,27 +43,22 @@ TBool ContentPls::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
     return false;
 }
 
-ProtocolStreamResult ContentPls::Stream(Srx& aReader, TUint64 /*aRemainingBytes*/, TUint /*aMaxReadBytes*/)
+ProtocolStreamResult ContentPls::Stream(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset)
 {
     LOG(kMedia, "ContentPls::Stream\n");
 
     ProtocolStreamResult res = EProtocolStreamSuccess;
-    TBool isPlaylist = false;
     try {
         // Find [playlist]
-        for (;;) {
-            Brn line = ReadLine(aReader);
+        while (!iIsPlaylist) {
+            Brn line = ReadLine(aReader, aTotalBytes, aOffset);
             if (line == Brn("[playlist]")) {
-                isPlaylist = true;
-                break;
+                iIsPlaylist = true;
             }
-        }
-        if (!isPlaylist) {
-            return EProtocolStreamErrorUnrecoverable;
         }
 
         while (res != EProtocolStreamStopped) {
-            Brn line = ReadLine(aReader);
+            Brn line = ReadLine(aReader, aTotalBytes, aOffset);
             Parser parser(line);
             Brn key = parser.Next('=');
             if (key.BeginsWith(Brn("File"))) {
@@ -75,7 +70,11 @@ ProtocolStreamResult ContentPls::Stream(Srx& aReader, TUint64 /*aRemainingBytes*
     catch (ReaderError&) {
     }
 
-    if (!isPlaylist) {
+    if (iPartialLine.Bytes() > 0) {
+        // break in stream.  Return an error and let caller attempt to re-establish connection
+        return EProtocolStreamErrorRecoverable;
+    }
+    else if (!iIsPlaylist) {
         return EProtocolStreamErrorUnrecoverable;
     }
     else if (res == EProtocolStreamStopped) {
@@ -84,17 +83,44 @@ ProtocolStreamResult ContentPls::Stream(Srx& aReader, TUint64 /*aRemainingBytes*
     return EProtocolStreamSuccess;
 }
 
-Brn ContentPls::ReadLine(Srx& aReader)
+void ContentPls::Reset()
+{
+    iPartialLine.SetBytes(0);
+    iIsPlaylist = false;
+}
+
+Brn ContentPls::ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset)
 {
     TBool done = false;
     while (!done) {
         Brn line;
         try {
-            line.Set(Ascii::Trim(aReader.ReadUntil(Ascii::kLf)));
+            line.Set(aReader.ReadUntil(Ascii::kLf));
+            aOffset += line.Bytes() + 1; // +1 for Ascii::kLf
+            line.Set(Ascii::Trim(line));
+            if (iPartialLine.Bytes() > 0) {
+                if (iPartialLine.Bytes() + line.Bytes() <= iPartialLine.MaxBytes()) {
+                    iPartialLine.Append(line);
+                    line.Set(iPartialLine);
+                }
+                else {
+                    // line is too long to store, no point in trying to process a fragment of it
+                    line.Set(Brx::Empty());
+                }
+            }
+            iPartialLine.SetBytes(0);
         }
         catch (ReaderError&) {
             line.Set(aReader.Snaffle());
+            aOffset += line.Bytes();
+            if (aOffset != aTotalBytes && line.Bytes() < iPartialLine.MaxBytes()) {
+                ASSERT(iPartialLine.Bytes() == 0);
+                iPartialLine.Append(line);
+            }
             done = true;
+        }
+        if (iPartialLine.Bytes() > 0) {
+            THROW(ReaderError);
         }
         if (line.Bytes() > 0) {
             LOG(kMedia, line);

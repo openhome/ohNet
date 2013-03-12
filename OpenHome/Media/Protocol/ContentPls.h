@@ -14,9 +14,14 @@ class ContentPls : public ContentProcessor
 public:
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
-    ProtocolStreamResult Stream(Srx& aReader, TUint64 aRemainingBytes, TUint aMaxReadBytes);
+    ProtocolStreamResult Stream(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset);
+    void Reset();
 private:
-    Brn ReadLine(Srx& aReader);
+    Brn ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset);
+private:
+    static const TUint kMaxLineBytes = 512;
+    Bws<kMaxLineBytes> iPartialLine;
+    TBool iIsPlaylist;
 };
 
 } // namespace Media

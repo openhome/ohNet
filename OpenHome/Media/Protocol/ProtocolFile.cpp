@@ -58,7 +58,8 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
         return EProtocolStreamErrorRecoverable;
     }
     if (contentProcessor != NULL) {
-        return contentProcessor->TryStream(iReaderBuf, fileSize, kReadBufBytes);
+        TUint64 offset = 0;
+        return contentProcessor->TryStream(iReaderBuf, fileSize, offset);
     }
     
     ProtocolStreamResult res = EProtocolStreamSuccess;
