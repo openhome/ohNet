@@ -137,7 +137,7 @@ void SuitePls::TestRecognise()
     TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
 
     // good content, bad MIME
-    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), content));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), content));
 
     // bad content, bad MIME
     TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brn("playlist")));

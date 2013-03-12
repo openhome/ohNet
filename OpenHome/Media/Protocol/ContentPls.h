@@ -11,7 +11,6 @@ namespace Media {
 
 class ContentPls : public ContentProcessor
 {
-public:
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
     ProtocolStreamResult Stream(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset);

@@ -37,7 +37,7 @@ TBool ContentPls::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
     if (Ascii::CaseInsensitiveEquals(aMimeType, Brn("audio/x-scpls"))) {
         return true;
     }
-    if (aMimeType.Bytes() == 0 && Ascii::Contains(aData, Brn("[playlist]"))) {
+    if (Ascii::Contains(aData, Brn("[playlist]"))) {
         return true;
     }
     return false;
