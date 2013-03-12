@@ -104,6 +104,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         else {
             TUint code = WriteRequest(iOffset);
             if (code != 0) {
+                iTotalBytes = iHeaderContentLength.ContentLength();
                 res = ProcessContent();
             }
         }
