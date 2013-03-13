@@ -184,7 +184,7 @@ void SuitePls::TestRecognise()
         "Title1=My Favorite Online Radio\r\n"
         "Length1=-1";
     // content with dos line endings
-    content.Set(kFile1);
+    content.Set(kFile2);
     TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
 }
 
