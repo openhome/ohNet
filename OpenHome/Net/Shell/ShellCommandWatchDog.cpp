@@ -14,9 +14,14 @@ public:
         : iMutex("wmtx")
         , iTimeoutSeconds(aTimeoutSeconds)
         , iRemainingSeconds(aTimeoutSeconds)
-        , iThreadFunctor("wd", MakeFunctor(*this, &WatchDog::Run))
+        , iThreadFunctor(NULL)
     {
-        iThreadFunctor.Start();
+        iThreadFunctor = new ThreadFunctor("wd", MakeFunctor(*this, &WatchDog::Run));
+        iThreadFunctor->Start();
+    }
+    ~WatchDog()
+    {
+        delete iThreadFunctor;
     }
     void Feed()
     {
@@ -31,7 +36,7 @@ public:
 private:
     void Run()
     {
-        while(true)
+        for(;;)
         {
             Thread::Sleep(1000);
             Thread::CheckCurrentForKill();
@@ -46,7 +51,7 @@ private:
     Mutex           iMutex;
     TUint           iTimeoutSeconds;
     TInt            iRemainingSeconds;
-    ThreadFunctor   iThreadFunctor;
+    ThreadFunctor*  iThreadFunctor;
 };
 
 // ShellCommandWatchDog
