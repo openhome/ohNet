@@ -698,8 +698,8 @@ $(objdir)TestShell.$(exeext) :  Shell ShellCommandRun $(objdir)TestShell.$(objex
 $(objdir)TestShell.$(objext) : OpenHome/Net/Shell/TestShell.cpp $(headers)
 	$(compiler)TestShell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/TestShell.cpp
 
-Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug ShellCommandQuit ShellCommandRun
-	$(ar)$(libprefix)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)ShellCommandQuit.$(objext) $(objdir)ShellCommandRun.$(objext)
+Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug ShellCommandQuit ShellCommandRun ShellCommandWatchDog
+	$(ar)$(libprefix)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)ShellCommandQuit.$(objext) $(objdir)ShellCommandRun.$(objext) $(objdir)ShellCommandWatchDog.$(objext)
 $(objdir)Shell.$(objext) : OpenHome/Net/Shell/Shell.cpp $(headers)
 	$(compiler)Shell.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/Shell.cpp
 
@@ -714,6 +714,11 @@ $(objdir)ShellCommandDebug.$(objext) : OpenHome/Net/Shell/ShellCommandDebug.cpp 
 ShellCommandQuit: $(objdir)ShellCommandQuit.$(objext)
 $(objdir)ShellCommandQuit.$(objext) : OpenHome/Net/Shell/ShellCommandQuit.cpp $(headers)
 	$(compiler)ShellCommandQuit.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandQuit.cpp
+
+ShellCommandWatchDog: $(objdir)ShellCommandWatchDog.$(objext)
+$(objdir)ShellCommandWatchDog.$(objext) : OpenHome/Net/Shell/ShellCommandWatchDog.cpp $(headers)
+	$(compiler)ShellCommandWatchDog.$(objext) -c $(cflags) $(includes) OpenHome/Net/Shell/ShellCommandWatchDog.cpp
+
 
 tests_core = \
 	$(objdir)TestBuffer.$(objext) \

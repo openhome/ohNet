@@ -4,9 +4,9 @@
 #include <OpenHome/Net/Private/ShellCommandRun.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 #include <OpenHome/Net/Private/ShellCommandQuit.h>
+#include <OpenHome/Net/Private/ShellCommandWatchDog.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Private/CpiStack.h>
-#include <cstdlib>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -63,47 +63,9 @@ static void RunTestDvInvocation(CpStack& aCpStack, DvStack& aDvStack, const std:
 extern void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack);
 static void RunTestDvSubscription(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestDvSubscription(aCpStack, aDvStack); }
 
-class WatchDog
-{
-public:
-    WatchDog(TUint aTimeoutSeconds)
-        : iMutex("wmtx")
-        , iTimeoutSeconds(aTimeoutSeconds)
-        , iRemainingSeconds(aTimeoutSeconds)
-        , iThreadFunctor("wd", MakeFunctor(*this, &WatchDog::Run))
-    {
-        iThreadFunctor.Start();
-    }
-    void Feed()
-    {
-        AutoMutex a(iMutex);
-        iRemainingSeconds = iTimeoutSeconds;
-    }
-private:
-    void Run()
-    {
-        while(true)
-        {
-            Thread::Sleep(1000);
-            Thread::CheckCurrentForKill();
-
-            AutoMutex a(iMutex);
-            iRemainingSeconds--;
-            if ( iRemainingSeconds <= 0 )
-                exit(-2);
-        }
-    }
-private:
-    Mutex           iMutex;
-    TUint           iTimeoutSeconds;
-    TInt            iRemainingSeconds;
-    ThreadFunctor   iThreadFunctor;
-};
-
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     Library* lib = new Library(aInitParams);
-    WatchDog* watchDog = new WatchDog(5 * 60 /*seconds*/);
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     TIpAddress addr = (*subnetList)[0]->Address();
@@ -142,13 +104,14 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
+    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell);
     blocker->Wait();
     // control never reaches here
     delete blocker;
+    delete cmdWatchDog;
     delete cmdQuit;
     delete cmdDebug;
     delete cmdRun;
     delete shell;
-    delete watchDog;
     delete lib;
 }
