@@ -102,9 +102,10 @@ protected:
     ContentProcessor();
 public:
     virtual TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) = 0;
-    ProtocolStreamResult TryStream(Srx& aReaderStream, TUint64 aRemainingBytes, TUint aMaxReadBytes);
+    virtual void Reset() = 0;
+    ProtocolStreamResult TryStream(Srx& aReaderStream, TUint64 aTotalBytes, TUint64& aOffset);
 private:
-    virtual ProtocolStreamResult Stream(Srx& aReaderStream, TUint64 aTotalBytes, TUint aMaxReadBytes) = 0;
+    virtual ProtocolStreamResult Stream(Srx& aReaderStream, TUint64 aTotalBytes, TUint64& aOffset) = 0;
 protected:
     IProtocolSet* iProtocolSet;
 private:

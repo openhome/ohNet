@@ -295,7 +295,7 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
         }
     }
     if (iContentProcessor != NULL) {
-        return iContentProcessor->TryStream(iReaderBuf, iTotalBytes, kReadBufferBytes/*, iOffset*/); // FIXME - passing iOffset might help with retries
+        return iContentProcessor->TryStream(iReaderBuf, iTotalBytes, iOffset);
     }
 
     if (!iStarted) {

@@ -174,6 +174,7 @@ ContentProcessor::~ContentProcessor()
 void ContentProcessor::Initialise(IProtocolSet& aProtocolSet)
 {
     iProtocolSet = &aProtocolSet;
+    Reset();
 }
 
 TBool ContentProcessor::Active() const
@@ -181,10 +182,10 @@ TBool ContentProcessor::Active() const
     return iActive;
 }
 
-ProtocolStreamResult ContentProcessor::TryStream(Srx& aReaderStream, TUint64 aTotalBytes, TUint aMaxReadBytes)
+ProtocolStreamResult ContentProcessor::TryStream(Srx& aReaderStream, TUint64 aTotalBytes, TUint64& aOffset)
 {
     AutoStream a(*this);
-    return Stream(aReaderStream, aTotalBytes, aMaxReadBytes);
+    return Stream(aReaderStream, aTotalBytes, aOffset);
 }
 
 
@@ -268,6 +269,7 @@ ContentProcessor* ProtocolManager::GetContentProcessor(const Brx& aUri, const Br
     for (TUint i=0; i<count; i++) {
         ContentProcessor* processor = iContentProcessors[i];
         if (!processor->Active() && processor->Recognise(aUri, aMimeType, aData)) {
+            processor->Reset();
             return processor;
         }
     }
