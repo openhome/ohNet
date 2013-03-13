@@ -94,6 +94,7 @@ protected:
 
 class ContentProcessor
 {
+    static const TUint kMaxLineBytes = 512;
 public:
     virtual ~ContentProcessor();
     void Initialise(IProtocolSet& aProtocolSet);
@@ -102,12 +103,15 @@ protected:
     ContentProcessor();
 public:
     virtual TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) = 0;
-    virtual void Reset() = 0;
+    virtual void Reset();
     ProtocolStreamResult TryStream(Srx& aReaderStream, TUint64 aTotalBytes, TUint64& aOffset);
+protected:
+    Brn ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset);
 private:
     virtual ProtocolStreamResult Stream(Srx& aReaderStream, TUint64 aTotalBytes, TUint64& aOffset) = 0;
 protected:
     IProtocolSet* iProtocolSet;
+    Bws<kMaxLineBytes> iPartialLine;
 private:
     TBool iActive;
 private:

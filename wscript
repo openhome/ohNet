@@ -130,6 +130,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
                 'OpenHome/Media/Protocol/ContentPls.cpp',
+                'OpenHome/Media/Protocol/ContentM3u.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')

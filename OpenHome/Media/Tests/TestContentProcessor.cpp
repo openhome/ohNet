@@ -1,6 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ContentPls.h>
+#include <OpenHome/Media/Protocol/ContentM3u.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
@@ -13,23 +14,18 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuitePls : public Suite, private IProtocolSet, private IReaderSource
+class SuiteContent : public Suite, protected IProtocolSet, protected IReaderSource
 {
-public:
-    SuitePls();
-    ~SuitePls();
-private: // from Suite
-    void Test();
+protected:
+    SuiteContent(const TChar* aName);
+    ~SuiteContent();
 private: // from IProtocolSet
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IReader
     void Read(Bwx& aBuffer);
     void ReadFlush();
     void ReadInterrupt();
-private:
-    void TestRecognise();
-    void TestParse();
-private:
+protected:
     static const TUint kReadBufferSize = 1024 * 2;
     ContentProcessor* iProcessor;
     FileStream iFileStream;
@@ -41,42 +37,64 @@ private:
     Bws<kReadBufferSize> iInterruptBuf;
     TBool iInterrupt;
 };
+    
+class SuitePls : public SuiteContent
+{
+public:
+    SuitePls();
+private: // from Suite
+    void Test();
+private:
+    void TestRecognise();
+    void TestParse();
+};
+    
+class SuiteM3u : public SuiteContent
+{
+public:
+    SuiteM3u();
+private: // from Suite
+    void Test();
+private:
+    void TestRecognise();
+    void TestParse();
+};
 
 } // namespace Media
 } // namespace OpenHome
 
-// SuitePls
+// SuiteContent
 
-SuitePls::SuitePls()
-    : Suite("Pls tests")
+SuiteContent::SuiteContent(const TChar* aName)
+    : Suite(aName)
+    , iProcessor(NULL)
     , iInterruptBytes(0)
     , iInterrupt(false)
 {
-    iProcessor = new ContentPls();
-    iProcessor->Initialise(*this);
     iReadBuffer = new Srs<kReadBufferSize>(*this);
 }
 
-SuitePls::~SuitePls()
+SuiteContent::~SuiteContent()
 {
     delete iReadBuffer;
     delete iProcessor;
 }
 
-void SuitePls::Test()
-{
-    TestRecognise();
-    TestParse();
-}
-
-ProtocolStreamResult SuitePls::Stream(const Brx& aUri)
+ProtocolStreamResult SuiteContent::Stream(const Brx& aUri)
 {
     Brn expected(iExpectedStreams[iIndex++]);
     TEST(aUri == expected);
+    if (aUri != expected) {
+        Print("\nERROR: Expected ");
+        Print(expected);
+        Print(", Got ");
+        Print(aUri);
+        Print("\n");
+    }
     return iNextResult;
 }
 
-void SuitePls::Read(Bwx& aBuffer)
+void SuiteContent::Read(Bwx& aBuffer)
 {
     if (iInterrupt) {
         THROW(ReaderError);
@@ -104,14 +122,30 @@ void SuitePls::Read(Bwx& aBuffer)
     }
 }
 
-void SuitePls::ReadFlush()
+void SuiteContent::ReadFlush()
 {
     iFileStream.ReadFlush();
 }
 
-void SuitePls::ReadInterrupt()
+void SuiteContent::ReadInterrupt()
 {
     iFileStream.ReadInterrupt();
+}
+
+
+// SuitePls
+
+SuitePls::SuitePls()
+    : SuiteContent("Pls tests")
+{
+    iProcessor = new ContentPls();
+    iProcessor->Initialise(*this);
+}
+
+void SuitePls::Test()
+{
+    TestRecognise();
+    TestParse();
 }
 
 void SuitePls::TestRecognise()
@@ -137,7 +171,7 @@ void SuitePls::TestRecognise()
     TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
 
     // good content, bad MIME
-    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), content));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), content));
 
     // bad content, bad MIME
     TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brn("playlist")));
@@ -270,10 +304,151 @@ void SuitePls::TestParse()
 }
 
 
+// SuiteM3u
+
+SuiteM3u::SuiteM3u()
+    : SuiteContent("M3u tests")
+{
+    iProcessor = new ContentM3u();
+    iProcessor->Initialise(*this);
+}
+
+void SuiteM3u::Test()
+{
+    TestRecognise();
+    TestParse();
+}
+
+void SuiteM3u::TestRecognise()
+{
+    // recognition by MIME type
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/x-mpegurl"), Brx::Empty()));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/mpegurl"), Brx::Empty()));
+
+    // recognition fails for bad MIME
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brx::Empty()));
+
+    static const TChar* kFile1 =
+        "#EXTM3U\n"
+        "\n"
+        "#EXTINF:123,Sample title\n"
+        "C:\\Documents and Settings\\I\\My Music\\Sample.mp3\n";
+    // recognition by MIME type + content
+    Brn content(kFile1);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/mpegurl"), content));
+
+    // recognition by content, no MIME
+    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+
+    // good content, bad MIME
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), content));
+
+    // bad content, bad MIME
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brn("playlist")));
+
+    static const TChar* kFile2 =
+        "#EXTM3U\r\n"
+        "\r\n"
+        "#EXTINF:123,Sample title\r\n"
+        "C:\\Documents and Settings\\I\\My Music\\Sample.mp3\r\n";
+    // content with dos line endings
+    content.Set(kFile2);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+}
+
+void SuiteM3u::TestParse()
+{
+    iInterruptBytes = 0;
+    TUint64 offset = 0;
+
+    // standard file with unix line endings
+    static const TChar* kFile1 =
+        "#EXTM3U\n"
+        "\n"
+        "#EXTINF:123,Sample title\n"
+        "C:\\Documents and Settings\\I\\My Music\\Sample.mp3\n"
+        "\n"
+        "#EXTINF:321,Example title\n"
+        "C:\\Documents and Settings\\I\\My Music\\Greatest Hits\\Example.ogg";
+    FileBrx file1(kFile1);
+    iFileStream.SetFile(&file1);
+    const char* expected1[] = {"C:\\Documents and Settings\\I\\My Music\\Sample.mp3",
+        "C:\\Documents and Settings\\I\\My Music\\Greatest Hits\\Example.ogg"};
+    iExpectedStreams = expected1;
+    iIndex = 0;
+    iNextResult = EProtocolStreamSuccess;
+    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamSuccess);
+    TEST(iIndex == 2);
+
+    // same file with dos line endings
+    static const TChar* kFile2 =
+        "#EXTM3U\r\n"
+        "\r\n"
+        "#EXTINF:123,Sample title\r\n"
+        "C:\\Documents and Settings\\I\\My Music\\Sample.mp3\r\n"
+        "\r\n"
+        "#EXTINF:321,Example title\r\n"
+        "C:\\Documents and Settings\\I\\My Music\\Greatest Hits\\Example.ogg\r\n";
+    
+    iProcessor->Reset();
+    FileBrx file2(kFile2);
+    iFileStream.SetFile(&file2);
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    offset = 0;
+    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamSuccess);
+    TEST(iIndex == 2);
+
+    // file with no line endings should fail to be processed
+    static const TChar* kFile3 =
+        "#EXTM3U"
+        ""
+        "#EXTINF:123,Sample title"
+        "C:\\Documents and Settings\\I\\My Music\\Sample.mp3"
+        ""
+        "#EXTINF:321,Example title"
+        "C:\\Documents and Settings\\I\\My Music\\Greatest Hits\\Example.ogg";
+    
+    iProcessor->Reset();
+    FileBrx file3(kFile3);
+    iFileStream.SetFile(&file3);
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    offset = 0;
+    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamErrorUnrecoverable);
+
+    // processor passes on EProtocolStreamStopped errors
+    iProcessor->Reset();
+    file1.Seek(0);
+    iFileStream.SetFile(&file1);
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    offset = 0;
+    iNextResult = EProtocolStreamStopped;
+    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamStopped);
+
+    // interrupt mid-way through then resume
+    iProcessor->Reset();
+    iReadBuffer->ReadFlush();
+    iFileStream.Seek(0);
+    iIndex = 0;
+    offset = 0;
+    iNextResult = EProtocolStreamSuccess;
+    static const TUint kInterruptBytes = 46; // part way through a File=[url] line
+    iInterruptBytes = kInterruptBytes;
+    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamErrorRecoverable);
+    iInterrupt = false;
+    offset = 0;
+    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes() - kInterruptBytes, offset) == EProtocolStreamSuccess);
+    TEST(iIndex == 2);
+}
+
+
 
 void TestContentProcessor()
 {
     Runner runner("Content Processor tests\n");
     runner.Add(new SuitePls());
+    runner.Add(new SuiteM3u());
     runner.Run();
 }
