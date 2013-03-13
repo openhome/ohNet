@@ -92,48 +92,6 @@ ProtocolStreamResult ContentPls::Stream(Srx& aReader, TUint64 aTotalBytes, TUint
 
 void ContentPls::Reset()
 {
-    iPartialLine.SetBytes(0);
+    ContentProcessor::Reset();
     iIsPlaylist = false;
-}
-
-Brn ContentPls::ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset)
-{
-    TBool done = false;
-    while (!done) {
-        Brn line;
-        try {
-            line.Set(aReader.ReadUntil(Ascii::kLf));
-            aOffset += line.Bytes() + 1; // +1 for Ascii::kLf
-            line.Set(Ascii::Trim(line));
-            if (iPartialLine.Bytes() > 0) {
-                if (iPartialLine.Bytes() + line.Bytes() <= iPartialLine.MaxBytes()) {
-                    iPartialLine.Append(line);
-                    line.Set(iPartialLine);
-                }
-                else {
-                    // line is too long to store, no point in trying to process a fragment of it
-                    line.Set(Brx::Empty());
-                }
-            }
-            iPartialLine.SetBytes(0);
-        }
-        catch (ReaderError&) {
-            line.Set(aReader.Snaffle());
-            aOffset += line.Bytes();
-            if (aOffset != aTotalBytes && line.Bytes() < iPartialLine.MaxBytes()) {
-                ASSERT(iPartialLine.Bytes() == 0);
-                iPartialLine.Append(line);
-            }
-            done = true;
-        }
-        if (iPartialLine.Bytes() > 0) {
-            THROW(ReaderError);
-        }
-        if (line.Bytes() > 0) {
-            LOG(kMedia, line);
-            LOG(kMedia, "\n");
-            return line;
-        }
-    }
-    THROW(ReaderError);
 }

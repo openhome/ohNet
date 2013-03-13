@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Ascii.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -186,6 +187,55 @@ ProtocolStreamResult ContentProcessor::TryStream(Srx& aReaderStream, TUint64 aTo
 {
     AutoStream a(*this);
     return Stream(aReaderStream, aTotalBytes, aOffset);
+}
+
+void ContentProcessor::Reset()
+{
+    iPartialLine.SetBytes(0);
+}
+
+Brn ContentProcessor::ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset)
+{
+    TBool done = false;
+    while (!done) {
+        Brn line;
+        try {
+            line.Set(aReader.ReadUntil(Ascii::kLf));
+            aOffset += line.Bytes() + 1; // +1 for Ascii::kLf
+            if (iPartialLine.Bytes() == 0) {
+                line.Set(Ascii::Trim(line));
+            }
+            else {
+                if (iPartialLine.Bytes() + line.Bytes() <= iPartialLine.MaxBytes()) {
+                    iPartialLine.Append(line);
+                    line.Set(iPartialLine);
+                }
+                else {
+                    // line is too long to store, no point in trying to process a fragment of it
+                    line.Set(Brx::Empty());
+                }
+            }
+            iPartialLine.SetBytes(0);
+        }
+        catch (ReaderError&) {
+            line.Set(aReader.Snaffle());
+            aOffset += line.Bytes();
+            if (aOffset != aTotalBytes && line.Bytes() < iPartialLine.MaxBytes()) {
+                ASSERT(iPartialLine.Bytes() == 0);
+                iPartialLine.Append(line);
+            }
+            done = true;
+        }
+        if (iPartialLine.Bytes() > 0) {
+            THROW(ReaderError);
+        }
+        if (line.Bytes() > 0) {
+            LOG(kMedia, line);
+            LOG(kMedia, "\n");
+            return line;
+        }
+    }
+    THROW(ReaderError);
 }
 
 
