@@ -4,6 +4,7 @@
 #include <OpenHome/Net/Private/ShellCommandRun.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 #include <OpenHome/Net/Private/ShellCommandQuit.h>
+#include <OpenHome/Net/Private/ShellCommandWatchDog.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 
@@ -103,13 +104,14 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
+    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell);
     blocker->Wait();
     // control never reaches here
     delete blocker;
+    delete cmdWatchDog;
     delete cmdQuit;
     delete cmdDebug;
     delete cmdRun;
     delete shell;
-
     delete lib;
 }
