@@ -33,7 +33,14 @@ class IProtocolManager : public IProtocolSet
 {
 public:
     virtual ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const = 0;
+    virtual ContentProcessor* GetAudioProcessor() const = 0;
     virtual TBool OkToSeek(TUint aTrackId) const = 0;
+};
+
+class IProtocolReader : public IReader
+{
+public:
+    virtual Brn ReadRemaining() = 0;
 };
 
 class Protocol : protected IStreamHandler, protected INonCopyable
@@ -98,31 +105,21 @@ class ContentProcessor
 public:
     virtual ~ContentProcessor();
     void Initialise(IProtocolSet& aProtocolSet);
-    TBool Active() const;
+    TBool IsActive() const;
+    void SetActive();
 protected:
     ContentProcessor();
 public:
     virtual TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) = 0;
     virtual void Reset();
-    ProtocolStreamResult TryStream(Srx& aReaderStream, TUint64 aTotalBytes, TUint64& aOffset);
+    virtual ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes) = 0;
 protected:
-    Brn ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset);
-private:
-    virtual ProtocolStreamResult Stream(Srx& aReaderStream, TUint64 aTotalBytes, TUint64& aOffset) = 0;
+    Brn ReadLine(IProtocolReader& aReader, TUint64& aBytesRemaining);
 protected:
     IProtocolSet* iProtocolSet;
     Bws<kMaxLineBytes> iPartialLine;
 private:
     TBool iActive;
-private:
-    class AutoStream : private INonCopyable
-    {
-    public:
-        AutoStream(ContentProcessor& aProcessor);
-        ~AutoStream();
-    private:
-        ContentProcessor& iProcessor;
-    };
 };
 
 class ProtocolManager : private IProtocolManager, private INonCopyable
@@ -139,6 +136,7 @@ public:
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;
+    ContentProcessor* GetAudioProcessor() const;
     TBool OkToSeek(TUint aTrackId) const;
 private:
     IPipelineIdProvider& iIdProvider;
@@ -147,6 +145,7 @@ private:
     mutable Mutex iLock;
     std::vector<Protocol*> iProtocols;
     std::vector<ContentProcessor*> iContentProcessors;
+    ContentProcessor* iAudioProcessor;
     TUint iTrackId;
 };
 

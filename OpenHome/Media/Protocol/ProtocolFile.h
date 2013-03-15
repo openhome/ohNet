@@ -13,7 +13,7 @@
 namespace OpenHome {
 namespace Media {
 
-class ProtocolFile : public Protocol
+class ProtocolFile : public Protocol, private IProtocolReader
 {
 public:
 	ProtocolFile(Environment& aEnv);
@@ -23,8 +23,14 @@ private: // from IStreamHandler
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+private: // from IProtocolReader
+    Brn Read(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
+    void ReadFlush();
+    void ReadInterrupt();
+    Brn ReadRemaining();
 private:
-    static const TUint kReadBufBytes = 4 * 1024;
+    static const TUint kReadBufBytes = 8 * 1024;
     Mutex iLock;
     OpenHome::Uri iUri;
     FileStream iFileStream;

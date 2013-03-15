@@ -1,4 +1,5 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
+#include <OpenHome/Media/Protocol/ContentAudio.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Ascii.h>
@@ -178,30 +179,31 @@ void ContentProcessor::Initialise(IProtocolSet& aProtocolSet)
     Reset();
 }
 
-TBool ContentProcessor::Active() const
+TBool ContentProcessor::IsActive() const
 {
     return iActive;
 }
 
-ProtocolStreamResult ContentProcessor::TryStream(Srx& aReaderStream, TUint64 aTotalBytes, TUint64& aOffset)
+void ContentProcessor::SetActive()
 {
-    AutoStream a(*this);
-    return Stream(aReaderStream, aTotalBytes, aOffset);
+    ASSERT(!iActive);
+    iActive = true;
 }
 
 void ContentProcessor::Reset()
 {
+    iActive = false;
     iPartialLine.SetBytes(0);
 }
 
-Brn ContentProcessor::ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset)
+Brn ContentProcessor::ReadLine(IProtocolReader& aReader, TUint64& aBytesRemaining)
 {
     TBool done = false;
     while (!done) {
         Brn line;
         try {
             line.Set(aReader.ReadUntil(Ascii::kLf));
-            aOffset += line.Bytes() + 1; // +1 for Ascii::kLf
+            aBytesRemaining -= (line.Bytes() + 1); // +1 for Ascii::kLf
             if (iPartialLine.Bytes() == 0) {
                 line.Set(Ascii::Trim(line));
             }
@@ -214,13 +216,13 @@ Brn ContentProcessor::ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffs
                     // line is too long to store, no point in trying to process a fragment of it
                     line.Set(Brx::Empty());
                 }
+                iPartialLine.SetBytes(0);
             }
-            iPartialLine.SetBytes(0);
         }
         catch (ReaderError&) {
-            line.Set(aReader.Snaffle());
-            aOffset += line.Bytes();
-            if (aOffset != aTotalBytes && line.Bytes() < iPartialLine.MaxBytes()) {
+            line.Set(aReader.ReadRemaining());
+            aBytesRemaining -= line.Bytes();
+            if (aBytesRemaining != 0 && line.Bytes() < iPartialLine.MaxBytes()) {
                 ASSERT(iPartialLine.Bytes() == 0);
                 iPartialLine.Append(line);
             }
@@ -239,20 +241,6 @@ Brn ContentProcessor::ReadLine(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffs
 }
 
 
-// ContentProcessor::AutoStream
-
-ContentProcessor::AutoStream::AutoStream(ContentProcessor& aProcessor)
-    : iProcessor(aProcessor)
-{
-    iProcessor.iActive = true;
-}
-
-ContentProcessor::AutoStream::~AutoStream()
-{
-    iProcessor.iActive = false;
-}
-
-
 // ProtocolManager
 
 ProtocolManager::ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider, IFlushIdProvider& aFlushIdProvider)
@@ -261,6 +249,7 @@ ProtocolManager::ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvi
     , iSupply(aSupply)
     , iLock("PMGR")
 {
+    iAudioProcessor = new ContentAudio(aSupply);
 }
 
 ProtocolManager::~ProtocolManager()
@@ -273,6 +262,7 @@ ProtocolManager::~ProtocolManager()
     for (TUint i = 0; i < count; i++) {
         delete iContentProcessors[i];
     }
+    delete iAudioProcessor;
 }
 
 void ProtocolManager::Add(Protocol* aProtocol)
@@ -318,13 +308,18 @@ ContentProcessor* ProtocolManager::GetContentProcessor(const Brx& aUri, const Br
     const TUint count = iContentProcessors.size();
     for (TUint i=0; i<count; i++) {
         ContentProcessor* processor = iContentProcessors[i];
-        if (!processor->Active() && processor->Recognise(aUri, aMimeType, aData)) {
-            processor->Reset();
+        if (!processor->IsActive() && processor->Recognise(aUri, aMimeType, aData)) {
+            processor->SetActive();
             return processor;
         }
     }
     // unrecognised content (may well be audio)
     return NULL;
+}
+
+ContentProcessor* ProtocolManager::GetAudioProcessor() const
+{
+    return iAudioProcessor;
 }
 
 TBool ProtocolManager::OkToSeek(TUint /*aTrackId*/) const

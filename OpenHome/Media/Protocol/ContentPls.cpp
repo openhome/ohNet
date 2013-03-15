@@ -43,23 +43,24 @@ TBool ContentPls::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
     return false;
 }
 
-ProtocolStreamResult ContentPls::Stream(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset)
+ProtocolStreamResult ContentPls::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
 {
     LOG(kMedia, "ContentPls::Stream\n");
 
+    TUint64 bytesRemaining = aTotalBytes;
     TBool stopped = false;
     TBool streamSucceeded = false;
     try {
         // Find [playlist]
         while (!iIsPlaylist) {
-            Brn line = ReadLine(aReader, aTotalBytes, aOffset);
+            Brn line = ReadLine(aReader, bytesRemaining);
             if (line == Brn("[playlist]")) {
                 iIsPlaylist = true;
             }
         }
 
         while (!stopped) {
-            Brn line = ReadLine(aReader, aTotalBytes, aOffset);
+            Brn line = ReadLine(aReader, bytesRemaining);
             Parser parser(line);
             Brn key = parser.Next('=');
             if (key.BeginsWith(Brn("File"))) {

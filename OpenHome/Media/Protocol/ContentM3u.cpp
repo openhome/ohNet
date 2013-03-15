@@ -35,15 +35,16 @@ TBool ContentM3u::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
     return false;
 }
 
-ProtocolStreamResult ContentM3u::Stream(Srx& aReader, TUint64 aTotalBytes, TUint64& aOffset)
+ProtocolStreamResult ContentM3u::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
 {
     LOG(kMedia, "ContentM3u::Stream\n");
 
+    TUint64 bytesRemaining = aTotalBytes;
     TBool stopped = false;
     TBool streamSucceeded = false;
     try {
         while (!stopped) {
-            Brn line = ReadLine(aReader, aTotalBytes, aOffset);
+            Brn line = ReadLine(aReader, bytesRemaining);
             if (line.Bytes() == 0 || line.BeginsWith(Brn("#"))) {
                 continue; // empty/comment line
             }
