@@ -135,11 +135,12 @@ void SuiteAudioReservoir::Test()
     // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
     EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
-        GenerateMsg(types[0]);
+        EMsgType msgType = types[i];
+        GenerateMsg(msgType);
         msg = iReservoir->Pull();
         msg = msg->Process(*this);
         msg->RemoveRef();
-        TEST(iLastMsg == types[0]);
+        TEST(iLastMsg == msgType);
         iSemUpstreamComplete.Wait();
     }
 
