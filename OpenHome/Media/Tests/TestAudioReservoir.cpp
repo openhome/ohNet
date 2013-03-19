@@ -126,22 +126,22 @@ void SuiteAudioReservoir::Test()
     // Add single 0xff filled audio.  Check it can be Pull()ed.
     TEST(iLastMsg == ENone);
     GenerateMsg(EMsgAudioPcm);
+    iSemUpstreamComplete.Wait();
     Msg* msg = iReservoir->Pull();
     msg = msg->Process(*this);
     TEST(iLastMsg == EMsgAudioPcm);
     ASSERT(msg == NULL);
-    iSemUpstreamComplete.Wait();
 
     // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
     EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         EMsgType msgType = types[i];
         GenerateMsg(msgType);
+        iSemUpstreamComplete.Wait();
         msg = iReservoir->Pull();
         msg = msg->Process(*this);
         msg->RemoveRef();
         TEST(iLastMsg == msgType);
-        iSemUpstreamComplete.Wait();
     }
 
     // Add audio until we exceed MaxSize.  Check adding thread is blocked.
