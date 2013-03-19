@@ -22,7 +22,7 @@ private:
     TUint iBytes;
 };
 
-class ProtocolHttp : public ProtocolNetwork
+class ProtocolHttp : public ProtocolNetwork, private IProtocolReader
 {
     static const TUint kAudioBytes = 6 * 1024;
 //    static const TUint kEntityBufferBytes = 2 * 1024;
@@ -37,6 +37,12 @@ private: // from IStreamHandler
     TBool OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+private: // from IProtocolReader
+    Brn Read(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
+    void ReadFlush();
+    void ReadInterrupt();
+    Brn ReadRemaining();
 private:
     ProtocolStreamResult DoStream();
     ProtocolStreamResult DoSeek(TUint64 aOffset);
@@ -72,6 +78,9 @@ private:
     TBool iLive;
     TBool iStarted;
     TBool iStopped;
+    TBool iStreamIncludesMetaData;
+    TUint iDataChunkSize;
+    TUint iDataChunkRemaining;
     TUint64 iSeekPos;
     TUint64 iOffset;
     ContentProcessor* iContentProcessor;

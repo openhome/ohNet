@@ -58,44 +58,40 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
         return EProtocolStreamErrorRecoverable;
     }
     if (contentProcessor != NULL) {
-        TUint64 offset = 0;
-        return contentProcessor->TryStream(iReaderBuf, fileSize, offset);
+        return contentProcessor->Stream(*this, fileSize);
     }
     
-    ProtocolStreamResult res = EProtocolStreamSuccess;
+    ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
     iStreamId = iIdProvider->NextStreamId();
     iSupply->OutputStream(iUri.AbsoluteUri(), fileSize, true, false, *this, iStreamId);
+    contentProcessor = iProtocolManager->GetAudioProcessor();
     TUint remaining = fileSize;
-    while (remaining > 0) {
-        try {
-            Brn data = iReaderBuf.Read(kReadBufBytes);
-            remaining -= data.Bytes();
-            iSupply->OutputData(data);
+    while (res == EProtocolStreamErrorRecoverable) {
+        res = contentProcessor->Stream(*this, remaining);
+        iLock.Wait();
+        if (iSeek) {
+            iFileStream.Interrupt(false);
+            iFileStream.Seek(iSeekPos);
+            remaining = fileSize - iSeekPos;
+            iSeek = false;
+            iSeekPos = 0;
+            iSupply->OutputFlush(iNextFlushId);
         }
-        catch (ReaderError&) {
-            iLock.Wait();
-            if (iSeek) {
-                iFileStream.Interrupt(false);
-                iFileStream.Seek(iSeekPos);
-                remaining = fileSize - iSeekPos;
-                iSeek = false;
-                iSeekPos = 0;
-                iSupply->OutputFlush(iNextFlushId);
-            }
-            else if (iStop) {
-                remaining = 0;
-                res = EProtocolStreamStopped;
-                iSupply->OutputFlush(iNextFlushId);
-            }
-            else {
-                // don't expect any exceptions (other than the above ones we generate) when reading a local file
-                ASSERTS();
-            }
-            iLock.Signal();
+        else if (iStop) {
+            res = EProtocolStreamStopped;
+            iSupply->OutputFlush(iNextFlushId);
         }
+        else {
+            // don't expect any exceptions (other than the above ones we generate) when reading a local file
+            ASSERTS();
+        }
+        iLock.Signal();
     }
 
     iFileStream.CloseFile();
+    if (contentProcessor != NULL) {
+        contentProcessor->Reset();
+    }
     return res;
 }
 
@@ -136,4 +132,29 @@ TUint ProtocolFile::TryStop(TUint /*aTrackId*/, TUint aStreamId)
         return MsgFlush::kIdInvalid;
     }
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
+}
+
+Brn ProtocolFile::Read(TUint aBytes)
+{
+    return iReaderBuf.Read(aBytes);
+}
+
+Brn ProtocolFile::ReadUntil(TByte aSeparator)
+{
+    return iReaderBuf.ReadUntil(aSeparator);
+}
+
+void ProtocolFile::ReadFlush()
+{
+    iReaderBuf.ReadFlush();
+}
+
+void ProtocolFile::ReadInterrupt()
+{
+    iReaderBuf.ReadInterrupt();
+}
+
+Brn ProtocolFile::ReadRemaining()
+{
+    return iReaderBuf.Snaffle();
 }

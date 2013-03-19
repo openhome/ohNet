@@ -67,7 +67,8 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 {
     iTotalBytes = iSeekPos = iOffset = 0;
     iStreamId = ProtocolManager::kStreamIdInvalid;
-    iSeekable = iSeek = iLive = iStarted = iStopped = false;
+    iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = false;
+    iDataChunkSize = iDataChunkRemaining = 0;
     iContentProcessor = NULL;
     iNextFlushId = MsgFlush::kIdInvalid;
     (void)iSem.Clear();
@@ -102,6 +103,9 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
             res = DoSeek(iOffset);
         }
         else {
+            // FIXME - if stream is non-seekable, set ErrorUnrecoverable as soon as Connect succeeds
+            /* FIXME - reconnects should use extra http headers to check that content hasn't changed
+               since our first attempt at reading it.  Any change should result in ErrorUnrecoverable */
             TUint code = WriteRequest(iOffset);
             if (code != 0) {
                 iTotalBytes = iHeaderContentLength.ContentLength();
@@ -123,6 +127,9 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     // FIXME - clear track, stream ids
     // TBool stopped = iStopped;
     iLock.Signal();
+    if (iContentProcessor != NULL) {
+        iContentProcessor->Reset();
+    }
     return res;
 }
 
@@ -168,6 +175,50 @@ TUint ProtocolHttp::TryStop(TUint /*aTrackId*/, TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
+Brn ProtocolHttp::Read(TUint aBytes)
+{
+    TUint bytes = aBytes;
+    if (iStreamIncludesMetaData) {
+        if (iDataChunkRemaining == 0) {
+            ExtractMetadata();
+            iDataChunkRemaining = iDataChunkSize;
+        }
+        if (iDataChunkRemaining < bytes) {
+            bytes = iDataChunkRemaining;
+        }
+        iDataChunkRemaining -= bytes;
+    }
+    Brn buf = iReaderBuf.Read(bytes);
+    iOffset += buf.Bytes();
+    return buf;
+}
+
+Brn ProtocolHttp::ReadUntil(TByte aSeparator)
+{
+    ASSERT(!iStreamIncludesMetaData); /* assume only audio streams contain icy data
+                                         and they just read a number of bytes */
+    Brn buf = iReaderBuf.ReadUntil(aSeparator);
+    iOffset += buf.Bytes();
+    return buf;
+}
+
+void ProtocolHttp::ReadFlush()
+{
+    iReaderBuf.ReadFlush();
+}
+
+void ProtocolHttp::ReadInterrupt()
+{
+    iReaderBuf.ReadInterrupt();
+}
+
+Brn ProtocolHttp::ReadRemaining()
+{
+    Brn buf = iReaderBuf.Snaffle();
+    iOffset += buf.Bytes();
+    return buf;
+}
+
 ProtocolStreamResult ProtocolHttp::DoStream()
 {
     TUint code;
@@ -202,6 +253,11 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     }
     else { // code == HttpStatus::kOk.Code()
         LOG(kMedia, "ProtocolHttp::Connect 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
+    }
+    if (iHeaderIcyMetadata.Received()) {
+        ASSERT(iTotalBytes == 0); // if non-live streams contain icy data, we'll need to adjust totalBytes passed to content processor
+        iStreamIncludesMetaData = true;
+        iDataChunkSize = iDataChunkRemaining = iHeaderIcyMetadata.Bytes();
     }
 
     return ProcessContent();
@@ -295,7 +351,7 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
         }
     }
     if (iContentProcessor != NULL) {
-        return iContentProcessor->TryStream(iReaderBuf, iTotalBytes, iOffset);
+        return iContentProcessor->Stream(*this, iTotalBytes);
     }
 
     if (!iStarted) {
@@ -308,66 +364,19 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
             return EProtocolStreamErrorRecoverable;
         }
     }
-
-    iIcyMetadata.SetBytes(0);
-    TUint64 bytes = iTotalBytes;
-    const TBool finite = (bytes > 0);
-    TUint dataBytes = 0;
-
-    for (;;) {
-        try {
-            TUint required;
-            if (iHeaderIcyMetadata.Received()) {
-                if (dataBytes == 0) {
-                    dataBytes = iHeaderIcyMetadata.Bytes();
-                }
-                if (dataBytes > kAudioBytes) {
-                    required = kAudioBytes;
-                }
-                else {
-                    required = dataBytes;
-                }
-                dataBytes -= required;
-            }
-            else {
-                required = kAudioBytes;
-            }
-            
-            if (finite) {
-                if (bytes == 0) {
-                    LOG(kMedia, "ProtocolHttp::ProcessContent completed\n");
-                    break;
-                }
-                if (bytes < required) {
-                    required = (TUint)bytes;
-                }
-                bytes -= required;
-            }
-            
-            iSupply->OutputData(iReaderBuf.Read(required));
-            iOffset += required;
-
-            if (iHeaderIcyMetadata.Received() && dataBytes == 0) { // at start of metadata
-                ExtractMetadata();
-            }
-        }
-        catch (ReaderError&)
-        {
-            LOG(kMedia, "ProtocolHttp::ProcessContent ReaderError bytes %lld, iTotalBytes %lld\n", bytes, iTotalBytes);
-            if (iOffset == iTotalBytes) {
-                return EProtocolStreamSuccess;
-            }
-            return EProtocolStreamErrorRecoverable;
-        }
-    }
-    return EProtocolStreamSuccess;
+    iContentProcessor = iProtocolManager->GetAudioProcessor();
+    return iContentProcessor->Stream(*this, iTotalBytes);
 }
 
 void ProtocolHttp::ExtractMetadata()
 {
-#if 0 // FIXME - need to bring across DidlLite class
     Brn metadata = iReaderBuf.Read(1);
+    iOffset++;
     TUint metadataBytes = metadata[0] * 16;
+#if 1 // FIXME - need to bring across DidlLite class
+    iReaderBuf.Read(metadataBytes);
+    iOffset += metadataBytes;
+#else
     Bws<kIcyMetadataBytes> newMetadata;
     DidlLite didl;
     if (metadataBytes != 0) {
