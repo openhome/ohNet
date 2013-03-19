@@ -130,6 +130,7 @@ void SuiteAudioReservoir::Test()
     msg = msg->Process(*this);
     TEST(iLastMsg == EMsgAudioPcm);
     ASSERT(msg == NULL);
+    iSemUpstreamComplete.Wait();
 
     // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
     EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgQuit };
@@ -139,6 +140,7 @@ void SuiteAudioReservoir::Test()
         msg = msg->Process(*this);
         msg->RemoveRef();
         TEST(iLastMsg == types[0]);
+        iSemUpstreamComplete.Wait();
     }
 
     // Add audio until we exceed MaxSize.  Check adding thread is blocked.
@@ -157,7 +159,8 @@ void SuiteAudioReservoir::Test()
     msg = msg->Process(*this);
     TEST(iLastMsg == EMsgAudioPcm);
     ASSERT(msg == NULL);
-    (void)iSemUpstreamComplete.Clear();
+    iSemUpstreamComplete.Wait();
+
     GenerateMsg(EMsgFlush);
     iSemUpstreamComplete.Wait();
     msg = iReservoir->Pull();
