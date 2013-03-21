@@ -34,13 +34,14 @@ class TestCodecPipelineElementDownstream;
 class SuiteCodec : public Suite
 {
 public:
+    static const TUint kSemaphoreWaitMax = 1000;   // Time to wait on processing (at most) in ms.
+public:
     enum EMode
     {
         eStreamFull = 0,            // Stream full audio
         eStreamSeekBack = 1,        // Stream audio, seeking backwards in the middle
         eStreamSimilar = 2,         // Check output audio is similar to input audio
     };
-public:
     enum ECodec
     {
         eCodecWav = 0,
@@ -379,7 +380,7 @@ Msg* TestCodecPipelineElementDownstream::ProcessMsg(MsgAudioPcm* aMsg)
     if (iMode == SuiteCodec::eStreamSimilar) {
         iMsg = aMsg;
         iSem.Signal();
-        iSemProcess.Wait();
+        iSemProcess.Wait(SuiteCodec::kSemaphoreWaitMax);
     }
     return NULL;
 }
@@ -503,7 +504,7 @@ void SuiteCodec::SetMode(EMode aMode)
 void SuiteCodec::TestStreamingFull()
 {
     // Try streaming a full file.
-    iSem.Wait(500);
+    iSem.Wait(kSemaphoreWaitMax);
     TEST(iElementDownstream->Jiffies() == TestCodecPipelineElementUpstream::kTotalJiffies);
     Reset();
 }
@@ -512,10 +513,10 @@ void SuiteCodec::TestSeekingToStart()
 {
     // Try seeking back to start of file.
     SetMode(eStreamSeekBack);
-    iSem.Wait(500);              // Should try seek now.
+    iSem.Wait(kSemaphoreWaitMax);              // Should try seek now.
     TBool trySeek = iController->Seek(0, TestCodecPipelineElementUpstream::kStreamId, 0);
     SetMode(eStreamFull);       // Reset mode to continute streaming as normal.
-    iSem.Wait(500);             // Wait for end of stream.
+    iSem.Wait(kSemaphoreWaitMax);             // Wait for end of stream.
     TEST(trySeek == true);
     TUint totalJiffies = TestCodecPipelineElementUpstream::kTotalJiffies;
     totalJiffies += totalJiffies / 2;   // Did a seek back to start from middle of file, so jiffies should be time + time/2.
@@ -530,7 +531,7 @@ void SuiteCodec::TestSeekingToStart()
 void SuiteCodec::TestSeeking() // FIXME
 {
     SetMode(eStreamFull);
-    iSem.Wait(500);    // Wait on all messages so we can have an easy cleanup.
+    iSem.Wait(kSemaphoreWaitMax);    // Wait on all messages so we can have an easy cleanup.
     Reset();
 }
 
@@ -580,7 +581,7 @@ void SuiteCodec::TestComparison()
     TUint count = 0;
     while (true)
     {
-        iSem.Wait();
+        iSem.Wait(kSemaphoreWaitMax);
         if (!iElementDownstream->Quit()) {
             if (count < sampleCount) {
                 MsgAudioPcm* msg = iElementDownstream->AudioPcm();
@@ -612,7 +613,7 @@ void SuiteCodec::TestComparison()
         }
         //iSemProcess.Signal();
     }
-    iSem.Wait();
+    iSem.Wait(kSemaphoreWaitMax);
     Reset();
 }
 
