@@ -8,7 +8,7 @@ from waflib.Node import Node
 import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
-from filetasks import gather_files, build_tree
+from filetasks import gather_files, build_tree, copy_task
 from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location
 
 def options(opt):
@@ -190,6 +190,15 @@ def build(bld):
             use=['MAD', 'OHNET', 'OSA'],
             target='CodecMp3')
 
+    # # Alac
+    # bld.stlib(
+             # source=[
+                 # 'OpenHome/Media/Codec/Alac.cpp',
+                 # 'alac_decoder/alac.cpp',
+             # ],
+             # use=['ALAC', 'OHNET'],
+             # target='CodecAlac')
+
     # Tests
     bld.stlib(
             source=[
@@ -205,9 +214,17 @@ def build(bld):
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 #'OpenHome/Media/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
+                # 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
+                'OpenHome/Media/Tests/TestCodec.cpp',
             ],
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
             target='ohMediaPlayerTestUtils')
+
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
+        "")
+
     if not bld.env.nolink:
         bld.program(
                 source='OpenHome/Media/Tests/TestShell.cpp',
@@ -261,6 +278,14 @@ def build(bld):
                 source='OpenHome/Av/Tests/TestStore.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestStore')
+        # bld.program(
+                # source='OpenHome/Media/Tests/TestProtocolHttpMain.cpp',
+                # use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                # target='TestProtocolHttp')
+        bld.program(
+                source='OpenHome/Media/Tests/TestCodecMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'CodecWav', 'CodecFlac', 'CodecMp3', 'ohMediaPlayerTestUtils'],
+                target='TestCodec')
 
     # Bundles
     #header_files = gather_files(bld, '{top}/src', ['*.h'])
@@ -289,6 +314,8 @@ def test(tst):
                       #,['TestContentProcessor', [], True]
                       ,['TestPipeline', [], True]
                       ,['TestStore', [], True]
+                      #,['TestProtocolHttp', [], True]
+                      ,['TestCodec', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
         tst.add_group() # Don't start another test until previous has finished.

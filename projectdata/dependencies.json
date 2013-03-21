@@ -19,5 +19,12 @@
         "platform-specific": false,
         "version": "0.0.36",
         "archive-filename": "${name}-${version}.tar.gz"
-    }
+    },
+	{
+		"name": "TestTones",
+		"type": "external",
+		"version": "1.0",
+		"archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
+		"dest": "dependencies/AnyPlatform/TestTones/"
+	}
 ]
