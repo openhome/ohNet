@@ -260,6 +260,13 @@ ProtocolStreamResult ProtocolHttp::DoStream()
         iDataChunkSize = iDataChunkRemaining = iHeaderIcyMetadata.Bytes();
     }
 
+    if (!iStarted && iLive) {
+        StartStream();
+        // don't want to buffer content from a live stream so need to wait on pipeline signalling it is ready to play
+        Close();
+        return EProtocolStreamErrorRecoverable;
+    }
+
     return ProcessContent();
 }
 
@@ -295,6 +302,15 @@ ProtocolStreamResult ProtocolHttp::DoLiveStream()
     }
 
     return ProcessContent();
+}
+
+void ProtocolHttp::StartStream()
+{
+    LOG(kMedia, "ProtocolHttp::StartStream\n");
+
+    iStreamId = iIdProvider->NextStreamId();
+    iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
+    iStarted = true;
 }
 
 TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
@@ -355,14 +371,7 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
     }
 
     if (!iStarted) {
-        iStreamId = iIdProvider->NextStreamId();
-        iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
-        iStarted = true;
-        if (iLive) {
-            // don't want to buffer content from a live stream so need to wait on pipeline signalling it is ready to play
-            Close();
-            return EProtocolStreamErrorRecoverable;
-        }
+        StartStream();
     }
     iContentProcessor = iProtocolManager->GetAudioProcessor();
     return iContentProcessor->Stream(*this, iTotalBytes);

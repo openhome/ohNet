@@ -47,6 +47,7 @@ private:
     ProtocolStreamResult DoStream();
     ProtocolStreamResult DoSeek(TUint64 aOffset);
     ProtocolStreamResult DoLiveStream();
+    void StartStream();
     TUint WriteRequest(TUint64 aOffset);
     ProtocolStreamResult ProcessContent();
     void ExtractMetadata();
