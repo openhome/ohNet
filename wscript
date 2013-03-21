@@ -215,7 +215,7 @@ def build(bld):
                 #'OpenHome/Media/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
                 # 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
-                #'OpenHome/Media/Tests/TestCodec.cpp',
+                'OpenHome/Media/Tests/TestCodec.cpp',
             ],
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
             target='ohMediaPlayerTestUtils')
@@ -315,7 +315,7 @@ def test(tst):
                       ,['TestPipeline', [], True]
                       ,['TestStore', [], True]
                       #,['TestProtocolHttp', [], True]
-                      ,['TestCodec', [], True]
+                      #,['TestCodec', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
         tst.add_group() # Don't start another test until previous has finished.
