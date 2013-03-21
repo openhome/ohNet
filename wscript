@@ -217,13 +217,18 @@ def build(bld):
                 # 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
             ],
-            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
+            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3'],
             target='ohMediaPlayerTestUtils')
 
     create_copy_task(
         bld,
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
-        "")
+        '')
+
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
+        'TestShell_resources')
 
     if not bld.env.nolink:
         bld.program(
