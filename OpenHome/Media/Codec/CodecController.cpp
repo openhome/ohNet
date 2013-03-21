@@ -179,7 +179,9 @@ void CodecController::CodecThread()
                     }
                 }
                 catch (CodecStreamStart&) { }
-                catch (CodecStreamEnded&) { }
+                catch (CodecStreamEnded&) {
+                    iStreamEnded = true;
+                }
                 catch (CodecStreamCorrupt&) {
                     iStreamEnded = true;
                 }
