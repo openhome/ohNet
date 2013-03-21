@@ -215,7 +215,7 @@ def build(bld):
                 #'OpenHome/Media/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
                 # 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
-                'OpenHome/Media/Tests/TestCodec.cpp',
+                #'OpenHome/Media/Tests/TestCodec.cpp',
             ],
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav'],
             target='ohMediaPlayerTestUtils')
