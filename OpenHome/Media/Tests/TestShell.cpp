@@ -24,6 +24,7 @@ SIMPLE_TEST_DECLARATION(TestStarvationMonitor);
 SIMPLE_TEST_DECLARATION(TestStopper);
 SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
+SIMPLE_TEST_DECLARATION(TestCodec);
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
@@ -53,6 +54,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestStopper", ShellTestStopper));
     shellTests.push_back(ShellTest("TestSupply", ShellTestSupply));
     shellTests.push_back(ShellTest("TestVariableDelay", ShellTestVariableDelay));
+    shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
 
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
