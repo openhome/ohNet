@@ -19,9 +19,17 @@ namespace OpenHome {
 namespace Media {
 namespace Codec {
 
+class TestCodecInfoAggregator : public Av::IInfoAggregator
+{
+public:
+    TestCodecInfoAggregator();
+    ~TestCodecInfoAggregator();
+public: // from IInfoAggregator
+    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
+};
+
 class TestCodecPipelineElementUpstream;
 class TestCodecPipelineElementDownstream;
-class TestCodecInfoAggregator;
 
 class SuiteCodec : public Suite
 {
@@ -107,15 +115,6 @@ private:
     TUint iFlushId;
     SuiteCodec::EMode iMode;
     Semaphore& iSem;
-};
-
-class TestCodecInfoAggregator : public Av::IInfoAggregator
-{
-public:
-    TestCodecInfoAggregator();
-    ~TestCodecInfoAggregator();
-public: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
 };
 
 class TestCodecPipelineElementDownstream : public IPipelineElementDownstream, private IMsgProcessor, private INonCopyable
@@ -477,9 +476,9 @@ SuiteCodec::~SuiteCodec()
     }
     delete iContainer;
     //delete iMsgFactory;
-    delete iInfoAggregator;
-    delete iElementDownstream;
-    delete iElementUpstream;
+    //delete iInfoAggregator;
+    //delete iElementDownstream;
+    //delete iElementUpstream;
     
 }
 
@@ -549,7 +548,8 @@ TUint SuiteCodec::TestSimilarity(MsgAudioPcm* aMsg)
 
     // Measure how many times subsamples pass through zero.
     for (TUint i = 0; i < bytes; i+=2) {
-        TInt subsample = ((*ptr++)<<8) + *ptr++;
+        TInt subsample = ((*ptr++)<<8);
+        subsample += *ptr++;
         if (subsample < 0) {
             if (positive && !negative)
             {
