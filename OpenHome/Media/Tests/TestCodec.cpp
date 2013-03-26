@@ -23,7 +23,7 @@ class TestCodecInfoAggregator : public Av::IInfoAggregator
 {
 public:
     TestCodecInfoAggregator();
-    ~TestCodecInfoAggregator();
+    virtual ~TestCodecInfoAggregator();
 public: // from IInfoAggregator
     void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
 };
@@ -96,7 +96,7 @@ public:
     static const TUint kFrequencyHz = 1000;
 public:
     TestCodecPipelineElementUpstream(MsgFactory& aMsgFactory, TestCodecPipelineElementDownstream& aElement, Semaphore& aSem, SuiteCodec::EMode aMode);
-    ~TestCodecPipelineElementUpstream();
+    virtual ~TestCodecPipelineElementUpstream();
     void Initialise(const Brx& aFilename);
     TUint FileBytes();
     TUint BytesRead();
@@ -130,7 +130,7 @@ class TestCodecPipelineElementDownstream : public IPipelineElementDownstream, pr
 {
 public:
     TestCodecPipelineElementDownstream(Semaphore& aSem, Semaphore& aSemProcess, SuiteCodec::EMode aMode);
-    ~TestCodecPipelineElementDownstream();
+    virtual ~TestCodecPipelineElementDownstream();
     TUint Jiffies();
     TBool Quit();
     void Reset();
@@ -492,10 +492,10 @@ SuiteCodec::~SuiteCodec()
         delete iController;
     }
     delete iContainer;
-    //delete iMsgFactory;
-    //delete iInfoAggregator;
-    //delete iElementDownstream;
-    //delete iElementUpstream;
+    delete iMsgFactory;
+    delete iInfoAggregator;
+    delete iElementDownstream;
+    delete iElementUpstream;
     
 }
 
@@ -840,7 +840,7 @@ void SuiteCodec::Test()
     TestFlac24BitMono();
     TestFlac24BitStereo();
     TestMp3Mono();
-    TestMp3Stereo();
+//    TestMp3Stereo();
 }
 
 void TestCodec()

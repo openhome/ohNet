@@ -59,6 +59,7 @@ class Mp3Header
 {
 public:
     Mp3Header(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes);
+    ~Mp3Header();
     TUint Channels() const { return iChannels; }
     TUint SampleRate() const { return iSampleRate; }
     TUint64 SamplesTotal() const { return iExtended->SamplesTotal(); }
@@ -378,6 +379,12 @@ Mp3Header::Mp3Header(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalB
             iExtended = new Mp3HeaderExtendedBare(aTotalBytes-iHeaderBytes, byteRate, iSampleRate);
         }
     }
+}
+
+Mp3Header::~Mp3Header()
+{
+    //LOG(kCodec, "Mp3Header::~Mp3Header\n");
+    delete iExtended;
 }
 
 TBool Mp3Header::Exists(const Brx& aData, TUint& aSyncFrameOffsetBytes)

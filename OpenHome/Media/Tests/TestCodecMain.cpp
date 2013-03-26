@@ -6,6 +6,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 {
     Net::UpnpLibrary::InitialiseMinimal(aInitParams);
     TestCodec();
-    //delete aInitParams;
+    delete aInitParams;
     Net::UpnpLibrary::Close();
 }
