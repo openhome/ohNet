@@ -584,8 +584,8 @@ TUint SuiteCodec::TestSimilarity(MsgAudioPcm* aMsg)
     TUint zeroCrossings = 0;
     TBool negative = false;
     TBool positive = false;
-    TInt lastValue = 0;
-    TUint lastDelta = 0;
+    //TInt lastValue = 0;
+    //TUint lastDelta = 0;
     MsgPlayable* msg = aMsg->CreatePlayable();
     iElementDownstream->ClearAudioPcm();    // MsgPlayable takes reference away.
     TUint bytes = msg->Bytes();
@@ -630,8 +630,8 @@ TUint SuiteCodec::TestSimilarity(MsgAudioPcm* aMsg)
                     negative = false;
                     positive = true;
                 }
-                lastDelta = Delta(lastValue, subsample);
-                lastValue = subsample;
+                //lastDelta = Delta(lastValue, subsample);
+                //lastValue = subsample;
             }
         }
     }
