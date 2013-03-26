@@ -180,7 +180,7 @@ void CodecFlac::Process()
             break;
         case FLAC__STREAM_DECODER_END_OF_STREAM:
             // we've decoded the entire stream.  Can now either return or throw CodecStreamEnded
-            return;
+            THROW(CodecStreamEnded);
         case FLAC__STREAM_DECODER_OGG_ERROR:
             // We don't support ogg currently, bug in code -- unrecoverable
             THROW(CodecStreamCorrupt);

@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Msg.h> // FIXME - needed?
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Printer.h>
 #include <mad.h>
 
 #include <stdlib.h>
@@ -598,7 +599,7 @@ void CodecMp3::Process()
 {
     //LOG(kCodec, "CodecMp3::Process\n");
 
-    TBool streamEnded = false, newStreamStarted = false;
+    TBool newStreamStarted = false;
 
     // Step 1: If this is the first time (buffer == 0) or the previous
     // iteration didn't have enough data in iInput for libmad to decode it
@@ -620,9 +621,11 @@ void CodecMp3::Process()
 
         try {
             //LOG(kCodec, "CodecMp3::Process calling iController->Read() for: %d bytes sample: %lld\n", kReadReqBytes - iInput.Bytes(), iSamplesWrittenTotal);
-            if (kReadReqBytes - iInput.Bytes()) { // FIXME - dubious test
-                iController->Read(iInput, kReadReqBytes - iInput.Bytes());
+            TUint bytesToRead = kReadReqBytes - iInput.Bytes();
+            if (bytesToRead) { // FIXME - dubious test
+                iController->Read(iInput, bytesToRead);
             }
+            iStreamEnded = (iInput.Bytes() < bytesToRead);
         }
 
         // When decoding the last frame of a file, it must be followed by MAD_BUFFER_GUARD
@@ -634,10 +637,10 @@ void CodecMp3::Process()
             //LOG(kCodec, "CodecMp3::Process caught CodecStreamStart\n");
         }
         catch (CodecStreamEnded&) {
-            streamEnded = true;
+            iStreamEnded = true;
             //LOG(kCodec, "CodecMp3::Process caught CodecStreamEnded\n");
         }
-        if (newStreamStarted || streamEnded) {
+        if (newStreamStarted || iStreamEnded) {
             ASSERT_DEBUG(iInput.Bytes() + MAD_BUFFER_GUARD < iInput.MaxBytes()); // FIXME - volkano just assumes this holds true.  Why is that safe?
             TUint8* ptr = (TUint8*)iInput.Ptr() + iInput.Bytes();
             (void)memset(ptr, 0, MAD_BUFFER_GUARD);
@@ -656,7 +659,7 @@ void CodecMp3::Process()
             return;
         }
         else {
-            if (iMadStream->error == MAD_ERROR_BUFLEN && !(newStreamStarted || streamEnded)) {
+            if (iMadStream->error == MAD_ERROR_BUFLEN && !(newStreamStarted || iStreamEnded)) {
                 // If buffer was too small to decode then return now and get more data
                 // the next time we're called.  If the stream has ended and the buffer
                 // is too small, then the file is corrupt (truncated)
@@ -716,7 +719,8 @@ void CodecMp3::Process()
     } while (samplesToWrite > 0);
 
     // now propogate any end of stream exception
-    if (streamEnded || newStreamStarted) {
+    // first check we have processed remaining frames of this stream
+    if ((iMadStream->md_len == 0) && (iStreamEnded || newStreamStarted)) {
         iController->OutputAudioPcm(iOutput, channels, iHeader->SampleRate(),
                                     kBitDepth, EMediaDataBigEndian, iTrackOffset);
         if (newStreamStarted) {

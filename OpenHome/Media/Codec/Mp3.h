@@ -38,6 +38,7 @@ private:
     TUint64     iTrackLengthJiffies;
     TUint64     iTrackOffset;
     Bws<DecodedAudio::kMaxBytes> iOutput;
+    TBool       iStreamEnded;
 };
 
 } // namespace Codec

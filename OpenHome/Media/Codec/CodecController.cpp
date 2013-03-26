@@ -195,6 +195,11 @@ void CodecController::CodecThread()
             // FIXME
         }
     }
+    // push out any pending msgs, such as a quit
+    if (iPendingMsg != NULL) {
+        Queue(iPendingMsg);
+        iPendingMsg = NULL;
+    }
 }
 
 void CodecController::PullMsg()
@@ -419,8 +424,7 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
 {
-    Queue(aMsg);
     iQuit = true;
-    iStreamEnded = true;
-    return NULL;
+    //iStreamEnded = true;  // will cause codec to quit prematurely; let codec set this with a CodecStreamEnded
+    return aMsg;
 }

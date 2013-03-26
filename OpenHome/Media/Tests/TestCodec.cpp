@@ -34,7 +34,7 @@ class TestCodecPipelineElementDownstream;
 class SuiteCodec : public Suite
 {
 public:
-    static const TUint kSemaphoreWaitMax = 1000;   // Time to wait on processing (at most) in ms.
+    static const TUint kSemaphoreWaitMax = 0;   // Time to wait on processing (at most) in ms.
 public:
     enum EMode
     {
@@ -50,8 +50,7 @@ public:
     };
 public:
     SuiteCodec();
-public:
-    static CodecBase* CreateCodec(ECodec aCodec);
+    CodecBase* CreateCodec(ECodec aCodec);
 private: // from Suite
     ~SuiteCodec();
     void Test();
@@ -61,14 +60,21 @@ private:
     void TestStreamingFull();
     void TestSeekingToStart();
     void TestSeeking();
+    TUint Delta(TInt aSubSampleA, TInt aSubSampleB) const;
     TUint TestSimilarity(MsgAudioPcm* aMsg);
     void TestComparison();
     void TestCodec(const Brx& aFilename, ECodec aCodec);
-    void TestWav();
-    void TestFlac();
-    void TestMp3();
+    void TestWavMono();
+    void TestWavStereo();
+    void TestFlac16BitMono();
+    void TestFlac16BitStereo();
+    void TestFlac24BitMono();
+    void TestFlac24BitStereo();
+    void TestMp3Mono();
+    void TestMp3Stereo();
 private:
     EMode iMode;
+    ECodec iCodec;
     Semaphore iSem;
     Semaphore iSemProcess;
     MsgFactory* iMsgFactory;
@@ -77,6 +83,8 @@ private:
     TestCodecInfoAggregator* iInfoAggregator;
     Container* iContainer;
     CodecController* iController;
+    TUint iBitDepth;
+    TUint iChannels;
 };
 
 class TestCodecPipelineElementUpstream : public IPipelineElementUpstream, public IStreamHandler
@@ -127,6 +135,7 @@ public:
     TBool Quit();
     void Reset();
     MsgAudioPcm* AudioPcm();
+    void ClearAudioPcm();
     void SetMode(SuiteCodec::EMode aMode);
     TBool AllMsgsReceived() const;
 public: // from IPipelineElementDownstream
@@ -342,6 +351,11 @@ MsgAudioPcm* TestCodecPipelineElementDownstream::AudioPcm()
     return iMsg;
 }
 
+void TestCodecPipelineElementDownstream::ClearAudioPcm()
+{
+    iMsg = NULL;
+}
+
 void TestCodecPipelineElementDownstream::Reset()
 {
     iJiffies = 0;
@@ -362,7 +376,7 @@ void TestCodecPipelineElementDownstream::Push(Msg* aMsg)
 {
     //LOG(kMedia, ">TestCodecPipelineElementDownstream::Push\n");
     aMsg->Process(*this);
-    if (iMode != SuiteCodec::eStreamSimilar) {
+    if (iMode != SuiteCodec::eStreamSimilar || iMsg == NULL) {
         aMsg->RemoveRef();
     }
 }
@@ -461,6 +475,8 @@ SuiteCodec::SuiteCodec()
     , iSem("TCO1", 0)
     , iSemProcess("TCO2", 0)
     , iController(NULL)
+    , iBitDepth(0)
+    , iChannels(0)
 {
     iInfoAggregator = new TestCodecInfoAggregator();
     iMsgFactory = new MsgFactory(*iInfoAggregator, 5, 5, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
@@ -504,7 +520,9 @@ void SuiteCodec::SetMode(EMode aMode)
 void SuiteCodec::TestStreamingFull()
 {
     // Try streaming a full file.
+    SetMode(eStreamFull);
     iSem.Wait(kSemaphoreWaitMax);
+    LOG(kMedia, "SuiteCodec::TestStreamingFull iElementDownstream->Jiffies: %u, kTotalJiffies: %u\n", iElementDownstream->Jiffies(), TestCodecPipelineElementUpstream::kTotalJiffies);
     TEST(iElementDownstream->Jiffies() == TestCodecPipelineElementUpstream::kTotalJiffies);
     Reset();
 }
@@ -520,8 +538,8 @@ void SuiteCodec::TestSeekingToStart()
     TEST(trySeek == true);
     TUint totalJiffies = TestCodecPipelineElementUpstream::kTotalJiffies;
     totalJiffies += totalJiffies / 2;   // Did a seek back to start from middle of file, so jiffies should be time + time/2.
-    LOG(kMedia, "SuiteCodec::Test iElementDownstream->Jiffies() %u\n", iElementDownstream->Jiffies());
-    LOG(kMedia, "SuiteCodec::Test totalJiffies() %u\n", totalJiffies);
+    LOG(kMedia, "SuiteCodec::TestSeekingToStart iElementDownstream->Jiffies() %u\n", iElementDownstream->Jiffies());
+    LOG(kMedia, "SuiteCodec::TestSeekingToStart totalJiffies() %u\n", totalJiffies);
     // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
     TEST(iElementDownstream->Jiffies() >= totalJiffies - Jiffies::kJiffiesPerSecond);   // Lower bound.
     TEST(iElementDownstream->Jiffies() <= totalJiffies + Jiffies::kJiffiesPerSecond);   // Upper bound.
@@ -535,37 +553,86 @@ void SuiteCodec::TestSeeking() // FIXME
     Reset();
 }
 
+TUint SuiteCodec::Delta(TInt aSubSampleA, TInt aSubSampleB) const
+{
+    if (aSubSampleA < 0 && aSubSampleB < 0) {   // Both vals are negative.
+        if (aSubSampleA > aSubSampleB) {
+            return aSubSampleA - aSubSampleB;
+        }
+        else {
+            return aSubSampleB - aSubSampleA;
+        }
+    }
+    else if (aSubSampleA < 0) {
+        return aSubSampleB - aSubSampleA;
+    }
+    else if (aSubSampleB < 0) {
+        return aSubSampleA - aSubSampleB;
+    }
+    else {                                      // Both vals are positive.
+        if (aSubSampleA > aSubSampleB) {
+            return aSubSampleA - aSubSampleB;
+        }
+        else {
+            return aSubSampleB - aSubSampleA;
+        }
+    }
+}
+
 TUint SuiteCodec::TestSimilarity(MsgAudioPcm* aMsg)
 {
     TUint zeroCrossings = 0;
     TBool negative = false;
     TBool positive = false;
+    TInt lastValue = 0;
+    TUint lastDelta = 0;
     MsgPlayable* msg = aMsg->CreatePlayable();
+    iElementDownstream->ClearAudioPcm();    // MsgPlayable takes reference away.
     TUint bytes = msg->Bytes();
     ProcessorPcmBufPacked pcmProcessor;
+    TUint increment = (iBitDepth/8) * iChannels;
 
     msg->Read(pcmProcessor);
     const TInt8* ptr = (TInt8*) pcmProcessor.Ptr();
 
     // Measure how many times subsamples pass through zero.
-    for (TUint i = 0; i < bytes; i+=2) {
-        TInt subsample = ((*ptr++)<<8);
-        subsample += *ptr++;
-        if (subsample < 0) {
-            if (positive && !negative)
+    for (TUint i = 0; i < bytes; i += increment) {
+        for (TUint j = 0; j < iChannels; j++) {
+            TInt subsample = 0;
+
+            switch (iBitDepth)
             {
-                zeroCrossings++;
+            case 16:
+                subsample += ((*ptr++) << 8);
+                subsample += *ptr++;
+                break;
+            case 24:
+                subsample += ((*ptr++) << 16);
+                subsample += ((*ptr++) << 8);
+                subsample += *ptr++;
+                break;
+            default:
+                ASSERTS();
             }
-            negative = true;
-            positive = false;
-        }
-        else {
-            if (negative && !positive)
-            {
-                zeroCrossings++;
+
+            if (j == 0) { // Only do subsample comparison on a single channel.
+                if (subsample < 0) {
+                    if (positive && !negative) {
+                        zeroCrossings++;
+                    }
+                    negative = true;
+                    positive = false;
+                }
+                else if (subsample > 0) {
+                    if (negative && !positive) {
+                        zeroCrossings++;
+                    }
+                    negative = false;
+                    positive = true;
+                }
+                lastDelta = Delta(lastValue, subsample);
+                lastValue = subsample;
             }
-            negative = false;
-            positive = true;
         }
     }
 
@@ -573,47 +640,86 @@ TUint SuiteCodec::TestSimilarity(MsgAudioPcm* aMsg)
     return zeroCrossings;
 }
 
+//void SuiteCodec::TestComparison()
+//{
+//    // Try comparing input vs output samples.
+//    SetMode(eStreamSimilar);
+//    const TUint sampleCount = 50;
+//    TUint count = 0;
+//    while (true)
+//    {
+//        iSem.Wait(kSemaphoreWaitMax);
+//        if (!iElementDownstream->Quit()) {
+//            if (count < sampleCount) {
+//                MsgAudioPcm* msg = iElementDownstream->AudioPcm();
+//                TUint measuredZeroCrossings = TestSimilarity(msg);
+//                const TUint jiffies = msg->Jiffies();
+//                Log::Print("jiffies: %u\n", jiffies);
+//                const TUint jiffiesMultiples = (Jiffies::kJiffiesPerSecond / jiffies);
+//                const TUint sineWaves = TestCodecPipelineElementUpstream::kFrequencyHz / jiffiesMultiples;
+//                const TUint calculatedZeroCrossings = (sineWaves*2 - 1)/iChannels;
+//
+//                LOG(kMedia, "SuiteCodec::Test calculatedZeroCrossings: %u\n", calculatedZeroCrossings);
+//                LOG(kMedia, "SuiteCodec::Test measuredZeroCrossings: %u\n", measuredZeroCrossings);
+//
+//                TEST(measuredZeroCrossings >= calculatedZeroCrossings-5);
+//                Log::Print("measuredZeroCrossings: %u, calculatedZeroCrossings: %u\n", measuredZeroCrossings, calculatedZeroCrossings);
+//                TEST(measuredZeroCrossings <= calculatedZeroCrossings+5);
+//                count++;
+//                if (count >= sampleCount) {
+//                    SetMode(eStreamFull);   // Break out of comparison mode, bypassing semaphore-based processing.
+//                    iSemProcess.Signal();
+//                    break;
+//                }
+//            }
+//        }
+//        else {
+//            break;
+//        }
+//        iSemProcess.Signal();
+//    }
+//    if (!iElementDownstream->Quit()) {
+//        iSem.Wait(kSemaphoreWaitMax);
+//    }
+//    Reset();
+//}
+
 void SuiteCodec::TestComparison()
 {
     // Try comparing input vs output samples.
     SetMode(eStreamSimilar);
-    const TUint sampleCount = 1;
-    TUint count = 0;
-    while (true)
-    {
+
+    TUint measuredZeroCrossings = 0;
+    const TUint sineWaves = TestCodecPipelineElementUpstream::kFrequencyHz * TestCodecPipelineElementUpstream::kDuration;
+    const TUint calculatedZeroCrossings = sineWaves*2 - 1;
+
+    while (true) {
         iSem.Wait(kSemaphoreWaitMax);
         if (!iElementDownstream->Quit()) {
-            if (count < sampleCount) {
-                MsgAudioPcm* msg = iElementDownstream->AudioPcm();
-                TUint measuredZeroCrossings = TestSimilarity(msg);
-                const TUint jiffies = msg->Jiffies();
-                const TUint jiffiesMultiples = (Jiffies::kJiffiesPerSecond / jiffies);
-                const TUint sineWaves = TestCodecPipelineElementUpstream::kFrequencyHz / jiffiesMultiples;
-                const TUint calculatedZeroCrossings = sineWaves*2 - 1;
+            MsgAudioPcm* msg = iElementDownstream->AudioPcm();
 
-                LOG(kMedia, "SuiteCodec::Test calculatedZeroCrossings: %u\n", calculatedZeroCrossings);
-                LOG(kMedia, "SuiteCodec::Test measuredZeroCrossings: %u\n", measuredZeroCrossings);
+            LOG(kMedia, "SuiteCodec::TestComparison calculatedZeroCrossings: %u\n", calculatedZeroCrossings);
+            LOG(kMedia, "SuiteCodec::TestComparison measuredZeroCrossings: %u\n", measuredZeroCrossings);
 
-                TEST(measuredZeroCrossings >= calculatedZeroCrossings-2);
-                TEST(measuredZeroCrossings <= calculatedZeroCrossings+2);
-                count++;
-                if (count >= sampleCount) {
-                    SetMode(eStreamFull);   // Break out of comparison mode, bypassing semaphore-based processing.
-                    iSemProcess.Signal();
-                    break;
-                }
-            }
-            //else {
-            //    SetMode(eStreamFull);
-            //    break;
-            //}
+            measuredZeroCrossings += TestSimilarity(msg);
+            iSemProcess.Signal();
+            //Log::Print("measuredZeroCrossings: %u, calculatedZeroCrossings: %u\n", measuredZeroCrossings, calculatedZeroCrossings);
         }
         else {
             break;
         }
-        //iSemProcess.Signal();
     }
-    iSem.Wait(kSemaphoreWaitMax);
+
+    TEST(measuredZeroCrossings >= calculatedZeroCrossings-20);
+    if (iCodec == eCodecMp3) {
+        // MP3 encoders/decoders add silence and some samples of random data to start of tracks for filter routines.
+        // LAME FAQ suggests this is for 1057 samples.
+        TEST(measuredZeroCrossings <= calculatedZeroCrossings+100);
+    }
+    else {
+        TEST(measuredZeroCrossings <= calculatedZeroCrossings+15);
+    }
+
     Reset();
 }
 
@@ -623,12 +729,12 @@ void SuiteCodec::TestCodec(const Brx& aFilename, ECodec aCodec)
     iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
     iController->AddCodec(CreateCodec(aCodec));
     TestStreamingFull();
-    iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
-    iController->AddCodec(CreateCodec(aCodec));
-    TestSeekingToStart();
-    iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
-    iController->AddCodec(CreateCodec(aCodec));
-    TestSeeking();
+    //iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
+    //iController->AddCodec(CreateCodec(aCodec));
+    //TestSeekingToStart();
+    //iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
+    //iController->AddCodec(CreateCodec(aCodec));
+    //TestSeeking();
     iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
     iController->AddCodec(CreateCodec(aCodec));
     TestComparison();
@@ -637,6 +743,8 @@ void SuiteCodec::TestCodec(const Brx& aFilename, ECodec aCodec)
 
 CodecBase* SuiteCodec::CreateCodec(ECodec aCodec)
 {
+    iCodec = aCodec;
+
     switch (aCodec)
     {
     case eCodecWav:
@@ -651,29 +759,88 @@ CodecBase* SuiteCodec::CreateCodec(ECodec aCodec)
     }
 }
 
-void SuiteCodec::TestWav()
+void SuiteCodec::TestWavMono()
 {
-    Brn file("1k_tone-10s.wav");
+    Log::Print("TestWavMono\n");
+    Brn file("1k_tone-10s-mono.wav");
+    iBitDepth = 16;
+    iChannels = 1;
     TestCodec(file, eCodecWav);
 }
 
-void SuiteCodec::TestFlac()
+void SuiteCodec::TestWavStereo()
 {
-    Brn file("1k_tone-10s-flac_l5_16bit.flac");
+    Log::Print("TestWavStereo\n");
+    Brn file("1k_tone-10s-stereo.wav");
+    iBitDepth = 16;
+    iChannels = 2;
+    TestCodec(file, eCodecWav);
+}
+
+void SuiteCodec::TestFlac16BitMono()
+{
+    Log::Print("TestFlac16BitMono\n");
+    Brn file("1k_tone-10s-mono-l5-16bit.flac");
+    iBitDepth = 16;
+    iChannels = 1;
     TestCodec(file, eCodecFlac);
 }
 
-void SuiteCodec::TestMp3()
+void SuiteCodec::TestFlac16BitStereo()
 {
-    Brn file("1k_tone-10s.mp3");
+    Log::Print("TestFlac16BitStereo\n");
+    Brn file("1k_tone-10s-stereo-l5-16bit.flac");
+    iBitDepth = 16;
+    iChannels = 2;
+    TestCodec(file, eCodecFlac);
+}
+
+void SuiteCodec::TestFlac24BitMono()
+{
+    Log::Print("TestFlac24BitMono\n");
+    Brn file("1k_tone-10s-mono-l5-24bit.flac");
+    iBitDepth = 24;
+    iChannels = 1;
+    TestCodec(file, eCodecFlac);
+}
+
+void SuiteCodec::TestFlac24BitStereo()
+{
+    Log::Print("TestFlac24BitStereo\n");
+    Brn file("1k_tone-10s-stereo-l5-24bit.flac");
+    iBitDepth = 24;
+    iChannels = 2;
+    TestCodec(file, eCodecFlac);
+}
+
+void SuiteCodec::TestMp3Mono()
+{
+    Log::Print("TestMp3Mono\n");
+    Brn file("1k_tone-10s-mono-128k.mp3");
+    iBitDepth = 24;
+    iChannels = 1;
+    TestCodec(file, eCodecMp3);
+}
+
+void SuiteCodec::TestMp3Stereo()
+{
+    Log::Print("TestMp3Stereo\n");
+    Brn file("1k_tone-10s-stereo-128k.mp3");
+    iBitDepth = 24;
+    iChannels = 2;
     TestCodec(file, eCodecMp3);
 }
 
 void SuiteCodec::Test()
 {
-    TestWav();
-    //TestFlac();
-    //TestMp3();
+    TestWavMono();
+    TestWavStereo();
+    TestFlac16BitMono();
+    TestFlac16BitStereo();
+    TestFlac24BitMono();
+    TestFlac24BitStereo();
+    TestMp3Mono();
+    TestMp3Stereo();
 }
 
 void TestCodec()
