@@ -191,13 +191,13 @@ def build(bld):
             target='CodecMp3')
 
     # Alac
-    bld.stlib(
-             source=[
-                 'OpenHome/Media/Codec/Alac.cpp',
-                 'alac_decoder/alac.cpp',
-             ],
-             use=['ALAC', 'OHNET'],
-             target='CodecAlac')
+    #bld.stlib(
+    #         source=[
+    #             'OpenHome/Media/Codec/Alac.cpp',
+    #             'alac_decoder/alac.cpp',
+    #         ],
+    #         use=['ALAC', 'OHNET'],
+    #         target='CodecAlac')
 
     # Tests
     bld.stlib(
@@ -217,7 +217,7 @@ def build(bld):
                 # 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
             ],
-            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac'],
+            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3'],
             target='ohMediaPlayerTestUtils')
 
     create_copy_task(
