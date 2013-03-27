@@ -63,7 +63,7 @@ ProtocolStreamResult ContentM3u::Stream(IProtocolReader& aReader, TUint64 aTotal
     if (stopped) {
         return EProtocolStreamStopped;
     }
-    else if (iPartialLine.Bytes() > 0) {
+    else if (bytesRemaining > 0 && bytesRemaining < aTotalBytes) {
         // break in stream.  Return an error and let caller attempt to re-establish connection
         return EProtocolStreamErrorRecoverable;
     }

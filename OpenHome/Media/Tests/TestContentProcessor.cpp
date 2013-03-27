@@ -6,6 +6,8 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/File.h>
+//#include <OpenHome/Private/Ascii.h>
+//#include <OpenHome/Private/Parser.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -14,19 +16,21 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteContent : public Suite, protected IProtocolSet, protected IReaderSource
+class SuiteContent : public Suite, protected IProtocolSet, protected IProtocolReader
 {
 protected:
     SuiteContent(const TChar* aName);
     ~SuiteContent();
 private: // from IProtocolSet
     ProtocolStreamResult Stream(const Brx& aUri);
-private: // from IReader
-    void Read(Bwx& aBuffer);
+private: // from IProtocolReader
+    Brn Read(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
+    Brn ReadRemaining();
 protected:
-    static const TUint kReadBufferSize = 1024 * 2;
+    static const TUint kReadBufferSize = 1024 * 8;
     ContentProcessor* iProcessor;
     FileStream iFileStream;
     Srs<kReadBufferSize>* iReadBuffer;
@@ -35,6 +39,7 @@ protected:
     ProtocolStreamResult iNextResult;
     TUint iInterruptBytes;
     Bws<kReadBufferSize> iInterruptBuf;
+    Bws<kReadBufferSize> iInterruptReturnBuf;
     TBool iInterrupt;
 };
     
@@ -71,7 +76,7 @@ SuiteContent::SuiteContent(const TChar* aName)
     , iInterruptBytes(0)
     , iInterrupt(false)
 {
-    iReadBuffer = new Srs<kReadBufferSize>(*this);
+    iReadBuffer = new Srs<kReadBufferSize>(iFileStream);
 }
 
 SuiteContent::~SuiteContent()
@@ -94,43 +99,114 @@ ProtocolStreamResult SuiteContent::Stream(const Brx& aUri)
     return iNextResult;
 }
 
-void SuiteContent::Read(Bwx& aBuffer)
+Brn SuiteContent::Read(TUint aBytes)
 {
+    Brn buf;
     if (iInterrupt) {
         THROW(ReaderError);
     }
-    if (iInterruptBuf.Bytes() != 0) {
-        aBuffer.Append(iInterruptBuf);
-        iInterruptBuf.SetBytes(0);
-    }
-    else {
-        iFileStream.Read(aBuffer);
+    if (iInterruptBuf.Bytes() == 0) {
+        buf.Set(iReadBuffer->Read(aBytes));
         if (iInterruptBytes != 0) {
-            if (aBuffer.Bytes() < iInterruptBytes) {
-                iInterruptBytes -= aBuffer.Bytes();
+            if (buf.Bytes() >= iInterruptBytes) {
+                iInterruptBytes -= buf.Bytes();
+                iInterrupt = (iInterruptBytes == 0);
             }
             else {
-                if (aBuffer.Bytes() != iInterruptBytes) {
-                    Brn rem = aBuffer.Split(iInterruptBytes);
-                    iInterruptBuf.Append(rem);
-                    aBuffer.SetBytes(iInterruptBytes);
-                }
+                Brn rem = buf.Split(buf.Bytes() - iInterruptBytes);
+                iInterruptBuf.Replace(rem);
                 iInterruptBytes = 0;
                 iInterrupt = true;
             }
         }
     }
+    else {
+        if (iInterruptBuf.Bytes() > aBytes) {
+            Brn rem = iInterruptBuf.Split(aBytes);
+            iInterruptReturnBuf.Replace(iInterruptBuf);
+            buf.Set(iInterruptReturnBuf);
+            iInterruptBuf.Replace(rem);
+        }
+        else if (iInterruptBuf.Bytes() == aBytes) {
+            buf.Set(iInterruptBuf);
+            iInterruptBuf.SetBytes(0);
+        }
+        else {
+            buf.Set(iReadBuffer->Read(aBytes - iInterruptBuf.Bytes()));
+            iInterruptBuf.Append(buf);
+            buf.Set(iInterruptBuf);
+            iInterruptBuf.SetBytes(0);
+        }
+    }
+    return buf;
+}
+
+Brn SuiteContent::ReadUntil(TByte aSeparator)
+{
+    Brn buf;
+    if (iInterrupt) {
+        THROW(ReaderError);
+    }
+    if (iInterruptBuf.Bytes() == 0) {
+        buf.Set(iReadBuffer->ReadUntil(aSeparator));
+        if (iInterruptBytes != 0) {
+            if (iInterruptBytes > buf.Bytes()) {
+                iInterruptBytes -= buf.Bytes();
+            }
+            else {
+                iInterruptBuf.Replace(buf);
+                //iInterruptBuf.Append(aSeparator);
+                iInterruptBytes = 0;
+                iInterrupt = true;
+                THROW(ReaderError);
+            }
+        }
+    }
+    else {
+        iInterruptReturnBuf.Replace(iInterruptBuf);
+        buf.Set(iInterruptReturnBuf);
+        iInterruptBuf.SetBytes(0);
+/*
+        if (Ascii::Contains(iInterruptBuf, aSeparator)) {
+            Parser parser(iInterruptBuf);
+            iInterruptReturnBuf.Replace(parser.Next(aSeparator));
+            //iInterruptBuf.Append(aSeparator);
+            buf.Set(iInterruptReturnBuf);
+            iInterruptBuf.Replace(parser.Remaining());
+        }
+        else {
+            buf.Set(iReadBuffer->ReadUntil(aSeparator));
+            iInterruptReturnBuf.Replace(iInterruptBuf);
+            iInterruptReturnBuf.Append(buf);
+            buf.Set(iInterruptReturnBuf);
+            iInterruptBuf.SetBytes(0);
+        }*/
+    }
+    return buf;
 }
 
 void SuiteContent::ReadFlush()
 {
-    iFileStream.ReadFlush();
+    iInterruptBuf.SetBytes(0);
+    iReadBuffer->ReadFlush();
 }
 
 void SuiteContent::ReadInterrupt()
 {
-    iFileStream.ReadInterrupt();
+    iReadBuffer->ReadInterrupt();
 }
+
+Brn SuiteContent::ReadRemaining()
+{
+    if (iInterruptBuf.Bytes() > 0) {
+        return Brx::Empty();
+        /*iInterruptReturnBuf.Replace(iInterruptBuf);
+        iInterruptBuf.SetBytes(0);
+        return Brn(iInterruptReturnBuf);*/
+    }
+    return iReadBuffer->Snaffle();
+}
+
 
 
 // SuitePls
@@ -191,7 +267,6 @@ void SuitePls::TestRecognise()
 void SuitePls::TestParse()
 {
     iInterruptBytes = 0;
-    TUint64 offset = 0;
 
     // standard file with unix line endings
     static const TChar* kFile1 =
@@ -219,7 +294,7 @@ void SuitePls::TestParse()
     iExpectedStreams = expected1;
     iIndex = 0;
     iNextResult = EProtocolStreamSuccess;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamSuccess);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 3);
 
     // same file with dos line endings
@@ -246,8 +321,7 @@ void SuitePls::TestParse()
     iFileStream.SetFile(&file2);
     iReadBuffer->ReadFlush();
     iIndex = 0;
-    offset = 0;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamSuccess);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 3);
 
     // file with no line endings should fail to be processed
@@ -274,8 +348,7 @@ void SuitePls::TestParse()
     iFileStream.SetFile(&file3);
     iReadBuffer->ReadFlush();
     iIndex = 0;
-    offset = 0;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamErrorUnrecoverable);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorUnrecoverable);
 
     // processor passes on EProtocolStreamStopped errors
     iProcessor->Reset();
@@ -283,23 +356,20 @@ void SuitePls::TestParse()
     iFileStream.SetFile(&file1);
     iReadBuffer->ReadFlush();
     iIndex = 0;
-    offset = 0;
     iNextResult = EProtocolStreamStopped;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamStopped);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamStopped);
 
     // interrupt mid-way through then resume
     iProcessor->Reset();
     iReadBuffer->ReadFlush();
     iFileStream.Seek(0);
     iIndex = 0;
-    offset = 0;
     iNextResult = EProtocolStreamSuccess;
     static const TUint kInterruptBytes = 46; // part way through a File=[url] line
     iInterruptBytes = kInterruptBytes;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamErrorRecoverable);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
     iInterrupt = false;
-    offset = 0;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes() - kInterruptBytes, offset) == EProtocolStreamSuccess);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes() - 30) == EProtocolStreamSuccess); // 30 chars in complete lines read before interruption
     TEST(iIndex == 3);
 }
 
@@ -359,7 +429,6 @@ void SuiteM3u::TestRecognise()
 void SuiteM3u::TestParse()
 {
     iInterruptBytes = 0;
-    TUint64 offset = 0;
 
     // standard file with unix line endings
     static const TChar* kFile1 =
@@ -377,7 +446,7 @@ void SuiteM3u::TestParse()
     iExpectedStreams = expected1;
     iIndex = 0;
     iNextResult = EProtocolStreamSuccess;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamSuccess);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 2);
 
     // same file with dos line endings
@@ -395,8 +464,7 @@ void SuiteM3u::TestParse()
     iFileStream.SetFile(&file2);
     iReadBuffer->ReadFlush();
     iIndex = 0;
-    offset = 0;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamSuccess);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 2);
 
     // file with no line endings should fail to be processed
@@ -414,8 +482,7 @@ void SuiteM3u::TestParse()
     iFileStream.SetFile(&file3);
     iReadBuffer->ReadFlush();
     iIndex = 0;
-    offset = 0;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamErrorUnrecoverable);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorUnrecoverable);
 
     // processor passes on EProtocolStreamStopped errors
     iProcessor->Reset();
@@ -423,23 +490,20 @@ void SuiteM3u::TestParse()
     iFileStream.SetFile(&file1);
     iReadBuffer->ReadFlush();
     iIndex = 0;
-    offset = 0;
     iNextResult = EProtocolStreamStopped;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamStopped);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamStopped);
 
     // interrupt mid-way through then resume
     iProcessor->Reset();
     iReadBuffer->ReadFlush();
     iFileStream.Seek(0);
     iIndex = 0;
-    offset = 0;
     iNextResult = EProtocolStreamSuccess;
     static const TUint kInterruptBytes = 46; // part way through a File=[url] line
     iInterruptBytes = kInterruptBytes;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes(), offset) == EProtocolStreamErrorRecoverable);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
     iInterrupt = false;
-    offset = 0;
-    TEST(iProcessor->TryStream(*iReadBuffer, iFileStream.Bytes() - kInterruptBytes, offset) == EProtocolStreamSuccess);
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes() - 34) == EProtocolStreamSuccess); // 34 chars in complete lines read before interruption
     TEST(iIndex == 2);
 }
 
