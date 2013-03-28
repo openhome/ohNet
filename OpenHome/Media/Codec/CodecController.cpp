@@ -234,6 +234,7 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
         }
         Queue(iPendingMsg);
         iPendingMsg = NULL;
+        THROW(CodecStreamEnded);
     }
     if (iStreamEnded) {
         if (DoRead(aBuf, aBytes)) {
