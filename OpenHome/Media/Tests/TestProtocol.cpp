@@ -172,6 +172,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
     iPipeline->AddCodec(new Codec::CodecMp3());
+    iPipeline->Start();
 
     iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");

@@ -56,7 +56,6 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamPos(0)
 {
     iDecoderThread = new ThreadFunctor("CDEC", MakeFunctor(*this, &CodecController::CodecThread));
-    iDecoderThread->Start();
 }
 
 CodecController::~CodecController()
@@ -75,6 +74,11 @@ void CodecController::AddCodec(CodecBase* aCodec)
 {
     aCodec->Construct(*this);
     iCodecs.push_back(aCodec);
+}
+
+void CodecController::Start()
+{
+    iDecoderThread->Start();
 }
 
 TBool CodecController::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)

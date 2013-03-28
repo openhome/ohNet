@@ -63,6 +63,7 @@ public:
     CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement);
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
+    void Start();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
 private:
     void CodecThread();

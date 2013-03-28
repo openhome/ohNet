@@ -148,6 +148,11 @@ void PipelineManager::AddCodec(Codec::CodecBase* aCodec)
     iCodecController->AddCodec(aCodec);
 }
 
+void PipelineManager::Start()
+{
+    iCodecController->Start();
+}
+
 void PipelineManager::Quit()
 {
     iQuitting = true;

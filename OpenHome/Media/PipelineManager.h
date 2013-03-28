@@ -69,6 +69,7 @@ public:
     PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes);
     virtual ~PipelineManager();
     void AddCodec(Codec::CodecBase* aCodec);
+    void Start();
     MsgFactory& Factory();
     void Play();
     void Pause();

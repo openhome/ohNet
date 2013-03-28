@@ -494,6 +494,7 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iController->AddCodec(new CodecWav());
     iController->AddCodec(new CodecFlac());
     iController->AddCodec(new CodecMp3());
+    iController->Start();
 }
 
 void SuiteCodecStream::Test()
