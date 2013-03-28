@@ -29,9 +29,9 @@ protected:
     void ReadClose();                 // complete the read
     TUint DoPeek();                   // return index of entry without removing it
 protected:
-    TUint iSlots;
-    TUint iSlotsUsed;
-    Mutex iMutexWrite;
+    const TUint iSlots;
+    TUint iSlotsUsed;                 // protected by iMutexWrite
+    mutable Mutex iMutexWrite;
     Mutex iMutexRead;
     Semaphore iSemaRead;
     Semaphore iSemaWrite;

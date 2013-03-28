@@ -25,11 +25,12 @@ TUint FifoBase::Slots() const
 
 TUint FifoBase::SlotsFree() const
 {
-    return iSlots - iSlotsUsed;
+    return iSlots - SlotsUsed();
 }
 
 TUint FifoBase::SlotsUsed() const
 {
+    AutoMutex a(iMutexWrite);
     return iSlotsUsed;
 }
 
@@ -77,7 +78,9 @@ TUint FifoBase::ReadOpen(TUint aTimeoutMs)
 
 void FifoBase::ReadClose()
 {
-    iSlotsUsed--; // not threadsafe but then again, no use of iSlotsUsed is particularly safe (or important)
+    iMutexWrite.Wait();
+    iSlotsUsed--;
+    iMutexWrite.Signal();
     iSemaWrite.Signal();
 }
 
