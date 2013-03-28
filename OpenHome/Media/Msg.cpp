@@ -1345,6 +1345,28 @@ MsgTrack::MsgTrack(AllocatorBase& aAllocator)
 {
 }
 
+const Brx& MsgTrack::Uri() const
+{
+    return iUri;
+}
+
+TUint MsgTrack::IdPipeline() const
+{
+    return iIdPipeline;
+}
+
+void MsgTrack::Initialise(const Brx& aUri, TUint aIdPipeline)
+{
+    iUri.Replace(aUri);
+    iIdPipeline = aIdPipeline;
+}
+
+void MsgTrack::Clear()
+{
+    iUri.SetBytes(0);
+    iIdPipeline = UINT_MAX;
+}
+
 Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
@@ -1974,9 +1996,11 @@ MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBit
     return msg;
 }
 
-MsgTrack* MsgFactory::CreateMsgTrack()
+MsgTrack* MsgFactory::CreateMsgTrack(const Brx& aUri, TUint aIdPipeline)
 {
-    return iAllocatorMsgTrack.Allocate();
+    MsgTrack* msg = iAllocatorMsgTrack.Allocate();
+    msg->Initialise(aUri, aIdPipeline);
+    return msg;
 }
 
 MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)

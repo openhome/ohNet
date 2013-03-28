@@ -1355,7 +1355,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgTrack();
+    msg = iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
     msg->RemoveRef();
@@ -1494,7 +1494,7 @@ void SuiteMsgQueue::Test()
     dequeued->RemoveRef();
 
     // queue can be emptied then reused
-    msg = iMsgFactory->CreateMsgTrack();
+    msg = iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
     queue->Enqueue(msg);
     TEST(!queue->IsEmpty());
     dequeued = queue->Dequeue();
@@ -1588,7 +1588,7 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->LastIn() == TestMsgQueueFlushable::ENone);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);
 
-    Msg* msg = iMsgFactory->CreateMsgTrack();
+    Msg* msg = iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();
     TEST(jiffies == 0);
@@ -1695,7 +1695,7 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgFlush);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);*/
     queue->Enqueue(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs));
-    queue->Enqueue(iMsgFactory->CreateMsgTrack());
+    queue->Enqueue(iMsgFactory->CreateMsgTrack(Brx::Empty(), 0));
     queue->Enqueue(iMsgFactory->CreateMsgSilence(2 * Jiffies::kJiffiesPerMs));
     TEST(queue->Jiffies() == 3 * Jiffies::kJiffiesPerMs);
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgSilence);

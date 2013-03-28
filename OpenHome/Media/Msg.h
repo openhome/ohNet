@@ -443,16 +443,21 @@ private:
 
 class MsgTrack : public Msg
 {
+    friend class MsgFactory;
 public:
-    static const TUint kMaxBytes = 100; // FIXME
+    static const TUint kMaxUriBytes = 1024;
 public:
     MsgTrack(AllocatorBase& aAllocator);
+    const Brx& Uri() const;
+    TUint IdPipeline() const;
+private:
+    void Initialise(const Brx& aUri, TUint aIdPipeline);
 private: // from Msg
+    void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
-    // track uri & meta data
-    TUint iTrackIdPublic;
-    TUint iTrackIdPipeline;
+    Bws<kMaxUriBytes> iUri;
+    TUint iIdPipeline;
 };
 
 class MsgEncodedStream : public Msg
@@ -763,7 +768,7 @@ public:
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
-    MsgTrack* CreateMsgTrack();
+    MsgTrack* CreateMsgTrack(const Brx& aUri, TUint aIdPipeline);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt();

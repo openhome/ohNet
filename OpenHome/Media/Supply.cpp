@@ -20,10 +20,9 @@ Supply::~Supply()
 {
 }
 
-void Supply::OutputTrack(const Brx& /*aUri*/, TUint /*aTrackId*/)
+void Supply::OutputTrack(const Brx& aUri, TUint aTrackId)
 {
-    // FIXME - MsgTrack should take uri and trackId
-    MsgTrack* msg = iMsgFactory.CreateMsgTrack();
+    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aUri, aTrackId);
     iDownStreamElement.Push(msg);
 }
 

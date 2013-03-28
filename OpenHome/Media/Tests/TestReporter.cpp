@@ -235,7 +235,7 @@ Msg* SuiteReporter::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, false, false, NULL);
     case EMsgTrack:
-        return iMsgFactory->CreateMsgTrack();
+        return iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn(kMetaText));
     case EMsgHalt:

@@ -315,7 +315,7 @@ Msg* SuiteStopper::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, this);
     case EMsgTrack:
-        return iMsgFactory->CreateMsgTrack();
+        return iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
     case EMsgEncodedStream:
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
     case EMsgMetaText:

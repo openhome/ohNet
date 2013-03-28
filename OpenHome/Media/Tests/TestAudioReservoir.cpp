@@ -237,7 +237,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
         break;
     case EMsgTrack:
-        msg = iMsgFactory->CreateMsgTrack();
+        msg = iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
         break;
     case EMsgEncodedStream:
         msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, false, false, NULL);

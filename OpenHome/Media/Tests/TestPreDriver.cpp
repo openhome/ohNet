@@ -198,7 +198,7 @@ Msg* SuitePreDriver::Pull()
     case EMsgTrack:
         iNextGeneratedMsg = EMsgAudioPcm; // msg will be discarded by PreDriver which will immediately Pull again.
                                           // Ensure we have something different to deliver to avoid an infinite loop.
-        return iMsgFactory->CreateMsgTrack();
+        return iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
     case EMsgEncodedStream:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
