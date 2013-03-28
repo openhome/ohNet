@@ -222,8 +222,7 @@ Brn ContentProcessor::ReadLine(IProtocolReader& aReader, TUint64& aBytesRemainin
         catch (ReaderError&) {
             line.Set(aReader.ReadRemaining());
             aBytesRemaining -= line.Bytes();
-            if (aBytesRemaining != 0 && line.Bytes() < iPartialLine.MaxBytes()) {
-                ASSERT(iPartialLine.Bytes() == 0);
+            if (aBytesRemaining != 0 && line.Bytes() < iPartialLine.MaxBytes() - iPartialLine.Bytes()) {
                 iPartialLine.Append(line);
             }
             done = true;
