@@ -123,7 +123,6 @@ void DviSubscription::Remove()
     if (service != NULL) {
         service->AddRef();
     }
-    iService = NULL;
     iLock.Signal();
     if (service != NULL) {
         service->RemoveSubscription(iSid);
