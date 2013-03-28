@@ -34,7 +34,7 @@ class IProtocolManager : public IProtocolSet
 public:
     virtual ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const = 0;
     virtual ContentProcessor* GetAudioProcessor() const = 0;
-    virtual TBool OkToSeek(TUint aTrackId) const = 0;
+    virtual TBool IsCurrentTrack(TUint aTrackId) const = 0;
 };
 
 class IProtocolReader : public IReader
@@ -137,7 +137,7 @@ private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;
     ContentProcessor* GetAudioProcessor() const;
-    TBool OkToSeek(TUint aTrackId) const;
+    TBool IsCurrentTrack(TUint aTrackId) const;
 private:
     IPipelineIdProvider& iIdProvider;
     IFlushIdProvider& iFlushIdProvider;

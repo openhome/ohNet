@@ -148,8 +148,8 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     IStreamHandler* sh = streamInfo.StreamHandler();
-    if (!sh->OkToPlay(0, streamInfo.StreamId())) { // FIXME - need a trackId
-        /*TUint flushId = */sh->TryStop(0, streamInfo.StreamId()); // FIXME - need a trackId
+    if (!sh->OkToPlay(iTrackId, streamInfo.StreamId())) {
+        /*TUint flushId = */sh->TryStop(iTrackId, streamInfo.StreamId());
         iFlushStream = true;
         aMsg->RemoveRef();
         return NULL;
@@ -162,6 +162,7 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
+    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

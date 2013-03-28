@@ -81,6 +81,7 @@ private:
     TBool iReportFlushed;
     TBool iFlushStream;
     TUint iTargetFlushId;
+    TUint iTrackId;
 };
 
 } // namespace Media

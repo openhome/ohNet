@@ -77,11 +77,10 @@ void CodecController::AddCodec(CodecBase* aCodec)
     iCodecs.push_back(aCodec);
 }
 
-TBool CodecController::Seek(TUint /*aTrackId*/, TUint aStreamId, TUint aSecondsAbsolute)
+TBool CodecController::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
     AutoMutex a(iLock);
-    // FIXME - check aTrackId
-    if (aStreamId != iStreamId) {
+    if (iTrackId != aTrackId || aStreamId != iStreamId) {
         return false;
     }
     if (iActiveCodec == NULL || !iSeekable) {
@@ -157,7 +156,7 @@ void CodecController::CodecThread()
             iAudioEncoded->Add(remaining);
             if (iActiveCodec == NULL) {
                 // FIXME - send error indication down the pipeline?
-                iExpectedFlushId = iStreamHandler->TryStop(0, iStreamId); // FIXME - need trackId
+                iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
                 continue;
             }
 
@@ -279,7 +278,7 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
     ReleaseAudioEncoded();
-    TUint flushId = iStreamHandler->TrySeek(0, aStreamId, aBytePos); // FIXME - need trackId
+    TUint flushId = iStreamHandler->TrySeek(iTrackId, aStreamId, aBytePos);
     if (flushId != MsgFlush::kIdInvalid) {
         iExpectedFlushId = flushId;
         iStreamPos = aBytePos;
@@ -364,6 +363,7 @@ Msg* CodecController::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
+    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

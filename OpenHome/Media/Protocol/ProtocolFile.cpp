@@ -103,7 +103,7 @@ TBool ProtocolFile::OkToPlay(TUint aTrackId, TUint aStreamId)
 TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     iLock.Wait();
-    const TBool streamIsValid = (iProtocolManager->OkToSeek(aTrackId) && iStreamId == aStreamId);
+    const TBool streamIsValid = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     if (streamIsValid) {
         iSeek = true;
         iSeekPos = (TUint32)aOffset;
@@ -117,11 +117,10 @@ TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
     return iNextFlushId;
 }
 
-TUint ProtocolFile::TryStop(TUint /*aTrackId*/, TUint aStreamId)
+TUint ProtocolFile::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    // FIXME - test aTrackId
     iLock.Wait();
-    const TBool stop = (iStreamId == aStreamId);
+    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStop = true;

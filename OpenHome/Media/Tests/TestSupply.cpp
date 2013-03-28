@@ -181,8 +181,9 @@ Msg* SuiteSupply::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 {
-    // FIXME - validate uri, trackId once these are contained in MsgTrack
     iLastMsg = EMsgTrack;
+    TEST(aMsg->Uri() == Brn(kUri));
+    TEST(aMsg->IdPipeline() == kTrackId);
     return aMsg;
 }
 

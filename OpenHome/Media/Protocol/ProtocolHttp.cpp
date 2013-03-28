@@ -147,7 +147,7 @@ TUint ProtocolHttp::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
     LOG(kMedia, "ProtocolHttp::Seek\n");
 
     iLock.Wait();
-    const TBool streamIsValid = (iProtocolManager->OkToSeek(aTrackId) && iStreamId == aStreamId);
+    const TBool streamIsValid = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     if (streamIsValid) {
         iSeek = true;
         iSeekPos = aOffset;
@@ -161,11 +161,10 @@ TUint ProtocolHttp::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
     return iNextFlushId;
 }
 
-TUint ProtocolHttp::TryStop(TUint /*aTrackId*/, TUint aStreamId)
+TUint ProtocolHttp::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    // FIXME - check aTrackId
     iLock.Wait();
-    const TBool stop = (iStreamId == aStreamId);
+    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStopped = true;

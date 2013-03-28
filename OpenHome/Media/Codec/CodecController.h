@@ -47,7 +47,7 @@ public:
     virtual TBool Recognise(const Brx& aData) = 0;
     virtual void StreamInitialise();
     virtual void Process() = 0;
-    virtual TBool TrySeek(TUint aStreamId, TUint64 aSample) = 0; // FIXME - no obvious point to bool return
+    virtual TBool TrySeek(TUint aStreamId, TUint64 aSample) = 0;
     virtual void StreamCompleted();
 protected:
     CodecBase();
@@ -119,6 +119,7 @@ private:
     TUint iSampleRate;
     TUint64 iStreamLength;
     TUint64 iStreamPos;
+    TUint iTrackId;
 };
 
 } // namespace Codec

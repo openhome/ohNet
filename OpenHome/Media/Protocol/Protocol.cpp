@@ -321,11 +321,10 @@ ContentProcessor* ProtocolManager::GetAudioProcessor() const
     return iAudioProcessor;
 }
 
-TBool ProtocolManager::OkToSeek(TUint /*aTrackId*/) const
+TBool ProtocolManager::IsCurrentTrack(TUint aTrackId) const
 {
     iLock.Wait();
-    // FIXME - MsgTrack needs getter/setter for TrackIdPipeline() before test of iTrackId becomes valid
-    const TBool ok = true;//(iTrackId == aTrackId);
+    const TBool ok = (iTrackId == aTrackId);
     iLock.Signal();
     return ok;
 }
