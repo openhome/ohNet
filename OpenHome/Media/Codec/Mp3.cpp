@@ -3,7 +3,6 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
-#include <OpenHome/Media/Msg.h> // FIXME - needed?
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
 #include <mad.h>
