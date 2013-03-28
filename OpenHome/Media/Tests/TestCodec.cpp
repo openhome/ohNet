@@ -432,10 +432,10 @@ Msg* MsgProcessor::ProcessMsg(MsgQuit* /*aMsg*/)
 
 SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles)
     : Suite("Codec stream tests")
+    , MsgProcessor(iSem)
+    , iJiffies(0)
     , iSem("TCO1", 0)
     , iController(NULL)
-    , iJiffies(0)
-    , MsgProcessor(iSem)
     , iFiles(aFiles)
 {
     Init();
@@ -443,10 +443,10 @@ SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles)
 
 SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles)
     : Suite(aSuiteName)
+    , MsgProcessor(iSem)
+    , iJiffies(0)
     , iSem("TCO1", 0)
     , iController(NULL)
-    , iJiffies(0)
-    , MsgProcessor(iSem)
     , iFiles(aFiles)
 {
     Init();
@@ -658,7 +658,7 @@ void SuiteCodecSeekFromStart::Test()
         TestSeekingFromStart(filename, duration, duration/2);
 
         // Try seeking from start to end of file.
-        Log::Print("SuiteCodecSeek seeking to end: ");
+        Log::Print("SuiteCodecSeekFromStart seeking to end: ");
         TestSeekingFromStart(filename, duration, duration);
         Log::Print(filename);
         Log::Print("\n");
