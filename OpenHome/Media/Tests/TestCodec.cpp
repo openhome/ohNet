@@ -568,6 +568,7 @@ void SuiteCodecSeek::TestSeeking(const Brx& aFilename, TUint aDuration, TUint aS
     iSem.Wait();
     TUint expectedJiffies = ExpectedJiffies(aDuration, aDuration/2, iSeekPos);
     LOG(kMedia, "iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
+    Log::Print("iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
     // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
     TEST(iJiffies >= expectedJiffies - Jiffies::kJiffiesPerSecond);   // Lower bound.
