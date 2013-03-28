@@ -33,7 +33,7 @@ class IPipelineObserver
 {
 public:
     virtual void NotifyPipelineState(EPipelineState aState) = 0;
-    virtual void NotifyTrack() = 0; // FIXME - MsgTrack doesn't contain any data yet
+    virtual void NotifyTrack(const Brx& aUri, TUint aIdPipeline) = 0;
     virtual void NotifyMetaText(const Brx& aText) = 0;
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
@@ -92,7 +92,7 @@ private: // from IStopperObserver
     void PipelineHalted();
     void PipelineFlushed();
 private: // from IPipelinePropertyObserver
-    void NotifyTrack();
+    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -149,7 +149,7 @@ class NullPipelineObserver : public IPipelineObserver // test helper
 {
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack();
+    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -159,7 +159,7 @@ class LoggingPipelineObserver : public IPipelineObserver // test helper
 {
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack();
+    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);

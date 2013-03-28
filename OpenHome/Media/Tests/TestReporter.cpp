@@ -17,6 +17,8 @@ namespace Media {
 
 class SuiteReporter : public Suite, public IPipelineElementUpstream, private IPipelinePropertyObserver
 {
+#define KTrackUri "http://host:port/path/file.ext"
+    static const TUint kTrackId       = 2;
     static const TUint kBitDepth      = 24;
     static const TUint kSampleRate    = 44100;
     static const TUint kBitRate       = kBitDepth * kSampleRate;
@@ -32,7 +34,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IPipelinePropertyObserver
-    void NotifyTrack();
+    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -63,6 +65,8 @@ private:
     TUint iMetaTextUpdates;
     TUint iTimeUpdates;
     TUint iAudioFormatUpdates;
+    Bws<1024> iTrackUri;
+    TUint iTrackIdPipeline;
     Bws<1024> iMetaText;
     TUint iSeconds;
     TUint iTrackDurationSeconds;
@@ -108,8 +112,10 @@ void SuiteReporter::Test()
     Msg* msg = iReporter->Pull();
     msg->RemoveRef();
     expectedTrackUpdates++;
-    expectedMetaTextUpdates++;
+    //expectedMetaTextUpdates++;
     TEST(iTrackUpdates == expectedTrackUpdates);
+    TEST(iTrackUri == Brn(KTrackUri));
+    TEST(iTrackIdPipeline == kTrackId);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
     TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
@@ -235,7 +241,7 @@ Msg* SuiteReporter::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, false, false, NULL);
     case EMsgTrack:
-        return iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
+        return iMsgFactory->CreateMsgTrack(Brn(KTrackUri), kTrackId);
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn(kMetaText));
     case EMsgHalt:
@@ -261,13 +267,16 @@ MsgAudio* SuiteReporter::CreateAudio()
     return audio;
 }
 
-void SuiteReporter::NotifyTrack()
+void SuiteReporter::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
 {
     iTrackUpdates++;
+    iTrackUri.Replace(aUri);
+    iTrackIdPipeline = aIdPipeline;
 }
 
 void SuiteReporter::NotifyMetaText(const Brx& aText)
 {
+    Print("NotifyMetaText\n");
     iMetaTextUpdates++;
     iMetaText.Replace(aText);
 }

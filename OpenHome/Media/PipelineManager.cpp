@@ -345,9 +345,9 @@ void PipelineManager::PipelineFlushed()
     }
 }
 
-void PipelineManager::NotifyTrack()
+void PipelineManager::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
 {
-    iObserver.NotifyTrack();
+    iObserver.NotifyTrack(aUri, aIdPipeline);
 }
 
 void PipelineManager::NotifyMetaText(const Brx& aText)
@@ -383,7 +383,7 @@ void NullPipelineObserver::NotifyPipelineState(EPipelineState /*aState*/)
 {
 }
 
-void NullPipelineObserver::NotifyTrack()
+void NullPipelineObserver::NotifyTrack(const Brx& /*aUri*/, TUint /*aIdPipeline*/)
 {
 }
 
@@ -426,9 +426,11 @@ void LoggingPipelineObserver::NotifyPipelineState(EPipelineState aState)
     Log::Print("Pipeline state change: %s\n", state);
 }
 
-void LoggingPipelineObserver::NotifyTrack()
+void LoggingPipelineObserver::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
 {
-    Log::Print("Pipeline report property: TRACK\n");
+    Log::Print("Pipeline report property: TRACK {uri=");
+    Log::Print(aUri);
+    Log::Print("; idPipeline=%u}\n", aIdPipeline);
 }
 
 void LoggingPipelineObserver::NotifyMetaText(const Brx& aText)

@@ -89,8 +89,9 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
 {
     iSeconds = 0;
     iJiffies = 0;
-    iObserver.NotifyTrack();
-    iObserver.NotifyMetaText(kNullMetaText);
+    iObserver.NotifyTrack(aMsg->Uri(), aMsg->IdPipeline());
+    // FIXME - Graham suggested tracks should contain metatext.  Isn't the case so far.
+    //iObserver.NotifyMetaText(kNullMetaText);
     return aMsg;
 }
 

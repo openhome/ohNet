@@ -12,7 +12,7 @@ namespace Media {
 class IPipelinePropertyObserver
 {
 public:
-    virtual void NotifyTrack() = 0; // FIXME - MsgTrack doesn't contain any data yet
+    virtual void NotifyTrack(const Brx& aUri, TUint aIdPipeline) = 0;
     virtual void NotifyMetaText(const Brx& aText) = 0;
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;

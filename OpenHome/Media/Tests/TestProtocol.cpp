@@ -93,7 +93,7 @@ public:
     int Run();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack();
+    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -297,10 +297,12 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack()
+void TestProtocol::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Log::Print("Pipeline report property: TRACK\n");
+    Log::Print("Pipeline report property: TRACK {uri=");
+    Log::Print(aUri);
+    Log::Print("; idPipeline=%u}\n", aIdPipeline);
 #endif
 }
 

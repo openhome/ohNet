@@ -64,7 +64,7 @@ private:
     void PullUntilQuit();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack();
+    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -422,10 +422,12 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void SuitePipeline::NotifyTrack()
+void SuitePipeline::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Print("Pipeline report property: TRACK\n");
+    Print("Pipeline report property: TRACK {uri=");
+    Print(aUri);
+    Print("; idPipeline=%u}\n", aIdPipeline);
 #endif
 }
 
