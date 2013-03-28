@@ -56,6 +56,7 @@ public: // from IInfoAggregator
 class TestCodecPipelineElementUpstream : public IPipelineElementUpstream, public IStreamHandler
 {
 public:
+    static const TUint kTrackId = 0;
     static const TUint kStreamId = 0;
     static const TUint kDuration = 10;          // Test file duration (in seconds).
     static const TUint kTotalJiffies = kDuration * Jiffies::kJiffiesPerSecond;
@@ -300,6 +301,9 @@ Msg* TestCodecPipelineElementUpstream::Pull()
     Msg* msg = NULL;
 
     if (iPullCount == 0) {
+        msg = iMsgFactory.CreateMsgTrack(Brn("10.2.0.1/someplaylistfile"), kTrackId);
+    }
+    else if (iPullCount == 1) {
         msg = iMsgFactory.CreateMsgEncodedStream(Brn("10.2.0.1/somefile"),
                 Brn("This is an audio file"), iFile->Bytes(), kStreamId, true, false, this);
     }
@@ -386,16 +390,15 @@ Msg* MsgProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
     ASSERTS();
     return NULL;
 }
-Msg* MsgProcessor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+Msg* MsgProcessor::ProcessMsg(MsgDecodedStream* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgDecodedStream\n");
-    return NULL;
+    return aMsg;
 }
-Msg* MsgProcessor::ProcessMsg(MsgTrack* /*aMsg*/)
+Msg* MsgProcessor::ProcessMsg(MsgTrack* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgTrack\n");
-    ASSERTS();
-    return NULL;
+    return aMsg;
 }
 Msg* MsgProcessor::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
