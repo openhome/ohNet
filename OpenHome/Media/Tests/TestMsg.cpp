@@ -111,6 +111,18 @@ private:
     AllocatorInfoLogger iInfoAggregator;
 };
 
+class SuiteTrack : public Suite
+{
+    static const TUint kMsgTrackCount = 1;
+public:
+    SuiteTrack();
+    ~SuiteTrack();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    AllocatorInfoLogger iInfoAggregator;
+};
+
 class SuiteFlush : public Suite
 {
     static const TUint kMsgFlushCount = 1;
@@ -1188,6 +1200,47 @@ void SuiteMetaText::Test()
 }
 
 
+// SuiteTrack
+
+SuiteTrack::SuiteTrack()
+    : Suite("MsgTrack tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgTrackCount, 1, 1, 1, 1, 1);
+}
+
+SuiteTrack::~SuiteTrack()
+{
+    delete iMsgFactory;
+}
+
+void SuiteTrack::Test()
+{
+    // create Track msg, check its uri/id can be retrieved
+    Brn uri("http://host:port/folder/file.ext");
+    TUint id = 3;
+    MsgTrack* msg = iMsgFactory->CreateMsgTrack(uri, id);
+    TEST(msg != NULL);
+    TEST(msg->Uri() == uri);
+    TEST(msg->IdPipeline() == id);
+    msg->RemoveRef();
+
+#ifdef DEFINE_DEBUG
+    // access freed msg (doesn't bother valgrind as this is still allocated memory).  Check uri/id have been cleared.
+    TEST(msg->Uri() != uri);
+    TEST(msg->IdPipeline() != id);
+#endif
+
+    // create second Track msg, check its uri/id can be retrieved
+    uri.Set("http://newhost:newport/newfolder/newfile.newext");
+    id = 6209;
+    msg = iMsgFactory->CreateMsgTrack(uri, id);
+    TEST(msg != NULL);
+    TEST(msg->Uri() == uri);
+    TEST(msg->IdPipeline() == id);
+    msg->RemoveRef();
+}
+
+
 // SuiteFlush
 
 SuiteFlush::SuiteFlush()
@@ -1842,6 +1895,7 @@ void TestMsg()
     runner.Add(new SuiteRamp());
     runner.Add(new SuiteAudioStream());
     runner.Add(new SuiteMetaText());
+    runner.Add(new SuiteTrack());
     runner.Add(new SuiteFlush());
     runner.Add(new SuiteDecodedStream());
     runner.Add(new SuiteMsgProcessor());
