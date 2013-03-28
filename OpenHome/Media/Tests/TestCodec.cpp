@@ -509,6 +509,7 @@ void SuiteCodecStream::Test()
         Reinitialise(filename);
         iSem.Wait();
         LOG(kMedia, "iJiffies: %u, kTotalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
+        Log::Print("iJiffies: %u, kTotalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
         TEST(iJiffies == TestCodecPipelineElementUpstream::kTotalJiffies);
     }
 }
@@ -638,6 +639,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(const Brx& aFilename, TUint a
     iSem.Wait();
     TUint expectedJiffies = ExpectedJiffies(aDuration, 0, iSeekPos);
     LOG(kMedia, "iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
+    Log::Print("iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
     // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
     TEST(iJiffies >= 0);   // Lower bound.
@@ -799,6 +801,7 @@ void SuiteCodecZeroCrossings::Test()
         Reinitialise(filename);
         iSem.Wait();
         LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
+        Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
         TEST(iZeroCrossings >= expectedZeroCrossings-20);
         if (iCodec == AudioFileDescriptor::eCodecMp3) {
             // MP3 encoders/decoders add silence and some samples of random data to start of tracks for filter routines.
