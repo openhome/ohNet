@@ -191,13 +191,13 @@ def build(bld):
             target='CodecMp3')
 
     # Alac
-    #bld.stlib(
-    #         source=[
-    #             'OpenHome/Media/Codec/Alac.cpp',
-    #             'alac_decoder/alac.cpp',
-    #         ],
-    #         use=['ALAC', 'OHNET'],
-    #         target='CodecAlac')
+    bld.stlib(
+             source=[
+                 'OpenHome/Media/Codec/Alac.cpp',
+                 'alac_decoder/alac.cpp',
+             ],
+             use=['ALAC', 'OHNET'],
+             target='CodecAlac')
 
     # Tests
     bld.stlib(
@@ -214,10 +214,10 @@ def build(bld):
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 'OpenHome/Media/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
-                # 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
+                'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
             ],
-            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3'],
+            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac'],
             target='ohMediaPlayerTestUtils')
 
     create_copy_task(
@@ -283,10 +283,10 @@ def build(bld):
                 source='OpenHome/Av/Tests/TestStore.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestStore')
-        # bld.program(
-                # source='OpenHome/Media/Tests/TestProtocolHttpMain.cpp',
-                # use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                # target='TestProtocolHttp')
+        bld.program(
+                source='OpenHome/Media/Tests/TestProtocolHttpMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestProtocolHttp')
         bld.program(
                 source='OpenHome/Media/Tests/TestCodecMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'CodecWav', 'CodecFlac', 'CodecMp3', 'ohMediaPlayerTestUtils'],
