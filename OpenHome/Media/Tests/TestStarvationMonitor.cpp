@@ -291,6 +291,7 @@ Msg* SuiteStarvationMonitor::Pull()
         return msg;
     }
     case EStateHalt:
+        Log::Print("TestStarvationMonitor - generating MsgHalt\n");
         iMsgGenerationState = EStateQuit;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgHalt();

@@ -88,6 +88,7 @@ Msg* StarvationMonitor::Pull()
     if (iStatus == EBuffering && jiffies == 0 && !iPlannedHalt && !iHaltDelivered) {
         iHaltDelivered = true;
         iLock.Signal();
+        Log::Print("StarvationMonitor - generating MsgHalt\n");
         return iMsgFactory.CreateMsgHalt(); // signal that we won't be providing any more audio for a while
     }
     TBool wait = false;
