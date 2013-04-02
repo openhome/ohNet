@@ -17,17 +17,17 @@ namespace Media {
 class HttpHeaderRange : public HttpHeader
 {
 public:
-	static const TUint kEndUnspecified = 0;
+    static const TUint kEndUnspecified = 0;
     static const TUint kTotalUnknown = 0;
 public:
     TUint Start() const;
-	TUint End() const;
+    TUint End() const;
 private:
     virtual TBool Recognise(const Brx& aHeader);
     virtual void Process(const Brx& aValue);
 private:
     TUint iStart;
-	TUint iEnd;
+    TUint iEnd;
 };
 
 class TestHttpSession;
@@ -43,7 +43,7 @@ public:
         eStreamFail = 3,            // Fail part way through streaming.
         eStreamReconnect = 4,       // Server allows reconnection after a failed stream.
         eStreamLive = 5,            // Live streaming.
-        eLiveReconnect = 6        // Client reconnects to commence live streaming.
+        eLiveReconnect = 6          // Client reconnects to commence live streaming.
     };
 public:
     static const Brn kPrefixHttp;
@@ -187,7 +187,7 @@ TUint HttpHeaderRange::Start() const
 
 TUint HttpHeaderRange::End() const
 {
-	return (Received()? iEnd : kEndUnspecified);
+    return (Received()? iEnd : kEndUnspecified);
 }
 
 TBool HttpHeaderRange::Recognise(const Brx& aHeader)
@@ -198,40 +198,40 @@ TBool HttpHeaderRange::Recognise(const Brx& aHeader)
 void HttpHeaderRange::Process(const Brx& aValue)
 {
     iStart = 0;
-	iEnd = kEndUnspecified;
-	TUint indEquals;
-	TUint indHyphen;
-	Brn range;
-	Brn start;
-	Brn end;
+    iEnd = kEndUnspecified;
+    TUint indEquals;
+    TUint indHyphen;
+    Brn range;
+    Brn start;
+    Brn end;
 
     SetReceived();
-	try {
-		indEquals = Ascii::IndexOf(aValue, '=');
-		if (indEquals == aValue.Bytes()) {	// An equals sign does not exist.
-			THROW(HttpError);
-		}
+    try {
+        indEquals = Ascii::IndexOf(aValue, '=');
+        if (indEquals == aValue.Bytes()) {	// An equals sign does not exist.
+            THROW(HttpError);
+        }
 
-		indEquals++; // Shift index so we skip over separator.
-		range = aValue.Split(indEquals, aValue.Bytes()-indEquals);
+        indEquals++; // Shift index so we skip over separator.
+        range = aValue.Split(indEquals, aValue.Bytes()-indEquals);
 
-		indHyphen = Ascii::IndexOf(range, '-');
-		if (indHyphen == range.Bytes()) {	// A hyphen does not exist, so range points are not specified.
-			THROW(HttpError);
-		}
+        indHyphen = Ascii::IndexOf(range, '-');
+        if (indHyphen == range.Bytes()) {	// A hyphen does not exist, so range points are not specified.
+            THROW(HttpError);
+        }
 
-		Brn start(range.Ptr(), indHyphen);		// Get the start value.
-		indHyphen++; // Shift index so we skip over separator.
-		end = range.Split(indHyphen, range.Bytes()-indHyphen);	// Get the end value.
+        Brn start(range.Ptr(), indHyphen);		// Get the start value.
+        indHyphen++; // Shift index so we skip over separator.
+        end = range.Split(indHyphen, range.Bytes()-indHyphen);	// Get the end value.
 
-		iStart = Ascii::Uint(start);
-		if (end.Bytes() == 0) {	// End range may be empty.
-			iEnd = 0;
-		}
-		else {
-			iEnd = Ascii::Uint(end);
-		}
-	}
+        iStart = Ascii::Uint(start);
+        if (end.Bytes() == 0) {	// End range may be empty.
+            iEnd = 0;
+        }
+        else {
+            iEnd = Ascii::Uint(end);
+        }
+    }
     catch (AsciiError&) {
         THROW(HttpError);
     }
