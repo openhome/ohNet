@@ -215,6 +215,9 @@ void SuiteStarvationMonitor::Test()
     do {
         TEST(!iSm->PullWouldBlock());
         TEST(iSm->iStatus == StarvationMonitor::ERunning);
+        if (iSm->iStatus != StarvationMonitor::ERunning) {
+            Print("ERROR: iSm->iStatus = %u\n", iSm->iStatus);
+        }
         msg = iSm->Pull();
         (void)msg->Process(*this);
         TEST(iLastMsg == EMsgAudioPcm);
@@ -233,6 +236,7 @@ void SuiteStarvationMonitor::Test()
     GenerateUpstreamMsgs(EStateQuit);
     msg = iSm->Pull();
     (void)msg->Process(*this);
+    Print("iLastMsg=%u\n", iLastMsg);
     TEST(iLastMsg == EMsgQuit);
     msg->RemoveRef();
 }
