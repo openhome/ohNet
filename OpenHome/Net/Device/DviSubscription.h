@@ -61,7 +61,7 @@ public:
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
-    ~DviSubscription();
+    virtual ~DviSubscription();
     IPropertyWriter* CreateWriter();
     void Expired();
     void DoRenew(TUint& aSeconds);
