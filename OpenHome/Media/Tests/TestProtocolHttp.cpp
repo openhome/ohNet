@@ -180,6 +180,9 @@ using namespace OpenHome::Media;
 
 // HttpHeaderRange
 
+const TUint HttpHeaderRange::kEndUnspecified;
+const TUint HttpHeaderRange::kTotalUnknown;
+
 TUint HttpHeaderRange::Start() const
 {
     return (Received()? iStart : 0);
@@ -187,7 +190,7 @@ TUint HttpHeaderRange::Start() const
 
 TUint HttpHeaderRange::End() const
 {
-    return (Received()? iEnd : HttpHeaderRange::kEndUnspecified);
+    return (Received()? iEnd : kEndUnspecified);
 }
 
 TBool HttpHeaderRange::Recognise(const Brx& aHeader)
@@ -198,7 +201,7 @@ TBool HttpHeaderRange::Recognise(const Brx& aHeader)
 void HttpHeaderRange::Process(const Brx& aValue)
 {
     iStart = 0;
-    iEnd = HttpHeaderRange::kEndUnspecified;
+    iEnd = kEndUnspecified;
     TUint indEquals;
     TUint indHyphen;
     Brn range;
