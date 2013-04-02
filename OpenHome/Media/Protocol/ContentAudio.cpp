@@ -24,10 +24,14 @@ TBool ContentAudio::Recognise(const Brx& /*aUri*/, const Brx& /*aMimeType*/, con
 ProtocolStreamResult ContentAudio::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
 {
     ProtocolStreamResult res = EProtocolStreamSuccess;
+    TUint bytes = EncodedAudio::kMaxBytes;
     const TBool finite = (aTotalBytes!=0);
     try {
         for (;;) {
-            Brn buf = aReader.Read(EncodedAudio::kMaxBytes);
+            if (finite && aTotalBytes < bytes) {
+                bytes = (TUint)aTotalBytes;
+            }
+            Brn buf = aReader.Read(bytes);
             iSupply.OutputData(buf);
             if (finite) {
                 aTotalBytes -= buf.Bytes();
