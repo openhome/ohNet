@@ -30,7 +30,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     ASSERT(iNormalMax < iGorgeSize);
     ASSERT(iRampUpSize < iGorgeSize);
     UpdateStatus(EBuffering);
-    iThread = new ThreadFunctor("STRV", MakeFunctor(*this, &StarvationMonitor::PullerThread), kPriorityNormal); // FIXME - want a priority that's higher that ohNet's threads
+    iThread = new ThreadFunctor("STRV", MakeFunctor(*this, &StarvationMonitor::PullerThread), kPriorityVeryHigh); // FIXME - review thread priorities
     iThread->Start();
 }
 

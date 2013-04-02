@@ -136,6 +136,7 @@ void SuiteStarvationMonitor::Test()
     TEST(iBuffering);
 
     // Add 0x7f filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
+    Print("\nAdd audio until would block\n");
     GenerateUpstreamMsgs(EStateAudioFillInitial);
     while (iSm->Jiffies() < kGorgeSize) {
         Thread::Sleep(10); // last msg may not quite have been enqueued when we switched threads
@@ -147,6 +148,7 @@ void SuiteStarvationMonitor::Test()
 
     Msg* msg;
     // Pull all audio.  Check the last bit ramps down.
+    Print("\nPull all audio\n");
     do {
         TEST(!iSm->PullWouldBlock());
         TUint prevJiffies = iSm->Jiffies();
@@ -175,6 +177,7 @@ void SuiteStarvationMonitor::Test()
     TEST(iBuffering);
 
     // Check halt message is sent and pull would then block
+    Print("\nCheck for halt then pull would block\n");
     msg = iSm->Pull();
     (void)msg->Process(*this);
     TEST(iLastMsg == EMsgHalt);
@@ -183,11 +186,13 @@ void SuiteStarvationMonitor::Test()
 
     // Start filling with 0x7f filled audio again.  Check pull would still block as we grow beyond regular limit
     // Continue adding audio until we reach gorge size.  Check enqueue would now block.
+    Print("\nRe-fill until gorge size\n");
     GenerateUpstreamMsgs(EStateAudioFillPostStarvation);
     WaitForEnqueueToBlock();
     TEST(!iBuffering);
 
     // Pull audio.  Check it ramps up.
+    Print("\nPull audio, checking for ramp\n");
     TUint jiffies = iSm->Jiffies();
     do {
         TEST(!iSm->PullWouldBlock());
@@ -201,6 +206,7 @@ void SuiteStarvationMonitor::Test()
     TEST(!iBuffering);
 
     // Check enqueues would block until size drops below normal max
+    Print("\nPull until below normal max\n");
     do {
         TEST(!iSm->PullWouldBlock());
         TEST(iSm->EnqueueWouldBlock());
@@ -211,7 +217,7 @@ void SuiteStarvationMonitor::Test()
     TEST(!iBuffering);
 
     // Add Halt.  Check queue can be drained without ramping down
-    Print("Drain without ramping down\n");
+    Print("\nDrain without ramping down\n");
     GenerateUpstreamMsgs(EStateHalt);
     do {
         TEST(!iSm->PullWouldBlock());
