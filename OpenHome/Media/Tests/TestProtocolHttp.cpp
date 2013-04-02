@@ -187,7 +187,7 @@ TUint HttpHeaderRange::Start() const
 
 TUint HttpHeaderRange::End() const
 {
-    return (Received()? iEnd : kEndUnspecified);
+    return (Received()? iEnd : HttpHeaderRange::kEndUnspecified);
 }
 
 TBool HttpHeaderRange::Recognise(const Brx& aHeader)
@@ -198,7 +198,7 @@ TBool HttpHeaderRange::Recognise(const Brx& aHeader)
 void HttpHeaderRange::Process(const Brx& aValue)
 {
     iStart = 0;
-    iEnd = kEndUnspecified;
+    iEnd = HttpHeaderRange::kEndUnspecified;
     TUint indEquals;
     TUint indHyphen;
     Brn range;
