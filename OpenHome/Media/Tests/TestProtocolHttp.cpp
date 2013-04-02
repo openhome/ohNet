@@ -836,19 +836,16 @@ void SuiteHttp::Test()
     //Debug::SetLevel(Debug::kHttp);
     Debug::SetLevel(Debug::kMedia);
 
-    TestStreamFull();
-    iHttpSession->Reset();
-    iSupply->Reset();
-    //TestServerReject();
-    //iHttpSession->Reset();
-    //iSupply->Reset();
-    //TestStreamReconnect();
-    //iHttpSession->Reset();
-    //iSupply->Reset();
-
-    //TestStreamLive();
-    //iHttpSession->Reset();
-    //iSupply->Reset();
+    Functor tests[] = { MakeFunctor(*this, &SuiteHttp::TestStreamFull)
+                       ,MakeFunctor(*this, &SuiteHttp::TestServerReject)
+                       ,MakeFunctor(*this, &SuiteHttp::TestStreamReconnect)
+                       //,MakeFunctor(*this, &SuiteHttp::TestStreamLive)
+                      };
+    for (TUint i=0; i<sizeof(tests)/sizeof(tests[0]); i++) {
+        tests[i]();
+        iHttpSession->Reset();
+        iSupply->Reset();
+    }
 }
 
 void SuiteHttp::TestStreamFull()
