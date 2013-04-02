@@ -205,8 +205,10 @@ void DviDevice::AddService(DviService* aService)
 {
     ASSERT(iEnabled == eDisabled);
     ASSERT(!Root()->HasService(aService->ServiceType()));
+    iServiceLock.Wait();
     iServices.push_back(aService);
     aService->AddRef();
+    iServiceLock.Signal();
     ConfigChanged();
 }
 
