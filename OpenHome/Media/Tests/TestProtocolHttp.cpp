@@ -104,6 +104,7 @@ class TestHttpSupplier : public ISupply
 {
 public:
     TestHttpSupplier();
+    virtual ~TestHttpSupplier();
 public:
     TUint TrackCount();
     TUint StreamCount();
@@ -127,6 +128,7 @@ class TestHttpPipelineProvider : public IPipelineIdProvider
 {
 public:
     TestHttpPipelineProvider();
+    virtual ~TestHttpPipelineProvider();
 public: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
@@ -313,9 +315,9 @@ const Uri TestHttpServer::ServingUri() const
 // TestHttpSession
 
 TestHttpSession::TestHttpSession(const Brx& aFilename, TestHttpServer* aServer)
-    : iFilename(aFilename)
+    : iErrorStatus(&HttpStatus::kOk)
     , iServer(aServer)
-    , iErrorStatus(&HttpStatus::kOk)
+    , iFilename(aFilename)
     , iBuf(kMaxWriteBufBytes)
 {
     // Try opening the file.
@@ -668,6 +670,10 @@ TestHttpSupplier::TestHttpSupplier()
 {
 }
 
+TestHttpSupplier::~TestHttpSupplier()
+{
+}
+
 TUint TestHttpSupplier::TrackCount()
 {
     return iTrackCount;
@@ -691,9 +697,8 @@ void TestHttpSupplier::Reset()
     iDataTotal = 0;
 }
 
-void TestHttpSupplier::OutputTrack(const Brx& aUri, TUint aTrackId)
+void TestHttpSupplier::OutputTrack(const Brx& /*aUri*/, TUint aTrackId)
 {
-    aUri, aTrackId;
     iCurrTrackId = aTrackId;
     iTrackCount++;
     Log::Print("><TestHttpSupplier::OutputTrack %u\n", aTrackId);
@@ -737,6 +742,10 @@ void TestHttpSupplier::OutputQuit()
 TestHttpPipelineProvider::TestHttpPipelineProvider()
     : iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
+{
+}
+
+TestHttpPipelineProvider::~TestHttpPipelineProvider()
 {
 }
 
