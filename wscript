@@ -120,7 +120,7 @@ def build(bld):
                 'OpenHome/Media/Stopper.cpp',
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
-                'OpenHome/Media/PipelineManager.cpp',
+                'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
                 'OpenHome/Media/Codec/Container.cpp',

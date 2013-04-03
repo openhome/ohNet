@@ -5,7 +5,7 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
 #include <OpenHome/Media/Protocol/ProtocolFile.h>
-#include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Wav.h>
 #include <OpenHome/Media/Codec/Mp3.h>
@@ -100,7 +100,7 @@ private: // from IPipelineObserver
 private:
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
-    PipelineManager* iPipeline;
+    Pipeline* iPipeline;
     Net::DvDeviceStandard* iDevice;
     DriverSongcastSender* iDriver;
     Brh iUrl;
@@ -167,7 +167,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     : iUrl(aUrl)
     , iStreamId(0)
 {
-    iPipeline = new PipelineManager(iInfoAggregator, *this, kMaxDriverJiffies);
+    iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());

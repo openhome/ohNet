@@ -39,7 +39,7 @@ public:
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
     
-class PipelineManager : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
     static const TUint kMsgCountEncodedAudio    = 512;
@@ -66,8 +66,8 @@ class PipelineManager : public ISupply, public IPipelineElementUpstream, public 
     static const TUint kStarvationMonitorGorgeSize           = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kJiffiesPerMs * 100;
 public:
-    PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes);
-    virtual ~PipelineManager();
+    Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes);
+    virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
     MsgFactory& Factory();
