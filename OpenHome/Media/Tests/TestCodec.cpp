@@ -1,5 +1,6 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Codec/Alac.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/Flac.h>
@@ -29,7 +30,8 @@ public:
         eCodecWav = 0,
         eCodecFlac = 1,
         eCodecMp3 = 2,
-        eCodecUnknown = 3,
+        eCodecAlac = 3,
+        eCodecUnknown = 4,
     };
 public:
     AudioFileDescriptor(const Brx& aFilename, TUint aBitDepth, TUint aChannels, ECodec aCodec);
@@ -497,6 +499,7 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iController->AddCodec(new CodecWav());
     iController->AddCodec(new CodecFlac());
     iController->AddCodec(new CodecMp3());
+    iController->AddCodec(new CodecAlac());
     iController->Start();
 }
 
@@ -908,6 +911,7 @@ void TestCodec()
     stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-24bit.flac"), 24, 2, AudioFileDescriptor::eCodecFlac));
     stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-128k.mp3"), 24, 1, AudioFileDescriptor::eCodecMp3));
     stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-128k.mp3"), 24, 2, AudioFileDescriptor::eCodecMp3));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.m4a"), 16, 2, AudioFileDescriptor::eCodecAlac));
 
     std::vector<AudioFileDescriptor> invalidFiles;
     //invalidFiles.push_back(AudioFileDescriptor(Brn("config.log"), 16, 1, AudioFileDescriptor::eCodecUnknown));

@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
 #include <OpenHome/Media/Protocol/ProtocolFile.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/Codec/Alac.h>
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Wav.h>
 #include <OpenHome/Media/Codec/Mp3.h>
@@ -172,6 +173,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
     iPipeline->AddCodec(new Codec::CodecMp3());
+    iPipeline->AddCodec(new Codec::CodecAlac());
     iPipeline->Start();
 
     iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
@@ -346,6 +348,7 @@ int CDECL main(int aArgc, char* aArgv[])
     http://10.2.9.146:26125/content/c2/b16/f44100/d35587-co6318.flac
     http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3
     file:///c:/test.wav
+    http://10.2.11.131:9000/disk/NON-DLNA/music/O0$1$4I4009/Waiting%20for%20the%207.18.m4a
     */
     OptionParser parser;
     OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
