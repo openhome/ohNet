@@ -505,6 +505,7 @@ void SuiteCodecStream::Test()
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
         Brn filename((*it).Filename());
+        AudioFileDescriptor::ECodec codec = (*it).Codec();
 
         // Try streaming a full file.
         Log::Print("SuiteCodecStream: ");
@@ -512,9 +513,19 @@ void SuiteCodecStream::Test()
         Log::Print("\n");
         Reinitialise(filename);
         iSem.Wait();
-        LOG(kMedia, "iJiffies: %u, kTotalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
-        //Log::Print("iJiffies: %u, kTotalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
-        TEST(iJiffies == TestCodecPipelineElementUpstream::kTotalJiffies);
+        if (codec == AudioFileDescriptor::eCodecMp3) {
+            // LAME FAQ suggests at least ~1057 and ~288 samples can be added to start and end of track, respectively.
+            // For our 44.1KHz tracks, we have 1368 extra samples, ~1751040 extra jiffies.
+            TUint totalJiffies = TestCodecPipelineElementUpstream::kTotalJiffies + 1751040;
+            LOG(kMedia, "iJiffies: %u, totalJiffies: %u\n", iJiffies, totalJiffies);
+            //Log::Print("iJiffies: %u, totalJiffies: %u\n", iJiffies, totalJiffies);
+            TEST(iJiffies == totalJiffies);
+        }
+        else {
+            LOG(kMedia, "iJiffies: %u, totalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
+            //Log::Print("iJiffies: %u, totalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
+            TEST(iJiffies == TestCodecPipelineElementUpstream::kTotalJiffies);
+        }
     }
 }
 
@@ -808,9 +819,10 @@ void SuiteCodecZeroCrossings::Test()
         //Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
         TEST(iZeroCrossings >= expectedZeroCrossings-20);
         if (iCodec == AudioFileDescriptor::eCodecMp3) {
-            // MP3 encoders/decoders add silence and some samples of random data to start of tracks for filter routines.
-            // LAME FAQ suggests this is for 1057 samples.
-            TEST(iZeroCrossings <= expectedZeroCrossings+100);
+            // MP3 encoders/decoders add silence and some samples of random data to
+            // start and end of tracks for filter routines.
+            // LAME FAQ suggests this is for at least 1057 samples at start and 288 at end.
+            TEST(iZeroCrossings <= expectedZeroCrossings+160);
         }
         else {
             TEST(iZeroCrossings <= expectedZeroCrossings+15);
