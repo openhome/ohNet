@@ -50,9 +50,9 @@ private:
 
 Mpeg4Box::Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent, const TChar* aIdName)
     : iController(aController)
+    , iParent(aParent)
     , iBytesRead(0)
     , iBoxSize(0)
-    , iParent(aParent)
 {
     ExtractHeaderId();
     if (aIdName != NULL)
