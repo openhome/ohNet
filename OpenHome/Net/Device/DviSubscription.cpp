@@ -57,6 +57,7 @@ DviSubscription::DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropert
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
     iTimer = new Timer(iDvStack.Env(), functor);
     DoRenew(aDurationSecs);
+    iDvStack.Env().AddObject(this);
 }
 
 void DviSubscription::Start(DviService& aService)
@@ -240,6 +241,20 @@ TBool DviSubscription::PropertiesInitialised() const
     return initialised;
 }
 
+void DviSubscription::ListObjectDetails() const
+{
+    Log::Print("  DviSubscription: addr=%p, serviceType=", this);
+    if (iService != NULL) {
+        Log::Print(iService->ServiceType().FullName());
+    }
+    else {
+        Log::Print("%s", "NULL");
+    }
+    Log::Print(", sid=");
+    Log::Print(iSid);
+    Log::Print(", refCount=%u, seqNum=%u\n", iRefCount, iSequenceNumber);
+}
+
 DviSubscription::~DviSubscription()
 {
     iLock.Wait();
@@ -253,6 +268,7 @@ DviSubscription::~DviSubscription()
     if (iUserData != NULL) {
         iUserData->Release();
     }
+    iDvStack.Env().RemoveObject(this);
 }
 
 void DviSubscription::Expired()

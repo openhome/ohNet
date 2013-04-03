@@ -272,9 +272,10 @@ void HeaderAcceptLanguage::AddPrioritisedLanguage(std::vector<PrioritisedLanguag
 
 // SubscriptionDataUpnp
 
-SubscriptionDataUpnp::SubscriptionDataUpnp(const Endpoint& aSubscriber, const Brx& aSubscriberPath)
+SubscriptionDataUpnp::SubscriptionDataUpnp(const Endpoint& aSubscriber, const Brx& aSubscriberPath, const Http::EVersion aHttpVersion)
     : iSubscriber(aSubscriber)
     , iSubscriberPath(aSubscriberPath)
+    , iHttpVersion(aHttpVersion)
 {
 }
 
@@ -286,6 +287,11 @@ const Endpoint& SubscriptionDataUpnp::Subscriber() const
 const Brx& SubscriptionDataUpnp::SubscriberPath() const
 {
     return iSubscriberPath;
+}
+
+const Http::EVersion SubscriptionDataUpnp::HttpVersion() const
+{
+    return iHttpVersion;
 }
 
 const void* SubscriptionDataUpnp::Data() const
@@ -302,7 +308,7 @@ void SubscriptionDataUpnp::Release()
 // PropertyWriterUpnp
 
 PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
-                                       const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber)
+                                       const Brx& aSubscriberPath, const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber)
     : iDvStack(aDvStack)
 {
     iSocket.Open(aDvStack.Env());
@@ -329,7 +335,9 @@ PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPubli
     writer.Write(aSid);
     writer.WriteFlush();
 
-    iWriterEvent->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+    if (aHttpVersion == Http::eHttp11) {
+        iWriterEvent->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+    }
 
     writer = iWriterEvent->WriteHeaderField(kUpnpHeaderSeq);
     writer.WriteUint(aSequenceNumber);
@@ -337,7 +345,9 @@ PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPubli
 
     iWriterEvent->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterEvent->WriteFlush();
-    iWriterChunked->SetChunked(true);
+    if (aHttpVersion == Http::eHttp11) {
+        iWriterChunked->SetChunked(true);
+    }
 
     iWriteBuffer->Write(Brn("<?xml version=\"1.0\"?>"));
     iWriteBuffer->Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
@@ -425,7 +435,7 @@ IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserD
     }
     Endpoint publisher(iPort, iAdapter);
     const SubscriptionDataUpnp* data = reinterpret_cast<const SubscriptionDataUpnp*>(aUserData->Data());
-    return new PropertyWriterUpnp(iDvStack, publisher, data->Subscriber(), data->SubscriberPath(), aSid, aSequenceNumber);
+    return new PropertyWriterUpnp(iDvStack, publisher, data->Subscriber(), data->SubscriberPath(), data->HttpVersion(), aSid, aSequenceNumber);
 }
 
 void PropertyWriterFactory::NotifySubscriptionCreated(const Brx& /*aSid*/)
@@ -697,7 +707,7 @@ void DviSessionUpnp::Subscribe()
     TUint duration = iHeaderTimeout.Timeout();
     Brh sid;
     device->CreateSid(sid);
-    SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri());
+    SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri(), iReaderRequest->Version());
     DviSubscription* subscription = new DviSubscription(iDvStack, *device, *iPropertyWriterFactory, data, sid, duration);
     iPropertyWriterFactory->SubscriptionAdded(*subscription);
     iDvStack.SubscriptionManager().AddSubscription(*subscription);
@@ -874,7 +884,9 @@ void DviSessionUpnp::WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeTyp
         Http::WriteHeaderContentLength(*iWriterResponse, aTotalBytes);
     }
     else {
-        iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+        if (iReaderRequest->Version() == Http::eHttp11) { 
+            iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+        }
     }
     if (aMimeType != NULL) {
         IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
@@ -885,7 +897,9 @@ void DviSessionUpnp::WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeTyp
     Http::WriteHeaderConnectionClose(*iWriterResponse);
     iWriterResponse->WriteFlush();
     if (aTotalBytes == 0) {
-        iWriterChunked->SetChunked(true);
+        if (iReaderRequest->Version() == Http::eHttp11) { 
+            iWriterChunked->SetChunked(true);
+        }
     }
     iResponseStarted = true;
 }
@@ -1070,11 +1084,15 @@ void DviSessionUpnp::InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescr
     iWriterResponse->WriteHeader(kUpnpHeaderExt, Brx::Empty());
     iWriterResponse->WriteHeader(Http::kHeaderContentType, Brn("text/xml; charset=\"utf-8\""));
     WriteServerHeader(*iWriterResponse);
-    iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+    if (iReaderRequest->Version() == Http::eHttp11) { 
+        iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+    }
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
 
-    iWriterChunked->SetChunked(true);
+    if (iReaderRequest->Version() == Http::eHttp11) { 
+        iWriterChunked->SetChunked(true);
+    }
 
     iWriterBuffer->Write(Brn("<?xml version=\"1.0\"?>"));
     iWriterBuffer->Write(Brn("<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"));
@@ -1103,11 +1121,15 @@ void DviSessionUpnp::InvocationWriteStart()
     iWriterResponse->WriteHeader(kUpnpHeaderExt, Brx::Empty());
     iWriterResponse->WriteHeader(Http::kHeaderContentType, Brn("text/xml; charset=\"utf-8\""));
     WriteServerHeader(*iWriterResponse);
-    iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+    if (iReaderRequest->Version() == Http::eHttp11) { 
+        iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+    }
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
 
-    iWriterChunked->SetChunked(true);
+    if (iReaderRequest->Version() == Http::eHttp11) { 
+        iWriterChunked->SetChunked(true);
+    }
 
     iWriterBuffer->Write(Brn("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><u:"));
     iWriterBuffer->Write(iHeaderSoapAction.Action());

@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <vector>
 #include <map>
@@ -42,7 +43,7 @@ class DviDevice;
 class DviService;
 class DvStack;
 
-class DviSubscription
+class DviSubscription : private IStackObject
 {
 public:
     DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
@@ -57,8 +58,10 @@ public:
     void WriteChanges();
     const Brx& Sid() const;
     TBool PropertiesInitialised() const;
+private: // from IStackObject
+    void ListObjectDetails() const;
 private:
-    ~DviSubscription();
+    virtual ~DviSubscription();
     IPropertyWriter* CreateWriter();
     void Expired();
     void DoRenew(TUint& aSeconds);

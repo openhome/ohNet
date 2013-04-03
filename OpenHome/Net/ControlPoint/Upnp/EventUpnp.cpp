@@ -134,13 +134,28 @@ void EventSessionUpnp::Run()
             else {
                 TUint length = iHeaderContentLength.ContentLength();
                 if (length == 0) {
-                    THROW(HttpError);
-                }
-                entity.Grow(length);
-                while (length > 0) {
-                    TUint readBytes = (length<kMaxReadBytes? length : kMaxReadBytes);
-                    entity.Append(iReadBuffer->Read(readBytes));
-                    length -= readBytes;
+                    // no Content-Length header, so read until remote socket closed
+                    Bwh buffer(kMaxReadBytes);
+                    buffer.Append(iReadBuffer->Snaffle());
+                    for (;;) {
+                        entity.Grow(entity.Bytes() + buffer.Bytes());
+                        entity.Append(buffer);
+                        buffer.SetBytes(0);
+                        try {
+                            Read(buffer);
+                        }
+                        catch (ReaderError) {
+                            // thrown for remote socket closed or network error 
+                            break;
+                        }
+                    }
+                } else {
+                    entity.Grow(length);
+                    while (length > 0) {
+                        TUint readBytes = (length<kMaxReadBytes? length : kMaxReadBytes);
+                        entity.Append(iReadBuffer->Read(readBytes));
+                        length -= readBytes;
+                    }
                 }
             }
 

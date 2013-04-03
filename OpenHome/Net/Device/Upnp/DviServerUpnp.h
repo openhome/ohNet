@@ -86,9 +86,10 @@ private:
 class SubscriptionDataUpnp : public IDviSubscriptionUserData
 {
 public:
-    SubscriptionDataUpnp(const Endpoint& aSubscriber, const Brx& aSubscriberPath);
+    SubscriptionDataUpnp(const Endpoint& aSubscriber, const Brx& aSubscriberPath, const Http::EVersion aHttpVersion);
     const Endpoint& Subscriber() const;
     const Brx& SubscriberPath() const;
+    const Http::EVersion HttpVersion() const;
     virtual const void* Data() const;
     virtual void Release();
 private:
@@ -96,13 +97,14 @@ private:
 private:
     Endpoint iSubscriber;
     Brh iSubscriberPath;
+    Http::EVersion iHttpVersion;
 };
 
 class PropertyWriterUpnp : public PropertyWriter
 {
 public:
     PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
-                       const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber);
+                       const Brx& aSubscriberPath, const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber);
 private: // IPropertyWriter
     ~PropertyWriterUpnp();
     void PropertyWriteEnd();
