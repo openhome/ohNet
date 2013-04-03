@@ -220,6 +220,7 @@ def build(bld):
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac'],
             target='ohMediaPlayerTestUtils')
 
+    # Copy files for codec tests.
     create_copy_task(
         bld,
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
@@ -227,7 +228,27 @@ def build(bld):
 
     create_copy_task(
         bld,
+        bld.path.ant_glob('dependencies/AnyPlatform/ohWafHelpers/filetasks.py'),
+        '')
+
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('projectdata/dependencies.json'),
+        '')
+
+    create_copy_task(
+        bld,
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
+        'TestShell_resources')
+
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('dependencies/AnyPlatform/ohWafHelpers/filetasks.py'),
+        'TestShell_resources')
+
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('projectdata/dependencies.json'),
         'TestShell_resources')
 
     if not bld.env.nolink:

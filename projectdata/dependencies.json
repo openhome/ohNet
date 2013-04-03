@@ -23,7 +23,7 @@
 	{
 		"name": "TestTones",
 		"type": "external",
-		"version": "1.1",
+		"version": "1.2",
 		"archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
 		"dest": "dependencies/AnyPlatform/TestTones/"
 	}

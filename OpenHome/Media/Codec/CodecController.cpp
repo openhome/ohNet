@@ -135,7 +135,7 @@ void CodecController::CodecThread()
                 if (msg != NULL) {
                     Queue(msg);
                 }
-            } while (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < kMaxRecogniseBytes));
+            } while (!iQuit && (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < kMaxRecogniseBytes)));
             if (iQuit) {
                 break;
             }

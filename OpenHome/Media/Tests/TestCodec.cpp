@@ -468,7 +468,6 @@ SuiteCodecStream::~SuiteCodecStream()
     delete iInfoAggregator;
     delete iElementDownstream;
     delete iElementUpstream;
-    
 }
 
 void SuiteCodecStream::Init()
@@ -903,18 +902,20 @@ void TestCodecInfoAggregator::Register(Av::IInfoProvider& /*aProvider*/, std::ve
 void TestCodec()
 {
     std::vector<AudioFileDescriptor> stdFiles;
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono.wav"), 16, 1, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo.wav"), 16, 2, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-l5-16bit.flac"), 16, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-16bit.flac"), 16, 2, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-l5-24bit.flac"), 24, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-24bit.flac"), 24, 2, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-128k.mp3"), 24, 1, AudioFileDescriptor::eCodecMp3));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-128k.mp3"), 24, 2, AudioFileDescriptor::eCodecMp3));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.m4a"), 16, 2, AudioFileDescriptor::eCodecAlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k.wav"), 16, 1, AudioFileDescriptor::eCodecWav));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.wav"), 16, 2, AudioFileDescriptor::eCodecWav));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k-l5-16bit.flac"), 16, 1, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-l5-16bit.flac"), 16, 2, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k-l5-24bit.flac"), 24, 1, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-l5-24bit.flac"), 24, 2, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k-128k.mp3"), 24, 1, AudioFileDescriptor::eCodecMp3));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-128k.mp3"), 24, 2, AudioFileDescriptor::eCodecMp3));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k.m4a"), 16, 1, AudioFileDescriptor::eCodecAlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.m4a"), 16, 2, AudioFileDescriptor::eCodecAlac));
 
     std::vector<AudioFileDescriptor> invalidFiles;
-    //invalidFiles.push_back(AudioFileDescriptor(Brn("config.log"), 16, 1, AudioFileDescriptor::eCodecUnknown));
+    invalidFiles.push_back(AudioFileDescriptor(Brn("filetasks.py"), 16, 1, AudioFileDescriptor::eCodecUnknown));          // Large invalid file.
+    invalidFiles.push_back(AudioFileDescriptor(Brn("dependencies.json"), 16, 1, AudioFileDescriptor::eCodecUnknown));   // Short invalid file.
 
     Runner runner("Codec tests\n");
     runner.Add(new SuiteCodecStream(stdFiles));
