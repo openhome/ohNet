@@ -112,6 +112,7 @@ public:
     static const TUint kMedia          = 1<<16;
     static const TUint kBonjour        = 1<<17;
     static const TUint kDvDevice       = 1<<18;
+    static const TUint kCodec          = 1<<19;
     static const TUint kError          = 1<<30;
 
     static const TUint kAll            = 0x7FFFFFFF;
