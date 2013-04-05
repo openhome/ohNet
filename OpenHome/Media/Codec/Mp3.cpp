@@ -177,14 +177,16 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     const TChar* kXing = "Xing";
     const TChar* kInfo = "Info";
     TBool found = false;
-
-    TUint32 value;
-    const TChar* check = (const TChar*)&value;
+    Brn value;
+    const TChar* check;
 
     TUint offBytes = 0x15;
     if (aHeader.Channels() == 1) {
-        value = Converter::BeUint32At(aHeaderData, offBytes);
-        //LOG(kCodec, "Xing check: %08x at offbytes: %x\n", value, offBytes);
+        value = aHeaderData.Split(offBytes);
+        check = (const TChar*) value.Ptr();
+        //LOG(kCodec, "Xing check at offbytes %x: ", offBytes);
+        //LOG(kCodec, Brn(value.Ptr(), 4));
+        //LOG(kCodec, "\n");
         if ((strncmp(check, kXing, 4) == 0) || (strncmp(check, kInfo, 4) == 0)) {
             found = true;
             //LOG(kCodec, "mp3 mono vbr header found\n");
@@ -192,8 +194,11 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     }
     else {
         offBytes = 0x24;
-        value = Converter::BeUint32At(aHeaderData, offBytes);
-        //LOG(kCodec, "Xing check: %08x at offbytes: %x\n", value, offBytes);
+        value = aHeaderData.Split(offBytes);
+        check = (const TChar*) value.Ptr();
+        //LOG(kCodec, "Xing check at offbytes %x: ", offBytes);
+        //LOG(kCodec, Brn(value.Ptr(), 4));
+        //LOG(kCodec, "\n");
         if ((strncmp(check, kXing, 4) == 0) || (strncmp(check, kInfo, 4) == 0)) {
             found = true;
             //LOG(kCodec, "mp3 2 channel vbr header found\n");
@@ -688,7 +693,7 @@ void CodecMp3::Process()
     if (iHeader->SamplesTotal()) {
 //        const TUint64 remaining = (iHeader->SamplesTotal() - iSamplesWrittenTotal);
         if (samplesToWrite > (iHeader->SamplesTotal() - iSamplesWrittenTotal)) {
-        	samplesToWrite = (TUint)(iHeader->SamplesTotal() - iSamplesWrittenTotal);
+            samplesToWrite = (TUint)(iHeader->SamplesTotal() - iSamplesWrittenTotal);
         }
     }
 

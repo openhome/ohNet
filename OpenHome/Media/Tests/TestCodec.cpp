@@ -1,5 +1,6 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Codec/Alac.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/Flac.h>
@@ -29,7 +30,8 @@ public:
         eCodecWav = 0,
         eCodecFlac = 1,
         eCodecMp3 = 2,
-        eCodecUnknown = 3,
+        eCodecAlac = 3,
+        eCodecUnknown = 4,
     };
 public:
     AudioFileDescriptor(const Brx& aFilename, TUint aBitDepth, TUint aChannels, ECodec aCodec);
@@ -466,7 +468,6 @@ SuiteCodecStream::~SuiteCodecStream()
     delete iInfoAggregator;
     delete iElementDownstream;
     delete iElementUpstream;
-    
 }
 
 void SuiteCodecStream::Init()
@@ -497,6 +498,7 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iController->AddCodec(new CodecWav());
     iController->AddCodec(new CodecFlac());
     iController->AddCodec(new CodecMp3());
+    iController->AddCodec(new CodecAlac());
     iController->Start();
 }
 
@@ -505,6 +507,7 @@ void SuiteCodecStream::Test()
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
         Brn filename((*it).Filename());
+        AudioFileDescriptor::ECodec codec = (*it).Codec();
 
         // Try streaming a full file.
         Log::Print("SuiteCodecStream: ");
@@ -512,9 +515,19 @@ void SuiteCodecStream::Test()
         Log::Print("\n");
         Reinitialise(filename);
         iSem.Wait();
-        LOG(kMedia, "iJiffies: %u, kTotalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
-        //Log::Print("iJiffies: %u, kTotalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
-        TEST(iJiffies == TestCodecPipelineElementUpstream::kTotalJiffies);
+        if (codec == AudioFileDescriptor::eCodecMp3) {
+            // LAME FAQ suggests at least ~1057 and ~288 samples can be added to start and end of track, respectively.
+            // For our 44.1KHz tracks, we have 1368 extra samples, ~1751040 extra jiffies.
+            TUint totalJiffies = TestCodecPipelineElementUpstream::kTotalJiffies + 1751040;
+            LOG(kMedia, "iJiffies: %u, totalJiffies: %u\n", iJiffies, totalJiffies);
+            //Log::Print("iJiffies: %u, totalJiffies: %u\n", iJiffies, totalJiffies);
+            TEST(iJiffies == totalJiffies);
+        }
+        else {
+            LOG(kMedia, "iJiffies: %u, totalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
+            //Log::Print("iJiffies: %u, totalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
+            TEST(iJiffies == TestCodecPipelineElementUpstream::kTotalJiffies);
+        }
     }
 }
 
@@ -808,9 +821,10 @@ void SuiteCodecZeroCrossings::Test()
         //Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
         TEST(iZeroCrossings >= expectedZeroCrossings-20);
         if (iCodec == AudioFileDescriptor::eCodecMp3) {
-            // MP3 encoders/decoders add silence and some samples of random data to start of tracks for filter routines.
-            // LAME FAQ suggests this is for 1057 samples.
-            TEST(iZeroCrossings <= expectedZeroCrossings+100);
+            // MP3 encoders/decoders add silence and some samples of random data to
+            // start and end of tracks for filter routines.
+            // LAME FAQ suggests this is for at least 1057 samples at start and 288 at end.
+            TEST(iZeroCrossings <= expectedZeroCrossings+160);
         }
         else {
             TEST(iZeroCrossings <= expectedZeroCrossings+15);
@@ -896,9 +910,12 @@ void TestCodec()
     stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-24bit.flac"), 24, 2, AudioFileDescriptor::eCodecFlac));
     stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-128k.mp3"), 24, 1, AudioFileDescriptor::eCodecMp3));
     stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-128k.mp3"), 24, 2, AudioFileDescriptor::eCodecMp3));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k.m4a"), 16, 1, AudioFileDescriptor::eCodecAlac));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.m4a"), 16, 2, AudioFileDescriptor::eCodecAlac));
 
     std::vector<AudioFileDescriptor> invalidFiles;
-    //invalidFiles.push_back(AudioFileDescriptor(Brn("config.log"), 16, 1, AudioFileDescriptor::eCodecUnknown));
+    invalidFiles.push_back(AudioFileDescriptor(Brn("filetasks.py"), 16, 1, AudioFileDescriptor::eCodecUnknown));          // Large invalid file.
+    invalidFiles.push_back(AudioFileDescriptor(Brn("dependencies.json"), 16, 1, AudioFileDescriptor::eCodecUnknown));   // Short invalid file.
 
     Runner runner("Codec tests\n");
     runner.Add(new SuiteCodecStream(stdFiles));

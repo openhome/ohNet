@@ -191,13 +191,13 @@ def build(bld):
             target='CodecMp3')
 
     # Alac
-    #bld.stlib(
-    #         source=[
-    #             'OpenHome/Media/Codec/Alac.cpp',
-    #             'alac_decoder/alac.cpp',
-    #         ],
-    #         use=['ALAC', 'OHNET'],
-    #         target='CodecAlac')
+    bld.stlib(
+             source=[
+                 'OpenHome/Media/Codec/Alac.cpp',
+                 'alac_decoder/alac.cpp',
+             ],
+             use=['ALAC', 'OHNET'],
+             target='CodecAlac')
 
     # Tests
     bld.stlib(
@@ -217,9 +217,10 @@ def build(bld):
                 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
             ],
-            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3'],
+            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac'],
             target='ohMediaPlayerTestUtils')
 
+    # Copy files for codec tests.
     create_copy_task(
         bld,
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
@@ -227,7 +228,27 @@ def build(bld):
 
     create_copy_task(
         bld,
+        bld.path.ant_glob('dependencies/AnyPlatform/ohWafHelpers/filetasks.py'),
+        '')
+
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('projectdata/dependencies.json'),
+        '')
+
+    create_copy_task(
+        bld,
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
+        'TestShell_resources')
+
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('dependencies/AnyPlatform/ohWafHelpers/filetasks.py'),
+        'TestShell_resources')
+
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('projectdata/dependencies.json'),
         'TestShell_resources')
 
     if not bld.env.nolink:
