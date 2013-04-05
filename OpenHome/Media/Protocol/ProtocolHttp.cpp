@@ -80,19 +80,25 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 
     if (iUri.Scheme() != Brn("http")) {
         LOG(kMedia, "ProtocolHttp::Stream Scheme not recognised\n");
+        Close();
         return EProtocolErrorNotSupported;
     }
     
     ProtocolStreamResult res = DoStream();
     if (res == EProtocolStreamErrorUnrecoverable) {
         // FIXME - error msg
+        Close();
         return res;
     }
     if (iLive) {
+        // don't want to buffer content from a live stream
+        // ...so need to wait on pipeline signalling it is ready to play
+        Close();
         iSem.Wait();
         res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
     }
     while (res == EProtocolStreamErrorRecoverable) {
+        Close();
         if (iLive) {
             res = DoLiveStream();
         }
@@ -130,6 +136,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     if (iContentProcessor != NULL) {
         iContentProcessor->Reset();
     }
+    Close();
     return res;
 }
 
@@ -261,8 +268,6 @@ ProtocolStreamResult ProtocolHttp::DoStream()
 
     if (!iStarted && iLive) {
         StartStream();
-        // don't want to buffer content from a live stream so need to wait on pipeline signalling it is ready to play
-        Close();
         return EProtocolStreamErrorRecoverable;
     }
 
@@ -274,7 +279,6 @@ ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
     LOG(kMedia, "ProtocolHttp::DoRestream %lld\n", aOffset);
 
     Interrupt(false);
-    Close();
     const TUint code = WriteRequest(aOffset);
     if (code == 0) {
         return EProtocolStreamErrorRecoverable;
@@ -293,7 +297,6 @@ ProtocolStreamResult ProtocolHttp::DoLiveStream()
     LOG(kMedia, "ProtocolHttp::DoLiveStream\n");
 
     Interrupt(false);
-    Close();
     const TUint code = WriteRequest(0);
     iLive = false;
     if (code == 0) {
@@ -314,7 +317,6 @@ void ProtocolHttp::StartStream()
 
 TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 {
-    Close();
     if (!Connect(iUri, 80)) {
         LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;

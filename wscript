@@ -340,7 +340,7 @@ def test(tst):
                       ,['TestContentProcessor', [], True]
                       ,['TestPipeline', [], True]
                       ,['TestStore', [], True]
-                      #,['TestProtocolHttp', [], True]
+                      ,['TestProtocolHttp', [], True]
                       ,['TestCodec', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
