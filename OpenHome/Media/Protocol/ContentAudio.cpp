@@ -43,6 +43,11 @@ ProtocolStreamResult ContentAudio::Stream(IProtocolReader& aReader, TUint64 aTot
     }
     catch (ReaderError&) {
         res = EProtocolStreamErrorRecoverable;
+        Brn buf = aReader.ReadRemaining();
+        iSupply.OutputData(buf);
+        if (finite) {
+            aTotalBytes -= buf.Bytes();
+        }
     }
     return res;
 }
