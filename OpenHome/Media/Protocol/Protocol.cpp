@@ -42,9 +42,9 @@ TBool Protocol::Active() const
     return iActive;
 }
 
-TBool Protocol::OkToPlay(TUint aTrackId, TUint /*aStreamId*/)
+TBool Protocol::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId);
+    return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
 
 TUint Protocol::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)

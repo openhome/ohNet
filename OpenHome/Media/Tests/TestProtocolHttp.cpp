@@ -219,7 +219,9 @@ public:
 public: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
-    TBool OkToPlay(TUint aTrackId);
+    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
 private:
     TUint iNextTrackId;
     TUint iNextStreamId;
@@ -799,10 +801,20 @@ TUint TestHttpPipelineProvider::NextStreamId()
     return iNextStreamId++;
 }
 
-TBool TestHttpPipelineProvider::OkToPlay(TUint /*aTrackId*/)
+TBool TestHttpPipelineProvider::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     //Log::Print("TestHttpPipelineProvider::OkToPlay\n");
     return true;
+}
+
+void TestHttpPipelineProvider::InvalidateAt(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+{
+    ASSERTS();
+}
+
+void TestHttpPipelineProvider::InvalidateAfter(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+{
+    ASSERTS();
 }
 
 

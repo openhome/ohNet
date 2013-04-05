@@ -731,7 +731,9 @@ class IPipelineIdProvider
 public:
     virtual TUint NextTrackId() = 0;
     virtual TUint NextStreamId() = 0;
-    virtual TBool OkToPlay(TUint aTrackId) = 0;
+    virtual TBool OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+    virtual void InvalidateAt(const Brx& aStyle, const Brx& aProviderId) = 0;
+    virtual void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId) = 0;
 };
 
 class IStreamHandler

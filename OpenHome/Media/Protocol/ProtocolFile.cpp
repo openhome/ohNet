@@ -97,7 +97,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
 
 TBool ProtocolFile::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId) && (iStreamId == aStreamId);
+    return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
 
 TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
