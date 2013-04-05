@@ -219,7 +219,7 @@ public:
 public: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
     void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
 private:
@@ -746,7 +746,7 @@ void TestHttpSupplier::OutputStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/
     iLive = aLive;
     iStreamId = aStreamId;
     iStreamHandler = &aStreamHandler;
-    aStreamHandler.OkToPlay(iTrackId, iStreamId);
+    (void)aStreamHandler.OkToPlay(iTrackId, iStreamId);
     iStreamCount++;
 }
 
@@ -801,10 +801,10 @@ TUint TestHttpPipelineProvider::NextStreamId()
     return iNextStreamId++;
 }
 
-TBool TestHttpPipelineProvider::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay TestHttpPipelineProvider::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     //Log::Print("TestHttpPipelineProvider::OkToPlay\n");
-    return true;
+    return ePlayYes;
 }
 
 void TestHttpPipelineProvider::InvalidateAt(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)

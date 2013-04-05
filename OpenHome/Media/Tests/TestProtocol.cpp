@@ -75,7 +75,7 @@ private: // from Thread
 private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
     void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
 private:
@@ -158,9 +158,9 @@ TUint DummyFiller::NextStreamId()
     return iNextStreamId++;
 }
 
-TBool DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    return true;
+    return ePlayYes;
 }
 
 void DummyFiller::InvalidateAt(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)

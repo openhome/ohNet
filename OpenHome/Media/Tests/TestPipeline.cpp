@@ -28,7 +28,7 @@ public:
 private: // from Thread
     void Run();
 private: // from IStreamHandler
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
@@ -173,9 +173,9 @@ void Supplier::Run()
     }
 }
 
-TBool Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    return true;
+    return ePlayYes;
 }
 
 TUint Supplier::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)

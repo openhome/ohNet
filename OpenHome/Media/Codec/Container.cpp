@@ -144,7 +144,7 @@ Msg* Container::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-TBool Container::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay Container::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
     return iStreamHandler->OkToPlay(aTrackId, aStreamId);
 }

@@ -95,7 +95,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     return res;
 }
 
-TBool ProtocolFile::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ProtocolFile::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
     return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }

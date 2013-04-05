@@ -42,7 +42,7 @@ TBool Protocol::Active() const
     return iActive;
 }
 
-TBool Protocol::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay Protocol::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
     return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
