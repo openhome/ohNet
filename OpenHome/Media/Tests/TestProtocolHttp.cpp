@@ -30,21 +30,8 @@ private:
     TUint iEnd;
 };
 
-class TestHttpSession;
-
 class TestHttpServer : public SocketTcpServer
 {
-public:
-    enum EMode
-    {
-        eStreamFull = 0,            // Stream a full track.
-        eServerReject = 1,          // Server sends bad initial response.
-        eServerRejectDoStream = 2,  // DoStream reaction after bad initial response.
-        eStreamFail = 3,            // Fail part way through streaming.
-        eStreamReconnect = 4,       // Server allows reconnection after a failed stream.
-        eStreamLive = 5,            // Live streaming.
-        eLiveReconnect = 6          // Client reconnects to commence live streaming.
-    };
 public:
     static const Brn kPrefixHttp;
     static const TUint kLenPrefixHttp = sizeof("http://")-1;
@@ -58,58 +45,154 @@ public:
     static void WriteHeaderPartialContent(WriterHttpHeader& aWriter, TUint64 aFirst, TUint64 aLast, TUint64 aTotal);
     static void WriteHeaderPartialContentStream(WriterHttpHeader& aWriter);
 public:
-    TestHttpServer(Environment& aEnv, const TChar* aName, TUint aPort, TIpAddress aInterface,
-                   EMode aMode = eStreamFull);
+    TestHttpServer(Environment& aEnv, const TChar* aName, TUint aPort, TIpAddress aInterface);
     ~TestHttpServer();
-    EMode Mode() const;
-    void SetMode(EMode aMode);
     const Uri ServingUri() const;
 private:
-    EMode iMode;
     const Uri* iUri;
 };
+
+
+// Http session classes.
 
 class TestHttpSession : public SocketTcpSession
 {
 public:
-    TestHttpSession(const Brx& aFilename, TestHttpServer* aServer);
+    TestHttpSession(const Brx& aFilename);
     ~TestHttpSession();
     TUint DataSize() const;
-    void Reset();
+protected:
+    void WaitOnReadRequest();
+    void StreamFile(TUint aStartPos, TUint aEndPos);
+    virtual void Respond() = 0;
 private: // from SocketTcpSession
     void Run();
 private:
     static const TUint kMaxReadBytes = 1024;
     static const TUint kReadTimeoutMs = 5000;
     static const TUint kMaxWriteBufBytes = 1400;
-    const HttpStatus* iErrorStatus; // Default is HttpStatus::kOk
     HttpHeaderConnection iHeaderConnection;
-    HttpHeaderRange iHeaderRange;
-    // Hosting server.
-    TestHttpServer* iServer;
     // File attributes.
     const Brhz iFilename;
-    IFile* iFile;
-    TUint iDataSize;
     // Reader and buffer.
     Srs<kMaxReadBytes>* iReadBuffer;
     ReaderHttpRequest* iReaderRequest;
     // Writer and buffer.
     Sws<kMaxWriteBufBytes>* iWriterBuffer;
-    WriterHttpResponse* iWriterResponse;
     Bwh iBuf;
+protected:
+    IFile* iFile;
+    HttpHeaderRange iHeaderRange;
+    // Writer shared by derived classes
+    WriterHttpResponse* iWriterResponse;
 };
+
+class TestHttpSessionStreamFull : public TestHttpSession
+{
+public:
+    TestHttpSessionStreamFull(const Brx& aFilename);
+protected:
+    void WriteResponseContentLength(TUint aLength);
+private: // from TestHttpSession
+    void Respond();
+};
+
+class TestHttpSessionReject : public TestHttpSession
+{
+public:
+    TestHttpSessionReject(const Brx& aFilename);
+private:
+    void WriteResponseBadRequest();
+private: // from TestHttpSession
+    void Respond();
+};
+
+class TestHttpSessionReconnect : public TestHttpSessionStreamFull
+{
+private:
+    enum EMode
+    {
+        eStreamBreak    = 0,
+        eReconnect  = 1,
+    };
+public:
+    TestHttpSessionReconnect(const Brx& aFilename);
+private:
+    void WriteResponsePartialContent(TUint aStartPos, TUint aEndPos, TUint aTotalLength, TUint aLength);
+private: // from TestHttpSession
+    void Respond();
+private:
+    EMode iMode;
+};
+
+class TestHttpSessionStreamLive : public TestHttpSessionStreamFull
+{
+private:
+    enum EMode
+    {
+        eConnect      = 0,
+        eStream    = 1,
+    };
+public:
+    TestHttpSessionStreamLive(const Brx& aFilename);
+protected:
+    void WriteResponseOk();
+private: // from TestHttpSessionStreamFull
+    void Respond();
+private:
+    EMode iMode;
+};
+
+class TestHttpSessionLiveReconnect : public TestHttpSessionStreamLive
+{
+private:
+    enum EMode
+    {
+        eConnect        = 0,
+        eStreamBreak    = 1,
+        eReconnect      = 2,
+    };
+public:
+    TestHttpSessionLiveReconnect(const Brx& aFilename);
+private: // from TestHttpSessionStreamLive
+    void Respond();
+private:
+    EMode iMode;
+};
+
+class SessionFactory
+{
+public:
+    enum ESession
+    {
+        eStreamFull       = 0,
+        eReject           = 1,
+        eReconnect        = 2,
+        eStreamLive       = 3,
+        eLiveReconnect    = 4,
+    };
+public:
+    SessionFactory(const Brx& aFilename);
+    TestHttpSession* Create(ESession aSession);
+private:
+    const Brh iFilename;
+};
+
+
+// Pipeline classes.
 
 class TestHttpSupplier : public ISupply
 {
 public:
-    TestHttpSupplier();
+    TestHttpSupplier(TUint aDataSize);
     virtual ~TestHttpSupplier();
 public:
+    TUint TrackId();
+    TUint StreamId();
+    TBool Live();
     TUint TrackCount();
     TUint StreamCount();
     TUint DataTotal();
-    void Reset();
 public: // from ISupply
     void OutputTrack(const Brx& aUri, TUint aTrackId);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
@@ -118,10 +201,14 @@ public: // from ISupply
     void OutputFlush(TUint aFlushId);
     void OutputQuit();
 private:
-    TUint iCurrTrackId;
+    TUint iDataSize;
+    TUint iTrackId;
+    TUint iStreamId;
+    TBool iLive;
     TUint iTrackCount;
     TUint iStreamCount;
     TUint iDataTotal;
+    IStreamHandler* iStreamHandler;
 };
 
 class TestHttpPipelineProvider : public IPipelineIdProvider
@@ -142,32 +229,80 @@ private:
 class TestHttpFlushIdProvider : public IFlushIdProvider
 {
 public:
-    TestHttpFlushIdProvider();;
+    TestHttpFlushIdProvider();
+    virtual ~TestHttpFlushIdProvider();
 public: // from iFlushIdProvider
     TUint NextFlushId();
 private:
     TUint iNextFlushId;
 };
 
+
+// Suite classes.
+
 class SuiteHttp : public Suite
 {
 public:
-    SuiteHttp();
+    SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession);
     ~SuiteHttp();
-    void Test();
+private:
     void TestStreamFull();
     void TestServerReject();
     void TestServerRejectDoStream();
     void TestStreamReconnect();
     void TestStreamLive();
+    void TestStreamLiveBreak();
+private: // from Suite
+    virtual void Test() = 0;
 private:
+    TestHttpPipelineProvider* iProvider;
+    TestHttpFlushIdProvider* iFlushId;
+    ProtocolHttp* iProtocolHttp;
+protected:
     TestHttpServer* iServer;
     TestHttpSession* iHttpSession;
     TestHttpSupplier* iSupply;
-    TestHttpPipelineProvider* iProvider;
-    TestHttpFlushIdProvider* iFlushId;
     ProtocolManager* iProtocolManager;
-    ProtocolHttp* iProtocolHttp;
+};
+
+class SuiteHttpStreamFull : public SuiteHttp
+{
+public:
+    SuiteHttpStreamFull();
+private: // from SuiteHttp
+    void Test();
+};
+
+class SuiteHttpReject : public SuiteHttp
+{
+public:
+    SuiteHttpReject();
+private: // from SuiteHttp
+    void Test();
+};
+
+class SuiteHttpReconnect : public SuiteHttp
+{
+public:
+    SuiteHttpReconnect();
+private: // from SuiteHttp
+    void Test();
+};
+
+class SuiteHttpStreamLive : public SuiteHttp
+{
+public:
+    SuiteHttpStreamLive();
+private: // from SuiteHttp
+    void Test();
+};
+
+class SuiteHttpLiveReconnect : public SuiteHttp
+{
+public:
+    SuiteHttpLiveReconnect();
+private: // from SuiteHttp
+    void Test();
 };
 
 } // namespace Media
@@ -195,7 +330,8 @@ TUint HttpHeaderRange::End() const
 
 TBool HttpHeaderRange::Recognise(const Brx& aHeader)
 {
-    return (Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderRange));
+    TBool recognised = Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderRange);
+    return recognised;
 }
 
 void HttpHeaderRange::Process(const Brx& aValue)
@@ -211,7 +347,7 @@ void HttpHeaderRange::Process(const Brx& aValue)
     SetReceived();
     try {
         indEquals = Ascii::IndexOf(aValue, '=');
-        if (indEquals == aValue.Bytes()) {	// An equals sign does not exist.
+        if (indEquals == aValue.Bytes()) {  // An equals sign does not exist.
             THROW(HttpError);
         }
 
@@ -219,16 +355,16 @@ void HttpHeaderRange::Process(const Brx& aValue)
         range = aValue.Split(indEquals, aValue.Bytes()-indEquals);
 
         indHyphen = Ascii::IndexOf(range, '-');
-        if (indHyphen == range.Bytes()) {	// A hyphen does not exist, so range points are not specified.
+        if (indHyphen == range.Bytes()) {   // A hyphen does not exist, so range points are not specified.
             THROW(HttpError);
         }
 
-        Brn start(range.Ptr(), indHyphen);		// Get the start value.
+        Brn start(range.Ptr(), indHyphen);      // Get the start value.
         indHyphen++; // Shift index so we skip over separator.
         end = range.Split(indHyphen, range.Bytes()-indHyphen);	// Get the end value.
 
         iStart = Ascii::Uint(start);
-        if (end.Bytes() == 0) {	// End range may be empty.
+        if (end.Bytes() == 0) { // End range may be empty.
             iEnd = 0;
         }
         else {
@@ -267,24 +403,11 @@ void TestHttpServer::WriteHeaderPartialContent(WriterHttpHeader& aWriter, TUint6
         Ascii::AppendDec(buf, aTotal);
     }
 
-    Log::Print("PartialContent val: ");
-    Log::Print(Http::kHeaderContentRange);
-    Log::Print(": ");
-    Log::Print(buf);
-    Log::Print("\n");
-
     aWriter.WriteHeader(Http::kHeaderContentRange, buf);
 }
 
-void TestHttpServer::WriteHeaderPartialContentStream(WriterHttpHeader& aWriter)
-{
-    WriteHeaderPartialContent(aWriter, 0, 0, TestHttpServer::kTotalContentUnknown);
-}
-
-TestHttpServer::TestHttpServer(Environment& aEnv, const TChar* aName, TUint aPort, TIpAddress aInterface,
-                               EMode aMode)
+TestHttpServer::TestHttpServer(Environment& aEnv, const TChar* aName, TUint aPort, TIpAddress aInterface)
     :SocketTcpServer(aEnv, aName, aPort, aInterface)
-    , iMode(aMode)
 {
     // Get server URI.
     Endpoint endpoint = Endpoint(Port(), Interface());
@@ -299,16 +422,6 @@ TestHttpServer::~TestHttpServer()
     delete iUri;
 }
 
-TestHttpServer::EMode TestHttpServer::Mode() const
-{
-    return iMode;
-}
-
-void TestHttpServer::SetMode(TestHttpServer::EMode aMode)
-{
-    iMode = aMode;
-}
-
 const Uri TestHttpServer::ServingUri() const
 {
     return *iUri;
@@ -317,24 +430,17 @@ const Uri TestHttpServer::ServingUri() const
 
 // TestHttpSession
 
-TestHttpSession::TestHttpSession(const Brx& aFilename, TestHttpServer* aServer)
-    : iErrorStatus(&HttpStatus::kOk)
-    , iServer(aServer)
-    , iFilename(aFilename)
+TestHttpSession::TestHttpSession(const Brx& aFilename)
+    : iFilename(aFilename)
     , iBuf(kMaxWriteBufBytes)
 {
     // Try opening the file.
     try {
         iFile = IFile::Open(iFilename.CString(), eFileReadOnly);
-        Log::Print("file bytes: %u\n", iFile->Bytes());
     }
     catch (FileOpenError aFileErr) {
-        Log::Print("FileOpenError: %s\n", aFileErr.File());
-        Log::Print("FileOpenError: %s\n", aFileErr.Message());
-        throw;
+        ASSERTS();
     }
-
-    iDataSize = iFile->Bytes();
 
     iReadBuffer = new Srs<kMaxReadBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*gEnv, *iReadBuffer);
@@ -356,325 +462,258 @@ TestHttpSession::~TestHttpSession()
     delete iWriterBuffer;
 }
 
-void TestHttpSession::Reset()
+void TestHttpSession::WaitOnReadRequest()
 {
-    delete iFile;
+    iReaderRequest->Flush();
+    iReaderRequest->Read(kReadTimeoutMs);
 
-    // Try reopening the file.
-    try {
-        iFile = IFile::Open(iFilename.CString(), eFileReadOnly);
+    if (!iHeaderConnection.Received()) {
+        ASSERTS();
     }
-    catch (FileOpenError aFileErr) {
-        Log::Print("FileOpenError: %s\n", aFileErr.File());
-        Log::Print("FileOpenError: %s\n", aFileErr.Message());
-        throw;
-    }
+}
 
-    iDataSize = iFile->Bytes();
+void TestHttpSession::StreamFile(TUint aStartPos, TUint aEndPos)
+{
+        TUint bytesRemaining = aEndPos - aStartPos;
+
+        iFile->Seek(aStartPos);
+
+        // Loop until we've streamed all of file.
+        while (bytesRemaining > 0) {
+            // Bytes to read from file.
+            iBuf.SetBytes(0);
+            TUint bytes = iBuf.MaxBytes();
+            if (bytesRemaining < bytes) {
+                bytes = bytesRemaining;
+            }
+
+            // Read from the file.
+            iFile->Read(iBuf, bytes);
+
+            // Check the number of bytes read is what we expected; file error otherwise.
+            if (iBuf.Bytes() != bytes) {
+                ASSERTS();
+            }
+            bytesRemaining -= bytes;
+
+            // Write file data out.
+            iWriterResponse->Write(iBuf);
+        }
+        iWriterBuffer->WriteFlush();
 }
 
 TUint TestHttpSession::DataSize() const
 {
-    return iDataSize;
+    return iFile->Bytes();
 }
 
-void TestHttpSession::Run() // FIXME - refactor
+void TestHttpSession::Run()
 {
-    iErrorStatus = &HttpStatus::kOk;
-    //AutoSemaphore a(iShutdownSem);
-
-    if (iServer->Mode() == TestHttpServer::eStreamFull) {
-        Log::Print("TestHttpServer::eStreamFull\n");
-        try {
-            TUint bytesRemaining = iDataSize;
-
-            // Wait on a request.
-            iReaderRequest->Flush();
-            iReaderRequest->Read(kReadTimeoutMs);
-
-            // Write the header back with the content length.
-            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-            Http::WriteHeaderContentLength(*iWriterResponse, iDataSize);
-            iWriterResponse->WriteFlush();
-
-            // Loop until we've streamed all of file.
-            while (bytesRemaining > 0) {
-                // Bytes to read from file.
-                iBuf.SetBytes(0);
-                TUint bytes = iBuf.MaxBytes();
-                if (bytesRemaining < bytes) {
-                    bytes = bytesRemaining;
-                }
-
-                // Read from the file.
-                iFile->Read(iBuf, bytes);
-
-                // Check the number of bytes read is what we expected; file error otherwise.
-                if (iBuf.Bytes() != bytes) {
-                    ASSERTS();
-                }
-                bytesRemaining -= bytes;
-
-                // Write file data out.
-                iWriterResponse->Write(iBuf);
-            }
-            iWriterBuffer->WriteFlush();
-            //iWriterResponse->WriteFlush();
-            //this->WriteFlush();
-        }
-        catch (HttpError) {ASSERTS();}
-        catch (ReaderError) {ASSERTS();}
-        catch (WriterError) {ASSERTS();}
-        catch (NetworkError) {ASSERTS();}
+    try {
+        WaitOnReadRequest();
+        Respond();      // From derived classes.
     }
-    else if (iServer->Mode() == TestHttpServer::eServerReject) {
-        Log::Print("TestHttpServer::eServerReject\n");
-        iErrorStatus = &HttpStatus::kBadRequest;
-        try {
-            // Wait on a request.
-            iReaderRequest->Flush();
-            iReaderRequest->Read(kReadTimeoutMs);
+    catch (HttpError) {ASSERTS();}
+    catch (ReaderError) {ASSERTS();}
+    catch (WriterError) {ASSERTS();}
+    catch (NetworkError) {ASSERTS();}
+}
 
-            // Send a header response indicating some issue resulting in non-streaming.
-            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-            iWriterResponse->WriteFlush();
-        }
-        catch (HttpError) {ASSERTS();}
-        catch (ReaderError) {ASSERTS();}
-        catch (WriterError) {ASSERTS();}
-        catch (NetworkError) {ASSERTS();}
-        iErrorStatus = &HttpStatus::kOk;
+
+// TestHttpSessionStreamFull
+
+TestHttpSessionStreamFull::TestHttpSessionStreamFull(const Brx& aFilename)
+    : TestHttpSession(aFilename)
+{
+}
+
+void TestHttpSessionStreamFull::WriteResponseContentLength(TUint aLength)
+{
+    const HttpStatus* errorStatus = &HttpStatus::kOk;
+
+    iWriterResponse->WriteStatus(*errorStatus, Http::eHttp11);
+    Http::WriteHeaderContentLength(*iWriterResponse, aLength);
+    iWriterResponse->WriteFlush();
+}
+
+void TestHttpSessionStreamFull::Respond()
+{
+    WriteResponseContentLength(iFile->Bytes());
+    StreamFile(0, iFile->Bytes());
+}
+
+
+// TestHttpSessionReject
+
+TestHttpSessionReject::TestHttpSessionReject(const Brx& aFilename)
+    : TestHttpSession(aFilename)
+{
+}
+
+void TestHttpSessionReject::WriteResponseBadRequest()
+{
+    const HttpStatus* errorStatus = &HttpStatus::kBadRequest;
+
+    iWriterResponse->WriteStatus(*errorStatus, Http::eHttp11);
+    iWriterResponse->WriteFlush();
+}
+
+void TestHttpSessionReject::Respond()
+{
+    WriteResponseBadRequest();
+}
+
+// TestHttpSessionReconnect
+
+TestHttpSessionReconnect::TestHttpSessionReconnect(const Brx& aFilename)
+    : TestHttpSessionStreamFull(aFilename)
+    , iMode(eStreamBreak)
+{
+}
+
+void TestHttpSessionReconnect::WriteResponsePartialContent(TUint aStartPos, TUint aEndPos, TUint aTotalLength, TUint aLength)
+{
+    const HttpStatus* errorStatus = &HttpStatus::kPartialContent;
+
+    iWriterResponse->WriteStatus(*errorStatus, Http::eHttp11);
+    TestHttpServer::WriteHeaderPartialContent(*iWriterResponse, aStartPos, aEndPos, aTotalLength);
+    Http::WriteHeaderContentLength(*iWriterResponse, aLength);
+    iWriterResponse->WriteFlush();
+}
+
+void TestHttpSessionReconnect::Respond()
+{
+    if (iMode == eStreamBreak) {
+        WriteResponseContentLength(iFile->Bytes());
+        // Stream only a portion of file.
+        StreamFile(0, iFile->Bytes()/2);
+        iMode = eReconnect;
     }
-    else if (iServer->Mode() == TestHttpServer::eStreamFail) {
-        Log::Print("TestHttpServer::eStreamFail\n");
-        try {
-            // Point to break streaming - middle of track.
-            TUint totalBuffs = iDataSize/iBuf.MaxBytes();
-            TUint pausePoint = totalBuffs/2;
-            TUint writeCount = 0;
-            TUint bytesRemaining = iDataSize;
-
-            Log::Print("totalBuffs: %u\n", totalBuffs);
-            Log::Print("pausePoint: %u\n", pausePoint);
-
-            // Wait on a request.
-            iReaderRequest->Flush();
-            iReaderRequest->Read(kReadTimeoutMs);
-
-            // Write the header back with the content length.
-            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-            Http::WriteHeaderContentLength(*iWriterResponse, iDataSize);
-            iWriterResponse->WriteFlush();
-
-            // Loop until we've streamed all of file, pausing  somewhere in the middle of streaming.
-            while (bytesRemaining > 0) {
-                // Simulate break in streaming.
-                if (writeCount == pausePoint) {
-                    Log::Print("Bytes written: %u\n", iDataSize-bytesRemaining);
-                    iWriterBuffer->WriteFlush();
-                    iServer->SetMode(TestHttpServer::eStreamReconnect);
-                    this->Reset();
-                    //iWriterResponse->WriteFlush();
-                    //this->WriteFlush();
-                    return;        // Close the session.
-                }
-
-                // Bytes to read from file.
-                iBuf.SetBytes(0);
-                TUint bytes = iBuf.MaxBytes();
-                if (bytesRemaining < bytes) {
-                    bytes = bytesRemaining;
-                }
-
-                // Read from the file.
-                iFile->Read(iBuf, bytes);
-
-                // Check the number of bytes read is what we expected; file error otherwise.
-                if (iBuf.Bytes() != bytes) {
-                    ASSERTS();
-                }
-                bytesRemaining -= bytes;
-
-                // Write file data out.
-                iWriterResponse->Write(iBuf);
-
-                writeCount++;
-            }
-            iWriterBuffer->WriteFlush();
-            //iWriterResponse->WriteFlush();
-            //this->WriteFlush();
+    else if (iMode == eReconnect) {
+        if (iHeaderRange.Received()) {
+            TUint startByte = iHeaderRange.Start();
+            //TUint endByte = iHeaderRange.End();
+            WriteResponsePartialContent(startByte, iFile->Bytes()-1, iFile->Bytes(), iFile->Bytes()-startByte);
+            StreamFile(startByte, iFile->Bytes());
         }
-        catch (HttpError) {ASSERTS();}
-        catch (ReaderError) {ASSERTS();}
-        catch (WriterError) {ASSERTS();}
-        catch (NetworkError) {ASSERTS();}
+        else {
+            ASSERTS();
+        }
     }
-    else if (iServer->Mode() == TestHttpServer::eStreamReconnect) {
-        Log::Print("TestHttpServer::eStreamReconnect\n");
-        try {
-            TUint startByte = 0;
-            TUint bytesRemaining = 0;
-
-            // Wait on a request.
-            iReaderRequest->Flush();
-            iReaderRequest->Read(kReadTimeoutMs);
-
-            if (iHeaderRange.Received()) {
-                Log::Print("Range start: %u\n", iHeaderRange.Start());
-                Log::Print("Range end: %u\n", iHeaderRange.End());
-                startByte = iHeaderRange.Start();
-            }
-            else {
-                ASSERTS();
-            }
-
-            // Write the header back with the content length.
-            iErrorStatus = &HttpStatus::kPartialContent;
-            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-            TestHttpServer::WriteHeaderPartialContent(*iWriterResponse, startByte, iDataSize-1, iDataSize);
-            Http::WriteHeaderContentLength(*iWriterResponse, iDataSize-startByte);
-            iWriterResponse->WriteFlush();
+}
 
 
-            // Seek to resume point in file.
-            iFile->Seek(startByte, eSeekFromStart);
-            bytesRemaining = iDataSize-startByte;
-            //iFile->Seek(0, eSeekFromStart);
-            //bytesRemaining = iDataSize;
-            Log::Print("Filesize-request: %u-%u=%u\n", iDataSize, startByte, iDataSize-startByte);
-            Log::Print("bytesRemaining: %u\n", bytesRemaining);
+// TestHttpSessionStreamLive
 
-            // Stream remaining bytes.
-            while (bytesRemaining > 0) {
-                // Bytes to read from file.
-                iBuf.SetBytes(0);
-                TUint bytes = iBuf.MaxBytes();
-                if (bytesRemaining < bytes) {
-                    bytes = bytesRemaining;
-                }
+TestHttpSessionStreamLive::TestHttpSessionStreamLive(const Brx& aFilename)
+    : TestHttpSessionStreamFull(aFilename)
+    , iMode(eConnect)
+{
+}
 
-                // Read from the file.
-                iFile->Read(iBuf, bytes);
+void TestHttpSessionStreamLive::WriteResponseOk()
+{
+    const HttpStatus* errorStatus = &HttpStatus::kOk;
 
-                //Log::Print("Bytes read: %u\n", iBuf.Bytes());
+    iWriterResponse->WriteStatus(*errorStatus, Http::eHttp11);
+    iWriterResponse->WriteFlush();
+}
 
-                // Check the number of bytes read is what we expected; file error otherwise.
-                if (iBuf.Bytes() != bytes) {
-                    ASSERTS();
-                }
-                bytesRemaining -= bytes;
-
-                // Write file data out.
-                //Log::Print("Before iWriterBuffer->Write\n");
-                //Log::Print("bytesRemaining: %u\n", bytesRemaining);
-                iWriterResponse->Write(iBuf);
-                //Log::Print("After iWriterBuffer->Write\n");
-            }
-            Log::Print("Before iWriterBuffer->WriteFlush\n");
-            iWriterBuffer->WriteFlush();
-            Log::Print("After iWriterBuffer->WriteFlush\n");
-            //iWriterResponse->WriteFlush();
-            //this->WriteFlush();
-        }
-        catch (HttpError) {ASSERTS();}
-        catch (ReaderError) {ASSERTS();}
-        catch (WriterError) {ASSERTS();}
-        catch (NetworkError) {ASSERTS();}
-
-        iErrorStatus = &HttpStatus::kOk;
+void TestHttpSessionStreamLive::Respond()
+{
+    if (iMode == eConnect) {
+        WriteResponseOk();
+        iMode = eStream;
     }
-    else if (iServer->Mode() == TestHttpServer::eStreamLive) {
-        Log::Print("TestHttpServer::eStreamLive\n");
-        try {
-            //TUint bytesRemaining = iDataSize;
-
-            // Wait on a request.
-            iReaderRequest->Flush();
-            iReaderRequest->Read(kReadTimeoutMs);
-
-            // Write the header back.
-            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-            iWriterResponse->WriteFlush();
-            iServer->SetMode(TestHttpServer::eLiveReconnect);
-        }
-        catch (HttpError) {ASSERTS();}
-        catch (ReaderError) {ASSERTS();}
-        catch (WriterError) {ASSERTS();}
-        catch (NetworkError) {ASSERTS();}
+    else if (iMode == eStream) {
+        WriteResponseContentLength(0);
+        StreamFile(0, iFile->Bytes());
     }
-    else if (iServer->Mode() == TestHttpServer::eLiveReconnect) {
-        Log::Print("TestHttpServer::eLiveReconnect\n");
-        try {
-            TUint startByte = 0;
-            TUint bytesRemaining = iDataSize;
+}
 
-            // Wait on a request.
-            iReaderRequest->Flush();
-            iReaderRequest->Read(kReadTimeoutMs);
 
-            if (iHeaderRange.Received()) {
-                Log::Print("Range start: %u\n", iHeaderRange.Start());
-                Log::Print("Range end: %u\n", iHeaderRange.End());
-                startByte = iHeaderRange.Start();
-            }
-            else {
-                ASSERTS();
-            }
+// TestHttpSessionLiveReconnect
 
-            // Write the header back with the content range.
-            iErrorStatus = &HttpStatus::kPartialContent;
-            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-            TestHttpServer::WriteHeaderPartialContentStream(*iWriterResponse);
-            Http::WriteHeaderContentLength(*iWriterResponse, iDataSize-startByte);
-            iWriterResponse->WriteFlush();
+TestHttpSessionLiveReconnect::TestHttpSessionLiveReconnect(const Brx& aFilename)
+    : TestHttpSessionStreamLive(aFilename)
+    , iMode(eConnect)
+{
+}
 
-            bytesRemaining = iDataSize;
-            // Loop until we've streamed all of file.
-            while (bytesRemaining > 0) {
-                // Bytes to read from file.
-                iBuf.SetBytes(0);
-                TUint bytes = iBuf.MaxBytes();
-                if (bytesRemaining < bytes) {
-                    bytes = bytesRemaining;
-                }
+void TestHttpSessionLiveReconnect::Respond()
+{
+    if (iMode == eConnect) {
+        WriteResponseOk();
+        iMode = eStreamBreak;
+    }
+    else if (iMode == eStreamBreak) {
+        WriteResponseContentLength(0);
+        StreamFile(0, iFile->Bytes()/2);
+        iMode = eReconnect;
+    }
+    else if (iMode == eReconnect) {
+        WriteResponseContentLength(0);
+        StreamFile(iFile->Bytes()/2, iFile->Bytes());
+    }
+}
 
-                // Read from the file.
-                iFile->Read(iBuf, bytes);
 
-                // Check the number of bytes read is what we expected; file error otherwise.
-                if (iBuf.Bytes() != bytes) {
-                    Log::Print("iBuf.Bytes: %u, bytes: %u\n", iBuf.Bytes(), bytes);
-                    ASSERTS();
-                }
-                bytesRemaining -= bytes;
+// SessionFactory
 
-                // Write file data out.
-                iWriterResponse->Write(iBuf);
-            }
-            iWriterBuffer->WriteFlush();
-            //iWriterResponse->WriteFlush();
-            //this->WriteFlush();
-        }
-        catch (HttpError) {ASSERTS();}
-        catch (ReaderError) {ASSERTS();}
-        catch (WriterError) {ASSERTS();}
-        catch (NetworkError) {ASSERTS();}
+SessionFactory::SessionFactory(const Brx& aFilename)
+    : iFilename(aFilename)
+{}
+
+TestHttpSession* SessionFactory::Create(ESession aSession)
+{
+    switch (aSession)
+    {
+    case eStreamFull:
+        return new TestHttpSessionStreamFull(iFilename);
+    case eReject:
+        return new TestHttpSessionReject(iFilename);
+    case eReconnect:
+        return new TestHttpSessionReconnect(iFilename);
+    case eStreamLive:
+        return new TestHttpSessionStreamLive(iFilename);
+    case eLiveReconnect:
+        return new TestHttpSessionLiveReconnect(iFilename);
+    default:
+        ASSERTS();
+        return NULL;    // Will never reach here.
     }
 }
 
 
 // TestHttpSupplier
 
-TestHttpSupplier::TestHttpSupplier()
-    : iCurrTrackId(0)
+TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
+    : iDataSize(aDataSize)
+    , iTrackId(0)
+    , iStreamId(0)
+    , iLive(false)
     , iTrackCount(0)
     , iStreamCount(0)
     , iDataTotal(0)
+    , iStreamHandler(NULL)
 {
 }
 
-TestHttpSupplier::~TestHttpSupplier()
+TestHttpSupplier::~TestHttpSupplier() {}
+
+TUint TestHttpSupplier::TrackId()
 {
+    return iTrackId;
+}
+
+TUint TestHttpSupplier::StreamId()
+{
+    return iStreamId;
+}
+
+TBool TestHttpSupplier::Live()
+{
+    return iLive;
 }
 
 TUint TestHttpSupplier::TrackCount()
@@ -692,36 +731,32 @@ TUint TestHttpSupplier::DataTotal()
     return iDataTotal;
 }
 
-void TestHttpSupplier::Reset()
-{
-    iCurrTrackId = 0;
-    iTrackCount = 0;
-    iStreamCount = 0;
-    iDataTotal = 0;
-}
-
 void TestHttpSupplier::OutputTrack(const Brx& /*aUri*/, TUint aTrackId)
 {
-    iCurrTrackId = aTrackId;
+    //Log::Print("TestHttpSupplier::OutputTrack %u\n", aTrackId);
+    iTrackId = aTrackId;
     iTrackCount++;
-    Log::Print("><TestHttpSupplier::OutputTrack %u\n", aTrackId);
 }
 
-void TestHttpSupplier::OutputStream(const Brx& /*aUri*/, TUint64 aTotalBytes, TBool /*aSeekable*/, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+void TestHttpSupplier::OutputStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/, TBool /*aSeekable*/, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
 {
-    if (aLive) {
-        Log::Print("TestHttpSupplier::OutputStream live stream\n");
-    }
-    aStreamHandler.OkToPlay(iCurrTrackId, aStreamId);
+    //Log::Print("TestHttpSupplier::OutputStream\n");
+    iLive = aLive;
+    iStreamId = aStreamId;
+    iStreamHandler = &aStreamHandler;
+    aStreamHandler.OkToPlay(iTrackId, iStreamId);
     iStreamCount++;
-    Log::Print("><TestHttpSupplier::OutputStream\n");
-    Log::Print("aTotalBytes: %u bytes.\n", aTotalBytes);
 }
 
 void TestHttpSupplier::OutputData(const Brx& aData)
 {
-    iDataTotal += aData.Bytes();
     //Log::Print("TestHttpSupplier::OutputData\n");
+    iDataTotal += aData.Bytes();
+    if (iLive && iDataTotal >= iDataSize) {
+        // We are only simulating a live stream, so want to tell
+        // client to stop when data has run out.
+        iStreamHandler->TryStop(iTrackId, iStreamId);
+    }
 }
 
 void TestHttpSupplier::OutputMetadata(const Brx& /*aMetadata*/)
@@ -754,19 +789,19 @@ TestHttpPipelineProvider::~TestHttpPipelineProvider()
 
 TUint TestHttpPipelineProvider::NextTrackId()
 {
-    Log::Print(">TestHttpPipelineProvider::NextTrackId\n");
+    //Log::Print("TestHttpPipelineProvider::NextTrackId\n");
     return iNextTrackId++;
 }
 
 TUint TestHttpPipelineProvider::NextStreamId()
 {
-    Log::Print(">TestHttpPipelineProvider::NextStreamId\n");
+    //Log::Print("TestHttpPipelineProvider::NextStreamId\n");
     return iNextStreamId++;
 }
 
 TBool TestHttpPipelineProvider::OkToPlay(TUint /*aTrackId*/)
 {
-    Log::Print(">TestHttpPipelineProvider::OkToPlay\n");
+    //Log::Print("TestHttpPipelineProvider::OkToPlay\n");
     return true;
 }
 
@@ -778,6 +813,9 @@ TestHttpFlushIdProvider::TestHttpFlushIdProvider()
 {
 }
 
+TestHttpFlushIdProvider::~TestHttpFlushIdProvider() {}
+
+
 TUint TestHttpFlushIdProvider::NextFlushId()
 {
     return iNextFlushId++;
@@ -786,12 +824,12 @@ TUint TestHttpFlushIdProvider::NextFlushId()
 
 // SuiteHttp
 
-SuiteHttp::SuiteHttp()
-    : Suite("HTTP tests")
+SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
+    : Suite(aSuiteName)
 {
     // The file to be served.
-    //Brn serveFile("TestTones/1k_tone-10s.wav");
     Brn serveFile("1k_tone-10s-stereo.wav");
+
     // Get a list of network adapters (using loopback, so first one should do).
     std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Net::InitialisationParams::ELoopbackUse, "Loopback");
     TIpAddress addr = (*ifs)[0]->Address();
@@ -801,18 +839,30 @@ SuiteHttp::SuiteHttp()
     delete ifs;
 
     // Create our TCP server.
-    iServer = new TestHttpServer(*gEnv, "HSV1", 0, addr, TestHttpServer::eStreamFull);
+    iServer = new TestHttpServer(*gEnv, "HSV1", 0, addr);
 
-    Log::Print("uri1: ");
-    Log::Print(iServer->ServingUri().AbsoluteUri());
-    Log::Print("\n");
+    //Log::Print("uri: ");
+    //Log::Print(iServer->ServingUri().AbsoluteUri());
+    //Log::Print("\n");
+
+    // Try opening the file to get the size.
+    TUint iDataSize = 0;
+    try {
+        IFile *file = IFile::Open(Brhz(serveFile).CString(), eFileReadOnly);
+        iDataSize = file->Bytes();
+        delete file;
+    }
+    catch (FileOpenError aFileErr) {
+        ASSERTS();
+    }
 
     // Create a custom HTTP session for testing purposes.
-    iHttpSession = new TestHttpSession(serveFile, iServer);
+    SessionFactory factory(serveFile);
+    iHttpSession = factory.Create(aSession);
     iServer->Add("HTP1", iHttpSession);
 
     // Create our HTTP client.
-    iSupply = new TestHttpSupplier();
+    iSupply = new TestHttpSupplier(iDataSize);
     iProvider = new TestHttpPipelineProvider();
     iFlushId = new TestHttpFlushIdProvider();
 
@@ -829,29 +879,19 @@ SuiteHttp::~SuiteHttp()
     delete iSupply;
     delete iServer;
     //delete iHttpSession;    // Owned by iHttpSession.
+    delete iFlushId;
 }
 
-void SuiteHttp::Test()
-{
-    //Debug::SetLevel(Debug::kHttp);
-    Debug::SetLevel(Debug::kMedia);
 
-    Functor tests[] = { MakeFunctor(*this, &SuiteHttp::TestStreamFull)
-                       ,MakeFunctor(*this, &SuiteHttp::TestServerReject)
-                       ,MakeFunctor(*this, &SuiteHttp::TestStreamReconnect)
-                       //,MakeFunctor(*this, &SuiteHttp::TestStreamLive)
-                      };
-    for (TUint i=0; i<sizeof(tests)/sizeof(tests[0]); i++) {
-        tests[i]();
-        iHttpSession->Reset();
-        iSupply->Reset();
-    }
+// SuiteHttpStreamFull
+
+SuiteHttpStreamFull::SuiteHttpStreamFull()
+    : SuiteHttp("HTTP file streaming tests", SessionFactory::eStreamFull)
+{
 }
 
-void SuiteHttp::TestStreamFull()
+void SuiteHttpStreamFull::Test()
 {
-    iServer->SetMode(TestHttpServer::eStreamFull);
-
     // Test if streaming is successful.
     TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
     TEST(boolStream == 1);
@@ -862,16 +902,25 @@ void SuiteHttp::TestStreamFull()
     // Test if a single stream message is received.
     TEST(iSupply->StreamCount() == 1);
 
+    // Test if it was a live stream
+    TEST(iSupply->Live() == false);
+
     // Test if the data transferred is equivalent to the file size.
     TUint fileSize = iHttpSession->DataSize();
     TUint dataTotal = iSupply->DataTotal();
     TEST(fileSize == dataTotal);
 }
 
-void SuiteHttp::TestServerReject()
-{
-    iServer->SetMode(TestHttpServer::eServerReject);
 
+// SuiteHttpReject
+
+SuiteHttpReject::SuiteHttpReject()
+    : SuiteHttp("HTTP server rejection tests", SessionFactory::eReject)
+{
+}
+
+void SuiteHttpReject::Test()
+{
     // Test if streaming is successful.
     TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
     TEST(boolStream == 1);
@@ -887,10 +936,16 @@ void SuiteHttp::TestServerReject()
     TEST(dataTotal == 0);
 }
 
-void SuiteHttp::TestStreamReconnect()
-{
-    iServer->SetMode(TestHttpServer::eStreamFail);
 
+// SuiteHttpReconnect
+
+SuiteHttpReconnect::SuiteHttpReconnect()
+    : SuiteHttp("HTTP file stream reconnection tests", SessionFactory::eReconnect)
+{
+}
+
+void SuiteHttpReconnect::Test()
+{
     // Test if streaming is successful.
     TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
     TEST(boolStream == 1);
@@ -901,35 +956,81 @@ void SuiteHttp::TestStreamReconnect()
     // Test if a single stream message is received.
     TEST(iSupply->StreamCount() == 1);
 
+    // Test if it was a live stream
+    TEST(iSupply->Live() == false);
+
     // Test if the total data transferred over both sessions is equivalent to the file size.
     TUint fileSize = iHttpSession->DataSize();
     TUint dataTotal = iSupply->DataTotal();
     TEST(fileSize == dataTotal);
 }
 
-void SuiteHttp::TestStreamLive()
-{
-    iServer->SetMode(TestHttpServer::eStreamLive);
 
+// SuiteHttpStreamLive
+
+SuiteHttpStreamLive::SuiteHttpStreamLive()
+    : SuiteHttp("HTTP live streaming tests", SessionFactory::eStreamLive)
+{
+}
+
+void SuiteHttpStreamLive::Test()
+{
     // Test if streaming is successful.
     TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
-    TEST(boolStream == 1);
+    TEST(boolStream == false);
 
-    //// Test if a single track message is received.
-    //TEST(iSupply->TrackCount() == 1);
+    // Test if a single track message is received.
+    TEST(iSupply->TrackCount() == 1);
 
-    //// Test if a single stream message is received.
-    //TEST(iSupply->StreamCount() == 1);
+    // Test if a single stream message is received.
+    TEST(iSupply->StreamCount() == 1);
 
-    //// Test if the total data transferred over both sessions is equivalent to the file size.
-    //TUint fileSize = iHttpSession->DataSize();
-    //TUint dataTotal = iSupply->DataTotal();
-    //TEST(fileSize == dataTotal);
+    // Test if it was a live stream
+    TEST(iSupply->Live() == true);
+
+    // Test if the total data transferred over both sessions is equivalent to the file size.
+    TUint fileSize = iHttpSession->DataSize();
+    TUint dataTotal = iSupply->DataTotal();
+    TEST(fileSize <= dataTotal);
 }
+
+
+// SuiteHttpLiveReconnect : SuiteHttp
+
+SuiteHttpLiveReconnect::SuiteHttpLiveReconnect()
+    : SuiteHttp("HTTP live stream reconnection tests", SessionFactory::eLiveReconnect)
+{
+}
+
+void SuiteHttpLiveReconnect::Test()
+{
+    // Test if streaming is successful.
+    TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
+    TEST(boolStream == false);
+
+    // Test if a single track message is received.
+    TEST(iSupply->TrackCount() == 1);
+
+    // Test if a single stream message is received.
+    TEST(iSupply->StreamCount() == 1);
+
+    // Test if it was a live stream
+    TEST(iSupply->Live() == true);
+
+    // Test if the total data transferred over both sessions is equivalent to the file size.
+    TUint fileSize = iHttpSession->DataSize();
+    TUint dataTotal = iSupply->DataTotal();
+    TEST(fileSize <= dataTotal);
+}
+
 
 void TestHttp()
 {
     Runner runner("HTTP tests\n");
-    runner.Add(new SuiteHttp());
+    runner.Add(new SuiteHttpStreamFull());
+    runner.Add(new SuiteHttpReject());
+    runner.Add(new SuiteHttpReconnect());
+    runner.Add(new SuiteHttpStreamLive());
+    runner.Add(new SuiteHttpLiveReconnect());
     runner.Run();
 }

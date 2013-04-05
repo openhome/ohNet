@@ -726,7 +726,7 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
     TUint byteDelta = 0;
 
     msg->Read(pcmProcessor);
-    const TInt8* ptr = (TInt8*) pcmProcessor.Ptr();
+    const TByte* ptr = (TByte*)pcmProcessor.Ptr();
 
     // Measure how many times subsamples pass through zero.
     for (TUint i = 0; i < bytes; i += increment) {
@@ -736,13 +736,12 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
             switch (iBitDepth)
             {
             case 16:
-                subsample += ((*ptr++) << 8);
-                subsample += *ptr++;
+                subsample = ((ptr[0] << 24) | (ptr[1] << 16)) >> 16;
+                ptr += 2;
                 break;
             case 24:
-                subsample += ((*ptr++) << 16);
-                subsample += ((*ptr++) << 8);
-                subsample += *ptr++;
+                subsample = ((ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8)) >> 8;
+                ptr += 3;
                 break;
             default:
                 ASSERTS();
@@ -818,13 +817,13 @@ void SuiteCodecZeroCrossings::Test()
         Reinitialise(filename);
         iSem.Wait();
         LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
-        //Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
+        Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
         TEST(iZeroCrossings >= expectedZeroCrossings-20);
         if (iCodec == AudioFileDescriptor::eCodecMp3) {
             // MP3 encoders/decoders add silence and some samples of random data to
             // start and end of tracks for filter routines.
             // LAME FAQ suggests this is for at least 1057 samples at start and 288 at end.
-            TEST(iZeroCrossings <= expectedZeroCrossings+160);
+            TEST(iZeroCrossings <= expectedZeroCrossings+130);
         }
         else {
             TEST(iZeroCrossings <= expectedZeroCrossings+15);
@@ -912,6 +911,7 @@ void TestCodec()
     stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-128k.mp3"), 24, 2, AudioFileDescriptor::eCodecMp3));
     //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k.m4a"), 16, 1, AudioFileDescriptor::eCodecAlac));
     //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.m4a"), 16, 2, AudioFileDescriptor::eCodecAlac));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-24bit.m4a"), 24, 2, AudioFileDescriptor::eCodecAlac));
 
     std::vector<AudioFileDescriptor> invalidFiles;
     invalidFiles.push_back(AudioFileDescriptor(Brn("filetasks.py"), 16, 1, AudioFileDescriptor::eCodecUnknown));          // Large invalid file.
