@@ -229,7 +229,8 @@ private:
 class TestHttpFlushIdProvider : public IFlushIdProvider
 {
 public:
-    TestHttpFlushIdProvider();;
+    TestHttpFlushIdProvider();
+    virtual ~TestHttpFlushIdProvider();
 public: // from iFlushIdProvider
     TUint NextFlushId();
 private:
@@ -811,6 +812,9 @@ TestHttpFlushIdProvider::TestHttpFlushIdProvider()
     : iNextFlushId(MsgFlush::kIdInvalid + 1)
 {
 }
+
+TestHttpFlushIdProvider::~TestHttpFlushIdProvider() {}
+
 
 TUint TestHttpFlushIdProvider::NextFlushId()
 {
