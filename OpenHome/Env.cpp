@@ -20,7 +20,7 @@ using namespace OpenHome::Net;
 const char kOhNetMimeTypeCss[]  = "text/css";
 const char kOhNetMimeTypeHtml[] = "text/html";
 const char kOhNetMimeTypeJs[]   = "application/javascript";
-const char kOhNetMimeTypeXml[]  = "application/xml";
+const char kOhNetMimeTypeXml[]  = "text/xml";
 const char kOhNetMimeTypeBmp[]  = "image/bmp";
 const char kOhNetMimeTypeGif[]  = "image/gif";
 const char kOhNetMimeTypeJpeg[] = "image/jpeg";
