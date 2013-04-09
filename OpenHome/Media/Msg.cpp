@@ -667,6 +667,12 @@ MsgAudioEncoded* MsgAudioEncoded::Split(TUint aBytes)
         ASSERT(iNextAudio != NULL);
         return iNextAudio->Split(aBytes - iSize);
     }
+    if (aBytes == iSize) {
+        ASSERT(iNextAudio != NULL);
+        MsgAudioEncoded* next = iNextAudio;
+        iNextAudio = NULL;
+        return next;
+    }
     ASSERT(aBytes > 0);
     ASSERT(aBytes < iSize);
     MsgAudioEncoded* remaining = static_cast<Allocator<MsgAudioEncoded>&>(iAllocator).Allocate();
